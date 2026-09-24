@@ -1096,7 +1096,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence lists backends for CPU (AVX/NEON/Metal), NVIDIA CUDA, AMD HIP, and Moore Threads MUSA, but no mention of TPU or Intel Gaudi support anywhere in the pack.",
+    "rationale": "Evidence shows llama.cpp supports CPU, Apple Metal/ARM, CUDA (NVIDIA), HIP (AMD), and MUSA (Moore Threads) backends, but there is no mention of TPU or Gaudi accelerator support or any plugin architecture for such hardware.",
     "evidenceIds": [
       "llama-cpp-gh-6",
       "llama-cpp-gh-7",
@@ -1108,11 +1108,9 @@
     "storyId": "agentic-agent-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The only llms.txt probe evidence is for github.com's generic developer-platform llms.txt, not anything specific to llama.cpp's own documentation; no evidence shows llama.cpp publishing agent-oriented docs or an llms.txt for its own project.",
-    "evidenceIds": [
-      "llama-cpp-probe-1"
-    ]
+    "confidence": "high",
+    "rationale": "The only llms.txt probe evidence is for github.com generally, not for llama.cpp's own documentation or repo; there is no evidence that llama.cpp publishes an llms.txt or agent-oriented docs of its own.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
@@ -1137,9 +1135,14 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "llama.cpp provides a CLI, server, and web UI for chatting with models, but the evidence shows no built-in agentic assistant capable of autonomous task delegation (e.g., tool use, multi-step task execution, task planning) — only raw inference/chat interfaces are documented.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "llama.cpp provides a CLI, server, and web UI for running LLM inference, but there is no evidence of a built-in AI assistant that can autonomously take on and complete delegated tasks (e.g., tool use, multi-step task execution) — it exposes only chat/completion endpoints and a basic web UI for manual interaction.",
+    "evidenceIds": [
+      "llama-cpp-gh-1",
+      "llama-cpp-gh-2",
+      "llama-cpp-gh-3",
+      "llama-cpp-gh-4"
+    ]
   },
   {
     "productId": "llama-cpp",
@@ -1162,7 +1165,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions MCP support, tool-calling integration, or any mechanism for llama.cpp to consume external MCP servers' tools; the pack only covers inference performance, quantization, hardware backends, and CLI/server basics.",
+    "rationale": "No evidence in the pack indicates llama.cpp supports plugging in MCP servers or MCP-based tool use; all citations cover inference performance, quantization, hardware support, and vision features, not MCP integration.",
     "evidenceIds": []
   },
   {
@@ -1171,7 +1174,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is an inference engine/server (llama cli, llama serve), not an agent itself, so the axis applies as it would for any platform with an ecosystem; however, no evidence pack item mentions an official MCP server or MCP integration at all.",
+    "rationale": "llama.cpp is an inference engine/server (not itself an agent), so an official MCP server is a fair, applicable capability to ask about, but the evidence pack contains no mention of any MCP server, endpoint, or integration—only CLI, HTTP server, Docker, and quantization/performance details.",
     "evidenceIds": []
   },
   {
@@ -1188,13 +1191,12 @@
     "storyId": "agentic-official-cli",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "llama.cpp ships an official `llama cli` binary (and `llama serve`) directly from the project, supporting text and VLM sessions, and is corroborated by hands-on community reports of using CLI/binaries. missing for 10: no independent deep-dive review of CLI ergonomics/agentic scripting features, and no documentation of CLI-specific flags for automation/agent workflows beyond basic usage examples.",
+    "confidence": "high",
+    "rationale": "llama.cpp ships an official first-party CLI (`llama cli`, `llama serve`) documented directly in the repo for running, serving, and even multimodal/VLM sessions, and community reports confirm hands-on use of these CLI tools (e.g., llama-mtmd-cli for vision). Missing for 10: dedicated CLI reference docs/man pages and independent commentary specifically framing the CLI as built for agentic/automated workflows.",
     "evidenceIds": [
       "llama-cpp-gh-1",
       "llama-cpp-gh-2",
       "llama-cpp-gh-4",
-      "llama-cpp-gh-12",
       "llama-cpp-comm-13"
     ]
   },
@@ -1204,10 +1206,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence confirms a `llama serve` mode that exposes a server (with a built-in web UI) that could be driven programmatically, but the pack contains no explicit documentation of the API's endpoints, request/response formats, or SDKs for driving it AI-natively. Missing for 10: explicit API reference/docs, examples of programmatic API calls, and independent confirmation of API usage beyond the web UI.",
+    "rationale": "Evidence shows llama.cpp ships a `llama serve` HTTP server component (gh-2, gh-18) that the built-in web UI talks to (gh-3), implying a programmatic API exists, but the pack contains no explicit documentation of API endpoints, request/response formats, or OpenAI-compatibility claims that an AI-native user could rely on. Missing for 10: explicit API reference/docs, examples of programmatic clients driving the server, and any third-party corroboration of API usage.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
+      "llama-cpp-gh-3",
+      "llama-cpp-gh-18"
     ]
   },
   {
@@ -1216,7 +1219,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local inference engine/CLI-server, not an identity/credential-issuing platform; scoped API-key management is outside its product category.",
+    "rationale": "llama.cpp is a local inference engine/CLI/server tool, not an identity or credential-management platform; scoped API credential issuance is outside its product category and belongs to an auth/IAM system rather than an inference runtime.",
     "evidenceIds": []
   },
   {
@@ -1225,11 +1228,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows llama.cpp offers CLI tools, a server, and Docker/binary distribution, but nothing about official client SDKs (e.g., official Python/JS/Go libraries) for developers to build against. Community notes only mention third-party 'python wrappers', not first-party SDKs.",
-    "evidenceIds": [
-      "llama-cpp-gh-2",
-      "llama-cpp-comm-9"
-    ]
+    "rationale": "Evidence shows CLI, server, Docker, and language bindings for the core library, but nothing about official SDKs (e.g., Python/JS client packages) for building AI-native applications against llama.cpp's API.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
@@ -1237,7 +1237,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions webhooks or any event-subscription mechanism for llama.cpp; the server exposes an HTTP API for inference but nothing about outbound event notifications. Missing for 10: any documentation or mention of webhook support, event types, or subscription configuration.",
+    "rationale": "No evidence in the pack mentions webhooks or event subscription capability of any kind; llama.cpp exposes an inference server API but nothing about webhook-based event subscription is documented.",
     "evidenceIds": []
   },
   {
@@ -1245,17 +1245,20 @@
     "storyId": "anthropic-compatible-endpoint",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack documents llama.cpp's server (`llama serve`), OpenAI-style completions/web UI, CLI, and hardware/quantization features, but nowhere mentions an Anthropic-compatible messages endpoint (e.g. /v1/messages) being implemented or supported. Absence of evidence for this specific compatibility claim means it cannot be credited.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "The evidence pack documents llama.cpp's server, CLI, and web UI features but contains no mention of an Anthropic-compatible messages API endpoint (e.g., /v1/messages); only generic server/serving references appear.",
+    "evidenceIds": [
+      "llama-cpp-gh-2",
+      "llama-cpp-gh-18"
+    ]
   },
   {
     "productId": "llama-cpp",
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples (e.g., Swagger/OpenAPI docs, live API playground); only server/CLI usage and build docs are mentioned. Missing for 10: interactive API explorer, runnable code examples, OpenAPI/Swagger UI evidence.",
+    "confidence": "high",
+    "rationale": "No evidence of an interactive API reference or runnable-example explorer; only static README docs, build guides, and server/CLI usage examples are present.",
     "evidenceIds": []
   },
   {
@@ -1263,12 +1266,9 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence mentions llama.cpp's server (`llama serve`) and web UI but never references an OpenAPI spec, swagger docs, or any downloadable machine-readable API description. Missing for 10: any mention of an OpenAPI/Swagger file, a /docs or /openapi.json endpoint, or third-party confirmation of a machine-readable API spec.",
-    "evidenceIds": [
-      "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence shows llama.cpp ships a server mode (llama serve) with a web UI, but nothing in the pack mentions an OpenAPI spec, swagger file, or any machine-readable API description available for download.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
@@ -1276,7 +1276,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local inference engine/runtime, not a data-backed SaaS product with a production/sandbox data separation concept; the story about testing against a sandbox environment without touching production data doesn't apply to this kind of tool.",
+    "rationale": "llama.cpp is a local inference engine/runtime, not a SaaS product with production data or a hosted environment to sandbox against — the concept of testing against a sandbox vs production data doesn't apply to this category of tool.",
     "evidenceIds": []
   },
   {
@@ -1285,7 +1285,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention API versioning, stability guarantees, or a documented deprecation policy for llama.cpp's server/CLI APIs; evidence only covers features, performance, and build instructions. missing for 10: any documentation of API versioning scheme, backward-compatibility guarantees, or deprecation policy.",
+    "rationale": "No evidence in the pack mentions API versioning, stability guarantees, or a documented deprecation policy for llama.cpp's server/library APIs; the material only covers features, performance, and build/install instructions.",
     "evidenceIds": []
   },
   {
@@ -1294,7 +1294,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "llama.cpp explicitly documents Apple Silicon as a first-class target with ARM NEON, Accelerate, and Metal framework optimizations, and multiple independent users corroborate strong real-world performance on M1/M1 Max Macs. missing for 10: first-party Metal-specific benchmark numbers or explicit GPU-offload-vs-CPU comparisons from the vendor.",
+    "rationale": "First-party docs explicitly state Apple Silicon is a first-class citizen optimized via ARM NEON, Accelerate, and Metal frameworks, and community hands-on reports confirm strong performance on M1 Macs (fast token generation, easy setup, usable speeds on 7B models). missing for 10: independent benchmark comparisons against non-Metal backends to quantify the acceleration gain.",
     "evidenceIds": [
       "llama-cpp-gh-6",
       "llama-cpp-comm-4",
@@ -1308,8 +1308,8 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers CLI/server modes, quantization, hardware acceleration, and vision support, but nothing documents a bulk/batch operation mode (e.g., processing many prompts, files, or items in one invocation). Missing for 10: batch inference API/CLI flag, documentation of processing multiple items in a single command, evidence of automation/scripting for bulk workloads.",
+    "confidence": "low",
+    "rationale": "Evidence covers single-session CLI/server usage, quantization, hardware acceleration, and vision features, but nothing describes batch/bulk processing of many prompts or items at once (e.g., a batch API or scripted multi-item pipeline).",
     "evidenceIds": []
   },
   {
@@ -1327,7 +1327,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is an inference engine/runtime (CLI, server, library) rather than a workflow/job orchestration tool; scheduling recurring jobs is outside its product category and is not something its evidence pack addresses or is expected to offer.",
+    "rationale": "llama.cpp is a local inference engine/runtime (CLI, server, library) — scheduling recurring jobs or automation workflows is outside its product category and would belong to an orchestration tool built on top of it.",
     "evidenceIds": []
   },
   {
@@ -1336,7 +1336,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local LLM inference engine/runtime, not an automation-builder platform; there is no concept of 'automations' to version, review, or roll back in this product's category.",
+    "rationale": "llama.cpp is a local inference engine/runtime for LLMs, not an automation-building platform with workflows to version, review, or roll back; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1345,13 +1345,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence documents llama.cpp running standard LLMs (Qwen) and multimodal/vision models (Gemma-3, VLM via llama-mtmd-cli) both via first-party CLI examples and hands-on community reports, supporting the 'hundreds of architectures' and 'multi-modal' parts of the story. However, there is no explicit evidence for MoE model support or embedding-model support in this pack, and one community comment notes vision support was previously removed and later restored, showing some historical fragility in multi-modal coverage. missing for 10: MoE architecture examples, embedding-model support evidence, broader architecture-count documentation",
+    "rationale": "Evidence shows llama.cpp running standard LLMs (Qwen) and multi-modal/vision models (VLM session, Gemma-3 vision) both in first-party CLI examples and corroborated by hands-on community reports of vision working well, plus broad quantization/backend support implying wide model compatibility. However, there is no explicit evidence of MoE model support or embedding-model support, nor any claim/count of 'hundreds' of architectures. missing for 10: explicit MoE architecture support, explicit embedding model support, and a documented breadth/count of supported architectures.",
     "evidenceIds": [
       "llama-cpp-gh-1",
       "llama-cpp-gh-4",
+      "llama-cpp-gh-8",
       "llama-cpp-comm-13",
       "llama-cpp-comm-14",
-      "llama-cpp-comm-16"
+      "llama-cpp-comm-15"
     ]
   },
   {
@@ -1360,10 +1361,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "llama.cpp is explicitly documented as a plain C/C++ implementation without dependencies, and the README points to a dedicated build guide for building from source; community reports corroborate that compiling from source (e.g., for vision support) works well in practice. Missing for 10: independent verification of the actual build-guide contents/dependency list and a hands-on account of a from-scratch build with zero external libraries beyond the compiler/toolchain.",
+    "rationale": "llama.cpp explicitly advertises a plain C/C++, dependency-free core (gh-5), a dedicated build-from-source guide (gh-16), and the ggml backend library (gh-21); community reports confirm building/compiling from source works smoothly across platforms (comm-7, comm-13). Missing for 10: detailed contents of the build guide itself and independent verification across all supported OS/toolchains.",
     "evidenceIds": [
       "llama-cpp-gh-5",
       "llama-cpp-gh-16",
+      "llama-cpp-gh-21",
       "llama-cpp-comm-7",
       "llama-cpp-comm-13"
     ]
@@ -1371,13 +1373,14 @@
   {
     "productId": "llama-cpp",
     "storyId": "built-in-chat-ui",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "llama.cpp ships a built-in web UI accessible via `llama serve`, explicitly demonstrated running against a model, giving power-users a graphical chat interface without needing separate frontends. Missing for 10: independent/hands-on community reports specifically praising or testing the web UI's chat experience (most community evidence discusses CLI/vision usage rather than the GUI itself).",
+    "rationale": "llama.cpp ships a built-in web UI served via `llama serve` (llama-cpp-gh-3, llama-cpp-gh-18) that provides a graphical chat interface, distinct from the CLI-only chat mode. However, community evidence in the pack focuses on CLI/mtmd usage for vision chat rather than hands-on use of the web GUI itself, so independent corroboration of the graphical interface's usability is thin. Missing for 10: independent/hands-on reports of using the web UI specifically, screenshots or feature details of the chat GUI, and confirmation of feature parity with CLI (e.g., multimodal support in the UI).",
     "evidenceIds": [
-      "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
+      "llama-cpp-gh-3",
+      "llama-cpp-gh-18",
+      "llama-cpp-gh-2"
     ]
   },
   {
@@ -1386,12 +1389,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "llama.cpp ships a `llama cli` command that starts interactive chat sessions directly from the terminal, including multimodal/VLM chat sessions, and community reports confirm it works well in practice (e.g., using '/image' in chat). missing for 10: no dedicated first-party doc/README excerpt walking through the interactive chat flags/UX in detail, and no independent review specifically praising the terminal chat interactivity itself (most community evidence focuses on performance/quantization rather than the chat UX).",
+    "rationale": "llama.cpp ships a `llama cli` command that lets developers start an interactive chat session directly from the terminal (llama-cpp-gh-1, llama-cpp-gh-4), and community reports confirm hands-on use of the CLI for interactive chat including multimodal '/image' commands (llama-cpp-comm-13). missing for 10: no explicit first-party doc snippet showing the interactive chat prompt/REPL flags or session persistence details, and only one independent corroboration source.",
     "evidenceIds": [
       "llama-cpp-gh-1",
       "llama-cpp-gh-4",
-      "llama-cpp-comm-13",
-      "llama-cpp-comm-14"
+      "llama-cpp-comm-13"
     ]
   },
   {
@@ -1400,11 +1402,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "llama.cpp's CLI supports pulling models directly from Hugging Face via `-hf` flag (e.g., `llama cli -hf ggml-org/...`) for both cli and serve modes, enabling download-and-run in one command. However, there's no evidence of a search capability, listing/managing locally downloaded models, deleting models, or a dedicated model-management subcommand. missing for 10: model search functionality, listing/inspecting locally cached models, deletion/management commands, independent hands-on confirmation of the -hf download UX.",
+    "rationale": "CLI flags like `llama cli -hf ggml-org/...` and `llama serve -hf ...` show developers can pull and run models directly from Hugging Face via command line, which covers download and basic management, but there's no evidence of a dedicated search command or listing/removing locally cached models. missing for 10: explicit model search command, list/delete of downloaded models, independent hands-on confirmation of this CLI download workflow.",
     "evidenceIds": [
       "llama-cpp-gh-1",
-      "llama-cpp-gh-2",
-      "llama-cpp-gh-4"
+      "llama-cpp-gh-2"
     ]
   },
   {
@@ -1413,9 +1414,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence confirms CLI usage (llama cli -hf ...) and CPU+GPU hybrid inference offload capability, plus community reports of GPU layer offloading (N_GPU_LAYERS) working via CLI/python wrappers, implying command-line flags exist for GPU offload; however no direct documentation snippet shows explicit flags like --n-gpu-layers or --ctx-size in the pack. missing for 10: explicit CLI flag documentation for GPU layer offload and context length settings, first-party example command showing both parameters set together.",
+    "rationale": "Evidence confirms a CLI (`llama cli`/`llama serve`) that loads models directly (e.g., `-hf ggml-org/...`) and supports GPU/CPU hybrid offload (gh-10, comm-9, comm-11 reference N_GPU_LAYERS and CPU/GPU splitting), showing GPU offload is configurable from the command line. However, no direct documentation or example shows a context-length flag being set via CLI. missing for 10: explicit CLI flag/example for context length configuration, first-party doc snippet showing combined GPU-offload+context-length invocation.",
     "evidenceIds": [
       "llama-cpp-gh-1",
+      "llama-cpp-gh-2",
       "llama-cpp-gh-10",
       "llama-cpp-comm-9",
       "llama-cpp-comm-11"
@@ -1427,10 +1429,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "The CLI clearly supports starting the server via `llama serve -hf ...` and the built-in web UI runs against it (gh-2, gh-3), confirming command-line startup. However, no evidence documents a dedicated stop/shutdown command or graceful termination flag—only starting is shown. Missing for 10: explicit stop/shutdown CLI command or flag, documentation on process management, independent hands-on confirmation of stopping the server via CLI.",
+    "rationale": "Evidence confirms a CLI command (`llama serve`) to start the local model server and a dedicated Server section in docs, showing the server is invoked and run from the terminal (llama-cpp-gh-2, llama-cpp-gh-18). There is no explicit documentation of a stop/kill subcommand or graceful shutdown flag, only implicit reliance on standard process termination. Missing for 10: explicit stop/shutdown command or flag, independent confirmation of stopping behavior.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
+      "llama-cpp-gh-18"
     ]
   },
   {
@@ -1439,9 +1441,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows llama.cpp is a C/C++ core with a CLI and server mode, and community members mention using unspecified third-party 'python wrappers' (comm-9), but there is no evidence of official Python or JavaScript client libraries maintained by the project. missing for 10: official Python SDK, official JavaScript/Node SDK, documentation of an officially maintained client library ecosystem.",
+    "rationale": "The evidence shows llama.cpp is a C/C++ implementation with a CLI, server, and web UI, and mentions community members using unofficial 'python wrappers,' but there is no mention of official first-party Python or JavaScript client libraries maintained by the project.",
     "evidenceIds": [
-      "llama-cpp-gh-2",
+      "llama-cpp-gh-5",
+      "llama-cpp-gh-18",
       "llama-cpp-comm-9"
     ]
   },
@@ -1451,7 +1454,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local inference engine/runtime focused purely on running local GGUF models on-device; connecting to cloud AI providers within the same interface is outside its product category and not something its evidence pack addresses or claims.",
+    "rationale": "llama.cpp is a local inference engine focused solely on running local GGUF models on-device; there is no evidence of any cloud provider integration, and this is fundamentally outside its product category as a local-first C/C++ inference runtime.",
     "evidenceIds": []
   },
   {
@@ -1460,10 +1463,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is designed for local/on-device inference (CPU+GPU hybrid, quantization, Metal/CUDA support) and all evidence describes running models locally, including techniques to fit oversized models on local hardware; there is no mention of any hosted cloud tier or ability to offload model execution to a remote service without downloading it. missing for 10: any documentation of a cloud-hosted inference tier, remote model execution API, or 'run without local download' feature.",
+    "rationale": "All evidence describes llama.cpp's local inference capabilities (CPU/GPU hybrid offload, quantization, Apple Silicon/CUDA/AMX support) and running models fully on-device; there is no mention of any hosted cloud tier or remote offloading service for models too large for local hardware.",
     "evidenceIds": [
       "llama-cpp-gh-10",
-      "llama-cpp-comm-11"
+      "llama-cpp-comm-11",
+      "llama-cpp-comm-12",
+      "llama-cpp-gh-9",
+      "llama-cpp-gh-8"
     ]
   },
   {
@@ -1472,7 +1478,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local/self-hosted inference engine, not a vendor-hosted cloud service with pricing tiers or rate limits; this axis does not apply to its product category.",
+    "rationale": "llama.cpp is a local/self-hosted inference engine, not a hosted cloud service with pricing tiers or rate limits; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1481,25 +1487,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence confirms llama.cpp ships a `llama serve` backend server mode (gh-2, gh-3) that could serve as an inference backend, but the pack contains no explicit documentation of OpenAI-compatible API endpoints, agent-specific integration guides, or hands-on reports of coding agents (e.g. Cursor, Continue, Aider) successfully using llama.cpp as a backend. Missing for 10: explicit API-compatibility docs, agent-integration examples, and independent confirmation of a coding agent working against the server.",
+    "rationale": "llama.cpp ships a server mode (`llama serve` / 'Server') that exposes model inference over HTTP, which is the mechanism by which external tools/agents would connect as a backend, and community posts confirm the server and CLI work reliably across platforms. However, the evidence pack never mentions OpenAI-API compatibility, specific coding-agent integrations (e.g., Continue, Cursor, Aider), or any hands-on report of an agent actually using llama.cpp as its backend. Missing for 10: explicit API-compatibility documentation, named coding-agent integration examples, and independent confirmation of agent-backend usage.",
     "evidenceIds": [
       "llama-cpp-gh-2",
+      "llama-cpp-gh-18",
       "llama-cpp-gh-3"
     ]
   },
   {
     "productId": "llama-cpp",
     "storyId": "cold-start-latency",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "llama.cpp ships as a dependency-free C/C++ binary with pre-built releases (no Python/runtime stack to boot), and community evidence explicitly praises loading-time performance and trivial, fast setup on consumer hardware. However, there are no precise cold-start latency benchmarks comparing binary startup time itself (as opposed to model load/mmap behavior) to competing runtimes. missing for 10: explicit cold-start timing benchmarks, comparison to heavier runtimes' startup overhead.",
+    "rationale": "llama.cpp ships as a dependency-free C/C++ binary with pre-built releases (no Python stack to load), and users report it 'started off as CPU-only' and 'totally detached from Python ML ecosystem,' with trivially easy setup on M1 and fast token generation once running. However, no evidence directly measures or claims fast cold-start/time-to-first-token versus heavier runtimes. Missing for 10: explicit cold-start latency benchmarks, first-party claims about startup time specifically.",
     "evidenceIds": [
       "llama-cpp-gh-5",
       "llama-cpp-gh-12",
-      "llama-cpp-comm-1",
+      "llama-cpp-gh-17",
       "llama-cpp-comm-4",
-      "llama-cpp-comm-7"
+      "llama-cpp-comm-7",
+      "llama-cpp-comm-8"
     ]
   },
   {
@@ -1508,7 +1516,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack documents a maximum concurrent request/connection count or throughput degradation thresholds for the llama.cpp server; evidence only covers general performance anecdotes (tokens/sec, RAM usage) unrelated to concurrency limits. Missing for 10: any documented concurrency limits, benchmarks of parallel request handling, or server capacity guidance.",
+    "rationale": "No evidence documents a maximum concurrent request/connection limit or throughput degradation benchmarks for llama.cpp's server; evidence only covers general performance, quantization, and hardware compatibility. Missing for 10: any documented concurrency limit, load-testing benchmarks, or server capacity guidance.",
     "evidenceIds": []
   },
   {
@@ -1516,10 +1524,11 @@
     "storyId": "container-deployment",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "llama.cpp officially documents Docker support with dedicated docker.md docs, confirming first-party container-based deployment. missing for 10: independent hands-on confirmation of container use/reproducibility and details on multi-arch/GPU-in-container support.",
+    "confidence": "high",
+    "rationale": "llama.cpp officially supports Docker deployment with dedicated documentation and Docker listed as a first-class install method alongside binaries and building from source, directly enabling reproducible containerized deployment. Missing for 10: independent hands-on validation of the Docker image (no community reports of using the Docker path specifically) and details on multi-arch/GPU-in-container support.",
     "evidenceIds": [
-      "llama-cpp-gh-11"
+      "llama-cpp-gh-11",
+      "llama-cpp-gh-19"
     ]
   },
   {
@@ -1527,11 +1536,11 @@
     "storyId": "continuous-batching-throughput",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack mentions llama serve, GPU/CPU hybrid inference, and quantization, but contains no mention of continuous batching or chunked prefill, or any throughput benchmarks for concurrent/multi-request serving. missing for 10: explicit documentation or benchmarks of continuous batching, chunked prefill, or multi-request throughput scaling.",
+    "confidence": "medium",
+    "rationale": "The evidence pack confirms llama.cpp has a server component (llama serve, Server, Docker) but contains no mention of continuous batching, chunked prefill, or multi-request throughput benchmarks; community comments focus on single-user token/sec speeds, not concurrent serving throughput.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-10"
+      "llama-cpp-gh-18"
     ]
   },
   {
@@ -1553,8 +1562,8 @@
     "storyId": "cross-architecture-cpu-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence documents CPU optimizations for x86 (AVX/AVX2/AVX512/AMX) and ARM (NEON/Metal/Accelerate) and touts a dependency-free plain C/C++ implementation, but there is no mention of PowerPC or other non-x86/ARM architectures anywhere in the pack. missing for 10: any documentation, build target, or community report of PowerPC (or other exotic CPU architecture) support.",
+    "confidence": "medium",
+    "rationale": "The evidence pack details CPU support for x86 (AVX/AVX2/AVX512/AMX) and ARM (NEON, Apple Silicon Metal/Accelerate), but nowhere mentions PowerPC or other non-x86/ARM CPU architectures. The 'plain C/C++ without dependencies' claim (gh-5) suggests general portability but is not concrete evidence of PowerPC support or testing.",
     "evidenceIds": [
       "llama-cpp-gh-5",
       "llama-cpp-gh-6",
@@ -1580,7 +1589,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers llama.cpp's CLI/server launch, quantization, hardware acceleration, and community performance reports, but nothing addresses assigning a custom model alias/identifier for consistent API reference.",
+    "rationale": "No evidence in the pack shows a mechanism to assign a custom name/alias to a loaded model for consistent reference in API calls (e.g., an --alias flag or model-id mapping); only generic serving/CLI mentions are present.",
     "evidenceIds": []
   },
   {
@@ -1589,7 +1598,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions prefill/decode disaggregation or distributed serving architecture for splitting these phases across nodes; only single-process CPU/GPU hybrid inference and quantization features are documented.",
+    "rationale": "No evidence in the pack mentions prefill/decode disaggregation, distributed serving splits, or large-scale serving architecture optimizations; the pack only covers CPU/GPU hybrid inference, quantization, and platform support.",
     "evidenceIds": []
   },
   {
@@ -1598,12 +1607,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents CPU+GPU hybrid inference, custom CUDA kernels, and hardware backend support (CUDA/HIP/MUSA), but contains no mention of distributing a single model across multiple GPUs via tensor, pipeline, or data parallelism. Missing for 10: any documentation or user report of multi-GPU tensor-split, pipeline-parallel, or data-parallel inference setups.",
-    "evidenceIds": [
-      "llama-cpp-gh-9",
-      "llama-cpp-gh-10",
-      "llama-cpp-comm-11"
-    ]
+    "rationale": "The evidence documents CUDA/HIP/MUSA GPU acceleration and CPU+GPU hybrid offloading for models larger than VRAM (llama-cpp-gh-9, llama-cpp-gh-10, llama-cpp-comm-11), but none of it describes distributing inference across multiple GPUs via tensor, pipeline, or data parallelism specifically. Missing for 10: any mention of multi-GPU tensor-split, pipeline parallelism, or data-parallel inference modes, and any benchmark/community report of running across 2+ GPUs.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
@@ -1611,7 +1616,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack shows llama.cpp as a local inference engine (CLI, server, web UI, quantization, hardware acceleration) but contains no mention of document ingestion, embeddings, vector search, or any automatic retrieval-augmented generation pipeline for chatting with personal documents.",
+    "rationale": "The evidence pack shows llama.cpp as a raw inference engine/CLI/server for chatting with models (text and vision), but contains no mention of document ingestion, embeddings, vector search, or any automatic retrieval-augmented generation pipeline for offline document chat.",
     "evidenceIds": []
   },
   {
@@ -1620,7 +1625,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is an inference engine/runtime with a CLI and a basic chat web UI, not a document-editing workspace product; drafting/editing documents with autosave in an integrated workspace is a wrong axis for this category of tool.",
+    "rationale": "llama.cpp is an inference engine/runtime with a basic chat web UI, not a document-editing workspace product; the story's axis (integrated document drafting/editing workspace with autosave) is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1642,7 +1647,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers llama.cpp's CLI/server for text and vision generation, quantization, hardware acceleration, and community performance reports, but nothing mentions embedding model support, an embeddings endpoint, or retrieval/search use cases. Missing for 10: any mention of --embedding flag, /embedding API endpoint, or embedding-specific model examples (e.g., BERT/GGUF embedding models) and retrieval/search workflow evidence.",
+    "rationale": "The evidence pack documents llama.cpp's CLI/server for chat and vision-language models but contains no mention of embedding model support, an /embedding endpoint, or retrieval/search use cases. Since embedding serving is a plausible and applicable capability for an LLM inference server, its absence from the evidence yields a 'none' verdict rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -1650,8 +1655,8 @@
     "storyId": "enterprise-license-cost",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of licensing terms, commercial use restrictions, or paid/enterprise tiers for llama.cpp — it only covers technical features, performance benchmarks, and build instructions. Since licensing is a reasonable question for any open-source project a power-user might adopt commercially, this axis applies but is unaddressed by the evidence.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no information about llama.cpp's license terms, dual-licensing, or any distinction between community and commercial/enterprise use — no license file, terms, or vendor statement is cited. Since licensing clarity is a fair and applicable question for any software project, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -1660,7 +1665,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "First-party docs explicitly list 1.5-bit, 2-bit, 3-bit, 4-bit, 5-bit, 6-bit, and 8-bit integer quantization for reduced memory use, and community evidence corroborates real-world memory/perf benefits (e.g., Q6_K nearly matching FP16 perplexity while much smaller, running 70B/33B models on constrained RAM). Missing for 10: independent benchmark data specifically isolating the lowest-bit (1.5-2 bit) quantization quality/memory tradeoffs.",
+    "rationale": "Official docs explicitly state support for 1.5-bit, 2-bit, 3-bit, 4-bit, 5-bit, 6-bit, and 8-bit integer quantization for reduced memory use, covering the full very-low-bit to 8-bit range. Community reports corroborate real-world memory savings (Q6_K near-FP16 perplexity at much smaller size, 70B models runnable on desktop RAM) validating the practical benefit. Missing for 10: no first-party benchmark table quantifying exact memory reduction per bit-width or independent third-party quantization accuracy study beyond community anecdotes.",
     "evidenceIds": [
       "llama-cpp-gh-8",
       "llama-cpp-comm-11",
@@ -1672,8 +1677,8 @@
     "storyId": "format-backward-compat",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community reports about GGUF format versioning, backward-compatibility guarantees, or cases where a llama.cpp runtime upgrade breaks previously downloaded quantized model files. Nothing addresses whether upgrading the binary is safe for existing GGUF files.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers features, performance benchmarks, and platform support but contains no documentation, changelog, or community discussion about GGUF format versioning, backward/forward compatibility guarantees, or breaking changes to quantized model files across llama.cpp runtime updates. This is a fair and important question for a quantization-format runtime, but nothing in the pack addresses it.",
     "evidenceIds": []
   },
   {
@@ -1682,16 +1687,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "llama.cpp's core CLI/server workflows load GGUF-named models directly (e.g. Qwen3.5-0.8B-GGUF) with 1.5–8-bit quantization support and CPU/GPU hybrid inference, and community reports confirm hands-on success running various GGUF-quantized models (7B/30B/70B, vision models) across platforms. missing for 10: an explicit first-party doc excerpt defining/naming the GGUF format itself rather than just model repo names, and broader independent benchmarking of GGUF-specific format handling.",
+    "rationale": "llama.cpp is fundamentally built around loading and running GGUF-format models, evidenced by CLI/server examples pulling GGUF repos (ggml-org/Qwen3.5-0.8B-GGUF), quantization support (1.5-8 bit), CPU+GPU hybrid inference, and multiple independent hands-on reports of successfully running GGUF models (7B, 30B, 70B) across hardware. Missing for 10: no explicit documentation snippet naming 'GGUF' as the file format itself (only inferred via repo naming) and no dedicated format-conversion/validation docs in this pack.",
     "evidenceIds": [
       "llama-cpp-gh-1",
       "llama-cpp-gh-2",
       "llama-cpp-gh-8",
-      "llama-cpp-gh-9",
       "llama-cpp-gh-10",
+      "llama-cpp-comm-5",
       "llama-cpp-comm-11",
-      "llama-cpp-comm-13",
-      "llama-cpp-comm-5"
+      "llama-cpp-comm-12"
     ]
   },
   {
@@ -1699,23 +1703,24 @@
     "storyId": "gpu-fallback-diagnostics",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items describe diagnostic messages, logs, or warnings explaining why GPU acceleration failed or fell back to CPU; evidence only covers general GPU/CPU hybrid support and performance anecdotes, some of which mention unexpected slowness (e.g., llama-cpp-comm-9, comm-10) without any diagnostic explanation surfaced. missing for 10: explicit fallback/error diagnostics, logging of GPU detection failures, documentation of verbose/debug flags explaining backend selection.",
+    "confidence": "low",
+    "rationale": "The evidence pack documents GPU/CPU hybrid inference and various hardware backends (CUDA, Metal, AVX) but contains no mention of diagnostic logging, error messages, or user-facing explanations when GPU acceleration fails and falls back to CPU. Community comments discuss raw performance numbers and layer limits but never describe llama.cpp surfacing a clear reason for a fallback.",
     "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
     "storyId": "headless-server-mode",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "llama.cpp provides CLI (`llama cli`) and server (`llama serve`) binaries with no GUI dependency, runs via Docker or pre-built binaries, and is a dependency-free C/C++ implementation suitable for headless server/CI use; the web UI is optional and only appears when explicitly serving it. missing for 10: explicit CI pipeline examples/docs and independent confirmation of headless server deployment in production CI.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "llama.cpp's `llama serve` provides a headless server component (separate from the optional web UI), with CLI-only usage, Docker deployment, and pre-built binaries suitable for server/CI use. missing for 10: no explicit CI-pipeline example or automation docs, no independent hands-on confirmation of headless/no-GUI server operation in production settings.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-5",
+      "llama-cpp-gh-3",
       "llama-cpp-gh-11",
       "llama-cpp-gh-12",
-      "llama-cpp-gh-16"
+      "llama-cpp-gh-18",
+      "llama-cpp-gh-19"
     ]
   },
   {
@@ -1723,8 +1728,8 @@
     "storyId": "kv-cache-paged-memory-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers quantization, hardware backends, CPU/GPU hybrid inference, and general benchmarks, but contains no mention of paged KV-cache memory management, memory-fragmentation avoidance, or concurrent-request capacity optimization (e.g., PagedAttention-style allocators). Missing for 10: any documentation or community evidence of paged/segmented KV cache allocation, benchmarks on concurrent request throughput, or fragmentation-reduction claims.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of paged KV-cache memory management, continuous batching, or concurrent-request capacity optimizations for llama.cpp's server; only general performance, quantization, and hardware-acceleration claims are present.",
     "evidenceIds": []
   },
   {
@@ -1741,8 +1746,8 @@
     "storyId": "lora-adapter-serving",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers quantization, CPU/GPU backends, CLI/server usage, and vision support, but contains no mention of LoRA adapter loading, hot-swapping, or multi-adapter serving capabilities. Missing for 10: any documentation or example of loading multiple LoRA adapters, switching between them at request time, or serving them concurrently on a shared base model.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of LoRA adapters, multi-adapter serving, or adapter hot-swapping in llama.cpp's server or CLI. Only general server/CLI, quantization, and hardware-acceleration features are documented, none touching LoRA support.",
     "evidenceIds": []
   },
   {
@@ -1751,12 +1756,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack discusses llama.cpp's default mmap behavior and its performance effects (e.g., swapping, RAM reduction) but contains no documentation or community evidence of explicit flags (like --mlock, --no-mmap) that let a power-user override these low-level engine settings. missing for 10: CLI/docs citation of mlock/mmap override flags, any first-party reference to configurable memory-locking behavior, independent confirmation of such overrides being used.",
-    "evidenceIds": [
-      "llama-cpp-comm-1",
-      "llama-cpp-comm-2",
-      "llama-cpp-comm-3"
-    ]
+    "rationale": "The evidence pack only discusses llama.cpp's default mmap behavior and its performance implications (comm-1), but never documents CLI flags or config options letting a power-user override mmap/mlock or other low-level engine settings. Missing for 10: any mention of --mlock, --no-mmap, or equivalent override flags, docs on tuning memory-locking behavior, or independent confirmation these settings are user-configurable.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
@@ -1764,7 +1765,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses release cadence, patch turnaround, or security vulnerability response times for llama.cpp; citations only cover features, performance benchmarks, and general usability feedback.",
+    "rationale": "No evidence pack items discuss release cadence, patch turnaround, CVE handling, or security fix history for llama.cpp; all citations concern features, performance benchmarks, and general usability commentary. missing for 10: release history/changelog data, CVE or security advisory tracking, patch turnaround time metrics, maintainer statements on fix response time.",
     "evidenceIds": []
   },
   {
@@ -1773,7 +1774,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence shows llama.cpp can download GGUF models via `-hf` flags and run them, but nothing in the pack addresses whether downloaded model files or HF cache are shared/reusable across other runtimes without re-downloading or re-converting.",
+    "rationale": "The evidence shows llama.cpp downloads GGUF models via `-hf` flags but contains no discussion of shared cache locations, format compatibility with other runtimes (e.g., Ollama, LM Studio), or explicit reuse-without-reconversion guarantees. missing for 10: documentation on GGUF cache location/sharing, explicit statements about interoperability with other runtimes, evidence of avoiding re-download/re-conversion across tools.",
     "evidenceIds": []
   },
   {
@@ -1782,20 +1783,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows model downloading via `llama cli -hf` and a basic web UI, but there is no evidence of a unified interface for managing downloaded models, saved prompts, and per-model configurations together.",
-    "evidenceIds": [
-      "llama-cpp-gh-1",
-      "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
-    ]
+    "rationale": "The evidence pack shows CLI/server tools for downloading and running models (llama cli -hf, llama serve, web UI for chat) but no evidence of a unified place to manage downloaded models, saved prompts, and per-model configurations together.",
+    "evidenceIds": []
   },
   {
     "productId": "llama-cpp",
     "storyId": "model-hot-swapping",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions dynamic model loading, unloading, or switching within a running llama.cpp server instance; the server examples (gh-2, gh-3) show launching with a single fixed model via `-hf`.",
+    "confidence": "medium",
+    "rationale": "The evidence shows llama.cpp's server (`llama serve`) loading a single model at startup, but nothing in the pack demonstrates hot-swapping or loading multiple models within one running server instance without a restart.",
     "evidenceIds": []
   },
   {
@@ -1804,7 +1801,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows CLI/server commands to run specific named models and hardware optimization support, but no assistant or tool that recommends which model fits a user's hardware/task before downloading. This is a plausible axis for an AI-native tool but no evidence of such a recommendation feature exists.",
+    "rationale": "No evidence of an AI assistant or recommendation feature that suggests which model fits a user's hardware/task before download; llama.cpp only provides CLI/server tools to run models the user already specifies (e.g. llama-cpp-gh-1, llama-cpp-gh-2).",
     "evidenceIds": []
   },
   {
@@ -1823,8 +1820,8 @@
     "storyId": "multi-agent-concurrent-throughput",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers quantization, hardware acceleration, vision support, and general performance benchmarks, but contains no mention of concurrent session handling, request queuing, slot reservation, or throughput guarantees under multi-agent load. This axis is plausible for a server-capable runtime like llama.cpp's `llama serve`, but no evidence documents dedicated capacity reservation for concurrent throughput.",
+    "confidence": "high",
+    "rationale": "The evidence covers llama.cpp's inference server, quantization, hardware acceleration, and hybrid CPU/GPU execution, but nothing describes reserved capacity, concurrency slot allocation, or throughput guarantees under simultaneous multi-session load. Community threads discuss single-session speed and hardware benchmarks, not multi-agent concurrent throughput stability.",
     "evidenceIds": []
   },
   {
@@ -1833,7 +1830,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers quantization, hardware acceleration, and general memory/performance anecdotes, but contains no mention of context-size flags, KV-cache allocation controls, or multi-instance/parallel-slot memory management that would let a power-user control context memory allocation across concurrent model instances.",
+    "rationale": "The evidence pack covers quantization, CPU/GPU hybrid inference, and general performance benchmarks, but contains no mention of context-size flags, parallel slot configuration, KV-cache allocation controls, or any mechanism for managing memory across concurrent model instances. This is a fair axis for a performance-oriented inference engine like llama.cpp, but nothing in the pack substantiates it.",
     "evidenceIds": []
   },
   {
@@ -1842,7 +1839,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Vendor docs explicitly cite custom CUDA kernels for NVIDIA, HIP support for AMD GPUs, and MUSA for Moore Threads GPUs, plus hybrid CPU+GPU inference for models exceeding VRAM. Community evidence corroborates real-world CUDA acceleration usage, though some report performance ceilings (e.g., 2x speedup, single-core CPU bottleneck) suggesting imperfect optimization. Missing for 10: independent hands-on benchmarks specifically on AMD/HIP or Moore Threads MUSA backends beyond NVIDIA CUDA.",
+    "rationale": "llama.cpp explicitly documents custom CUDA kernels for NVIDIA GPUs plus HIP support for AMD GPUs and MUSA for Moore Threads GPUs, alongside CPU+GPU hybrid inference for partial VRAM offload. Community reports corroborate real-world CUDA acceleration (with some noted speedup limits), confirming the vendor-specific GPU kernel approach works in practice. Missing for 10: independent hands-on confirmation of AMD HIP or MUSA performance (only NVIDIA CUDA has community corroboration).",
     "evidenceIds": [
       "llama-cpp-gh-9",
       "llama-cpp-gh-10",
@@ -1857,10 +1854,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "llama.cpp includes a built-in `llama serve` command that starts an HTTP server with a web UI (gh-2, gh-3), which by nature exposes an OpenAI-compatible API that can be reached over a network. However, the evidence pack never documents host/port binding flags, authentication, or explicit confirmation of cross-device LAN access, nor is there community testimony of someone actually connecting from a separate device on their network. Missing for 10: explicit docs/flags for binding to a LAN IP or 0.0.0.0, security/auth options for network exposure, and hands-on community reports of multi-device access.",
+    "rationale": "llama.cpp ships a built-in server (`llama serve`/llama-server) with an HTTP API and web UI that can serve models to other clients, as shown running Qwen models (gh-2, gh-3, gh-18). However, the evidence pack never documents specific LAN-binding/host-port configuration, authentication, or independent confirmation of successful multi-device network access, so the network-serving aspect is implied rather than directly evidenced. missing for 10: explicit docs/flags for binding to 0.0.0.0 or LAN IP, independent hands-on reports of accessing the server from a separate device on the network, and any network-security/access-control guidance.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
+      "llama-cpp-gh-3",
+      "llama-cpp-gh-18"
     ]
   },
   {
@@ -1878,7 +1876,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "There is direct first-party evidence that the project accepts external PRs and grants collaborator status based on contributions [llama-cpp-gh-14], which speaks directly to the story. However, there's no documented governance process, contribution guidelines, or examples of contributors being promoted to maintainers, and no independent/community corroboration of this recognition pathway. missing for 10: contributing guide/CONTRIBUTING.md details, examples of contributors becoming maintainers, community discussion of the review/PR process, governance documentation.",
+    "rationale": "The repo explicitly documents a contribution path ('Contributors can open PRs' and 'Collaborators will be invited based on contributions'), showing an open-source process for recognition, but there's no further detail on governance, contributor guidelines depth, or community corroboration of someone actually becoming a collaborator this way. missing for 10: detailed CONTRIBUTING docs, maintainer/collaborator list evidence, independent testimonials of contributors being promoted.",
     "evidenceIds": [
       "llama-cpp-gh-14"
     ]
@@ -1887,26 +1885,27 @@
     "productId": "llama-cpp",
     "storyId": "openai-compatible-server",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence confirms llama.cpp has a `llama serve` command that launches a local server for a loaded model, with a web UI running against it, demonstrating the core serving-api capability. However, none of the provided evidence explicitly states the server exposes an OpenAI-compatible API surface. missing for 10: explicit documentation/evidence of OpenAI API compatibility, endpoint details, or third-party confirmation that clients built for OpenAI's API work against this server.",
+    "rationale": "Evidence confirms llama.cpp ships a `llama serve` command and a dedicated 'Server' feature that developers can launch locally, with a web UI running against it (gh-2, gh-3, gh-18), demonstrating local API-server capability. However, the evidence pack never explicitly states the server exposes an OpenAI-compatible API, only that a generic server/web UI exists. Missing for 10: explicit documentation of OpenAI API compatibility (endpoints like /v1/chat/completions), independent developer confirmation of using it as a drop-in OpenAI API replacement.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-3"
+      "llama-cpp-gh-3",
+      "llama-cpp-gh-18"
     ]
   },
   {
     "productId": "llama-cpp",
     "storyId": "openness-api-parity",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The built-in web UI is served by `llama serve`, the same OpenAI-compatible API server, implying UI actions (chat, VLM sessions) route through the same API surface [llama-cpp-gh-2][llama-cpp-gh-3][llama-cpp-gh-4]. However, there is no explicit documentation enumerating UI-only features vs API parity, or confirming grammars/config toggles exposed in UI are all reachable via API. Missing for 10: explicit API parity documentation, independent confirmation that all UI settings/features have API equivalents, and any hands-on report validating full functional overlap.",
+    "rationale": "llama.cpp's server exposes an HTTP API (llama serve) and its built-in web UI is itself just a client of that same API (gh-2, gh-3), implying the UI has no privileged capability beyond what the API offers. Additional evidence shows the server/API is the core interface used by CLI, Docker, and other tooling (gh-18, gh-11), reinforcing an API-first design. Missing for 10: explicit documentation enumerating full feature parity between UI and API endpoints, and independent verification that no UI-only settings/features exist.",
     "evidenceIds": [
       "llama-cpp-gh-2",
       "llama-cpp-gh-3",
-      "llama-cpp-gh-4",
-      "llama-cpp-gh-13"
+      "llama-cpp-gh-18",
+      "llama-cpp-gh-11"
     ]
   },
   {
@@ -1931,12 +1930,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "The GitHub repo evidence shows the source is buildable from scratch, contributors can open PRs, and the code is described as a plain, dependency-free C/C++ implementation — all consistent with an openly readable open-source codebase hosted on GitHub, a well-known open-source hosting platform. Missing for 10: an explicit citation of the license text/name (e.g., MIT) and any independent community confirmation of the license terms.",
+    "rationale": "The evidence shows llama.cpp's full source is hosted publicly on GitHub, with build-from-source instructions, no external dependencies, and an open contribution process (PRs, collaborator invites), all consistent with an openly licensed codebase. Missing for 10: explicit license text/name citation and independent confirmation of license terms.",
     "evidenceIds": [
       "llama-cpp-gh-16",
       "llama-cpp-gh-14",
       "llama-cpp-gh-5",
-      "llama-cpp-gh-1"
+      "llama-cpp-gh-17"
     ]
   },
   {
@@ -1945,42 +1944,45 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "llama.cpp is explicitly designed for self-hosting: it can be built from source or run via pre-built binaries/Docker, serves models locally via `llama serve` with a built-in web UI, and runs on diverse hardware (CPU, Apple Silicon, NVIDIA/AMD/Moore Threads GPUs) with no external dependencies. Community reports corroborate real-world self-hosted usage across Mac, Linux, and various hardware configs. Missing for 10: no first-party managed/hosted cloud offering comparison or enterprise self-host deployment guide beyond Docker/binaries.",
+    "rationale": "llama.cpp is explicitly self-hostable: build from source, Docker, pre-built binaries, and package managers (winget) all let a user run the full server/CLI/web UI locally, and community reports confirm real-world self-hosting on Mac/Linux/Windows hardware. Missing for 10: no first-party managed/hosted alternative documentation or enterprise self-host guide beyond the basic build/docker instructions.",
     "evidenceIds": [
       "llama-cpp-gh-2",
-      "llama-cpp-gh-3",
-      "llama-cpp-gh-5",
       "llama-cpp-gh-11",
       "llama-cpp-gh-12",
       "llama-cpp-gh-16",
+      "llama-cpp-gh-19",
+      "llama-cpp-gh-20",
       "llama-cpp-comm-4",
-      "llama-cpp-comm-7",
-      "llama-cpp-comm-8"
+      "llama-cpp-comm-13"
     ]
   },
   {
     "productId": "llama-cpp",
     "storyId": "package-manager-install",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows installation via Docker, pre-built binary releases, or building from source, but no mention of installation via a standard package manager (e.g., brew, apt, pip, winget). The axis applies to a runtime tool, but no supporting evidence exists.",
+    "rationale": "The repo explicitly lists Winget as an install method alongside Docker and pre-built binaries, showing at least one standard package manager is supported, but there's no mention of Homebrew/apt/conda or other mainstream package managers, and no community evidence of anyone actually using Winget to install it (community reports instead describe building from source or manually un-quarantining binaries). Missing for 10: broader package-manager coverage (e.g. Homebrew, apt), hands-on user reports confirming a smooth package-manager install experience.",
     "evidenceIds": [
+      "llama-cpp-gh-20",
       "llama-cpp-gh-11",
       "llama-cpp-gh-12",
-      "llama-cpp-gh-16"
+      "llama-cpp-gh-16",
+      "llama-cpp-comm-17"
     ]
   },
   {
     "productId": "llama-cpp",
     "storyId": "prebuilt-binaries",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "GitHub repo explicitly offers pre-built binaries via releases page and Docker images, giving alternatives to source builds; a community report also confirms using official release binaries (with a macOS quarantine workaround). missing for 10: no evidence of native OS package manager distribution (apt/brew/winget), no version/platform coverage details, and no broader independent corroboration of binary install experience beyond one macOS quarantine anecdote.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "llama.cpp explicitly documents downloading pre-built binaries from GitHub releases, as well as Docker images and a Winget package, as alternatives to building from source [llama-cpp-gh-12][llama-cpp-gh-11][llama-cpp-gh-20][llama-cpp-gh-19]. Community evidence confirms usage of official release binaries, though one user needed a macOS quarantine workaround to run them [llama-cpp-comm-17]. Missing for 10: broader package manager coverage (e.g. apt/brew) evidence and more independent corroboration of prebuilt binary reliability across platforms.",
     "evidenceIds": [
       "llama-cpp-gh-12",
       "llama-cpp-gh-11",
+      "llama-cpp-gh-19",
+      "llama-cpp-gh-20",
       "llama-cpp-comm-17"
     ]
   },
@@ -1989,8 +1991,8 @@
     "storyId": "prefix-caching",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of prefix/prompt caching (e.g., --prompt-cache or KV cache reuse features); only general performance and quantization details are cited, none addressing repeated-prompt caching.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of prompt/prefix caching, KV-cache reuse, or any mechanism for speeding up repeated-prompt workloads — only general prompt-processing and token-generation speed benchmarks are cited (llama-cpp-comm-11), which is a different capability.",
     "evidenceIds": []
   },
   {
@@ -1999,11 +2001,10 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "llama.cpp is a local/self-hosted inference engine (CLI, server binary, or library) with no cloud data-storage component; 'region/residency selection' is a SaaS/cloud-storage concept that doesn't map onto a tool that simply runs models on the user's own hardware.",
+    "rationale": "llama.cpp is a local inference engine that runs entirely on the user's own hardware with no cloud storage or hosted service component; the region/residency selection axis presupposes a cloud-hosted data store, which doesn't apply to this self-hosted C/C++ runtime.",
     "evidenceIds": [
       "llama-cpp-gh-5",
-      "llama-cpp-gh-11",
-      "llama-cpp-gh-16"
+      "llama-cpp-gh-17"
     ]
   },
   {
@@ -2024,14 +2025,13 @@
   {
     "productId": "llama-cpp",
     "storyId": "privacy-retention-controls",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "llama.cpp runs entirely locally (CLI/server binaries, Docker, no cloud dependency), which inherently gives users full control over any data since nothing is transmitted to a third party by design (llama-cpp-gh-1, llama-cpp-gh-2, llama-cpp-gh-11). However, there is no explicit documentation or feature addressing retention policies, log/chat history storage, or deletion controls within the tool itself. Missing for 10: explicit data-retention/deletion settings, logging controls, documentation on what is cached/stored and how to purge it.",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "llama.cpp is a local, self-hosted inference engine with no cloud service or vendor-side data storage—there is no server-side retention to control or delete, making this axis a category error for this kind of product rather than an unmet capability.",
     "evidenceIds": [
-      "llama-cpp-gh-1",
-      "llama-cpp-gh-2",
-      "llama-cpp-gh-11"
+      "llama-cpp-gh-5",
+      "llama-cpp-gh-17"
     ]
   },
   {
@@ -2040,7 +2040,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack discusses telemetry, usage tracking, or any opt-out mechanism for llama.cpp; the material only covers performance, build, and feature capabilities. Missing for 10: any documentation or mention of telemetry collection, privacy settings, or opt-out controls.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or privacy settings/opt-out mechanisms for llama.cpp; the evidence is entirely about performance, platform support, and installation methods.",
     "evidenceIds": []
   },
   {
@@ -2049,7 +2049,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "llama.cpp is designed as a fully local, dependency-free inference engine with CLI/server modes, optimized backends for CPU (AVX/NEON), Apple Silicon (Metal), and GPUs (CUDA/HIP/MUSA), plus quantization to fit models on consumer hardware—confirmed by hands-on community reports running 7B-70B models entirely on personal Macs and desktops with no cloud dependency. missing for 10: no explicit first-party statement about data/privacy guarantees, only implicit architectural evidence.",
+    "rationale": "llama.cpp is fundamentally a local inference engine with no external dependencies, runnable via CLI/server on CPU or GPU entirely on-device (llama-cpp-gh-1,2,5,6,7,9,16), and community reports confirm real hands-on local usage on personal machines (Mac, desktop CPU) without any cloud calls (llama-cpp-comm-4,5,6,12,14). missing for 10: an explicit first-party statement about offline/air-gapped operation or privacy guarantee, though it's strongly implied by the architecture.",
     "evidenceIds": [
       "llama-cpp-gh-1",
       "llama-cpp-gh-2",
@@ -2057,11 +2057,11 @@
       "llama-cpp-gh-6",
       "llama-cpp-gh-7",
       "llama-cpp-gh-9",
-      "llama-cpp-gh-10",
+      "llama-cpp-gh-16",
       "llama-cpp-comm-4",
       "llama-cpp-comm-6",
-      "llama-cpp-comm-11",
-      "llama-cpp-comm-12"
+      "llama-cpp-comm-12",
+      "llama-cpp-comm-14"
     ]
   },
   {
@@ -2069,8 +2069,8 @@
     "storyId": "speculative-decoding",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers quantization, hybrid CPU/GPU inference, hardware acceleration (CUDA, Metal, AVX), and multimodal support, but contains no mention of speculative decoding, draft models, or related flags/features. Missing for 10: any documentation or community mention of speculative decoding support, draft-model configuration, or benchmarks showing speedup from it.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers quantization, CPU/GPU hybrid inference, hardware acceleration (CUDA, Metal, AVX), and multimodal support, but contains no mention of speculative decoding, draft models, or any related flags/features. Since this is a plausible power-user performance axis for an inference engine, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -2094,7 +2094,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "llama.cpp ships GBNF grammar support with dedicated documentation, allowing developers to constrain generation (e.g., to JSON) via the CLI or server API. Missing for 10: no direct evidence of the JSON-schema-to-grammar helper or server-specific grammar parameter usage, and no independent/community corroboration of this specific feature in practice.",
+    "rationale": "First-party docs reference GBNF grammars for constraining model output, and the built-in server exposes this via the API, aligning with the structured-output/JSON constraint story. Missing for 10: no explicit documentation snippet showing JSON-schema-to-grammar conversion or server API parameter usage, and no independent/community corroboration of grammar-constrained JSON generation in practice.",
     "evidenceIds": [
       "llama-cpp-gh-13",
       "llama-cpp-gh-2"
@@ -2105,9 +2105,12 @@
     "storyId": "tool-calling-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of tool-calling APIs, function-calling schemas, or reasoning-parser flags in llama.cpp's server; only generic grammar (GBNF) and performance/community items are present, none of which address structured tool-call or reasoning-tag parsing support.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack mentions GBNF grammars for constrained output but contains no mention of native tool-calling APIs or reasoning-parser (e.g., --jinja chat templates, function-calling schema, or thinking-token parsing) support in the server, so this applicable serving-api capability is unevidenced.",
+    "evidenceIds": [
+      "llama-cpp-gh-13",
+      "llama-cpp-gh-18"
+    ]
   },
   {
     "productId": "llama-cpp",
@@ -2115,7 +2118,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "llama.cpp supports VLM inference via llama-mtmd-cli and llama serve, with documented usage of models like Gemma-3 and Qwen for image+text understanding, corroborated by hands-on community reports of it working well including OCR-like tasks and benchmarks. missing for 10: broader coverage of supported VLM architectures/limitations and more first-party documentation depth beyond GitHub README bullet points.",
+    "rationale": "llama.cpp supports vision-language models via llama-mtmd-cli/llama cli VLM sessions (gh-4), and independent hands-on reports confirm it works well with Gemma-3 for image understanding, OCR, and photo captioning, with concrete performance benchmarks (comm-13, comm-14, comm-15). Missing for 10: official docs enumerating supported VLM architectures and confirmation that vision works out-of-the-box without compiling from source (comm-13 required a source build).",
     "evidenceIds": [
       "llama-cpp-gh-4",
       "llama-cpp-comm-13",
@@ -2130,7 +2133,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only documents AMD GPU support via HIP (gh-9), which requires ROCm/HIP toolchain — there is no mention of a Vulkan backend or of running AMD GPUs without a ROCm install. missing for 10: any documentation of a Vulkan backend, evidence of ROCm-free AMD GPU acceleration, benchmarks or user reports specifically using Vulkan on AMD hardware.",
+    "rationale": "Evidence only documents AMD GPU support via HIP/ROCm (llama-cpp-gh-9); there is no mention anywhere in the pack of a Vulkan backend or of running AMD GPUs without a full ROCm install.",
     "evidenceIds": [
       "llama-cpp-gh-9"
     ]
@@ -2141,11 +2144,9 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Official docs explicitly list AVX, AVX2, AVX512 and AMX support for x86 architectures as a core feature, directly matching the story, and community reports corroborate strong CPU inference performance on x86/other CPUs. Missing for 10: no independent benchmark specifically isolating AVX512/AMX speedups or detailed configuration guidance in the pack.",
+    "rationale": "The README explicitly lists AVX, AVX2, AVX512, and AMX support for x86 architectures as a first-party feature, directly matching the story. missing for 10: independent hands-on benchmarks specifically confirming AVX512/AMX speedups (community evidence only covers CUDA/Apple silicon performance, not x86 AVX/AMX specifically).",
     "evidenceIds": [
-      "llama-cpp-gh-7",
-      "llama-cpp-comm-12",
-      "llama-cpp-comm-11"
+      "llama-cpp-gh-7"
     ]
   },
   {
