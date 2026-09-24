@@ -3859,34 +3859,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Turso documents and runtime-probes confirm a full non-dashboard provisioning path: the API can create/token-scope/tear down a database per agent (turso-docs-8), the CLI can create a db and shell into it (turso-docs-14/15/40, turso-probe-5), and the official MCP server (docs-9/37, turso-probe-4) lets any MCP-capable agent manage orgs/databases/groups and run SQL with no token copy-paste — independently verified live and returning a real OAuth challenge (turso-probe-rt-3), plus a keyless local libSQL server actually executing CREATE TABLE/INSERT/SELECT via CLI (turso-probe-rt-2). Schema/data operations are covered via SDK push()/pull() (docs-7/20/43) and CLI shell/.dump (docs-47). Missing for 10: a single documented end-to-end example chaining API-create→connection-string→schema-apply→query in one flow, and independent (non-vendor) confirmation of the full agent-driven MCP workflow beyond the auth handshake.",
+    "rationale": "Turso provides all required pieces: CLI (turso db create, shell, schema/dump) [turso-docs-14,turso-docs-40,turso-docs-47,turso-probe-5], Platform API to create/manage databases and tokens programmatically per-agent [turso-docs-8,turso-docs-60], and an official MCP server that lets any MCP-capable agent create/manage databases and run SQL without manual API tokens [turso-docs-9,turso-docs-37,turso-probe-4]. This covers create, connect, schema, and query across API/CLI/MCP paths, matching the story closely. missing for 10: independent/hands-on verification of the MCP-driven end-to-end provisioning flow (only vendor docs cited) and no explicit example combining schema-apply + query via API/MCP in one flow.",
     "evidenceIds": [
       "turso-docs-8",
       "turso-docs-9",
-      "turso-docs-37",
       "turso-docs-14",
-      "turso-docs-15",
+      "turso-docs-37",
       "turso-docs-40",
-      "turso-docs-7",
-      "turso-docs-20",
+      "turso-docs-47",
+      "turso-docs-60",
       "turso-probe-4",
-      "turso-probe-5",
-      "turso-probe-rt-2",
-      "turso-probe-rt-3"
+      "turso-probe-5"
     ]
   },
   {
     "productId": "turso",
     "storyId": "agent-safe-sql-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso ships an official MCP server (turso-docs-9, turso-docs-37, turso-probe-rt-3) that lets any MCP-capable agent run SQL and manage databases, and token-scoped per-agent database provisioning (turso-docs-8) exists, but there is no evidence the MCP tool set distinguishes read-only query tools from destructive/schema-mutating ones (e.g. no documented tool scoping, permission tiers, or dry-run/confirmation gating for DDL/DML vs SELECT).",
+    "rationale": "Turso ships an official MCP server that lets any MCP-capable agent manage the account and run SQL (turso-docs-9/37, turso-probe-4), and separately offers fine-grained, per-token permission scoping by database/table/action (turso-docs-56, turso-docs-57) which could underlie safe delegation. But there is no documentation showing the MCP server's own tool set explicitly separates read-only vs destructive operations (e.g., a distinct 'query' vs 'execute-destructive' tool), so the specific safety-scoping claim in the story is only inferentially supported. missing for 10: explicit MCP tool-level read-only/destructive distinction, documentation or examples showing agents blocked from destructive ops by default, independent/hands-on confirmation of this safety behavior.",
     "evidenceIds": [
       "turso-docs-9",
       "turso-docs-37",
-      "turso-docs-8",
-      "turso-probe-rt-3"
+      "turso-probe-4",
+      "turso-docs-56",
+      "turso-docs-57"
     ]
   },
   {
@@ -3895,10 +3893,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Turso hosts a live llms.txt index (HTTP 200) that links to markdown docs pages, exactly matching the agent-oriented docs pattern, and this was independently confirmed via probe. Missing for 10: no independent/community corroboration that agents actually use this llms.txt file successfully in practice.",
+    "rationale": "Turso has a confirmed live llms.txt index (HTTP 200) and markdown-formatted docs pages (.md suffix) explicitly designed for agent consumption, plus dedicated agent-oriented guides (agent-databases.md, ai-memory.md). missing for 10: independent/community confirmation that agents actually use llms.txt successfully in practice.",
     "evidenceIds": [
       "turso-probe-1",
-      "turso-probe-2"
+      "turso-probe-2",
+      "turso-docs-51",
+      "turso-docs-52"
     ]
   },
   {
@@ -3907,22 +3907,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Turso provides infrastructure primitives (native vector search, MCP integration for agents to run SQL) but no evidence of a built-in feature that itself generates AI insights or suggestions about the user's stored data — it merely provides raw building blocks for others to build such features on top.",
+    "rationale": "Turso provides building blocks (vector search, agent-database provisioning, MCP integration for agents to query data) but no evidence shows the product itself generates insights or suggestions from a user's data — it is infrastructure that AI agents/apps built on top of it could use, not a feature where Turso itself surfaces AI-generated analysis.",
     "evidenceIds": []
   },
   {
     "productId": "turso",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Turso provides infrastructure that supports agent-driven automation — a documented MCP server that lets any MCP-capable agent autonomously manage the Turso Cloud account, provision/branch databases and run SQL (turso-docs-9, turso-docs-37, verified live in turso-probe-rt-3), plus an API for programmatically provisioning per-agent isolated databases (turso-docs-8, turso-docs-12) and automating branch creation for CI/CD pipelines (turso-docs-11). However, Turso itself has no native scheduler, trigger, or cron/background-job engine — the 'automation' must be built externally by the agent/orchestrator calling Turso's API/MCP, not something Turso runs autonomously on its own. Missing for 10: a built-in scheduled/triggered job or workflow engine, and independent/hands-on evidence of an agent actually running unattended background automations against Turso.",
+    "rationale": "Turso's evidence covers MCP integration for on-demand agent-driven database management and CI-triggered branch automation, but nothing shows a background/autonomous scheduling mechanism (e.g., triggers, cron jobs, webhooks) that runs independently without an active agent or external trigger. This is a fair axis for a database platform, but no evidence supports it.",
     "evidenceIds": [
       "turso-docs-9",
-      "turso-docs-37",
-      "turso-docs-8",
       "turso-docs-11",
-      "turso-probe-rt-3"
+      "turso-docs-37"
     ]
   },
   {
@@ -3930,25 +3928,28 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Turso's evidence only shows an MCP server letting external AI agents connect to and manage Turso (agent-as-client), not a built-in AI assistant embedded within the Turso product itself that users could delegate tasks to. No CLI, dashboard, or SDK feature describes an in-product AI assistant.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Turso offers an MCP integration allowing external AI agents to connect to and manage a Turso account (turso-docs-9, turso-docs-37), but this is a client integration, not a built-in AI assistant embedded within the Turso product itself. No evidence describes any native, built-in assistant feature inside Turso's dashboard, CLI, or SDKs.",
+    "evidenceIds": [
+      "turso-docs-9",
+      "turso-docs-37",
+      "turso-probe-4"
+    ]
   },
   {
     "productId": "turso",
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Turso ships a scriptable CLI (turso db create/shell), local dev server (turso dev / sqld) that runs keylessly with no account, and SDK push/pull automation, all confirmed by hands-on probes showing real SQL roundtrips headlessly on port 8085 — ideal for CI pipelines and PR-based branch automation. missing for 10: no explicit CI recipe/example (e.g. GitHub Actions workflow) in the evidence, and no independent community report specifically confirming CI usage.",
+    "confidence": "medium",
+    "rationale": "Turso ships a scriptable CLI (turso db create/shell) and Platform API for programmatic, non-interactive database creation/teardown, plus SDKs (TS/Python/Rust/Go) and push/pull embedded replicas that work well in CI pipelines, and docs explicitly describe automating branch creation per PR — a clear CI/automation pattern. missing for 10: no explicit CI recipe/GitHub Actions example or independent report of headless CI usage confirming reliability at scale.",
     "evidenceIds": [
-      "turso-docs-14",
-      "turso-docs-15",
-      "turso-docs-17",
+      "turso-docs-50",
+      "turso-docs-60",
       "turso-docs-11",
+      "turso-docs-18",
       "turso-docs-20",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2",
+      "turso-docs-8",
       "turso-probe-5"
     ]
   },
@@ -3958,8 +3959,12 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Turso is a database platform, not an agent or orchestrator that itself consumes MCP servers' tools; the evidence entirely concerns Turso exposing its own official MCP server for AI agents to connect to and manage Turso resources (turso-docs-9, turso-docs-37, turso-probe-4, turso-probe-rt-3), which is the reverse (server) role, not the client-side 'plug MCP servers into this product' story.",
-    "evidenceIds": []
+    "rationale": "Turso is a database platform, not an agentic runtime or assistant that consumes tools from MCP servers; its MCP integration works the opposite way (docs-9, docs-37, probe-4) — Turso exposes an MCP server so external AI agents can manage Turso via MCP, not the other way around. Plugging MCP servers into Turso to give it tool-use capability is a category error for this product type.",
+    "evidenceIds": [
+      "turso-docs-9",
+      "turso-docs-37",
+      "turso-probe-4"
+    ]
   },
   {
     "productId": "turso",
@@ -3967,44 +3972,44 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Turso ships an official hosted MCP server (mcp.turso.ai) that lets any MCP-capable agent manage databases, branches, and run SQL without manual token handling, documented at docs.turso.tech/integrations/mcp and confirmed live via a runtime probe returning the expected OAuth challenge from the real endpoint. Missing for 10: independent/community hands-on validation of the MCP server specifically (all community evidence concerns core DB features, not MCP usage).",
+    "rationale": "Turso publishes an official MCP server that lets any MCP-capable AI agent manage the Turso Cloud account and run SQL without manual API tokens, confirmed by first-party docs and a probe. missing for 10: independent/hands-on community corroboration of the MCP server working in practice, and more detail on scope/permission limits when used by agents.",
     "evidenceIds": [
       "turso-docs-9",
       "turso-docs-21",
       "turso-docs-37",
-      "turso-probe-4",
-      "turso-probe-rt-3"
+      "turso-probe-4"
     ]
   },
   {
     "productId": "turso",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Turso ships an official, documented MCP integration that lets any MCP-capable AI agent manage the Turso Cloud account (create/branch databases, groups) and run SQL directly via natural-language agent commands, with no manual API token handling — and a runtime probe confirms the hosted MCP endpoint (mcp.turso.ai) is live and enforces the documented OAuth flow. This directly satisfies the AI-native/agentic natural-language operation story. Missing for 10: independent/community hands-on validation of the MCP agent workflow itself (evidence pack has no third-party reports specifically using the MCP interface, only vendor docs and a runtime auth probe).",
+    "rationale": "Turso ships an official MCP server that lets any MCP-capable AI agent manage the Turso Cloud account (create/manage databases, orgs, groups) and run SQL 'on your behalf,' which enables natural-language operation via an AI agent intermediary rather than a native NL interface in the product itself. missing for 10: independent/hands-on corroboration of natural-language MCP usage, and evidence of a first-party conversational/NL interface outside MCP.",
     "evidenceIds": [
       "turso-docs-9",
-      "turso-docs-21",
       "turso-docs-37",
-      "turso-probe-4",
-      "turso-probe-rt-3"
+      "turso-docs-21",
+      "turso-probe-4"
     ]
   },
   {
     "productId": "turso",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Turso ships an official CLI (documented at docs.turso.tech/cli/introduction, used throughout quickstart for db create, shell, dump) and this was independently verified at runtime (installed via get.tur.so, `turso --version` worked, and `turso dev` booted a real local libSQL server with a working SQL roundtrip). It also integrates with AI agents via an official MCP server, reinforcing agenticness. missing for 10: no independent community commentary specifically praising/critiquing the CLI's AI-native workflow ergonomics beyond vendor docs and probes.",
+    "rationale": "Turso ships an official CLI (turso db create/shell/dump, tursodb) documented extensively for managing databases, branches, and local dev, plus an official MCP integration letting AI agents drive the CLI/API-equivalent actions on the account. missing for 10: independent hands-on review specifically praising CLI AI-native workflows, and clearer agent-specific CLI usage examples beyond MCP docs.",
     "evidenceIds": [
-      "turso-probe-5",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2",
       "turso-docs-14",
       "turso-docs-15",
       "turso-docs-40",
+      "turso-docs-50",
+      "turso-docs-53",
+      "turso-probe-5",
+      "turso-docs-9",
+      "turso-docs-37",
       "turso-probe-4"
     ]
   },
@@ -4014,16 +4019,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Turso documents and exposes a public API (database provisioning, token-scoping, SQL execution) per turso-docs-8/12, plus SDKs in multiple languages (turso-docs-13) and a live Hrana HTTP API confirmed via runtime probe (turso-probe-rt-2), and a hosted MCP endpoint for agent-driven control (turso-docs-9, turso-probe-rt-3). No formal OpenAPI/Swagger spec was found (turso-probe-3), and community evidence doesn't specifically corroborate API completeness beyond SDK usage. missing for 10: a discoverable OpenAPI/swagger spec, independent hands-on confirmation of the REST/management API beyond SQL execution.",
+    "rationale": "Turso documents a public Platform API for programmatically managing databases, groups, organizations, and tokens (turso-docs-60, turso-docs-8, turso-docs-12), plus SDKs in multiple languages and fine-grained token/permission controls (turso-docs-56, turso-docs-57), giving AI-native users a documented, scriptable interface. Missing for 10: no discoverable machine-readable OpenAPI/swagger spec (probe found all candidate paths 404), reducing programmatic self-discovery.",
     "evidenceIds": [
+      "turso-docs-60",
       "turso-docs-8",
-      "turso-docs-9",
       "turso-docs-12",
-      "turso-docs-13",
-      "turso-probe-3",
-      "turso-probe-4",
-      "turso-probe-rt-2",
-      "turso-probe-rt-3"
+      "turso-docs-56",
+      "turso-docs-57",
+      "turso-probe-3"
     ]
   },
   {
@@ -4032,29 +4035,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe provisioning a dedicated, isolated database per AI agent that you 'create, token-scope, and tear down via the API' (turso-docs-8), directly matching least-privilege per-agent credentials, and the MCP integration uses OAuth-based auth rather than shared static tokens (turso-docs-9/37, confirmed live via turso-probe-rt-3). Missing for 10: detailed documentation of fine-grained permission scopes (e.g., read-only vs write, table-level scopes) and independent/hands-on validation of the token-scoping API itself.",
+    "rationale": "Turso docs explicitly describe issuing scoped tokens restricted by database, permission level, and expiration, plus fine-grained table/action-level permissions and JWKS-based JWT issuance, and the API reference notes each agent/user can get its own token-scoped database. This directly matches the story of issuing least-privilege credentials for an agent. Missing for 10: independent/hands-on corroboration of token scoping behavior and no explicit example tying scoped tokens specifically to an AI agent workflow beyond the MCP integration.",
     "evidenceIds": [
+      "turso-docs-56",
+      "turso-docs-57",
+      "turso-docs-61",
       "turso-docs-8",
-      "turso-docs-9",
-      "turso-docs-37",
-      "turso-probe-rt-3"
+      "turso-docs-60"
     ]
   },
   {
     "productId": "turso",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Turso documents official SDKs in TypeScript, Python, Rust, and Go with concrete quickstart usage (push/pull, embedded replicas), and this is corroborated by a CLI/local-dev runtime probe showing real SQL execution over a supported protocol. This directly satisfies 'build against official SDKs' for AI-native/agentic use, including per-agent database provisioning via API and MCP integration for agent-driven management. Missing for 10: independent hands-on validation of the non-TS SDKs (Python/Rust/Go) specifically, beyond the TS quickstart and vendor docs.",
+    "rationale": "Turso documents official SDKs across TypeScript, Python, Rust, and Go, with detailed quickstarts, authorization/JWKS guides, a serverless HTTP client for edge runtimes, and framework guides (e.g., Next.js), plus a Platform API for programmatic control — all clearly aimed at building AI-native apps/agents (agent-database and AI-memory guides). Community reports (turso-comm-1, turso-comm-2) confirm real-world usage of these SDKs successfully, though some users note SQLite compatibility gotchas (turso-comm-4, turso-comm-8, turso-comm-9) unrelated to SDK API quality itself. Missing for 10: deeper independent corroboration for the non-TS SDKs (Python/Rust/Go) and no resolution of the noted compatibility edge cases.",
     "evidenceIds": [
       "turso-docs-13",
       "turso-docs-7",
       "turso-docs-20",
-      "turso-docs-8",
-      "turso-probe-rt-2",
-      "turso-probe-4",
-      "turso-probe-rt-3"
+      "turso-docs-56",
+      "turso-docs-58",
+      "turso-docs-59",
+      "turso-docs-51",
+      "turso-comm-1",
+      "turso-comm-2"
     ]
   },
   {
@@ -4063,7 +4069,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of webhook support or event subscription mechanisms; Turso's documented integration surface is CLI, SDKs, API, and MCP, not webhooks. This is a fair capability to ask of a cloud database (e.g., change-data-capture notifications), so absence is 'none' rather than 'na'.",
+    "rationale": "No evidence of webhook support or event subscription mechanisms anywhere in the Turso docs; the product offers a CLI, SDKs, API, and MCP integration but nothing about webhooks or event-driven notifications. As a database platform, webhooks for events (e.g., data change notifications) are a plausible feature, so this axis applies but is unmet.",
     "evidenceIds": []
   },
   {
@@ -4072,10 +4078,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Turso's docs focus on SQLite-compatible OLTP features (embedded replicas, branching, PITR, vector search) with no mention of analytical/OLAP optimizations, columnar storage, or dashboard-scale aggregation performance. Community evidence actually points the other way: users report missing window functions and 'deeply nested joins which overflow something,' both core to heavy analytical aggregations, suggesting the product is not built or proven for this workload.",
+    "rationale": "Turso is positioned as an embedded/edge SQLite-compatible OLTP database optimized for low-latency reads/writes and replication, not for large-scale analytical aggregation; no docs mention OLAP, columnar storage, or dashboard-scale aggregation performance. Community feedback even flags missing window functions and join-performance issues ('deeply nested joins which overflow something'), further indicating no analytical-workload strength.",
     "evidenceIds": [
       "turso-comm-2",
-      "turso-comm-9"
+      "turso-comm-9",
+      "turso-docs-24",
+      "turso-docs-25"
     ]
   },
   {
@@ -4084,8 +4092,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Turso has API reference docs (turso-docs-8) but no evidence of an interactive, runnable-example reference; a direct probe for OpenAPI/Swagger interactive docs returned 404 on all candidate paths, indicating no such interactive reference is exposed.",
+    "rationale": "Turso publishes API reference docs and SDK quickstarts with code snippets (turso-docs-8, turso-docs-60), but a direct probe for an OpenAPI/Swagger-style interactive reference found all candidate endpoints returning 404, and no evidence describes a runnable/try-it-now API console.",
     "evidenceIds": [
+      "turso-docs-60",
       "turso-docs-8",
       "turso-probe-3"
     ]
@@ -4096,10 +4105,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/swagger spec files at Turso's docs domain returned 404 on all candidate paths, and no other evidence shows a downloadable machine-readable API spec despite Turso having an API reference and CLI/SDK docs.",
+    "rationale": "Turso has a Platform API (turso-docs-60) but no evidence of a downloadable OpenAPI/Swagger spec; an explicit probe of common spec paths (openapi.json, swagger.json, etc.) returned 404 on all candidates, indicating no machine-readable API spec is published.",
     "evidenceIds": [
       "turso-probe-3",
-      "turso-docs-8"
+      "turso-docs-60"
     ]
   },
   {
@@ -4107,16 +4116,15 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Turso's branching feature explicitly creates a separate database instance from production for dev/testing without affecting the original, and local development (turso dev, local file DBs, dump-and-use-locally) plus PITR further support safe sandbox testing away from production; runtime probes confirm branching and local dev commands actually work. Missing for 10: no independent hands-on evidence of branch-based testing workflows specifically (only local-dev CLI was runtime-verified), and no documented automatic data-masking/anonymization when branching from production data.",
+    "confidence": "medium",
+    "rationale": "Turso explicitly supports branching to create isolated copies for dev/test without touching the original database, plus per-PR branch automation, local development against a local file, and dumping production data for local sandbox use — directly matching the story. missing for 10: independent/hands-on corroboration specifically validating branching-for-testing workflows (community evidence is general product feedback, not about branching/sandboxing).",
     "evidenceIds": [
       "turso-docs-3",
-      "turso-docs-18",
-      "turso-docs-32",
       "turso-docs-41",
       "turso-docs-11",
+      "turso-docs-18",
       "turso-docs-29",
-      "turso-probe-rt-2"
+      "turso-docs-2"
     ]
   },
   {
@@ -4125,9 +4133,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions API versioning scheme or a deprecation policy for Turso's APIs, SDKs, or CLI; probes even show no OpenAPI spec discoverable at expected paths. This is a fair axis for a cloud API/database product, so absence of evidence yields 'none'.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probe returned 404s and no docs reference version history or deprecation guarantees for the Platform API or SDKs.",
     "evidenceIds": [
-      "turso-probe-3"
+      "turso-probe-3",
+      "turso-docs-60"
     ]
   },
   {
@@ -4150,11 +4159,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Turso explicitly documents provisioning thousands/millions of isolated databases programmatically via API for per-user/per-agent use cases, which directly supports bulk automation for AI-native workflows (turso-docs-8, turso-docs-12, turso-docs-13). Missing for 10: independent/hands-on corroboration of large-scale bulk provisioning, and explicit documentation of bulk row-level SQL batch operations (e.g. batch insert/update APIs) beyond database-level scale.",
+    "rationale": "Turso's Platform API and CLI let an AI-native user programmatically provision, token-scope, and tear down thousands or millions of isolated databases (one per user/agent/tenant), and the MCP integration lets an agent run these operations and SQL queries autonomously across many entities. Missing for 10: independent/hands-on evidence of large-scale bulk operations in practice, and no documented bulk-SQL/batch-row-operation API beyond database-level provisioning.",
     "evidenceIds": [
       "turso-docs-8",
       "turso-docs-12",
-      "turso-docs-13"
+      "turso-docs-48",
+      "turso-docs-60",
+      "turso-docs-9",
+      "turso-docs-37"
     ]
   },
   {
@@ -4162,11 +4174,9 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of SQL triggers, webhooks, change-data-capture, or any event-driven rule/action mechanism built into Turso. The closest mention (turso-docs-11, automating branch creation per pull request) describes external CI automation, not a rules engine that fires actions on database events, so this applicable axis (SQLite-based DBs commonly support CREATE TRIGGER) has no supporting evidence.",
-    "evidenceIds": [
-      "turso-docs-11"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence of database triggers, webhooks, or event-driven automation rules in Turso's documentation — the pack covers branching, PITR, replicas, vector search, and MCP/API management, but nothing about defining rules that fire actions on data events.",
+    "evidenceIds": []
   },
   {
     "productId": "turso",
@@ -4180,21 +4190,11 @@
   {
     "productId": "turso",
     "storyId": "automation-versioned-workflows",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Turso provides branching (versioning of schema/data changes, including automating a new branch per PR) and point-in-time recovery (rollback for user errors), and its MCP integration lets an AI agent create/manage these branches and run SQL directly. However, there is no documented 'review' mechanism (e.g., diffing or approval workflow before merging a branch back), so the story's review component is unevidenced. Missing for 10: explicit review/diff/approval tooling for automation changes, and independent confirmation that AI agents actually use branching+PITR as a version-control workflow in practice.",
-    "evidenceIds": [
-      "turso-docs-3",
-      "turso-docs-11",
-      "turso-docs-18",
-      "turso-docs-4",
-      "turso-docs-33",
-      "turso-docs-42",
-      "turso-docs-9",
-      "turso-probe-4",
-      "turso-probe-rt-3"
-    ]
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Turso is a SQLite-compatible edge/embedded database platform, not a workflow/automation-authoring tool; it has no concept of 'automations' to version, review, or roll back. Its branching (turso-docs-3, turso-docs-41) and point-in-time recovery (turso-docs-4, turso-docs-33) features apply to database state, not automation workflows, so this axis is a category mismatch rather than a missing capability.",
+    "evidenceIds": []
   },
   {
     "productId": "turso",
@@ -4202,11 +4202,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes database provisioning at scale (thousands/millions of isolated databases), branching, replication, and durability, but contains no claim or documentation that per-database compute automatically scales up/down with load without manual resizing or downtime. Missing for 10: any docs on compute/resource autoscaling, load-based scaling triggers, or zero-downtime resize behavior.",
-    "evidenceIds": [
-      "turso-docs-12",
-      "turso-docs-13"
-    ]
+    "rationale": "Evidence covers database provisioning at scale (thousands of isolated DBs, self-serve signup-to-production), branching, and durability, but nothing describes automatic compute autoscaling up/down with load or elimination of manual resizes/downtime for a given database instance.",
+    "evidenceIds": []
   },
   {
     "productId": "turso",
@@ -4229,23 +4226,24 @@
     "storyId": "builtin-connection-pooling",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Turso's evidence describes SQLite/libSQL architecture (embedded replicas, multi-writer without locking, HTTP/Hrana protocol) but nowhere documents a built-in connection pooler analogous to pgbouncer or claims about handling thousands of concurrent raw connections without such a proxy. Since Turso is not Postgres-based, the pgbouncer-specific framing doesn't map cleanly, but the general concern (many concurrent clients without an external pooler) is a fair question for any hosted DB and is simply unaddressed in the evidence pack.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack describes a built-in connection pooler or any pgbouncer-like proxy for handling concurrent connections; Turso's model is based on embedded replicas, branching, and per-tenant database provisioning rather than a shared-connection pooling layer. This axis applies to a hosted DB platform but nothing in docs or community evidence addresses connection pooling at scale.",
     "evidenceIds": []
   },
   {
     "productId": "turso",
     "storyId": "ci-preview-branches",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Turso documents branch creation via CLI (`turso db create ... --from-db`) and explicitly calls out automating branching for per-pull-request databases, plus API-driven provisioning/teardown of isolated databases, which platform engineers could wire into CI. However, there's no first-party CI/CD integration (e.g., GitHub Action, deploy-platform plugin) or documented teardown API call/webhook example, and no independent/hands-on evidence of a real CI pipeline doing this end-to-end. missing for 10: a documented CI/CD integration or GitHub Action for PR-branch lifecycle, an explicit teardown API example/webhook, and independent verification of the automated per-PR workflow in practice.",
+    "rationale": "Turso's docs explicitly describe branching for automation, stating 'Automating branching is useful for creating a new database for each pull request' and show CLI commands to create a branch from an existing db (turso-docs-11, turso-docs-18, turso-docs-32/41). The Platform API (turso-docs-8, turso-docs-60) lets you programmatically create and tear down databases/branches, which is what a CI pipeline would call. Missing for 10: a concrete CI/CD integration example (e.g., GitHub Actions workflow), explicit teardown/delete-branch API documentation, and independent/hands-on confirmation that PR-branch automation works in practice.",
     "evidenceIds": [
       "turso-docs-11",
       "turso-docs-18",
+      "turso-docs-32",
       "turso-docs-8",
-      "turso-docs-12",
-      "turso-probe-5"
+      "turso-docs-60",
+      "turso-docs-41"
     ]
   },
   {
@@ -4253,17 +4251,16 @@
     "storyId": "cli-daily-workflow",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs and a runtime probe confirm the official `turso` CLI covers create (`turso db create`), connect/shell (`turso db shell`), and inspect (`.dump`) without needing the dashboard, and a live CLI install was verified running a local libSQL server keylessly. Missing for 10: independent/hands-on third-party confirmation of the full daily loop (beyond vendor docs) and more inspection commands (e.g. schema/list) shown in action.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe the CLI covering create (`turso db create`), connect/shell (`turso db shell`), inspection/dump (`.dump`), and management (tokens, users) — 'The Turso CLI gives you everything you need from the command line to manage your database, API tokens, inviting users, and launching the database shell.' Quickstart walks through create→shell in one flow.\nmissing for 10: independent/hands-on community corroboration specifically praising or validating the CLI workflow (community evidence discusses SQLite compatibility/perf but not CLI usage).",
     "evidenceIds": [
+      "turso-docs-50",
       "turso-docs-14",
       "turso-docs-15",
       "turso-docs-31",
       "turso-docs-40",
       "turso-docs-47",
-      "turso-probe-5",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2"
+      "turso-probe-5"
     ]
   },
   {
@@ -4271,13 +4268,13 @@
     "storyId": "database-branching",
     "verdict": "full",
     "quality": 9,
-    "confidence": "high",
-    "rationale": "Turso's docs directly document creating a branch from an existing database with schema and data (`turso db create my-new-database-branch --from-db my-existing-database`), explicitly framed for dev/test isolation without affecting the original, and even automating per-PR branch creation. Community evidence corroborates general reliability of the platform, though no independent hands-on report specifically validates branch creation. Missing for 10: independent/community confirmation of the branching feature itself (only vendor docs cover it).",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe creating a branch (copy-on-write instance with schema and data) from an existing database via CLI (`--from-db`), stating branches let you develop/test without affecting production data, and even support automation per-PR. Missing for 10: independent/hands-on community confirmation specifically validating branching behavior (only vendor docs cited).",
     "evidenceIds": [
-      "turso-docs-3",
       "turso-docs-18",
       "turso-docs-32",
       "turso-docs-41",
+      "turso-docs-3",
       "turso-docs-11"
     ]
   },
@@ -4287,15 +4284,15 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "high",
-    "rationale": "Turso's docs claim full SQLite compatibility ('Fully backwards compatible with SQLite', 'SQLite-compatible' SDKs, dump/shell/CLI tooling that mirrors SQLite), but hands-on community reports directly contradict this: using Turso/libSQL extensions breaks file-format compatibility so the standard SQLite CLI, Litestream, sqlite_rsync, recovery tools and SQLite UIs stop working, WAL-mode multi-process reads behave differently (exclusive lock errors), and important SQL features like savepoints, window functions, and ATTACH DATABASE are reported missing. Missing for 10: verified parity testing against the full SQLite feature/extension surface, resolution of the savepoints/windows/attach gaps, and independent confirmation that 'compatible' claims hold once libSQL-specific features are used.",
+    "rationale": "Turso markets libSQL as 'fully backwards compatible with SQLite' [turso-docs-24, turso-docs-30], but hands-on community reports document concrete dialect/compatibility gaps: missing savepoints, window functions, and ATTACH DATABASE support [turso-comm-9], unimplemented conflict resolution [turso-comm-12], WAL-mode locking behavior differing from real SQLite [turso-comm-4], and file-format compatibility breaking once Turso extensions are used—breaking SQLite CLI, Litestream, sqlite_rsync, and recovery tools [turso-comm-8]. This is a genuine SQLite-family engine (not Postgres/MySQL), so the story only partially applies, and even within that scope real developers report it diverging from a true SQLite superset rather than being fully compatible. Missing for 10: independent verification of Postgres/MySQL wire-protocol support (not offered), and resolution/acknowledgment of the specific missing SQL features reported by users.",
     "evidenceIds": [
       "turso-docs-24",
-      "turso-docs-13",
       "turso-docs-30",
+      "turso-gh-1",
       "turso-comm-4",
+      "turso-comm-7",
       "turso-comm-8",
       "turso-comm-9",
-      "turso-comm-7",
       "turso-comm-12"
     ]
   },
@@ -4303,15 +4300,17 @@
     "productId": "turso",
     "storyId": "fleet-per-agent-databases",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "First-party docs explicitly describe provisioning a dedicated isolated SQLite database per user/agent, creating/token-scoping/tearing down via API, and spinning up 'thousands or millions' of isolated databases programmatically as core architecture, plus branch-per-PR automation and CLI/API creation flows. Missing for 10: independent/hands-on evidence of actually managing a large fleet (thousands) at scale, and concrete cost data proving 'cheap' bulk provisioning.",
+    "rationale": "Turso's docs explicitly describe provisioning one isolated SQLite database per user/agent/tenant, token-scoping and tearing it down via the Platform API, and marketing claims support for spinning up thousands or millions of such databases programmatically, backed by CLI and API tooling for full lifecycle management. Community feedback corroborates ease of use and low cost for hosted Turso deployments, though it does not specifically test fleet-scale provisioning. missing for 10: independent/hands-on verification of managing thousands of databases at scale, and concrete cost benchmarks for large fleets.",
     "evidenceIds": [
       "turso-docs-8",
       "turso-docs-12",
-      "turso-docs-11",
-      "turso-docs-18",
-      "turso-probe-5"
+      "turso-docs-48",
+      "turso-docs-60",
+      "turso-docs-56",
+      "turso-comm-1",
+      "turso-comm-2"
     ]
   },
   {
@@ -4332,15 +4331,15 @@
     "productId": "turso",
     "storyId": "global-low-latency",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso's Embedded Replicas feature directly supports placing local read replicas near users, with reads served in microseconds from the replica and writes syncing to the cloud primary — this is well documented across multiple sources. However, the evidence pack lacks explicit documentation of choosing/configuring specific regions for primary or replica placement (e.g., a region-selection API/flag), and a community report notes a real-world multi-day latency spike tied to a regional networking issue on Turso's infrastructure, tempering confidence in worldwide low-latency guarantees. Missing for 10: explicit region-selection tooling/docs for placing databases or replicas in specific geographies, and independent benchmark confirmation of low latency across regions.",
+    "rationale": "Turso's embedded-replicas feature lets a local copy of a Cloud database live wherever the app runs (edge, browser, on-device), giving microsecond local reads and reduced latency, which directly supports placing data close to users. However the evidence pack contains no explicit documentation of choosing/creating databases in specific cloud regions or a multi-region replica topology (e.g., a `--location` flag or region list), so the story's 'place data or replicas in regions' aspect is only partially evidenced. missing for 10: explicit region-selection/creation docs for primary databases, documented list of available regions, independent confirmation of measured cross-region latency improvements.",
     "evidenceIds": [
       "turso-docs-5",
       "turso-docs-19",
       "turso-docs-34",
       "turso-docs-35",
-      "turso-comm-5"
+      "turso-docs-49"
     ]
   },
   {
@@ -4363,32 +4362,35 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs and runtime probes show `turso db create` plus `turso db shell` for instant cloud DB creation, and `turso dev` spinning up a fully keyless local libSQL server with a real SQL roundtrip in seconds — no capacity planning, provisioning API for programmatic per-user/agent DB creation, and self-serve signup-to-production flow are all documented and probe-verified. missing for 10: independent (non-vendor) benchmark or user account specifically confirming 'seconds-to-ready' timing for cloud creation beyond docs/probe.",
+    "rationale": "Docs show a simple CLI flow (`turso db create`, `turso db shell`) and a Platform API for provisioning databases programmatically without any capacity/sizing configuration, plus self-serve signup-to-production and rapid multi-database provisioning claims corroborated by community usage reports of fast, easy setup. Missing for 10: independent benchmarking of 'seconds' creation time and no direct hands-on confirmation of zero capacity planning at scale.",
     "evidenceIds": [
       "turso-docs-1",
       "turso-docs-14",
       "turso-docs-15",
-      "turso-docs-8",
+      "turso-docs-31",
       "turso-docs-13",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2",
-      "turso-docs-12"
+      "turso-docs-8",
+      "turso-docs-12",
+      "turso-docs-60",
+      "turso-comm-1",
+      "turso-comm-2"
     ]
   },
   {
     "productId": "turso",
     "storyId": "local-keyless-engine",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Turso's docs and CLI explicitly support a local, server-less libSQL database file with no account needed (turso-docs-2, turso-docs-16, turso-docs-17, turso-docs-30), and a hands-on runtime probe confirms `turso dev` boots a keyless local libSQL server and successfully executes real SQL without any cloud or account dependency (turso-probe-rt-1, turso-probe-rt-2). This directly satisfies offline/local dev and CI use cases keylessly. Missing for 10: an explicit first-party CI pipeline example/tutorial demonstrating this in an automated test suite context.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe a local-only mode — \"local database file, no server needed (recommended)\" that \"runs entirely in your process\" and is fully SQLite-compatible, with no account or token required, ideal for offline dev and CI (turso-docs-2, turso-docs-16, turso-docs-30, turso-docs-54). The embedded engine is also positioned as usable offline/in-browser/on-device (turso-docs-49), and community reports confirm local usage works well (turso-comm-2) though with some SQLite-compatibility edge cases (turso-comm-4, turso-comm-8). missing for 10: independent CI-specific case study, and confirmation there's zero telemetry/account touch in the local-only CLI path.",
     "evidenceIds": [
       "turso-docs-2",
       "turso-docs-16",
-      "turso-docs-17",
       "turso-docs-30",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2"
+      "turso-docs-49",
+      "turso-docs-54",
+      "turso-comm-2",
+      "turso-comm-4"
     ]
   },
   {
@@ -4397,71 +4399,70 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Turso's Platform API and CLI let you create/manage databases, branches, tokens, and even tear down resources programmatically (turso-docs-8, turso-docs-14, turso-docs-18), and the official MCP server lets an AI agent manage organizations, databases, groups, and run SQL without manual tokens (turso-docs-9, turso-probe-rt-3), suggesting broad API/UI parity. However there is no explicit documentation stating full feature parity between dashboard and API, and a discoverable OpenAPI/swagger spec could not be found (turso-probe-3 all 404), leaving some doubt about completeness for every UI feature (e.g., billing, VPC allow-list config in turso-docs-22/46 aren't shown as API-controllable). missing for 10: explicit UI/API parity statement, a public OpenAPI spec, evidence that dashboard-only settings (billing, VPC allow lists) are also API-manageable.",
+    "rationale": "Turso documents a full Platform API for programmatically creating/tearing down databases, groups, orgs, and tokens (turso-docs-8, turso-docs-60), plus SDK-level push/pull, branching, and PITR that mirror CLI/UI actions (turso-docs-7, turso-docs-18, turso-docs-33). However, there's no explicit statement or evidence of full UI/API parity, and a probe for a formal API spec (OpenAPI) returned 404s across candidate paths, suggesting the API surface isn't exhaustively self-documented in a structured way. missing for 10: explicit parity confirmation between dashboard UI and API, a discoverable OpenAPI/schema spec, and independent verification that every UI action (e.g. billing, dashboard-only settings) has an API equivalent.",
     "evidenceIds": [
       "turso-docs-8",
-      "turso-docs-9",
-      "turso-docs-14",
+      "turso-docs-60",
+      "turso-docs-7",
       "turso-docs-18",
-      "turso-probe-3",
-      "turso-probe-rt-3"
+      "turso-docs-33",
+      "turso-probe-3"
     ]
   },
   {
     "productId": "turso",
     "storyId": "openness-full-export",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso documents a straightforward export path (`turso db shell <db> .dump > dump.sql`, docs-47) and markets itself as fully SQLite-compatible (docs-24, docs-13), which would let a user take a clean SQL dump and leave. However hands-on community reports directly contradict full openness: once any Turso-specific feature (vector search, replication, etc.) is used, the file is no longer plain-SQLite compatible — 'the SQLite CLI no longer works, Litestream doesn't work, sqlite_rsync doesn't work, recovery tools don't work, SQLite UIs don't work' (comm-8), undermining the 'export in open formats and leave' promise for any non-trivial schema. Missing for 10: vendor documentation acknowledging or addressing this compatibility caveat, and evidence of successful re-import of a dumped Turso database (with extensions) into vanilla SQLite/another engine.",
+    "rationale": "Turso ships open export paths — local SQLite-compatible files, a `.dump` command producing SQL, and libSQL as an open-source fork — supporting the ability to take data out in standard formats [turso-docs-29][turso-docs-47][turso-gh-1]. However, a hands-on community report concretely contradicts full 'open format' portability: once any Turso-specific extension (e.g. vector search) is used in the schema, the resulting database is no longer true SQLite-file-compatible, breaking the SQLite CLI, Litestream, sqlite_rsync, recovery tools, and SQLite UIs [turso-comm-8]. Missing for 10: clear vendor guidance/tooling for converting an extension-using database back to vanilla SQLite before export, and independent confirmation that full data (including vectors) exports losslessly to an open format.",
     "evidenceIds": [
-      "turso-docs-47",
       "turso-docs-29",
-      "turso-docs-24",
-      "turso-docs-13",
-      "turso-comm-8",
-      "turso-comm-7"
+      "turso-docs-47",
+      "turso-gh-1",
+      "turso-comm-8"
     ]
   },
   {
     "productId": "turso",
     "storyId": "openness-open-license",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "A Turso engineer confirms that libSQL — the SQLite fork underlying Turso — is open source under the MIT license, and the CLI/local dev tooling is documented and runtime-verified as freely usable. However, there's no first-party documentation pack entry confirming the full Turso Cloud service or its newer Rust-based core is open-licensed, only a community aside. Missing for 10: an official first-party source-availability/license statement covering the whole product (cloud service, Rust rewrite), and independent corroboration beyond one community comment.",
+    "rationale": "Turso's core engine, libSQL (a fork of SQLite), is confirmed open source under the MIT license by both the official GitHub repo and a Turso employee's community comment, giving genuine buyer-relevant proof of open licensing for the product's foundational code. However, it's unclear whether the Turso Cloud platform, CLI, or hosted service layer are also open-sourced, so the story is only partially satisfied. missing for 10: confirmation that the full product stack (cloud platform/CLI, not just the libSQL engine) is open-sourced, and independent hands-on verification of the license terms.",
     "evidenceIds": [
-      "turso-comm-10",
-      "turso-probe-5",
-      "turso-probe-rt-1"
+      "turso-gh-1",
+      "turso-comm-10"
     ]
   },
   {
     "productId": "turso",
     "storyId": "openness-self-host",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Turso's core engine, libSQL/sqld, is open source (MIT) and can be run entirely locally with no cloud dependency — confirmed by docs (turso-docs-16/17/30) and a hands-on probe showing a real keyless local libSQL server handling SQL round-trips (turso-probe-rt-1/rt-2). However, most of Turso's advanced product surface (branching, PITR, embedded replicas sync, hosted MCP, dashboards, BYOC S3) is tied to Turso Cloud rather than a fully self-hostable platform, and community comments raise real compatibility/feature caveats on the libSQL fork (turso-comm-8, turso-comm-9, turso-comm-12). Missing for 10: first-party docs/guide for self-hosting the full platform (not just dev-mode server), and independent reports of production self-hosted deployments at scale.",
+    "rationale": "libSQL, the open-source core engine behind Turso, can be run entirely locally/embedded with no server, or as a local libSQL server (turso-docs-2/16/17/30), and is documented as an MIT-licensed open fork of SQLite (turso-gh-1, turso-comm-10). This gives AI-native users a genuine self-hosting path for the database engine itself, but Turso's cloud platform features (managed branching, PITR, embedded-replica sync, Platform API) remain proprietary SaaS with no documented self-hosted equivalent. Missing for 10: a documented self-hosted deployment of the full Turso Cloud service (branching/PITR/replication server), independent confirmation of self-hosted libSQL server production use.",
     "evidenceIds": [
+      "turso-docs-2",
       "turso-docs-16",
       "turso-docs-17",
       "turso-docs-30",
-      "turso-comm-10",
-      "turso-probe-rt-1",
-      "turso-probe-rt-2",
-      "turso-comm-8",
-      "turso-comm-9"
+      "turso-gh-1",
+      "turso-comm-10"
     ]
   },
   {
     "productId": "turso",
     "storyId": "orm-framework-compat",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Turso's own CLI, SDKs, branching, embedded replicas, and MCP integration, but contains no mention of Prisma, Drizzle, Django, or Rails integration guides or documented ORM support. A database product could reasonably be expected to publish such guides, so the axis applies, but no evidence confirms it here.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows only a Next.js integration guide and general SDKs (TypeScript, Python, Rust, Go) plus a community mention of 'automatic schema migrations' with Turso itself, but no documented guides for Prisma, Drizzle, Django, or Rails are present in the evidence pack. missing for 10: dedicated Prisma guide, dedicated Drizzle guide, dedicated Django guide, dedicated Rails guide, independent corroboration of ORM compatibility.",
+    "evidenceIds": [
+      "turso-docs-59",
+      "turso-docs-13",
+      "turso-comm-6"
+    ]
   },
   {
     "productId": "turso",
@@ -4469,14 +4470,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Turso documents explicit PITR (\"restore a database to a specific point in time... recovering from user errors, such as dropping a table by mistake\") and branching from any existing database (`turso db create ... --from-db`), directly covering both restore and branch-for-recovery workflows within a retention window. Docs also describe automating branch creation, giving platform engineers a scriptable recovery/testing path. Missing for 10: no explicit documentation of the retention window length/configurability, no independent/hands-on report confirming a PITR restore actually worked in production.",
+    "rationale": "Turso docs explicitly document PITR to restore a database to a specific point in time to recover from user errors like accidental drops, plus branching (including from-db) to create isolated copies for testing recovery scenarios. No independent/hands-on corroboration of PITR specifically was found, and retention window limits/pricing tiers for PITR aren't detailed. missing for 10: independent verification of PITR working in practice, explicit retention-window duration/limits per plan.",
     "evidenceIds": [
       "turso-docs-4",
       "turso-docs-33",
       "turso-docs-42",
       "turso-docs-18",
-      "turso-docs-32",
-      "turso-docs-11"
+      "turso-docs-32"
     ]
   },
   {
@@ -4485,12 +4485,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Turso's docs explicitly promise data-residency control — 'Bring-your-own-cloud deployment. Data residency you control' and the ability for Pro/Enterprise customers to use their own S3 buckets so 'data lives inside their infrastructure,' plus VPC allow-lists for network isolation. These are first-party claims only, gated to paid tiers, and the evidence pack lacks concrete detail on region selection at database-creation time or independent verification of BYOC/residency in practice. Missing for 10: independent/hands-on confirmation of residency controls, explicit region-picker mechanism in CLI/API docs, and clarity on free-tier residency options.",
+    "rationale": "Turso's docs explicitly advertise data residency control via BYOC (customer-owned S3/S3-express buckets) and per-database encryption with customer-held keys, directly addressing regional/residency choice for enterprise customers, and community mentions of 'certain regions' imply multi-region infrastructure exists. However, there's no first-party doc showing a simple region-selection flag/UI for standard (non-Enterprise) users creating a database, and no independent confirmation of how residency controls work in practice. Missing for 10: explicit region-selection mechanism in CLI/API docs for all tiers, independent/hands-on verification of residency guarantees.",
     "evidenceIds": [
       "turso-docs-27",
       "turso-docs-28",
-      "turso-docs-22",
-      "turso-docs-46"
+      "turso-comm-5"
     ]
   },
   {
@@ -4506,15 +4505,15 @@
     "productId": "turso",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso lets users provision and 'tear down via the API' isolated per-user/per-agent databases (docs-8), supports full dump/export for data portability (docs-29/47), and offers PITR for recovery windows plus customer-held encryption keys and BYOC/data-residency controls (docs-27, docs-28) — all relevant to retention/deletion posture. However there is no explicit documentation of configurable retention periods, GDPR-style deletion guarantees, or backup-purge behavior after deletion. Missing for 10: explicit retention-period configuration, documented deletion/purge guarantees for backups and replicas, and independent verification that tear-down fully erases data.",
+    "rationale": "Turso lets users provision and tear down databases via its API/CLI (turso-docs-8, turso-docs-12) and control encryption/data residency (turso-docs-27, turso-docs-28), giving some control over data lifecycle, but there is no explicit documentation of retention policies, automated data expiry/TTL, or compliance-oriented deletion guarantees (e.g., GDPR 'right to be forgotten') beyond ad-hoc DB deletion. missing for 10: explicit retention-policy docs, automated data-expiry/TTL controls, compliance certifications for deletion guarantees.",
     "evidenceIds": [
       "turso-docs-8",
+      "turso-docs-12",
       "turso-docs-27",
       "turso-docs-28",
-      "turso-docs-29",
-      "turso-docs-42"
+      "turso-docs-56"
     ]
   },
   {
@@ -4522,8 +4521,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry, analytics, or usage-tracking opt-out settings for Turso's CLI, SDKs, or cloud platform — the question is a fair one for a developer tool/CLI product but nothing in docs, pricing, or community discussion confirms or denies a telemetry opt-out mechanism.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for Turso's CLI, SDKs, or cloud platform; this is a fair question for a developer tool/CLI but no documentation or community discussion confirms or denies it.",
     "evidenceIds": []
   },
   {
@@ -4532,7 +4531,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a built-in insights/observability view covering slow queries, index recommendations, or performance metrics; docs focus on branching, replication, durability, MCP, and CLI, with no mention of query analytics dashboards.",
+    "rationale": "No evidence of a built-in insights view, slow query logging, index recommendations, or performance metrics dashboard anywhere in Turso's docs or community reports; the pack covers branching, replication, durability, MCP, and CLI but nothing on query performance observability.",
     "evidenceIds": []
   },
   {
@@ -4575,23 +4574,29 @@
   {
     "productId": "turso",
     "storyId": "scale-to-zero-idle",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers durability, branching, embedded replicas, vector search, and pricing tiers, but nowhere states that idle Turso databases scale to zero or that idle usage incurs no cost while data remains durable. Without explicit documentation or community confirmation of scale-to-zero behavior, this story is unsupported by the given evidence.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Turso's docs show a Free tier with strong durability guarantees (99.999999999%, docs-45) and the architecture supports spinning up many isolated per-user/per-project databases cheaply (docs-12/48), and a hands-on community report notes 'cold start times are basically zero now' (turso-comm-6), consistent with scale-to-zero behavior. However, no vendor documentation explicitly states idle databases scale to zero cost or spells out the pricing mechanics for dormant projects. Missing for 10: explicit scale-to-zero/idle-cost documentation, pricing page detail on inactive database billing, independent benchmark confirming zero cost for idle prototypes.",
+    "evidenceIds": [
+      "turso-docs-45",
+      "turso-docs-12",
+      "turso-docs-48",
+      "turso-docs-26",
+      "turso-comm-6"
+    ]
   },
   {
     "productId": "turso",
     "storyId": "serverless-edge-driver",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Turso's docs and probes confirm an HTTP-based protocol (Hrana) with a real SQL roundtrip over the HTTP pipeline API, and official SDKs in TypeScript/Python/Rust/Go built on a stateless client model suited to short-lived connections. However, the evidence pack never explicitly discusses WebSocket transport or edge/serverless deployment targeting, so only part of the story is directly evidenced. Missing for 10: explicit documentation of WebSocket driver mode, explicit serverless/edge runtime guidance (e.g. Vercel/Cloudflare Workers examples), and independent hands-on confirmation of edge usage.",
+    "rationale": "Turso ships a first-party `@tursodatabase/serverless` driver documented as using only the `fetch` API with no native dependencies, specifically marketed as the smallest option for edge and serverless runtimes — directly matching the connectivity story for short-lived connections. Missing for 10: explicit documentation/evidence of WebSocket-based querying, and independent/hands-on corroboration of the serverless driver's behavior in production edge environments.",
     "evidenceIds": [
-      "turso-docs-13",
-      "turso-probe-rt-2",
-      "turso-docs-24"
+      "turso-docs-58",
+      "turso-docs-55",
+      "turso-docs-13"
     ]
   },
   {
@@ -4600,11 +4605,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions spend caps, budget limits, billing alerts, or usage-threshold notifications; pricing page references only mention plan tiers and VPC allow lists, not cost-control tooling. This is an applicable axis for a usage-billed cloud database, but nothing in the docs or community evidence shows Turso offers alerting or spend-capping features.",
-    "evidenceIds": [
-      "turso-docs-22",
-      "turso-docs-46"
-    ]
+    "rationale": "No evidence pack item mentions spend caps, usage alerts, budget limits, or billing notifications; pricing page references only mention feature tiers (e.g., VPC allow lists), not cost controls. This is a fair operations-insights axis for a usage-billed cloud DB, but no documentation or community evidence shows Turso offers any mechanism to cap spend or alert on usage spikes.",
+    "evidenceIds": []
   },
   {
     "productId": "turso",
@@ -4612,7 +4614,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows a pricing page exists with tier names and feature toggles (e.g., 'AWS VPC Allow Lists', 'Free', 'Developer') but no per-unit rates for compute, storage, or traffic (e.g., $/GB, $/row-read, $/egress) are cited anywhere in the pack, so a founder cannot predict a bill from this evidence.",
+    "rationale": "Evidence only shows that a pricing page exists (turso.tech/pricing) with tier names like Free/Developer and feature checkmarks (e.g., AWS VPC Allow Lists), but no evidence surfaces actual per-unit rates for compute, storage, or traffic that a founder could use to predict a bill.",
     "evidenceIds": [
       "turso-docs-22",
       "turso-docs-46"
@@ -4623,12 +4625,13 @@
     "storyId": "vector-embeddings",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Turso docs explicitly state native vector search support with no extensions required, supporting storage of embeddings alongside relational data and built-in distance functions for similarity search, and community evidence corroborates this as a genuine advantage over bolting vector extensions onto plain SQLite. Missing for 10: independent hands-on benchmarks of vector search performance/scale, and community feedback notes documentation on vector embeddings could be more robust.",
+    "confidence": "high",
+    "rationale": "Turso docs explicitly state native vector search support with no extensions required, storing embeddings alongside relational data and built-in distance functions for similarity search, and this is corroborated by independent community testimony noting native vector embedding support as a differentiator versus fragile SQLite extensions. Additional docs show vector search used in real agent-memory use cases. missing for 10: deeper independent benchmarking/production-scale validation of vector search performance, and community feedback notes documentation on vector embeddings could be more robust.",
     "evidenceIds": [
       "turso-docs-6",
       "turso-docs-36",
       "turso-docs-44",
+      "turso-docs-52",
       "turso-comm-3",
       "turso-comm-6"
     ]
