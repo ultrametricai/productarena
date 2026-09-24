@@ -2728,55 +2728,51 @@
     "storyId": "admin-audit-logs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items mention audit logs, admin action logs, or user activity tracking features in Zulip; the evidence covers topics, channels, search, bots, integrations, and export/import tools but nothing about auditability of admin/user actions.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers topics/channels, export/import, bots, and integrations, but contains no mention of admin/user action audit logs or an audit-log feature for platform engineers to review. Zulip's export tools (zulip-docs-6, zulip-docs-14) cover message data export, not admin action audit trails.",
     "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "agent-channel-member",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Zulip's documented bot framework lets you write and run custom bots (including via a dedicated Botserver for production) that 'react to messages,' and the full REST/API surface (confirmed live and via OpenAPI spec) supports sending/receiving messages, which is the technical substrate needed for an AI-agent-as-channel-member use case. However, this requires custom bot development rather than a first-party 'add an AI agent to a channel' feature, and there's no explicit documentation or evidence of native @-mention-triggered AI agent participation out of the box. Missing for 10: explicit first-party AI-agent bot support (vs generic bot framework), documentation of mention-triggered behavior specifically, and independent/hands-on confirmation of an AI agent actually participating in a channel conversation.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Zulip's documented bot framework lets you write/run custom bots (or existing ones) that react to messages, run via Botserver, which is the underlying mechanism needed to add an AI agent as a channel member that responds to mentions — but the evidence never mentions AI/LLM agents specifically, mention-triggered behavior, or any first-party AI integration example. Missing for 10: explicit AI-agent/LLM bot examples, documented @mention-triggering behavior, and independent/hands-on confirmation of an AI bot working this way in a channel.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-12",
       "zulip-docs-18",
       "zulip-docs-24",
-      "zulip-probe-4",
-      "zulip-probe-5"
+      "zulip-docs-27"
     ]
   },
   {
     "productId": "zulip",
     "storyId": "agent-reads-posts-api",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Zulip ships a documented, versioned REST API (OpenAPI spec, live endpoint confirmed) with a bot framework specifically designed to read and react to channel messages and a documented message-sending endpoint, plus an official CLI/Python client for scripting — bots authenticate via their own per-bot API key, which functions as a scoped credential distinct from a user's. missing for 10: explicit documentation of granular token scopes/permissions (vs. just per-bot keys), and an explicit documented 'read messages' endpoint (only send-message and bot-reacts-to-message are directly evidenced).",
+    "rationale": "Zulip's official API supports sending messages and has a documented bot framework with API keys/botserver deployment, which is the standard mechanism agents use to read and post messages. However, the evidence pack lacks explicit documentation of reading channel messages via the API or of scoped/restricted API tokens (e.g., per-channel or read-only key scoping). missing for 10: explicit docs on reading messages via API, explicit scoped-token/permission mechanism, independent confirmation of bot token scoping in practice.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-5",
       "zulip-docs-12",
       "zulip-docs-18",
-      "zulip-probe-4",
-      "zulip-probe-5",
-      "zulip-probe-6"
+      "zulip-docs-28"
     ]
   },
   {
     "productId": "zulip",
     "storyId": "agentic-agent-docs",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "medium",
-    "rationale": "No llms.txt exists (confirmed 404) and other agent-friendly doc endpoints (openapi.json, docs.md) also 404 on the primary domain, but Zulip does publish a full machine-readable OpenAPI spec in its GitHub repo that an agent could be pointed at to understand the API surface. This is a weak substitute for a true llms.txt/agent-docs entry point. Missing for 10: an actual llms.txt file, any officially surfaced agent-oriented documentation page, and discoverability of the OpenAPI spec from the main docs site rather than only via GitHub raw.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Probes explicitly show llms.txt, markdown docs endpoints, and OpenAPI/machine-readable spec all return 404, and no other evidence indicates any agent-oriented documentation format.",
     "evidenceIds": [
       "zulip-probe-1",
       "zulip-probe-2",
-      "zulip-probe-3",
-      "zulip-probe-5"
+      "zulip-probe-3"
     ]
   },
   {
@@ -2785,22 +2781,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any AI-generated insights, summarization, or suggestion features surfaced within Zulip itself; evidence covers topics, channels, search, bots (rule-based), integrations, and hosting/export, none of which involve AI analysis of data. Missing for 10: any AI summarization/insight feature, AI-generated suggestions, or documented AI assistant surfaced in the product UI.",
+    "rationale": "No evidence of any AI-generated insights, summarization, or suggestion features within Zulip; the pack covers topics, search, bots-as-webhooks, integrations, and hosting, none of which involve AI-driven analysis of user data.",
     "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Zulip supports bots that run autonomously in the background via its bot API framework and Botserver for production deployment, plus a full REST/OpenAPI API and CLI tools for scripting automations. However, this is a general chatbot/integration framework rather than an AI-native agentic automation platform with built-in scheduling, triggers, or autonomous task orchestration. Missing for 10: evidence of AI-specific agent orchestration, native scheduling/triggering beyond message-reactive bots, and independent hands-on validation that bots run reliably unattended in production.",
+    "rationale": "Zulip documents a bot API/framework for building custom bots that react to messages and can be deployed persistently via the Zulip Botserver, plus 130+ native integrations and incoming webhooks, which together enable background automation. However, this requires custom coding and self-managed hosting rather than a native no-code scheduler or autonomous agent runtime. Missing for 10: built-in scheduling/triggers UI, first-party autonomous agent hosting, independent hands-on evidence of bots running unattended long-term.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-12",
       "zulip-docs-18",
-      "zulip-probe-5",
-      "zulip-probe-6"
+      "zulip-docs-9",
+      "zulip-docs-19"
     ]
   },
   {
@@ -2809,22 +2805,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zulip's evidence covers bots/integrations built by users via its API, but there is no mention of a built-in AI assistant that users can delegate tasks to directly within the product.",
+    "rationale": "Zulip is a team chat platform with a bot/API framework for building custom bots and integrations, but there is no evidence of a built-in AI assistant that users can delegate tasks to inside the product.",
     "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Zulip ships a documented REST API (OpenAPI spec verified live), a keyless-working API endpoint, and an official Python CLI (zulip-send) that installs via pip and runs headlessly from scripts, supporting basic CI automation like sending messages. However, there's no evidence of first-class CI/CD integration patterns, GitHub Actions examples, containerized headless server mode, or broader automation tooling beyond bots/webhooks. missing for 10: CI-specific documentation or examples, containerized/headless deployment guidance for automation pipelines, evidence of use in real CI workflows.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Zulip exposes a REST API for sending messages, a bot framework, incoming webhooks, and a Botserver for running bots unattended in production, which could be wired into CI pipelines for automated notifications. However, there is no explicit documentation of a CI/CD workflow, no dedicated CLI for headless automation, and probes show no llms.txt/OpenAPI spec discoverable for automation tooling. missing for 10: explicit CI/CD integration guide, official CLI for scripted automation, machine-readable API spec (openapi.json returned 404), independent evidence of it being run headlessly in a CI context.",
     "evidenceIds": [
-      "zulip-probe-4",
-      "zulip-probe-5",
-      "zulip-probe-6",
       "zulip-docs-4",
-      "zulip-docs-18"
+      "zulip-docs-5",
+      "zulip-docs-18",
+      "zulip-docs-19",
+      "zulip-probe-3"
     ]
   },
   {
@@ -2842,50 +2838,46 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zulip is a chat platform, so publishing an official MCP server to let AI agents connect is a plausible axis, but no evidence pack item mentions MCP at all — only bots, webhooks, REST API, and OpenAPI spec are documented. missing for 10: any mention of an MCP server (official or community), MCP protocol support, or agent-connection tooling beyond generic bots/API.",
-    "evidenceIds": [
-      "zulip-docs-4",
-      "zulip-docs-12",
-      "zulip-probe-5"
-    ]
+    "rationale": "Zulip is a chat platform, so offering an official MCP server for AI agents to connect is a fair question for its ecosystem, but no evidence pack item mentions MCP, an MCP server, or agent connectivity — only bots, webhooks, and integrations are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "agentic-nl-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Zulip's docs describe channels, topics, search filters, and a bot API for building reactive bots, but none of this constitutes an AI-native natural-language command interface for operating the product itself — no evidence of NLU-driven commands, AI assistant, or agentic control layer. missing for 10: any natural-language command parsing/interface, AI assistant for operating Zulip, evidence of NL-driven actions beyond keyword search filters.",
+    "confidence": "medium",
+    "rationale": "Zulip is a team chat/messaging platform with search filters, bots, and integrations, but there is no evidence of a natural-language command interface (e.g., NL-to-action, conversational command parsing) for operating the product itself. Bots react to messages programmatically, and search uses structured filter syntax, not natural-language commands.",
     "evidenceIds": [
       "zulip-docs-3",
-      "zulip-docs-23",
-      "zulip-docs-4",
-      "zulip-docs-12"
+      "zulip-docs-12",
+      "zulip-docs-23"
     ]
   },
   {
     "productId": "zulip",
     "storyId": "agentic-official-cli",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Hands-on evidence confirms an official 'zulip-send' CLI installs via PyPI and runs headlessly for scripting message sends, which supports agentic/automation use cases. However, the evidence pack shows no broader CLI feature set (e.g., reading messages, managing channels, bots) beyond sending, and no first-party docs elaborating CLI capabilities beyond the probe. Missing for 10: documented full CLI command reference, evidence of read/administrative CLI operations, and independent community corroboration of CLI use in agentic workflows.",
-    "evidenceIds": [
-      "zulip-probe-6"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of an official Zulip CLI tool; it covers the web/API, bots, integrations, and export/import tools but nothing about a command-line interface for AI-native workflows. While a CLI is a plausible offering for a collaboration platform (making the axis applicable), there is no documentation or community evidence confirming one exists.",
+    "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Zulip publishes a documented REST API (zulip.com/api) backed by a full OpenAPI 3.0 spec in its repo, verified live against a public server responding to documented endpoints, plus an official Python CLI (zulip-send) installable via pip for scripting/automation. This directly supports an AI-native user driving the product programmatically. Missing for 10: no discoverable llms.txt or machine-readable docs endpoint for LLM consumption, and no independent third-party corroboration beyond hands-on probes.",
+    "rationale": "Zulip publishes a dedicated public REST API (zulip.com/api) with documented endpoints like 'Send a message', plus a bot framework built on this API for programmatic/interactive use, giving AI-native users a documented way to drive the product. Missing for 10: no confirmed OpenAPI/machine-readable spec or llms.txt (probes returned 404s), and no independent hands-on corroboration of API usage.",
     "evidenceIds": [
       "zulip-docs-5",
-      "zulip-probe-4",
-      "zulip-probe-5",
-      "zulip-probe-6"
+      "zulip-docs-28",
+      "zulip-docs-4",
+      "zulip-docs-12",
+      "zulip-docs-18",
+      "zulip-probe-1",
+      "zulip-probe-3"
     ]
   },
   {
@@ -2894,26 +2886,29 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Zulip documents bot accounts and API keys for automation, but no evidence shows a mechanism for issuing scoped or least-privilege credentials (e.g., restricted permission bots, granular API scopes) specifically for AI agents — bots appear to get a single API key without documented fine-grained access controls.",
+    "rationale": "Evidence shows Zulip has a bot API and general API framework, but nothing about scoped or least-privilege API credentials/permissions for bots or agents — no mention of permission scoping, role restriction, or credential minimization. missing for 10: documentation of scoped/least-privilege bot or API key permissions, evidence of restricting an agent's API access to specific channels/actions.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-12",
-      "zulip-docs-18",
-      "zulip-docs-24"
+      "zulip-docs-18"
     ]
   },
   {
     "productId": "zulip",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Zulip ships an official Python SDK/CLI installable via PyPI (pip install zulip) with hands-on verified functionality (zulip-send), a full machine-readable OpenAPI 3.0.1 spec covering the REST API, and a live documented REST API confirmed working on a public server. This directly satisfies building against official SDKs for an AI-native/agentic workflow. Missing for 10: no evidence of SDKs in other languages (JS/Node, Go, etc.), no llms.txt or dedicated agent-facing docs, and no independent third-party corroboration of SDK quality beyond the hands-on probe.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Zulip documents a public API and a bot framework for building integrations (zulip-docs-4/12/24/27, zulip-docs-5/28), which implies some form of official tooling for developers, but the evidence never names or links actual language SDKs (Python/JS/etc.) and probes show no OpenAPI spec or llms.txt discoverability (zulip-probe-1/2/3). missing for 10: explicit official SDK packages/libraries, language coverage, versioning/maintenance evidence, and machine-readable API spec.",
     "evidenceIds": [
-      "zulip-probe-4",
-      "zulip-probe-5",
-      "zulip-probe-6",
-      "zulip-docs-5"
+      "zulip-docs-4",
+      "zulip-docs-5",
+      "zulip-docs-12",
+      "zulip-docs-27",
+      "zulip-docs-28",
+      "zulip-probe-1",
+      "zulip-probe-2",
+      "zulip-probe-3"
     ]
   },
   {
@@ -2935,7 +2930,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any AI-generated summary, recap, or digest feature for missed channels/threads; documentation focuses on topics, search, bots, integrations, and export/import but never mentions AI summarization.",
+    "rationale": "No evidence of any AI-generated summary or recap feature for channels/threads; docs cover topics, search filters, bots, and integrations but nothing about AI summarization of missed conversations.",
     "evidenceIds": []
   },
   {
@@ -2950,27 +2945,28 @@
   {
     "productId": "zulip",
     "storyId": "api-interactive-docs",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Zulip publishes a full machine-readable OpenAPI 3.0 spec for its REST API (zulip-probe-5) and a public API reference site with example endpoints like 'Send a message' (zulip-docs-5), and the API is confirmed live and functional hands-on (zulip-probe-4). However, there is no direct evidence that the API reference page itself offers interactive 'try it out' runnable examples in-browser rather than just documented curl/code snippets. Missing for 10: explicit confirmation of an in-browser interactive/try-it console on the API docs, independent user reports of using runnable examples.",
+    "rationale": "Evidence confirms Zulip has an API reference page (zulip.com/api/) listing endpoints like 'Send a message', but nothing in the pack describes interactive, runnable code examples (e.g., a 'try it out' console or live execution). Probes for OpenAPI/Swagger specs and machine-readable docs all returned 404, further indicating no evidence of an interactive API console.",
     "evidenceIds": [
       "zulip-docs-5",
-      "zulip-probe-5",
-      "zulip-probe-4"
+      "zulip-docs-28",
+      "zulip-probe-2",
+      "zulip-probe-3"
     ]
   },
   {
     "productId": "zulip",
     "storyId": "api-machine-spec",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Zulip's REST API ships a machine-readable OpenAPI 3.0.1 spec (zulip.yaml, ~1.5MB) directly in its repo, confirmed hands-on, and the live API docs at zulip.com/api/ are generated from this spec. Missing for 10: no dedicated discoverable download link/endpoint on the main docs site itself (openapi.json probes 404'd, so it's not trivially discoverable without knowing the GitHub path).",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows API documentation pages (e.g., zulip-docs-5, zulip-docs-28) but no confirmation of a downloadable OpenAPI/machine-readable spec; explicit probes for openapi.json, swagger.json, and related paths all returned 404s, and no other evidence references a spec file.",
     "evidenceIds": [
-      "zulip-probe-5",
-      "zulip-docs-5",
-      "zulip-probe-3"
+      "zulip-probe-3",
+      "zulip-probe-1",
+      "zulip-probe-2"
     ]
   },
   {
@@ -2978,8 +2974,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers self-hosting, export/import, integrations, and API access, but nowhere mentions a dedicated sandbox, staging, or test-mode instance that is separate from production data. Nothing describes a way to safely test bots/integrations against non-production data without standing up and fully configuring an entirely separate self-hosted server.",
+    "confidence": "medium",
+    "rationale": "Zulip's docs describe self-hosting, export/import, and bot development (zulip-docs-18, zulip-docs-6, zulip-docs-25) but nowhere mention a dedicated sandbox/staging environment or test organization that isolates AI-native testing from production data. Since Zulip is a self-hostable platform with an API and bot framework, such a sandbox capability would be a fair thing to expect, but no evidence in the pack shows it exists.",
     "evidenceIds": []
   },
   {
@@ -2988,8 +2984,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "While Zulip clearly has a documented, machine-readable REST API (OpenAPI spec, live endpoint, CLI) per zulip-docs-5, zulip-probe-4/5/6, the evidence pack contains no mention of API versioning scheme or a deprecation policy for changed/removed endpoints. Missing for 10: documentation of API version numbers, backward-compatibility guarantees, or a deprecation/changelog process.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Zulip has an API and documentation (zulip.com/api) but nothing about API versioning or a documented deprecation policy; probes for OpenAPI/machine-readable spec all 404. Missing for 10: any mention of API version numbers, changelog, or deprecation policy for the REST API.",
+    "evidenceIds": [
+      "zulip-docs-5",
+      "zulip-docs-28",
+      "zulip-probe-3"
+    ]
   },
   {
     "productId": "zulip",
@@ -2997,7 +2997,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Zulip provides an official integrations directory (zulip.com/integrations) listing 130+ native prebuilt integrations plus Zapier/IFTTT for hundreds more, which team-admins can browse and install/configure (e.g., via incoming webhooks) without custom coding. missing for 10: no evidence of an in-app 'install with one click' marketplace UI or independent hands-on confirmation of the install flow.",
+    "rationale": "Zulip documents an integrations directory with 130+ native prebuilt integrations plus Zapier/IFTTT connectivity, which team-admins can install directly (zulip-docs-9, zulip-docs-13, zulip-docs-19). Missing for 10: independent hands-on confirmation of the install/admin UX for adding integrations and no detail on install permission/approval flow for admins.",
     "evidenceIds": [
       "zulip-docs-9",
       "zulip-docs-13",
@@ -3009,8 +3009,8 @@
     "storyId": "audio-video-calls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions audio/video calling features in Zulip; all documentation and community references cover topics, channels, search, bots, integrations, export/import, and self-hosting, but nothing about starting a call from a channel or DM.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention audio/video calling functionality within Zulip; all evidence covers topics, channels, search, bots, integrations, and self-hosting. This is a fair capability to ask of a team chat product, but no documentation or community mention confirms in-app calls.",
     "evidenceIds": []
   },
   {
@@ -3019,11 +3019,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "While Zulip exposes a full REST API and CLI tooling (zulip-probe-5, zulip-probe-6, zulip-docs-5) that could theoretically be scripted, the evidence pack contains no documentation or hands-on proof of a bulk/batch endpoint (e.g., mass message updates, bulk channel management, batch subscribe/unsubscribe) that lets an AI-native user act on many items in one call. missing for 10: documented bulk-update/bulk-delete/batch endpoints, evidence of batch request support, any example of operating on multiple items in a single API call.",
+    "rationale": "Zulip's evidence pack shows only single-item API actions (e.g., 'send a message') and bot/integration frameworks, but no documentation of bulk/batch operations (e.g., mass message edits, bulk user management, batch API calls) that an AI-native user could invoke across many items at once.",
     "evidenceIds": [
       "zulip-docs-5",
-      "zulip-probe-5",
-      "zulip-probe-6"
+      "zulip-docs-28",
+      "zulip-docs-12"
     ]
   },
   {
@@ -3032,13 +3032,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Zulip has no documented native rules/automation engine; the closest capabilities are a bot framework requiring custom code (zulip-docs-4/12/24) and webhook/Zapier/IFTTT integrations (zulip-docs-9/19) that let external tools trigger actions on Zulip events. This is automation via third-party glue or coding, not a built-in 'define rules' feature. Missing for 10: a native no-code rules/trigger builder, first-party documentation of event-condition-action automation, and any evidence of it working out-of-the-box without external services or custom bot code.",
+    "rationale": "Zulip offers bots/integrations that react to messages and webhooks, which provide a basic event-triggered automation substrate, but there is no evidence of a native rule-builder or 'if-this-then-that' automation engine for defining custom trigger-action rules directly in Zulip. missing for 10: native no-code rule/trigger builder, documented event-condition-action automation framework, evidence of AI-native rule definition beyond generic bot/webhook API.",
     "evidenceIds": [
       "zulip-docs-4",
-      "zulip-docs-9",
       "zulip-docs-12",
       "zulip-docs-19",
-      "zulip-docs-24"
+      "zulip-docs-9"
     ]
   },
   {
@@ -3046,14 +3045,9 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Zulip is a team chat platform with bots, integrations, and an API for sending messages, but there is no evidence of any scheduler, cron-like feature, or recurring workflow/job automation capability — only reactive bots and one-off messages are documented.",
-    "evidenceIds": [
-      "zulip-docs-4",
-      "zulip-docs-12",
-      "zulip-docs-18",
-      "zulip-docs-5"
-    ]
+    "confidence": "high",
+    "rationale": "Zulip is a team chat platform; the evidence shows bots, integrations, and an API for messaging, but nothing about scheduling recurring jobs or workflows (no cron-like scheduler, workflow automation engine, or recurring task feature is documented). missing for 10: any scheduler/cron feature, recurring workflow definition, or automation-orchestration capability.",
+    "evidenceIds": []
   },
   {
     "productId": "zulip",
@@ -3061,7 +3055,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zulip is a team chat platform, not an automation/workflow-building tool with a concept of 'automations' that could be versioned, reviewed, or rolled back; while it supports bots/integrations, there's no evidence of any automation-authoring feature with version control or rollback semantics. This axis is a category error for a chat product rather than an unmet capability.",
+    "rationale": "Zulip is a team chat/messaging platform, not an automation/workflow builder with versionable automations to review or roll back; while it supports bots and integrations, there is no concept of 'automations' with version history or rollback. This is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3070,12 +3064,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Zulip's docs describe an interactive-bot framework that reacts to messages, but there is no evidence of a slash-command registration API or mechanism where a developer registers a custom command invoked via '/' in the message box, distinct from Slack-style slash commands.",
+    "rationale": "Evidence shows Zulip supports custom bots and integrations that react to messages, but there is no mention of registering custom slash commands invoked from the message box (a distinct feature like Slack's slash commands). Missing for 10: any documentation of a slash-command registration API or UI, examples of custom commands, or community confirmation of this feature.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-12",
-      "zulip-docs-24",
-      "zulip-docs-18"
+      "zulip-docs-24"
     ]
   },
   {
@@ -3094,8 +3087,8 @@
     "storyId": "free-tier-full-history",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Zulip's free-tier message history limits or retention policy, so there is no support for the claim that a free-tier team retains full access to older messages. Missing for 10: any documentation or community evidence about free-plan message history caps/retention, and confirmation that free tier does not truncate history.",
+    "confidence": "low",
+    "rationale": "Evidence pack has no documentation of Zulip's free/Cloud Standard tier message history retention policy or any statement that free-tier orgs retain full history without paywalling older messages; it only covers export/import and self-hosting portability, not pricing-tier history limits.",
     "evidenceIds": []
   },
   {
@@ -3117,8 +3110,8 @@
     "storyId": "granular-notifications",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no documentation or mentions of per-channel, per-keyword, or scheduled notification controls (e.g., no citations about notification settings, alert words, or do-not-disturb/quiet hours) — only topics, channels, search, bots, and export/import material. Notification tuning is a standard, fair axis for a chat product, but nothing in the pack demonstrates it.",
+    "confidence": "low",
+    "rationale": "Evidence pack covers topics/channels, search, bots, integrations, export/import, and self-hosting, but contains no documentation of per-channel or per-keyword notification settings, or scheduling/quiet-hours controls for admins.",
     "evidenceIds": []
   },
   {
@@ -3127,13 +3120,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Zulip explicitly documents incoming webhooks as a native integration type (zulip-docs-19) alongside 130+ native integrations (zulip-docs-9/13), and its API includes a straightforward 'send a message' endpoint (zulip-docs-5) backed by a full OpenAPI spec (zulip-probe-5) and live-verified API (zulip-probe-4). This matches the standard incoming-webhook-posts-to-channel pattern. Missing for 10: a first-party doc snippet showing the exact incoming-webhook URL format/config screen, and independent third-party confirmation of webhook setup ease.",
+    "rationale": "Zulip natively supports incoming webhooks as documented in its integrations page and API docs, allowing developers to post messages to a channel via a simple webhook URL. missing for 10: no hands-on/independent confirmation of webhook setup simplicity or example payloads/configuration walkthrough.",
     "evidenceIds": [
       "zulip-docs-19",
       "zulip-docs-9",
       "zulip-docs-5",
-      "zulip-probe-5",
-      "zulip-probe-4"
+      "zulip-docs-28"
     ]
   },
   {
@@ -3142,20 +3134,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers Zulip's bot/API framework, integrations, and messaging features but contains no mention of interactive UI elements like modals, buttons, or structured message layouts within chat (unlike Slack's Block Kit or similar). Missing for 10: any documentation of interactive message components, modal dialogs, button widgets, or structured layout building blocks for developers.",
-    "evidenceIds": []
+    "rationale": "Evidence only shows Zulip's bot API for reactive message bots and webhooks/integrations; there is no mention of interactive UI elements like modals, buttons, or structured message layouts (e.g., Slack-style Block Kit equivalents). Missing for 10: any documentation of interactive message components, buttons, modals, or structured card/layout UI within chat.",
+    "evidenceIds": [
+      "zulip-docs-4",
+      "zulip-docs-12",
+      "zulip-docs-18",
+      "zulip-docs-19"
+    ]
   },
   {
     "productId": "zulip",
     "storyId": "no-code-workflow-builder",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Zulip's evidence shows only custom-coded bots, webhooks, and 130+ integrations plus optional Zapier/IFTTT connections (external tools), but no built-in no-code workflow/automation builder with triggers, schedules, or form submissions inside the chat product itself.",
+    "confidence": "high",
+    "rationale": "Zulip offers bots, incoming webhooks, and integrations, but there is no evidence of a no-code workflow builder for triggers (events/schedules/forms) inside the chat tool; automation requires custom bot code or third-party tools like Zapier/IFTTT, not a native no-code workflow engine.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-9",
-      "zulip-docs-12",
       "zulip-docs-19"
     ]
   },
@@ -3163,15 +3159,18 @@
     "productId": "zulip",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Zulip ships a large, machine-readable OpenAPI spec (~1.5MB) covering messaging, bots, integrations, and administration, with a live public endpoint confirming the API works and an official CLI/bot framework for scripting (zulip-probe-5, zulip-probe-4, zulip-probe-6, zulip-docs-5, zulip-docs-12). However, there is no explicit vendor or independent claim that every UI action (e.g., search filters, topic management UI nuances) has a 1:1 API equivalent. Missing for 10: explicit UI-API parity documentation/audit, independent confirmation that all UI-only features (e.g., advanced search UX, settings toggles) are scriptable via API.",
+    "rationale": "Zulip's REST API documents sending messages, running bots, and other actions that mirror UI functionality, indicating broad API coverage of core chat operations. However, the evidence pack lacks confirmation of full parity (e.g., admin/org settings, exports, integrations management via API) and probes show no discoverable OpenAPI spec or llms.txt, weakening verifiability of completeness. missing for 10: explicit API-vs-UI parity documentation, evidence of administrative/settings actions via API, independent confirmation of full feature coverage, working OpenAPI/machine-readable spec.",
     "evidenceIds": [
-      "zulip-probe-5",
-      "zulip-probe-4",
-      "zulip-probe-6",
       "zulip-docs-5",
-      "zulip-docs-12"
+      "zulip-docs-28",
+      "zulip-docs-4",
+      "zulip-docs-12",
+      "zulip-docs-18",
+      "zulip-probe-1",
+      "zulip-probe-2",
+      "zulip-probe-3"
     ]
   },
   {
@@ -3206,18 +3205,17 @@
     "storyId": "openness-self-host",
     "verdict": "partial",
     "quality": 7,
-    "confidence": "high",
-    "rationale": "Zulip is documented as fully open-source and self-hostable, with official production install docs, import/export tools to migrate between cloud and self-host, and a GitHub repo for contributing (zulip-docs-8, zulip-docs-25, zulip-docs-7, zulip-gh-1). However, community hands-on reports describe real friction: installs require a dedicated server/VM with poor containerization support, heavy RAM requirements, and limited distro support beyond Ubuntu (zulip-comm-18, zulip-comm-13, zulip-comm-14, zulip-comm-3). Missing for 10: independent verification that installation friction has been resolved, broader OS/container support, and clearer resource-requirement documentation.",
+    "confidence": "medium",
+    "rationale": "First-party docs confirm full self-hosting parity with Zulip Cloud, with detailed install instructions (zulip-docs-8, zulip-docs-20, zulip-docs-25) and export/import tools for migration (zulip-docs-6, zulip-docs-7, zulip-docs-10). However, independent community reports describe real friction: self-hosting effectively requires a dedicated server/VM with poor containerization support and a messy install process (zulip-comm-13, zulip-comm-14, zulip-comm-18). missing for 10: evidence of streamlined/containerized deployment, resolution of installer complaints, and confirmation these issues are resolved in current releases.",
     "evidenceIds": [
       "zulip-docs-8",
-      "zulip-docs-25",
-      "zulip-docs-7",
       "zulip-docs-20",
-      "zulip-gh-1",
-      "zulip-comm-18",
+      "zulip-docs-25",
+      "zulip-docs-6",
+      "zulip-docs-7",
       "zulip-comm-13",
       "zulip-comm-14",
-      "zulip-comm-3"
+      "zulip-comm-18"
     ]
   },
   {
@@ -3226,12 +3224,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm channels can be public/private/web-public with subscription controls (zulip-docs-2, zulip-docs-22), and channel-scoped search/export tools acknowledge private channel membership boundaries (zulip-docs-14, zulip-docs-17). However, there is no explicit documentation of admin-side membership management workflows (adding/removing members, role-based permissions per channel) or granular channel permission settings. missing for 10: detailed admin UI/API for managing channel membership and permissions, evidence of private channel invite-only enforcement, independent corroboration of admin controls in practice.",
+    "rationale": "Docs confirm both public and private channels exist (zulip-docs-14, zulip-docs-22) with subscription-based membership, and guests are restricted from public channels by default, implying granular membership rules. However, the evidence pack lacks explicit documentation of admin-side controls like inviting/removing members, changing channel privacy settings, or role-based channel permissions. missing for 10: explicit admin membership management docs, channel privacy/permission settings, independent corroboration of admin controls in practice.",
     "evidenceIds": [
-      "zulip-docs-2",
-      "zulip-docs-22",
       "zulip-docs-14",
-      "zulip-docs-17"
+      "zulip-docs-22",
+      "zulip-docs-2"
     ]
   },
   {
@@ -3255,7 +3252,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any explicit AI-training privacy policy for Zulip; self-hosting is mentioned but not tied to preventing AI training use of data. missing for 10: explicit policy/statement on AI model training use of data, opt-out mechanism, or contractual guarantee against training use.",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-outs, or any AI-model-training policy for Zulip; the pack only covers topics, channels, bots, exports, and self-hosting.",
     "evidenceIds": []
   },
   {
@@ -3279,23 +3276,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, analytics collection, or an opt-out setting for Zulip; the self-hosting docs discuss data export/import and deployment but never mention telemetry controls.",
+    "rationale": "No evidence pack items address telemetry, usage tracking, or opt-out controls for Zulip; while self-hosting (evidenced) implies data control, there is no explicit documentation of telemetry collection or an opt-out mechanism. Missing for 10: any mention of telemetry/analytics collection practices, an opt-out setting or configuration flag, and privacy policy language addressing usage tracking.",
     "evidenceIds": []
   },
   {
     "productId": "zulip",
     "storyId": "realtime-bot-events",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Zulip explicitly documents a bot framework that lets developers write custom bots that 'react to messages in Zulip' in real time, deployable persistently via the Zulip Botserver, backed by a full OpenAPI-documented REST API and a working live API endpoint plus an installable CLI/client library for scripting integrations. This maps to Zulip's known events/register API model for real-time bots, though the evidence pack never names the events/register endpoints or long-polling mechanics explicitly. Missing for 10: explicit documentation/citation of the events/register API endpoints and real-time event queue mechanics, and independent hands-on confirmation of a bot actually receiving live events.",
+    "rationale": "Zulip docs confirm a bot API framework where bots 'react to messages in Zulip' in real time, with a Botserver for production deployment, indicating an events/webhook-driven architecture for bots. However, the evidence lacks concrete detail on the actual events API/long-polling mechanism, event types, or code examples showing real-time event handling, and there's no independent/hands-on corroboration of this specific capability. Missing for 10: explicit documentation of the events API/register-queue mechanism, sample code demonstrating real-time event consumption, and community validation of the bot framework's reliability.",
     "evidenceIds": [
       "zulip-docs-4",
       "zulip-docs-12",
       "zulip-docs-18",
-      "zulip-probe-5",
-      "zulip-probe-4",
-      "zulip-probe-6"
+      "zulip-docs-24",
+      "zulip-docs-27"
     ]
   },
   {
@@ -3304,7 +3300,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack only covers data export/import tools for migrating organizations, with no mention of configurable message retention policies, automatic deletion schedules, or legal hold/eDiscovery preservation features. No documentation or community evidence addresses compliance-driven retention enforcement.",
+    "rationale": "The evidence pack only covers organization export/import for migration purposes, not retention policies or legal holds. No mention of configurable message retention rules, litigation/legal hold features, or eDiscovery workflows.",
     "evidenceIds": []
   },
   {
@@ -3322,15 +3318,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Zulip's core topic-based threading model lets users reply within a topic to keep side discussions attached to the original conversation, and community evidence strongly corroborates this as a standout feature ('the killer feature', 'fundamentally superior model' to Slack threads). Docs describe starting/joining topics and searching within them, and admins have the same messaging capabilities as any user. missing for 10: explicit admin-specific documentation on replying in threads (evidence is general-user focused), and some community reports note UX friction/confusion for non-technical users when threading.",
+    "rationale": "Zulip's topic model is explicitly designed so that side conversations in a channel each get their own topic/thread, keeping related messages together (zulip-docs-1, zulip-docs-16, zulip-docs-21/26, zulip-docs-29), and community users independently confirm this threading is the standout feature ('the killer feature'; 'most important feature of Zulip is threading') that lets side discussions stay separated without interrupting the main flow (zulip-comm-5, zulip-comm-15, zulip-comm-20). Missing for 10: a first-party doc specifically titled around 'replying within a topic' (docs focus on starting new topics) and independent screenshots/hands-on demo of replying into an existing thread rather than just topic creation.",
     "evidenceIds": [
       "zulip-docs-1",
       "zulip-docs-16",
       "zulip-docs-21",
+      "zulip-docs-26",
+      "zulip-docs-29",
       "zulip-comm-5",
       "zulip-comm-15",
-      "zulip-comm-20",
-      "zulip-comm-9"
+      "zulip-comm-20"
     ]
   },
   {
@@ -3339,19 +3336,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Zulip's topic model is core to the product: docs explain starting new topics per conversation, subscribing to channels surfaces conversations in inbox/feed, and topic-scoped search lets admins filter busy channels. Community reports strongly corroborate that this threading model is 'fundamentally superior' to Slack for following busy, high-volume discussions without being overwhelmed, and the 'all messages' view helps catch up chronologically across channels. Missing for 10: independent measurement of catch-up efficiency and some community reports note UX friction (miscasting to wrong topic, non-technical user confusion) that slightly tempers the ideal experience.",
+    "rationale": "Zulip's topic model is extensively documented (start-a-topic flow, per-topic isolation, inbox/recent-conversations views) and independently corroborated by long-time users who call the topic/thread separation a 'fundamentally superior model' for following busy channels without being overwhelmed. Some community reports note onboarding friction for non-technical users, but this doesn't contradict that conversations are organized by topic once adopted. Missing for 10: independent benchmarks or hands-on tests specifically measuring 'catch-up efficiency' rather than general praise of the topic model.",
     "evidenceIds": [
       "zulip-docs-1",
-      "zulip-docs-2",
-      "zulip-docs-3",
       "zulip-docs-16",
       "zulip-docs-21",
-      "zulip-comm-1",
+      "zulip-docs-29",
       "zulip-comm-5",
       "zulip-comm-11",
-      "zulip-comm-20",
-      "zulip-comm-9",
-      "zulip-comm-10"
+      "zulip-comm-16",
+      "zulip-comm-20"
     ]
   },
   {
@@ -3360,12 +3354,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Zulip's docs explicitly describe an export tool that can include 'public and private data (with consent)' — private channel messages and DMs from consenting members — in a machine-readable export format used for migration/backup, directly matching the compliance-export story for a team-admin. This is corroborated by general export/import documentation and self-hosting docs confirming full data portability. Missing for 10: independent/hands-on verification of the export tool's exact output format and confirmation of admin-level override for private data without member consent.",
+    "rationale": "Zulip's export documentation explicitly describes exporting full message history including private channel messages and direct messages when members consent, and organization data export is a first-party admin tool producing machine-readable data for self-hosting/migration purposes. Missing for 10: independent/hands-on corroboration of the export format's completeness and no explicit mention of export file format details (e.g., JSON structure) or audit-log-specific compliance features.",
     "evidenceIds": [
       "zulip-docs-6",
       "zulip-docs-14",
-      "zulip-docs-10",
-      "zulip-docs-7"
+      "zulip-docs-10"
     ]
   }
 ]

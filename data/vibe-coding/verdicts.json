@@ -2,17 +2,22 @@
   {
     "productId": "base44",
     "storyId": "agent-builds-app-via-api",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Base44 offers a CLI (`base44 create`, sync, deploy) and an SDK with entity CRUD operations that let developers programmatically build and manage apps and their data, and states the backend is code/config-based so AI agents can manage projects. However, there's no evidence of a full public REST/HTTP 'platform API' for app generation (openapi/swagger endpoints all 404), so programmatic access is limited to the CLI/SDK wrapper rather than a documented direct API. Missing for 10: a public REST API spec for app creation, independent corroboration of programmatic app generation beyond CLI/SDK docs.",
+    "rationale": "Base44 provides a documented SDK for CRUD operations on app entities, a CLI for creating/deploying/managing backend projects programmatically, and an MCP server that exposes the Base44 account to AI assistants for programmatic app management, plus 'bring your own agent' sandbox access — all clearly enabling AI-native, API-driven app generation and management. Missing for 10: a public OpenAPI/REST spec (probed and returned 404) and independent/hands-on corroboration of the API's robustness beyond vendor docs.",
     "evidenceIds": [
+      "base44-docs-4",
       "base44-docs-5",
       "base44-docs-17",
-      "base44-docs-19",
+      "base44-docs-23",
       "base44-docs-24",
+      "base44-docs-27",
       "base44-docs-28",
       "base44-docs-29",
+      "base44-docs-35",
+      "base44-docs-38",
+      "base44-docs-40",
       "base44-probe-2"
     ]
   },
@@ -22,11 +27,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at https://docs.base44.com/llms.txt returning HTTP 200 with structured content describing Base44, and the docs site itself is built with agent-friendly .md endpoints for every page (e.g. docs-1 through docs-30 all resolve as .md URLs), showing docs are structured for agent consumption. Missing for 10: no independent/community confirmation that third-party agents have actually consumed llms.txt successfully in the wild.",
+    "rationale": "A probe confirms llms.txt is live at docs.base44.com/llms.txt returning HTTP 200 with structured content describing Base44, and the docs also expose a dedicated Docs MCP server so AI assistants can search documentation directly. Missing for 10: no independent/community corroboration of an agent actually consuming llms.txt in practice.",
     "evidenceIds": [
       "base44-probe-1",
-      "base44-docs-5",
-      "base44-docs-29"
+      "base44-docs-39"
     ]
   },
   {
@@ -34,38 +38,45 @@
     "storyId": "agentic-ai-insights",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Base44 docs describe AI agents that take actions (update records, trigger workflows) and a Data page for viewing tables, but there is no evidence of AI-generated insights, analytics, or suggestions derived from the app's own data. missing for 10: any documentation of data analysis/insight generation, dashboards, or suggestion features surfaced to end users.",
-    "evidenceIds": [
-      "base44-docs-6",
-      "base44-docs-9"
-    ]
+    "confidence": "low",
+    "rationale": "Base44's docs describe AI agents that act on data (create/update records, trigger workflows) and Superagents that research or complete tasks, but there is no evidence of AI proactively analyzing a user's app data to surface insights, trends, or suggestions (e.g., dashboards, anomaly detection, summarized findings from stored data). The axis is plausible for a data-backed app platform, so it is not out-of-category, but no supporting evidence exists.",
+    "evidenceIds": []
   },
   {
     "productId": "base44",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Base44's docs describe AI agents that respond to chat and trigger workflows within an app, and CLI/SDK tooling for building apps, but there is no evidence of scheduled, event-driven, or persistent background automations that run autonomously without a user prompt. Missing for 10: any mention of cron/scheduled jobs, background workers, autonomous triggers, or agents operating without live chat interaction.",
+    "rationale": "Base44 supports Superagents with scheduled/triggered workflows that run autonomously (e.g., meeting notes agent, browser control, tool integrations like Slack/GitHub/Notion), and AI agents that trigger workflows within apps. Missing for 10: independent/hands-on verification of long-running autonomous reliability and more detail on monitoring/error-handling for background automations.",
     "evidenceIds": [
-      "base44-docs-6"
+      "base44-docs-46",
+      "base44-docs-47",
+      "base44-docs-48",
+      "base44-docs-45",
+      "base44-docs-6",
+      "base44-docs-43"
     ]
   },
   {
     "productId": "base44",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Base44 is itself an AI app-building product where the core interaction is delegating tasks (build features, design, resolve conflicts) to a built-in AI assistant via chat, as documented in the AI-agents feature and corroborated by hands-on community reports of the AI resolving issues and building full apps from prompts. missing for 10: independent benchmarking of assistant task scope/limits and more first-party documentation detail on assistant capabilities beyond marketing copy.",
+    "rationale": "Base44's core product is built around a built-in AI assistant: users describe tasks in natural language and the assistant builds/edits the app (docs-31, docs-33), while 'AI agents' and 'Superagents' inside apps can update records, trigger workflows, connect to external tools (Slack, GitHub, Notion), run scheduled workflows, take meeting notes, and browse the web autonomously (docs-6, docs-43, docs-45–48). Community hands-on reports corroborate that this in-app AI delegation produces fully functional results (comm-4, comm-5, comm-6). Missing for 10: independent benchmarking of task-delegation reliability/limits beyond anecdotal community praise.",
     "evidenceIds": [
+      "base44-docs-31",
+      "base44-docs-33",
       "base44-docs-6",
-      "base44-docs-12",
-      "base44-docs-14",
+      "base44-docs-43",
+      "base44-docs-45",
+      "base44-docs-46",
+      "base44-docs-47",
+      "base44-docs-48",
       "base44-comm-4",
       "base44-comm-5",
-      "base44-probe-1"
+      "base44-comm-6"
     ]
   },
   {
@@ -74,14 +85,17 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Base44 offers a CLI (login, create, deploy, sync) and an SDK for programmatic app management, which could be scripted in CI, plus 'bring your own agent/scripts' sandbox access — supporting headless automation potential. However there's no explicit documentation of non-interactive auth (API tokens/service accounts), CI/CD pipeline examples, or exit-code/scripting guarantees needed for true CI use. Missing for 10: documented non-interactive/headless auth flow, CI/CD pipeline examples or GitHub Actions integration, explicit statement of unattended/scriptable operation, and independent confirmation of CI usage.",
+    "rationale": "Base44 ships a scriptable CLI (login, create, deploy, run commands against any app) and an SDK with CRUD entity methods, which could be invoked in automated pipelines, and it supports agent/skill configs for automated project creation. However, there is no explicit documentation of headless/non-interactive auth, CI/CD examples, or an automation-specific mode. Missing for 10: explicit CI/CD pipeline guidance, non-interactive/headless authentication flow docs, and independent confirmation of CLI use in automated environments.",
     "evidenceIds": [
       "base44-docs-5",
       "base44-docs-24",
       "base44-docs-27",
-      "base44-docs-3",
+      "base44-docs-35",
       "base44-docs-4",
-      "base44-probe-3"
+      "base44-docs-23",
+      "base44-docs-28",
+      "base44-docs-40",
+      "base44-docs-51"
     ]
   },
   {
@@ -90,20 +104,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Base44 can expose its own app as an MCP *server* for external assistants (base44-docs-7), which is the reverse capability; there is no evidence Base44 itself can connect to and consume external MCP servers' tools as a client.",
+    "rationale": "The documentation only shows Base44 acting as an MCP *server* (exposing its own account/app data or docs to external AI assistants like Claude, ChatGPT, Cursor), not as a client that can ingest third-party MCP servers so its own agents can use their tools. Superagent/agent tool-connection features (Slack, Notion, HubSpot, etc.) are described as native integrations, not MCP plug-ins, so there is no evidence Base44 lets a user 'plug in' arbitrary MCP servers for its agents to consume.",
     "evidenceIds": [
-      "base44-docs-7"
+      "base44-docs-38",
+      "base44-docs-39",
+      "base44-docs-7",
+      "base44-docs-45",
+      "base44-docs-51"
     ]
   },
   {
     "productId": "base44",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Base44 documents 'App MCP', letting external AI assistants like Claude, ChatGPT, and Cursor connect to a published Base44 app via its own official MCP server, directly matching the story. Missing for 10: independent/hands-on verification of the MCP server working in practice and more detail on setup/config beyond the single doc page.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Base44 documents multiple official MCP servers: an App MCP server exposing published apps to external AI assistants (Claude, ChatGPT, Cursor), an account-level MCP server for any MCP-compatible assistant, and a dedicated Docs MCP server — all first-party documented features, consistent with Base44's role as a platform/backend service rather than an agent itself. Missing for 10: independent/hands-on community corroboration of MCP server usage in practice.",
     "evidenceIds": [
-      "base44-docs-7"
+      "base44-docs-7",
+      "base44-docs-38",
+      "base44-docs-39"
     ]
   },
   {
@@ -112,15 +132,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44's core product is natural-language app building — users describe ideas, request design changes, and generate content via chat ('Ask for design options', 'Describe a video, get one'), and community evidence confirms this works well in practice ('two prompts and deploy', 'far superior' output from prompts). This is corroborated by hands-on community reports, not just vendor docs. Missing for 10: independent benchmarking of how far natural-language commands alone can go before requiring code/CLI intervention, and clearer documentation of the full scope of NL commands versus GUI-only actions.",
+    "rationale": "Base44's core value proposition is natural-language app building: users describe what they want and AI generates/updates code, design, and components (docs-31, docs-33), with AI agents and chat modes extending this to in-app actions, workflows, and tool connections (docs-6, docs-43, docs-45). Community reports corroborate that natural-language prompts produce functional apps (comm-4, comm-5, comm-6). Missing for 10: independent benchmarking of command reliability/complexity limits and more detail on failure modes of natural-language instructions beyond anecdotal HN reports.",
     "evidenceIds": [
-      "base44-docs-12",
-      "base44-docs-14",
-      "base44-docs-21",
+      "base44-docs-31",
+      "base44-docs-33",
+      "base44-docs-6",
+      "base44-docs-43",
+      "base44-docs-45",
       "base44-comm-4",
       "base44-comm-5",
-      "base44-comm-6",
-      "base44-probe-1"
+      "base44-comm-6"
     ]
   },
   {
@@ -129,30 +150,31 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44 ships an official CLI (npm install -g base44, base44 login, base44 create) with documented commands for creating, syncing, deploying, and ejecting projects, explicitly aimed at AI-native/agent workflows since the backend is defined in code/config for AI agents to manage. Missing for 10: independent hands-on verification of CLI usage beyond docs, and no community corroboration of CLI reliability in practice.",
+    "rationale": "Base44 ships an official CLI (installable via npm) documented with commands for creating projects, syncing data models/code, deploying resources, and cloning/ejecting apps, explicitly positioned for AI-native workflows (e.g. 'easy for AI coding agents to build and manage your project'). Missing for 10: independent/hands-on community verification of the CLI itself (community evidence discusses the web app experience, not CLI usage) and no evidence of CLI extensibility or plugin ecosystem.",
     "evidenceIds": [
       "base44-docs-5",
       "base44-docs-19",
       "base44-docs-24",
       "base44-docs-27",
       "base44-docs-29",
+      "base44-docs-35",
       "base44-probe-3"
     ]
   },
   {
     "productId": "base44",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Base44 documents an SDK (with CRUD code examples) and a CLI for programmatically creating, syncing and deploying apps, which lets AI-native users drive the platform outside the UI (base44-docs-4, base44-docs-23, base44-docs-28, base44-docs-5, base44-docs-24). However, a probe for a formal OpenAPI/REST spec returned 404s across all standard paths, indicating no canonical public API reference beyond the SDK/CLI docs. Missing for 10: a documented REST/OpenAPI specification, independent third-party corroboration of API usage, and evidence of API stability/versioning guarantees.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Base44 publishes a documented SDK (entities CRUD, code samples), a CLI for scripted app management, and a dedicated MCP server that exposes the account/app to external AI assistants, together forming a documented public programmatic interface for AI-native use. Missing for 10: a formal OpenAPI/swagger spec (probe found only 404s) and independent third-party corroboration of API robustness.",
     "evidenceIds": [
       "base44-docs-4",
-      "base44-docs-5",
       "base44-docs-23",
-      "base44-docs-24",
-      "base44-docs-27",
       "base44-docs-28",
+      "base44-docs-27",
+      "base44-docs-38",
+      "base44-docs-24",
       "base44-probe-2"
     ]
   },
@@ -161,13 +183,12 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows Base44 has CLI login, SDK access, and MCP server connections, but nothing describes issuing scoped or least-privilege API credentials/tokens for agents — no mention of permission scopes, role-based API keys, or credential restriction mechanisms. missing for 10: any documentation of scoped API keys, permission levels, or least-privilege credential issuance for agents.",
+    "confidence": "medium",
+    "rationale": "While Base44 documents agent permission/tool configuration via JSONC files (base44-docs-51) and various agent integrations (MCP server, bring-your-own-agent), there is no evidence of scoped or least-privilege API credential/key issuance mechanism for agents—no scopes, token restrictions, or granular auth controls are documented.",
     "evidenceIds": [
-      "base44-docs-24",
-      "base44-docs-27",
-      "base44-docs-4",
-      "base44-docs-7"
+      "base44-docs-51",
+      "base44-docs-38",
+      "base44-docs-3"
     ]
   },
   {
@@ -176,14 +197,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44 documents an official SDK with clear getting-started docs, code examples (entities.Task.create), CRUD entity operations, and a CLI to scaffold/manage projects, all first-party and probe-confirmed. Missing for 10: independent/hands-on developer corroboration of SDK usage and a public OpenAPI spec (probe found 404s for openapi/swagger endpoints).",
+    "rationale": "Base44 documents an official SDK with getting-started guides, code examples (entities.Task.create), CLI tooling, and backend-as-code design explicitly for AI agents to build against. missing for 10: independent/hands-on developer corroboration of SDK usage beyond docs, and a public API reference/OpenAPI spec (probe found only 404s for openapi endpoints).",
     "evidenceIds": [
       "base44-docs-4",
       "base44-docs-17",
       "base44-docs-23",
       "base44-docs-28",
-      "base44-docs-24",
-      "base44-probe-3",
+      "base44-docs-29",
       "base44-probe-2"
     ]
   },
@@ -193,8 +213,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack of webhook subscription/event functionality; documentation covers CLI, SDK, MCP server for external assistants, entities/CRUD, GitHub sync, but nothing about outbound webhooks or event subscriptions.",
-    "evidenceIds": []
+    "rationale": "The evidence describes workflows that trigger 'on a schedule or when a trigger happens, such as activity in a connected tool' (base44-docs-46) and integrations with tools like Slack/GitHub, but there is no documentation of an actual webhook subscription mechanism (incoming webhook endpoints, event payload schema, or webhook management API) that would let an AI-native user subscribe to Base44 app events. This is a fair capability for a backend-as-a-service platform, so the axis applies, but no evidence confirms it exists.",
+    "evidenceIds": [
+      "base44-docs-46",
+      "base44-docs-45"
+    ]
   },
   {
     "productId": "base44",
@@ -202,7 +225,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Base44 provides static SDK/CLI docs with code snippets (e.g., docs-23, docs-28) but no evidence of an interactive API reference with runnable/executable examples; the probe explicitly found no OpenAPI/Swagger spec (404s across all candidate paths), indicating no such interactive reference exists.",
+    "rationale": "Docs show static SDK/CLI reference pages with code snippets (e.g. base44-docs-23, 28) but no interactive, runnable API reference; a direct probe for OpenAPI/Swagger endpoints returned 404s, indicating no interactive API playground exists.",
     "evidenceIds": [
       "base44-docs-4",
       "base44-docs-23",
@@ -216,10 +239,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/swagger specs on Base44's docs domain returned 404 on all candidate paths, and no documentation mentions a downloadable machine-readable API spec; only an llms.txt exists, which is not an OpenAPI-equivalent spec.",
+    "rationale": "Base44 exposes an SDK and CLI but no documented downloadable OpenAPI/Swagger spec; a direct probe found all candidate OpenAPI endpoints returning 404, and no docs reference an API spec download.",
     "evidenceIds": [
       "base44-probe-2",
-      "base44-probe-1"
+      "base44-docs-4",
+      "base44-docs-27"
     ]
   },
   {
@@ -228,11 +252,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Base44 docs mention 'connecting to its sandbox' for bring-your-own-agent workflows and a CLI 'clone/eject' command that spins up a separate project with its own app ID, both of which imply an isolated environment distinct from the live app. However, there is no explicit documentation of a staging/sandbox mode with synced-but-isolated production data, nor guidance on safely testing without affecting production records. Missing for 10: explicit staging environment docs, data-isolation guarantees, and any hands-on/community confirmation that sandbox testing avoids touching production data.",
+    "rationale": "Base44 docs mention connecting external AI agents to an app's 'sandbox' (docs-3, docs-37) and a dedicated testing agent that runs browser-based simulated flows (docs-44), suggesting some isolation from live production, but there is no explicit description of a staging/test environment with separate data storage or guarantees that testing won't affect production records. missing for 10: explicit staging/production data separation, documentation of how the testing agent avoids mutating real data, independent confirmation that sandbox use is isolated.",
     "evidenceIds": [
       "base44-docs-3",
-      "base44-docs-1",
-      "base44-docs-22"
+      "base44-docs-37",
+      "base44-docs-44"
     ]
   },
   {
@@ -241,24 +265,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API versioning scheme or any documented deprecation policy; probe explicitly found no OpenAPI spec, and SDK/CLI docs describe usage but never mention versioning or deprecation guarantees.",
+    "rationale": "There is no evidence of API versioning scheme or a documented deprecation policy; the openapi.json probe returned 404s and no docs reference version numbers, changelogs, or deprecation timelines for the SDK/CLI/API.",
     "evidenceIds": [
-      "base44-probe-2",
-      "base44-docs-4",
-      "base44-docs-17"
+      "base44-probe-2"
     ]
   },
   {
     "productId": "base44",
     "storyId": "app-gets-ai-features",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Base44 documents built-in 'AI agents for apps' that let generated apps chat, trigger workflows, and call tools without the user standing up their own LLM integration (base44-docs-6), and community feedback confirms this AI functionality 'just works' inside apps (base44-comm-4, base44-comm-5). However, there is no explicit documentation stating that provider API keys are fully managed/abstracted away (e.g., no mention of BYO-key vs. platform-key model, rate limits, or supported providers), so the 'without managing provider keys' claim is only implied, not directly evidenced. Missing for 10: explicit statement on API key management/provider abstraction, list of supported LLM providers, and independent hands-on confirmation that no key setup is required.",
+    "rationale": "Base44 docs show built-in AI agents and Superagents that can update records, trigger workflows, and connect to tools (docs-6, docs-43, docs-45-51) without requiring the user to supply provider credentials, suggesting managed LLM access is baked into the platform. However, docs-49 explicitly describes connecting to external AI services (OpenAI, Claude, Groq, Mistral) 'that use an API key,' implying key management is still exposed for non-default providers, and there's no explicit statement that the default in-app agents fully abstract provider key handling. Missing for 10: explicit confirmation that default AI agents use Base44-managed keys with zero key exposure, and independent/hands-on corroboration of this specific claim.",
     "evidenceIds": [
       "base44-docs-6",
-      "base44-comm-4",
-      "base44-comm-5"
+      "base44-docs-43",
+      "base44-docs-45",
+      "base44-docs-49",
+      "base44-docs-51"
     ]
   },
   {
@@ -267,8 +291,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation describes an automated security review or pre-launch security scan for generated apps; instead, community reports describe a real vulnerability discovered by external researchers and criticism that code was pushed without reviews, suggesting no such built-in security review process exists.",
+    "rationale": "Base44 docs describe a testing agent for functional/browser-based flow testing (base44-docs-44) but no dedicated security review or vulnerability-scanning feature before an app goes live. Community evidence even shows a security vulnerability was found post-launch by an external researcher rather than caught by any built-in security review (base44-comm-9, base44-comm-10, base44-comm-11), reinforcing the absence of this capability.",
     "evidenceIds": [
+      "base44-docs-44",
       "base44-comm-9",
       "base44-comm-10",
       "base44-comm-11"
@@ -277,14 +302,17 @@
   {
     "productId": "base44",
     "storyId": "auth-scaffolding",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Base44 docs explicitly describe built-in sign-up/login scaffolding with email and social providers (e.g., Google), ready-made login/register/forgot-password pages, and customizable branding — directly matching the story. Missing for 10: independent hands-on verification of the full provider list and UI customization depth beyond docs.",
+    "verdict": "disputed",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Base44 docs show built-in scaffolded auth: ready-made login/register/forgot-password pages supporting email plus social providers like Google, customizable and branded (docs-11, docs-30, docs-41, docs-25). However, an independent security report found the registration/email-verification endpoints were exploitable via just the app_id, letting attackers register themselves as editor/collaborator on any app — a concrete hands-on failure of the scaffolded auth system (though fixed within 24h). missing for 10: independent confirmation the fix is robust, and no mention of OAuth/social provider setup mechanics beyond marketing copy.",
     "evidenceIds": [
       "base44-docs-11",
       "base44-docs-30",
-      "base44-docs-25"
+      "base44-docs-41",
+      "base44-docs-25",
+      "base44-comm-9",
+      "base44-comm-11"
     ]
   },
   {
@@ -293,32 +321,40 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The SDK docs only show single-record CRUD operations (e.g., creating one Task) and the CLI covers deploy/sync of resources, but no evidence describes bulk create/update/delete across many items or batch endpoints for AI-native automation.",
+    "rationale": "Base44's SDK docs mention only single-record CRUD examples (e.g., base44.entities.Task.create for one task) and generic 'CRUD operations' language, with no documented bulk-create/bulk-update/batch endpoints or UI bulk-action tooling across many items at once.",
     "evidenceIds": [
       "base44-docs-23",
-      "base44-docs-28",
-      "base44-docs-27"
+      "base44-docs-28"
     ]
   },
   {
     "productId": "base44",
     "storyId": "automation-rules-engine",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs mention AI agents that can 'update records, trigger workflows, and connect to tools' in response to chat, implying some action-triggering capability, but there is no documentation of a rule/event definition system (e.g., 'when X happens, do Y') or automated triggers outside of chat-initiated agent actions. Missing for 10: explicit event/trigger rule builder, documented conditions for automatic triggering, and independent evidence of automation-depth beyond chat-driven agent actions.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Base44 explicitly supports event/schedule-based workflows ('A workflow runs on a schedule or when a trigger happens, such as activity in a connected tool') and AI agents that 'update records, trigger workflows, and connect to tools' automatically in response to chat/events, matching the automation-depth story. missing for 10: independent/hands-on verification of rule complexity (e.g., conditional logic beyond simple triggers) and no third-party corroboration of workflow reliability.",
     "evidenceIds": [
-      "base44-docs-6"
+      "base44-docs-46",
+      "base44-docs-6",
+      "base44-docs-43",
+      "base44-docs-47",
+      "base44-docs-51"
     ]
   },
   {
     "productId": "base44",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of scheduled/recurring job or workflow triggers (e.g., cron-like jobs, timers) in Base44's docs — only entities/CRUD, AI agents triggered by chat, and CLI/SDK for building apps are mentioned, none of which describe recurring scheduling.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Base44 documents workflows that run on a schedule or trigger (Superagents), including scheduled meeting-notes automation and connections to external tools like Google Workspace/Slack/GitHub, directly supporting recurring/automated job scheduling. Missing for 10: independent hands-on verification of scheduling reliability, and more detail on scheduling granularity/configuration options beyond the brief doc mention.",
+    "evidenceIds": [
+      "base44-docs-46",
+      "base44-docs-47",
+      "base44-docs-45",
+      "base44-docs-48"
+    ]
   },
   {
     "productId": "base44",
@@ -326,11 +362,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Base44 supports GitHub sync for local development, which provides some version-control capability for app code, but there is no documented feature for versioning/reviewing/rolling back automations specifically (AI agents, workflows, or data changes) within the platform itself. missing for 10: automation-specific versioning, in-app diff/review UI for automations, rollback mechanism for workflow or agent changes, independent confirmation of rollback working in practice.",
+    "rationale": "Base44 supports GitHub sync for code version control (which would include workflow/agent config files) and defines agent behavior in local JSONC config files, implying some git-based versioning, but there is no explicit feature for reviewing execution history or rolling back automations/workflows specifically. Missing for 10: dedicated automation run history/audit log, an in-app rollback mechanism for workflows, and any review UI for automation changes beyond generic GitHub diffs.",
     "evidenceIds": [
       "base44-docs-2",
       "base44-docs-18",
-      "base44-docs-6"
+      "base44-docs-46",
+      "base44-docs-51",
+      "base44-docs-29"
     ]
   },
   {
@@ -338,11 +376,12 @@
     "storyId": "custom-domain",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs explicitly cover connecting a custom domain, automatic SSL issuance/renewal, and the branding benefit of a custom domain, directly matching the founder story. Missing for 10: no independent/hands-on corroboration of the domain-connection flow and no detail on DNS setup steps or troubleshooting.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly cover connecting a custom domain to a published app, with automatic SSL issuance/renewal and branding benefits (base44-docs-42, base44-docs-26, base44-docs-8). No independent/hands-on corroboration of the domain-connection flow exists beyond first-party docs. Missing for 10: independent/community verification of the custom domain setup working in practice, and details on DNS/CNAME configuration steps.",
     "evidenceIds": [
-      "base44-docs-8",
-      "base44-docs-26"
+      "base44-docs-42",
+      "base44-docs-26",
+      "base44-docs-8"
     ]
   },
   {
@@ -351,12 +390,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Base44's 'eject' command only clones an app into a new Base44-hosted project with its own app ID (base44-docs-1/22), and custom-domain support (base44-docs-8/26) is for pointing a domain at Base44's own hosting, not exporting to external infrastructure. No evidence describes downloading a deployable build for self-hosting or deploying to a third-party cloud/host.",
+    "rationale": "Base44's docs describe custom domains (still served on Base44's own hosting) and an 'eject'/clone command that copies code into a new Base44 project with its own app ID, but there is no evidence of exporting or deploying the generated app to an external host or self-managed infrastructure outside Base44's platform.",
     "evidenceIds": [
       "base44-docs-1",
       "base44-docs-22",
+      "base44-docs-36",
       "base44-docs-8",
-      "base44-docs-26"
+      "base44-docs-42"
     ]
   },
   {
@@ -365,13 +405,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Base44 supports editing code externally via GitHub sync, CLI eject/download, or bringing your own agent to the sandbox, but there is no documentation of an in-builder source code editor where a developer can view/edit the generated code directly inside the app builder UI. missing for 10: any mention of an in-app/in-builder code editor or code view, first-party or hands-on confirmation of direct in-builder code editing.",
+    "rationale": "Base44's docs describe natural-language editing (AI updates code from prompts), exporting code via 'eject' to a separate local project, GitHub sync for local dev, and connecting external AI agents to the sandbox — but none of these describe a built-in code editor where a developer can directly view and hand-edit the generated source inside the builder UI itself.",
     "evidenceIds": [
       "base44-docs-1",
       "base44-docs-2",
       "base44-docs-3",
-      "base44-docs-18",
-      "base44-docs-22"
+      "base44-docs-33",
+      "base44-docs-37"
     ]
   },
   {
@@ -379,28 +419,32 @@
     "storyId": "export-and-eject",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "The CLI 'eject' command explicitly downloads full frontend and backend code from an app and creates a standalone project with its own app ID, enabling code export outside the platform, and this is corroborated by CLI overview docs and GitHub sync features for local development. missing for 10: no independent/hands-on confirmation that the exported app can be fully hosted/run with no Base44 backend dependency, and no detail on how backend services (DB, auth) are replicated outside the platform.",
+    "confidence": "medium",
+    "rationale": "Base44 documents an explicit eject/clone CLI command that downloads full frontend and backend code into a standalone project with its own app ID, plus GitHub sync for local development and an SDK/CLI for building outside the platform. This directly matches the story of exporting and running the app outside the platform, though hosting elsewhere isn't explicitly detailed beyond code export. Missing for 10: independent/hands-on confirmation that ejected code runs fully standalone without Base44 backend dependencies, and explicit documentation of external hosting steps post-export.",
     "evidenceIds": [
       "base44-docs-1",
       "base44-docs-22",
-      "base44-docs-5",
-      "base44-docs-27",
+      "base44-docs-36",
       "base44-docs-2",
-      "base44-docs-18"
+      "base44-docs-18",
+      "base44-docs-4",
+      "base44-docs-17"
     ]
   },
   {
     "productId": "base44",
     "storyId": "external-agent-drives-builder",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Base44 explicitly documents a 'Bring your own agent' feature letting users connect their own AI coding agent or scripts directly to the app's sandbox, and the backend-as-code design is highlighted as friendly to external AI agents. However, this is only first-party documentation with no independent/hands-on verification of how well an external agent 'drives the builder' compared to the built-in one. missing for 10: independent/hands-on confirmation, details on how full control transfers to the external agent vs the built-in one.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Base44 explicitly documents 'Bring your own agent' functionality allowing users to connect their own AI coding agent (or scripts) to a Base44 app's sandbox, either with or without a local code copy, plus CLI/SDK access and MCP server integration for external assistants. missing for 10: independent/hands-on corroboration of bring-your-own-agent working in practice, and detail on how it interoperates with or replaces the built-in agent's UI/workflow.",
     "evidenceIds": [
       "base44-docs-3",
-      "base44-docs-29",
-      "base44-docs-17"
+      "base44-docs-37",
+      "base44-docs-38",
+      "base44-docs-40",
+      "base44-docs-51",
+      "base44-docs-2"
     ]
   },
   {
@@ -409,15 +453,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44 explicitly builds full-stack apps (frontend + managed backend with data entities, auth, business logic) from prompts, and community testimonials confirm producing 'fully functional apps' from prompts with 'two prompts and deploy.' missing for 10: independent technical benchmarking of true single-prompt full-stack generation and clearer boundary on how much backend logic vs just data models is generated.",
+    "rationale": "Base44 is explicitly a prompt-to-app builder with a managed backend: docs state you describe what you want and AI updates code, styles, components, and the backend is auto-defined in code/config (base44-docs-31, docs-33, docs-29, docs-17), with an SDK/CLI for entities/CRUD (docs-28, docs-23) showing generated backend logic alongside UI. Community reports corroborate that a single prompt/session produces a fully functional app end-to-end (base44-comm-5, base44-comm-6). Missing for 10: no detailed technical breakdown of how a single literal prompt maps to both layers simultaneously, and some community skepticism about complexity/cost at scale (base44-comm-8) tempers full confidence.",
     "evidenceIds": [
+      "base44-docs-31",
+      "base44-docs-33",
+      "base44-docs-29",
       "base44-docs-17",
       "base44-docs-28",
-      "base44-docs-30",
-      "base44-docs-9",
+      "base44-docs-23",
       "base44-comm-5",
-      "base44-comm-6",
-      "base44-probe-1"
+      "base44-comm-6"
     ]
   },
   {
@@ -426,37 +471,39 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Base44 has documented first-party GitHub integration explicitly for two-way sync between local development and the Base44 app editor, plus CLI eject/clone commands to pull code into your own repo with SDK support for custom builds. Missing for 10: independent/hands-on confirmation of the bidirectional sync working reliably in practice, and more detail on conflict resolution or merge behavior.",
+    "rationale": "Docs explicitly describe connecting a Base44 app to GitHub for two-way sync between local development and Base44's editor, supporting version control and collaboration workflows [base44-docs-2][base44-docs-18]. missing for 10: independent/hands-on confirmation of bidirectional sync working reliably, and detail on conflict resolution or merge handling.",
     "evidenceIds": [
       "base44-docs-2",
       "base44-docs-18",
-      "base44-docs-1",
-      "base44-docs-22",
       "base44-docs-5"
     ]
   },
   {
     "productId": "base44",
     "storyId": "import-existing-design",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state you can turn a Figma frame into a working app and also start from an existing website and refine it in the app editor, directly matching the story's core capability. Missing for 10: no independent/hands-on corroboration of Figma import fidelity, and no detail on how much manual refinement is needed after import.",
+    "rationale": "Docs explicitly claim 'Turn a Figma frame into a working app' and also support starting from an existing website/design ('Begin from a website you already own', 'Share a public website link... to instantly copy the design'), directly matching the story's core ask. However, there is no independent/hands-on corroboration of Figma import fidelity, and details on file format support, layer/component mapping, or limitations are absent. Missing for 10: independent verification of Figma import quality, technical detail on fidelity/limitations, community hands-on reports of this specific feature.",
     "evidenceIds": [
       "base44-docs-16",
-      "base44-docs-15"
+      "base44-docs-15",
+      "base44-docs-34",
+      "base44-docs-33"
     ]
   },
   {
     "productId": "base44",
     "storyId": "iterate-by-prompt",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Base44 markets AI-driven previews before changes are applied (docs-14) and lets users send follow-up instructions to the AI from a shared board (docs-12), suggesting some iterative safety, and community feedback broadly praises the AI's ability to build/extend apps (base44-comm-4, base44-comm-5). However there is no explicit documentation or hands-on evidence about preserving prior functionality, versioning, rollback, or regression protection when iterating via prompts, and comm-8 notes users can hit walls that cost money without resolving issues cleanly. Missing for 10: explicit non-regression/version-history mechanism, documented safeguards against breaking existing features, and independent confirmation that follow-up prompts don't degrade prior work.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Base44 explicitly supports iterative refinement via natural-language follow-up prompts ('Describe what you want... AI updates code, styles, and components for you', 'AI shows previews before it touches anything'), and GitHub sync plus a built-in DB architecture help preserve app integrity across edits (praised by a community reviewer for making cross-app fixes easy). However, there's no documented rollback/checkpoint/versioning safety net specifically guarding against regressions from new prompts, and one community post complains about runaway token costs when iteration goes wrong. Missing for 10: explicit undo/checkpoint or diff-preview mechanism guaranteeing non-breaking changes, and independent hands-on evidence that repeated prompt iterations don't degrade existing features.",
     "evidenceIds": [
-      "base44-docs-12",
+      "base44-docs-33",
       "base44-docs-14",
+      "base44-docs-12",
+      "base44-comm-2",
       "base44-comm-4",
       "base44-comm-5",
       "base44-comm-8"
@@ -467,27 +514,30 @@
     "storyId": "local-dev-own-tools",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Base44 documents GitHub sync to write code locally and keep it in sync with the platform, a CLI to eject/clone apps into local projects with their own app ID, and explicit 'bring your own agent/scripts' sandbox connectivity for local tooling. These first-party docs directly cover local editing plus pushing changes back, though there's no independent/hands-on verification of the round-trip workflow. Missing for 10: independent/hands-on confirmation that local-edit-then-push-back actually works smoothly in practice.",
+    "confidence": "high",
+    "rationale": "Base44 supports GitHub sync for local development in a developer's own editor (base44-docs-2, base44-docs-18), plus a CLI (base44-docs-5, base44-docs-24) and 'bring your own agent' sandbox connection (base44-docs-3, base44-docs-37) for pushing changes back to the platform. Eject/clone commands also let developers pull code locally to work with own tooling (base44-docs-1, base44-docs-22). missing for 10: independent/hands-on confirmation that GitHub sync round-trips changes reliably without conflicts, and more detail on push-back mechanics beyond docs claims.",
     "evidenceIds": [
       "base44-docs-2",
-      "base44-docs-3",
       "base44-docs-18",
-      "base44-docs-22",
       "base44-docs-5",
-      "base44-docs-29"
+      "base44-docs-24",
+      "base44-docs-3",
+      "base44-docs-37",
+      "base44-docs-1",
+      "base44-docs-22"
     ]
   },
   {
     "productId": "base44",
     "storyId": "one-click-publish",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show apps get a custom domain with auto-issued SSL (base44-docs-8, base44-docs-26) and a community user describes building an app with 'two prompts and deploy' (base44-comm-6), implying a simple publish flow, but there is no first-party doc explicitly describing a one-click 'Publish' action or default live URL provisioning step-by-step. missing for 10: explicit docs on the one-step publish/deploy button and default subdomain URL generation, independent confirmation of publish simplicity beyond one anecdote.",
+    "rationale": "Base44 apps get a live URL with auto-issued SSL and can add a custom domain (base44-docs-8, base44-docs-26, base44-docs-42), and a community user confirms building and deploying an app quickly ('two prompts and deploy', base44-comm-6), supporting one-step publishing. However, there's no explicit first-party doc describing the exact 'Publish' button/flow itself (only domain-setup and post-publish steps are documented). Missing for 10: explicit documentation of the publish action/button and its default URL format, plus independent verification of the one-step claim beyond a single anecdote.",
     "evidenceIds": [
       "base44-docs-8",
       "base44-docs-26",
+      "base44-docs-42",
       "base44-comm-6"
     ]
   },
@@ -495,36 +545,34 @@
     "productId": "base44",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Base44 offers an SDK/CLI for CRUD on data entities, backend code/config management, and app MCP servers for external agents, giving strong programmatic access to backend/data operations. However, many UI-only capabilities (visual design board, theming/branding UI, AI-generated design previews, video generation, template publishing flow, login page customization) have no documented API/CLI equivalents, and there's no OpenAPI spec exposed (openapi probe returned 404s), suggesting API parity is partial rather than complete. missing for 10: documented API/CLI equivalents for visual design/branding tools, AI design preview workflow, media generation features, and a public OpenAPI spec confirming full UI-API parity.",
+    "rationale": "Base44 documents an SDK for entity CRUD, a CLI for backend management, and MCP servers exposing account/app functionality to external AI assistants, giving real programmatic access to core backend/data operations. However, no OpenAPI/public API spec was found (probe shows all openapi.json paths 404), and many UI-centric capabilities (AI design chat, theming, templates, superagent workflows, domain/login setup) are not shown to have documented API/CLI equivalents. missing for 10: a comprehensive API spec covering UI-only features (design, theming, superagents, domain/auth config), independent verification of full API/UI parity.",
     "evidenceIds": [
       "base44-docs-4",
       "base44-docs-5",
       "base44-docs-17",
       "base44-docs-23",
       "base44-docs-28",
-      "base44-docs-29",
-      "base44-docs-7",
-      "base44-probe-2",
-      "base44-docs-12",
-      "base44-docs-13",
-      "base44-docs-14",
-      "base44-docs-21"
+      "base44-docs-38",
+      "base44-docs-51",
+      "base44-probe-2"
     ]
   },
   {
     "productId": "base44",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The 'eject' CLI command lets a user clone an app's frontend code and backend resources into a new independent project with its own app ID, which supports a degree of platform exit, and GitHub sync/SDK access reinforce code portability. However, there is no explicit documentation of exporting the actual data records (database contents) in an open, standard format (e.g., CSV/JSON dump) — the Data page description only shows records in-app, and no export-to-open-format feature is described. Missing for 10: explicit data-record export in open formats (CSV/JSON/SQL dump), documentation confirming eject includes full data migration, independent verification that a full account can be exported and closed without lock-in.",
+    "rationale": "Base44's CLI 'eject'/clone command lets users download frontend code and backend resources into a new local project with its own app ID, and the SDK/GitHub sync support building outside the platform, giving real portability of app logic. However, there's no explicit documentation of exporting the actual data records (e.g., CSV/JSON dump of table rows) in an open format, only code/resources — missing for 10: explicit bulk data-record export format, confirmation the ejected app runs fully independent of Base44 services, and independent/hands-on verification that a full clean exit works.",
     "evidenceIds": [
       "base44-docs-1",
       "base44-docs-22",
-      "base44-docs-9",
-      "base44-docs-18"
+      "base44-docs-36",
+      "base44-docs-4",
+      "base44-docs-17",
+      "base44-docs-9"
     ]
   },
   {
@@ -533,13 +581,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Base44 is a closed, hosted AI app-builder platform; no evidence anywhere in the pack indicates its own source code (platform/product source) is published under an open license. Evidence only covers exporting/ejecting user-built apps, CLI, SDK, and GitHub sync for user apps—not the openness of Base44's own codebase.",
-    "evidenceIds": [
-      "base44-docs-1",
-      "base44-docs-22",
-      "base44-docs-4",
-      "base44-docs-5"
-    ]
+    "rationale": "Base44 is a closed proprietary SaaS platform; the evidence shows CLI/SDK/eject/MCP features for building apps on Base44, but nothing indicates Base44's own platform source code is published under an open license.",
+    "evidenceIds": []
   },
   {
     "productId": "base44",
@@ -547,23 +590,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only that you can 'eject' an individual app's frontend/backend code into a new Base44-hosted project (still using Base44's platform with its own app ID), not that the Base44 platform/core service itself can be run on your own infrastructure. No mention of an open-source core, downloadable server, or self-hosting instructions exists in the pack.",
+    "rationale": "Base44 is a managed SaaS app-builder; the only related capability is 'eject/clone' which creates a new project with its own app ID still hosted within Base44's platform, not an independent self-hosted deployment of the core product itself. No evidence of an open-source release or instructions to run the Base44 platform on one's own infrastructure.",
     "evidenceIds": [
       "base44-docs-1",
       "base44-docs-22",
-      "base44-probe-1"
+      "base44-docs-36"
     ]
   },
   {
     "productId": "base44",
     "storyId": "preview-before-publish",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Base44 docs mention an AI-driven design/preview flow ('AI shows previews before it touches anything') and an all-in-one board to view pages and send instructions, implying a live-preview-while-building experience, but there is no explicit documentation of a dedicated 'preview before publish' mode or hands-on confirmation of this specific workflow. missing for 10: explicit documentation of a live preview/staging environment distinct from the published app, independent/hands-on confirmation that founders can interact with an unpublished live preview, and details on how changes are reflected in real time before publishing.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs describe an AI editor board where founders can see every page, give instructions, and get AI-generated design previews before changes are applied (base44-docs-12, base44-docs-14), and natural-language editing updates code/styles live (base44-docs-33), implying an in-progress live preview prior to publishing. However, there is no explicit 'live preview' feature name, no screenshots/hands-on walkthrough of the preview pane, and no independent confirmation of this specific pre-publish preview workflow. missing for 10: explicit documentation naming a live/instant preview feature, independent hands-on corroboration of previewing unpublished changes, detail on how preview differs from the published app.",
     "evidenceIds": [
+      "base44-docs-12",
       "base44-docs-14",
-      "base44-docs-12"
+      "base44-docs-33"
     ]
   },
   {
@@ -572,7 +616,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Base44 apps; the docs focus on app building, CLI, SDK, and integrations without any privacy/data-location settings.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls anywhere in Base44's docs or community discussion; the evidence covers custom domains, SSL, CLI, SDK, and AI agent features but nothing about choosing where data is stored.",
     "evidenceIds": []
   },
   {
@@ -580,8 +624,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions any data-training opt-out, privacy controls over AI model training, or related policy language; the docs cover unrelated topics like CLI, SDK, domains, and login. Absence of evidence for this applicable privacy axis yields 'none'.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-out settings, or data-privacy controls for model training; the evidence covers app-building, CLI, SDK, integrations, and security incidents but nothing about training-data exclusion.",
     "evidenceIds": []
   },
   {
@@ -589,8 +633,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, data export, or account/data deletion controls; only unrelated features (data tables display, security incident, SSL) are mentioned. This is an applicable privacy axis for a SaaS app builder, so absence of evidence yields 'none'.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, data export/purge tools, or privacy settings for user data; the docs cover app building, CLI, agents, and integrations but nothing on retention/deletion governance.",
     "evidenceIds": []
   },
   {
@@ -599,7 +643,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or any opt-out mechanism for Base44; the docs and community discussion cover unrelated features and a security vulnerability, not data collection controls.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics opt-out, or privacy settings for Base44; the security incident discussed relates to an auth vulnerability, not telemetry.",
     "evidenceIds": []
   },
   {
@@ -608,14 +652,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Base44's core value proposition is prompt-to-app generation with a managed full-stack backend (data, auth, deploy, custom domain), well documented (base44-docs-17, docs-29, probe-1) and strongly corroborated by hands-on community reports of building fully functional apps from a couple of prompts (base44-comm-4, comm-5, comm-6). Some community skepticism exists around cost/complexity at scale (base44-comm-8) but this doesn't contradict the core capability. Missing for 10: independent benchmark/quantitative comparison of generated app quality and more first-party detail on limits of 'full-stack' completeness for complex apps.",
+    "rationale": "This is Base44's core value proposition, backed by extensive first-party docs on natural-language app building, no-code requirement, AI design updates, managed backend/database, and corroborated by independent community reports of successfully generating fully functional apps from a few prompts. missing for 10: no rigorous third-party benchmark of output quality/reliability across complex use cases beyond anecdotal HN reports.",
     "evidenceIds": [
+      "base44-docs-31",
+      "base44-docs-33",
       "base44-docs-17",
-      "base44-docs-29",
       "base44-probe-1",
-      "base44-comm-4",
       "base44-comm-5",
-      "base44-comm-6"
+      "base44-comm-6",
+      "base44-comm-2"
     ]
   },
   {
@@ -624,12 +669,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44 ships a built-in, managed database as part of the app builder—the Data page shows tables/records directly in-app (base44-docs-9), entities are auto-created and manipulated via SDK CRUD (base44-docs-23, base44-docs-28), and backend/data models sync automatically without leaving the platform. Community corroboration confirms the integrated DB approach is core to the product's value (base44-comm-2). Missing for 10: no independent hands-on walkthrough of provisioning steps, and no detail on schema/migration controls or scaling limits.",
+    "rationale": "Base44 bakes a managed database directly into the builder — the Data page shows every app table as a card for direct editing (base44-docs-9), and the SDK exposes CRUD entity operations against that same backend (base44-docs-23, base44-docs-28) with zero external DB setup. Independent community commentary corroborates this as a deliberate design choice that developers found valuable: 'Maor opted to include the db within the platform, rather than enable persistence externally... made fixing cross-application things very easy' (base44-comm-2). Missing for 10: explicit documentation of automatic schema/table generation from natural-language prompts and independent hands-on proof of zero-config wiring beyond the HN anecdote.",
     "evidenceIds": [
       "base44-docs-9",
       "base44-docs-23",
       "base44-docs-28",
-      "base44-docs-29",
       "base44-comm-2"
     ]
   },
@@ -639,28 +683,29 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Base44 supports app-level collaboration via GitHub sync (both docs-2/18) and community evidence confirms apps have an 'editor/collaborator' role concept (base44-comm-9), showing teammates can be added to a shared app. However, there is no first-party documentation of a dedicated shared-workspace UI, invite flow, or role/permission management for teams, and the collaborator mechanism was shown to have a security flaw (base44-comm-9, base44-comm-11) though patched quickly. Missing for 10: explicit workspace/team management docs, invite-teammate flow, granular permission controls, and independent confirmation of smooth real-time multi-user editing.",
+    "rationale": "Docs show GitHub sync 'for version control, local development, and collaboration' (base44-docs-2, base44-docs-18), and a security report confirms an 'editor/collaborator' role per app exists (base44-comm-9), implying multi-user access to a shared app. However there's no first-party documentation of inviting teammates, setting roles/permissions, or real-time co-editing inside a shared Base44 workspace. Missing for 10: explicit team-invite/role-management docs, evidence of simultaneous multi-user editing, and workspace-level access controls beyond the incidental collaborator mention.",
     "evidenceIds": [
       "base44-docs-2",
       "base44-docs-18",
-      "base44-comm-9",
-      "base44-comm-11"
+      "base44-comm-9"
     ]
   },
   {
     "productId": "base44",
     "storyId": "server-functions-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Base44 supports backend entities/CRUD, SDK/CLI-based backend code, and login/auth integrations, and its AI-agent/tool-connection features suggest extensibility, but there is no explicit documentation of adding custom server-side functions or built-in third-party integrations like payment processors or email services from the builder. missing for 10: dedicated server-side function/webhook feature, documented payment gateway integration, documented email-sending integration, and independent confirmation of these working in practice.",
+    "rationale": "Base44 supports backend logic via its SDK/CLI (entities, CRUD, custom backend code) and has documented integrations for AI services (OpenAI, Claude, etc.) and third-party tools (Google Workspace, Slack, GitHub, Notion, HubSpot, Wix) plus built-in auth/login providers, but there is no explicit documentation of dedicated payment processing or transactional email integrations comparable to Stripe/SendGrid-style setup from the builder. missing for 10: explicit payments integration (e.g. Stripe) docs, explicit transactional email sending integration, hands-on confirmation that server-side custom functions can call these third-party services from the builder UI.",
     "evidenceIds": [
-      "base44-docs-6",
-      "base44-docs-9",
+      "base44-docs-4",
       "base44-docs-17",
       "base44-docs-23",
       "base44-docs-28",
-      "base44-docs-29"
+      "base44-docs-45",
+      "base44-docs-49",
+      "base44-docs-46",
+      "base44-docs-11"
     ]
   },
   {
@@ -669,25 +714,24 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Base44 explicitly supports starting from community/public app templates (docs-10, docs-20) and CLI project creation from templates (docs-19), plus cloning existing apps via eject (docs-1/22) instead of a blank prompt. Missing for 10: independent/community corroboration of template quality or breadth, and no detail on template categories/curation.",
+    "rationale": "Base44 docs explicitly describe browsing community-created templates and starting from one instead of a blank prompt ([base44-docs-20], [base44-docs-32]), plus the ability to publish your own templates ([base44-docs-10]) and CLI template selection at project creation ([base44-docs-19]). Missing for 10: independent/community hands-on confirmation of the template gallery experience and details on template quality/variety.",
     "evidenceIds": [
       "base44-docs-10",
-      "base44-docs-20",
       "base44-docs-19",
-      "base44-docs-1",
-      "base44-docs-22"
+      "base44-docs-20",
+      "base44-docs-32"
     ]
   },
   {
     "productId": "base44",
     "storyId": "targeted-visual-edits",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Base44's editing model is prompt/AI-driven (e.g., 'Ask for design options, pick the one you want. AI shows previews before it touches anything' and 'send instructions straight to AI') rather than direct click-to-edit manipulation of text, style, or layout. No documentation or community evidence describes a designer selecting an element and editing it inline without going through an AI prompt.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Base44 is primarily a prompt-driven builder ('Describe what you want in natural language, and AI updates code, styles, and components for you' — docs-33), meaning most edits require a prompt round-trip. There is a narrow direct-control exception for global theme settings ('Set colors and fonts for your entire app from one place' — docs-13), but no evidence of a select-an-element-and-directly-edit-text/layout canvas interface. missing for 10: evidence of a WYSIWYG/direct-manipulation editor for selecting individual elements and editing text/layout without invoking AI, independent hands-on confirmation of non-prompt editing.",
     "evidenceIds": [
-      "base44-docs-12",
       "base44-docs-13",
+      "base44-docs-33",
       "base44-docs-14"
     ]
   },
@@ -697,7 +741,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the docs pack describes how credits/tokens are consumed per action or what plans include; the only relevant signal is a community complaint that costs can balloon before you realize it ('they charge by the token... run up a huge bill'), which reflects opacity rather than a documented usage/plan breakdown. missing for 10: any pricing page, credit/token cost table, plan comparison, or usage dashboard documentation.",
+    "rationale": "No evidence pack item documents how credits/tokens are consumed per action or what a plan includes; the only related mention is a community complaint that Base44 'charges by token' with no visibility until a large bill appears (base44-comm-8), which is criticism rather than a documented capability. Missing for 10: any first-party pricing/credit-usage docs, plan comparison, or in-app usage dashboard evidence.",
     "evidenceIds": [
       "base44-comm-8"
     ]
