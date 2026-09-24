@@ -40,6 +40,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Deep-table homepage: OSS/YC/MCP quick filters (?oss/?yc/?mcp) shipped; full-width move reverted same day by founder ask | shipped 2026-09-23 |
 | Arenas as a homepage tab next to Processes (grid moved out of companies mode) | shipped-next-deploy 2026-09-23 |
 | Keep deep-spiking until done | DONE 2026-09-23: never-spiked ZERO (60 products swept) + all 9 thinnest arenas deepened (53 products; id-verification 18→30.5, billing 26→43, banking-as-a-service 21.5→38.5); honest rank moves throughout; GAIA bias correction on 9950X3D |
+| Deep spikes on ALL vendors (founder 2026-09-24 "get accurate here"): 112 surface products (<35 ev) across 44 arenas | in-lane (deep-wave ×3, disjoint 38/37/37; hardware + owner-product bias rules embedded) |
 | 'Virtual Startup' — simulated startup journey, branching starting decisions, synthetic data, timeline mode | shipped-next-deploy 2026-09-23 — /virtual-startup: 16 decision combos over real chains, seeded synthetic artifacts all SIMULATED-chipped, day timeline from corpus estimates |
 | Product-page Access/CLI-docs box info arch — top rail retired, doc chips inline in header secondary row | shipped-next-deploy 2026-09-23 |
 | Showcase caption ('docs · captured … · view live') removed — provenance moves to the image tooltip | shipped-next-deploy 2026-09-23 |
