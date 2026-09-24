@@ -3436,13 +3436,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "uv's `uv add`, `uv remove`, and `uv lock --upgrade-package` commands are documented as non-interactive CLI operations that update the lockfile/environment, and community reports confirm uv surfaces resolution errors (e.g., failing to resolve a local wheel) rather than silently succeeding, supporting scriptable failure detection. However, no evidence explicitly documents uv's exit-code conventions or structured/machine-parseable error output for agent-driven automation. Missing for 10: explicit exit-code documentation, structured/JSON error reporting, and first-party guidance on non-interactive/CI failure handling.",
+    "rationale": "uv provides non-interactive dependency management commands (uv add, uv remove, uv lock --upgrade-package, uv sync) with deterministic lockfile updates and CI integration (setup-uv action) suitable for agentic/scripted use, and community reports confirm it 'just works' without prompts in automated pipelines. However, the evidence never documents specific exit-code semantics or structured error output for failure cases, and some community reports mention resolver quirks/edge-case errors that aren't clearly surfaced.\nmissing for 10: explicit documentation of exit codes, structured/machine-readable error output on failure, and hands-on confirmation of clear error messaging in CI.",
     "evidenceIds": [
       "uv-docs-2",
+      "uv-docs-9",
       "uv-docs-38",
       "uv-docs-39",
-      "uv-comm-18",
-      "uv-docs-9"
+      "uv-docs-42",
+      "uv-docs-10",
+      "uv-comm-6",
+      "uv-comm-10"
     ]
   },
   {
@@ -3464,7 +3467,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project management tool with no data-analysis or insight-generation features; AI-generated insights from user data is a category error for this product type.",
+    "rationale": "uv is a Python packaging/project management CLI tool with no data storage or analytics surface; generating AI insights from 'my data' is a category error for this kind of product, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3473,7 +3476,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project management tool, not an automation/orchestration platform; there is no axis in the evidence for scheduling or running autonomous background automations, and this capability is outside its category (wrong axis, not a missing feature of this tool type).",
+    "rationale": "uv is a Python packaging/project/tool manager; it has no scheduling, triggers, or autonomous background-agent orchestration features — setting up autonomous background automations is outside its product category rather than a documented gap.",
     "evidenceIds": []
   },
   {
@@ -3482,7 +3485,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python package/project manager CLI, not an AI assistant product; the evidence pack shows no built-in AI assistant feature, and this axis is a category error for this type of tool.",
+    "rationale": "uv is a Python package/project manager CLI tool; it has no built-in AI assistant feature. This story applies to AI agent/assistant products, not package management tooling — category mismatch, so 'na' rather than 'none'.",
     "evidenceIds": []
   },
   {
@@ -3491,14 +3494,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "uv is explicitly designed as a scriptable CLI with deterministic, non-interactive commands (init, add, run, lock, tool install) and provides official CI tooling via the astral-sh/setup-uv GitHub Action, cache persistence for CI, and self-update; it also ships a documented CLI reference and JSON output mode (uv version --output-format json) for machine parsing, all consistent with headless/CI use. Missing for 10: no independent CI-hands-on report confirming smooth headless runs at scale, and community notes mention some friction with Docker/CI env var complexity (uv-comm-16).",
+    "rationale": "uv ships explicit CI/headless support: official `astral-sh/setup-uv` GitHub Action for installing/caching, non-interactive `uv run`/`uv sync`/`uv lock` commands, deterministic lockfiles for reproducible builds, JSON-formatted output (`uv version --output-format json`) for scripting, and `uv self update`/`uv cache clean` for maintenance in automated pipelines. Community feedback confirms it 'just works' in scripted/server contexts (uv-comm-7, uv-comm-10) though one user reports Docker friction (uv-comm-16), a caveat rather than a full contradiction. missing for 10: independent CI-benchmark reports beyond GitHub Actions, and resolution of the noted Docker integration friction.",
     "evidenceIds": [
       "uv-docs-10",
       "uv-docs-34",
+      "uv-docs-28",
       "uv-docs-46",
       "uv-docs-50",
-      "uv-docs-28",
       "uv-gh-3",
+      "uv-docs-25",
+      "uv-comm-7",
       "uv-comm-16"
     ]
   },
@@ -3508,7 +3513,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python package/project manager, not an AI agent or assistant; there is no evidence of MCP server integration in its feature set, and this axis is outside its product category.",
+    "rationale": "uv is a Python packaging/project/tool manager, not an AI agent or assistant that consumes MCP servers/tools; nothing in the evidence relates to MCP integration, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3526,7 +3531,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv's entire interface is a structured CLI with explicit subcommands (uv init, uv add, uv run, uvx, etc.) documented across the evidence pack; there is no mention of natural-language parsing, an AI assistant, or NL-to-command translation anywhere in the docs or community discussion.",
+    "rationale": "uv is a traditional structured CLI (uv init, uv add, uv run, uvx, etc.) and evidence only shows discrete flag/subcommand syntax; the llms.txt reference (uv-docs-52) merely exposes docs in markdown for LLM consumption, not a natural-language command interface for operating uv itself. No evidence of any NL-to-command translation, chat interface, or agentic command parsing.",
     "evidenceIds": []
   },
   {
@@ -3535,15 +3540,17 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "uv ships an official, extensively documented CLI (docs.astral.sh/uv/reference/cli/) covering project management, tool execution, packaging, and even JSON-structured output (`uv version --output-format json`) suitable for scripting/agentic use, corroborated by extensive first-party docs and independent hands-on community reports of CLI usage. Missing for 10: no explicit documentation or guide targeting AI-agent/automation-specific CLI usage patterns beyond general scriptability.",
+    "rationale": "uv is fundamentally a CLI tool with an extensive official CLI reference (uv-probe-4) and dozens of documented commands (init, add, remove, run, tool install/run, python pin, cache clean, self update, etc.), all first-party. Community evidence (uv-comm-1, uv-comm-2, uv-comm-6, uv-comm-10, uv-comm-15) independently corroborates hands-on CLI usage and its ergonomics. Missing for 10: no explicit mention of AI-agent-specific CLI features (e.g., machine-readable/JSON output beyond uv-docs-28) tailored to agentic workflows.",
     "evidenceIds": [
-      "uv-probe-4",
-      "uv-docs-28",
       "uv-docs-4",
-      "uv-docs-3",
+      "uv-probe-4",
+      "uv-docs-15",
+      "uv-docs-20",
+      "uv-docs-58",
+      "uv-gh-3",
+      "uv-comm-2",
       "uv-comm-6",
-      "uv-comm-10",
-      "uv-docs-52"
+      "uv-comm-15"
     ]
   },
   {
@@ -3567,7 +3574,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project tool; it has no concept of API credentials or agent identity/authorization scoping, so scoped/least-privilege credential issuance is a category error for this product type.",
+    "rationale": "uv is a Python packaging/project tool, not an identity or credential-issuing system; scoped API credential issuance for agents is outside its product category — a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3576,7 +3583,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "uv's evidence pack covers CLI commands, docs, and package management features, but there is no mention of an official SDK or programmatic API library that developers could build against for AI-native integration; the closest is the llms.txt documentation index, which is not an SDK.",
+    "rationale": "The evidence pack covers uv's CLI commands, project/tool management, caching, and CI integration, but contains no mention of an official SDK or programmatic API (Python library, REST API, etc.) for building against uv from external code. Since a developer tool like uv could plausibly expose such an SDK, the axis applies, but no evidence shows one exists.",
     "evidenceIds": []
   },
   {
@@ -3585,7 +3592,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project management CLI tool, not an event-driven service; webhooks/event subscriptions are not a relevant capability category for this kind of product.",
+    "rationale": "uv is a Python packaging/project management CLI tool; webhooks/event subscription is not a relevant capability for this kind of product, making the axis a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3623,7 +3630,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python package/project manager, not a service with production data or a sandbox/test-environment concept; testing against a sandbox vs production data is a category error for this kind of tool.",
+    "rationale": "uv is a Python package/project manager; it has no concept of a sandboxed test environment vs production data — this is a category error for the product type, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3631,21 +3638,17 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "uv is a CLI package manager; the evidence pack shows no versioned API surface, API reference, or documented deprecation policy for such an API — only CLI commands, self-update, and docs indexing are mentioned. The axis is applicable (a tool could publish versioned APIs/CLI compatibility guarantees with deprecation notices) but no such policy is evidenced.",
-    "evidenceIds": [
-      "uv-probe-3",
-      "uv-docs-52",
-      "uv-probe-4"
-    ]
+    "confidence": "medium",
+    "rationale": "uv ships versioned releases and a self-update mechanism, but there is no evidence of a documented API/CLI deprecation policy, versioning guarantees for its interface, or a formal stability/deprecation schedule that AI-native automation could rely on.",
+    "evidenceIds": []
   },
   {
     "productId": "uv",
     "storyId": "artifact-integrity-verification",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions checksum verification, package signing, or attestation checks before installing/running packages; docs cover caching, tool install, and lockfiles but not supply-chain verification mechanisms.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions checksum verification, package signing, or attestation checks for fetched packages; documentation focuses on speed, caching, tool management, and workflow features with no supply-chain verification claims.",
     "evidenceIds": []
   },
   {
@@ -3669,7 +3672,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project management tool; it has no event-based rule/trigger/automation-workflow engine, and event-driven automation is outside its category (a buyer would use CI/CD or task schedulers for that, not uv itself). This is a wrong-axis question for a package manager, not a missing feature.",
+    "rationale": "uv is a Python packaging/project management CLI tool; it has no event-driven rules engine or automation-trigger system, and this axis is a category error for this kind of tool rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3678,7 +3681,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project manager; scheduling recurring jobs or workflows is outside its product category — no scheduler/cron/orchestration feature is claimed or implied by any evidence.",
+    "rationale": "uv is a Python packaging/project management tool, not a workflow orchestrator or scheduler; scheduling recurring jobs is outside its product category and would require external tools (cron, CI schedulers) rather than uv itself.",
     "evidenceIds": []
   },
   {
@@ -3687,7 +3690,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python packaging/project manager (dependency installs, virtual envs, tool execution, lockfiles), not an automation/workflow platform; the story's concept of versioning, reviewing, and rolling back 'automations' (e.g., agent workflows) does not map to any uv capability in the evidence pack.",
+    "rationale": "uv is a Python packaging/project management tool (dependency installation, virtual envs, tool running, lockfiles) — it has no concept of 'automations' as workflows/agents to version, review, or roll back. This story targets AI-native workflow/automation platforms, which is a different product category entirely.",
     "evidenceIds": []
   },
   {
@@ -3730,15 +3733,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "uv's lockfile is explicitly documented as cross-platform, and it ships standalone installers (curl-based) plus pip installation, with consistent CLI commands (`uv add`, `uv run`, `uv tool install`, etc.) that work the same way regardless of OS. Community comments corroborate a consistent, fast workflow but don't specifically stress-test Windows parity. Missing for 10: explicit Windows-specific documentation/testing, independent hands-on confirmation of identical behavior across macOS/Linux/Windows, and any discussion of platform-specific quirks.",
+    "rationale": "uv's docs explicitly market `uv.lock` as a 'cross-platform lockfile' and provide unified commands (`uv init`, `uv add`, `uv run`, `uv tool install`) plus a standalone installer (curl or pip) and GitHub Actions integration for CI across environments, indicating one workflow spanning platforms. Missing for 10: explicit statements or independent hands-on confirmation of identical behavior specifically across macOS, Linux, and Windows (evidence only generically calls the lockfile 'cross-platform' and community quotes are Linux/Mac-centric with no Windows-specific validation).",
     "evidenceIds": [
       "uv-docs-17",
       "uv-docs-54",
       "uv-docs-57",
+      "uv-docs-62",
       "uv-gh-2",
-      "uv-docs-4",
-      "uv-comm-2",
-      "uv-comm-6"
+      "uv-docs-46",
+      "uv-docs-10",
+      "uv-docs-4"
     ]
   },
   {
@@ -3747,17 +3751,18 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "uv documents a clear CI caching workflow via the official `astral-sh/setup-uv` GitHub Action (installs uv, persists cache) plus a global dependency cache, cache-key config, and cache-clean commands, which directly supports fast CI installs with cache-restore. However, there is no explicit documentation of an 'offline mode' or offline-install flag, and community reports note real caching gaps (e.g. uvx sometimes re-downloading dependencies, large disk cache growth) that undercut a fully offline-capable guarantee. Missing for 10: explicit offline-install/--offline flag documentation, first-party guidance on air-gapped CI use, and confirmation that cache-restore avoids network calls entirely.",
+    "rationale": "uv documents a strong caching model (aggressive dependency caching, configurable cache-keys, cache clean commands) and explicitly recommends the official `astral-sh/setup-uv` GitHub Action which 'installs uv, adds it to PATH, (optionally) persists the cache' for CI, plus guidance for Python version pinning and matrix testing in CI — directly supporting fast, reproducible CI installs. However, the evidence pack lacks explicit documentation of an offline/--no-index install mode or air-gapped install workflow, and one community report (uvx redownloading dependencies repeatedly) suggests cache reuse isn't always seamless. Missing for 10: explicit offline-install documentation/flags, independent benchmark data on CI cache-restore speedups, and resolution of the redownload-cache community complaint.",
     "evidenceIds": [
       "uv-docs-10",
       "uv-docs-34",
-      "uv-docs-33",
       "uv-docs-25",
-      "uv-docs-11",
       "uv-docs-26",
       "uv-docs-45",
+      "uv-docs-11",
+      "uv-docs-46",
+      "uv-docs-50",
       "uv-comm-4",
-      "uv-comm-11"
+      "uv-comm-7"
     ]
   },
   {
@@ -3766,13 +3771,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack confirms uv has a lockfile (uv.lock) and commands like uv add/uv lock --upgrade-package, but nowhere does it mention a --frozen or --locked flag (or any mode) that fails an install when the manifest and lockfile diverge. Since lockfile reproducibility is clearly an applicable axis for a package manager but no supporting evidence exists, this is 'none' rather than 'na'.",
+    "rationale": "The evidence pack confirms uv maintains a cross-platform lockfile (uv.lock) but contains no mention of a frozen/immutable install mode (e.g., a --locked or --frozen flag) that fails when the manifest and lockfile diverge; missing for 10: any documentation of a strict/frozen lock-verification flag, CI usage examples enforcing lock consistency, or community confirmation of this failure behavior.",
     "evidenceIds": [
       "uv-docs-17",
-      "uv-docs-54",
       "uv-docs-57",
-      "uv-docs-9",
-      "uv-docs-39"
+      "uv-docs-62"
     ]
   },
   {
@@ -3781,30 +3784,33 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "uv explicitly ships a `uv pip` interface described as a drop-in replacement for common pip/pip-tools/virtualenv commands, letting switchers keep familiar syntax while adopting uv (uv-docs-5, uv-docs-31), and also supports migrating requirements.txt via `uv add -r` (uv-docs-42). However, hands-on community reports show real friction: missing `uv pip install --user` support, `uv pip` not being a full pip replacement in some workflows, and non-standard handling of things like NVIDIA's package hacks or pre-releases (uv-comm-8, uv-comm-12, uv-comm-16). Missing for 10: independent verification that all common pip/poetry/pyenv command idioms map cleanly, and resolution of documented edge-case incompatibilities.",
+    "rationale": "uv explicitly ships a `uv pip` interface described as a drop-in replacement for pip/pip-tools/virtualenv and supports importing existing `requirements.txt` files, and community reports confirm the CLI feels familiar/more ergonomic than pip or poetry. However, hands-on reports note real friction for switchers—missing flags like `uv pip install --user`, needing to fall back to `uv pip` for some workflows, and differing venv-location conventions versus pipenv/poetry—so the familiar-interface promise isn't fully seamless. Missing for 10: full flag parity with pip (e.g., --user), confirmed smooth Docker/CI parity, and broader independent validation beyond a few HN threads.",
     "evidenceIds": [
       "uv-docs-5",
       "uv-docs-31",
+      "uv-docs-66",
       "uv-docs-42",
+      "uv-comm-15",
       "uv-comm-8",
-      "uv-comm-12",
-      "uv-comm-16"
+      "uv-comm-16",
+      "uv-comm-17"
     ]
   },
   {
     "productId": "uv",
     "storyId": "lockfile-reproducible-install",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "uv's `uv.lock` is described as a cross-platform lockfile with exact dependency information, and `uv add`/`uv lock --upgrade-package` explicitly preserve the rest of the lockfile intact, supporting deterministic, reproducible installs across machines. Missing for 10: explicit documentation of the `uv sync` command for installing strictly from the lockfile, and independent/hands-on confirmation that resolved versions are identical across different OS/machines.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "uv's cross-platform lockfile (uv.lock) captures exact dependency resolution, and `uv sync`/`uv run` install from it consistently across machines, per docs; community feedback corroborates reliable, reproducible environment handling (e.g. 'uv run automatically runs your code through the env'). missing for 10: no explicit hands-on multi-machine reproducibility test or independent verification of identical resolved versions across OSes.",
     "evidenceIds": [
       "uv-docs-17",
       "uv-docs-54",
       "uv-docs-57",
+      "uv-docs-62",
       "uv-docs-2",
-      "uv-docs-9",
-      "uv-docs-39"
+      "uv-comm-10",
+      "uv-comm-6"
     ]
   },
   {
@@ -3838,14 +3844,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "uv documents a concrete import path from pip's requirements.txt (`uv add -r`) and offers a `uv pip` drop-in interface plus positions itself as a pip/pip-tools/poetry/pyenv/virtualenv replacement, and community reports confirm many users migrating with minor friction (e.g. missing `--user` flag). However there is no dedicated conversion tool or documented guide for importing an existing poetry.lock/Pipfile/conda environment, and some community feedback shows migration is only partial (still using `uv pip`, or treating uv as 'just a faster pip+venv').\nmissing for 10: dedicated poetry/Pipfile/conda lockfile conversion tooling, an official step-by-step migration guide beyond the requirements.txt case, independent hands-on confirmation of full incumbent-tool migration.",
+    "rationale": "uv documents a concrete import path for pip users: 'uv add -r' to migrate a requirements.txt file (uv-docs-42), plus a full pip-compatible 'uv pip' CLI and drop-in replacement for pip/pip-tools/virtualenv/poetry/pyenv (uv-docs-4, uv-docs-5, uv-docs-31, uv-docs-66) that reduces friction for switchers. However, there is no documented converter for other incumbents' native files (e.g., poetry.lock, Pipfile, pyproject build backends), and community reports cite real migration friction (missing --user flag, sticky --no-binary, Docker/venv location differences) showing the transition isn't seamless. Missing for 10: dedicated import/conversion command for Poetry/Pipenv projects, independent hands-on account of a full incumbent-to-uv migration succeeding without workarounds.",
     "evidenceIds": [
       "uv-docs-42",
       "uv-docs-4",
       "uv-docs-5",
       "uv-docs-31",
+      "uv-docs-66",
+      "uv-comm-5",
       "uv-comm-8",
-      "uv-comm-14",
       "uv-comm-16"
     ]
   },
@@ -3870,8 +3877,12 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a CLI/package-manager tool with no graphical or web UI and no separate API surface — the CLI itself is the sole interface, so a UI-vs-API parity question is a category error for this kind of product.",
-    "evidenceIds": []
+    "rationale": "uv is a command-line tool with no graphical UI or separate web/API surface to compare against—its CLI *is* the interface (uv-docs-4, uv-probe-4), and probes confirm no OpenAPI/API surface exists (uv-probe-3). The UI-vs-API parity question is a category error for this kind of product.",
+    "evidenceIds": [
+      "uv-docs-4",
+      "uv-probe-4",
+      "uv-probe-3"
+    ]
   },
   {
     "productId": "uv",
@@ -3909,38 +3920,41 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a local CLI package/project manager distributed as open-source binaries (installed via curl/pip) that runs entirely on the user's own machine; there is no hosted/SaaS version for which 'self-hosting' would be a meaningful alternative deployment choice. This axis is a category error for this kind of product.",
+    "rationale": "uv is a local CLI/package manager binary that runs entirely on the user's machine with no server/service component to host; 'self-hosting the core product' is a category error for this type of tool, similar to asking a VPN client to support version control.",
     "evidenceIds": []
   },
   {
     "productId": "uv",
     "storyId": "parseable-lockfile-format",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "uv.lock is documented as a well-defined, cross-platform lockfile containing exact dependency information, and uv provides a documented CLI/reference and llms.txt for machine consumption, supporting agent readability. However, the evidence never explicitly states the lockfile's text format (TOML) or its diff-friendliness, nor is there community/hands-on confirmation of agents reading/diffing uv.lock. Missing for 10: explicit documentation of the lockfile's text/TOML format, explicit diff-friendliness claims, and independent evidence of agents successfully parsing or diffing uv.lock.",
+    "rationale": "uv's docs repeatedly describe `uv.lock` as a cross-platform lockfile capturing exact dependency information, generated/updated by ordinary commands (`uv add`, `uv lock`, `uv remove`), which any agent or human could read and diff since it's a normal project file. However, the evidence never explicitly states the file's text format (TOML) or discusses diff-friendliness, agent tooling, or version-control workflows. Missing for 10: explicit confirmation of a plain-text/TOML format, explicit diffability claims, and independent/hands-on corroboration of an agent reading or diffing uv.lock.",
     "evidenceIds": [
       "uv-docs-17",
       "uv-docs-54",
       "uv-docs-57",
-      "uv-docs-52",
-      "uv-probe-4"
+      "uv-docs-62",
+      "uv-docs-2",
+      "uv-docs-38",
+      "uv-docs-39"
     ]
   },
   {
     "productId": "uv",
     "storyId": "prebuilt-binary-cache",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "uv installs Python packages via wheels (prebuilt binaries) by default and uses a global cache to avoid re-downloading/re-building dependencies already fetched, with docs confirming aggressive caching and disk-efficient global cache for deduplication; community reports corroborate the speed gains from this caching. missing for 10: explicit first-party documentation contrasting wheel vs sdist source builds, and independent benchmarking specifically isolating binary-cache reuse rather than general speed.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "uv's docs describe an aggressive global cache that avoids re-downloading and re-building dependencies already fetched previously, and highlight disk-efficient caching for dependency deduplication, which is how installing prebuilt wheels from cache versus recompiling works in the Python packaging ecosystem uv is compatible with. Community reports corroborate large real-world speedups consistent with cache hits avoiding rebuilds. Missing for 10: explicit documentation distinguishing wheel (binary) vs sdist (source) install paths and confirmation cache stores prebuilt wheels specifically rather than just resolution metadata.",
     "evidenceIds": [
       "uv-docs-25",
       "uv-docs-33",
-      "uv-docs-26",
+      "uv-docs-66",
       "uv-comm-1",
       "uv-comm-2",
-      "uv-comm-7"
+      "uv-comm-6",
+      "uv-docs-11"
     ]
   },
   {
@@ -3949,7 +3963,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a local Python package/project manager CLI tool with no hosted data storage or cloud service component, so data residency/region selection is a category error for this product type.",
+    "rationale": "uv is a local Python packaging/project tool with no hosted service or data storage component, so data residency/region selection is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3958,7 +3972,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "uv is a Python package/project manager; it has no data-training or AI-model opt-out feature, and this axis is a category error for a package management CLI tool.",
+    "rationale": "uv is a Python package/project manager; it has no AI model training or data-usage opt-out feature, and this privacy axis about preventing AI training on user data is a category error for a package manager tool.",
     "evidenceIds": []
   },
   {
@@ -3975,8 +3989,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or an opt-out mechanism for uv; none of the docs or community items address this axis.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or any opt-out mechanism/environment variable for uv; the axis applies to a CLI tool but no documentation or community source addresses privacy/telemetry settings.",
     "evidenceIds": []
   },
   {
@@ -3984,8 +3998,8 @@
     "storyId": "private-registry-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers uv's project management, tools, caching, and pip-compatibility features but contains no mention of configuring private package indexes, mirrors, or scoped authentication credentials. This is a fair axis for a package manager, but no supporting evidence exists in the pack.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention configuring private package indexes, mirrors, or scoped authentication (e.g., index URLs, credentials, keyring integration) despite this being a plausible and common capability for a Python package manager. Nothing in the docs, GitHub excerpts, or community posts addresses private registries or mirror configuration.",
     "evidenceIds": []
   },
   {
@@ -4008,16 +4022,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "uv fully supports installing Python packages and tools via uv add, uv pip, uv tool install/uvx, all of which draw on the standard Python package ecosystem (PyPI) and are corroborated by extensive community use for real-world packages like torch, ruff, and pycowsay, showing it can fetch a huge range of actively maintained packages quickly and reliably. missing for 10: explicit mention of PyPI/registry scale or freshness, and independent benchmarking of registry breadth vs pip/conda.",
+    "rationale": "uv provides a pip-compatible interface to install from PyPI (the large, actively maintained Python package registry), plus uv add/uv pip install, uvx/uv tool install for standalone tools, and uv python install for Python versions itself, all backed by docs and corroborated by community usage reports of successful installs. missing for 10: no first-party evidence of uv operating its own separate large registry (it relies on PyPI), and no independent audit of registry breadth/uptime beyond docs and anecdotal HN comments.",
     "evidenceIds": [
-      "uv-docs-2",
+      "uv-docs-4",
       "uv-docs-5",
       "uv-docs-31",
+      "uv-docs-66",
+      "uv-docs-2",
       "uv-docs-58",
-      "uv-docs-19",
+      "uv-docs-27",
       "uv-comm-2",
       "uv-comm-6",
-      "uv-comm-11"
+      "uv-comm-15"
     ]
   },
   {
@@ -4026,16 +4042,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "uv supports `uv python pin 3.11` which writes a checked-in `.python-version` file, and `uv python install` to install runtimes, plus `uv tool install`/`uvx` for per-project tool versions pinned via pyproject.toml/lockfile. This directly matches installing/switching runtimes or tool versions from a checked-in config file. Missing for 10: independent hands-on confirmation specifically of `.python-version` switching behavior across projects (only vendor docs/GitHub README cited) and no community corroboration of multi-project runtime switching workflow.",
+    "rationale": "uv supports pinning a Python version to a checked-in .python-version file via `uv python pin`, which is respected by CI and other tooling, and tool/dependency versions are tracked in pyproject.toml/uv.lock for per-project reproducibility. missing for 10: independent hands-on confirmation specifically of cross-machine .python-version switching behavior and edge cases (community evidence is mostly about speed/pip-replacement, not this specific workflow).",
     "evidenceIds": [
       "uv-gh-1",
       "uv-gh-4",
       "uv-gh-5",
-      "uv-docs-27",
       "uv-docs-6",
       "uv-docs-50",
-      "uv-docs-20",
-      "uv-docs-30"
+      "uv-docs-17",
+      "uv-docs-27"
     ]
   },
   {
@@ -4044,7 +4059,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions vulnerability scanning, CVE auditing, or security advisories in uv's CLI; coverage is entirely about dependency management, tooling, caching, and Python version handling.",
+    "rationale": "No evidence pack item mentions vulnerability scanning, CVE auditing, or security advisory checks; uv's documented commands cover project/dependency management, tool execution, caching, and Python version management but not vulnerability auditing.",
     "evidenceIds": []
   },
   {
@@ -4068,7 +4083,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions any supply-chain security controls like blocking lifecycle scripts, enforcing minimum package release age, or similar malicious-package protections; all citations concern project/tool management, caching, and general performance/UX feedback.",
+    "rationale": "No evidence in the pack mentions blocking lifecycle scripts, enforcing minimum package release age, or any other supply-chain security controls for platform engineers; the pack only covers general package/tool/project management features.",
     "evidenceIds": []
   },
   {
@@ -4077,7 +4092,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of any plugin system, third-party backend hooks, taps, or overlay mechanism for uv; all citations describe uv's built-in commands (add/remove/run/tool/venv/cache) rather than any extensibility API for third parties to hook into the manager. This is a fair axis for a package/project manager (comparable to pip plugins or poetry plugins), but no evidence shows uv supports it.",
+    "rationale": "The evidence pack documents uv's built-in commands (project management, tool running, pip-compatible interface, caching, Python version management) but contains no mention of a plugin architecture, third-party taps, overlays, or pluggable backends that let developers extend uv itself. uv is presented as a single self-contained Rust binary replacing multiple tools, not as an extensible platform.",
     "evidenceIds": []
   },
   {
@@ -4086,16 +4101,22 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "uv.lock provides exact cross-platform dependency pinning respected by uv sync/run, uv python pin pins Python version per project, and tool installs respect specified version constraints on upgrade; community feedback corroborates reliable reproducible behavior. Missing for 10: no independent hands-on test explicitly verifying pin enforcement across CI/multiple machines beyond docs claims.",
+    "rationale": "uv supports exact version pinning at multiple levels: `uv.lock` provides a cross-platform lockfile with exact dependency versions that is respected on `uv run`/`uv sync`, `uv python pin` pins the exact Python version per project via `.python-version`, and `uv add`/`uv remove`/`--upgrade-package` let developers control exact package versions while the rest of the lockfile stays intact. Tool version pins are also respected via `uvx [email protected]` and `uv tool upgrade` constraints. missing for 10: no independent hands-on confirmation that lockfile pins are strictly enforced across CI/collaborators beyond docs, and community notes on pre-release version resolution quirks (uv-comm-9) suggest minor edge-case friction.",
     "evidenceIds": [
       "uv-docs-17",
-      "uv-docs-2",
-      "uv-docs-38",
+      "uv-docs-54",
+      "uv-docs-57",
+      "uv-docs-62",
       "uv-gh-1",
-      "uv-docs-50",
+      "uv-gh-4",
+      "uv-gh-5",
+      "uv-docs-9",
+      "uv-docs-39",
       "uv-docs-23",
-      "uv-comm-2",
-      "uv-comm-15"
+      "uv-docs-41",
+      "uv-docs-59",
+      "uv-docs-50",
+      "uv-comm-9"
     ]
   },
   {
@@ -4104,7 +4125,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms uv supports Cargo-style workspaces (uv-docs-32, uv-docs-56) but contains no mention of filtering installs or `uv run` scripts to a subset of workspace packages, package-selection flags (e.g. per-package targeting), or any 'affected packages' detection mechanism.",
+    "rationale": "The evidence confirms uv supports Cargo-style workspaces (uv-docs-32/56), but nothing in the pack describes a mechanism to run installs or scripts filtered to a subset of workspace packages, let alone selecting packages 'affected by a change'. No `--package` flag, workspace member selection, or change-detection feature is documented or discussed anywhere in the pack.",
     "evidenceIds": [
       "uv-docs-32",
       "uv-docs-56"

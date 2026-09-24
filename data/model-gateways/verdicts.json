@@ -3906,13 +3906,14 @@
     "productId": "vercel-ai-gateway",
     "storyId": "agent-spend-guardrails",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm you can create per-API-key budgets and view spend/usage broken out by API key (docs-16, docs-12, docs-5), which supports giving an agent its own key with a spend cap. However, there is no explicit documentation of rate-limit guardrails (only spend budgets), and community evidence shows real friction around balance-based enforcement even with BYOK keys, so the 'cannot run away on spend' guarantee is only partially evidenced. Missing for 10: explicit per-key rate-limiting controls, clear docs on key-level rate guardrails (not just budget caps), and independent confirmation that budget enforcement reliably halts an autonomous agent before overspend.",
+    "rationale": "Docs confirm you can create a distinct API key (e.g., for an agent) and set a spend budget cap on that specific key (docs-16), plus per-key usage/request monitoring (docs-12, docs-30). However, there's no explicit documentation of rate-limit guardrails (requests/min or concurrency caps) per key, only spend budgets — and a community report notes budget enforcement can behave unexpectedly with BYOK/account balance interactions (vercel-ai-gateway-comm-1), suggesting the guardrail isn't purely deterministic on the agent's own key. missing for 10: explicit rate-limiting controls per key, independent confirmation that budget caps reliably halt an agent's spend without side effects.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-16",
+      "vercel-ai-gateway-docs-40",
       "vercel-ai-gateway-docs-12",
-      "vercel-ai-gateway-docs-5",
+      "vercel-ai-gateway-docs-30",
       "vercel-ai-gateway-comm-1"
     ]
   },
@@ -3922,14 +3923,14 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show routing rules via providerOptions.gateway (order, only, sort, timeouts) that let requests fail over across providers by availability/latency, plus cost/spend visibility and budgets, which supports policy-driven switching. However, there's no explicit evidence of dynamic mid-task capability-based switching or agent-driven runtime policy changes beyond static config, and community evidence flags BYOK requests being blocked once account balance hits $0, undermining pure availability-based routing in some cases. missing for 10: explicit support for capability-based (not just cost/availability) routing rules, evidence of an agent dynamically changing models mid-task at runtime, and independent confirmation that failover/ordering works reliably in production.",
+    "rationale": "Docs clearly support routing rules like order/only/sort, per-provider timeouts, automatic failover on error, and default dynamic provider selection based on latency/uptime — this covers availability and cost-based switching mid-task. However, there's no explicit evidence of policy-driven switching based on 'capability' (e.g., routing to a more capable model for harder subtasks) or agent-initiated dynamic policy changes mid-task beyond static config; routing rules appear configured per-request/providerOptions rather than dynamically decided by the agent's own logic mid-task. missing for 10: explicit capability-based routing policy, evidence of agent dynamically changing routing mid-task (not just static failover/order config), independent/hands-on validation of routing rules working as described.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-9",
       "vercel-ai-gateway-docs-10",
       "vercel-ai-gateway-docs-29",
+      "vercel-ai-gateway-docs-35",
       "vercel-ai-gateway-docs-3",
-      "vercel-ai-gateway-docs-16",
-      "vercel-ai-gateway-comm-1"
+      "vercel-ai-gateway-docs-13"
     ]
   },
   {
@@ -3938,13 +3939,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Vercel confirms a live llms.txt (probe-1) plus per-page .md documentation endpoints (probe-2) and an OpenAPI spec (probe-3), all machine-readable for agent consumption, and docs explicitly mention coding-agent setup guidance (docs-8, docs-24). Missing for 10: no independent/community confirmation that agents actually use these llms.txt/docs successfully in practice.",
+    "rationale": "Probes confirm a working llms.txt at vercel.com/llms.txt (HTTP 200) and .md doc versions of AI Gateway docs (HTTP 200), explicitly designed for AI agents to consume, plus an OpenAPI spec for machine-readable API discovery. Docs also reference coding-agent setup guidance. Missing for 10: independent third-party confirmation of an agent successfully using llms.txt to complete a task.",
     "evidenceIds": [
       "vercel-ai-gateway-probe-1",
       "vercel-ai-gateway-probe-2",
       "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-docs-8",
-      "vercel-ai-gateway-docs-24"
+      "vercel-ai-gateway-docs-8"
     ]
   },
   {
@@ -3953,7 +3953,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is developer infrastructure that routes and manages LLM API calls between an application and model providers; it has no end-user product surface or stored user data of its own from which to surface insights. This capability belongs to applications built on top of the gateway, not the gateway itself, so the axis is a category error here.",
+    "rationale": "Vercel AI Gateway is developer infrastructure for routing and managing LLM API calls, not a product that holds a user's own data and surfaces AI-generated insights from it — this axis doesn't apply to an API gateway.",
     "evidenceIds": []
   },
   {
@@ -3962,7 +3962,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is a model-routing/API gateway product (unified API, failover, spend monitoring, observability) — it is not an automation/orchestration platform with schedulers, triggers, or persistent background execution. Building or running autonomous background automations is outside its product category; that capability would live in a separate agent/orchestration tool that might use the Gateway for model calls.",
+    "rationale": "Vercel AI Gateway is a routing/proxy layer for model API calls, not an automation/scheduling/agent-runner product; it has no concept of background jobs, triggers, or autonomous scheduled runs. This axis is a category error for a gateway product, not a missing capability.",
     "evidenceIds": []
   },
   {
@@ -3971,7 +3971,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is an infrastructure/routing layer for LLM API calls, not a product with a built-in AI assistant UI for users to delegate tasks to; it enables developers to build agents (e.g., ToolLoopAgent) but does not itself ship a first-party assistant persona for end users.",
+    "rationale": "Vercel AI Gateway is infrastructure for routing/managing model requests, not a product with a built-in assistant persona to delegate tasks to; this axis is a category error for a gateway/routing tool.",
     "evidenceIds": []
   },
   {
@@ -3980,15 +3980,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "AI Gateway is an API/HTTP gateway with OpenAI-compatible endpoints, unauthenticated model listing, OIDC token auth for deployed apps, and a keyless models endpoint verified live — all of which support pure headless/CI/automation use without any UI dependency. missing for 10: no explicit CI pipeline example (e.g., GitHub Actions) or independent third-party report of CI usage.",
+    "rationale": "AI Gateway is API-key based and explicitly documented to work in local dev, CI, external servers, and Vercel deployments, with OpenAI-compatible SDK support and OIDC/API-key auth designed for headless/automated use — a natural fit for CI pipelines. missing for 10: no explicit CI pipeline example/tutorial (e.g. GitHub Actions) or independent hands-on report confirming CI usage.",
     "evidenceIds": [
+      "vercel-ai-gateway-docs-40",
+      "vercel-ai-gateway-docs-38",
       "vercel-ai-gateway-docs-7",
-      "vercel-ai-gateway-docs-14",
-      "vercel-ai-gateway-docs-15",
-      "vercel-ai-gateway-docs-22",
       "vercel-ai-gateway-docs-28",
-      "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-14"
     ]
   },
   {
@@ -4006,11 +4004,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs mention connecting 'supported coding agents' and generic gateway integration, but there is no evidence of an official MCP (Model Context Protocol) server or endpoint that agents can connect to. Missing for 10: explicit MCP server documentation, MCP endpoint URL, and demonstration of an agent connecting via MCP.",
-    "evidenceIds": [
-      "vercel-ai-gateway-docs-8",
-      "vercel-ai-gateway-docs-24"
-    ]
+    "rationale": "Vercel AI Gateway is a service/platform (not itself an agent), so the axis of shipping an official MCP server for agent connectivity applies, but the evidence pack only shows generic API/model access and mentions of 'connects supported coding agents' without any documentation of an official MCP server implementation.",
+    "evidenceIds": []
   },
   {
     "productId": "vercel-ai-gateway",
@@ -4038,14 +4033,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "AI Gateway exposes a documented, OpenAI-compatible public API (Chat Completions, models endpoint) with a verified OpenAPI spec, unauthenticated models endpoint, and probe confirming a live JSON API response, enabling programmatic/agentic control via standard SDKs or raw HTTP. missing for 10: independent third-party developer writeups explicitly praising the API's completeness/stability beyond Vercel's own docs and probes.",
+    "rationale": "Vercel AI Gateway exposes a well-documented public API (OpenAI Chat Completions-compatible endpoint, models endpoint, provider-options, authentication via API key/OIDC), confirmed by both docs and an OpenAPI spec probe, enabling programmatic/agentic use including tool-calling agents. Missing for 10: no independent third-party API client walkthrough or SDK changelog corroborating long-term API stability beyond vendor docs.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-7",
-      "vercel-ai-gateway-docs-15",
-      "vercel-ai-gateway-docs-25",
       "vercel-ai-gateway-docs-28",
+      "vercel-ai-gateway-docs-34",
+      "vercel-ai-gateway-docs-25",
+      "vercel-ai-gateway-docs-38",
+      "vercel-ai-gateway-docs-26",
       "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-probe-2"
     ]
   },
   {
@@ -4054,12 +4051,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show budget caps that can be set per API key, per project, or per team member (docs-16), and per-key usage breakdown in Requests logs (docs-12), plus short-lived OIDC tokens for Vercel-deployed apps that avoid static secrets (docs-14/22). This supports issuing distinct, budget-limited keys for an agent, but there is no documentation of fine-grained permission scoping (e.g. restricting a key to specific models/providers/actions) beyond spend limits. missing for 10: explicit least-privilege scoping controls (model/provider/action restrictions per key), role-based permission model, first-party or independent confirmation of true least-privilege agent credentials",
+    "rationale": "Vercel AI Gateway supports issuing distinct API keys per team/project and setting spend budgets per API key or team member (docs-16, docs-40), which gives some least-privilege control over how much an agent's credential can spend. However, there is no documented mechanism to scope a key to specific models, providers, or actions (e.g., restrict an agent key to read-only or a single model), which is the core of 'scoped/least-privilege' credentials for an agent persona. Missing for 10: explicit permission/scope restrictions per key (model/provider allowlists, role-based access), and independent confirmation that budget caps actually enforce hard cutoffs (community evidence [vercel-ai-gateway-comm-1] raises questions about BYOK behavior when balance hits zero, though that's about billing not scoping).",
     "evidenceIds": [
       "vercel-ai-gateway-docs-16",
-      "vercel-ai-gateway-docs-12",
-      "vercel-ai-gateway-docs-14",
-      "vercel-ai-gateway-docs-22"
+      "vercel-ai-gateway-docs-40",
+      "vercel-ai-gateway-docs-27",
+      "vercel-ai-gateway-docs-38"
     ]
   },
   {
@@ -4068,14 +4065,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "AI Gateway is designed to be used via existing official SDKs (OpenAI client libraries, Anthropic SDK, Vercel AI SDK) with just a base URL/model-string change, documented in openai-compat and getting-started guides, and confirmed by a live OpenAI-compatible endpoint probe. It also supports agent-building primitives like ToolLoopAgent for agentic workflows. missing for 10: no independent/hands-on developer confirmation beyond vendor docs and one API probe.",
+    "rationale": "Vercel AI Gateway is designed to work with official SDKs (OpenAI client libraries, Anthropic SDK, Vercel AI SDK) via URL/base-URL swaps with no rewrites, and provides an OpenAPI spec and models endpoint for programmatic/SDK-based integration. missing for 10: independent hands-on developer confirmation of SDK compatibility across all providers, and dedicated first-party SDK packages beyond OpenAI-compatible client reuse.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-7",
       "vercel-ai-gateway-docs-18",
       "vercel-ai-gateway-docs-28",
       "vercel-ai-gateway-docs-31",
-      "vercel-ai-gateway-docs-26",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-34",
+      "vercel-ai-gateway-probe-3"
     ]
   },
   {
@@ -4084,33 +4081,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of webhook subscriptions or event-driven notifications from AI Gateway; the product exposes REST APIs, logs, and observability dashboards, but nothing about webhooks for events like request completion, budget alerts, or failures.",
+    "rationale": "No evidence anywhere in the pack mentions webhooks or event subscriptions; AI Gateway is described purely as a request-routing/observability layer with logs and usage dashboards, not an event-driven webhook system.",
     "evidenceIds": []
   },
   {
     "productId": "vercel-ai-gateway",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "There's a documented OpenAPI spec and a live, keyless models endpoint that returns JSON model data, showing some interactive/runnable API surface, but there's no evidence of an interactive API reference UI (like Swagger/Redoc) with embedded runnable examples or a try-it-now console. missing for 10: an actual interactive API explorer/playground page, runnable code snippets embedded in docs, independent confirmation of a docs UI with live request execution.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs include code snippets (e.g. ToolLoopAgent example) and a publicly available OpenAPI spec (openapi.json) plus an unauthenticated models endpoint, which could underpin interactive tooling, but there is no evidence of an actual interactive API console/playground where examples can be run live from the docs. Missing for 10: a documented try-it-now console, in-browser code execution, or Swagger/Redoc-style interactive explorer confirmed by first-party docs or hands-on reports.",
     "evidenceIds": [
       "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-probe-4",
+      "vercel-ai-gateway-docs-25",
       "vercel-ai-gateway-docs-15",
-      "vercel-ai-gateway-docs-25"
+      "vercel-ai-gateway-docs-26"
     ]
   },
   {
     "productId": "vercel-ai-gateway",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "A probe confirms a live OpenAPI JSON spec at vercel.com/openapi.json (contains the 'openapi' key) and the docs also expose a keyless models JSON endpoint and OpenAI-compatible API, all of which are machine-readable and programmatically consumable. Missing for 10: explicit confirmation the openapi.json spec covers AI Gateway endpoints specifically (vs. general Vercel API) and independent third-party validation of the spec's completeness.",
+    "rationale": "A probe confirms that https://vercel.com/openapi.json returns HTTP 200 and contains a valid OpenAPI document, and the Gateway's models endpoint is documented as returning a JSON list of models/pricing programmatically, satisfying the ask for a machine-readable API spec. missing for 10: explicit confirmation that the openapi.json specifically scopes to AI Gateway endpoints (vs. general Vercel platform API) and independent/community corroboration of using this spec.",
     "evidenceIds": [
       "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-probe-4",
       "vercel-ai-gateway-docs-15",
       "vercel-ai-gateway-docs-25"
     ]
@@ -4130,12 +4126,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an OpenAI-compatible endpoint with a 'v1' path and an openapi.json spec, but nowhere does the pack document an explicit API versioning scheme or a deprecation policy for endpoints/models. Missing for 10: explicit versioning strategy documentation, deprecation/sunset timelines, migration guidance for breaking changes.",
-    "evidenceIds": [
-      "vercel-ai-gateway-probe-3",
-      "vercel-ai-gateway-probe-4",
-      "vercel-ai-gateway-docs-25"
-    ]
+    "rationale": "The evidence pack covers routing, observability, pricing, BYOK, and OpenAI-compatible endpoints, but nowhere documents API versioning conventions or a deprecation policy for models/endpoints; there's no changelog or versioning scheme cited despite an OpenAPI spec existing.",
+    "evidenceIds": []
   },
   {
     "productId": "vercel-ai-gateway",
@@ -4143,14 +4135,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe automatic retries to other providers on failure, plus fine-grained control via `order`, `only`, and `sort` in providerOptions.gateway, per-provider timeouts for fast failover, and even BYOK-to-system-credential fallback — directly matching the fallback/routing-resilience story. This is well-documented first-party capability with concrete configuration options, though missing for 10: independent hands-on verification that fallback behaves correctly in production scenarios.",
+    "rationale": "Docs explicitly describe automatic retries/fallback to other providers on failure, configurable ordering (order/only/sort), per-provider timeouts for fast failover, and default dynamic provider selection based on uptime/latency—directly matching the story. Missing for 10: independent hands-on validation of fallback behavior in production (only vendor docs, no third-party corroboration of failover reliability).",
     "evidenceIds": [
       "vercel-ai-gateway-docs-3",
       "vercel-ai-gateway-docs-9",
       "vercel-ai-gateway-docs-10",
-      "vercel-ai-gateway-docs-13",
-      "vercel-ai-gateway-docs-20",
-      "vercel-ai-gateway-docs-24"
+      "vercel-ai-gateway-docs-29",
+      "vercel-ai-gateway-docs-32",
+      "vercel-ai-gateway-docs-35"
     ]
   },
   {
@@ -4159,7 +4151,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers routing, failover, BYOK, observability, and embeddings, but there is no mention of any batch/bulk request API or capability to process many items in a single operation. Since a gateway product could plausibly offer batch endpoints (e.g., batch inference or bulk embeddings), the axis applies, but no evidence supports it being delivered.",
+    "rationale": "The evidence describes single-request routing, failover, observability, and pricing features, but there is no documentation of a batch/bulk API (e.g., submitting many prompts or embeddings in one call) or bulk management operations across many items. The only tangential item is CSV/JSON export of request logs (docs-23), which is not a bulk 'operation' in the automation-depth sense the story asks about.",
     "evidenceIds": []
   },
   {
@@ -4183,7 +4175,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is a request-routing/proxy layer for LLM API calls (unified API, retries, budgets, observability) — it has no scheduler, cron, or workflow orchestration feature for recurring jobs. This is a category mismatch, not a missing capability of this product type.",
+    "rationale": "Vercel AI Gateway is a model routing/proxy layer (unified API, failover, spend monitoring, observability) — it is not a workflow/job scheduling product, so 'schedule recurring jobs or workflows' is a category error for this axis.",
     "evidenceIds": []
   },
   {
@@ -4192,21 +4184,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is a model-routing/API gateway product, not an automation-building platform with a concept of versionable 'automations' to review or roll back — this axis is a category mismatch for its product type.",
+    "rationale": "Vercel AI Gateway is a request-routing/observability layer for model calls, not an automation/workflow builder — versioning, reviewing, and rolling back 'automations' is outside its product category; this axis applies to workflow/automation platforms, not an LLM API gateway.",
     "evidenceIds": []
   },
   {
     "productId": "vercel-ai-gateway",
     "storyId": "budgets-limits",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state budgets can be set to cap spend for a team, project, API key, or team member, directly matching the story, and spend monitoring/usage dashboards support enforcement. missing for 10: independent/hands-on confirmation that hard budgets actually block spend at the limit (community evidence only discusses BYOK balance blocking, not per-key/team/user budget enforcement specifics) and more detail on granularity/configuration UI.",
+    "rationale": "Docs explicitly confirm budgets can be set to cap spend for a team, project, API key, or team member (docs-16), which directly supports the story, plus spend monitoring/observability features (docs-5, docs-12, docs-30, docs-36). However, there's a community report that BYOK requests are blocked once Vercel account balance hits $0, suggesting budget enforcement may be tied to platform-wide balance rather than granular limits in practice (comm-1), and no evidence details how budgets are configured (thresholds, alerts vs hard stops, granularity per-key vs per-user in UI). missing for 10: documented UI/API workflow for configuring hard per-key/per-user limits, confirmation that limits are hard stops (not just alerts), and independent verification resolving the BYOK balance-block community concern.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-16",
       "vercel-ai-gateway-docs-5",
       "vercel-ai-gateway-docs-12",
-      "vercel-ai-gateway-docs-30"
+      "vercel-ai-gateway-docs-30",
+      "vercel-ai-gateway-docs-36",
+      "vercel-ai-gateway-comm-1"
     ]
   },
   {
@@ -4215,12 +4209,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Vercel's docs clearly describe BYOK support — pass provider credentials per-request via providerOptions.gateway.byok, with no markup on tokens, and even fallback to system credentials on failure — suggesting bring-your-own-key traffic should run on the developer's own credentials (docs-6, docs-13, docs-19, docs-27). However, a concrete community report describes BYOK requests being blocked by Vercel's account balance reaching $0 even when the user's own provider key has available usage, directly contradicting the expectation that BYOK traffic is unaffected by platform account balance (comm-1). missing for 10: independent confirmation resolving the balance-dependency complaint, clearer documentation on how billing/balance interacts with BYOK requests.",
+    "rationale": "Vercel's docs clearly describe BYOK: passing per-request provider credentials via `byok` in providerOptions.gateway, with no markup on tokens, and fallback to system credentials only if the user's own key fails (docs-13, docs-27, docs-37, docs-6). However, a hands-on community report states that even with a valid BYOK key and provider usage available, requests are blocked once the Vercel account balance hits $0 — contradicting the expectation that bringing your own key fully decouples billing/execution from Vercel's balance (vercel-ai-gateway-comm-1). Missing for 10: independent verification that BYOK truly bypasses Vercel account balance gating, and clearer documentation reconciling this behavior.",
     "evidenceIds": [
-      "vercel-ai-gateway-docs-6",
       "vercel-ai-gateway-docs-13",
-      "vercel-ai-gateway-docs-19",
       "vercel-ai-gateway-docs-27",
+      "vercel-ai-gateway-docs-37",
+      "vercel-ai-gateway-docs-6",
       "vercel-ai-gateway-comm-1"
     ]
   },
@@ -4230,13 +4224,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs show request/usage summaries broken down by project and API key, budgets settable per team/project/API key/team member, and detailed logs filterable by model/provider/status with CSV/JSON export, directly matching the story's cost-tracking dimensions. Missing for 10: explicit per-user (not just per-team-member/API key) breakdowns and independent third-party confirmation of the dashboard's granularity in practice.",
+    "rationale": "Docs show spend tracking broken down by project, API key, and team member, budgets settable per team/project/key/user, and Usage/Requests/Logs dashboards with model/provider filters and CSV/JSON export — covering the core dimensions of the story (model, key, team, user, cross-provider). Missing for 10: independent/hands-on verification of the dashboard's granularity and no explicit evidence of per-model spend breakdown in the UI beyond filtering.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-5",
       "vercel-ai-gateway-docs-12",
       "vercel-ai-gateway-docs-16",
       "vercel-ai-gateway-docs-23",
-      "vercel-ai-gateway-docs-30"
+      "vercel-ai-gateway-docs-30",
+      "vercel-ai-gateway-docs-36"
     ]
   },
   {
@@ -4245,12 +4240,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs show performance-related controls (per-provider timeouts for fast failover, sort-by-performance metric, automatic caching) that imply attention to latency, but there is no direct benchmark or explicit claim quantifying the gateway's own added latency overhead. Missing for 10: published latency benchmarks or first-party/independent measurements showing the gateway adds minimal overhead versus direct provider calls, and no community corroboration of low added latency.",
+    "rationale": "Docs show performance-oriented routing features (latency/uptime-based default provider selection, per-provider timeouts for fast failover, sort by performance metric, and 'caching: auto') that imply an emphasis on low overhead, but there is no explicit benchmark or first-party claim quantifying the gateway's own added latency, nor independent hands-on latency testing. Missing for 10: direct latency-overhead benchmarks, third-party performance comparisons, and explicit claims about the gateway's own processing time versus direct provider calls.",
     "evidenceIds": [
+      "vercel-ai-gateway-docs-35",
       "vercel-ai-gateway-docs-10",
       "vercel-ai-gateway-docs-29",
-      "vercel-ai-gateway-docs-11",
-      "vercel-ai-gateway-docs-21"
+      "vercel-ai-gateway-docs-11"
     ]
   },
   {
@@ -4259,13 +4254,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm ordering/sorting by performance or cost metric (`order`, `only`, `sort`), per-provider timeouts for fast failover, and automatic retries/fallbacks to other providers — covering latency- and cost-based routing and failover. However, explicit weight-based load balancing across providers/deployments/keys is not documented, and there's no evidence of key-level load balancing beyond BYOK fallback to system credentials. missing for 10: explicit weighted load-balancing configuration, per-key routing/balancing control, independent verification of routing behavior under load.",
+    "rationale": "Docs show provider routing controls—`order`, `only`, `sort` (by performance or cost metric), per-provider timeouts for latency-based failover, and default dynamic provider selection based on uptime/latency—which cover latency- and cost-based routing decisions across providers/keys (docs-9, docs-20, docs-29, docs-10, docs-35). However, there is no explicit weighted/percentage-based load-balancing mechanism (e.g., splitting traffic 70/30 across providers) described anywhere in the evidence. Missing for 10: explicit weight-based traffic splitting across providers/keys, and independent/hands-on verification that latency/cost routing actually balances load as claimed rather than just failover ordering.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-9",
       "vercel-ai-gateway-docs-10",
+      "vercel-ai-gateway-docs-20",
       "vercel-ai-gateway-docs-29",
-      "vercel-ai-gateway-docs-3",
-      "vercel-ai-gateway-docs-13"
+      "vercel-ai-gateway-docs-35"
     ]
   },
   {
@@ -4274,11 +4269,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe a models endpoint returning model IDs, context windows, and pricing with no authentication required, and a probe independently confirms the live unauthenticated /v1/models endpoint returns a full JSON model catalog. This directly satisfies browsing/querying a model catalog with pricing and context-window metadata. Missing for 10: no evidence of a dedicated visual browsing UI/dashboard for the catalog beyond the API and docs page.",
+    "rationale": "Docs explicitly describe a public, no-auth-required models endpoint returning model IDs, context windows, and pricing, plus a general model catalog with pricing/capabilities across hundreds of models, and a dashboard for browsing usage/spend by model/provider. Missing for 10: independent hands-on verification of the models endpoint output beyond vendor docs.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-15",
       "vercel-ai-gateway-docs-25",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-41",
+      "vercel-ai-gateway-docs-1"
     ]
   },
   {
@@ -4287,13 +4283,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Vercel explicitly documents OpenAI-compatible Chat Completions API where developers just swap the base URL and key with existing OpenAI SDKs, with no code rewrites, and a probe confirms the gateway serves an OpenAI-compatible /v1/models JSON response. Community evidence around BYOK balance behavior is unrelated to base-URL compatibility, so it doesn't dispute this. Missing for 10: independent third-party hands-on confirmation of a full migration beyond Vercel's own docs/probes.",
+    "rationale": "Docs explicitly describe an OpenAI-compatible Chat Completions API where developers point existing OpenAI/Anthropic SDKs at the gateway with only a base URL and API key change, with no code rewrites required. This is directly corroborated across multiple first-party doc pages describing the migration path. Missing for 10: independent/hands-on developer confirmation beyond vendor docs.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-7",
       "vercel-ai-gateway-docs-18",
       "vercel-ai-gateway-docs-28",
       "vercel-ai-gateway-docs-31",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-34",
+      "vercel-ai-gateway-docs-17"
     ]
   },
   {
@@ -4302,18 +4299,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "The gateway is largely API-first: model access, provider routing, caching, BYOK, and even a keyless public models endpoint are confirmed to work programmatically (docs-1,2,9,15,25,27; probe-4). However, budgets, spend caps, and the detailed Requests/Logs dashboard are described only as UI features (docs-5,12,16,23,30) without documented API endpoints to set budgets or pull logs programmatically. Missing for 10: budgets/spend-cap management API, log/usage export API parity, team/key management API parity.",
+    "rationale": "The core inference functionality (model access, routing, BYOK, caching, provider options, embeddings) is fully API-driven and documented, and even the models list is available via an unauthenticated API endpoint. However, several UI-centric management features—budget setting, usage dashboards, and the Logs/Requests page—are described only as UI screens with no documented API/CLI equivalent for setting budgets or querying usage/logs programmatically. Missing for 10: documented API endpoints for setting spend budgets, retrieving usage metrics, and querying/exporting request logs to match UI capabilities.",
     "evidenceIds": [
-      "vercel-ai-gateway-docs-1",
-      "vercel-ai-gateway-docs-2",
       "vercel-ai-gateway-docs-9",
+      "vercel-ai-gateway-docs-11",
       "vercel-ai-gateway-docs-15",
       "vercel-ai-gateway-docs-25",
-      "vercel-ai-gateway-docs-27",
-      "vercel-ai-gateway-docs-5",
       "vercel-ai-gateway-docs-16",
+      "vercel-ai-gateway-docs-30",
       "vercel-ai-gateway-docs-23",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-12"
     ]
   },
   {
@@ -4322,13 +4317,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Vercel documents that the Logs page lets users export request/usage data as CSV or JSON, and its OpenAI-compatible API means you can point clients elsewhere with minimal rewrite, reducing lock-in. However, there's no evidence of a comprehensive account/data export (billing history, configs, keys) beyond request logs, and BYOK behavior tied to Vercel balance (comm-1) suggests some platform dependency remains. Missing for 10: full account/config data export, evidence of exporting all historical usage/billing data, and confirmation that BYOK/API keys are fully portable without gateway dependency.",
+    "rationale": "Vercel AI Gateway lets users export request logs as CSV or JSON and offers an OpenAI-compatible API that avoids lock-in by letting users point existing clients elsewhere with a URL change, which supports open-format portability and easy exit. However, this only covers request/log data, not a full account data export (billing history, configs, keys) and there is no explicit 'export all my data' or account-closure/export feature documented. Missing for 10: comprehensive account data export beyond logs, explicit data-portability/account-deletion documentation, independent verification of export completeness.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-23",
       "vercel-ai-gateway-docs-7",
-      "vercel-ai-gateway-docs-18",
-      "vercel-ai-gateway-docs-28",
-      "vercel-ai-gateway-comm-1"
+      "vercel-ai-gateway-docs-31"
     ]
   },
   {
@@ -4337,7 +4330,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Vercel AI Gateway is a closed, proprietary hosted service; no evidence in the pack points to any open-source repository or open license for its source code — all evidence is documentation and API endpoints, not source availability.",
+    "rationale": "No evidence of an open-source license or public source repository for AI Gateway; it is a proprietary hosted Vercel service documented only via docs and API references. Missing for 10: any open-source repo, license file, or public source code disclosure.",
     "evidenceIds": []
   },
   {
@@ -4355,7 +4348,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of region/data-residency controls or storage location choices in the AI Gateway docs; the pack covers routing, failover, pricing, and observability but nothing about where data is stored or processed. Missing for 10: any mention of regional data residency options, storage location controls, or compliance certifications addressing data locality.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls for AI Gateway; docs focus on routing, failover, pricing, and observability but never address where data/logs are stored.",
     "evidenceIds": []
   },
   {
@@ -4364,7 +4357,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data-training opt-out policies, zero-retention agreements, or any explicit statement that prompts/outputs are excluded from model training; the docs focus on routing, pricing, and observability instead. Missing for 10: any privacy policy or training-opt-out statement, zero-data-retention terms, provider-level data-use guarantees.",
+    "rationale": "The evidence pack covers routing, observability, pricing, BYOK, and authentication but contains no mention of data training policies, opt-out controls, or any privacy commitment about not using customer prompts/data to train AI models.",
     "evidenceIds": []
   },
   {
@@ -4372,8 +4365,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, log/data deletion controls, or retention configuration for requests/prompts processed through AI Gateway; observability docs mention logging/exporting requests but nothing about retention duration or deletion mechanisms.",
+    "confidence": "medium",
+    "rationale": "Evidence covers routing, spend monitoring, BYOK, and observability, but there is no mention of data retention policies, log/request retention windows, or user-initiated data deletion controls anywhere in the docs pack.",
     "evidenceIds": []
   },
   {
@@ -4381,9 +4374,13 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of any telemetry opt-out or privacy/data-collection controls; the gateway's observability features are about logging usage for the account owner, not about disabling tracking. Missing for 10: any documented telemetry opt-out setting, privacy policy on data retention/training use, or way to disable request logging.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack details logging, observability, usage/spend monitoring, and request tracking features, but there is no mention of any option to opt out of telemetry or usage tracking — in fact, the gateway inherently logs requests, spend, and model usage as a core feature, with no documented opt-out toggle.",
+    "evidenceIds": [
+      "vercel-ai-gateway-docs-12",
+      "vercel-ai-gateway-docs-23",
+      "vercel-ai-gateway-docs-36"
+    ]
   },
   {
     "productId": "vercel-ai-gateway",
@@ -4391,10 +4388,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs describe setting budgets, API keys, and monitoring spend through the Vercel dashboard/CLI, and a general Vercel OpenAPI spec exists, but there is no evidence of a documented admin API specifically for programmatically provisioning AI Gateway resources, keys, or budgets. Missing for 10: explicit admin/API endpoints for creating gateways, generating keys, or setting budgets programmatically, and any docs or examples showing this workflow.",
+    "rationale": "Evidence confirms API keys, spend budgets, and BYOK credentials exist as concepts (docs-16, docs-40), and Vercel has a general OpenAPI spec (probe-3), but nothing in the pack documents an admin API endpoint for programmatically creating gateways, issuing keys, or setting budgets — provisioning appears to be dashboard-driven. Missing for 10: documented admin/API endpoints for key creation, budget configuration, or gateway provisioning, and any example of programmatic key/budget management.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-16",
-      "vercel-ai-gateway-docs-12",
+      "vercel-ai-gateway-docs-40",
       "vercel-ai-gateway-probe-3"
     ]
   },
@@ -4402,29 +4399,30 @@
     "productId": "vercel-ai-gateway",
     "storyId": "rate-limit-smoothing",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The gateway supports failover/retry across providers, per-provider timeouts for fast failover, and ordering/sorting of providers (docs-3, docs-9, docs-10, docs-13, docs-20, docs-29), which can mitigate a single provider's rate limits by shifting traffic elsewhere. However, there's no documented mechanism for spreading load across multiple API keys for the same provider, nor any explicit request queuing/throttling feature to smooth bursts against rate limits. Missing for 10: multi-key load balancing, explicit request queuing/throttling controls, and any rate-limit-specific documentation or independent verification.",
+    "rationale": "AI Gateway supports failover across providers (order/only/sort, per-provider timeouts, automatic retries to other providers or system credentials) which mitigates a single provider's rate limits, and per-request BYOK credentials allow varying keys per call. However, there is no documented feature for spreading traffic across multiple keys for the same provider or for queuing/throttling requests to smooth rate limits — these are implied only via provider fallback, not explicit queue/throttle mechanisms. Missing for 10: explicit multi-key load balancing within a provider, request queuing, and throttling/backoff controls for rate-limit smoothing.",
     "evidenceIds": [
-      "vercel-ai-gateway-docs-3",
       "vercel-ai-gateway-docs-9",
       "vercel-ai-gateway-docs-10",
       "vercel-ai-gateway-docs-13",
-      "vercel-ai-gateway-docs-29"
+      "vercel-ai-gateway-docs-27",
+      "vercel-ai-gateway-docs-29",
+      "vercel-ai-gateway-docs-35"
     ]
   },
   {
     "productId": "vercel-ai-gateway",
     "storyId": "request-logging",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs describe a Logs page with per-request detail, search by request ID, filtering by model/provider/status, and export as CSV/JSON, plus a Requests section with summaries by project/API key and a Usage section with metrics — covering latency, tokens, cost, and routing detail. Missing for 10: independent/hands-on confirmation that latency and cost are explicitly visible per logged request (only vendor docs cited), and no third-party corroboration of the observability UI.",
+    "rationale": "Docs describe a Logs page where requests can be filtered by model/provider/status, searched by request ID, inspected individually to see routing, and exported as CSV/JSON, plus a Usage section and request logs that capture spend, model usage, and observability metrics tied to requests. This directly matches inspecting logged requests/responses with latency, token counts, and cost attached; missing for 10: independent/hands-on corroboration of the UI showing per-request latency and token counts explicitly.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-12",
       "vercel-ai-gateway-docs-23",
       "vercel-ai-gateway-docs-30",
-      "vercel-ai-gateway-docs-5"
+      "vercel-ai-gateway-docs-36"
     ]
   },
   {
@@ -4433,7 +4431,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe a `caching: 'auto'` option in providerOptions.gateway that lets the gateway apply provider-appropriate caching automatically, directly supporting cost/latency reduction on repeated requests, and community pricing discussion confirms cache-read pricing exists for at least one model. However, details on cache hit-rate guarantees, TTL, scope, or independent benchmarks of latency/cost savings are absent. Missing for 10: independent hands-on benchmarks showing latency/cost reduction, documentation on cache TTL/invalidation/scope, confirmation caching works uniformly across all providers rather than being provider-dependent.",
+    "rationale": "Docs explicitly document a `caching: 'auto'` provider option that automatically applies provider-appropriate caching strategies, and community evidence corroborates real cache pricing/discounts for at least one model (DeepSeek), confirming the feature exists in practice. However, it's opt-in per-request config rather than a first-class automatic gateway cache layer, and there's no detail on cache hit-rate guarantees, TTLs, or latency benchmarks. Missing for 10: independent benchmarks quantifying latency/cost savings, broader multi-provider cache documentation, and clarity on cache invalidation/control.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-11",
       "vercel-ai-gateway-docs-21",
@@ -4444,15 +4442,15 @@
     "productId": "vercel-ai-gateway",
     "storyId": "retry-policies",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs explicitly describe automatic failover/retry to other providers on failure (docs-3), configurable provider ordering/fallback with `order`, `only`, `sort` (docs-9, docs-29), per-provider timeouts to trigger fast failover (docs-10), and even automatic retry with system credentials when BYOK fails (docs-13). This directly covers automatic retry policies for transient provider errors. Missing for 10: no independent/hands-on confirmation of retry behavior in production, and no explicit documentation of configurable retry counts/backoff intervals distinct from provider ordering.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state AI Gateway automatically retries requests to other providers on failure, retries BYOK queries with system credentials on failure, supports per-provider timeouts for fast failover, and lets engineers control provider order/sort for failover policies. This directly satisfies automatic retry handling for transient provider errors. Missing for 10: explicit configuration of retry count/backoff parameters, and independent/hands-on verification of retry behavior in production.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-3",
-      "vercel-ai-gateway-docs-9",
       "vercel-ai-gateway-docs-10",
       "vercel-ai-gateway-docs-13",
-      "vercel-ai-gateway-docs-29"
+      "vercel-ai-gateway-docs-9",
+      "vercel-ai-gateway-docs-35"
     ]
   },
   {
@@ -4461,12 +4459,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The gateway advertises full OpenAI/Anthropic SDK compatibility and AI SDK integration (docs-7, docs-18, docs-28, docs-31), and since streaming is a standard capability of those client libraries, it is implicitly supported when pointing existing clients at the gateway's base URL. However, no evidence explicitly documents streaming/token-by-token responses, SSE support, or shows this working across all providers. Missing for 10: explicit docs on streaming endpoints/parameters, hands-on confirmation of token-by-token streaming across multiple providers, and any independent verification.",
+    "rationale": "The gateway explicitly exposes an OpenAI-compatible Chat Completions API and works with existing OpenAI client libraries and the Vercel AI SDK, both of which support streaming responses, implying token-by-token streaming works through the gateway for any provider it proxies. However, no evidence explicitly documents a `stream: true` parameter, SSE format, or confirms streaming behavior per-provider. Missing for 10: explicit streaming API documentation, confirmation across all providers, and independent/hands-on verification of streaming behavior.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-7",
-      "vercel-ai-gateway-docs-18",
       "vercel-ai-gateway-docs-28",
-      "vercel-ai-gateway-docs-31"
+      "vercel-ai-gateway-docs-34",
+      "vercel-ai-gateway-docs-18"
     ]
   },
   {
@@ -4475,23 +4473,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes unified APIs, OpenAI-compatibility, provider routing, embeddings, and observability, but nowhere mentions structured JSON-schema/response_format output support or how it is normalized across different providers. Missing for 10: any documentation of JSON-schema/structured-output support, cross-provider schema normalization, or examples using response_format/json_schema.",
+    "rationale": "The evidence pack documents unified API access, OpenAI-compatible Chat Completions endpoints, provider routing, embeddings, and observability, but never mentions structured/JSON-schema output support (e.g., response_format, JSON mode, or schema-constrained generation) across providers. Since gateway/unified-API products could plausibly normalize structured outputs, the axis applies, but there is no evidence it does so.",
     "evidenceIds": []
   },
   {
     "productId": "vercel-ai-gateway",
     "storyId": "tool-call-fidelity",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Vercel AI Gateway supports a unified API/schema (OpenAI-compatible and AI SDK) that lets developers call tools/functions across many providers with consistent code, including an explicit ToolLoopAgent example with tool calling, provider routing/fallback, and no-rewrite compatibility with existing OpenAI/Anthropic clients. missing for 10: independent hands-on verification of cross-provider tool-call schema consistency (e.g., confirming tool-calling behaves identically across Anthropic/OpenAI/other models) and any documented edge cases or limitations in function-calling parity across providers.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs show a unified API/SDK (ToolLoopAgent with `tools` defined) that works across providers via a single schema, and OpenAI Chat Completions compatibility lets existing tool-calling code work through the gateway without rewrites. However, evidence is limited to one code snippet and general unified-API claims rather than deep documentation of tool-call schema normalization across many providers, and there is no independent/hands-on confirmation of cross-provider tool-calling consistency. missing for 10: multi-provider tool-call schema mapping details, independent verification that tool calls behave identically across providers.",
     "evidenceIds": [
-      "vercel-ai-gateway-docs-2",
-      "vercel-ai-gateway-docs-7",
-      "vercel-ai-gateway-docs-18",
       "vercel-ai-gateway-docs-26",
+      "vercel-ai-gateway-docs-33",
       "vercel-ai-gateway-docs-28",
-      "vercel-ai-gateway-probe-4"
+      "vercel-ai-gateway-docs-7"
     ]
   },
   {
@@ -4500,9 +4496,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The gateway provides a Logs UI with filtering and CSV/JSON export of request logs, which supports manual export of logs, but there's no evidence of native integration with external observability stacks (e.g., OpenTelemetry export, webhook/streaming to Datadog/Grafana, or trace export in standard formats like OTLP). missing for 10: OpenTelemetry/OTLP trace export, native integrations with third-party observability platforms, automated/streaming log export (vs manual CSV/JSON download), independent confirmation of export usability.",
+    "rationale": "Docs confirm a Logs page that can be filtered and exported as CSV or JSON (docs-23), plus spend/usage/observability metrics logging (docs-36, docs-12, docs-30), which supports basic manual export of request logs. However there is no evidence of native integration with external observability stacks (e.g., OpenTelemetry, webhooks, Datadog/Grafana streaming, or a traces API) for automated ingestion into a developer's own tooling. Missing for 10: OpenTelemetry/webhook-based trace export, third-party observability integrations, automated/streaming log delivery beyond manual CSV/JSON download.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-23",
+      "vercel-ai-gateway-docs-36",
       "vercel-ai-gateway-docs-12",
       "vercel-ai-gateway-docs-30"
     ]
@@ -4513,15 +4510,17 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Extensive first-party docs describe a single unified API/key across hundreds of providers, OpenAI-compatible client support, and provider routing/fallback controls, and a live probe confirms the OpenAI-compatible /v1/models endpoint works unauthenticated. There is a minor community-reported caveat about BYOK requests being blocked when Vercel balance hits $0, which slightly limits the 'bring your own key' flow but doesn't contradict the core unified-API story. Missing for 10: independent hands-on developer confirmation of multi-provider switching in production beyond docs and one probe.",
+    "rationale": "Extensive first-party docs confirm a single unified API (OpenAI-compatible Chat Completions endpoint) to access hundreds of models across many providers, with model/provider switching via minimal code changes, provider routing controls, and BYOK support, and this is corroborated by probes confirming live docs/OpenAPI endpoints. Missing for 10: independent hands-on developer confirmation of seamless multi-provider switching in production beyond docs/probes.",
     "evidenceIds": [
       "vercel-ai-gateway-docs-1",
       "vercel-ai-gateway-docs-2",
       "vercel-ai-gateway-docs-7",
       "vercel-ai-gateway-docs-18",
-      "vercel-ai-gateway-docs-28",
-      "vercel-ai-gateway-probe-4",
-      "vercel-ai-gateway-comm-1"
+      "vercel-ai-gateway-docs-33",
+      "vercel-ai-gateway-docs-34",
+      "vercel-ai-gateway-docs-41",
+      "vercel-ai-gateway-probe-2",
+      "vercel-ai-gateway-probe-3"
     ]
   },
   {
@@ -4530,14 +4529,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show a single Gateway-managed API key (or OIDC token) replaces direct provider keys, with per-API-key usage tracking and budget caps that imply teams/apps can have distinct managed keys, and BYOK/system-credential fallback keeps raw provider secrets out of app code. Missing for 10: explicit dashboard walkthrough for creating/rotating multiple named keys per team or app, and documentation of per-key role/permission scoping.",
+    "rationale": "Docs show gateway-managed API keys belong to a Vercel team and work across environments, with per-key budgets, per-key spend/usage summaries, and centralized credential management—so teams/apps use gateway keys instead of raw provider keys (docs-40, docs-16, docs-12, docs-32). OIDC token support further removes the need to manage provider secrets in Vercel deployments (docs-14/22). Missing for 10: explicit documentation of per-app/per-team key scoping or permission granularity, and key rotation/revocation workflows.",
     "evidenceIds": [
-      "vercel-ai-gateway-docs-1",
-      "vercel-ai-gateway-docs-12",
+      "vercel-ai-gateway-docs-40",
       "vercel-ai-gateway-docs-16",
-      "vercel-ai-gateway-docs-13",
+      "vercel-ai-gateway-docs-12",
+      "vercel-ai-gateway-docs-32",
       "vercel-ai-gateway-docs-14",
-      "vercel-ai-gateway-docs-27"
+      "vercel-ai-gateway-docs-22"
     ]
   }
 ]

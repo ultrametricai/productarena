@@ -5686,12 +5686,13 @@
     "productId": "omnara",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Probe confirms llms.txt is live at docs.omnara.com/llms.txt (HTTP 200) with structured links to introduction, quickstart, etc., directly enabling agent-oriented doc consumption; openapi.json is also served for machine consumption. missing for 10: no independent/community confirmation that agents actually consume llms.txt effectively, and no explicit vendor documentation describing llms.txt as an intentional agent-facing feature.",
+    "rationale": "A direct probe confirms llms.txt is live and returns a structured index of agent-oriented docs (introduction, quickstart, etc.), plus the docs site exposes machine-readable markdown pages (.md URLs) and an OpenAPI spec, all clearly agent-consumable. missing for 10: no independent third-party confirmation of an agent actually consuming llms.txt successfully in the wild.",
     "evidenceIds": [
       "omnara-probe-1",
       "omnara-probe-2",
+      "omnara-docs-14",
       "omnara-probe-3"
     ]
   },
@@ -5701,41 +5702,40 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is a platform for launching, monitoring, and controlling AI coding agents (agent orchestration/remote control), but no evidence shows the product itself surfaces AI-generated insights or suggestions derived from a user's own data (e.g., analytics, dashboards summarizing usage, recommendations). The mention of querying agent history in Postgres for analytics is a raw data-access feature for self-hosters, not an AI-generated insight delivered inside the product.",
-    "evidenceIds": [
-      "omnara-gh-2"
-    ]
+    "rationale": "Omnara is an agent orchestration/communication platform (launching, monitoring, controlling AI agents) with no evidence of AI-generated insights or suggestions derived from the user's own data (e.g., analytics summaries, recommendations, anomaly detection). The Postgres export feature only enables external analytics, not built-in AI-generated insights.",
+    "evidenceIds": []
   },
   {
     "productId": "omnara",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show agents can be launched programmatically (CLI/API/SDK), run on a connected machine, and persist across crashes/restarts/disconnects, which supports background operation, and users can queue tasks and set approval rules for autonomy. However, the docs emphasize human oversight (pause for approval, live corrections) rather than fully unattended scheduled automation, and no independent evidence confirms agents running autonomously without supervision. Missing for 10: evidence of scheduling/triggers for automation, independent confirmation of successful unattended background runs, and clarity on how 'autonomous' vs 'supervised' operation is enforced.",
+    "rationale": "Omnara's docs describe agents defined via YAML config that run persistently, retain conversation history across crashes/restarts/disconnects, can be triggered via webhooks, and can spawn subagents — all pointing to autonomous background operation with human-in-the-loop approvals for certain actions. However, there's no explicit scheduling/cron-trigger mechanism documented and no independent/hands-on confirmation that agents genuinely run unattended for extended periods without oversight; community discussion focuses mainly on remote control UI/UX rather than confirming autonomous background execution. Missing for 10: dedicated scheduling/trigger automation feature, independent verification of long-running unattended agent behavior.",
     "evidenceIds": [
-      "omnara-docs-2",
+      "omnara-docs-1",
       "omnara-docs-3",
-      "omnara-docs-7",
       "omnara-docs-8",
-      "omnara-docs-12"
+      "omnara-docs-19",
+      "omnara-docs-21",
+      "omnara-docs-22"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Omnara's core product function is launching and delegating tasks to configurable AI agents (via dashboard, CLI, API, or SDK), which run using pluggable models (OpenAI, Anthropic, etc.), retain conversation history, and let users follow progress, send corrections, queue tasks, and approve actions — a textbook 'delegate to built-in AI assistant' workflow. Hands-on community reactions corroborate real usage and enthusiasm for this delegation workflow (e.g. 'using Claude Code from your phone is kind of great', 'this is genius, how I've wanted AI agents to work'). Missing for 10: no rigorous independent benchmark of assistant quality/reliability, and some community friction (UI copy bugs, GitHub OAuth errors) suggests rough edges in the delegation experience.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Omnara lets users launch, configure, and delegate tasks to AI agents (via dashboard, CLI, API, SDK) with model choice, MCP tools, skills, and subagents, which functions as delegation to an AI assistant. However, Omnara is fundamentally an orchestration/interface layer for external agents (Claude, Codex, etc.) rather than a single built-in assistant, and some users note it's mainly a UI/tunnel wrapper rather than a distinct built-in AI. missing for 10: evidence of a single unified 'built-in' assistant persona (as opposed to bring-your-own-model/agent orchestration), and independent hands-on confirmation of smooth end-to-end task delegation.",
     "evidenceIds": [
       "omnara-docs-2",
       "omnara-docs-4",
-      "omnara-docs-7",
-      "omnara-docs-8",
-      "omnara-comm-3",
-      "omnara-comm-9",
-      "omnara-comm-16"
+      "omnara-docs-5",
+      "omnara-docs-6",
+      "omnara-docs-19",
+      "omnara-comm-12",
+      "omnara-comm-18"
     ]
   },
   {
@@ -5744,11 +5744,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Omnara explicitly supports launching agents programmatically via CLI, REST API, or TypeScript SDK (omnara-docs-2), and API keys can be assigned operator roles for automated agent control (omnara-gh-1), which supports headless/CI-style usage. However, there is no explicit CI/CD pipeline example, GitHub Actions integration, or dedicated 'headless mode' documentation demonstrating a full automation workflow. missing for 10: concrete CI/CD integration example, explicit headless-mode docs, independent confirmation of automated pipeline usage.",
+    "rationale": "Omnara exposes a CLI, REST API, and TypeScript SDK for launching and managing agents programmatically, plus webhooks for event-driven automation, which supports headless/automated use (omnara-docs-2, omnara-docs-14, omnara-docs-22, omnara-probe-2). However, there is no explicit CI/CD example (e.g., GitHub Actions, pipeline integration) or documentation calling out CI usage specifically. missing for 10: explicit CI pipeline integration docs/examples, independent hands-on confirmation of headless CI runs.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-gh-1",
-      "omnara-gh-2",
+      "omnara-docs-14",
+      "omnara-docs-22",
       "omnara-probe-2",
       "omnara-probe-3"
     ]
@@ -5759,9 +5759,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state users can 'Connect MCP servers to give them access to your services and data, or add custom tools' as a first-party feature. Missing for 10: independent hands-on confirmation of MCP server integration working, and details on setup/configuration flow or limitations.",
+    "rationale": "Docs explicitly describe adding MCP servers (Linear, Notion, internal services) to an agent config with tool auto-discovery, directly matching the story. Missing for 10: independent/hands-on corroboration of MCP tool usage and detail on breadth of supported servers or auth flow.",
     "evidenceIds": [
-      "omnara-docs-5"
+      "omnara-docs-5",
+      "omnara-docs-17"
     ]
   },
   {
@@ -5770,9 +5771,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Omnara is a platform for launching and managing agents (not itself a coding agent), so the axis of exposing an official MCP server applies. Evidence only shows Omnara connecting outward to MCP servers to give its agents tool access (client-side), with no documentation of Omnara itself running as an MCP server that external agents can connect to.",
+    "rationale": "Omnara is a platform for launching/managing agents (dashboard, CLI, REST API, TypeScript SDK) rather than itself being an agent, so an official MCP server it exposes for external connection would be a fair ask. The evidence only shows the reverse direction — Omnara's agents can consume external MCP servers (omnara-docs-5, omnara-docs-17) — with no mention of Omnara publishing its own MCP server endpoint for other agents/clients to connect to.",
     "evidenceIds": [
-      "omnara-docs-5"
+      "omnara-docs-5",
+      "omnara-docs-17",
+      "omnara-docs-14"
     ]
   },
   {
@@ -5781,23 +5784,24 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Omnara's core interaction model is natural-language messaging with agents — users can 'send a correction while it's working, or queue up its next task' and agents 'pause to ask questions' for user input in natural language, which is the primary way users operate the product day-to-day. Missing for 10: independent/hands-on confirmation of the NL interface specifically (community threads focus on UI/pricing/tunneling, not command quality), and no detail on how broad or robust the NL command surface is beyond corrections/queuing.",
+    "rationale": "Omnara's core interaction model is conversational: users send corrections, queue tasks, and attach content to an ongoing conversation with an agent, and can operate agents via dashboard or Slack in natural language (omnara-docs-7, omnara-docs-9, omnara-gh-3). Missing for 10: explicit documentation of natural-language parsing/intent handling and independent hands-on validation that NL commands are reliably interpreted (community threads focus on pricing/UI, not NL command quality).",
     "evidenceIds": [
       "omnara-docs-7",
-      "omnara-docs-8",
       "omnara-docs-9",
-      "omnara-docs-2"
+      "omnara-gh-3",
+      "omnara-docs-3"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly mention launching agents 'programmatically with the CLI' alongside REST API and SDK, and a probe confirms an official CLI documented on the quickstart page. Missing for 10: detailed CLI command reference/usage docs and independent hands-on confirmation of CLI functionality.",
+    "rationale": "Omnara explicitly documents an official CLI as one of its interaction methods alongside API, TypeScript SDK, and dashboard, used to launch and manage agents programmatically. Missing for 10: independent hands-on verification of CLI usage/commands and more detailed CLI-specific documentation beyond brief mentions.",
     "evidenceIds": [
       "omnara-docs-2",
+      "omnara-docs-14",
       "omnara-probe-3"
     ]
   },
@@ -5807,9 +5811,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Omnara documents a public REST API with an OpenAPI spec (probed live, HTTP 200), plus a CLI and TypeScript SDK for programmatic launching and control of agents, and describes itself as 'The API for Production-Grade Agents.' Missing for 10: independent third-party developer accounts of building against the API beyond vendor docs/probes.",
+    "rationale": "Omnara documents a REST API (with OpenAPI spec confirmed live), a TypeScript SDK, and CLI, with bearer-token authentication, letting AI-native users drive agent creation, tool/model configuration, and monitoring programmatically. This is corroborated by an independently probed live openapi.json and llms.txt describing 'The API for Production-Grade Agents.' Missing for 10: independent third-party developer accounts of using the API/SDK in production (community evidence is mostly about UI/pricing, not API usage).",
     "evidenceIds": [
       "omnara-docs-2",
+      "omnara-docs-14",
+      "omnara-docs-15",
       "omnara-probe-1",
       "omnara-probe-2",
       "omnara-probe-3"
@@ -5819,11 +5825,13 @@
     "productId": "omnara",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Omnara supports role-based access via 'organization and project roles to users and API keys' distinguishing who can manage, configure, operate, or view agents, which is a form of scoped credential control (omnara-gh-1). However, there is no documentation of fine-grained scoping (e.g., per-resource or per-action API key scopes), token expiration, or least-privilege credential issuance workflows specifically for agents. missing for 10: explicit API key scoping/permission granularity docs, credential expiration/rotation support, independent verification of least-privilege enforcement.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "GitHub docs describe role-based API keys that separate who can manage access, configure agents, operate them, or view-only — a clear least-privilege credential model — and the API auth docs confirm bearer-token keys exist. Missing for 10: detailed docs on per-agent scoping, key expiration/rotation, and independent/hands-on confirmation that these scopes are enforced in practice.",
     "evidenceIds": [
-      "omnara-gh-1"
+      "omnara-gh-1",
+      "omnara-docs-15",
+      "omnara-docs-14"
     ]
   },
   {
@@ -5832,21 +5840,24 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs and probes confirm an official REST API (OpenAPI spec live), a TypeScript SDK, and a CLI for launching/programming agents, which supports SDK-based building. However, evidence is limited to a single TypeScript SDK with no mention of other language SDKs (e.g., Python), no independent developer corroboration of SDK usage, and community discussion is mostly about UI/pricing rather than SDK development experience. Missing for 10: multi-language SDK coverage, independent hands-on SDK usage reports, deeper SDK reference docs beyond quickstart.",
+    "rationale": "Omnara documents an official TypeScript SDK plus a REST API (with published OpenAPI spec) and CLI, giving AI-native users a concrete way to build against it programmatically (omnara-docs-2, omnara-docs-14, omnara-probe-2). However, evidence only shows one language SDK (TypeScript), no Python/other SDKs, no code examples or independent developer corroboration of SDK usage beyond docs. missing for 10: multi-language SDK coverage, third-party/hands-on validation of SDK usage, richer SDK reference docs.",
     "evidenceIds": [
       "omnara-docs-2",
+      "omnara-docs-14",
       "omnara-probe-2",
-      "omnara-probe-3"
+      "omnara-probe-1"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions webhooks or any event-subscription mechanism; Omnara's docs describe API/CLI/SDK usage, MCP connections, and agent management but nothing about outbound webhook notifications.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe configuring event webhooks that receive JSON POST requests with `event` and `data` fields, directly matching the story. Missing for 10: independent/hands-on corroboration of webhook usage, and detail on available event types or reliability guarantees.",
+    "evidenceIds": [
+      "omnara-docs-22"
+    ]
   },
   {
     "productId": "omnara",
@@ -5862,11 +5873,12 @@
     "storyId": "ai-automatic-model-routing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Omnara lets users choose from multiple model providers (OpenAI, Anthropic, OpenRouter, Bedrock, self-hosted) but there is no evidence of automatic routing of prompts to the most suitable model — model selection appears manual/configured per agent, not dynamically routed.",
+    "confidence": "medium",
+    "rationale": "Omnara lets users manually connect and select from multiple model providers (OpenAI, Anthropic, OpenRouter, Bedrock, custom endpoints) per agent config, but there is no evidence of automatic routing of individual task prompts to the most suitable model — model choice is configured upfront by the org/project, not dynamically routed per-prompt.",
     "evidenceIds": [
       "omnara-docs-4",
-      "omnara-docs-13"
+      "omnara-docs-23",
+      "omnara-docs-20"
     ]
   },
   {
@@ -5875,7 +5887,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is an agent orchestration/mobile-control platform for launching and monitoring coding agents, not an issue-triage or incident-management tool; there is no concept of incoming issues, severity scoring, or ownership routing in its evidence pack. This axis is a category error for this product type.",
+    "rationale": "Omnara is an agent orchestration/dashboard platform for launching and monitoring coding agents, not an issue-tracking/support-triage product; automatic issue triage with severity assignment and owner routing is outside its category.",
     "evidenceIds": []
   },
   {
@@ -5884,11 +5896,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "An OpenAPI spec is confirmed live (openapi.json) and docs.omnara.com hosts structured API/quickstart pages, suggesting a machine-readable API reference exists, but no evidence confirms an interactive 'try it now' console or runnable code examples within the docs. Missing for 10: explicit documentation or screenshots of an interactive API playground, confirmation of runnable/executable examples, and independent user reports of using such a feature.",
+    "rationale": "The docs confirm a published OpenAPI spec (openapi.json) and API/SDK/CLI documentation, which could underlie an interactive reference, but there is no direct evidence of a runnable/try-it-out interactive API explorer or embedded live examples. missing for 10: explicit interactive 'try it' console, runnable code samples in docs, independent confirmation of an interactive reference UI.",
     "evidenceIds": [
       "omnara-probe-2",
-      "omnara-probe-1",
-      "omnara-docs-2"
+      "omnara-docs-14",
+      "omnara-probe-1"
     ]
   },
   {
@@ -5897,11 +5909,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a live, machine-readable OpenAPI spec at docs.omnara.com/openapi.json returning a valid 'openapi' key, alongside a documented REST API and SDKs referenced in quickstart docs. Missing for 10: no independent/community corroboration of developers actually consuming the spec.",
+    "rationale": "A probe confirms a live, machine-readable OpenAPI spec at docs.omnara.com/openapi.json (HTTP 200, contains 'openapi' key), and docs describe a full REST API plus SDK/CLI built on it. Missing for 10: independent third-party confirmation or explicit versioning/download-format documentation beyond the probe.",
     "evidenceIds": [
       "omnara-probe-2",
-      "omnara-docs-2",
-      "omnara-probe-1"
+      "omnara-docs-14",
+      "omnara-docs-15"
     ]
   },
   {
@@ -5910,7 +5922,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is an agent orchestration/monitoring platform for launching and managing coding agents, not a data platform or API with production vs sandbox environments; the evidence pack shows no concept of sandbox/test environments distinct from production data. This axis is a category error for this product type.",
+    "rationale": "Omnara is an agent-orchestration/monitoring platform for controlling coding agents, not a product with a testable sandbox-vs-production data separation axis; no evidence pack material addresses sandbox environments or production data isolation, making this a category mismatch rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -5918,11 +5930,9 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of API versioning scheme or documented deprecation policy; the OpenAPI spec exists (omnara-probe-2) but nothing addresses version numbers, backward compatibility guarantees, or deprecation timelines. Missing for 10: versioned API endpoints/headers, published deprecation policy, changelog entries about breaking changes.",
-    "evidenceIds": [
-      "omnara-probe-2"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence shows Omnara has an API, SDK, CLI, and an OpenAPI spec, but nothing addresses API versioning or a documented deprecation policy. Missing for 10: any mention of API version numbers, versioning scheme, changelog of breaking changes, or a stated deprecation/support-window policy.",
+    "evidenceIds": []
   },
   {
     "productId": "omnara",
@@ -5930,10 +5940,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Omnara lets you configure which agent actions require approval and lets agents pause to ask for input, which could be used to gate on a plan before code changes, but there is no documented feature specifically for presenting/reviewing an implementation plan before code is written. Community feedback (omnara-comm-5) explicitly notes that reviewing/QAing agent work remains unsolved with tools like this, casting doubt on how robust the approval gate is for plan review. Missing for 10: dedicated plan-approval workflow/UI, evidence that approvals occur pre-implementation rather than mid-execution, and independent confirmation the feature works as intended.",
+    "rationale": "Omnara supports configurable approval gates ('you can decide which actions need approval, and agents can pause to ask questions when they need your input') and live progress following with corrections, which could be used to intercept before code changes, but there is no documented dedicated 'plan review/approval' step or spec-first workflow distinct from general action approval. missing for 10: explicit plan-generation/plan-approval workflow, evidence of blocking code execution until a plan is approved, and independent confirmation this is used for pre-code review.",
     "evidenceIds": [
-      "omnara-docs-8",
-      "omnara-comm-5"
+      "omnara-docs-7",
+      "omnara-docs-8"
     ]
   },
   {
@@ -5942,7 +5952,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Omnara lets you configure which agent actions require approval and pause for input, which offers some pre-modification gating (omnara-docs-8), and role-based permissions can restrict who can operate agents (omnara-gh-1). However there is no documented workflow for an engineering-lead to review and approve a task's overall scope/contract before any repository changes occur — approvals are described as per-action, not a formal spec-review gate. Missing for 10: explicit scope/contract definition and lead sign-off step prior to agent execution, evidence of blocking all repo writes until approval, and independent confirmation this approval flow works as intended.",
+    "rationale": "Omnara lets teams configure which agent actions require approval and pause for human input (omnara-docs-8), plus role-based access controls to restrict who can operate/configure agents (omnara-gh-1), which supports gating repository-modifying actions. However there's no evidence of an explicit upfront 'scope and contract' approval step (e.g., approving a plan/spec before any code changes begin) — the approval mechanism described is generic per-action gating, not a task-scoping contract review workflow. Missing for 10: dedicated scope/plan approval workflow prior to task start, evidence of a spec/contract review UI, and independent confirmation this gating actually blocks repo writes until approved.",
     "evidenceIds": [
       "omnara-docs-8",
       "omnara-gh-1"
@@ -5954,9 +5964,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers launching agents via dashboard/CLI/API/SDK, skills, MCP tools, and approvals, but nothing describes assigning a task directly from an existing GitHub issue, Jira ticket, or similar tracker item. A GitHub OAuth connection is mentioned only in the context of a login error, not issue-to-task assignment. Missing for 10: any documentation or demo of ticket/issue import, issue-linked task creation, or tracker integration triggering agent work.",
+    "rationale": "Omnara documents launching agents via dashboard/CLI/API/SDK and connecting MCP servers like Linear or Notion for tool access, but there is no evidence of a feature that lets a developer directly assign a coding task from an existing issue or ticket (e.g., importing/triggering an agent from a Jira/Linear/GitHub issue).",
     "evidenceIds": [
       "omnara-docs-2",
+      "omnara-docs-17",
       "omnara-comm-19"
     ]
   },
@@ -5977,7 +5988,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is an agent orchestration/remote-monitoring platform for launching and interacting with coding agents, not a repository review/quality-gate tool that assesses or auto-fixes 'agent-readiness criteria'. This story belongs to a different product category (review-quality-gate/linting tools), so it is a category error for Omnara.",
+    "rationale": "Omnara is a platform for launching, monitoring, and interacting with agentic sessions (dashboard, CLI, MCP, webhooks) rather than a code-review/quality-gate tool that evaluates and auto-remediates 'agent-readiness' criteria in a repo; this review-quality-gates axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -5986,12 +5997,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Omnara is a mission-control/dashboard layer for monitoring and interacting with coding agents (session tracking, MCP tools, approvals) but no evidence describes automated PR creation on task completion; community even notes GitHub OAuth integration errors and no PR-automation feature is mentioned.",
-    "evidenceIds": [
-      "omnara-comm-19",
-      "omnara-docs-7",
-      "omnara-docs-8"
-    ]
+    "rationale": "Omnara's evidence covers agent configuration, monitoring, MCP tools, webhooks, and model provider setup, but nothing describes an agent automatically opening a pull request on task completion. The only GitHub-related evidence is an OAuth connection error report, not a PR-automation feature.",
+    "evidenceIds": []
   },
   {
     "productId": "omnara",
@@ -6010,12 +6017,14 @@
     "storyId": "automatic-environment-setup",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Omnara's evidence covers launching, monitoring, and remote-controlling agents (via dashboard/CLI/API/SDK) and connecting to a machine you own, but there's no documentation of the agent autonomously cloning a repo, installing dependencies, or self-configuring its own working environment — that setup appears to remain the developer's responsibility. Missing for 10: any mention of automated repo cloning, dependency installation, or environment bootstrap by the agent itself.",
+    "confidence": "medium",
+    "rationale": "Omnara's evidence describes it as a dashboard/orchestration layer for launching and monitoring agents (YAML config, MCP tools, skills, subagents, model providers) but never documents the agent autonomously cloning a repo, installing dependencies, or configuring its own working environment — that setup appears to be the job of the underlying coding agent/machine the user connects, not something Omnara automates.",
     "evidenceIds": [
+      "omnara-docs-1",
       "omnara-docs-2",
       "omnara-docs-12",
-      "omnara-docs-1"
+      "omnara-docs-21",
+      "omnara-docs-17"
     ]
   },
   {
@@ -6023,18 +6032,20 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack describes bulk operations across many items (e.g., batch launching, mass approval, multi-agent bulk actions); the docs focus on single-agent lifecycle, roles, and analytics queries rather than bulk operations tooling.",
+    "confidence": "medium",
+    "rationale": "Omnara's evidence covers single-agent orchestration, subagents, tools, and monitoring, but nothing describes bulk operations across many items (e.g., batch-launching, mass-editing, or bulk-approving many agents/tasks at once). No documentation or community evidence mentions bulk/batch workflows.",
     "evidenceIds": []
   },
   {
     "productId": "omnara",
     "storyId": "automation-rules-engine",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Omnara's evidence covers agent launching, conversation persistence, MCP/tool connections, and human-in-the-loop approval gates, but nothing describes a rule engine or event-trigger system where users define conditions that automatically fire actions. The closest item (approval configuration, omnara-docs-8) is about gating agent actions for human review, not automating actions on events.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only relevant evidence is a webhook feature that sends JSON POST notifications on events, which supports building external automation but is not itself a rule engine for defining conditional actions within Omnara. There's no documentation of an in-product rules/triggers system (e.g., 'if X happens, do Y') beyond this one-way event notification. Missing for 10: evidence of user-defined conditional logic or automated action execution triggered by events inside Omnara, and independent confirmation the webhook feature works as described.",
+    "evidenceIds": [
+      "omnara-docs-22"
+    ]
   },
   {
     "productId": "omnara",
@@ -6042,7 +6053,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a scheduler, cron-like trigger, or recurring job/workflow feature; Omnara's evidence covers launching agents, tracking conversations, tools, and approvals, but nothing about scheduling recurrence.",
+    "rationale": "No evidence pack item mentions scheduling, cron-like recurring triggers, or automated recurring workflow execution; Omnara's docs cover agent launching, MCP tools, skills, and conversation persistence but nothing about scheduling jobs to run on a recurring basis.",
     "evidenceIds": []
   },
   {
@@ -6050,26 +6061,22 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows agent configs as YAML, conversation history persistence, and approval gating, but nothing about versioning automations, reviewing changes over time, or rolling back to prior configurations/states. Missing for 10: version history for agent configs, diff/review UI for changes, rollback/restore mechanism.",
-    "evidenceIds": [
-      "omnara-docs-1",
-      "omnara-docs-3",
-      "omnara-docs-8"
-    ]
+    "confidence": "medium",
+    "rationale": "No evidence of any versioning, review, or rollback mechanism for automations/agent configs — the evidence covers agent creation, model connection, MCP tools, skills, and access control, but nothing about tracking config history, reviewing changes, or reverting to a prior version.",
+    "evidenceIds": []
   },
   {
     "productId": "omnara",
     "storyId": "autonomous-bug-fixing",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Omnara's evidence describes it as an orchestration/remote-monitoring layer for launching, tracking, and approving agent sessions (YAML config, model connections, MCP tools, live following/correction) rather than an agent that itself performs autonomous bug diagnosis and code fixes; community comments frame it as a wrapper around external coding agents like Claude Code rather than an implementer of fixes. No evidence shows Omnara autonomously diagnosing or resolving a reported bug end-to-end.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Omnara lets a developer launch agents (backed by models like Claude/OpenAI) with MCP tool access and skills, and community comments imply these agents autonomously write/edit code that then needs human review — but there is no explicit documentation or example of an agent diagnosing a bug report and producing a fix end-to-end; Omnara is presented as an orchestration/remote-control layer rather than the coding-agent logic itself. missing for 10: explicit bug-diagnosis-and-fix workflow documentation, first-party or independent example of an agent resolving a real bug, evidence that fix quality/success is verified.",
     "evidenceIds": [
-      "omnara-docs-1",
       "omnara-docs-2",
+      "omnara-docs-4",
       "omnara-docs-5",
-      "omnara-comm-3",
+      "omnara-docs-19",
       "omnara-comm-5"
     ]
   },
@@ -6077,26 +6084,27 @@
     "productId": "omnara",
     "storyId": "bring-your-own-model",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state support for OpenAI, Anthropic, OpenRouter, Bedrock, or self-hosted compatible models, and pricing page confirms 'Bring your own model keys for free.' missing for 10: independent/hands-on confirmation of BYO-key setup working in practice, and details on per-model configuration granularity.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Docs explicitly state support for OpenAI, Anthropic, OpenRouter, Amazon Bedrock, or self-hosted compatible models, plus 'bring your own model keys for free' and custom model endpoints configurable in the dashboard, giving engineering leads control over which LLM/keys power their agents. Missing for 10: independent hands-on confirmation that BYO keys work smoothly in practice (community threads don't address this specific capability).",
     "evidenceIds": [
       "omnara-docs-4",
       "omnara-docs-13",
-      "omnara-docs-11"
+      "omnara-docs-20",
+      "omnara-docs-23"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "chat-with-agent-in-slack",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Omnara supports conversational interaction with an agent — following its progress live, sending corrections, queuing next tasks, and pausing for questions/approvals (omnara-docs-7, omnara-docs-8) — which covers discussing and delegating work, but there is no evidence of an actual '@tag' mechanism inside a shared team chat thread (e.g., Slack/Discord-style mention) for bringing an agent into a conversation. missing for 10: explicit tagging/mention syntax, multi-user shared thread support, and any integration showing agents being pulled into existing chat channels.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Omnara supports live chat-style interaction with agents — sending corrections, queuing tasks, and answering agent questions (omnara-docs-7, omnara-docs-8) — and offers a first-party Slack connector plus dashboard for this (omnara-gh-3), which covers discussing/delegating tasks conversationally. However there's no documented '@mention'/tagging mechanism specifically, nor evidence of GitHub issue/PR thread integration for delegation. Missing for 10: explicit tag/mention syntax in a chat thread, GitHub-thread-based delegation workflow, and independent confirmation of this specific interaction pattern.",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
-      "omnara-docs-9"
+      "omnara-gh-3"
     ]
   },
   {
@@ -6105,7 +6113,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is a remote agent-monitoring/mobile-control platform for launching and interacting with coding agents, not a CI/CD integration or code-review tool; there is no mention of CI workflow diagnosis or auto-generated PRs from failed builds. This is a wrong-axis story for this product category.",
+    "rationale": "Omnara is a remote-agent orchestration/monitoring platform (dashboard, mobile control, webhooks) for launching and supervising agents, not a CI-integrated code review/PR-fixing tool; there's no evidence of CI workflow diagnosis or automated PR generation from failed builds, and this is a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -6114,23 +6122,25 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Omnara's 'Skills' feature lets users package instructions and supporting files for recurring agent work, which could function like a context file, but there is no explicit documentation describing a dedicated codebase-conventions context file that shapes agent plans/code generation. missing for 10: explicit codebase-conventions context file feature, evidence of it improving plan/code relevance, and any independent confirmation of this use case.",
+    "rationale": "Omnara's 'Skills' feature lets users package reusable instructions and supporting files for agents (omnara-docs-6, omnara-docs-18), which could be repurposed to hold codebase conventions, but there is no explicit documentation of a repo-level context file (like CLAUDE.md) that is automatically loaded to inform plans/code generation. missing for 10: explicit support for a dedicated codebase-conventions context file, evidence that agents automatically ingest such a file when generating plans/code, independent confirmation of this use case.",
     "evidenceIds": [
-      "omnara-docs-6"
+      "omnara-docs-6",
+      "omnara-docs-18"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "concurrent-task-execution",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Omnara lets you launch agents programmatically via CLI/REST/SDK, manage multiple agents with org/project roles, and queue tasks, which implies some capacity for parallel agent operation, but there is no explicit documentation or evidence of running many agents concurrently at scale, dashboards for fleet-wide monitoring, or throughput/performance claims. missing for 10: explicit concurrency/parallelism documentation, scaling benchmarks or case studies, dashboard support for managing many simultaneous agent sessions.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Omnara supports launching agents programmatically via dashboard, CLI, API, or SDK (omnara-docs-2, omnara-docs-14), and agents can spawn subagent helpers to parallelize work within a task (omnara-docs-19), plus org/project role management for multiple users/agents (omnara-gh-1). This implies concurrent agent operation is architecturally supported, but there is no explicit documentation of running many agents simultaneously, no concurrency limits/benchmarks, and no case study of scaled throughput. Missing for 10: explicit multi-agent concurrency documentation, throughput/scale benchmarks, and independent confirmation of running many agents at once.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-docs-7",
+      "omnara-docs-14",
+      "omnara-docs-19",
       "omnara-gh-1",
-      "omnara-docs-8"
+      "omnara-docs-23"
     ]
   },
   {
@@ -6139,9 +6149,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No vendor documentation describes connecting a GitHub repository so an agent can access code and open pull requests; the only concrete evidence is a community report of a GitHub OAuth connection failure (redirect_uri mismatch), with no confirmation that repo access or PR creation actually works.",
+    "rationale": "No vendor documentation describes connecting a GitHub repository or agents opening pull requests; the only related evidence is a community report of a GitHub OAuth connection failing (redirect_uri mismatch), not a working repo-integration/PR feature. Machine/MCP connection docs cover generic compute or MCP servers (Linear, Notion) but never GitHub repo access or PR creation.",
     "evidenceIds": [
-      "omnara-comm-19"
+      "omnara-comm-19",
+      "omnara-docs-21",
+      "omnara-docs-17"
     ]
   },
   {
@@ -6149,11 +6161,13 @@
     "storyId": "daily-task-quota-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions plan-based daily task limits, concurrency limits, or any dashboard/UI for managing such quotas; pricing docs only mention self-hosting being free and 'bring your own model keys' with no concurrency/task-limit controls described.",
+    "confidence": "medium",
+    "rationale": "The pricing page mentions being free to self-host and 'bring your own model keys for free,' but there is no evidence of any dashboard, API, or docs feature letting an engineering-lead view or manage plan-based daily task counts or concurrency limits for agent workflows. Community threads even discuss pricing dissatisfaction but never reference limit visibility or management tools.",
     "evidenceIds": [
       "omnara-docs-11",
-      "omnara-docs-13"
+      "omnara-docs-13",
+      "omnara-comm-12",
+      "omnara-comm-14"
     ]
   },
   {
@@ -6162,9 +6176,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Omnara supports organization/project roles that let admins manage access and configure or operate agents on behalf of others (omnara-gh-1), which implies some delegated control, but there is no explicit documentation of an engineering-lead directly creating or launching agent sessions attributed to another specific user. Missing for 10: explicit API/CLI support for creating a session 'as' another user, audit/ownership attribution evidence, and any hands-on confirmation of this workflow.",
+    "rationale": "Omnara supports organization/project structures with role-based access (manage, configure, operate, view) assigned to users and API keys, implying some administrative control over others' agent usage, but there is no explicit evidence of a lead directly creating or launching a session under another user's identity. missing for 10: explicit 'create session on behalf of' workflow, documentation of delegated session ownership, and confirmation that leads can operate agents as/for teammates.",
     "evidenceIds": [
-      "omnara-gh-1"
+      "omnara-gh-1",
+      "omnara-docs-23"
     ]
   },
   {
@@ -6208,14 +6223,15 @@
   {
     "productId": "omnara",
     "storyId": "end-to-end-feature-implementation",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Omnara lets you launch and remotely manage coding agents (e.g., Claude Code, Codex) that can presumably write code, and community comments imply these agents 'write code' end-to-end, but there is no documentation or evidence specifically describing an agent completing a full feature implementation including test-writing within Omnara itself — it's positioned as an orchestration/monitoring layer, not the coding agent doing the work. missing for 10: explicit documentation or case study of an agent autonomously implementing a feature end-to-end, evidence of test generation/execution, and confirmation that Omnara (vs. the underlying model) performs the actual coding.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Omnara is documented as an orchestration/monitoring layer that launches and interacts with agents (via YAML config, CLI/API/SDK, MCP tools, subagents) but no evidence describes an agent completing a requested feature end-to-end or writing tests — the docs focus on connectivity, approvals, and session persistence, not on autonomous implementation outcomes. Community threads discuss UI, pricing, and remote access, not code/test quality delivered by the agent.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-docs-7",
-      "omnara-comm-5"
+      "omnara-docs-5",
+      "omnara-docs-19",
+      "omnara-docs-6"
     ]
   },
   {
@@ -6223,12 +6239,12 @@
     "storyId": "enterprise-sso-licensing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows role-based access control and self-hosted deployments, but there is no mention of SSO, enterprise licensing, or commercial support offerings anywhere in the pack; pricing info only covers free self-hosting and a consumer subscription tier.",
+    "confidence": "high",
+    "rationale": "Evidence shows organization/project roles and self-hosted analytics but no mention of SSO, enterprise licensing tiers, or commercial support offerings anywhere in docs, GitHub, or pricing page (which only describes free self-hosting and BYO model keys).",
     "evidenceIds": [
       "omnara-gh-1",
       "omnara-docs-11",
-      "omnara-comm-14"
+      "omnara-docs-13"
     ]
   },
   {
@@ -6237,21 +6253,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is an agent-orchestration/remote-control platform for coding agents, not a product-feedback or requirements-management tool; nothing in the evidence relates to converting user feedback into structured tasks with proposed scope. This is a wrong-axis story for this product category.",
+    "rationale": "Omnara is an agent orchestration/observability platform for running and monitoring coding agents, not a product-feedback or requirements-management tool; there is no concept of ingesting user feedback submissions and converting them into structured tasks with proposed scope. This is a category mismatch, not a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "omnara",
     "storyId": "headless-ci-execution",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Omnara documents a CLI, REST API and TypeScript SDK for launching agents programmatically (omnara-docs-2, omnara-probe-2/3), which could technically be invoked from a CI/CD pipeline or shell script, but there is no explicit CI/CD example, pipeline integration guide, or non-interactive/headless mode documentation. The product's core design emphasizes live human oversight (following progress, approvals, pausing for questions) rather than unattended automation. Missing for 10: explicit CI/CD pipeline docs/examples, confirmation of a fully non-interactive headless mode, and evidence of shell-script usage patterns.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Omnara explicitly offers a CLI, REST API, and TypeScript SDK for launching agents programmatically, and machines can be connected without inbound network access, which supports scriptable/headless use (omnara-docs-2, omnara-docs-14, omnara-docs-21). However, there is no explicit documentation or example of running Omnara agents inside a CI/CD pipeline or automated shell script, nor guidance on non-interactive/unattended operation given the product's emphasis on live approvals and human-in-the-loop interaction. missing for 10: explicit CI/CD pipeline integration docs/examples, confirmation that approval/interaction flows can be fully bypassed for unattended headless runs, and independent evidence of scripted CI usage.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-probe-2",
-      "omnara-probe-3",
-      "omnara-docs-8"
+      "omnara-docs-14",
+      "omnara-docs-21",
+      "omnara-docs-8",
+      "omnara-probe-3"
     ]
   },
   {
@@ -6259,60 +6276,69 @@
     "storyId": "isolated-sandbox-execution",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Omnara is a control/orchestration layer for launching, monitoring, and messaging agents (via CLI/API/dashboard, connecting to your own machine or model), but nothing in the evidence describes a sandboxed or isolated execution environment for code/dependency installation—agents appear to run on a user-connected machine or laptop/server without mention of isolation, containerization, or sandboxing guarantees. missing for 10: any mention of sandbox/isolation architecture, dependency installation safety, or containerized execution environment.",
+    "confidence": "high",
+    "rationale": "Omnara is a remote-agent orchestration/monitoring layer (dashboard, CLI, SDK, webhooks, MCP tool connections) that runs agents on machines the user connects, but no evidence describes an isolated sandbox for code execution or dependency installation. Docs explicitly describe connecting to your own laptop/server rather than providing an isolated execution environment.",
     "evidenceIds": [
-      "omnara-docs-2",
-      "omnara-docs-12"
+      "omnara-docs-12",
+      "omnara-docs-21",
+      "omnara-docs-2"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "issue-tracker-sync",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Omnara integrates with issue trackers like Jira, Linear, ClickUp, or Monday.com; docs mention MCP servers, custom tools, GitHub OAuth, and models, but no ticketing/issue-tracker connectors are described anywhere.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Omnara supports connecting MCP servers to agent configs, explicitly naming Linear as an example integration, meaning issue-tracker connectivity is technically possible via the generic MCP mechanism, but no dedicated Jira, ClickUp, or Monday.com integrations are documented or demonstrated. missing for 10: explicit Jira/ClickUp/Monday.com connectors, evidence of ticket-management workflows (create/update tickets) beyond generic tool discovery, and any hands-on confirmation of issue-tracker use.",
+    "evidenceIds": [
+      "omnara-docs-17",
+      "omnara-docs-5"
+    ]
   },
   {
     "productId": "omnara",
     "storyId": "live-agent-activity-monitoring",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state you can 'Follow an agent's progress live' and agents 'pause to ask questions when they need your input,' with approval controls for actions, matching real-time monitoring and status visibility. Community threads confirm the product's core use case is remote live monitoring of running agents via a UI/app. Missing for 10: independent hands-on confirmation of the live status UI's accuracy/latency and more detail on what 'status' fields are shown.",
+    "rationale": "Docs and GitHub evidence describe following an agent's progress live, sending corrections, queuing tasks, and interacting via dashboard/Slack, which directly supports real-time oversight of agent activity and status. missing for 10: independent hands-on verification of the live-status UI's accuracy/latency, and detail on exactly what status indicators (e.g., idle/running/error states) are shown.",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
-      "omnara-comm-3",
-      "omnara-comm-11"
+      "omnara-gh-3",
+      "omnara-gh-1"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "managed-cloud-execution",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Omnara offers a dashboard/API/CLI to launch and manage agents (omnara-docs-2, omnara-probe-1/2/3) and a pricing tier separate from self-hosting (omnara-docs-11, omnara-comm-12/14 mention a paid ~$20/mo hosted tunnel/service), implying a managed cloud option exists. However, the product is primarily marketed as an open-source, self-hostable alternative to managed agent platforms, and there's no first-party documentation detailing SLAs, scaling, or infrastructure guarantees of the managed cloud service — community comments even question its value versus self-hosting with Tailscale.\nmissing for 10: explicit vendor documentation of the managed cloud infrastructure's scaling/reliability guarantees, and independent confirmation that users successfully run agents purely via the hosted service without any self-hosted components.",
+    "rationale": "Omnara offers a hosted dashboard/API/CLI/SDK to launch and manage agents without requiring inbound ports or exposing your network (omnara-docs-2, omnara-docs-21, omnara-probe-1/2/3), which supports a managed-cloud experience. However, docs also describe agents running on 'a machine you connect, such as a laptop or server' (omnara-docs-12), implying compute still runs on user-owned infrastructure rather than fully in Omnara's cloud, and community feedback frames it as a paid tunnel/orchestration layer over self-managed compute rather than a full backend replacement (omnara-comm-12, omnara-comm-14). Missing for 10: clear evidence of fully cloud-hosted agent execution (not just BYO machine), and independent confirmation of a no-infra-needed managed tier.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-docs-11",
+      "omnara-docs-21",
+      "omnara-docs-12",
+      "omnara-probe-1",
+      "omnara-probe-2",
+      "omnara-probe-3",
       "omnara-comm-12",
-      "omnara-comm-14",
-      "omnara-probe-1"
+      "omnara-comm-14"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "manual-model-override",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs confirm users can choose models from OpenAI, Anthropic, OpenRouter, Bedrock, or self-hosted ones and 'bring your own model keys', implying explicit model selection rather than forced auto-selection, but there is no direct documentation of an automatic model-selection mode being toggled off or a UI/config setting explicitly named 'model selection'. missing for 10: explicit description of a default/automatic model-selection mode and a documented switch/override mechanism, independent confirmation of this workflow.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs confirm users can choose models from OpenAI, Anthropic, OpenRouter, Bedrock, or self-hosted models, configure custom model endpoints in the dashboard, and that orgs explicitly connect/configure/grant specific models to projects rather than relying on automatic selection. missing for 10: no explicit UI walkthrough showing a default 'automatic' mode being overridden, and no independent/hands-on confirmation of manual model switching in practice.",
     "evidenceIds": [
       "omnara-docs-4",
+      "omnara-docs-20",
+      "omnara-docs-23",
       "omnara-docs-13"
     ]
   },
@@ -6322,12 +6348,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs directly describe following an agent live, sending a correction mid-task, and queuing its next task, plus pausing for approval/questions — matching the story's takeover/redirect ask across web/dashboard access; agents also persist across restarts/disconnects so work can be resumed from any connected machine. Community threads corroborate real-world use (e.g., interacting with agents from phone/terminal), though QA/copy friction is noted. Missing for 10: no explicit first-party confirmation of parity across editor, terminal, and browser specifically, and no independent hands-on account of a full mid-task takeover/redirect workflow.",
+    "rationale": "Docs explicitly describe following an agent's progress live, sending a correction mid-task, or queuing the next task, plus pausing for questions/approval — core to takeover/redirect. Cross-platform access is supported via dashboard, CLI/API/SDK, Slack connector, and persistent conversation history across crashes/disconnects lets work resume seamlessly across devices. Community feedback (mobile SSH-tab usage, phone-based Claude Code) corroborates real editor/terminal/browser handoff use. Missing for 10: no first-party hands-on report specifically demonstrating mid-task redirect success/failure, and some community skepticism about UI copy/paste friction slightly limits polish confidence.",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
       "omnara-docs-3",
-      "omnara-docs-12",
+      "omnara-docs-14",
+      "omnara-gh-3",
       "omnara-comm-3",
       "omnara-comm-5"
     ]
@@ -6335,14 +6362,16 @@
   {
     "productId": "omnara",
     "storyId": "mobile-approval-of-decisions",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe mobile-friendly approval workflows: agents pause to ask questions and require approval on configurable actions, users can follow progress live, send corrections, and queue tasks while agents keep working, and community feedback confirms real hands-on use of approving/interacting with agents from a phone. missing for 10: no explicit phone-specific UI documentation or independent review confirming approval-from-phone works reliably at scale, and some community concerns about UI usability (copy/paste) slightly temper confidence.",
+    "rationale": "Omnara documents mobile/dashboard access to follow agents live, send corrections, and approve actions requiring approval, with agents pausing to ask for input — directly supporting phone-based oversight while agents continue elsewhere (omnara-docs-7, omnara-docs-8, omnara-gh-3). However, community evidence raises unresolved concerns about message privacy/encryption and no independent hands-on confirmation of the approval-while-mobile workflow specifically was found. Missing for 10: hands-on/independent verification of the approve-from-phone flow in practice, detail on latency/reliability of push notifications for approvals, and resolution of community concerns about data visibility (omnara-comm-13, omnara-comm-20).",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
-      "omnara-comm-3"
+      "omnara-gh-3",
+      "omnara-comm-13",
+      "omnara-comm-20"
     ]
   },
   {
@@ -6350,25 +6379,29 @@
     "storyId": "one-click-repo-access",
     "verdict": "disputed",
     "quality": 3,
-    "confidence": "medium",
-    "rationale": "There's no explicit vendor documentation describing a 'one-click' repo install flow, but community evidence shows a user attempting to connect GitHub and hitting a concrete OAuth failure (github_unauthorized: redirect_uri mismatch), indicating the integration is not smooth or reliable as implied. Missing for 10: first-party docs describing a one-click repo-connect flow, and confirmation the OAuth issue was resolved.",
+    "confidence": "low",
+    "rationale": "Omnara does have a GitHub connection flow (implied by the OAuth callback in comm-19), suggesting some repo-connect capability exists, but the only hands-on evidence of it shows a broken OAuth redirect_uri error rather than a smooth one-click setup. There is no first-party documentation describing a simple 'one-click' repo install; docs instead describe agent setup via YAML config, CLI, dashboard, or SDK, and MCP-server connections for external services, not repository access specifically. missing for 10: explicit docs/marketing describing a one-click repo-connect flow, independent confirmation that GitHub connection works without errors, details on repo permission scoping.",
     "evidenceIds": [
       "omnara-comm-19",
-      "omnara-gh-1"
+      "omnara-docs-17",
+      "omnara-docs-21"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "openness-api-parity",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Omnara explicitly markets itself as 'The API for Production-Grade Agents' with a published OpenAPI spec, and docs state you can launch, manage, and interact with agents via dashboard, CLI, REST API, or TypeScript SDK — indicating API-first parity with the UI. Role-based API keys (omnara-gh-1) further support programmatic control equivalent to UI actions like approvals and configuration. Missing for 10: an explicit statement or independent confirmation that every UI feature (e.g., approvals, skills, image/document attachments) has a documented 1:1 API equivalent, and hands-on verification beyond the OpenAPI probe.",
+    "rationale": "Omnara documents parity between API/CLI/SDK and dashboard for core agent operations (launch, monitor, approvals, MCP tools, skills, model config, webhooks) and provides a live OpenAPI spec, showing strong API-first design. However, some UI-surfaced features (e.g. Slack connector interactions, org/role management UI, organization model-provider setup flow) aren't explicitly confirmed as fully API-equivalent, and no independent/hands-on confirmation that 100% of UI actions are API-reachable. missing for 10: explicit API parity for role/permission management and Slack-based interactions, independent verification of full UI-API equivalence.",
     "evidenceIds": [
       "omnara-docs-2",
-      "omnara-probe-1",
-      "omnara-probe-2",
-      "omnara-gh-1"
+      "omnara-docs-14",
+      "omnara-docs-17",
+      "omnara-docs-22",
+      "omnara-gh-1",
+      "omnara-gh-3",
+      "omnara-probe-2"
     ]
   },
   {
@@ -6376,12 +6409,13 @@
     "storyId": "openness-full-export",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Omnara is open-source (Apache 2.0) and self-hostable, and self-hosted deployments can query agent history directly in Postgres for analytics/training datasets, which effectively enables data portability and exit without lock-in. However, there is no explicit documented 'export my data' feature, bulk export tool, or open-format export guarantee for the hosted/SaaS offering. Missing for 10: an explicit data-export mechanism/API endpoint for hosted users, documentation confirming full data portability in open formats, and independent confirmation of successful export/migration.",
+    "confidence": "medium",
+    "rationale": "Omnara is open-source (Apache 2.0) and self-hostable, and self-hosted deployments can query agent history directly in Postgres for analytics/exports, plus a REST API/CLI for programmatic access — giving AI-native users a path to full data ownership and extraction. However, there is no explicit documented 'export all data' feature, no stated open export format (e.g. JSON/CSV bundle), and no migration/leave workflow described. Missing for 10: a dedicated data-export tool or documented export format, evidence of exporting conversation history/attachments/skills in bulk, and independent confirmation that self-hosted Postgres access covers all data types.",
     "evidenceIds": [
-      "omnara-docs-10",
       "omnara-docs-11",
-      "omnara-gh-2"
+      "omnara-gh-2",
+      "omnara-docs-14",
+      "omnara-docs-10"
     ]
   },
   {
@@ -6390,12 +6424,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Omnara explicitly markets itself as 'the open-source alternative to Claude Managed Agents' and states it is 'Free to self-host and build on. Open source under Apache 2.0,' with a public GitHub repository confirming the source is available. Missing for 10: independent verification of full license scope/completeness (e.g., some components possibly closed-source) and community confirmation of actual code openness beyond vendor claims.",
+    "rationale": "Omnara explicitly states it is 'Open source under Apache 2.0' and 'Free to self-host and build on', with a public GitHub repository (github.com/omnara-ai/omnara) referenced multiple times for code, roles, and analytics features, confirming the source is readable under a permissive open license. Missing for 10: independent/hands-on confirmation of the license file or repo contents beyond vendor claims and GitHub link presence.",
     "evidenceIds": [
       "omnara-docs-10",
       "omnara-docs-11",
+      "omnara-docs-16",
       "omnara-gh-1",
-      "omnara-gh-2"
+      "omnara-gh-2",
+      "omnara-gh-3"
     ]
   },
   {
@@ -6404,12 +6440,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Omnara is explicitly positioned as open-source (Apache 2.0) and 'free to self-host and build on,' with a public GitHub repo and self-hosted deployment details (e.g., querying Postgres directly for analytics) confirming the capability exists in practice, not just marketing. Missing for 10: independent/hands-on report of someone actually self-hosting and confirming setup ease or parity with the hosted SaaS version.",
+    "rationale": "Omnara is explicitly positioned as open source (Apache 2.0) and 'Free to self-host and build on,' with GitHub evidence of self-hosted deployments querying Postgres directly for analytics, confirming a functioning self-hosted architecture. Missing for 10: independent hands-on confirmation of a full self-hosting setup/walkthrough and detail on infra requirements beyond the marketing claim.",
     "evidenceIds": [
       "omnara-docs-10",
       "omnara-docs-11",
-      "omnara-gh-1",
-      "omnara-gh-2"
+      "omnara-gh-2",
+      "omnara-docs-21"
     ]
   },
   {
@@ -6417,10 +6453,11 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any data residency/region selection feature; Omnara is self-hostable (Apache 2.0) which could give indirect control over storage location, but there's no documented region-choice option for the hosted service, and community comments even raise unresolved concerns about data going to a 3rd party and lack of E2E encryption. missing for 10: any documented region/residency selection mechanism, hosted-service data location controls, compliance certifications tied to region.",
+    "confidence": "medium",
+    "rationale": "No evidence that Omnara offers data residency/region selection for stored data; the product is self-hostable (open source, Apache 2.0), which could theoretically satisfy residency needs, but there's no documented feature letting cloud/hosted users choose a storage region. Community comments even raise unresolved concerns about data being visible to a 3rd party and lack of E2E encryption, further indicating no formal residency control exists.",
     "evidenceIds": [
       "omnara-docs-11",
+      "omnara-gh-2",
       "omnara-comm-18",
       "omnara-comm-20"
     ]
@@ -6431,7 +6468,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of a training-data opt-out or data-usage policy; the only related evidence is community complaints about lack of end-to-end encryption and concerns over data going to third parties, which is not a documented control against AI training use.",
+    "rationale": "No evidence pack item addresses a data-training opt-out, privacy policy on model training, or any statement about how user conversation/data is or isn't used to train AI models; in fact community comments raise unresolved concerns about lack of end-to-end encryption and visibility of messages, but nothing concrete about training-data usage either way.",
     "evidenceIds": []
   },
   {
@@ -6454,7 +6491,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics opt-out, or privacy settings; self-hosting is offered but that alone doesn't constitute a documented telemetry opt-out mechanism.",
+    "rationale": "No evidence pack item mentions telemetry, analytics opt-out, or usage tracking settings; the only related material (self-hosting, Postgres analytics for self-hosted deployments) is about the customer's own data, not Omnara's own telemetry collection or an opt-out control.",
     "evidenceIds": []
   },
   {
@@ -6463,7 +6500,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is an agent orchestration/monitoring platform for running and interacting with coding agents remotely, not a documentation-generation or repo-search tool; querying generated docs for arbitrary repos is outside its product category.",
+    "rationale": "Omnara is an agent orchestration/monitoring platform (launching, tracking, and interacting with coding agents) rather than a repository documentation generator/query tool; none of the evidence describes any feature for generating or querying documentation for a repo, making this axis a category mismatch for this product type.",
     "evidenceIds": []
   },
   {
@@ -6472,7 +6509,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is a platform for launching and remotely operating agents, not a repository analysis or code-review tool; a 'repository readiness report' is a category error for this product type rather than a missing feature.",
+    "rationale": "Omnara is an agent orchestration/remote-control platform for launching and monitoring coding agents, not a static-analysis or repo-assessment tool; a 'readiness report' evaluating repository suitability for autonomous agents is outside its product category and not something its features (dashboard, MCP tools, skills, webhooks) address.",
     "evidenceIds": []
   },
   {
@@ -6481,21 +6518,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Omnara is a platform for remotely monitoring/controlling coding agents, not a security-scanning or SCA/SAST tool; there is no evidence of vulnerability detection, alert triage, or automated PR remediation workflows tied to security findings. This axis (security-alert validation and auto-remediation) belongs to a different product category (e.g., dependency/security scanners), so it does not apply here.",
+    "rationale": "Omnara is a remote agent orchestration/monitoring platform (launch, track, approve, message agents) rather than a security-scanning or SAST/dependency-vulnerability tool; there is no evidence it detects security alerts, validates them, or opens remediation PRs. This capability is a category error for its product type.",
     "evidenceIds": []
   },
   {
     "productId": "omnara",
     "storyId": "self-hosted-agent-deployment",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Omnara is explicitly open-source (Apache 2.0) and documented as 'free to self-host and build on,' with self-hosted deployments able to query Postgres directly for agent history, and agents can run on any connected machine (laptop or server) — consistent with local, container, or VM deployment. Missing for 10: explicit Docker/Kubernetes/VM deployment guides or configs, and independent hands-on confirmation of a successful self-hosted setup.",
+    "rationale": "Omnara is explicitly open-source (Apache 2.0) and marketed as 'free to self-host and build on,' and GitHub docs confirm self-hosted deployments can run their own Postgres for agent history, implying a full self-hosted stack is possible. However, there is no detailed documentation or independent evidence of container/Docker or VM deployment instructions, nor any hands-on confirmation that self-hosting works in practice beyond the marketing claim. Missing for 10: concrete self-hosting/deployment docs (Docker/K8s/VM setup guides), independent verification of a self-hosted instance running successfully.",
     "evidenceIds": [
       "omnara-docs-11",
       "omnara-gh-2",
-      "omnara-docs-12",
-      "omnara-docs-10"
+      "omnara-docs-21"
     ]
   },
   {
@@ -6504,7 +6540,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe following an agent's progress live, sending a correction while it's working, or queuing its next task, which directly matches steering an active session without restarting; approvals/pause-for-input further support mid-session interaction. Missing for 10: independent hands-on confirmation that mid-session corrections actually steer behavior reliably (community threads focus on UI/pricing, not on validating this specific steering feature).",
+    "rationale": "Docs explicitly state users can 'follow an agent's progress live, send a correction while it's working, or queue up its next task,' and agents 'pause to ask questions' while retaining conversation history across sessions, directly matching the story of steering an active session without restarting. Missing for 10: independent hands-on confirmation that mid-task corrections actually alter agent behavior (community threads focus on UI/pricing, not steering mechanics).",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
@@ -6517,12 +6553,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe live progress tracking, mid-task corrections, task queuing, and agents pausing to ask for input/approval — directly matching the notification/human-input story, and mobile/remote use is corroborated by community hands-on comments. Missing for 10: no explicit push/email notification mechanism documented, and no independent verification of notification reliability or latency.",
+    "rationale": "Docs describe agents pausing to ask for input, dashboard live progress tracking, Slack connector for direct interaction, and configurable event webhooks for JSON notifications on agent events — together covering completion/need-input notification workflows. Missing for 10: independent hands-on confirmation that push/webhook notifications reliably fire for task completion, and no explicit mobile push notification evidence beyond dashboard/Slack.",
     "evidenceIds": [
       "omnara-docs-7",
       "omnara-docs-8",
-      "omnara-comm-3",
-      "omnara-comm-9"
+      "omnara-docs-22",
+      "omnara-gh-3"
     ]
   },
   {
@@ -6531,21 +6567,24 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs state you can decide which actions require approval and agents pause to ask for input when needed, which maps to configurable autonomy/oversight, and org/project roles further separate what different users can configure vs operate (omnara-docs-8, omnara-gh-1). However there's no explicit documentation of named 'tiers' or granular policy configuration, and no community/hands-on evidence validating this in practice. Missing for 10: explicit tiered-autonomy policy documentation (e.g., levels/thresholds), examples of configuring per-action approval rules, and independent corroboration that this works as described.",
+    "rationale": "Omnara's docs state you can configure which actions require approval and agents pause to ask for input, plus role-based access controls for who can operate/configure agents — this supports human-oversight/autonomy gating but is not documented as explicit 'tiers' or autonomy levels. missing for 10: named autonomy-level presets (e.g., low/medium/high), documentation showing granular per-action approval configuration UI, and independent/hands-on confirmation of this specific control mechanism.",
     "evidenceIds": [
       "omnara-docs-8",
-      "omnara-gh-1"
+      "omnara-gh-1",
+      "omnara-docs-23"
     ]
   },
   {
     "productId": "omnara",
     "storyId": "trigger-agent-on-build-failure",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Omnara offers a REST API/CLI/SDK to launch agents programmatically (omnara-docs-2), which could theoretically be scripted into a CI pipeline, but there is no documentation, example, or community evidence showing an actual CI/CD integration (e.g., GitHub Actions trigger, webhook on failed build/test) for automatically fixing broken builds.",
+    "rationale": "Omnara exposes a REST API, CLI, and TypeScript SDK for programmatically launching agents, plus webhooks for events (omnara-docs-2, omnara-docs-14, omnara-docs-22), which are the building blocks one could wire into a CI/CD pipeline to trigger an agent. However, there is no documented CI/CD integration (e.g., GitHub Actions, Jenkins plugin, build-failure hook) or example of automatically detecting a failing build/test and dispatching an agent to fix it. Missing for 10: explicit CI/CD pipeline integration docs, a build/test-failure triggered workflow example, and any first-party GitHub Actions or similar CI connector.",
     "evidenceIds": [
-      "omnara-docs-2"
+      "omnara-docs-2",
+      "omnara-docs-14",
+      "omnara-docs-22"
     ]
   },
   {
@@ -6554,7 +6593,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Omnara supports attaching images and documents to a conversation (omnara-docs-9), which could technically allow attaching a marked-up screenshot, but there is no evidence of markup/annotation tooling, task-specific attachment linking, or the agent explicitly interpreting visual diffs to implement UI changes. missing for 10: annotation/markup tooling, task-level (not just conversation-level) attachment workflow, evidence the agent actually parses/acts on visual markup, independent confirmation of this use case.",
+    "rationale": "Omnara docs confirm you can attach images and documents to a conversation with an agent, which supports the general idea of sharing a screenshot/mockup as task input. However, there is no evidence of markup/annotation tooling, or of the agent specifically interpreting marked-up visual diffs to implement a targeted visual change — missing for 10: annotation/markup tooling, evidence of visual-diff interpretation, and any UI-specific workflow around attaching mockups to a task.",
     "evidenceIds": [
       "omnara-docs-9"
     ]
@@ -6573,16 +6612,17 @@
   {
     "productId": "openhands",
     "storyId": "agentic-ai-insights",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands ships automation agents that inspect real data (incident logs, PR diffs, workflow failures, security alerts) and generate AI insights/suggestions such as severity assessment, review comments, root-cause analysis, and remediation PRs, directly matching the story's intent for a coding-agent product. Evidence is vendor-documented only, with no independent/hands-on corroboration of the quality of these insights. Missing for 10: independent validation of suggestion quality, a unified 'insights' UI/dashboard, and evidence of insights beyond code/security/ops contexts.",
+    "rationale": "OpenHands ships automations that inspect user data (PR diffs, CI logs, security alerts, Slack messages) and generate AI suggestions — severity assessment, root-cause identification, review comments, and remediation PRs — which count as AI-generated insights inside the product's workflows. However this is scoped to code/dev-ops data rather than general business data, and there's no dashboard/analytics-style insight surface or independent hands-on validation of these automations. missing for 10: broader data-source insight generation beyond code/CI/Slack, a dedicated insights/analytics UI, and independent corroboration that these automations produce accurate suggestions in practice.",
     "evidenceIds": [
       "openhands-docs-7",
       "openhands-docs-8",
       "openhands-docs-9",
       "openhands-docs-10",
-      "openhands-docs-11"
+      "openhands-docs-11",
+      "openhands-docs-37"
     ]
   },
   {
@@ -6590,8 +6630,8 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "OpenHands supports scheduled/webhook-triggered automations integrating with Slack, GitHub, Linear, etc., and ships prebuilt autonomous workflows (bug triage, PR review, CI failure fixing, security remediation, Slack mention handling) that run without human intervention, plus API support for scripting automations. Missing for 10: independent/hands-on verification of the scheduling/webhook trigger reliability and no detailed docs excerpt on configuring schedules beyond marketing copy.",
+    "confidence": "high",
+    "rationale": "OpenHands explicitly supports creating automations/workflows triggered by schedules or webhook events, integrating with Slack, GitHub, Linear, etc., plus concrete prebuilt background automations (bug-watch, PR label review, workflow-fix, security remediation, Slack mention monitor) that run autonomously without manual invocation. Missing for 10: independent/hands-on verification of these automations running unattended in production and more detail on scheduling configuration UI.",
     "evidenceIds": [
       "openhands-gh-4",
       "openhands-docs-7",
@@ -6599,7 +6639,8 @@
       "openhands-docs-9",
       "openhands-docs-10",
       "openhands-docs-11",
-      "openhands-docs-13"
+      "openhands-docs-37",
+      "openhands-gh-5"
     ]
   },
   {
@@ -6607,15 +6648,15 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "OpenHands is itself the built-in AI assistant/agent: CLI mode lets users type natural language tasks and get instant feedback, resume conversations, and auto-approve actions, and it can run locally, remote, or in the cloud with any LLM. This directly matches delegating tasks to a built-in assistant within the product. Missing for 10: independent/hands-on user reports validating the delegation experience beyond vendor docs, and more detail on task delegation depth (e.g., multi-step autonomy limits).",
+    "confidence": "medium",
+    "rationale": "OpenHands itself functions as the built-in AI agent users delegate coding tasks to via natural language, evidenced by CLI mode ('type natural language tasks and receive instant feedback'), goal-setting UI flows, custom agent creation, and automation workflows triggered from Slack/GitHub. missing for 10: independent/hands-on user reports corroborating the delegation experience beyond first-party docs, and clearer detail on how task results/feedback loop back to the user in non-CLI modes.",
     "evidenceIds": [
       "openhands-docs-1",
-      "openhands-docs-2",
-      "openhands-docs-3",
-      "openhands-gh-1",
-      "openhands-gh-2",
-      "openhands-probe-3"
+      "openhands-docs-16",
+      "openhands-docs-24",
+      "openhands-docs-28",
+      "openhands-gh-4",
+      "openhands-docs-11"
     ]
   },
   {
@@ -6623,14 +6664,18 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "OpenHands supports CLI mode with auto-approve for non-interactive runs, API support for automation/scripting, webhook/schedule-triggered automations (Slack, GitHub, Linear), and can run headless in Docker/VMs/servers — all consistent with CI/automation usage. Missing for 10: an explicit first-party CI pipeline example (e.g., GitHub Actions config) or independent hands-on confirmation of headless CI runs.",
+    "confidence": "high",
+    "rationale": "OpenHands supports a CLI headless mode with auto-approve for unattended runs, an Agent Server with HTTP/WebSocket API and OpenAPI spec, GitHub Actions-style automations (webhooks, schedules, PR triage, CI failure fixes), and Docker/VM/Apptainer sandbox backends — all clearly enabling CI/automation use. Missing for 10: a dedicated first-party CI example workflow file (e.g. GitHub Actions YAML) and independent third-party confirmation of headless CI runs.",
     "evidenceIds": [
       "openhands-docs-3",
-      "openhands-docs-13",
+      "openhands-docs-16",
+      "openhands-docs-32",
+      "openhands-probe-2",
       "openhands-gh-4",
       "openhands-gh-5",
-      "openhands-probe-3"
+      "openhands-docs-9",
+      "openhands-docs-35",
+      "openhands-docs-13"
     ]
   },
   {
@@ -6638,8 +6683,8 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "OpenHands is an AI coding agent, so the axis of consuming MCP servers as a client is applicable (unlike serving MCP, which would be na for an agent), but no evidence in the pack mentions MCP integration, configuration, or tool-plugging capability at all.",
+    "confidence": "medium",
+    "rationale": "The evidence pack describes OpenHands' custom tool system, ACP-compatible agent support, and skills, but nowhere mentions MCP (Model Context Protocol) server integration or configuration, so there is no evidence the product supports plugging in MCP servers.",
     "evidenceIds": []
   },
   {
@@ -6648,7 +6693,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenHands is itself an AI coding agent, so serving as an MCP server for other agents is a different product role (agent-as-client, not server) — this axis is out of scope per the agent-role exception. No evidence shows OpenHands running as an MCP server endpoint.",
+    "rationale": "OpenHands is itself a coding agent product; serving tools via an official MCP server is a different role (client vs server) and no evidence shows OpenHands exposing itself as an MCP server — only ACP-compatible agent backends and its own HTTP/WebSocket Agent Server are documented.",
     "evidenceIds": []
   },
   {
@@ -6657,11 +6702,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenHands' CLI mode explicitly lets users type natural language tasks and get instant feedback, resume conversations, and control approvals, directly matching the story, and this is corroborated by an official documented CLI probe. Missing for 10: independent/hands-on user reports validating the natural-language interaction quality beyond vendor docs.",
+    "rationale": "OpenHands is fundamentally natural-language driven: CLI and GUI let users type natural language tasks and get instant feedback, resume conversations, and control the agent with simple commands, and the browser-use integration explicitly works 'through natural language instructions.' This is corroborated by official docs and a CLI probe confirming the interface exists. Missing for 10: independent/hands-on user reports validating real-world natural-language robustness beyond vendor docs.",
     "evidenceIds": [
       "openhands-docs-1",
-      "openhands-docs-2",
-      "openhands-docs-3",
+      "openhands-docs-16",
+      "openhands-docs-22",
       "openhands-probe-3"
     ]
   },
@@ -6671,11 +6716,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenHands documents an official CLI mode with natural language task execution, conversation resumption, and auto-approve controls, confirmed by dedicated docs pages and a probe verifying the CLI documentation page exists. Missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and more detail on CLI installation/distribution mechanics.",
+    "rationale": "OpenHands ships an official CLI as its default interactive mode (`openhands`), with documented features like resuming conversations, auto-approve, pause controls, and natural language task input. missing for 10: independent/third-party hands-on corroboration of the CLI beyond vendor docs, and more detail on CLI-specific scripting/automation capabilities distinct from the API.",
     "evidenceIds": [
+      "openhands-docs-16",
       "openhands-docs-1",
       "openhands-docs-2",
       "openhands-docs-3",
+      "openhands-docs-17",
       "openhands-probe-3"
     ]
   },
@@ -6684,12 +6731,14 @@
     "storyId": "agentic-public-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "OpenHands exposes a documented OpenAPI spec (openapi.json) plus an llms.txt LLM-friendly docs index, and pricing docs explicitly mention 'API support for automation and scripting,' confirming a public, documented API for programmatic/agentic control. missing for 10: independent third-party corroboration of API usage/reliability and more detailed API reference docs beyond the openapi.json probe.",
+    "confidence": "high",
+    "rationale": "OpenHands documents a public OpenAPI spec (openapi.json), an Agent Server exposing HTTP/WebSocket API, a Software Agent SDK for programmatic control, and pricing tiers explicitly listing 'API support for automation and scripting' — together these constitute a documented public API for driving the product. missing for 10: independent/hands-on corroboration of the API in production use and more detail on authentication/rate limits for the public API.",
     "evidenceIds": [
       "openhands-probe-2",
-      "openhands-probe-1",
-      "openhands-docs-13"
+      "openhands-docs-32",
+      "openhands-docs-6",
+      "openhands-docs-13",
+      "openhands-docs-27"
     ]
   },
   {
@@ -6697,8 +6746,8 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows OpenHands supports bringing your own LLM keys, SAML/SSO, and general API access, but nothing describes issuing scoped or least-privilege API credentials specifically for an agent's actions/tool access.",
+    "confidence": "high",
+    "rationale": "No evidence describes scoped or least-privilege API credential issuance for agents — docs mention bringing your own LLM keys and general API support for automation, but nothing about permission scoping, credential minimization, or role-based access tokens for agents.",
     "evidenceIds": []
   },
   {
@@ -6706,12 +6755,15 @@
     "storyId": "agentic-sdks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "OpenHands documents an official Software Agent SDK ('a composable Python library for building agents that work with code') plus a public OpenAPI spec and llms.txt index, giving AI-native users concrete official interfaces to build against. Missing for 10: independent/third-party corroboration of SDK usage, and richer SDK-specific docs (examples, API reference depth) beyond the single description.",
+    "confidence": "high",
+    "rationale": "OpenHands ships an official 'Software Agent SDK' — a composable Python library for building agents that work with code, with extensive documented guides (custom agents, custom tools, agent settings, condensers, ACP integration, agent server API with OpenAPI spec). This constitutes a genuine official SDK, well-documented with first-party guides and a live OpenAPI schema. Missing for 10: independent/community corroboration of real-world SDK adoption and multi-language SDK support (appears Python-only).",
     "evidenceIds": [
       "openhands-docs-6",
-      "openhands-probe-2",
-      "openhands-probe-1"
+      "openhands-docs-28",
+      "openhands-docs-30",
+      "openhands-docs-33",
+      "openhands-docs-32",
+      "openhands-probe-2"
     ]
   },
   {
@@ -6730,21 +6782,24 @@
     "storyId": "ai-automated-test-generation-on-change",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes OpenHands agents autonomously generating or running tests to validate their own code changes before proposing them; the docs/GitHub excerpts cover CLI usage, multi-agent backends, automations, and pricing, but not test-generation/self-validation workflows.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "While OpenHands runs as an autonomous coding agent with sandboxed execution and even a 'critic' feature that computes quality/success probability scores during execution, there is no evidence it specifically generates and runs tests to validate code changes before proposing them (e.g., no test-writing/test-execution step described in the workflow, PR-review, or critic docs).",
+    "evidenceIds": [
+      "openhands-docs-29",
+      "openhands-docs-9"
+    ]
   },
   {
     "productId": "openhands",
     "storyId": "ai-automatic-model-routing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows OpenHands supports using any LLM and switching between agent backends manually, but there is no mention of automatic routing of prompts to the most suitable model based on task characteristics. Missing for 10: any model-routing/selection logic, per-task model suitability heuristics, or documentation of automatic model selection.",
+    "confidence": "medium",
+    "rationale": "Evidence shows OpenHands is model-agnostic and lets users choose an LLM (openhands-gh-2, openhands-docs-26), and it offers an `ask_oracle` mechanism for consulting a stronger model without switching (openhands-docs-19), but this is a manual consult tool, not automatic per-prompt routing to the best-suited model. No evidence of an automatic routing/selection system that picks the optimal model per task.",
     "evidenceIds": [
       "openhands-gh-2",
-      "openhands-gh-1",
-      "openhands-docs-15"
+      "openhands-docs-26",
+      "openhands-docs-19"
     ]
   },
   {
@@ -6765,10 +6820,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows an OpenAPI spec is served (openhands-probe-2) and API support is advertised for automation/scripting (openhands-docs-13), implying some API reference exists, but there is no evidence of an interactive documentation UI (e.g., Swagger/Redoc 'try it' console) or runnable code examples tied to that spec. missing for 10: interactive API explorer UI, runnable/try-it code examples, confirmation the openapi.json is rendered as browsable docs.",
+    "rationale": "An OpenAPI spec is exposed at docs.openhands.dev/openapi.json, indicating a machine-readable API reference exists for the Agent Server's HTTP/WebSocket API, but there is no evidence of an interactive explorer UI (e.g., Swagger/Redoc try-it-out) or runnable code examples embedded in docs. Missing for 10: interactive API console/UI, runnable/executable code samples, independent confirmation of an explorable reference experience.",
     "evidenceIds": [
       "openhands-probe-2",
-      "openhands-docs-13"
+      "openhands-docs-32"
     ]
   },
   {
@@ -6777,9 +6832,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms an OpenAPI spec is served at docs.openhands.dev/openapi.json with a valid 'openapi' key, directly satisfying the machine-readable API spec requirement, and API support for automation/scripting is also documented in pricing. Missing for 10: independent third-party corroboration or detailed docs describing spec coverage/versioning.",
+    "rationale": "A probe confirms an OpenAPI spec is served at docs.openhands.dev/openapi.json with a valid 'openapi' key, and the Agent Server exposes an HTTP/WebSocket API, corroborating machine-readable spec availability. Missing for 10: no independent third-party confirmation of spec completeness/versioning beyond the probe.",
     "evidenceIds": [
       "openhands-probe-2",
+      "openhands-docs-32",
       "openhands-docs-13"
     ]
   },
@@ -6787,11 +6843,13 @@
     "productId": "openhands",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "OpenHands can run agents in Docker/VMs (openhands-gh-5), which implies isolated execution rather than direct production access, but the evidence pack never explicitly describes a sandbox environment for testing safely against non-production data. Missing for 10: explicit documentation of sandbox/isolation guarantees, workspace-vs-production data separation, and any hands-on confirmation that production systems are protected.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "OpenHands documents running agents in isolated sandboxes (Docker, VMs, or Apptainer containers for HPC/shared environments), which supports safe, isolated execution separate from a user's live system — openhands-gh-5, openhands-docs-35. However, there's no explicit documentation of test/staging data separation from production data, data seeding, or guarantees against touching production systems specifically. Missing for 10: explicit production-data isolation guarantees, test-data fixtures/seeding docs, and independent verification that sandbox truly prevents production access.",
     "evidenceIds": [
-      "openhands-gh-5"
+      "openhands-gh-5",
+      "openhands-docs-35",
+      "openhands-docs-32"
     ]
   },
   {
@@ -6810,11 +6868,15 @@
   {
     "productId": "openhands",
     "storyId": "approve-plan-before-execution",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack mentions auto-approve controls and CLI usage but contains no mention of a plan-review/approval step before code changes are made; no planning-phase or approval-gate feature is documented. missing for 10: any documentation of a plan-generation step, an approval/confirmation gate prior to code edits, or user testimony confirming such a workflow exists.",
-    "evidenceIds": []
+    "rationale": "The CLI docs mention an 'auto-approve all actions (use with caution)' setting, implying a default confirmation/approval step exists before actions run, and a custom 'planning agent' example is documented, but there is no explicit description of a dedicated implementation-plan review/approval step before code changes are made. missing for 10: explicit plan-presentation UI, documented approve/reject workflow for a generated plan, and confirmation that code changes are gated behind plan approval.",
+    "evidenceIds": [
+      "openhands-docs-3",
+      "openhands-docs-28",
+      "openhands-docs-16"
+    ]
   },
   {
     "productId": "openhands",
@@ -6822,10 +6884,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a scope/contract approval workflow gating agent repository modifications; only auto-approve settings and general automation features are documented, not a pre-execution scope-approval gate for engineering leads.",
-    "evidenceIds": [
-      "openhands-docs-3"
-    ]
+    "rationale": "No evidence of a scope/contract approval gate or spec sign-off workflow before an agent can modify the repository; the pack shows auto-approve, pause/resume, and CLI controls but nothing about an engineering-lead reviewing and approving a task's scope/contract as a precondition for repo changes.",
+    "evidenceIds": []
   },
   {
     "productId": "openhands",
@@ -6833,11 +6893,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenHands supports automations that integrate with GitHub and Linear and can respond to webhook events, plus label-triggered PR review and bug-watching automations, implying issue/ticket-triggered agent runs are possible. However there's no explicit documentation of a workflow where a developer directly assigns a specific issue/ticket to an agent (e.g. via an 'assign to OpenHands' button or issue-comment trigger) as opposed to general automation setup. Missing for 10: explicit documentation of issue-to-agent assignment UX (e.g., GitHub issue comment/label triggering agent to pick up that specific ticket), independent/hands-on confirmation of this workflow, and ticketing system coverage beyond GitHub/Linear mentions.",
+    "rationale": "OpenHands documents GitHub/Linear integrations and webhook-triggered automations (e.g., watching PR labels, failed workflows, security alerts) that let an agent act on repo events, and issue-watching for bug triage that routes issues to owners, suggesting some issue-driven task assignment. However, no evidence explicitly shows a documented flow of assigning a coding task directly from a GitHub/Linear issue or ticket (e.g., an @openhands mention on an issue) analogous to the Slack mention flow. Missing for 10: explicit doc/example of triggering an agent from an issue/ticket (not just PR labels or Slack), and confirmation that GitHub/Linear issue-to-task assignment is a first-class supported workflow.",
     "evidenceIds": [
       "openhands-gh-4",
+      "openhands-docs-7",
       "openhands-docs-8",
-      "openhands-docs-7"
+      "openhands-docs-9",
+      "openhands-docs-10",
+      "openhands-docs-11",
+      "openhands-docs-37"
     ]
   },
   {
@@ -6846,9 +6910,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly list an 'Auto-approve all actions (use with caution)' setting for CLI mode, directly matching the story. Missing for 10: independent/hands-on confirmation and details on scope (per-action vs global) or how to configure it beyond CLI mode.",
+    "rationale": "Docs explicitly list 'Auto-approve all actions (use with caution)' as a CLI mode feature, directly matching the story of configuring an agent to bypass per-action confirmation. Missing for 10: no independent/hands-on corroboration beyond first-party docs, and no detail on granularity (e.g., per-tool vs global auto-approve settings).",
     "evidenceIds": [
       "openhands-docs-3",
+      "openhands-docs-16",
       "openhands-probe-3"
     ]
   },
@@ -6864,14 +6929,15 @@
   {
     "productId": "openhands",
     "storyId": "auto-open-pr-on-completion",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands documents workflow automations that open pull requests automatically for specific triggers (failed CI, security alerts) via [openhands-docs-9] and [openhands-docs-10], showing the underlying capability exists. However, there's no direct documentation of configuring a general coding-task agent to auto-open a PR upon arbitrary task completion — the evidence only covers specific automation templates (bug-fix, security remediation) rather than a generic 'open PR on task completion' setting. Missing for 10: explicit config option/flag for auto-PR-on-completion in standard task workflows, independent/hands-on confirmation of this behavior.",
+    "rationale": "OpenHands documents explicit automations that open pull requests automatically on task completion (e.g., failed workflow fixes and security remediations both result in opening a PR), plus general git/GitHub integration and workflow automation triggers via webhooks/schedules. Missing for 10: a dedicated first-party doc specifically titled 'auto-open PR on task completion' as a generic configurable option (rather than only via specific automation templates), and independent/hands-on confirmation.",
     "evidenceIds": [
       "openhands-docs-9",
       "openhands-docs-10",
-      "openhands-gh-4"
+      "openhands-gh-4",
+      "openhands-docs-26"
     ]
   },
   {
@@ -6880,7 +6946,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands documents a specific automation that watches for a configurable PR label, inspects full PR context, and posts an AI review comment, which directly matches automated PR review with AI-generated comments. However, it is label-triggered rather than automatic on every PR, and posts once per label event rather than full inline (line-by-line) comments, so it's a partial match to 'every pull request' with 'inline comments'. missing for 10: evidence of automatic triggering on all PRs without manual labeling, confirmation of true inline (line-level) code comments vs a single summary comment, and independent/hands-on verification of this workflow in practice.",
+    "rationale": "OpenHands documents a PR-review automation that watches for a configurable label, inspects full PR context, and posts an AI review comment once per label event, which directly matches the story's intent. However, this is label-triggered rather than automatic on every PR, and there's no evidence of inline (line-level) comments specifically or independent/hands-on confirmation of review quality. Missing for 10: evidence of automatic (non-label-gated) triggering on every PR, confirmation comments are inline/line-specific rather than a single summary comment, and independent verification of the feature working in practice.",
     "evidenceIds": [
       "openhands-docs-8"
     ]
@@ -6889,13 +6955,14 @@
     "productId": "openhands",
     "storyId": "automatic-environment-setup",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence shows OpenHands runs agents in configurable sandboxed backends (Docker, VMs, local/remote/cloud) and supports natural-language task execution with auto-approve, which implies some autonomous environment setup, but no citation explicitly confirms the agent auto-clones repos or installs dependencies on its own. Missing for 10: explicit documentation of repo cloning, dependency installation, and end-to-end environment bootstrap steps.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "OpenHands is fundamentally an autonomous coding agent with sandboxed execution (Docker/Apptainer runtimes), git integrations, and CLI/cloud modes that imply it can operate within a cloned repo and run setup commands, but the evidence pack never explicitly documents an end-to-end 'clone repo, install dependencies, configure environment' autonomous workflow. missing for 10: explicit documentation or demo of autonomous repo cloning, dependency installation, and self-configuration of the working environment; independent/hands-on confirmation of this specific workflow succeeding.",
     "evidenceIds": [
+      "openhands-docs-26",
+      "openhands-docs-35",
       "openhands-gh-5",
-      "openhands-docs-1",
-      "openhands-docs-3"
+      "openhands-docs-6"
     ]
   },
   {
@@ -6903,12 +6970,12 @@
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "OpenHands supports automations/workflows triggered by events (Slack, GitHub, Linear, webhooks) and API access for scripting, which enables some multi-item automation, but there's no explicit evidence of a bulk-operation feature (e.g., processing a batch list of items/tasks in one command or UI action). missing for 10: explicit bulk/batch operation feature, evidence of processing multiple items in a single invocation, UI/CLI support for batch task lists, independent confirmation of scale.",
+    "confidence": "medium",
+    "rationale": "OpenHands supports running multiple agent tasks in parallel via asyncio.gather, workflow automations triggered on schedules/webhooks across Slack/GitHub/Linear, and PR/issue triage automations that could touch many items, suggesting some bulk/automation-depth capability. However there's no explicit documented feature for batch/bulk operations across many items (e.g., bulk file edits, bulk PR processing, multi-repo batch runs) as a first-class concept. missing for 10: dedicated bulk-operation API or UI, documented limits/performance at scale, independent evidence of bulk usage in production.",
     "evidenceIds": [
+      "openhands-docs-25",
       "openhands-gh-4",
-      "openhands-docs-13",
-      "openhands-docs-7",
+      "openhands-docs-20",
       "openhands-docs-9"
     ]
   },
@@ -6916,16 +6983,17 @@
     "productId": "openhands",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands ships documented automation triggers—scheduled runs, webhook events, PR label events, Slack mentions, failed-workflow detection, and security-alert triage—each automatically invoking an agent action, matching the 'rules trigger actions on events' story (openhands-gh-4, openhands-docs-7 to openhands-docs-11). missing for 10: independent/hands-on verification that users can define fully custom rule logic (vs. fixed preset automations), and no evidence of a general-purpose rule-authoring UI or DSL for arbitrary event/action pairing",
+    "rationale": "OpenHands explicitly supports event/webhook-triggered automations (schedules, webhooks, Slack mentions, PR labels, failed workflows, security alerts) that autonomously run agent actions, matching the 'rules triggering actions on events' story. Missing for 10: no first-party docs detailing a generalized rules-definition UI/config schema (only example automations are shown) and no independent/hands-on verification of these triggers working in practice.",
     "evidenceIds": [
       "openhands-gh-4",
       "openhands-docs-7",
       "openhands-docs-8",
       "openhands-docs-9",
       "openhands-docs-10",
-      "openhands-docs-11"
+      "openhands-docs-11",
+      "openhands-docs-37"
     ]
   },
   {
@@ -6934,14 +7002,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands explicitly supports creating automations/workflows that run on a schedule or in response to webhook events, integrating with Slack, GitHub, Linear, etc., which directly matches recurring job scheduling. Missing for 10: independent/hands-on corroboration of the scheduling UI/config and details on job management (pause/edit/monitor recurring jobs).",
+    "rationale": "OpenHands explicitly supports creating automations that 'run on a schedule or in response to webhook events' and integrate with Slack, GitHub, Linear, etc., plus documented recurring workflows like bug triage, PR review, failed-workflow fixes, and security alert remediation. Missing for 10: independent/hands-on confirmation of scheduling reliability and detailed docs on schedule configuration syntax.",
     "evidenceIds": [
       "openhands-gh-4",
       "openhands-docs-7",
       "openhands-docs-8",
       "openhands-docs-9",
       "openhands-docs-10",
-      "openhands-docs-11"
+      "openhands-docs-11",
+      "openhands-docs-37"
     ]
   },
   {
@@ -6950,15 +7019,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows OpenHands can create automations/workflows (Slack, GitHub, Linear integrations, scheduled/webhook triggers) but nothing in the pack describes version history, review, or rollback mechanisms specifically for these automations themselves — no changelog, diff view, or revert feature is documented.",
-    "evidenceIds": [
-      "openhands-gh-4",
-      "openhands-docs-7",
-      "openhands-docs-8",
-      "openhands-docs-9",
-      "openhands-docs-10",
-      "openhands-docs-11"
-    ]
+    "rationale": "Evidence shows OpenHands can create automations/workflows (Slack, GitHub, Linear triggers) and resume conversations, but there is no evidence of versioning, reviewing, or rolling back these automations themselves (e.g., workflow config history, diff/approve changes, or revert to a prior automation state).",
+    "evidenceIds": []
   },
   {
     "productId": "openhands",
@@ -6966,12 +7028,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands ships explicit automation for bug diagnosis and fixing: watching for new bugs/incidents and gathering logs (openhands-docs-7), detecting failed workflows/inspecting logs/identifying cause and opening a PR fix (openhands-docs-9), and general natural-language task execution via CLI (openhands-docs-1). This directly matches autonomous bug diagnosis-and-fix, though missing for 10: independent hands-on verification of fix success rate and end-to-end case studies beyond vendor docs.",
+    "rationale": "OpenHands explicitly ships bug-fix automations: watching for new bugs/incidents and gathering logs/context, detecting failed workflows and opening a PR with a proposed fix, and reviewing security alerts to open a remediation PR — all autonomous diagnose-and-fix flows backed by a CLI/agent-server for execution. missing for 10: independent hands-on verification/benchmarks of end-to-end bug-fix success rate.",
     "evidenceIds": [
       "openhands-docs-7",
       "openhands-docs-9",
-      "openhands-docs-1",
-      "openhands-docs-6"
+      "openhands-docs-10",
+      "openhands-docs-16",
+      "openhands-docs-32"
     ]
   },
   {
@@ -6980,10 +7043,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "GitHub docs explicitly state OpenHands can be used with any LLM, and pricing docs confirm both Open Source and Cloud plans support bringing your own LLM keys, directly matching the story. Missing for 10: independent/hands-on verification of BYO-key setup and any model-specific limitations or edge cases.",
+    "rationale": "Multiple sources confirm BYO-LLM/key support: GitHub states 'Use with any LLM,' pricing docs explicitly say 'OpenHands Open Source and OpenHands Cloud plans offer support to bring your own LLM keys,' and the free tier description notes 'Model agnostic.' Missing for 10: independent/hands-on confirmation of the setup flow and any limitations on which providers/keys are supported.",
     "evidenceIds": [
       "openhands-gh-2",
-      "openhands-docs-15"
+      "openhands-docs-15",
+      "openhands-docs-26"
     ]
   },
   {
@@ -6992,10 +7056,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands documents a Slack integration where the agent watches for @openhands mentions, opens a conversation with the message context, and replies when done (openhands-docs-11), which matches tagging an agent in a chat thread to delegate a task. However this is limited to Slack specifically (not other chat platforms), appears tied to the Cloud/automation feature set rather than the core product, and lacks independent/hands-on corroboration. Missing for 10: support for other chat platforms (e.g., Teams, Discord), independent verification of the Slack flow working in practice, and detail on how delegated context/threading is preserved during the exchange.",
+    "rationale": "OpenHands documents a Slack channel monitor that watches for @openhands mentions and opens a conversation with the message context, replying when finished — this directly supports tagging an agent in a chat thread to delegate a task. However, evidence doesn't show threaded discussion/back-and-forth delegation within the same thread beyond the initial mention-triggered conversation, nor integration with other chat tools (Teams, Discord) or richer bug-triage dialogue in-thread. missing for 10: evidence of multi-turn in-thread discussion after tagging, support for chat platforms beyond Slack, and hands-on/independent confirmation of the Slack integration working as described.",
     "evidenceIds": [
       "openhands-docs-11",
-      "openhands-gh-4"
+      "openhands-docs-37"
     ]
   },
   {
@@ -7015,22 +7079,24 @@
     "storyId": "codebase-context-file",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in this pack mentions a repo-level context/convention file (e.g., microagents, custom instructions, or similar) that developers can add to guide agent behavior; the pack only covers CLI usage, deployment, integrations, and pricing.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows agent configuration, skills, and custom agent creation guides, but nothing describes a repo-level context file (e.g., an AGENTS.md/microagents-style file for codebase conventions) that shapes planning or code generation. Missing for 10: explicit documentation of a repository context/conventions file, evidence it's read to shape plans/code, and any example of such a file's format.",
     "evidenceIds": []
   },
   {
     "productId": "openhands",
     "storyId": "concurrent-task-execution",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "OpenHands supports running agents across many backends (local, Docker, VMs, cloud) and building automations triggered by schedules or webhooks (Slack, GitHub, Linear), plus API access for scripting — all of which enable running multiple tasks in parallel across infrastructure. However, there is no explicit documentation of a dashboard or orchestration layer for managing many concurrent agent runs, concurrency limits, or throughput metrics for an engineering lead. Missing for 10: explicit multi-task concurrency/orchestration UI, stated concurrency limits or scaling guarantees, and independent evidence of teams running many parallel agents successfully.",
+    "rationale": "Docs explicitly show running multiple agent tasks in parallel via asyncio.gather(), plus API support for automation/scripting and cloud/enterprise backends that could host many concurrent agent sessions, and webhook-driven automations (Slack/GitHub/Linear) that can trigger many agent runs. However this is dev-level/API-level parallelism rather than a dedicated fleet-management or throughput-scaling dashboard for engineering leads. Missing for 10: evidence of built-in orchestration/monitoring UI for managing many concurrent agents, documented concurrency limits/scaling guarantees, and case studies showing throughput at scale.",
     "evidenceIds": [
-      "openhands-gh-4",
-      "openhands-gh-5",
+      "openhands-docs-25",
       "openhands-docs-13",
-      "openhands-docs-4"
+      "openhands-docs-4",
+      "openhands-docs-5",
+      "openhands-gh-4",
+      "openhands-docs-32"
     ]
   },
   {
@@ -7039,12 +7105,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "GitHub is explicitly listed as an integration target for OpenHands automations, and multiple documented workflows show the agent opening pull requests (fixing failed CI, remediating security alerts, responding to PR-review label events), which implies repo access and PR creation. However, there is no first-party documentation of the actual repo-connection/auth flow (e.g., installing a GitHub App, granting repo scopes) or hands-on confirmation that this works end-to-end. Missing for 10: explicit repo-connection setup docs, evidence of PR creation permissions/scopes, and independent verification of successful PRs opened.",
+    "rationale": "Evidence shows GitHub-centric automation workflows (PR review, failed-workflow fixes with PR creation, security remediation PRs, PR reviewer assignment via git blame) and general 'Git integrations' listed in pricing, implying repo connection and PR-opening capability. However, there's no explicit documentation of the GitHub connection/auth flow, repo selection UI, or a dedicated 'connect repo' feature walkthrough. missing for 10: explicit repo-connection/auth setup docs, confirmation of PR creation permissions/flow, independent hands-on verification of opening PRs.",
     "evidenceIds": [
-      "openhands-gh-4",
       "openhands-docs-9",
       "openhands-docs-10",
-      "openhands-docs-8"
+      "openhands-docs-20",
+      "openhands-docs-26",
+      "openhands-gh-4"
     ]
   },
   {
@@ -7053,40 +7120,31 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows pricing page mentions plan features like SSO, API access, and BYO LLM keys, but nothing about daily task limits, concurrency limits, or any management dashboard for such limits.",
-    "evidenceIds": [
-      "openhands-docs-12",
-      "openhands-docs-13",
-      "openhands-docs-14",
-      "openhands-docs-15"
-    ]
+    "rationale": "There is pricing page evidence listing plan features (SSO, API access, BYO LLM keys) but nothing about visibility or management of daily task/concurrency limits per plan for engineering leads; no dashboard, quota, or rate-limit management controls are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "openhands",
     "storyId": "delegate-sessions-for-teammates",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows enterprise features like SSO/SAML and API access, which imply some multi-user org management, but there is no evidence of an engineering-lead being able to create or launch agent sessions on behalf of other users. Missing for 10: any documentation of delegated session creation, admin-initiated sessions, or role-based session provisioning for other org members.",
-    "evidenceIds": [
-      "openhands-docs-14",
-      "openhands-docs-13",
-      "openhands-docs-5"
-    ]
+    "confidence": "low",
+    "rationale": "There is no evidence of multi-user org admin features, delegated session creation, or role-based access allowing a lead to spin up sessions on behalf of others; SSO/SAML is mentioned only for enterprise login, not delegated session creation.",
+    "evidenceIds": []
   },
   {
     "productId": "openhands",
     "storyId": "describe-feature-in-plain-language",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands lets users type natural-language tasks directly in the CLI and receive feedback, which is the core mechanism for turning plain-language input into agent-executed work, and automation triggers (Slack mentions, PR labels, failed workflows) show it converting informal signals into concrete PRs/tasks. However, there is no evidence of an explicit 'spec' or scoped task artifact (e.g., a generated plan, ticket, or requirements doc) being produced before implementation — missing for 10: explicit task-scoping/spec generation step, evidence of a structured plan artifact, and independent confirmation that vague bug/feature descriptions reliably become well-scoped tasks rather than direct code edits.",
+    "rationale": "OpenHands' core loop is exactly this: users type natural-language tasks and the agent works toward them (docs-1, docs-24), and dedicated automations turn incoming bug/issue signals and PR review requests directly into implementation tasks or fix PRs (docs-7, docs-9, docs-10). A dedicated planning agent example (docs-28) further shows task-scoping behavior built into the SDK.\nMissing for 10: explicit first-party documentation of an automatic 'plain language → scoped spec/task breakdown' step (vs. just execution), and independent/hands-on verification of task quality.",
     "evidenceIds": [
       "openhands-docs-1",
-      "openhands-docs-7",
-      "openhands-docs-8",
+      "openhands-docs-24",
       "openhands-docs-9",
-      "openhands-docs-11"
+      "openhands-docs-10",
+      "openhands-docs-28"
     ]
   },
   {
@@ -7095,11 +7153,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows OpenHands executes natural-language coding tasks and automations, but nothing in the pack addresses ingesting mockups/design files or a PM-oriented, engineer-free workflow from design to implementation. missing for 10: mockup/design ingestion capability, no-code PM-facing workflow evidence, any example of design-to-code handoff elimination.",
-    "evidenceIds": [
-      "openhands-docs-1",
-      "openhands-gh-4"
-    ]
+    "rationale": "The evidence describes OpenHands as a developer-oriented coding agent (CLI, SDK, GitHub/Slack automations, custom tools) but contains no mention of mockup/design import, Figma-to-code, or any workflow enabling a non-engineer product manager to turn a visual design into a working app without engineering involvement.",
+    "evidenceIds": []
   },
   {
     "productId": "openhands",
@@ -7117,14 +7172,16 @@
     "productId": "openhands",
     "storyId": "end-to-end-feature-implementation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands is positioned as an autonomous coding agent that takes natural language tasks and works across CLI, cloud, and automation workflows (e.g., PR review, bug-fixing, incident response), implying it can implement features end-to-end, but the evidence pack lacks a concrete first-party or hands-on example of the agent writing a feature plus tests. Missing for 10: explicit documentation/demo of full feature-implementation-with-tests workflow, independent benchmark or hands-on verification of test-writing capability, and confirmation of end-to-end PR creation including tests.",
+    "rationale": "Evidence shows OpenHands is built as an autonomous coding agent (CLI natural-language tasks, auto-approve mode, SDK for building code-working agents, custom tool system, quality/success scoring) which supports end-to-end feature implementation, but no evidence explicitly confirms it writes or runs tests as part of that workflow. missing for 10: explicit documentation/demo of test-writing as part of feature implementation, independent hands-on verification of end-to-end feature delivery.",
     "evidenceIds": [
       "openhands-docs-1",
       "openhands-docs-3",
-      "openhands-gh-3",
-      "openhands-docs-9"
+      "openhands-docs-6",
+      "openhands-docs-29",
+      "openhands-docs-30",
+      "openhands-docs-16"
     ]
   },
   {
@@ -7145,23 +7202,25 @@
     "storyId": "feedback-to-task-conversion",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "OpenHands integrates with Linear/GitHub/Slack for automations and can process natural-language tasks, so the general axis of turning input into work items is plausible, but there is no evidence of a feature that ingests user feedback and outputs a structured task with proposed scope for PM workflows.",
+    "confidence": "high",
+    "rationale": "OpenHands is a coding agent platform focused on executing tasks (code, PRs, bug fixes, automations) rather than a product-management tool for intake and triage of user feedback into structured specs; there is no evidence of a feedback-intake workflow, scoping template, or PM-facing structuring feature. Nothing in the evidence pack describes converting feedback submissions into structured tasks with proposed scope.",
     "evidenceIds": []
   },
   {
     "productId": "openhands",
     "storyId": "headless-ci-execution",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show a CLI mode with an 'auto-approve all actions' flag for non-interactive runs, and GitHub evidence describes running agents locally/Docker/VMs and triggering automations 'on a schedule or in response to webhook events,' plus API support for automation/scripting — all consistent with headless CI/CD use. Missing for 10: an explicit CI/CD pipeline example (e.g., GitHub Actions YAML snippet) or independent hands-on confirmation of headless exit-code/scripting behavior.",
+    "rationale": "Evidence shows CLI headless-style options (auto-approve all actions, non-interactive task execution) plus GitHub workflow automations (failed-workflow fixes, security alert remediation, PR review triggers via label events) that imply CI/CD-style headless invocation, and API support for automation/scripting. However, there is no explicit documentation of a dedicated CI/CD flag, exit-code semantics, or a documented shell-script/pipeline invocation pattern. Missing for 10: explicit CI/CD pipeline integration docs, headless/non-interactive mode flag documentation, and independent confirmation of scripted/automated invocation in build pipelines.",
     "evidenceIds": [
       "openhands-docs-3",
-      "openhands-probe-3",
+      "openhands-docs-9",
+      "openhands-docs-10",
+      "openhands-docs-8",
+      "openhands-docs-13",
       "openhands-gh-4",
-      "openhands-gh-5",
-      "openhands-docs-13"
+      "openhands-docs-16"
     ]
   },
   {
@@ -7170,10 +7229,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence confirms OpenHands supports running agents in isolated environments (Docker/VMs) and explicitly references 'sandbox infrastructure' as part of its backend, implying code execution is sandboxed. However, there is no detailed documentation on dependency installation within the sandbox, security guarantees, or isolation mechanics beyond these brief mentions. missing for 10: explicit sandbox architecture docs, dependency-installation workflow details, isolation/security guarantees, independent verification of sandbox safety.",
+    "rationale": "OpenHands supports running agents locally, in Docker, on VMs, or via an agent server backend, and offers Apptainer as a container runtime for sandboxed execution in restricted environments, implying isolated code execution. However, there is no explicit documentation on dependency installation workflows, sandbox security guarantees, or hands-on verification of isolation robustness. Missing for 10: explicit sandbox security model/documentation, dependency installation details, independent verification of isolation.",
     "evidenceIds": [
       "openhands-gh-5",
-      "openhands-docs-4"
+      "openhands-docs-35"
     ]
   },
   {
@@ -7181,8 +7240,8 @@
     "storyId": "issue-tracker-sync",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "OpenHands documents automation workflows that integrate with Linear (and Slack/GitHub) via webhooks/schedules, showing some issue-tracker connectivity, but Jira, ClickUp, and Monday.com are never mentioned anywhere in the evidence pack — only vague 'and more' language covers them. missing for 10: explicit Jira/ClickUp/Monday.com integrations, docs on ticket management workflows beyond Linear, evidence of two-way ticket manipulation (create/update/close) rather than just webhook triggers.",
+    "confidence": "low",
+    "rationale": "OpenHands documents workflow automations that integrate with Linear (alongside Slack and GitHub) for triggering agent tasks, but there is no evidence of Jira, ClickUp, or Monday.com integrations, nor of agents directly managing tickets (creating/updating/closing) rather than just being triggered by webhook events. missing for 10: Jira integration, ClickUp integration, Monday.com integration, evidence of bidirectional ticket management (not just triggering).",
     "evidenceIds": [
       "openhands-gh-4"
     ]
@@ -7190,14 +7249,17 @@
   {
     "productId": "openhands",
     "storyId": "live-agent-activity-monitoring",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "OpenHands CLI mode offers instant feedback on tasks and resumable conversations, implying some real-time interaction, but there's no explicit evidence of a live status dashboard, streaming action log, or step-by-step progress view while an agent runs. missing for 10: explicit real-time status/progress UI documentation, evidence of live action streaming or step visibility, independent hands-on confirmation of watching an agent live.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenHands' CLI mode provides an interactive terminal experience with instant feedback and an Esc-to-pause control, while the Agent Server exposes a WebSocket/HTTP API and the Agent Canvas serves as a browser-based control center for live agent conversations, and the conversation-goals guide explicitly describes UI progress display with stop/resume controls. Together these show real-time visibility into agent actions and status, though the pack lacks a dedicated 'live status dashboard' screenshot or independent hands-on confirmation. Missing for 10: independent/hands-on corroboration of real-time monitoring UX, and explicit documentation of a persistent status indicator beyond CLI/Canvas mentions.",
     "evidenceIds": [
       "openhands-docs-1",
-      "openhands-docs-2",
-      "openhands-probe-3"
+      "openhands-docs-17",
+      "openhands-docs-18",
+      "openhands-docs-24",
+      "openhands-docs-36",
+      "openhands-docs-32"
     ]
   },
   {
@@ -7206,37 +7268,43 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "OpenHands Cloud is explicitly documented as the managed commercial service for running OpenHands without operating your own backend and sandbox infrastructure, with hosted access, API support, and bring-your-own-LLM-key options detailed on the pricing page. Missing for 10: independent/hands-on corroboration of the cloud offering's reliability and scale, and more detail on infrastructure limits or SLAs.",
+    "rationale": "OpenHands Cloud is explicitly documented as a managed commercial service for running agents without operating your own backend/sandbox infrastructure, with hosted access, API support, and pricing tiers listed. Missing for 10: independent/hands-on corroboration of the cloud service's reliability or scale beyond vendor docs/pricing page.",
     "evidenceIds": [
       "openhands-docs-4",
+      "openhands-docs-5",
       "openhands-docs-12",
       "openhands-docs-13",
-      "openhands-docs-15"
+      "openhands-docs-27"
     ]
   },
   {
     "productId": "openhands",
     "storyId": "manual-model-override",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Evidence confirms OpenHands can be used with any LLM and lets users bring their own LLM keys, implying model choice is configurable, but there is no explicit documentation of an 'automatic model selection' default or a UI/CLI toggle to override it. Missing for 10: explicit docs on default/automatic model selection behavior, step-by-step instructions for switching models, and independent confirmation of the switch working in practice.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm OpenHands is model-agnostic and lets users bring their own LLM keys, and `OpenHandsAgentSettings` explicitly configures an agent's model — enabling selection of a specific model. However, there is no evidence of an 'automatic model selection' default mode being switched away from, nor a dedicated UI control for this toggle. missing for 10: explicit description of automatic vs manual model selection modes, UI/CLI screenshot or flag showing the switch action.",
     "evidenceIds": [
       "openhands-gh-2",
-      "openhands-docs-15"
+      "openhands-docs-15",
+      "openhands-docs-26",
+      "openhands-docs-33"
     ]
   },
   {
     "productId": "openhands",
     "storyId": "mid-task-takeover",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "OpenHands supports resuming conversations and switching between local/remote/cloud agents 'without losing focus,' implying some cross-surface continuity, but there's no explicit documentation of a developer taking over a live in-progress task from editor/terminal/browser mid-run with redirect capability. missing for 10: explicit IDE/editor integration for live takeover, concrete UI/UX description of mid-task redirect, and independent hands-on confirmation of seamless handoff across all three surfaces.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "OpenHands supports pausing/resuming agent runs (Esc to pause, resume previous conversations), switching between local/remote/cloud agents without losing focus, and multi-surface access (CLI, terminal, web GUI/Agent Canvas). This suggests a developer could take over across surfaces, but there is no explicit documented workflow describing mid-task handoff/redirection (e.g., editing agent's plan mid-run, injecting new instructions to redirect work) or cross-device continuity of a single in-progress task. missing for 10: explicit documentation of redirecting/steering an in-progress task (not just pause/resume), evidence of editor/IDE integration for takeover, and independent/hands-on confirmation of seamless handoff across surfaces.",
     "evidenceIds": [
+      "openhands-docs-2",
+      "openhands-docs-17",
       "openhands-gh-1",
-      "openhands-gh-3",
-      "openhands-docs-2"
+      "openhands-docs-16",
+      "openhands-docs-36",
+      "openhands-docs-24"
     ]
   },
   {
@@ -7245,10 +7313,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "OpenHands Cloud offers 'hosted cloud access from desktop and mobile' and Slack-based interaction (@mentions, replies) that could let a PM check in remotely, but there is no documented feature for approving specific in-progress agent actions/decisions via a mobile interface while the agent continues autonomously — the only approval-related control mentioned is a blanket 'auto-approve all actions' CLI flag, not selective human-in-the-loop approval. Missing for 10: explicit mobile approval/confirmation UI, human-in-the-loop decision gating documentation, evidence of push notifications or approval prompts reaching a phone.",
+    "rationale": "OpenHands documents 'Hosted cloud access from desktop and mobile' and Slack integrations where the agent can be mentioned/replies posted, plus conversation controls (pause/resume, ask_oracle, auto-approve) that hint at oversight mechanisms, but there is no documented mobile-specific approval UI or workflow for a PM to approve key agent decisions while agents continue working. missing for 10: dedicated mobile approval/decision-point UI, evidence of async approve/reject actions surfaced to a non-technical PM, hands-on confirmation the mobile web experience supports this workflow.",
     "evidenceIds": [
       "openhands-docs-12",
-      "openhands-docs-11",
+      "openhands-docs-37",
+      "openhands-docs-24",
       "openhands-docs-3"
     ]
   },
@@ -7258,11 +7327,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "OpenHands Cloud offers hosted access and integrations (Slack, GitHub, Linear, webhooks) suggesting some repo connection flow, but there is no concrete evidence of a one-click repo install/auth flow — no screenshots, GitHub App install steps, or onboarding walkthrough. missing for 10: documented one-click GitHub/GitLab App install flow, evidence of minimal setup steps, independent confirmation of ease of onboarding.",
+    "rationale": "OpenHands offers Cloud and GitHub/Slack/webhook integrations suggesting some repo-connection capability, but there is no evidence of a one-click GitHub App install flow or simplified onboarding UX for granting repo access — setup appears to require configuring backends, LLM keys, and automations manually. missing for 10: explicit one-click GitHub App/marketplace install flow, screenshots or docs of simplified repo-authorization UX, independent confirmation of low-friction onboarding.",
     "evidenceIds": [
-      "openhands-gh-4",
       "openhands-docs-4",
-      "openhands-docs-12"
+      "openhands-gh-4",
+      "openhands-docs-26"
     ]
   },
   {
@@ -7271,14 +7340,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands exposes a documented OpenAPI spec and dedicated 'API support for automation and scripting' tier, plus CLI mode with resume/auto-approve that mirrors UI conversation flows, suggesting broad API parity. However, no evidence explicitly confirms that every UI feature (e.g., cloud dashboard views, integrations config, enterprise SSO management) is fully API-accessible. Missing for 10: explicit parity documentation enumerating UI vs API feature coverage, and independent/hands-on confirmation that API can replicate all UI workflows.",
+    "rationale": "OpenHands ships a documented HTTP/WebSocket Agent Server with an OpenAPI spec, and the SDK/API expose conversation control, goals, async execution, custom agents/tools, and automation hooks (openhands-docs-32, openhands-probe-2, openhands-docs-24, openhands-docs-25, openhands-docs-13). This shows deep, near-parity API access to core agent functionality, but there's no explicit vendor statement of full UI/API feature parity and some UI-specific elements (e.g., interactive CLI keybindings, browser session replay UI) aren't confirmed as fully API-drivable. Missing for 10: explicit parity statement, independent verification that every UI action maps to an API call, and coverage of CLI-only interactive controls via API.",
     "evidenceIds": [
+      "openhands-docs-32",
       "openhands-probe-2",
       "openhands-docs-13",
-      "openhands-docs-1",
-      "openhands-docs-2",
-      "openhands-docs-3",
-      "openhands-probe-3"
+      "openhands-docs-24",
+      "openhands-docs-25",
+      "openhands-docs-27"
     ]
   },
   {
@@ -7286,8 +7355,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack describes an explicit data export feature or open-format data portability; only conversation resume and self-hosting options are mentioned, not a way to export/leave with all user data. missing for 10: explicit export/download feature, documented open data formats, statement on data portability upon leaving the platform.",
+    "confidence": "low",
+    "rationale": "The evidence pack describes OpenHands' features (CLI, multi-agent backends, integrations, pricing tiers) but contains no mention of a data export feature, open-format export, or explicit mechanism for users to extract and take their conversation/agent data elsewhere. Being open-source and self-hostable is implied but not the same as a documented export capability.",
     "evidenceIds": []
   },
   {
@@ -7296,10 +7365,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "The GitHub repository (openhands-gh-1..5) confirms the source code is publicly hosted and readable, and openhands-docs-15 explicitly references an 'OpenHands Open Source' plan/tier, implying the core project is open-licensed. However, no evidence pack item names the specific license (e.g., MIT/Apache) or points to a LICENSE file, so full open-license confirmation is unverified. Missing for 10: explicit license name/file citation, independent confirmation of license terms.",
+    "rationale": "The product's GitHub repository is referenced directly (openhands-gh-1..5) and docs explicitly market an 'OpenHands Open Source' plan and an 'open-source browser client' (openhands-docs-26, openhands-docs-36), indicating the source is publicly readable. However, the evidence pack never names or links a specific open-source license (e.g., MIT/Apache) or license file. Missing for 10: explicit license identification/citation, confirmation of license terms permitting redistribution/modification.",
     "evidenceIds": [
       "openhands-gh-1",
-      "openhands-docs-15"
+      "openhands-gh-2",
+      "openhands-docs-26",
+      "openhands-docs-36"
     ]
   },
   {
@@ -7308,11 +7379,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Evidence shows OpenHands can be run locally/self-hosted (Docker, VMs, or any agent server backend) as opposed to only using the managed Cloud/Enterprise offerings, and it is open-source with an SDK for building on it. Missing for 10: independent hands-on confirmation of a full self-hosted setup (e.g., a third-party report of running the entire stack without cloud dependencies) and detailed self-hosting infra requirements/documentation.",
+    "rationale": "OpenHands is explicitly open-source and documented to run locally, in Docker, on VMs, or 'anywhere you can run an agent server backend,' with a free local OSS tier distinct from the managed Cloud/Enterprise offerings, and Apptainer support for HPC/self-hosted sandboxing without root. This confirms core self-hosting is a first-class, documented path rather than cloud-only. Missing for 10: independent (non-vendor) hands-on report confirming a real self-hosted deployment and more detail on infra/resource requirements.",
     "evidenceIds": [
       "openhands-gh-5",
+      "openhands-docs-26",
       "openhands-docs-4",
-      "openhands-docs-6",
+      "openhands-docs-5",
+      "openhands-docs-35",
       "openhands-docs-15"
     ]
   },
@@ -7331,7 +7404,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out policies, or any privacy commitments regarding training data; the pack only covers CLI usage, deployment options, and integrations.",
+    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out settings, or any privacy policy statement about training data; open-source/self-hosted deployment is mentioned but not tied to this specific privacy claim.",
     "evidenceIds": []
   },
   {
@@ -7340,7 +7413,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items describe data retention policies, deletion controls, or user-facing settings for managing stored conversation/data lifecycle; while OpenHands is open-source and self-hostable (implying some inherent control), no explicit retention/deletion feature or documentation is cited.",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or data export/removal mechanisms for OpenHands Cloud or self-hosted deployments. Being an open-source/self-hostable tool implies data control is possible in principle, but nothing in the evidence documents user-facing retention or deletion settings. Missing for 10: documented data retention policy, deletion/export controls, conversation/log purge options, and any privacy-posture documentation.",
     "evidenceIds": []
   },
   {
@@ -7349,7 +7422,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics, or opt-out settings; the pack covers CLI features, agent orchestration, and pricing tiers only.",
+    "rationale": "No evidence in the pack discusses telemetry, usage tracking, analytics collection, or an opt-out mechanism for OpenHands; the open-source/self-hosted nature is mentioned but privacy-posture specifics are absent.",
     "evidenceIds": []
   },
   {
@@ -7357,8 +7430,8 @@
     "storyId": "query-repo-documentation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a documentation-generation or repo-doc-querying feature; OpenHands is a coding agent focused on tasks, automations, and integrations, not a repo documentation search/query tool.",
+    "confidence": "high",
+    "rationale": "No evidence that OpenHands generates or indexes repository documentation for querying; the evidence pack covers CLI usage, agent SDK, automations, and pricing but nothing about a docs-generation/query feature for repos.",
     "evidenceIds": []
   },
   {
@@ -7367,7 +7440,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a repository readiness assessment/report feature for autonomous agents; OpenHands' evidence covers task execution, automations, and integrations but nothing about scoring or auditing repo readiness.",
+    "rationale": "No evidence of a repository readiness report or assessment feature for autonomous agent compatibility; OpenHands offers automation workflows (PR review, incident triage, security fixes) but nothing that evaluates or scores a repo's readiness for agents.",
     "evidenceIds": []
   },
   {
@@ -7376,7 +7449,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "openhands-docs-10 explicitly describes an automation that reviews security alerts, validates the finding, updates affected code, and opens a pull request with the remediation, directly matching the story. This is a first-party vendor claim without independent/hands-on corroboration or detail on validation accuracy. Missing for 10: independent verification of remediation quality, and detail on how 'validated' findings are confirmed before code changes.",
+    "rationale": "OpenHands explicitly documents an automation that reviews security alerts, validates the finding, updates affected code, and opens a pull request with the remediation, directly matching the story. Missing for 10: independent/hands-on validation of this specific workflow and detail on how validation accuracy/false-positive handling is assessed.",
     "evidenceIds": [
       "openhands-docs-10"
     ]
@@ -7387,25 +7460,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "GitHub docs explicitly state agents can be run locally, in Docker, on VMs, or any agent server backend, and Enterprise offers licensed self-hosting for organizations. This directly matches the engineering-lead's need for flexible self-hosted deployment. Missing for 10: independent/hands-on verification of self-hosting setup complexity and no detailed self-host deployment guide excerpt in evidence.",
+    "rationale": "OpenHands explicitly documents running agents locally, in Docker, on VMs, or via any self-hosted agent server backend, plus Apptainer support for HPC/shared clusters and an Agent Server HTTP/WebSocket API for custom deployment, alongside a separate licensed self-hosting Enterprise option. missing for 10: independent hands-on verification of a full self-hosted production deployment and more detail on VM-specific setup instructions.",
     "evidenceIds": [
       "openhands-gh-5",
-      "openhands-docs-5",
-      "openhands-gh-1",
-      "openhands-gh-3"
+      "openhands-docs-32",
+      "openhands-docs-35",
+      "openhands-docs-5"
     ]
   },
   {
     "productId": "openhands",
     "storyId": "steer-active-session",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "CLI mode docs mention typing natural language tasks with instant feedback and resuming previous conversations, which implies interactive follow-up steering, but there is no explicit evidence describing sending new instructions mid-task to an already-running/active agent session without restarting it. missing for 10: explicit documentation of mid-session steering/interrupt-and-redirect behavior while an agent is actively working, and independent/hands-on confirmation that follow-up messages are incorporated without restarting the session.",
+    "rationale": "CLI docs show conversations can be paused (Esc) and resumed, and the SDK's ask_agent guide notes that questions 'don't interrupt the main conversation flow - they're processed separately,' while conversation-goals describes stop/resume controls for an ongoing agent objective — together these support mid-session steering without a full restart. However, no evidence explicitly confirms arbitrary follow-up instructions are merged into an in-progress task rather than merely queued/paused. Missing for 10: explicit documentation of injecting new steering instructions mid-execution and independent/hands-on confirmation that the agent adapts its plan accordingly.",
     "evidenceIds": [
-      "openhands-docs-1",
       "openhands-docs-2",
-      "openhands-probe-3"
+      "openhands-docs-17",
+      "openhands-docs-18",
+      "openhands-docs-24"
     ]
   },
   {
@@ -7414,11 +7488,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenHands supports Slack integration where it 'replies when the agent finishes' and workflow automations tied to webhook events (Slack, GitHub, Linear), which implies notification-like behavior on task completion; CLI mode also gives instant feedback in interactive sessions. However, there's no explicit evidence of a dedicated notification system for 'needs my input' events or push/desktop alerts outside Slack context. missing for 10: explicit documentation of notifications when agent needs human input/approval, native mobile/desktop push alerts, and independent/hands-on confirmation of notification reliability.",
+    "rationale": "OpenHands supports Slack integration that 'replies when the agent finishes' and webhook-triggered automations, giving developers completion notifications outside the CLI (openhands-docs-11, openhands-docs-37, openhands-gh-4). It also has a separate question-handling flow so agent questions don't block the main conversation (openhands-docs-18), and CLI 'Esc' can pause a running agent (openhands-docs-17), suggesting some in-session interruption handling. However, there's no dedicated 'needs my input' push notification (e.g., email, desktop alert) documented beyond Slack replies-on-completion, and no evidence of a unified notification system across all interfaces. Missing for 10: explicit 'agent needs input' alerting outside Slack/CLI, native desktop/mobile push notifications, and independent confirmation these notifications work reliably in practice.",
     "evidenceIds": [
       "openhands-docs-11",
+      "openhands-docs-37",
       "openhands-gh-4",
-      "openhands-docs-1"
+      "openhands-docs-18",
+      "openhands-docs-17"
     ]
   },
   {
@@ -7426,24 +7502,26 @@
     "storyId": "tiered-autonomy-levels",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence shows only a binary confirmation toggle (auto-approve all actions vs manual confirmation) in CLI mode, not a tiered/granular autonomy system with multiple configurable levels for an engineering lead to set. Missing for 10: documented multi-tier permission/autonomy levels, admin controls to enforce team-wide policies, and per-action or per-risk-category confirmation settings.",
+    "confidence": "medium",
+    "rationale": "Docs mention a CLI toggle to 'Auto-approve all actions (use with caution)', implying a binary confirm-vs-auto-approve mode exists, but there is no evidence of multiple graduated autonomy tiers (e.g., read-only, auto-edit-with-review, full-autonomy) or per-action-type policy controls that an engineering-lead could configure. missing for 10: documentation of distinct tiered autonomy levels beyond a single on/off auto-approve toggle, granular per-action-type permission policies, and any admin/org-level controls to enforce autonomy tiers across a team.",
     "evidenceIds": [
-      "openhands-docs-3"
+      "openhands-docs-3",
+      "openhands-docs-16",
+      "openhands-docs-17"
     ]
   },
   {
     "productId": "openhands",
     "storyId": "trigger-agent-on-build-failure",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "OpenHands advertises a workflow that watches for failed CI/CD workflows, inspects logs, identifies causes, and opens a PR with a fix (openhands-docs-9), plus webhook/schedule-triggered automations (openhands-gh-4) and API support for scripting (openhands-docs-13), which together support triggering an agent from CI/CD to fix broken builds. However, there is no concrete example of GitHub Actions/CI pipeline configuration, no evidence of test-failure-specific triggers, and no independent/hands-on confirmation that this works as described. Missing for 10: explicit CI pipeline integration docs/examples, test-failure-specific triggers, third-party verification.",
+    "rationale": "OpenHands documents CI/CD-triggerable automations, including detecting failed workflows, inspecting logs, and opening a PR with a proposed fix (openhands-docs-9), plus webhook/schedule-triggered automations integrating with GitHub (openhands-gh-4) and an Agent Server API for scripting/automation (openhands-docs-13, openhands-docs-32). This directly supports triggering an agent to fix a broken build or failing test. missing for 10: no explicit dedicated CI test-failure example (e.g., failing unit test remediation) walkthrough, no first-party GitHub Actions YAML sample, and no independent/hands-on confirmation of this exact workflow succeeding.",
     "evidenceIds": [
       "openhands-docs-9",
       "openhands-gh-4",
       "openhands-docs-13",
-      "openhands-docs-6"
+      "openhands-docs-32"
     ]
   },
   {
@@ -7451,8 +7529,8 @@
     "storyId": "visual-context-for-tasks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack that OpenHands supports attaching images, screenshots, or mockups to a task, or that the agent can interpret visual markup to drive implementation; documentation focuses on text-based CLI tasks, integrations, and automations.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions image/screenshot attachment, visual mockup input, or multimodal task specification for implementing UI changes; the evidence covers CLI, automation, integrations, and SDK internals but nothing about attaching marked-up images to tasks.",
     "evidenceIds": []
   },
   {

@@ -74,4 +74,18 @@ export const probes: LocalProbe[] = [
       expect: /Apache License/,
       timeoutMs: 30_000,
     },
+    {
+      // Zulip publishes no agent-legible docs index on its own origin: zulip.com/llms.txt
+      // answers a clean HTTP 404 (verified live 2026-09-23, matching the spike engine's
+      // recorded absence for this pass). An honest negative — the absence proof for the
+      // agent-docs surface (Zulip's REST/API docs live at zulip.com/api/, human-oriented).
+      probeId: 'own-llms-txt-absent',
+      productId: 'zulip',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 -o /dev/null -w "llms.txt HTTP %{http_code}\\n" https://zulip.com/llms.txt'],
+      displayCommand: 'curl -s -o /dev/null -w "llms.txt HTTP %{http_code}" https://zulip.com/llms.txt',
+      expect: /llms\.txt HTTP 404/,
+      timeoutMs: 30_000,
+    },
 ]

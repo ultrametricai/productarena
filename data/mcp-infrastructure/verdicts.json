@@ -3302,7 +3302,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Smithery documents a dedicated Vercel AI SDK integration with automatic OAuth/token handling and multi-server tool aggregation (docs-13/14), and every published server gets an auto-generated typed SDK (docs-16), but the evidence pack shows no documented adapters for LangChain, CrewAI, or OpenAI/Anthropic SDKs specifically. Missing for 10: documented LangChain adapter, documented CrewAI adapter, documented OpenAI/Anthropic SDK adapter, and independent/hands-on confirmation beyond first-party docs.",
+    "rationale": "Smithery documents a dedicated Vercel AI SDK integration (OAuth/token handling, multi-server aggregation) and auto-generates typed TypeScript SDKs plus a generic REST interface for any client, but the evidence pack shows no documented adapters for LangChain, CrewAI, or OpenAI/Anthropic SDKs specifically. missing for 10: documented LangChain adapter, documented CrewAI adapter, documented OpenAI/Anthropic SDK adapters, independent corroboration of these integrations working.",
     "evidenceIds": [
       "smithery-docs-13",
       "smithery-docs-14",
@@ -3313,15 +3313,14 @@
   {
     "productId": "smithery",
     "storyId": "agentic-agent-docs",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "llms.txt and docs.md are confirmed 404, so the specific llms.txt convention isn't supported, but Smithery does expose agent-oriented docs alternatives: docs served live over MCP (JSON-RPC initialize succeeds at /docs/mcp) and a machine-readable OpenAPI 3.1 spec at /docs/openapi.json that an agent could consume to understand the API. missing for 10: an actual llms.txt file, and any docs indicating agents are expected to consume these alternate machine-readable formats as a first-class 'llms.txt-style' workflow.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Direct probes show llms.txt and docs.md both return 404 on smithery.ai, and no openapi/agent-readable docs format was found either; there is no evidence Smithery exposes agent-oriented documentation formats for an AI agent to consume.",
     "evidenceIds": [
       "smithery-probe-1",
       "smithery-probe-2",
-      "smithery-probe-rt-3",
-      "smithery-probe-rt-4"
+      "smithery-probe-3"
     ]
   },
   {
@@ -3330,18 +3329,19 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smithery is an MCP connector/registry platform for exposing and consuming tools between agents and servers — it doesn't hold or analyze 'user data' to surface its own AI-generated insights/suggestions inside a product surface. This axis (in-product data analytics/insight generation) doesn't fit Smithery's category as connectivity infrastructure.",
+    "rationale": "Smithery is an MCP server registry/connectivity infrastructure product, not a data application that generates AI insights from a user's own data; the evidence pack covers connection management, OAuth, publishing, and tool discovery, none of which involves analyzing user data to surface insights. This story is a category error for this type of product.",
     "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Smithery's Triggers feature lets an MCP server surface upstream events which Smithery proxies to a consumer, hinting at event-driven automation, but there is no evidence of a scheduler, persistent background execution engine, or the platform itself running autonomous tasks — automation actually running requires an external agent that consumes the trigger. missing for 10: evidence of a scheduling/cron mechanism, autonomous execution loop hosted by Smithery, and confirmation that triggers fire without an active client agent.",
+    "rationale": "Smithery's 'Triggers' feature lets an MCP server surface upstream events and deliver them directly to a consumer without Smithery being in the delivery path, which is a form of background, autonomous event handling — but this is event proxying/webhook delivery, not a general-purpose scheduler or autonomous agent-task runner. There's no evidence of Smithery itself orchestrating recurring or multi-step autonomous automations beyond triggering event delivery to a consumer's own server. Missing for 10: evidence of scheduled/recurring automation setup, autonomous multi-step task execution, or an automation-builder UI beyond simple event triggers.",
     "evidenceIds": [
-      "smithery-docs-12"
+      "smithery-docs-12",
+      "smithery-docs-25"
     ]
   },
   {
@@ -3350,24 +3350,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smithery is an MCP registry/hosting and connection platform used by external AI agents and clients to discover and call tools — it is not itself an assistant product with a built-in AI persona to delegate tasks to. No evidence describes a Smithery-native assistant; the CLI and docs only expose tool search/call and server management commands for use by other agents/clients.",
+    "rationale": "Smithery is an MCP registry/connection platform for connecting external MCP servers and tools to agents/clients, not a product with its own built-in AI assistant persona that users delegate tasks to. This story applies to conversational assistant products, not infrastructure/registry platforms like Smithery.",
     "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Smithery ships a CLI (search/add/call tools) and a documented REST API with an OpenAPI 3.1 spec, service tokens scoped for AI agents/automation, and a live registry API queryable without interactive auth — all of which support scripted/headless use in CI pipelines. Runtime probes confirm the CLI installs and runs (`smithery --version`) and the API/registry endpoints respond programmatically.\nmissing for 10: explicit CI/CD pipeline examples or GitHub Actions integration docs, and independent reports of real-world CI usage.",
+    "rationale": "Smithery ships a CLI (`smithery mcp search/add`, `smithery tool call`) and a REST interface with service tokens for programmatic, non-interactive access, which are the building blocks for headless/CI automation. However, there is no explicit documentation of a CI/CD workflow, headless mode, or automation examples (e.g., GitHub Actions integration), and probes show no llms.txt/OpenAPI spec that would ease automated tooling. Missing for 10: explicit CI/CD pipeline examples, documented headless/non-interactive mode, and independent confirmation of automation use in production pipelines.",
     "evidenceIds": [
       "smithery-gh-1",
       "smithery-gh-2",
       "smithery-docs-1",
       "smithery-docs-6",
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-3",
-      "smithery-probe-rt-4"
+      "smithery-probe-1",
+      "smithery-probe-3"
     ]
   },
   {
@@ -3376,79 +3375,80 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Smithery's core purpose is connecting/aggregating MCP servers: docs and probes confirm a REST/registry interface, hosted MCP endpoints with OAuth, deep links, uplink for local servers, and CLI/SDK tooling for adding and calling tools across connections, with runtime probes corroborating a live registry and per-server endpoints. Community reports of tool-description injection risks are a security caveat, not evidence the connection/tool-use mechanism fails. missing for 10: independent hands-on confirmation that an AI agent (not just probes) successfully invokes tools end-to-end across multiple aggregated servers, and resolution of the tool-description-injection security concerns.",
+    "rationale": "Smithery's core product function is exactly this: a registry/gateway that lets users connect and use third-party MCP servers, with OAuth/credential handling, a CLI (`smithery mcp add`, `smithery tool call`), deep-linking for supported clients, and SDK/tool aggregation across multiple servers. Community security research (tool description injection across hosted servers) actually corroborates that tools from connected servers are executed by agents, reinforcing the capability works, even as it raises trust concerns (reflected in confidence, not verdict). Missing for 10: independent hands-on usability corroboration beyond vendor docs and no live API/schema verification (openapi/llms.txt probes 404).",
     "evidenceIds": [
       "smithery-docs-1",
-      "smithery-docs-4",
+      "smithery-docs-2",
+      "smithery-docs-3",
       "smithery-docs-8",
       "smithery-docs-13",
       "smithery-docs-14",
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-2",
+      "smithery-docs-16",
       "smithery-gh-1",
       "smithery-gh-2",
-      "smithery-comm-1"
+      "smithery-comm-1",
+      "smithery-comm-2"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Smithery is a hosting/registry platform (not itself an agent), so the exception applies and publishing an official MCP server endpoint is a fair, evidenced axis: docs describe OAuth-handled connections, deep linking, uplink, and typed SDKs, and independent probes confirm a live hosted MCP endpoint (server.smithery.ai/exa/mcp) requiring OAuth and even the docs site itself served over MCP (smithery.ai/docs/mcp) with a working CLI install. Missing for 10: no independent third-party report validating that connecting via the hosted server works end-to-end for an actual agent (only probe-level confirmation, not user testimonial), and community findings raise tool-description-injection risk that slightly tempers confidence though it doesn't contradict the connection mechanism itself.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Smithery's core product function is being an MCP server registry/connector—its docs describe a REST interface, OAuth handling, deep links, and SDK integrations (Vercel AI SDK) that let an agent connect to official MCP servers without implementing the protocol itself. This is well-documented first-party functionality directly matching the story. Missing for 10: independent hands-on verification of the connection flow and resolution of security concerns (tool description injection, path traversal) raised in community reports that could affect trust in 'official' servers, though these don't contradict the connection capability itself.",
     "evidenceIds": [
       "smithery-docs-1",
-      "smithery-docs-4",
       "smithery-docs-8",
       "smithery-docs-13",
-      "smithery-probe-rt-2",
-      "smithery-probe-rt-4"
+      "smithery-docs-14",
+      "smithery-docs-16",
+      "smithery-docs-21",
+      "smithery-comm-1",
+      "smithery-comm-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Smithery's CLI exposes intent-based discovery ('smithery tool find [query] # Search tools by name or intent') and its docs are themselves served as an MCP endpoint that an agent can query conversationally, showing some natural-language-friendly interaction. However, the primary interface remains structured CLI subcommands (search, add, call) and REST/OpenAPI calls rather than a general natural-language command layer for operating the whole product. Missing for 10: a documented conversational/chat interface or explicit NL parsing across all product operations, and independent evidence of users successfully issuing free-form natural-language commands rather than structured queries.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "The Smithery CLI supports intent-based tool discovery ('smithery tool find [query] # Search tools by name or intent') alongside structured commands like 'mcp search'/'mcp add', suggesting some natural-language-style querying, but there is no evidence of a broader natural-language command interface for operating the platform itself (e.g., conversational configuration, publishing, or connection management). missing for 10: evidence of NL commands beyond tool search, first-party docs describing NL interaction, independent corroboration of NL usability.",
     "evidenceIds": [
       "smithery-gh-2",
-      "smithery-docs-16",
-      "smithery-probe-rt-4",
       "smithery-gh-1"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-official-cli",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "There is concrete evidence of a working Smithery CLI (npm install @smithery/cli verified, version 4.11.1) with documented commands for searching the registry, adding MCP connections, finding/calling tools, and installing skills. However, the GitHub source is attributed to 'arcadeai-labs/smithery-cli' rather than an obviously first-party Smithery org, leaving some ambiguity about official first-party ownership, and there is no independent/community corroboration of CLI usage. Missing for 10: clearer first-party branding/ownership confirmation, official docs page dedicated to the CLI, and independent hands-on user reports.",
+    "rationale": "GitHub evidence shows an official smithery-cli with commands for searching/adding MCP servers, finding/calling tools, and installing skills — a genuine CLI for AI-native workflows. However, the CLI's provenance and maintenance status are thin (single repo listing, no adoption/independent corroboration, no mention in official smithery.ai docs pages). Missing for 10: first-party docs referencing the CLI, independent hands-on validation, breadth of commands/versioning history.",
     "evidenceIds": [
       "smithery-gh-1",
       "smithery-gh-2",
-      "smithery-gh-3",
-      "smithery-probe-rt-4"
+      "smithery-gh-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Smithery exposes a real, documented public API: a registry API (registry.smithery.ai) queryable without keys, a full OpenAPI 3.1.0 spec (35 paths) confirmed live at smithery.ai/docs/openapi.json, and a REST/connection interface with OAuth and token scoping for programmatic/agent use, plus a CLI (smithery mcp/tool commands) for driving it. Initial llms.txt/docs.md probes 404'd but the actual OpenAPI spec and registry endpoints were independently verified live, satisfying 'documented public API' for an AI-native/agentic consumer. missing for 10: no independent third-party corroboration of API stability/versioning, and some docs endpoints (llms.txt) are absent despite the OpenAPI spec existing.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Smithery documents a REST interface for connecting to MCP servers, token scoping for programmatic/agent access, and a CLI (smithery mcp/tool commands) for driving the platform, which supports agentic use. However, probes found no discoverable OpenAPI/swagger spec or llms.txt/docs.md machine-readable reference, suggesting the public API is documented only in prose form rather than as a full formal API reference. missing for 10: a formal OpenAPI/swagger spec or machine-readable API reference, independent/hands-on corroboration that the REST API works as documented for arbitrary automation.",
     "evidenceIds": [
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-2",
-      "smithery-probe-rt-3",
       "smithery-docs-1",
       "smithery-docs-6",
+      "smithery-docs-7",
       "smithery-gh-1",
-      "smithery-gh-2"
+      "smithery-gh-2",
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3"
     ]
   },
   {
@@ -3457,50 +3457,50 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Smithery docs describe service tokens explicitly scoped to a specific app/connection/user metadata ('list and call tools on connections in my-app where metadata.userId is user-123 — nothing else'), plus encrypted write-only credential storage and namespace-scoped API keys, directly matching the least-privilege credential story for agents. Missing for 10: independent/hands-on verification that scope enforcement actually holds, and documentation of token revocation/expiry/audit controls.",
+    "rationale": "Smithery documents scoped \"service tokens\" that restrict an agent's access to specific connections/metadata (e.g., only tools where userId matches) rather than exposing the full API key, directly matching least-privilege credential issuance for agents [smithery-docs-6][smithery-docs-7]. This is reinforced by namespace-scoped API keys for team/workspace isolation [smithery-docs-15][smithery-docs-26] and secure encrypted credential storage [smithery-docs-3]. Missing for 10: independent/hands-on verification of token scoping enforcement, and no evidence of granular per-tool or per-action permission scoping beyond the userId/connection example.",
     "evidenceIds": [
       "smithery-docs-6",
       "smithery-docs-7",
-      "smithery-docs-3",
-      "smithery-docs-15"
+      "smithery-docs-15",
+      "smithery-docs-26",
+      "smithery-docs-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Smithery auto-generates a typed TypeScript SDK for every published MCP server (smithery-docs-16), ships an official CLI (smithery-cli on GitHub) verified via live npm install (smithery-probe-rt-4), and exposes a documented OpenAPI 3.1 spec for platform API client generation, confirmed live via probe (smithery-probe-rt-3). This gives AI-native builders concrete, verified official SDK/CLI/API surfaces to build against. Missing for 10: SDKs beyond TypeScript (no Python/other language SDK evidence), and independent third-party corroboration of real-world SDK usage beyond Smithery's own docs/probes.",
+    "rationale": "Smithery documents auto-generated typed TypeScript SDKs for every published MCP server and REST/SDK-style integration with the Vercel AI SDK, which supports building against official SDKs. However, evidence is limited to TypeScript and one framework integration, there's no broader multi-language SDK documentation, no OpenAPI spec (probes returned 404s), and no independent/hands-on corroboration of SDK quality or completeness. missing for 10: multi-language SDK support, public OpenAPI/API reference, independent developer corroboration of SDK usage.",
     "evidenceIds": [
       "smithery-docs-16",
-      "smithery-probe-rt-3",
-      "smithery-probe-rt-4",
-      "smithery-gh-1",
-      "smithery-gh-2"
+      "smithery-docs-13",
+      "smithery-docs-14",
+      "smithery-probe-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Smithery's Triggers feature explicitly lets consumers subscribe to upstream events, proxying subscribe calls through to the server—directly matching webhook/event-subscription functionality for agentic use. However, this is documented only at a conceptual level with no depth on webhook delivery mechanics, retry/reliability guarantees, or independent hands-on verification. missing for 10: detailed webhook payload/delivery docs, independent corroboration of triggers working in practice, and coverage of failure/retry semantics.",
+    "rationale": "Smithery's documented 'Triggers' feature lets a consumer subscribe to events surfaced by an MCP server's upstream service, with Smithery proxying the subscribe call and events POSTed directly to the consumer (webhook-style delivery) — a fairly direct match for the story. missing for 10: independent/hands-on verification of trigger subscription and delivery, and more detail on how an AI-native user actually invokes/consumes these webhook events end-to-end.",
     "evidenceIds": [
-      "smithery-docs-12"
+      "smithery-docs-12",
+      "smithery-docs-25"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "api-interactive-docs",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Smithery exposes a full OpenAPI 3.1 spec (35 paths) and even serves its documentation itself as an MCP endpoint that agents can query interactively via JSON-RPC, which supports AI-native exploration of the API surface. However there's no evidence of a classic interactive reference UI (e.g., Swagger/Redoc 'try it out' runnable examples in-browser), and alternate machine-readable doc formats (llms.txt, docs.md) return 404s.\nmissing for 10: an actual interactive/try-it-out API console with executable example requests, evidence of runnable code snippets in docs, independent confirmation of usability of the MCP-served docs.",
+    "rationale": "Probes explicitly show no OpenAPI/Swagger spec, no llms.txt, and no docs.md — there is no evidence of an interactive API reference with runnable examples (e.g., Swagger UI, API playground). Docs describe REST/SDK usage conceptually but nothing indicates an explorable, runnable API console.",
     "evidenceIds": [
-      "smithery-probe-rt-3",
-      "smithery-probe-rt-4",
+      "smithery-probe-3",
       "smithery-probe-1",
       "smithery-probe-2"
     ]
@@ -3508,13 +3508,15 @@
   {
     "productId": "smithery",
     "storyId": "api-machine-spec",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "A direct hands-on probe confirms a live, machine-readable OpenAPI 3.1.0 specification with 35 documented paths at smithery.ai/docs/openapi.json, which an agent could use to generate a client — squarely satisfying the story. Earlier probe attempts at guessed paths (openapi.json at root, swagger.json, etc.) 404'd, but the actual documented location succeeds. Missing for 10: first-party documentation explicitly announcing/linking the OpenAPI spec, and independent community confirmation of its use.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Direct probes for OpenAPI/swagger spec files and llms.txt/docs.md all returned 404, and no documentation item references a downloadable machine-readable API spec; the only structured artifact mentioned is a generated TypeScript SDK, not an OpenAPI spec.",
     "evidenceIds": [
-      "smithery-probe-rt-3",
-      "smithery-probe-3"
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3",
+      "smithery-docs-16"
     ]
   },
   {
@@ -3522,11 +3524,11 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Smithery's Uplink lets developers test an in-development MCP server against a real agent before publishing, but there is no mention of a distinct sandbox environment, test data isolation, or any mechanism preventing production data exposure during testing.",
+    "confidence": "low",
+    "rationale": "Smithery is a registry/gateway for connecting to and publishing MCP servers, with docs on uplink for testing servers 'before publishing' against a real agent, but there is no evidence of a dedicated sandbox environment isolated from production data — no mention of sandboxed test data, staging vs production separation, or mock data environments.",
     "evidenceIds": [
-      "smithery-docs-4",
-      "smithery-docs-5"
+      "smithery-docs-5",
+      "smithery-docs-20"
     ]
   },
   {
@@ -3534,18 +3536,26 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Smithery has an OpenAPI 3.1.0 spec and a documented REST/MCP interface, but nothing in the docs or probes describes API versioning conventions or a deprecation policy for breaking changes.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; probes for OpenAPI spec and llms.txt/docs.md all 404, and none of the docs mention version numbers or deprecation timelines.",
+    "evidenceIds": [
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3"
+    ]
   },
   {
     "productId": "smithery",
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Smithery lets an agent connect to and aggregate tools from multiple servers, and its registry API can be queried/paginated for many entries, but there is no documented batch/bulk operation capability (e.g., bulk tool calls, mass server management, batch CRUD) that would let a user perform bulk actions across many items at once. missing for 10: batch tool-call API, bulk server management commands, mass connection/config updates, any documented multi-item transaction support.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Smithery's docs describe connecting to and aggregating tools from multiple MCP servers, and CLI commands for searching/adding one connection or calling one tool at a time, but there is no evidence of batch/bulk operations across many items (e.g., bulk publish, bulk tool invocation, batch processing across many connections).",
+    "evidenceIds": [
+      "smithery-docs-14",
+      "smithery-gh-1",
+      "smithery-gh-2"
+    ]
   },
   {
     "productId": "smithery",
@@ -3553,9 +3563,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Smithery's 'Triggers' feature lets an MCP server surface upstream events and lets a consumer 'activate' a trigger, which is a thin form of event-driven automation, but there's no evidence of a user-facing rule-definition mechanism (e.g., 'if event X then run action Y') or a rules engine — it only proxies subscribe calls. Missing for 10: a documented rule/condition-action authoring interface, examples of automated action execution on trigger events, and independent confirmation the feature works end-to-end.",
+    "rationale": "Smithery's 'Triggers' feature lets an MCP server surface upstream events and proxies subscribe calls to consumers, which is event-plumbing infrastructure rather than a user-facing rule engine for defining 'if event X, then action Y' automations. There's no evidence of a rule/condition editor, workflow builder, or automated action-execution layer beyond raw event delivery to the consumer.  Missing for 10: user-defined conditional rule syntax, automatic action execution (vs. just event delivery), UI/API for authoring rules, and any hands-on example of an automation actually firing an action.",
     "evidenceIds": [
-      "smithery-docs-12"
+      "smithery-docs-12",
+      "smithery-docs-25"
     ]
   },
   {
@@ -3563,13 +3574,9 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Smithery's docs describe on-demand tool connections, OAuth/credential management, and event-driven 'Triggers' that proxy subscribe calls from upstream services, but nothing describes cron-like recurring job scheduling or workflow automation on a timer. Triggers are reactive (event-based), not scheduled/recurring, so the specific capability asked for is unevidenced.",
-    "evidenceIds": [
-      "smithery-docs-12",
-      "smithery-docs-4",
-      "smithery-docs-9"
-    ]
+    "confidence": "high",
+    "rationale": "Smithery's evidence covers MCP server connection, triggers (event-based), OAuth, and registry/publishing — but there is no mention of scheduling recurring jobs, cron-like automation, or time-based workflow triggers anywhere in the docs. Triggers are event-driven (upstream service fires an event), not scheduled/recurring jobs.",
+    "evidenceIds": []
   },
   {
     "productId": "smithery",
@@ -3577,17 +3584,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Smithery is an MCP registry/connection platform for discovering, publishing, and connecting to MCP servers; the evidence pack contains no mention of versioning automations, reviewing changes, or rolling back configurations/workflows. Namespaces provide shared team access but not version history or rollback capability.",
     "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "browser-inspector-playground",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents Smithery's registry, REST connect flow, OAuth/token handling, uplink, deep links, and CLI tool-calling, but nothing describes a browser-based inspector or playground UI for interactively testing a server's tools before integration. Since a registry/marketplace product could plausibly ship such a try-before-integrate UI, the axis applies, but no evidence confirms it exists.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Smithery's docs mention that a server's page lets users 'discover, try, and install' an MCP from any client, implying some in-browser trial capability, but there is no explicit description of a dedicated inspector/playground UI for exercising tools before integration — the closest concrete tool-calling evidence is a CLI (`smithery tool call`), not browser-based. Missing for 10: explicit documentation or screenshots of a browser-based inspector/playground, hands-on confirmation of trying tools in-browser, and detail on what 'try' actually entails.",
+    "evidenceIds": [
+      "smithery-docs-23",
+      "smithery-gh-2"
+    ]
   },
   {
     "productId": "smithery",
@@ -3595,7 +3605,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes any audit logging, tool-call history, or replay capability for platform engineers—docs cover connection, credential management, publishing, tokens, and namespaces but never mention logs of tool calls passing through the gateway.",
+    "rationale": "No evidence in the pack mentions audit logs, tool-call logging, replay, or any observability feature for tracking agent tool calls through Smithery; documentation focuses on connecting, publishing, token scoping, triggers, and namespaces but never audit/log capabilities.",
     "evidenceIds": []
   },
   {
@@ -3604,9 +3614,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Smithery documents a Triggers feature that explicitly lets consumers subscribe to event streams surfaced from an upstream service, with Smithery proxying the subscribe call to the server instead of requiring polling. This directly matches the story of subscribing an agent to downstream app events via webhooks/triggers rather than polling. Missing for 10: independent/hands-on confirmation that triggers work reliably in production, and more detail on delivery guarantees or webhook payload handling.",
+    "rationale": "Smithery documents a dedicated Triggers feature that lets an MCP server surface upstream events which consumers subscribe to, with Smithery proxying the subscribe call and delivering events directly to the consumer (not polling-based). This directly matches the story of subscribing to downstream app events instead of polling. missing for 10: independent/hands-on corroboration of triggers working in production, and detail on how a developer's agent actually configures/receives these webhook-style events end-to-end.",
     "evidenceIds": [
-      "smithery-docs-12"
+      "smithery-docs-12",
+      "smithery-docs-25"
     ]
   },
   {
@@ -3615,39 +3626,39 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains extensive documentation on Smithery's features, registry, and integrations but no mention of pricing tiers, a free tier, usage limits, or billing at all — the axis is applicable to a hosted MCP platform but simply unevidenced.",
+    "rationale": "The evidence pack contains no mention of pricing, free tier limits, or paid plans for Smithery at all — only technical docs on connections, OAuth, uplink, triggers, and namespaces. Pricing-plans is a fair axis for a hosted platform product, but there is zero evidence it offers a meaningful free tier for prototyping.",
     "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "generate-server-from-openapi",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Smithery's docs show a hosting/publishing path for MCP servers already built in code (URL method, MCPB bundles, server-card metadata) which removes protocol plumbing for deployment, but there is no evidence of an OpenAPI-spec ingestion or auto-generation feature that turns an existing REST API definition into an MCP server — the publish flow assumes you already have MCP-shaped code or a deployed server. Missing for 10: OpenAPI-to-MCP conversion tooling, any first-party or independent proof of generating a server from an OpenAPI spec, and confirmation that 'custom code' can be arbitrary non-MCP code rather than code already written against the MCP SDK.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack only shows Smithery publishing/hosting already-built MCP servers (via URL or MCPB bundle) and offering typed SDK generation for consumers — there is no mention of an OpenAPI-to-MCP conversion tool or a no-protocol-plumbing code wrapper feature that would let a developer turn an existing API spec or plain custom code into a hosted MCP server automatically.",
     "evidenceIds": [
       "smithery-docs-9",
+      "smithery-docs-24",
       "smithery-docs-10",
-      "smithery-docs-11",
-      "smithery-docs-16"
+      "smithery-docs-16",
+      "smithery-docs-23"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "integration-breadth",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Smithery is a registry/marketplace connecting to a large catalog of third-party MCP servers (Exa, Context7, Browserbase, Google Sheets, Brave Search, etc.), with a live registry API confirmed via probe returning searchable server entries with useCount/verified metadata, plus hosted per-server MCP endpoints (server.smithery.ai) and CLI search/add tooling. Community evidence confirms real scale (100+ servers scanned) though also raises security concerns about tool description injection, which affects trust/quality but not the breadth-of-catalog claim itself. Missing for 10: independently verified total count of hundreds/thousands of listings and first-party data on catalog size/growth.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs list a wide range of third-party integrations (Exa, Context7, Browserbase, Google Sheets, Brave Search, Senzia, etc.), a CLI to search/browse the registry, and community security research explicitly references scanning the 'top 100 servers on Smithery's registry,' corroborating a sizable catalog beyond just docs claims. However, no first-party or independent source states an exact total integration count (hundreds vs thousands), and one community comment dismisses it as 'just another directory,' reflecting some skepticism about differentiation rather than catalog depth itself. Missing for 10: explicit published catalog size/count, independent benchmarking of breadth against competitors.",
     "evidenceIds": [
-      "smithery-docs-1",
       "smithery-docs-17",
       "smithery-docs-18",
       "smithery-docs-19",
       "smithery-gh-1",
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-2",
-      "smithery-comm-1"
+      "smithery-gh-2",
+      "smithery-comm-1",
+      "smithery-comm-4"
     ]
   },
   {
@@ -3656,13 +3667,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Smithery's Uplink feature explicitly exposes an MCP server running on any local machine as a regular Smithery connection, letting developers test/use a locally running server against real agents without deploying it, and this is backed by scoped tokens and managed OAuth/credential handling. missing for 10: independent/hands-on confirmation of Uplink working end-to-end (only first-party docs cited) and no detail on latency/reliability of the bridged local connection.",
+    "rationale": "Smithery's Uplink feature explicitly exposes an MCP server running on any local machine as a regular Smithery connection, targeting exactly this use case (testing before publishing, running private tools without hosting). This is well documented as a first-party feature distinct from full publishing/deployment. Missing for 10: independent/hands-on verification of Uplink working in practice, and details on connection reliability/latency for locally-bridged servers.",
     "evidenceIds": [
       "smithery-docs-4",
       "smithery-docs-5",
-      "smithery-docs-20",
-      "smithery-docs-1",
-      "smithery-docs-6"
+      "smithery-docs-20"
     ]
   },
   {
@@ -3671,13 +3680,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe Smithery handling OAuth flows, encrypted write-only credential storage, and automatic token refresh (smithery-docs-1,2,3,13), and this is corroborated by a live probe showing an OAuth challenge gating a hosted MCP endpoint (smithery-probe-rt-2). missing for 10: no independent hands-on confirmation of encryption-at-rest implementation details or token refresh behavior over time, and community evidence focuses on unrelated security findings rather than corroborating credential vaulting.",
+    "rationale": "Smithery docs explicitly describe zero-config OAuth handling, encrypted write-only credential storage, and automatic token refresh with fallback to auth_required status on failure — directly matching the story. This is corroborated across multiple doc pages (connect, Vercel AI SDK integration) but lacks independent/hands-on verification of the OAuth vaulting flow itself. missing for 10: independent/hands-on confirmation that OAuth flows and encrypted vaulting work as documented, and detail on encryption-at-rest specifics.",
     "evidenceIds": [
       "smithery-docs-1",
       "smithery-docs-2",
       "smithery-docs-3",
-      "smithery-docs-13",
-      "smithery-probe-rt-2"
+      "smithery-docs-21",
+      "smithery-docs-22",
+      "smithery-docs-13"
     ]
   },
   {
@@ -3686,33 +3696,36 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs and live probes confirm Smithery hosts remote MCP server endpoints (server.smithery.ai/<server>/mcp) that clients can point at directly, with OAuth/token handling, deep links, and typed SDKs generated automatically — no server deployment needed by the developer. Independent probe evidence (smithery-probe-rt-2) shows the hosted endpoint is live and gated by managed OAuth rather than requiring self-hosting infrastructure.\nmissing for 10: independent hands-on developer accounts (outside security research) confirming a smooth end-to-end connect experience beyond documentation and infra probes.",
+    "rationale": "Smithery explicitly hosts MCP servers and provides remote connection URLs that clients connect to without deploying infrastructure, handling OAuth, token refresh, and credential storage automatically; servers get dedicated pages, deep links, and typed SDKs for connecting from any client. Community evidence confirms real hosted servers (Context7, Brave Search, Google Sheets) are reachable this way, though it also surfaces security concerns in some hosted server tool descriptions, which is a quality/trust caveat rather than a functional failure of the reach-without-deploying story. Missing for 10: independent hands-on confirmation of zero-infrastructure setup from a client's perspective and clearer resolution of the security findings' impact on reliability.",
     "evidenceIds": [
       "smithery-docs-1",
       "smithery-docs-4",
       "smithery-docs-9",
-      "smithery-docs-13",
+      "smithery-docs-21",
+      "smithery-docs-22",
+      "smithery-docs-23",
+      "smithery-docs-24",
       "smithery-docs-16",
-      "smithery-probe-rt-2",
-      "smithery-probe-rt-1"
+      "smithery-comm-1",
+      "smithery-comm-2"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Smithery exposes a documented, live OpenAPI 3.1 spec (35 paths) and a keyless registry API, plus a CLI (`smithery mcp add`, `smithery tool call`) that mirrors core UI actions like discovering, connecting, and invoking MCP servers — showing broad API/CLI parity with the UI for the main workflows (search, connect, publish via URL, call tools). However, no evidence explicitly confirms that secondary UI-only features (team/namespace management, trigger configuration, token scoping setup) are fully API-reachable, and llms.txt/docs.md convenience endpoints 404. missing for 10: explicit confirmation that admin/team features (namespaces, triggers, token scoping) are configurable via the API/CLI rather than only the UI, and independent hands-on verification beyond the vendor's own OpenAPI spec.",
+    "rationale": "Smithery documents a REST interface, CLI (search/add/tool call), and token-scoping for using MCP connections programmatically, showing meaningful API parity for connecting/using servers. However, there's no evidence of an API/CLI path for the full build/publish/namespace-management workflows (publishing appears UI/URL-flow oriented) and probes show no discoverable OpenAPI spec or llms.txt, undermining claims of complete API-UI parity. Missing for 10: OpenAPI/API reference confirming full CRUD coverage, API-driven publishing/namespace management, independent corroboration of API completeness.",
     "evidenceIds": [
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-2",
-      "smithery-probe-rt-3",
+      "smithery-docs-1",
+      "smithery-docs-6",
+      "smithery-docs-7",
       "smithery-gh-1",
       "smithery-gh-2",
-      "smithery-docs-9",
-      "smithery-docs-15",
-      "smithery-docs-12"
+      "smithery-docs-24",
+      "smithery-probe-3",
+      "smithery-probe-1"
     ]
   },
   {
@@ -3721,8 +3734,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack of a data-export feature, account data portability, or open-format export for users leaving the platform; documentation covers connections, tokens, and MCP server publishing but nothing about exporting stored user data (connections, credentials metadata, namespaces) in an open format.",
-    "evidenceIds": []
+    "rationale": "No evidence of any data export feature, open-format export tooling, or account portability mechanism; probes for llms.txt/docs.md/openapi all 404, and nothing in the docs addresses exporting user data or leaving the platform.",
+    "evidenceIds": [
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3"
+    ]
   },
   {
     "productId": "smithery",
@@ -3730,7 +3747,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a GitHub repo for the Smithery CLI tool (smithery-gh-1/2/3) but no license information, and the core Smithery platform (registry, hosting, OAuth handling) is described only via docs as a hosted SaaS with no mention of source availability or open licensing. No evidence establishes that Smithery's product source is published under an open license.",
+    "rationale": "While a smithery-cli GitHub repo is referenced, none of the evidence states an open-source license for it or for the core Smithery platform/registry, so there is no basis to confirm the product's source is available under an open license.",
     "evidenceIds": [
       "smithery-gh-1",
       "smithery-gh-2",
@@ -3742,13 +3759,9 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence describes Smithery only as a hosted registry/platform (registry.smithery.ai, server.smithery.ai) with OAuth-gated hosted MCP endpoints; 'Uplink' lets users expose their own local MCP server as a connection into the hosted Smithery service, but this is not self-hosting the Smithery platform itself. No docs, GitHub repo, or probes indicate a self-hostable/open-source deployment of the core product.",
-    "evidenceIds": [
-      "smithery-docs-4",
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-2"
-    ]
+    "confidence": "low",
+    "rationale": "Smithery is presented as a hosted registry/platform (SaaS) for connecting to and publishing MCP servers, with no documentation, self-hosting guide, Docker image, or open-source repo mentioned for running the core Smithery platform itself; only a CLI client and 'Uplink' for exposing your own local server through Smithery's hosted service are described, not self-hosting Smithery's core infrastructure.",
+    "evidenceIds": []
   },
   {
     "productId": "smithery",
@@ -3756,14 +3769,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Smithery's token-scoping docs show scoped tokens tied to per-user metadata (e.g. a token limited to connections where metadata.userId is 'user-123'), and secure credential storage/automatic refresh are documented, which directly supports per-end-user credential isolation for a platform-engineer building on top of Smithery. However, there's no first-party documentation of a full per-user account management workflow (provisioning, revocation, auditing across many end users) beyond the single scoping example, and independent security research flagged real vulnerabilities (tool description injection, path traversal) that raise doubts about credential-boundary robustness in practice. missing for 10: dedicated multi-tenant/per-end-user account management docs beyond one scoping example, evidence of token revocation/rotation workflows at scale, and independent verification that scoped tokens hold up against the reported security findings.",
+    "rationale": "Smithery's token-scoping docs show scoped service tokens tied to metadata.userId that restrict a token to only that user's connections, directly supporting per-end-user credential isolation, and secure/encrypted credential storage plus automatic token refresh are documented. However there's no first-party documentation of a full per-end-user account management workflow (e.g., provisioning/rotating per-user tokens at scale, revocation, or dashboards for managing many end-user identities) and no independent/hands-on verification that scoping enforcement works as claimed in production. missing for 10: multi-user account provisioning/revocation workflow details, independent verification of token-scoping enforcement, audit/logging of per-user credential usage.",
     "evidenceIds": [
       "smithery-docs-6",
       "smithery-docs-7",
-      "smithery-docs-2",
       "smithery-docs-3",
-      "smithery-comm-1",
-      "smithery-comm-3"
+      "smithery-docs-22"
     ]
   },
   {
@@ -3772,7 +3783,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or geographic storage controls; Smithery's docs cover credential storage, token scoping, and connection management but not where data is physically stored.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic control over where data/credentials are stored; docs cover credential storage security but not location choice.",
     "evidenceIds": []
   },
   {
@@ -3781,7 +3792,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any data-privacy policy regarding model training; docs focus on credential storage, OAuth, and connection routing, not training-data opt-out.",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy policy regarding model training on user data or credentials; the docs focus on OAuth, credential storage, and connection management, not training-data privacy.",
     "evidenceIds": []
   },
   {
@@ -3790,7 +3801,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers credential storage encryption and token scoping but contains no mention of data retention policies, user-initiated data deletion, or account/data export controls. This is a fair privacy-posture question for a platform managing credentials and connections, so the absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "The evidence pack covers credential storage, OAuth, token scoping, and publishing, but contains no mention of data retention policies, deletion controls, export tools, or user-facing settings to delete stored data/history. No first-party or community evidence addresses this axis at all.",
     "evidenceIds": []
   },
   {
@@ -3798,82 +3809,80 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack mentions a telemetry/usage-tracking opt-out setting, privacy policy toggle, or data-collection disclosure for Smithery; the docs cover credential security and OAuth but never address analytics/telemetry opt-out.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or any opt-out/privacy settings for Smithery; the documentation focuses on connection, OAuth, credential storage, and publishing features with no mention of telemetry controls.",
     "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "publish-server-distribution",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs clearly describe multiple publishing paths (URL method for already-deployed servers, MCPB bundle distribution for local stdio servers, automatic scanning or manual server-card metadata) resulting in a registry listing with generated TypeScript SDK, and the registry API probe confirms servers are discoverable/searchable by others without auth. Security researchers did find vulnerabilities/prompt-injection risks in some published servers, but this reflects on registry quality, not on whether publishing/discovery/installation works. missing for 10: independent hands-on account of a developer successfully publishing a server end-to-end, and clearer detail on install flow verification post-publish.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs clearly describe a publishing flow (URL method or MCPB bundle, static server-card metadata) that gives each server a dedicated discoverable page with distribution/install support across clients, plus CLI search/add commands corroborating discovery. However, independent security research found real published servers on the registry contain tool-description injection and a path-traversal vulnerability, indicating publishing/hosting has notable trust and safety gaps not addressed in vendor docs. Missing for 10: independent verification of the publishing UX itself (beyond docs) and evidence Smithery has resolved the flagged security issues.",
     "evidenceIds": [
       "smithery-docs-9",
       "smithery-docs-10",
       "smithery-docs-11",
-      "smithery-docs-16",
-      "smithery-probe-rt-1",
-      "smithery-comm-1"
+      "smithery-docs-23",
+      "smithery-docs-24",
+      "smithery-gh-1",
+      "smithery-comm-1",
+      "smithery-comm-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "publisher-cli-workflow",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Smithery ships an official CLI (@smithery/cli, confirmed installable via npm and version-checked) with commands to search/add/call MCP servers, and docs cover publishing servers (URL method, MCPB bundles, server-card metadata) plus auth via OAuth/service tokens and installing into agents via deep links/uplink. However, evidence does not clearly show a unified CLI-driven build-and-push workflow (e.g., 'smithery build' or 'smithery deploy' subcommands) — the CLI evidence only shows search/add/call, while publish/build steps are documented as web/manual flows rather than CLI-driven. missing for 10: CLI subcommands for authenticate/build/push in one flow, independent hands-on confirmation of end-to-end publish-via-CLI, and clarity on whether install-into-agents is CLI-native vs deep-link/manual.",
+    "rationale": "A first-party CLI exists (smithery-cli) with commands to search the registry, add server connections, and call tools — covering the 'install into agents' step — but the publish/build/deploy steps described in docs (URL method, MCPB bundle, server-card.json) are framed as a web-based publishing flow rather than CLI subcommands, and no CLI authenticate/build/push commands are evidenced. Missing for 10: CLI login/auth command, CLI build-and-stage command, CLI push/publish command, and independent confirmation that the full authenticate→build→push→install pipeline runs end-to-end from the CLI.",
     "evidenceIds": [
       "smithery-gh-1",
       "smithery-gh-2",
       "smithery-gh-3",
       "smithery-docs-9",
+      "smithery-docs-24",
       "smithery-docs-10",
-      "smithery-docs-11",
-      "smithery-docs-8",
-      "smithery-probe-rt-4"
+      "smithery-docs-11"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "quality-scores-usage-signals",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "The registry API (probe evidence) exposes useCount and verified fields per server, plus isDeployed/remote status, giving developers concrete usage and verification signals to compare servers; docs also mention automatic scanning during publish which implies some quality vetting. However, there is no documented explicit 'quality score' metric or dedicated health/liveness-check endpoint beyond isDeployed, and independent security scans found unflagged risky servers in the top 100, showing the published signals don't capture all quality concerns. Missing for 10: an explicit scoring/quality-score field, a dedicated liveness/health-check mechanism, and corroboration that verification badges reliably reflect security vetting.",
-    "evidenceIds": [
-      "smithery-probe-rt-1",
-      "smithery-docs-11",
-      "smithery-comm-1"
-    ]
+    "rationale": "The evidence pack contains no mention of usage counts, health/liveness checks, quality scores, or verification badges for comparing servers on Smithery's registry; documentation covers connection, OAuth, publishing, and namespaces but not curation/quality signals. Community evidence only discusses security scan findings, not published comparison metrics.",
+    "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "registry-programmatic-api",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "A live probe confirms an agent can query https://registry.smithery.ai/servers keylessly and get a machine-readable JSON catalog (displayName, qualifiedName, verified, etc.), and a documented OpenAPI 3.1 spec with 35 paths is served at smithery.ai/docs/openapi.json, enabling programmatic client generation. This is corroborated by the smithery-cli's 'mcp search'/'tool find' commands for registry/tool discovery. Missing for 10: no independent third-party report of an agent successfully building a full client purely from the OpenAPI spec, and llms.txt/docs.md convenience endpoints 404.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "The Smithery CLI documents commands like `smithery mcp search` and `smithery tool find` that let an agent programmatically query the registry/catalog, and docs mention distribution pages for discovering servers, but there is no evidence of a formally documented REST/OpenAPI endpoint for registry discovery — probes for llms.txt, docs.md, and openapi.json all returned 404. Missing for 10: a first-party documented HTTP/REST API spec for registry search callable directly by agents (not just via CLI wrapper), and independent confirmation of agents using it successfully.",
     "evidenceIds": [
-      "smithery-probe-rt-1",
-      "smithery-probe-rt-3",
       "smithery-gh-1",
-      "smithery-gh-2"
+      "smithery-gh-2",
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "runtime-tool-search",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Smithery's CLI exposes explicit meta-tools — `mcp search`, `tool find [query]`, and `tool call <connection> <tool>` — letting an agent discover and invoke tools by intent at runtime rather than preloading every tool definition, and the registry API is confirmed live and keylessly searchable in a probe returning a machine-readable catalog. missing for 10: no evidence the search/find/call meta-tools are themselves exposed as callable MCP tools inside a live agent session (vs. CLI-level usage), and no independent benchmark showing reduced context footprint from this pattern.",
+    "rationale": "Smithery's CLI exposes registry/tool search commands (`smithery mcp search`, `smithery tool find`, `smithery tool call`) that let an agent discover and invoke tools dynamically rather than needing static definitions, and the Vercel AI SDK integration lets an agent 'connect to multiple servers and aggregate their tools' on demand. However, there's no explicit documentation of a dedicated in-session meta-tool (e.g., a 'search_tools' function callable mid-conversation) or evidence quantifying context savings versus stuffing tool defs upfront. Missing for 10: an explicit runtime meta-tool API for dynamic tool discovery/loading within an agent session, benchmarks/evidence on context-size reduction, and independent confirmation that agents use this pattern successfully in practice.",
     "evidenceIds": [
-      "smithery-gh-1",
       "smithery-gh-2",
-      "smithery-probe-rt-1",
+      "smithery-gh-1",
+      "smithery-docs-14",
       "smithery-docs-16"
     ]
   },
@@ -3895,44 +3904,45 @@
     "productId": "smithery",
     "storyId": "server-metadata-inspection",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The registry API (probe-rt-1) exposes machine-readable metadata per server — displayName, qualifiedName, isDeployed, remote, verified — covering hosting/transport attributes, and community security audits (comm-1, comm-2) confirm that tool description fields are visible and inspectable pre-connection (that's how injected instructions were found). The CLI's `tool find` command (gh-2) and per-server typed SDKs generated from tool schemas (docs-16) further support schema visibility, but there is no single documented endpoint or UI view that surfaces full input schemas plus transport plus hosting attributes together in one inspection step. Missing for 10: a documented unified 'server detail' API/UI showing input schemas explicitly, and independent confirmation that transport type (stdio/http/websocket) is surfaced pre-connect.",
+    "rationale": "Smithery provides per-server pages for discovery ('dedicated server page where users can discover, try, and install'), CLI search/tool-find commands, and typed SDKs generated from each server's tool/trigger schemas, implying tool and schema visibility before connecting. However, there is no explicit documentation showing a UI/API that surfaces transport type or hosting attributes (e.g., remote/local, uplink vs. hosted) prior to connection—these are only inferable from separate docs pages (uplink, publish) rather than a unified inspection view. Missing for 10: explicit evidence of a pre-connection view showing transport type and hosting attributes together, and independent/hands-on confirmation that schema/tool inspection works as described.",
     "evidenceIds": [
-      "smithery-probe-rt-1",
-      "smithery-gh-2",
       "smithery-docs-16",
-      "smithery-comm-1",
-      "smithery-comm-2"
+      "smithery-docs-23",
+      "smithery-gh-2",
+      "smithery-docs-11"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "server-registry-search",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Smithery ships both a CLI (`smithery mcp search`, `smithery tool find [query]`) and a keyless registry REST API (registry.smithery.ai/servers) that returns a machine-readable catalog with names, descriptions, verification status and usage counts, letting developers search/browse servers and tools by capability before connecting; docs also list example servers (Exa, Context7, Browserbase) illustrating capability-based discovery. Missing for 10: no evidence of a rich web UI faceted-browse/filter-by-category experience or independent hands-on review of the discovery UX itself beyond the CLI/API probes.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Smithery has a public server registry with a dedicated server page for discovery ('discover, try, and install your MCP from any client'), example servers listed (Exa, Context7, Browserbase), and a CLI with 'smithery mcp search' and 'smithery tool find [query]' commands to search the registry and find tools by intent, matching the story's search/browse-by-capability need. missing for 10: no independent evidence of catalog size/scale or browsing-by-capability UI depth, and community commentary questions the registry's differentiation/value versus other directories.",
     "evidenceIds": [
+      "smithery-docs-23",
       "smithery-gh-1",
       "smithery-gh-2",
-      "smithery-probe-rt-1",
       "smithery-docs-17",
       "smithery-docs-18",
-      "smithery-docs-19"
+      "smithery-docs-19",
+      "smithery-comm-4"
     ]
   },
   {
     "productId": "smithery",
     "storyId": "tool-allowlist-access-control",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Smithery's token-scoping feature lets platform engineers issue tokens restricted to specific connections/namespaces (e.g., 'list and call tools on connections in my-app where metadata.userId is user-123 — nothing else'), which functions as a coarse allowlist mechanism, and namespaces further scope API-key access to a workspace. However, the evidence shows scoping is at the connection/namespace level, not explicit per-tool allow/deny lists within a single server. Missing for 10: documented fine-grained per-tool allow/deny configuration, independent/hands-on verification that tool-level restrictions are enforced, and any admin UI or policy examples showing individual tool blocking within an allowed connection.",
+    "rationale": "Smithery's token-scoping docs show a real access-control primitive — service tokens can be scoped to specific connections/apps and even user metadata, limiting which tools a token can 'list and call' — which partially satisfies the allowlist/per-tool control theme. Namespaces further support workspace-level API key scoping. However, there is no documented UI/API for platform engineers to explicitly allowlist or deny individual tools within a server (only connection/app-level scoping is shown), and no independent verification of enforcement. Missing for 10: explicit per-tool allow/deny list configuration, documentation on blocking specific tools within an otherwise-permitted server, and independent/hands-on confirmation that scoping is enforced as described.",
     "evidenceIds": [
       "smithery-docs-6",
       "smithery-docs-7",
-      "smithery-docs-15"
+      "smithery-docs-15",
+      "smithery-docs-26"
     ]
   },
   {
@@ -3941,8 +3951,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions pricing tiers, per-call costs, or documented rate limits anywhere in Smithery's docs, GitHub, or probes; the documentation covers connection, tokens, and hosting but is silent on pricing/rate limits, and repeated probes (llms.txt, docs.md, openapi) surface no pricing/rate-limit schema.",
-    "evidenceIds": []
+    "rationale": "No evidence in the pack discusses pricing per tool call/connection, plans, or documented rate limits for the platform; the docs cover connection, OAuth, uplink, triggers, and namespaces but never pricing or rate-limit specifics, and probes for API/pricing docs (openapi, llms.txt) all 404.",
+    "evidenceIds": [
+      "smithery-probe-1",
+      "smithery-probe-2",
+      "smithery-probe-3"
+    ]
   },
   {
     "productId": "smithery",
@@ -3950,18 +3964,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack documents connection, publishing, token scoping, triggers, and SDK generation, but nothing about a dashboard or API for org-level usage analytics (call volumes, per-user breakdowns, error rates, cost). The only quantitative signal found is a per-server 'useCount' field in the public registry listing, which is not org-scoped consumption/error/cost analytics.",
-    "evidenceIds": [
-      "smithery-probe-rt-1"
-    ]
+    "rationale": "No evidence of any usage analytics, dashboards, call volume metrics, error tracking, or cost reporting for servers/tools consumed or published on Smithery; the docs cover connection, publishing, auth, and namespaces but never mention analytics or observability metrics.",
+    "evidenceIds": []
   },
   {
     "productId": "smithery",
     "storyId": "white-label-auth",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Smithery's own OAuth/credential-management infrastructure (managed auth, token scoping, secure storage) but contains no mention of white-labeling the auth flow with custom branding or bringing your own OAuth app/client credentials to replace Smithery's identity — no BYO-OAuth-app, custom domain, or branding customization feature is documented anywhere.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Smithery's own docs explicitly describe the opposite of white-labeled OAuth: 'Zero OAuth configuration — No redirect URIs, client IDs, or secrets to configure. Smithery maintains OAuth apps for popular integrations,' meaning platform engineers cannot bring their own OAuth app credentials or brand the auth flow. No evidence anywhere in the pack shows custom OAuth app registration, custom redirect URIs, or branding options for the authorization flow.",
+    "evidenceIds": [
+      "smithery-docs-21",
+      "smithery-docs-1",
+      "smithery-docs-22"
+    ]
   }
 ]
