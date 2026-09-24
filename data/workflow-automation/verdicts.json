@@ -3,16 +3,15 @@
     "productId": "activepieces",
     "storyId": "agent-creates-workflow-via-api",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Activepieces documents a public REST API secured by API keys/Bearer tokens (activepieces-docs-2, activepieces-docs-28) and a built-in MCP server that lets AI assistants build flows via natural language (activepieces-docs-4, activepieces-docs-27), showing programmatic/agent-driven flow creation is supported. However, there is no concrete documentation of specific endpoints for updating or activating (publishing) a flow via the public API, and probes found no discoverable OpenAPI spec confirming the full CRUD surface, only general endpoint-overview docs and publishing-flow governance pages (activepieces-docs-22, activepieces-docs-23) that don't reference API usage explicitly. Missing for 10: explicit API endpoint reference for create/update/activate flow operations, and independent verification (e.g. a working example) that an agent can drive the full lifecycle purely through the REST API rather than the UI or MCP layer.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm a public REST API secured by API keys (activepieces-docs-2, activepieces-docs-28, activepieces-docs-33) and an MCP server that lets AI assistants build flows via natural language (activepieces-docs-4, activepieces-docs-27), suggesting some programmatic flow management exists. However, there is no explicit evidence of REST endpoints for creating, updating, and activating a flow, and probes for an OpenAPI/swagger spec all 404 (activepieces-probe-3), leaving the exact API surface unverified. Missing for 10: explicit documentation of flow create/update/activate endpoints, a working OpenAPI spec, and independent confirmation of programmatic flow lifecycle control.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-28",
+      "activepieces-docs-33",
       "activepieces-docs-4",
       "activepieces-docs-27",
-      "activepieces-docs-22",
-      "activepieces-docs-23",
       "activepieces-probe-3"
     ]
   },
@@ -35,12 +34,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Activepieces' AI agents can be described in natural language to perform tasks like 'summarise my unread emails every morning', which shows agents can generate summaries/insights from connected data sources, but there's no dedicated analytics/insights dashboard or proactive suggestion feature surfaced inside the product itself. missing for 10: no evidence of a built-in analytics/insights UI, no proactive suggestion engine surfacing patterns from user data, no independent corroboration of AI-generated insights beyond the changelog example.",
+    "rationale": "Activepieces' AI agents can process live data from connected apps and produce summaries (e.g., 'summarise my unread emails every morning') and can search Slack/Drive/Linear in real time to answer questions, which is a limited form of AI-generated insight from user data. However there is no dedicated insights dashboard, proactive suggestion engine, or analytics feature — insights are only produced as ad-hoc outputs of manually configured agent tasks. missing for 10: dedicated data-insights/analytics UI, proactive/unprompted suggestions, independent evidence of insight quality.",
     "evidenceIds": [
       "activepieces-docs-8",
-      "activepieces-docs-14",
-      "activepieces-docs-18",
-      "activepieces-docs-19"
+      "activepieces-docs-38",
+      "activepieces-docs-37"
     ]
   },
   {
@@ -49,13 +47,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Activepieces flows run autonomously via triggers/actions with durable execution that resumes from checkpoints, and its AI agents are described as handling ongoing jobs as they arrive ('it handles the work as it arrives') with approval gating for sensitive steps. Docs also describe scheduling/trigger-based flows and agent tool restrictions supporting safe autonomous operation. Missing for 10: independent/hands-on confirmation of long-running autonomous background execution and reliability at scale beyond vendor docs.",
+    "rationale": "Activepieces natively supports background automation via flows (trigger+actions), durable execution with checkpoint resume, scheduled/async triggers, and AI agents that 'handle work as it arrives' with tool access and approval gates—clearly enabling autonomous background runs. Docs also show governance (audit logs, sensitive-flow approvals) reinforcing safe autonomous operation. Missing for 10: independent/hands-on verification of long-running autonomous agent reliability beyond vendor docs and changelog claims.",
     "evidenceIds": [
       "activepieces-docs-14",
+      "activepieces-docs-37",
       "activepieces-docs-9",
       "activepieces-docs-21",
-      "activepieces-docs-31",
-      "activepieces-docs-30"
+      "activepieces-docs-39",
+      "activepieces-docs-42",
+      "activepieces-docs-10",
+      "activepieces-docs-38"
     ]
   },
   {
@@ -63,43 +64,45 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Activepieces has a built-in AI agent builder and chat-based assistant that lets users describe tasks in plain language ('summarise my unread emails every morning', 'only reply to paying customers') to generate agents/automations with tools and instructions, plus an AI agent that autonomously executes steps with approval gating. This is well documented across product and changelog pages. Missing for 10: independent/hands-on verification of the assistant's real-world reliability and depth (community evidence is about the workflow engine generally, not the AI assistant specifically).",
+    "confidence": "medium",
+    "rationale": "Activepieces ships a native AI Agent Builder where users describe a task in plain language ('summarise my unread emails every morning') and the assistant drafts a fully configured agent with name, instructions, and tools, then executes it with approval gates — this is a built-in AI assistant, not an external integration. missing for 10: independent/hands-on corroboration of the agent-builder chat feature (community evidence only covers pricing/setup, not this capability).",
     "evidenceIds": [
       "activepieces-docs-8",
       "activepieces-docs-14",
       "activepieces-docs-18",
       "activepieces-docs-19",
-      "activepieces-docs-29",
-      "activepieces-docs-31"
+      "activepieces-docs-37",
+      "activepieces-docs-42",
+      "activepieces-docs-29"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Activepieces exposes a REST API secured by API keys and can be self-hosted via Docker/CLI install scripts, which implies flows could be triggered programmatically without the UI, but there is no explicit documentation of a CLI, headless run mode, or CI/CD integration pattern. missing for 10: dedicated CLI or headless-mode docs, CI pipeline examples, independent confirmation of automated/non-interactive execution.",
+    "rationale": "Activepieces exposes an API with API-key auth for triggering/managing flows and can be self-hosted headlessly via Docker or a CLI install script, which implies it could be run and triggered from CI pipelines. However, there is no explicit documentation of a CI/headless workflow, CLI commands for running flows non-interactively, or examples of CI integration. Missing for 10: explicit CI/headless execution docs, a dedicated CLI for running flows, and independent confirmation of CI usage.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-28",
-      "activepieces-docs-6",
-      "activepieces-docs-26"
+      "activepieces-docs-33",
+      "activepieces-docs-26",
+      "activepieces-docs-36"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "agentic-mcp-client",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly list 'MCP server' as one of the tool types an Activepieces agent can attach (an external server, for systems that aren't pieces), letting agents call its tools alongside pieces and flows — this is the client-side capability the story asks for. However, most of the MCP-related evidence in the pack (docs-4, docs-27, probe-4) actually describes the reverse direction (Activepieces itself exposing an MCP server to external clients like Claude/Cursor), and there is no independent/hands-on confirmation of adding an external MCP server as an agent tool. Missing for 10: independent or hands-on verification of connecting an external MCP server into an agent, and more detailed first-party setup/config documentation for that specific flow.",
+    "rationale": "Docs confirm agents can be given an 'MCP server' as a tool type — 'An external server, for systems that aren't pieces' — meaning Activepieces can plug in external MCP servers so agents use their tools, alongside piece actions and flows as other tool types. This is corroborated by the dedicated MCP docs and agent tools page. missing for 10: independent/hands-on verification of connecting a real external MCP server and confirmation of any config/auth steps beyond docs claims.",
     "evidenceIds": [
       "activepieces-docs-5",
       "activepieces-docs-15",
-      "activepieces-docs-20",
-      "activepieces-docs-30"
+      "activepieces-docs-38",
+      "activepieces-docs-4"
     ]
   },
   {
@@ -108,11 +111,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Activepieces documents a built-in official MCP server that lets AI assistants (Claude, Cursor, Codex, or any MCP client) drive the whole platform, plus an embeddable MCP option for end users, directly satisfying the story. missing for 10: independent/hands-on third-party verification of the MCP server working end-to-end.",
+    "rationale": "Activepieces documents a built-in MCP server that exposes flows/tables/automations to AI assistants, and explicitly supports connecting Claude, Cursor, Codex or any MCP client to drive the platform, plus an embeddable MCP for end users. This is well-documented first-party evidence with clear client compatibility claims. Missing for 10: independent/hands-on third-party verification of the MCP server working in practice.",
     "evidenceIds": [
       "activepieces-docs-4",
+      "activepieces-docs-5",
       "activepieces-docs-27",
       "activepieces-docs-13",
+      "activepieces-docs-35",
       "activepieces-probe-4"
     ]
   },
@@ -120,18 +125,17 @@
     "productId": "activepieces",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Activepieces documents natural-language creation and editing of agents/automations ('describe what you want in chat', 'summarise my unread emails' → drafted agent, 'only reply to paying customers' rewriting instructions) plus a built-in MCP server enabling AI assistants to build flows and manage the platform via natural language. This is corroborated by dedicated MCP docs and product pages, though independent hands-on verification of the NL-to-agent flow is absent. missing for 10: independent/third-party corroboration of natural-language agent creation working reliably in practice, and detail on limits/edge cases of NL command coverage.",
+    "rationale": "Activepieces lets users describe automations/agents in plain language ('summarise my unread emails every morning', 'only reply to paying customers') and have flows/agents built automatically, plus exposes a built-in MCP server so natural-language AI assistants (Claude, Cursor, Codex) can drive the whole platform. This is well documented across product, changelog, and MCP docs. Missing for 10: independent/hands-on corroboration of the natural-language agent-building experience beyond first-party docs.",
     "evidenceIds": [
       "activepieces-docs-4",
       "activepieces-docs-8",
-      "activepieces-docs-14",
       "activepieces-docs-18",
       "activepieces-docs-19",
       "activepieces-docs-27",
       "activepieces-docs-29",
-      "activepieces-probe-4"
+      "activepieces-docs-37"
     ]
   },
   {
@@ -140,25 +144,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an official CLI tool for interacting with Activepieces; the only command-line artifact found is a shell install script (curl | sh) for deploying the server, not a CLI for managing flows/agents. Given the product's server/API/MCP surface, a CLI is a plausible axis, but nothing in the evidence pack documents one.",
-    "evidenceIds": [
-      "activepieces-docs-26"
-    ]
+    "rationale": "No evidence of an official Activepieces CLI tool for AI-native workflows; only an install script (curl | sh) and MCP server/API key mentions are documented, none of which constitute a CLI.",
+    "evidenceIds": []
   },
   {
     "productId": "activepieces",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Activepieces documents a public REST API with API-key/Bearer-token authentication (endpoints overview), plus an official MCP server that lets AI clients like Claude/Cursor/Codex drive the whole platform programmatically, satisfying the 'documented public API for AI-native use' story. Missing for 10: a discoverable OpenAPI/swagger spec (probe found 404s on standard OpenAPI paths) and independent third-party confirmation of API robustness.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Activepieces documents a REST API with API-key/Bearer-token authentication and per-project key management (activepieces-docs-2, activepieces-docs-28, activepieces-docs-33), giving AI-native users a documented way to drive the platform programmatically, and this is further reinforced by an MCP server exposing the same platform control via natural language (activepieces-docs-4, activepieces-docs-27). Missing for 10: a discoverable OpenAPI/Swagger spec (probe found all common openapi paths 404) and independent/hands-on confirmation that the documented endpoints are complete and reliable.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-28",
+      "activepieces-docs-33",
       "activepieces-docs-4",
       "activepieces-docs-27",
-      "activepieces-probe-3",
-      "activepieces-probe-4"
+      "activepieces-probe-3"
     ]
   },
   {
@@ -166,15 +168,15 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Activepieces docs describe restricting an agent's capabilities to specific actions/tools rather than whole apps (\"You pick the exact actions an agent can call, and lock the inputs it must not change\") which is a least-privilege mechanism for agent tool access, and the platform has API keys for authentication plus permission gating like PUBLISH_SENSITIVE_FLOW_ACCESS. However there's no evidence of actually issuing scoped/limited-permission API keys or tokens specifically for agents (e.g., granular API key scopes, read/write restrictions) — the API key docs only describe a flat bearer-token auth model. Missing for 10: documented scoped API key/token issuance mechanism, evidence of per-agent credential scoping distinct from action-level tool restriction, independent verification of least-privilege enforcement.",
+    "confidence": "low",
+    "rationale": "Activepieces supports API keys for authenticating requests and generating tokens per embedded user for MCP-driven automation (docs-2, docs-28, docs-33, docs-35), and agents can be restricted to individual actions/apps rather than full access (docs-30, docs-32), which approximates least-privilege scoping at the agent-tool level. However, there is no documented mechanism for issuing scoped/permissioned API keys themselves (e.g., read-only, resource-limited, or expiring keys) — the API key docs describe a flat per-project key model, not fine-grained credential scoping. Missing for 10: explicit scoped/role-based API key issuance, key expiration/revocation controls, and independent verification that agent-issued tokens enforce least privilege.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-28",
-      "activepieces-docs-20",
+      "activepieces-docs-33",
       "activepieces-docs-30",
       "activepieces-docs-32",
-      "activepieces-docs-23"
+      "activepieces-docs-35"
     ]
   },
   {
@@ -183,14 +185,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Activepieces documents an official TypeScript SDK for building pieces and an SDK for embedding/customizing the platform, plus a REST API with API-key/Bearer auth, all of which an AI-native developer could build against. However, no official OpenAPI spec was found (probe returned 404s across common paths) and there's no evidence of official multi-language client SDKs (e.g., Python/JS API wrapper) beyond the embedding/piece-building SDKs. Missing for 10: published OpenAPI/swagger spec, dedicated API client SDKs in multiple languages, independent developer corroboration of SDK quality.",
+    "rationale": "Activepieces documents a REST API with API-key auth, a TypeScript SDK for building pieces, and an embedding SDK, plus an official MCP server enabling AI clients to drive the platform — solid first-party SDK/API surface for AI-native integration. However, there's no OpenAPI spec found (probe returned 404s across candidate paths), no independent/hands-on corroboration of SDK usability, and community feedback flags friction in local dev setup. Missing for 10: published OpenAPI/swagger spec, independent developer corroboration of SDK reliability, clearer versioned SDK release/changelog evidence.",
     "evidenceIds": [
       "activepieces-docs-1",
       "activepieces-docs-2",
-      "activepieces-docs-3",
       "activepieces-docs-16",
-      "activepieces-docs-28",
-      "activepieces-probe-3"
+      "activepieces-docs-4",
+      "activepieces-docs-27",
+      "activepieces-probe-3",
+      "activepieces-comm-2"
     ]
   },
   {
@@ -198,13 +201,9 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack describes flows with triggers/actions, APIs, MCP servers, and agents, but never mentions webhook triggers or a webhook subscription mechanism for events. While webhook support is a plausible capability for a workflow-automation platform, no documentation, API endpoint, or community evidence confirms it here, so this applicable axis is unevidenced.",
-    "evidenceIds": [
-      "activepieces-docs-21",
-      "activepieces-docs-2",
-      "activepieces-docs-28"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack describes flows, triggers/actions, MCP servers, agents, and APIs, but no citation explicitly documents a webhook trigger or event-subscription mechanism for AI-native consumption. Since webhook support is a plausible and expected capability for a workflow-automation platform, its complete absence from the evidence pack yields a 'none' verdict rather than 'na'.",
+    "evidenceIds": []
   },
   {
     "productId": "activepieces",
@@ -212,18 +211,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Activepieces has a dedicated AI Agents feature allowing natural-language agent creation with specific tool/action attachment (not whole apps), model/tool governance, and integration inside flows, plus 'bring your own AI keys' for model choice. missing for 10: no independent/hands-on verification of the agent-building experience, and no explicit documentation of selecting among multiple LLM providers/models within the UI.",
+    "rationale": "Activepieces has a dedicated AI Agents feature where you brief an agent in plain language, choose which apps/flows/tools it can use, and it decides steps and executes with approval gating, plus governance controls to lock specific actions/inputs. Docs also confirm 'bring your own AI keys' for model choice and tool attachment at the individual-action level. missing for 10: independent hands-on verification of agent step behavior and explicit multi-model selection UI details beyond BYO keys.",
     "evidenceIds": [
-      "activepieces-docs-8",
       "activepieces-docs-14",
-      "activepieces-docs-18",
-      "activepieces-docs-19",
-      "activepieces-docs-20",
+      "activepieces-docs-37",
+      "activepieces-docs-42",
       "activepieces-docs-30",
-      "activepieces-docs-31",
       "activepieces-docs-32",
-      "activepieces-docs-24",
-      "activepieces-docs-25"
+      "activepieces-docs-25",
+      "activepieces-docs-38"
     ]
   },
   {
@@ -232,12 +228,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Activepieces has basic API docs (endpoints/overview, API keys) but no evidence of an interactive API reference with runnable examples; explicit probes for OpenAPI/Swagger specs all returned 404, indicating no such interactive reference exists.",
+    "rationale": "Docs describe API key auth and endpoints overview, but explicit probes for an OpenAPI/Swagger spec and docs.md all returned 404, and no evidence shows an interactive API reference with runnable examples.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-28",
-      "activepieces-probe-3",
-      "activepieces-probe-2"
+      "activepieces-probe-2",
+      "activepieces-probe-3"
     ]
   },
   {
@@ -245,8 +241,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Direct probes for OpenAPI/Swagger specs at standard paths all returned 404, and no evidence pack item documents a downloadable machine-readable API spec despite there being a documented REST API with endpoints and API keys.",
+    "confidence": "high",
+    "rationale": "Activepieces has a documented REST API (endpoints/overview docs) but active probing for OpenAPI/swagger spec files at all standard paths returned 404, and no docs page references a downloadable machine-readable spec.",
     "evidenceIds": [
       "activepieces-probe-3",
       "activepieces-docs-2",
@@ -258,8 +254,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes a dedicated sandbox/staging environment isolated from production data; the closest hints (draft vs published flows, 'test automations' via MCP) do not establish data isolation or a sandbox mode. Missing for 10: explicit sandbox/staging environment, guarantee of production data isolation, documentation of test-vs-prod separation.",
+    "confidence": "medium",
+    "rationale": "No evidence of a dedicated sandbox/test environment isolated from production data; docs only describe draft-vs-published flow states and self-hosting options, not an explicit test sandbox for safely trialing automations without touching real data.",
     "evidenceIds": []
   },
   {
@@ -268,9 +264,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is an API endpoints doc and API key auth documented, but no evidence of API versioning scheme or a documented deprecation policy; the OpenAPI spec probes all returned 404. missing for 10: versioning scheme documentation, deprecation policy statement, changelog/notice process for breaking API changes.",
+    "rationale": "There is API documentation (endpoints, API keys) but no evidence of versioning scheme or a documented deprecation policy; OpenAPI/spec probes returned 404, and no changelog or policy addressing API version lifecycle is present.",
     "evidenceIds": [
       "activepieces-docs-2",
+      "activepieces-docs-28",
+      "activepieces-docs-33",
       "activepieces-probe-3"
     ]
   },
@@ -278,13 +276,16 @@
     "productId": "activepieces",
     "storyId": "app-event-triggers",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Activepieces is explicitly a workflow automation platform where 'Flow consists of two parts, trigger and actions' and can 'Move data, send messages and update records between 764 apps without writing glue code,' confirming app-event-triggered workflows across many connected services. This is core functionality for a Zapier-alternative product. Missing for 10: explicit documentation/examples of specific trigger types (new record, new message, email received, form submission) and independent hands-on verification of trigger reliability.",
+    "rationale": "Activepieces flows are explicitly built around triggers (new record, message, form, email) plus actions across 760+ app integrations, positioned as a Zapier alternative with a large app ecosystem for exactly this workflow-trigger use case. Missing for 10: no independent hands-on confirmation of specific trigger types (e.g., new email, form submission) working reliably, and one community report notes rough edges in self-hosted setup.",
     "evidenceIds": [
       "activepieces-docs-21",
+      "activepieces-docs-39",
       "activepieces-docs-7",
-      "activepieces-gh-1"
+      "activepieces-docs-41",
+      "activepieces-gh-1",
+      "activepieces-comm-2"
     ]
   },
   {
@@ -292,8 +293,8 @@
     "storyId": "automatic-step-retries",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions retry, backoff, or failure-handling configuration for flow steps/actions; only durable execution/checkpointing (activepieces-docs-9) is mentioned, which is a distinct mechanism from configurable per-step retries with backoff.",
+    "confidence": "low",
+    "rationale": "The evidence pack has no documentation of retry/backoff configuration for failed steps or activities; it covers durable execution/checkpoint resume but nothing about configurable retry policies or backoff strategies.",
     "evidenceIds": []
   },
   {
@@ -301,50 +302,51 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers flows, agents, MCP, embedding, and publishing controls but never mentions looping, batch/bulk processing, or iterating actions over many items at once — a core automation-depth capability that would need explicit documentation (e.g., a 'Loop' piece or batch API) to be credited.",
+    "confidence": "medium",
+    "rationale": "Evidence describes flows, triggers, actions, agents, and MCP integration but contains no mention of loop/iterator steps, batch processing, or bulk operations across multiple items at once.",
     "evidenceIds": []
   },
   {
     "productId": "activepieces",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Activepieces flows are explicitly trigger+action based, letting users define event-based rules that automatically fire actions, with durable execution and publishing controls documented. missing for 10: independent/hands-on verification of complex multi-condition rule logic and third-party corroboration beyond vendor docs.",
+    "rationale": "Activepieces flows are explicitly built around trigger + action definitions (docs-21, docs-39), with support for publishing/activation controls (docs-22, docs-40) and durable execution (docs-9), directly matching the rule-based trigger-action automation story. Missing for 10: independent/hands-on verification of trigger reliability beyond vendor docs.",
     "evidenceIds": [
       "activepieces-docs-21",
+      "activepieces-docs-39",
       "activepieces-docs-9",
       "activepieces-docs-22",
-      "activepieces-docs-7",
-      "activepieces-gh-1"
+      "activepieces-docs-40"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Activepieces flows are built from triggers and actions (docs-21) with durable execution that resumes interrupted runs (docs-9), implying support for automated recurring workflows, and it's positioned as a Zapier alternative where scheduled triggers are standard. However, no evidence explicitly documents a schedule/cron trigger type or how recurring jobs are configured. Missing for 10: explicit documentation of a schedule/cron trigger, examples of recurring job configuration, and independent confirmation that scheduled flows work reliably.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Activepieces flows are built from triggers and actions (activepieces-docs-21, activepieces-docs-39), and its agent framing describes ongoing jobs 'handled as they arrive' (activepieces-docs-37), implying support for automated recurring execution, but no evidence explicitly documents a schedule/cron trigger type or recurring-job scheduling UI. missing for 10: explicit documentation of a schedule/cron trigger, recurrence configuration options, and independent confirmation that scheduled flows run reliably.",
     "evidenceIds": [
       "activepieces-docs-21",
-      "activepieces-docs-9",
-      "activepieces-docs-7",
-      "activepieces-gh-1"
+      "activepieces-docs-39",
+      "activepieces-docs-37",
+      "activepieces-docs-14"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Activepieces has a publishing workflow with review gates (PUBLISH_SENSITIVE_FLOW_ACCESS permission) and staged rollout so changes don't disrupt live flows, which covers some review/approval aspects, but there's no documented version history browsing, diffing, or explicit rollback-to-previous-version capability. missing for 10: version history/diff view, explicit rollback UI or API, independent confirmation that rollback works as described.",
+    "rationale": "Docs show a draft vs published flow model with a review/approval gate for sensitive flows (PUBLISH_SENSITIVE_FLOW_ACCESS, 'Request approval') and audit logs of agent actions, which cover part of 'review' and change-gating. However there is no documented version-history browser or explicit rollback-to-previous-version feature. Missing for 10: explicit version history UI, ability to revert/rollback to a prior published version, and independent confirmation of this workflow.",
     "evidenceIds": [
-      "activepieces-docs-11",
       "activepieces-docs-22",
-      "activepieces-docs-23"
+      "activepieces-docs-40",
+      "activepieces-docs-43",
+      "activepieces-docs-10"
     ]
   },
   {
@@ -352,24 +354,20 @@
     "storyId": "central-credentials-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows API-key auth, general RBAC permissions (e.g. PUBLISH_SENSITIVE_FLOW_ACCESS) and audit logging, but nowhere documents a dedicated 'connections' credential store with team sharing or per-credential access control — the closest hint is a community comment praising 'authentication/connections' without detail. Missing for 10: documentation of centralized connection/credential vault, sharing scope across teams/projects, and role-based control over who can use a specific credential.",
-    "evidenceIds": [
-      "activepieces-docs-11",
-      "activepieces-docs-23",
-      "activepieces-comm-5"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains only tangential governance details (flow publishing permissions, API-key management, general platform access control) but no documentation of a central credential/connection store with team sharing and per-credential access control — the specific capability the story asks about is unevidenced.",
+    "evidenceIds": []
   },
   {
     "productId": "activepieces",
     "storyId": "code-steps-in-workflows",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm developers can write custom pieces in TypeScript (a code-based extensibility mechanism), but the evidence never describes an inline 'Code' step where you drop raw JavaScript or Python directly into a flow as a step — the docs only cover building separate reusable pieces, not ad-hoc code steps. missing for 10: explicit documentation of an inline Code/Python step usable within a flow builder, evidence of Python support at all, and independent/hands-on confirmation of this specific capability.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm flows support 'Actions' that include 'running code' as a step type (activepieces-docs-39), which aligns with Activepieces' known code-step feature, but the evidence pack never explicitly names JavaScript/Python code steps, shows syntax/examples, or documents language support details. missing for 10: explicit documentation naming JavaScript/Python as supported code-step languages, code editor examples, npm package support details, and independent/hands-on confirmation of writing custom code steps.",
     "evidenceIds": [
-      "activepieces-docs-1",
-      "activepieces-docs-12"
+      "activepieces-docs-39",
+      "activepieces-docs-21"
     ]
   },
   {
@@ -377,13 +375,13 @@
     "storyId": "community-built-components",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Activepieces is open-source and documents a TypeScript SDK for building custom 'pieces' (activepieces-docs-1), implying developers could create and presumably install integrations outside the core 764 pre-built apps (activepieces-docs-7, activepieces-gh-1). However, there's no direct evidence of a community marketplace, npm-style install flow for third-party pieces, or confirmation that externally-authored pieces can be installed into an instance — a HN commenter explicitly asks whether such documentation/boilerplate exists (activepieces-comm-3), which is unanswered in the evidence pack. Missing for 10: explicit install mechanism for community-built pieces, a community marketplace/registry, and confirmation/examples of externally-contributed pieces in production use.",
+    "confidence": "medium",
+    "rationale": "Activepieces is open source and documents a TypeScript SDK for building custom 'pieces' (activepieces-docs-1, activepieces-gh-1), which implies the technical possibility for community contributions, and a community question directly probes whether third-party integrations can be added (activepieces-comm-3), but no evidence confirms an actual marketplace or install flow for pieces built by parties outside the vendor. missing for 10: evidence of a community pieces marketplace/registry, confirmation that non-vendor pieces are actually published/installable, and a direct answer to the community's open question about contribution documentation.",
     "evidenceIds": [
       "activepieces-docs-1",
-      "activepieces-docs-7",
       "activepieces-gh-1",
-      "activepieces-comm-3"
+      "activepieces-comm-3",
+      "activepieces-docs-12"
     ]
   },
   {
@@ -392,7 +390,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions rate limiting, throttling, concurrency control, or queuing of workflow executions to protect downstream services. Documentation covers durable execution/checkpointing, publishing flows, and agent tooling, but nothing about throttling/queueing for rate-limit compliance.",
+    "rationale": "No evidence of rate-limiting, throttling, or queuing controls for workflow executions; docs cover durable execution/checkpointing, publishing approvals, and agent tooling but nothing about controlling execution rate to respect downstream API limits.",
     "evidenceIds": []
   },
   {
@@ -400,10 +398,11 @@
     "storyId": "conditional-branching-logic",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack only describes flows as trigger+actions and covers agents, MCP, embedding, and publishing — no mention of conditional branches, filters, parallel paths, or merge-back logic in the visual builder.",
+    "confidence": "medium",
+    "rationale": "The evidence pack describes flows only as trigger + actions and never mentions conditional branches, filters, routers, or parallel paths that merge back together, so there is no evidence this core visual-builder capability is delivered.",
     "evidenceIds": [
-      "activepieces-docs-21"
+      "activepieces-docs-21",
+      "activepieces-docs-39"
     ]
   },
   {
@@ -412,8 +411,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers pieces, MCP, agents, embedding, and publishing controls, but contains no mention of a schedule/cron trigger or timezone configuration for flows. Scheduling is a standard, expected capability for a workflow-automation tool, so the axis clearly applies, but no evidence confirms it. Missing for 10: any documentation of a schedule/cron trigger type, timezone selection UI or setting, or examples of time-based automation runs.",
-    "evidenceIds": []
+    "rationale": "The evidence pack describes flows having a 'trigger' and 'actions' concept but never mentions a schedule/cron trigger type or timezone configuration; no docs or community evidence document this capability. missing for 10: schedule/cron trigger documentation, timezone control settings, any example of a scheduled flow.",
+    "evidenceIds": [
+      "activepieces-docs-21",
+      "activepieces-docs-39"
+    ]
   },
   {
     "productId": "activepieces",
@@ -437,25 +439,25 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim durable execution: 'Interrupted runs resume from their last checkpoint instead of starting over,' which directly supports surviving worker/platform restarts without losing state. However there is no explicit mention of multi-day waits/delays specifically, no independent/hands-on verification of restart durability, and one community report notes bugs in local setup that raise reliability questions. Missing for 10: explicit documentation of long-duration (multi-day) wait/delay steps surviving restarts, independent or hands-on confirmation of durable execution under real restarts, and details on state persistence mechanics.",
+    "rationale": "Docs explicitly describe durable execution where 'interrupted runs resume from their last checkpoint instead of starting over,' directly supporting survival of restarts, but there's no explicit documentation of multi-day wait/delay steps or independent hands-on confirmation of long-lived pauses. Missing for 10: explicit docs on delay/sleep steps spanning days, third-party or hands-on verification of long-running workflow durability.",
     "evidenceIds": [
-      "activepieces-docs-9",
-      "activepieces-comm-2"
+      "activepieces-docs-9"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "embed-white-label",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Activepieces provides a dedicated embedding SDK and documentation explicitly for embedding the flow builder, AI agents, and 760+ integrations white-label inside a developer's own product under their own brand, including embeddable MCP for end users. missing for 10: independent/hands-on verification of the embedding SDK in production, and pricing/licensing detail on white-label branding limits at scale.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Activepieces provides a dedicated embedding SDK/docs to embed the builder white-label in a SaaS product with user auto-provisioning, custom branding, and even embeddable MCP for end users, explicitly marketed as 'under your own brand.' missing for 10: independent third-party case study or hands-on verification of embedding beyond first-party docs.",
     "evidenceIds": [
       "activepieces-docs-3",
       "activepieces-docs-16",
       "activepieces-docs-17",
+      "activepieces-docs-34",
       "activepieces-docs-13",
-      "activepieces-docs-24"
+      "activepieces-docs-35"
     ]
   },
   {
@@ -463,12 +465,14 @@
     "storyId": "environments-source-control",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Activepieces has a publish/staged-changes flow with sensitive-flow review gating (docs-11, docs-22, docs-23), which offers some environment-promotion-like governance, but there is no evidence of git-based version control, diffing, branching, or explicit dev-to-production environment promotion across separate deployments. missing for 10: git/source-control integration for workflows, multi-environment (dev/staging/prod) promotion mechanism, version history/rollback, independent confirmation of the publish-review workflow in practice.",
+    "confidence": "medium",
+    "rationale": "Activepieces documents a draft/publish flow versioning mechanism, including a sensitive-project approval gate requiring PUBLISH_SENSITIVE_FLOW_ACCESS before changes go live, which mirrors a basic dev-to-prod promotion gate. However there is no evidence of git/source-control integration, exportable version history, or distinct multiple environments (dev/staging/prod) beyond a single project's draft vs published state.  missing for 10: source control integration (git sync/export), explicit multi-environment promotion (dev/staging/prod), version history/rollback tooling.",
     "evidenceIds": [
       "activepieces-docs-11",
       "activepieces-docs-22",
-      "activepieces-docs-23"
+      "activepieces-docs-23",
+      "activepieces-docs-40",
+      "activepieces-docs-43"
     ]
   },
   {
@@ -477,7 +481,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers durable execution/checkpointing, publishing permissions, and MCP/agent features, but contains no mention of dedicated error-handling paths, fallback branches, or failure notifications for ops users. This is a reasonable axis for a workflow automation tool, but no supporting evidence exists in the pack.",
+    "rationale": "The evidence pack covers durable execution/checkpointing, publishing approvals, and agent governance, but contains no mention of dedicated error-handling branches, failure-notification triggers, or retry/alerting configuration for flows. Missing for 10: any documentation of error paths, failure notifications, or retry/alert configuration.",
     "evidenceIds": []
   },
   {
@@ -486,11 +490,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Activepieces supports building custom TypeScript pieces and flows made of triggers/actions, implying some code-level data handling, but the evidence pack never documents an explicit expression/variable-mapping syntax (e.g., {{ }} interpolation) or built-in functions/formulas for transforming data between steps. Missing for 10: explicit docs on step-to-step variable/expression syntax, built-in formula/function library, and examples of mapping outputs from one step into another.",
+    "rationale": "Docs mention that flow actions can include 'running code' and that pieces are built in TypeScript, implying some data transformation capability, but there is no explicit documentation of expression syntax, built-in functions, or formula-based mapping between steps. missing for 10: explicit docs on expression/variable syntax between steps, built-in transformation functions, examples of formula usage, independent confirmation of this UX.",
     "evidenceIds": [
-      "activepieces-docs-1",
-      "activepieces-docs-21",
-      "activepieces-docs-7"
+      "activepieces-docs-39",
+      "activepieces-docs-1"
     ]
   },
   {
@@ -498,13 +501,12 @@
     "storyId": "human-approval-steps",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Activepieces has related governance features (sensitive-flow publish review requiring PUBLISH_SENSITIVE_FLOW_ACCESS permission, agent approval gating in the AI agent builder where 'anything you want to check first waits for your approval'), suggesting some human-in-the-loop capability exists, but there is no explicit documentation of a dedicated 'pause and wait for approval/input' step or action within a flow itself. missing for 10: explicit docs on a flow-level pause/wait-for-approval step or human input action, evidence of how a paused flow resumes after approval, and independent/hands-on confirmation of this specific capability.",
+    "confidence": "low",
+    "rationale": "Activepieces documents human-approval gating in two contexts — AI agent actions that 'wait for your approval' before executing (docs-31, docs-42) and a publish-approval flow for Sensitive projects (docs-43) — but there is no explicit documentation of a dedicated 'pause and wait for human input/approval' step usable mid-execution within an ordinary automation flow. missing for 10: a documented flow-level 'wait for approval' or 'human input' action/piece, evidence of how a paused run resumes after approval is given, and independent/hands-on confirmation of this capability.",
     "evidenceIds": [
-      "activepieces-docs-11",
-      "activepieces-docs-23",
       "activepieces-docs-31",
-      "activepieces-docs-22"
+      "activepieces-docs-42",
+      "activepieces-docs-43"
     ]
   },
   {
@@ -512,10 +514,11 @@
     "storyId": "inbound-webhook-triggers",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack confirms flows have a trigger/action structure (docs-21) but contains no documentation or example specifically describing a webhook trigger that exposes a custom URL to receive external HTTP requests and start a run with the payload; no webhook-specific docs, API endpoint spec, or hands-on confirmation are present. missing for 10: explicit webhook trigger documentation, example of webhook URL generation, confirmation that payload is passed into the flow run, any hands-on/community verification of webhook functionality.",
+    "confidence": "medium",
+    "rationale": "The evidence pack confirms Activepieces flows consist of a trigger and actions (activepieces-docs-21, activepieces-docs-39) but never specifically documents a webhook trigger type, custom webhook URL generation, or receiving external HTTP payloads to start a run — missing for 10: explicit webhook trigger documentation, webhook URL generation details, payload-to-flow-input mapping evidence.",
     "evidenceIds": [
-      "activepieces-docs-21"
+      "activepieces-docs-21",
+      "activepieces-docs-39"
     ]
   },
   {
@@ -538,16 +541,15 @@
     "productId": "activepieces",
     "storyId": "nl-workflow-generation",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Multiple docs confirm natural-language generation/editing of agents and automations ('Describe what you want in chat, and Activepieces builds the agent or automation for you', 'Write summarise my unread emails every morning and you get a drafted agent', 'describe a change in the editor... and the instructions and tools are rewritten for you'), plus an MCP server enabling AI assistants to build/edit flows via NL. missing for 10: independent/hands-on verification of prompt-to-workflow generation quality and no third-party report confirming it works reliably in practice.",
+    "rationale": "First-party docs show natural-language creation ('Describe what you want in chat, and Activepieces builds the agent or automation for you') and editing ('describe a change in the editor... and the instructions and tools are rewritten for you'), plus a concrete changelog example turning a prompt into a drafted agent. missing for 10: independent/hands-on corroboration of this specific NL-to-workflow generation feature, and detail on how well it handles complex multi-step flow edits.",
     "evidenceIds": [
       "activepieces-docs-18",
       "activepieces-docs-8",
       "activepieces-docs-29",
-      "activepieces-docs-14",
-      "activepieces-docs-4",
-      "activepieces-docs-27"
+      "activepieces-docs-19",
+      "activepieces-docs-37"
     ]
   },
   {
@@ -556,28 +558,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Activepieces exposes a documented API with key-based auth (activepieces-docs-2, docs-28) and a first-party MCP server explicitly described as able to 'drive the whole platform' — build flows, manage tables, test automations (docs-4, docs-27, probe-4) — suggesting broad UI-parity for AI-native users. However, no discoverable OpenAPI/swagger spec was found (probe-3 shows 404s across all candidate paths), and there's no independent or hands-on confirmation that every UI action (e.g., publishing governance flows, embedding SDK features) is reachable via API/MCP. Missing for 10: a published OpenAPI spec, explicit API endpoint parity documentation for all UI features, and independent verification of full API/UI feature parity.",
+    "rationale": "Activepieces exposes a documented REST API with API-key/Bearer auth (activepieces-docs-2, activepieces-docs-28, activepieces-docs-33) and a built-in MCP server explicitly marketed as being able to 'build flows, manage tables, test automations' and 'drive the whole platform' via natural language (activepieces-docs-4, activepieces-docs-27), suggesting broad UI/API parity for AI-native use. However, there is no discoverable OpenAPI/swagger spec (activepieces-probe-3) or independent confirmation that every UI action (e.g., publishing approvals, embedding provisioning, agent tool governance) is fully API/MCP-accessible. Missing for 10: a published OpenAPI spec confirming full endpoint coverage, and independent/hands-on verification that all UI workflows (not just flow-building) are API-equivalent.",
     "evidenceIds": [
       "activepieces-docs-2",
       "activepieces-docs-4",
       "activepieces-docs-27",
       "activepieces-docs-28",
-      "activepieces-probe-3",
-      "activepieces-probe-4"
+      "activepieces-docs-33",
+      "activepieces-probe-3"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Activepieces is open-source (MIT) and self-hostable via Docker, and exposes an API with API-key auth that could be used to pull data out, which supports data portability in principle. However there is no explicit documentation of a bulk 'export all your data/flows in an open format' feature or migration tooling. missing for 10: dedicated data-export feature docs, documented open export format (e.g. JSON flow export/import), independent confirmation of a full data-portability workflow.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Activepieces is fully open-source (MIT) and self-hostable via Docker/Docker Compose, meaning data lives in your own infrastructure/database rather than a vendor silo, and the REST API with API-key auth allows programmatic access to flows/data. However, there is no explicit documented 'export all data' feature or open-format export tooling (e.g., a bulk export command or documented data schema for migration) in the evidence pack. Missing for 10: dedicated data export/import documentation, confirmation of open standard export formats (JSON/CSV) for flows, connections, and run history, and independent confirmation of a clean migration path.",
     "evidenceIds": [
       "activepieces-gh-1",
-      "activepieces-docs-6",
+      "activepieces-docs-25",
+      "activepieces-docs-36",
       "activepieces-docs-2",
-      "activepieces-docs-28"
+      "activepieces-docs-33"
     ]
   },
   {
@@ -598,14 +601,15 @@
     "productId": "activepieces",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Activepieces is explicitly open-source (MIT license per HN commentary) and provides official self-hosting instructions via a one-line install script and Docker Compose that generates secrets and starts the full stack. This is corroborated by GitHub description as an open-source Zapier replacement and founder commentary about avoiding closed ecosystems, though a community report notes some early friction with local setup/docker-compose using published images rather than local code. Missing for 10: independent recent verification that self-hosting is smooth/production-ready and more detail on feature parity between self-hosted and cloud versions.",
+    "rationale": "Activepieces is open source (MIT-licensed per GitHub and community comments) and provides documented self-hosting install options, including a single-container Docker setup and one-line Docker Compose install script, explicitly for running on your own infrastructure. Community evidence confirms hands-on local setup attempts, corroborating that self-hosting is real and functional, though with some rough edges noted (missing dev setup docs). Missing for 10: no independent long-term production self-hosting report at scale.",
     "evidenceIds": [
+      "activepieces-docs-36",
       "activepieces-docs-26",
       "activepieces-docs-6",
+      "activepieces-docs-25",
       "activepieces-gh-1",
-      "activepieces-comm-7",
       "activepieces-comm-2"
     ]
   },
@@ -615,11 +619,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Activepieces documents a marketplace of 764+ prebuilt 'pieces' (integrations) enabling no-code connections between apps, positioned explicitly as a Zapier alternative, with a TypeScript SDK for building/maintaining pieces. However, the number of documented integrations (~764) falls short of 'thousands', and community feedback raises concerns about how easy/well-documented it is to add new integrations, suggesting the ecosystem is less mature/vendor-maintained than larger competitors.  missing for 10: evidence of integration count reaching 'thousands', clear documentation of vendor-maintained upkeep process, independent corroboration of integration quality/breadth.",
+    "rationale": "Activepieces documents 760+/764 prebuilt \"pieces\" (integrations) that let users move data between apps without code, and is positioned as an open-source Zapier alternative built around this integration marketplace. However, the story specifies 'thousands' of integrations, while evidence only shows ~760-764, and there's no independent corroboration of integration quality/maintenance beyond vendor docs (community comment even questions ease of extending the ecosystem). Missing for 10: evidence of thousands (not hundreds) of integrations, independent/third-party verification of integration breadth and vendor maintenance quality.",
     "evidenceIds": [
       "activepieces-docs-7",
+      "activepieces-docs-41",
       "activepieces-gh-1",
-      "activepieces-docs-17",
       "activepieces-comm-3",
       "activepieces-comm-7"
     ]
@@ -629,13 +633,12 @@
     "storyId": "privacy-data-residency",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Activepieces is open-source and explicitly supports self-hosting via Docker or a one-line installer, letting users run it 'on your own infrastructure' and 'keep the governance your company needs' — this gives de facto control over data location/region. However, there is no explicit cloud-offering region-selection feature or data-residency certification documented. Missing for 10: explicit region/residency selection controls for the managed/cloud service, compliance certifications (SOC2/GDPR data-locality guarantees), and documentation naming specific hosting regions.",
+    "confidence": "low",
+    "rationale": "Activepieces supports self-hosting (Docker/own infrastructure) and explicitly mentions an 'EU cloud' option alongside running 'entirely inside your own network,' giving users some control over where data lives, but there's no documentation of a broader menu of cloud regions or formal data-residency/compliance guarantees beyond that single EU mention. Missing for 10: multiple named cloud regions, explicit data-residency/compliance certifications, and any UI/setting for choosing region within the hosted product.",
     "evidenceIds": [
+      "activepieces-docs-44",
       "activepieces-docs-25",
-      "activepieces-docs-6",
-      "activepieces-docs-26",
-      "activepieces-gh-1"
+      "activepieces-docs-36"
     ]
   },
   {
@@ -644,23 +647,23 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Activepieces is open-source and self-hostable, and lets users 'bring your own AI keys' and 'run it on your own infrastructure,' which implicitly limits data flowing to a third-party AI trainer, but there is no explicit policy statement or setting about preventing AI-model training on user data. missing for 10: an explicit no-training-on-data policy or opt-out setting, terms-of-service language addressing model training, and independent confirmation of this privacy posture.",
+    "rationale": "Activepieces offers self-hosting and 'bring your own AI keys' so customers can route AI calls through their own provider contracts and infrastructure, which indirectly lets them avoid sending data to a third-party model trainer, and EU-cloud/self-hosted governance options reinforce data control (activepieces-docs-24, activepieces-docs-25, activepieces-docs-44). However, there is no explicit Activepieces policy statement about whether Activepieces itself or its AI features use customer data for model training, nor any opt-out toggle documented. Missing for 10: an explicit no-training/data-use policy statement, a documented opt-out setting, and independent confirmation of this guarantee.",
     "evidenceIds": [
-      "activepieces-docs-25",
       "activepieces-docs-24",
-      "activepieces-gh-1"
+      "activepieces-docs-25",
+      "activepieces-docs-44"
     ]
   },
   {
     "productId": "activepieces",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Activepieces offers self-hosting and 'bring your own AI keys, run it on your own infrastructure' which gives users infrastructure-level control over where data lives, implying they can manage retention/deletion themselves. However, there is no explicit documentation of retention policies, data deletion APIs/UI, or log purging controls within the product itself. Missing for 10: explicit data retention settings, deletion/export APIs, documented retention periods for logs/run history, and any GDPR-style data erasure workflow.",
+    "rationale": "Activepieces supports self-hosting and running entirely on your own infrastructure ('Bring your own AI keys, run it on your own infrastructure, and keep the governance your company needs'), which implicitly gives operators control over where data lives and lets them delete it themselves, and audit logs track actions taken. However there is no explicit documentation of data retention policies, configurable retention windows, or built-in deletion/export tooling for flow run data. Missing for 10: explicit retention/TTL settings, data deletion APIs or UI controls, and independent confirmation these work as described.",
     "evidenceIds": [
       "activepieces-docs-25",
-      "activepieces-docs-24",
+      "activepieces-docs-44",
       "activepieces-docs-10"
     ]
   },
@@ -670,7 +673,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out setting; the closest topics are self-hosting and bring-your-own-AI-keys, which do not address telemetry controls.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics opt-out, or any privacy/data-collection settings for Activepieces; the product is self-hostable which could plausibly support this, but nothing documents a telemetry toggle or opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -705,7 +708,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or community reports describing a step-testing feature with sample/pinned data or per-step input/output inspection prior to publishing a flow; only general flow-building, publishing, and durable-execution docs are present. missing for 10: no docs on 'test step' UI, sample/pinned data injection, or before/after input-output inspection panels.",
+    "rationale": "The evidence pack covers publishing/versioning (draft vs published flows) and general flow-building concepts, but contains no mention of step-level testing, sample/pinned data, or inspecting per-step input/output before publishing — a well-known Activepieces builder feature that simply isn't documented in this pack.",
     "evidenceIds": []
   },
   {
@@ -714,13 +717,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe flows built from triggers and actions, connecting 764 apps without writing glue code, positioning Activepieces as a no-code Zapier alternative with a visual flow builder. Community evidence corroborates it as an open-source Zapier-style tool, though one hands-on report notes setup friction and a bug, not specific to the visual builder itself. missing for 10: independent hands-on validation of the visual editor UX itself, screenshots/demos of multi-step drag-and-drop building, and detail on error handling/branching within the no-code editor.",
+    "rationale": "Docs describe flows built from triggers and actions across 760+ apps without writing glue code, positioning Activepieces as a visual, no-code automation builder akin to Zapier (activepieces-docs-21, docs-39, docs-7, docs-41, gh-1). Community comments confirm it's used as a Zapier alternative, though one hands-on report notes setup friction/bugs unrelated to the builder's no-code nature (activepieces-comm-2, comm-7). Missing for 10: independent hands-on walkthroughs specifically validating the drag-and-drop/no-code editor experience, and screenshots/demos beyond vendor docs.",
     "evidenceIds": [
       "activepieces-docs-21",
+      "activepieces-docs-39",
       "activepieces-docs-7",
+      "activepieces-docs-41",
       "activepieces-gh-1",
-      "activepieces-comm-1",
-      "activepieces-comm-2"
+      "activepieces-comm-7"
     ]
   },
   {
@@ -729,7 +733,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers pieces/connectors, MCP, agents, and embedding, but nowhere mentions a public template library or pre-built workflow templates that ops users could start from. Absence of evidence for this applicable capability yields none.",
+    "rationale": "The evidence pack contains no mention of a public template library or gallery of pre-built workflows; it covers pieces/connectors, agents, embedding, and installation but not templates. Missing for 10: any docs or page referencing a template gallery, template count, or 'start from a template' flow.",
     "evidenceIds": []
   },
   {
@@ -737,12 +741,13 @@
     "storyId": "workflows-as-mcp-tools",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Activepieces has a built-in MCP server that lets external MCP clients (Claude, Cursor, Codex, etc.) drive flows, tables, and automations, and this can even be embedded for end users to expose their own workflows as MCP tools with one click. missing for 10: independent/hands-on third-party verification of the MCP server working in practice, and more detail on granularity of exposing individual app actions vs whole workflows as callable tools.",
+    "confidence": "medium",
+    "rationale": "Activepieces ships both a built-in MCP server (docs-4, docs-27) letting external MCP clients like Claude/Cursor drive flows, and an explicit embeddable MCP feature (docs-13, docs-35) that lets end users expose their own workflows/automations as MCP tools callable by an external agent via an Authorize flow. This directly matches the story of exposing workflows/app actions as MCP tools for external agents. Missing for 10: independent/hands-on verification of the MCP tool-exposure flow and more detail on which specific actions/tools are exposed vs whole flows.",
     "evidenceIds": [
       "activepieces-docs-4",
-      "activepieces-docs-27",
       "activepieces-docs-13",
+      "activepieces-docs-27",
+      "activepieces-docs-35",
       "activepieces-probe-4"
     ]
   },
