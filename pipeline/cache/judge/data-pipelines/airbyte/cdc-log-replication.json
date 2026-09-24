@@ -1,15 +1,17 @@
 {
-  "hash": "1b4a44b977e28c5b0670d2be8906ba3be2e612318bb71a52191104c69ed2cbe1",
+  "hash": "e615dd040d0108e74aac7f72abcc22048ebd1fe2ca1b1536888a9423e6419863",
   "verdict": {
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Airbyte's docs explicitly describe log-based CDC that reads binlog/WAL files to capture INSERT/UPDATE/DELETE changes while tracking log position, directly matching the story's requirement for low-impact update/delete capture (airbyte-docs-15, -25, -38, -42). Missing for 10: independent/hands-on benchmarks proving reduced source load in production, and per-database (MySQL/Postgres) specifics beyond the generic CDC overview; an old community comment questioning hard-delete handling exists but predates and doesn't concretely contradict the current documented CDC mechanism.",
+    "rationale": "Airbyte's CDC docs explicitly describe log-based replication (binlog/WAL) where a consumer reads change logs while tracking position to capture INSERT/UPDATE/DELETE without heavy source load, directly matching the story. However, a community question specifically asks whether hard deletions are reliably captured via incremental/CDC mode, and this remains unanswered in the evidence, and there's no independent hands-on confirmation of the low-impact/efficiency claims. Missing for 10: independent verification of CDC performance impact on source DBs, and confirmation that hard-delete capture works as claimed (community question in airbyte-comm-2 is unresolved).",
     "evidenceIds": [
       "airbyte-docs-15",
       "airbyte-docs-25",
       "airbyte-docs-38",
-      "airbyte-docs-42"
+      "airbyte-docs-42",
+      "airbyte-docs-54",
+      "airbyte-comm-2"
     ],
     "productId": "airbyte",
     "storyId": "cdc-log-replication"

@@ -1,15 +1,16 @@
 {
-  "hash": "5fc2ae3b69506207e09c59ebb568fa3be7875e40a907d2932ce396b049237b94",
+  "hash": "81ea6bf00eea330ca6f6c86dafd49e8af5290333dfd5113e16de7d4519056ceb",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Meltano's docs show loaders move data (often as JSON-based Singer records) and require a separate dbt transformation step to type and model data (meltano-docs-6, meltano-docs-11), plus incremental state tracking (meltano-docs-20) that dedupes on replication key changes but doesn't guarantee typed, deduplicated final tables without additional dbt modeling. There is no direct evidence that the loader itself produces analyst-ready typed/deduplicated tables without extra transformation work. missing for 10: evidence that loaders alone type and dedupe destination tables, independent confirmation of load-time schema casting, and hands-on validation that raw JSON is not exposed to end users.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Meltano's EL pipeline extracts raw data via Singer taps and relies on dbt for transformation into typed, modeled tables (meltano-docs-6), and incremental replication state is tracked (meltano-docs-20/30), but the evidence never confirms that loaded data automatically lands as typed, deduplicated tables without running a separate dbt transform step — raw loader output (e.g. to a warehouse) is typically JSON/variant until dbt models are built and run. missing for 10: evidence that the loader itself produces typed/deduplicated destination tables out-of-the-box, details on how loaders handle schema typing/dedup before dbt, and independent confirmation that end-state tables are analyst-ready without extra transformation work.",
     "evidenceIds": [
       "meltano-docs-6",
       "meltano-docs-11",
       "meltano-docs-20",
-      "meltano-docs-30"
+      "meltano-docs-30",
+      "meltano-docs-37"
     ],
     "productId": "meltano",
     "storyId": "typed-deduped-tables"
