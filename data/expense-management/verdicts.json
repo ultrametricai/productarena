@@ -2098,7 +2098,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of QuickBooks, NetSuite, Xero, or any accounting-system sync, nor GL account/class/department mapping controls — it only covers Navan's API/MCP for expense querying, travel booking, and rewards. This is a plausible and expected axis for a T&E platform, but nothing in the evidence demonstrates it.",
+    "rationale": "No evidence in the pack mentions QuickBooks, NetSuite, Xero, or any accounting-system sync, nor GL account/class/department mapping controls. The evidence covers MCP/API for expense data, travel booking, and pricing tiers but never accounting-close integrations.",
     "evidenceIds": []
   },
   {
@@ -2124,12 +2124,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A live llms.txt file is confirmed at developer.navan.com/llms.txt (HTTP 200) describing MCP-based agent access, and the developer portal has dedicated agent-oriented docs (/mcp/, /api/) with example natural-language queries. Missing for 10: independent third-party confirmation that agents successfully consume this llms.txt in practice.",
+    "rationale": "Navan hosts a live, agent-oriented llms.txt (confirmed via probe returning HTTP 200 with structured content pointing to MCP docs) plus a full developer portal describing MCP integration for AI assistants like Claude, Cursor, ChatGPT. This directly satisfies pointing an agent at agent-native docs. Missing for 10: independent third-party confirmation that agents successfully parse/use the llms.txt in practice.",
     "evidenceIds": [
       "navan-probe-1",
+      "navan-probe-2",
       "navan-docs-1",
-      "navan-docs-3",
-      "navan-probe-2"
+      "navan-docs-3"
     ]
   },
   {
@@ -2137,17 +2137,18 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Navan's Ava AI and MCP integration provide AI-generated insights such as analyzing travel/spend data, summarizing by category, comparing to policy, predicting future spend, and flagging policy violations, all directly from Navan data. missing for 10: independent/hands-on verification of insight quality beyond vendor blog and docs, and details on how proactive/unprompted these suggestions are versus query-driven.",
+    "confidence": "high",
+    "rationale": "Navan documents Ava AI which analyzes spend/travel data, summarizes and predicts spend, compares against policy, and surfaces proactive savings suggestions; the MCP server also enables natural-language querying of spend/policy data for insights. missing for 10: independent/hands-on validation of insight quality and no evidence of broader cross-domain (non-travel/expense) insight generation.",
     "evidenceIds": [
       "navan-docs-17",
       "navan-docs-18",
       "navan-docs-19",
       "navan-docs-20",
-      "navan-docs-21",
-      "navan-docs-22",
+      "navan-docs-31",
       "navan-docs-5",
-      "navan-docs-6"
+      "navan-docs-6",
+      "navan-docs-21",
+      "navan-docs-22"
     ]
   },
   {
@@ -2156,13 +2157,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Navan's AI features (MCP, Ava) are query/chat-based tools that answer questions or analyze spend on request, and Navan Edge explicitly states it 'will always ask for your explicit confirmation before booking, changing, or canceling any trip,' which is the opposite of autonomous background automation. No workflow, trigger, or scheduling mechanism for unattended background automations is documented anywhere in the pack.",
+    "rationale": "Evidence shows Navan's AI features (MCP, Ava) are query/chat-based assistants for retrieving and analyzing spend/travel data, not autonomous background automations; Navan Edge explicitly requires explicit human confirmation before any action, and no scheduled/triggered background automation capability is documented.",
     "evidenceIds": [
+      "navan-docs-3",
       "navan-docs-16",
       "navan-docs-26",
-      "navan-docs-3",
-      "navan-docs-21",
-      "navan-docs-25"
+      "navan-docs-31"
     ]
   },
   {
@@ -2171,15 +2171,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Navan documents built-in AI assistants (Ava for analyzing/summarizing/predicting travel spend, and Navan Edge for booking/changing/canceling trips with confirmation) that users can delegate expense and travel tasks to. Missing for 10: independent/hands-on verification of these assistants in action and detail on broader task types beyond travel/expense.",
+    "rationale": "Navan has a built-in AI assistant (Ava/Navan Edge) that users can delegate tasks to — analyzing travel/expense spend, summarizing spend by category, comparing to policy, predicting future spend, and even booking/changing/cancelling trips with confirmation. This is a native in-product assistant, not just an external MCP integration. missing for 10: independent/hands-on verification of Ava's task delegation beyond vendor blog/marketing copy, and clearer detail on the breadth of actionable tasks (vs. just Q&A/analysis) it can perform autonomously.",
     "evidenceIds": [
+      "navan-docs-14",
+      "navan-docs-15",
+      "navan-docs-16",
       "navan-docs-17",
       "navan-docs-18",
       "navan-docs-19",
       "navan-docs-20",
-      "navan-docs-14",
-      "navan-docs-16",
-      "navan-docs-15"
+      "navan-docs-31"
     ]
   },
   {
@@ -2187,12 +2188,14 @@
     "storyId": "agentic-headless",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Navan's API documents an OAuth 2.0 client-credentials flow (machine-to-machine auth with no interactive login), which is the kind of mechanism needed to call Navan programmatically from a CI/automation pipeline, and its REST/webhook endpoints could be scripted headlessly. However, there is no explicit CI documentation, CLI, or example of running Navan (or its MCP server) unattended in a pipeline — missing for 10: explicit CI/automation guide, headless MCP server deployment instructions, and any hands-on evidence of it being run in CI.",
+    "confidence": "medium",
+    "rationale": "Navan's developer API supports OAuth 2.0 client-credentials (machine-to-machine, non-interactive) auth, CRUD endpoints, webhooks, and async job polling, which enables headless/automated integration with expense and travel data — a reasonable basis for CI-style automation. However there is no explicit CI/CD example, SDK, or headless test harness documentation, and the MCP server is framed for interactive AI-assistant use rather than unattended pipelines. Missing for 10: explicit CI/automation examples or guides, SDK/CLI for scripted pipelines, and independent confirmation of headless reliability.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
-      "navan-docs-23"
+      "navan-docs-23",
+      "navan-probe-1",
+      "navan-probe-2"
     ]
   },
   {
@@ -2201,7 +2204,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence describes Navan exposing its own MCP server so external AI assistants (Claude, Cursor, ChatGPT) can query Navan's travel/expense data — this is Navan acting as the MCP server/provider, not as a client consuming external MCP servers' tools. There is no evidence Navan (or its Ava assistant) can plug in and use tools from third-party MCP servers. Missing for 10: any documentation of Navan's AI features connecting to external MCP servers, any tool/plugin ecosystem for consuming outside MCP tools, and any hands-on confirmation of such client-side behavior.",
+    "rationale": "All evidence describes Navan exposing its own MCP server so external AI assistants (Claude, Cursor, ChatGPT) can query Navan data — this is Navan acting as an MCP server/provider, not as a client that plugs in outside MCP servers to use their tools. There is no evidence that Navan or its AI assistant (Ava) can connect to and consume third-party MCP servers itself.",
     "evidenceIds": [
       "navan-docs-1",
       "navan-docs-3",
@@ -2215,31 +2218,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Navan publishes an official MCP server (developer.navan.com/mcp/) explicitly for connecting AI assistants like Claude, Cursor, ChatGPT to Navan spend/travel data, with documented natural-language query examples and OAuth-secured API endpoints backing it. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice beyond vendor docs.",
+    "rationale": "Navan documents an official MCP server (developer.navan.com/mcp) enabling AI assistants like Claude, Cursor, ChatGPT to query spend/travel data via natural language, confirmed by both docs and a probe hit. Missing for 10: independent/hands-on third-party corroboration of the MCP server actually working, beyond vendor docs.",
     "evidenceIds": [
       "navan-docs-1",
       "navan-docs-3",
       "navan-probe-1",
-      "navan-probe-2",
-      "navan-docs-5",
-      "navan-docs-6"
+      "navan-probe-2"
     ]
   },
   {
     "productId": "navan",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Navan's MCP server and Ava assistant let users query spend, travel, policy, and card data with natural-language commands (e.g. flagged expenses, rideshare policy violations), and Navan Edge/Ava support conversational trip booking with confirmation steps. missing for 10: independent/hands-on verification of natural-language accuracy and breadth beyond vendor docs, and no evidence of NL commands for arbitrary in-app actions beyond travel/expense domains.",
+    "rationale": "Navan supports natural-language operation via its MCP server (query spend/policy data, flagged expenses, card details) and via the Ava assistant (summarize spend, compare to policy) and Navan Edge chat for travel changes with explicit confirmation before booking. This covers querying, analysis, and even action-taking (with confirmation) through natural language across multiple product surfaces. Missing for 10: independent/hands-on verification of NL command reliability and broader action coverage beyond travel/expense queries.",
     "evidenceIds": [
-      "navan-docs-1",
       "navan-docs-3",
       "navan-docs-5",
       "navan-docs-6",
       "navan-docs-21",
       "navan-docs-22",
       "navan-docs-17",
+      "navan-docs-31",
       "navan-docs-16",
       "navan-probe-2"
     ]
@@ -2250,7 +2251,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "The evidence pack documents Navan's MCP server, REST API, and OAuth flows but contains no mention of an official CLI tool for AI-native workflows. As a SaaS platform, a CLI is a plausible offering, so the axis applies, but no evidence supports it. Missing for 10: any documentation of a Navan CLI, installation/usage instructions, or CLI-specific AI-native workflow support.",
     "evidenceIds": []
   },
   {
@@ -2259,14 +2260,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Navan provides a documented public API (developer.navan.com) with OAuth 2.0 client-credentials auth, retrieval/update endpoints across expense, card, payroll, custom fields, and webhooks, plus a first-party MCP server for natural-language AI access — corroborated by a live llms.txt probe. Missing for 10: independent third-party developer accounts of building against the API and clearer rate-limit/versioning documentation.",
+    "rationale": "Navan documents a public developer API with OAuth 2.0 client-credentials auth, retrieval/update endpoints across expense, cards, receipts, webhooks, and async job status (navan-docs-2, navan-docs-4, navan-docs-23), confirmed by a live probe of the docs portal. This is a genuine public API for driving the product programmatically, not just an MCP wrapper. Missing for 10: independent/hands-on developer reports validating the API in production, and more detail on rate limits/SDKs.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
       "navan-docs-23",
       "navan-probe-1",
-      "navan-probe-2",
-      "navan-docs-1"
+      "navan-probe-2"
     ]
   },
   {
@@ -2275,11 +2275,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Navan's developer docs mention an OAuth 2.0 client-credentials flow for API access (navan-docs-2), which implies some credential-based authentication, but there is no explicit documentation of scoped permissions, granular access levels, or least-privilege controls specifically for AI agents connecting via MCP or API. missing for 10: explicit scope/permission definitions, least-privilege role configuration, agent-specific credential restrictions, and any documentation or independent verification of access-control granularity.",
+    "rationale": "Navan's developer docs mention an OAuth 2.0 client-credentials flow for API access, which could in principle support scoped tokens, but there is no explicit documentation of granular, least-privilege scopes or role-based credential issuance specifically for AI agents. Missing for 10: documented scope/permission granularity, agent-specific credential policies, and any independent verification of least-privilege enforcement.",
     "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-1",
-      "navan-probe-2"
+      "navan-docs-2"
     ]
   },
   {
@@ -2288,12 +2286,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Navan documents an official REST API (OAuth2 client-credentials, expense/card/travel endpoints, webhooks) and an MCP server for AI assistants, which developers can build against, but there is no evidence of language-specific official SDKs (e.g., Python/JS client libraries) — only raw API/MCP documentation. missing for 10: explicit SDK packages/libraries, code samples in multiple languages, independent developer corroboration of SDK usage.",
+    "rationale": "Navan exposes a well-documented REST API with OAuth2 client-credentials flow, expense/card/travel endpoints, and an MCP server for AI assistants, which supports API-native and agentic development. However, the evidence never mentions actual official SDKs (e.g., Python, Node.js, Java client libraries) — only raw API/MCP documentation. missing for 10: named official language SDKs/client libraries, code samples in SDK form, versioned SDK release notes.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
       "navan-docs-23",
-      "navan-probe-1",
       "navan-probe-2"
     ]
   },
@@ -2314,14 +2311,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Navan's MCP/API and Ava AI assistant let AI query flagged expenses, analyze spend, and check policy violations (navan-docs-5, navan-docs-6, navan-docs-22), plus native receipt scanning (navan-docs-24) — covering audit/flagging aspects. However there's no explicit evidence of AI auto-suggesting categories/memos or specifically detecting duplicate/fraudulent transactions. Missing for 10: automated category/memo suggestion, explicit duplicate-detection or fraud-catching functionality, and independent verification of these AI audit claims.",
+    "rationale": "Navan documents receipt scanning, AI (Ava/MCP) querying flagged expenses over policy thresholds, and identifying policy violations, which covers spend auditing and fraud/policy flagging. However there is no explicit documentation of AI auto-suggesting expense categories/memos or specifically detecting duplicate transactions. missing for 10: explicit auto-categorization/memo suggestion feature, explicit duplicate-detection capability, independent hands-on validation of receipt-reading accuracy.",
     "evidenceIds": [
+      "navan-docs-24",
       "navan-docs-5",
       "navan-docs-6",
       "navan-docs-22",
-      "navan-docs-24",
       "navan-docs-21",
-      "navan-probe-2"
+      "navan-docs-31"
     ]
   },
   {
@@ -2330,13 +2327,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The Navan MCP explicitly supports conversational policy Q&A — asking about policy, approval flows, and why a transaction was flagged/declined (navan-docs-22, navan-docs-6) — and Ava can compare travel spend to policy after the fact (navan-docs-19). However there is no evidence of proactive 'chasing missing receipts' workflows or a pre-spend 'can I expense this?' check before the transaction occurs; the examples shown are retrospective queries on past transactions/spend. Missing for 10: proactive missing-receipt nudges/reminders, and evidence of a pre-purchase 'is this expensable' conversational check.",
+    "rationale": "Navan's MCP/AI assistant (Ava) can answer natural-language questions about policy, flag/decline reasons, and spend analysis (navan-docs-5, navan-docs-6, navan-docs-22, navan-docs-31), which covers the 'explaining declines' and policy Q&A parts of the story. However, there is no evidence of proactive conversational chasing of missing receipts or a pre-spend 'can I expense this?' check before the transaction occurs — the examples shown are post-hoc queries about existing flagged/violating transactions rather than pre-spend guidance. missing for 10: proactive receipt-chasing workflow, pre-purchase expense-eligibility check, evidence of conversational nudges before spend happens.",
     "evidenceIds": [
-      "navan-docs-22",
-      "navan-docs-6",
-      "navan-docs-19",
       "navan-docs-5",
-      "navan-docs-2"
+      "navan-docs-6",
+      "navan-docs-22",
+      "navan-docs-31",
+      "navan-docs-24"
     ]
   },
   {
@@ -2345,7 +2342,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a developer portal describing API endpoints (OAuth, expense/card endpoints, webhooks) and an MCP server for natural-language queries, but nothing indicates an interactive API reference with runnable/try-it-now code examples (e.g., Swagger/OpenAPI explorer or live sandbox).",
+    "rationale": "Evidence confirms Navan has a developer API and docs (endpoints, OAuth, MCP), but nothing indicates an interactive reference with runnable/try-it examples (e.g., embedded console, live code execution). Missing for 10: any mention of an interactive API explorer, live code samples, or runnable request builder.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
@@ -2358,12 +2355,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Navan's developer docs describe REST API endpoints, OAuth 2.0 flows, and an MCP server, but no evidence pack item mentions a downloadable OpenAPI/Swagger spec or any machine-readable API definition file. missing for 10: explicit OpenAPI/Swagger spec file, API reference generated from a spec, or a documented download link.",
-    "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-4",
-      "navan-docs-23"
-    ]
+    "rationale": "The developer portal documents API endpoints, OAuth flows, and an MCP server, but none of the evidence mentions a downloadable OpenAPI/Swagger spec or any machine-readable API definition file. missing for 10: explicit OpenAPI/Swagger spec file, download link or reference to a machine-readable API definition.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2379,13 +2372,9 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack documents Navan's API/MCP endpoints and OAuth flow but contains no mention of API versioning scheme or a documented deprecation policy for consumers to rely on.",
-    "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-4",
-      "navan-docs-23"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Navan's API and MCP capabilities but contains no mention of API versioning scheme or a documented deprecation policy anywhere in the developer docs.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2441,8 +2430,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Navan's evidence covers MCP-based querying, expense/travel management, webhooks, and async job polling, but there is no mention of scheduling recurring jobs, cron-like automation, or persistent workflow triggers for AI-native users. Absence of evidence for this applicable automation-depth capability yields none.",
+    "confidence": "high",
+    "rationale": "Evidence shows Navan's MCP/API/Ava assistant support querying, analyzing, and managing expense/travel data on-demand, but nothing describes scheduling recurring jobs, workflows, or automated recurring triggers.",
     "evidenceIds": []
   },
   {
@@ -2460,7 +2449,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Navan's travel and expense management (card transactions, reimbursements, receipts, policy approvals) but contains no mention of invoice capture, vendor bill management, or paying vendors via ACH, check, or wire — the core AP capabilities the story requires.",
+    "rationale": "Evidence covers expense management, corporate cards, receipts, and travel booking, but nothing about invoice capture, approval routing for vendor bills, or ACH/check/wire vendor payments — the core AP capability described in the story is absent from the pack.",
     "evidenceIds": []
   },
   {
@@ -2469,12 +2458,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Navan documents general 'unlimited policy and approval workflows' and card management/policy-limit features, and MCP queries can surface policy violations and approval status, implying some enforcement infrastructure exists. However, there is no direct evidence of budget allocation to specific teams/projects or of card limits being tied to those budgets and automatically enforced. Missing for 10: explicit budget-allocation-to-team/project feature docs, evidence that card limits are dynamically tied to allocated budgets, and any hands-on confirmation that approvals actually block over-budget spend.",
+    "rationale": "Navan documents card management and 'unlimited policy and approval workflows' (docs-7, docs-25) plus expense/policy-violation detection (docs-6, docs-22), implying some enforcement mechanism, but there is no explicit evidence of budget allocation to teams/projects or that card limits are tied to and enforce those allocations. missing for 10: dedicated budget-allocation-by-team/project feature, evidence that card limits are dynamically enforced against allocated budgets, and any hands-on/independent confirmation this works in practice.",
     "evidenceIds": [
-      "navan-docs-25",
       "navan-docs-7",
-      "navan-docs-22",
-      "navan-docs-5"
+      "navan-docs-25",
+      "navan-docs-22"
     ]
   },
   {
@@ -2483,13 +2471,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows general card management (active/inactive status), policy workflows, and MCP queries about flagged/violating transactions, but nothing documents configurable restrictions by category, merchant, or amount, nor automatic point-of-sale locking/declining of out-of-policy spend. missing for 10: explicit documentation of category/merchant/amount-based card controls, missing for 10: evidence of real-time auto-lock or point-of-sale decline enforcement.",
-    "evidenceIds": [
-      "navan-docs-7",
-      "navan-docs-9",
-      "navan-docs-25",
-      "navan-docs-22"
-    ]
+    "rationale": "Evidence covers Navan's MCP/API for querying expenses, policy violation detection, and general card management (viewing active/inactive cards), plus generic 'unlimited policy workflows' pricing bullets, but nothing describes configurable card controls by category/merchant/amount or real-time auto-lock/decline at point of sale.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2514,11 +2497,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Navan documents policy/approval workflows and the ability to query why a transaction was flagged or who must approve it, which implies some traceability, but there is no explicit documentation of an immutable audit log, edit history, or audit-survivability guarantees. Missing for 10: explicit audit-trail/version-history documentation, evidence of edit logging, and any mention of external-audit compliance or SOC/ISO controls.",
+    "rationale": "Docs confirm policy and approval workflows exist and can be queried (e.g., 'Unlimited policy and approval workflows', 'Ask questions about policies, approval flows, and flag/decline reasons') and the API can retrieve/update expense records, implying some traceability. However there is no explicit evidence of an immutable audit log, edit-history tracking, or audit-export/compliance certification that would let a finance lead demonstrate a full trail to an external auditor. Missing for 10: dedicated audit-log/history feature, evidence of edit tracking, and any audit-export or compliance certification documentation.",
     "evidenceIds": [
-      "navan-docs-22",
       "navan-docs-25",
-      "navan-docs-2"
+      "navan-docs-22",
+      "navan-docs-4",
+      "navan-docs-21"
     ]
   },
   {
@@ -2542,7 +2526,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Navan's developer portal documents a REST API with OAuth 2.0 client-credentials flow, and endpoints covering transactions, expenses, receipts, custom fields, and webhooks. Missing for 10: explicit mention of scoped/permissioned tokens (vs just client-credentials) and independent third-party corroboration of the API's documented behavior beyond vendor docs.",
+    "rationale": "Navan's developer portal documents an OAuth 2.0 client-credentials flow with scoped tokens and REST endpoints for retrieving/updating card transactions, manual expenses, receipts, and custom fields — directly matching the story. Missing for 10: independent/hands-on developer confirmation of the API working in practice and detail on token scoping granularity beyond the docs claim.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
@@ -2556,11 +2540,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Navan pricing page mentions it can 'manage expenses and issue reimbursements' and includes receipt scanning, but there is no evidence describing direct-deposit payout, a specific reimbursement timeline (days), or end-to-end tracking from submission to payout. missing for 10: direct deposit mechanism, reimbursement speed/SLA, submission-to-payout tracking/status visibility.",
+    "rationale": "Navan's pricing page mentions it can 'manage expenses and issue reimbursements' and supports receipt scanning for expense capture, implying an out-of-pocket expense workflow exists, but there is no evidence describing direct deposit specifics, reimbursement speed ('days'), or a submission-to-payout tracking view. missing for 10: direct deposit payout mechanism, reimbursement timeline/SLA details, status-tracking UI from submission to payout.",
     "evidenceIds": [
       "navan-docs-8",
-      "navan-docs-24",
-      "navan-docs-25"
+      "navan-docs-24"
     ]
   },
   {
@@ -2568,10 +2551,11 @@
     "storyId": "global-reimbursements",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows generic reimbursement management (docs-8) with no mention of local-currency payouts, multi-currency support, or eliminating a separate international payment process for reimbursing employees abroad.",
+    "confidence": "medium",
+    "rationale": "Evidence confirms Navan supports general expense management and reimbursements, but nothing describes multi-currency payout capability, local-currency disbursement, or elimination of a separate international payments process for reimbursing employees abroad.",
     "evidenceIds": [
-      "navan-docs-8"
+      "navan-docs-8",
+      "navan-docs-25"
     ]
   },
   {
@@ -2580,7 +2564,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows querying/viewing existing card status via MCP (navan-docs-7) and connecting existing cards (navan-docs-9), but nothing about issuing new physical or virtual cards, setting per-card spend limits, or speed of issuance ('minutes'). Missing for 10: any documentation of card issuance workflow, virtual card creation, spend-limit configuration, or time-to-issue claims.",
+    "rationale": "Evidence only mentions card management (viewing active/inactive cards) and connecting existing corporate cards, but nothing about issuing new physical/virtual cards with per-card spend limits in minutes. Missing for 10: card issuance workflow, spend-limit configuration, physical vs virtual card creation evidence.",
     "evidenceIds": [
       "navan-docs-7",
       "navan-docs-9"
@@ -2592,7 +2576,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers Navan's MCP/API integrations, travel booking rewards, and generic 'receipt scanning' and 'manage expenses' pricing bullets, but nothing describes mileage tracking, map-based distance calculation, or automated per-diem rate application. Missing for 10: mileage logging with GPS/map distance capture, per-diem rate lookup/auto-application, any auto-build-expense-from-mileage workflow.",
+    "rationale": "No evidence describes mileage tracking with map-based distance calculation or automated per-diem claim generation; only generic 'receipt scanning' and 'manage expenses' mentions appear, with nothing specific to mileage or per-diem automation.",
     "evidenceIds": []
   },
   {
@@ -2600,8 +2584,8 @@
     "storyId": "multi-entity-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers Navan's MCP/API for expense and travel data, card management, and pricing/rewards, but contains no mention of multi-entity or multi-currency account structures, consolidated reporting, or per-entity books — core requirements for finance-lead accounting-close workflows.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses multi-entity, multi-currency support, or consolidated/per-entity financial reporting; the pack focuses entirely on expense/travel management, MCP/API integrations, and rewards features.",
     "evidenceIds": []
   },
   {
@@ -2610,14 +2594,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Navan's API/MCP covers expense retrieval/update, transactions, custom fields, receipts, webhooks, and read-style spend/policy queries, but there is no evidence of API parity for travel booking, rewards, or other core UI workflows (e.g., booking trips, managing 'price to beat', Navan Edge concierge features) — those remain UI/chat-only per docs. missing for 10: API endpoints for travel booking/itinerary management, evidence of full UI-to-API parity beyond expense/finance domain, independent confirmation of completeness.",
+    "rationale": "Navan's developer API covers a substantial slice of the expense domain (transactions, custom fields, receipts, webhooks) and an MCP server lets AI assistants query spend/policy data, but there's no evidence of API/MCP coverage for travel booking, Navan Edge concierge actions, or rewards management — core UI capabilities that appear to remain UI-only or human-agent-mediated. missing for 10: API/MCP parity for travel booking and itinerary changes, Navan Edge concierge actions via API, rewards/loyalty management via API.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
-      "navan-docs-23",
-      "navan-docs-10",
+      "navan-docs-21",
+      "navan-docs-22",
       "navan-docs-14",
-      "navan-probe-2"
+      "navan-docs-16"
     ]
   },
   {
@@ -2625,8 +2609,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows API/MCP access for querying and updating expense/travel data, but nothing about bulk data export in open/portable formats or any documented account-closure/data-portability process for leaving the platform. Missing for 10: bulk export functionality, open-format data dumps, documented data portability/exit process.",
+    "confidence": "low",
+    "rationale": "Evidence shows API and MCP access to query/update data, but nothing about bulk data export in open/portable formats or account-closure data portability guarantees, so the specific 'export all data and leave' story is unevidenced.",
     "evidenceIds": []
   },
   {
@@ -2635,7 +2619,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Navan is a closed-source SaaS travel/expense platform; open-sourcing its source code is not a fair expectation for this product category, and no evidence pack item discusses source licensing.",
+    "rationale": "Navan is a closed-source SaaS travel/expense platform; there is no indication its source code is open or licensed for inspection, and open-sourcing core product code is not a plausible axis for this kind of commercial SaaS product.",
     "evidenceIds": []
   },
   {
@@ -2644,7 +2628,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Navan is a SaaS travel/expense management product with no self-hosted deployment option; self-hosting the core product is a category error for this type of cloud SaaS offering.",
+    "rationale": "Navan is a SaaS travel/expense platform, not open-source or self-hostable software; self-hosting the core product is a category error for this kind of SaaS service.",
     "evidenceIds": []
   },
   {
@@ -2653,7 +2637,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack about data residency, region selection, or data storage location controls for Navan's data or its AI/MCP features; the pack only covers MCP capabilities, API endpoints, pricing features, and travel booking experience.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or data storage location controls for Navan; the pack focuses on MCP/API integration, expense/travel features, and pricing.",
     "evidenceIds": []
   },
   {
@@ -2662,7 +2646,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or data privacy policy regarding model training; all evidence covers MCP integrations, expense/travel features, and unrelated community complaints. Missing for 10: any explicit statement on AI/model training data usage, opt-out settings, or data retention/privacy commitments.",
+    "rationale": "No evidence pack item addresses AI-training data usage, opt-out controls, or any data-privacy policy regarding model training; all evidence concerns MCP/API integration, travel/expense features, and pricing.",
     "evidenceIds": []
   },
   {
@@ -2671,7 +2655,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user/admin ability to manage how long AI/assistant data is stored or how to delete it — the pack covers MCP querying, API surfaces, pricing features, and travel booking, but nothing on retention/deletion controls.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user/admin ability to configure or delete data retained by Navan or its AI features (MCP, Ava). This is a fair axis for an AI-native SaaS product, but nothing in the docs, API surface, or community sources speaks to retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -2680,7 +2664,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Navan or its AI/MCP features; all evidence covers MCP data access, expense/travel features, and pricing.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Navan or its MCP/AI integrations; all documentation covers MCP features, API endpoints, and travel/expense functionality without privacy controls.",
     "evidenceIds": []
   },
   {
@@ -2689,7 +2673,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The API docs mention retrieving/updating card transactions and MCP tools let you view card status (active/inactive, count), but there is no evidence of creating a new card, setting a spending limit, locking a card, or updating card controls programmatically via the public API — missing for 10: card creation endpoint, limit-setting endpoint, lock/freeze endpoint, control-update endpoint documentation.",
+    "rationale": "Evidence covers retrieving/updating card transactions and viewing card status (active/inactive, counts) via API/MCP, but nothing documents creating a card with a limit, locking a card, or updating card controls programmatically. missing for 10: card creation endpoint, limit-setting API, lock/unlock endpoint, control-update endpoint.",
     "evidenceIds": [
       "navan-docs-4",
       "navan-docs-7",
@@ -2702,13 +2686,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Navan's docs show spend can be queried by department, vendor/merchant, and category via MCP/API, and card transactions (including Navan-issued cards) are retrievable directly rather than waiting for statements, supporting near real-time visibility for founders. Missing for 10: explicit same-day latency claims for card feeds, a dedicated real-time dashboard description, and independent/hands-on corroboration of update speed.",
+    "rationale": "Navan's API/MCP surface explicitly supports querying real-time card transaction data broken down by department, vendor/merchant, and category, and Ava is described as slicing 'real-time spend data' for T&E insights. missing for 10: independent/hands-on corroboration of same-day transaction visibility and no explicit dashboard UI screenshots showing real-time posting.",
     "evidenceIds": [
       "navan-docs-4",
       "navan-docs-21",
-      "navan-docs-5",
-      "navan-docs-22",
-      "navan-docs-2"
+      "navan-docs-31",
+      "navan-docs-5"
     ]
   },
   {
@@ -2717,10 +2700,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs mention 'Receipt scanning for on-the-go expenses' as a pricing-page feature bullet and API docs mention a 'receipts' surface, implying photo capture and filing against transactions, but there's no detail on OCR accuracy, email-forwarding capture, or automatic matching logic. Missing for 10: technical documentation of the OCR/email-forwarding pipeline, evidence of automatic transaction matching, and independent/hands-on confirmation of accuracy.",
+    "rationale": "Docs mention 'Receipt scanning for on-the-go expenses' as a pricing feature bullet, implying photo capture and processing, but there's no detail on OCR accuracy, email-forwarding intake, or automatic matching against the right card transaction. missing for 10: technical detail on OCR/email-forward ingestion, evidence of auto-matching logic to transactions, independent/hands-on confirmation of accuracy.",
     "evidenceIds": [
       "navan-docs-24",
-      "navan-docs-2"
+      "navan-docs-8"
     ]
   },
   {
@@ -2762,7 +2745,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Navan's MCP/API integrations, travel booking, rewards, and pricing highlights, but contains no mention of virtual card creation, single-vendor card controls, or SaaS/procurement card issuance. Card-related evidence only covers connecting existing corporate cards and viewing/managing card transaction data, not creating new single-vendor virtual cards.",
+    "rationale": "The evidence pack only shows general card management (viewing active/inactive cards) and connecting existing corporate cards, with no mention of issuing new single-vendor/merchant-locked virtual cards for SaaS or procurement spend control.",
     "evidenceIds": [
       "navan-docs-7",
       "navan-docs-9",
