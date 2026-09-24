@@ -180,6 +180,7 @@ describe('sortSurfaces / rank toggles', () => {
   const row = (id: string, patch: Partial<SurfaceRow>): SurfaceRow => ({
     id,
     name: id,
+    icon: '🔌',
     blurb: '',
     tier: 'canonical',
     pros: [],

@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import AiEraBadge from '@/components/AiEraBadge'
 import IconChip from '@/components/IconChip'
 import ProductLogo from '@/components/ProductLogo'
 import arenaIcons from '@/data/arena-icons.json'
@@ -35,14 +34,13 @@ function ArenaCard({ data }: { data: CategoryData }) {
         />
         {data.category.name}
       </h3>
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-400">
-            {data.products.length} products · PA Score leader
-          </p>
-          <p className="truncate text-sm font-medium">{leader.name}</p>
-        </div>
-        <AiEraBadge value={leaderEntry.aiEra} size="sm" />
+      {/* Founder 2026-09-24: no score badge on the cards — leader name only; the number lives
+          on the arena leaderboard a click away. */}
+      <div className="mt-2 min-w-0">
+        <p className="text-[10px] uppercase tracking-widest text-zinc-400">
+          {data.products.length} products · PA Score leader
+        </p>
+        <p className="truncate text-sm font-medium">{leader.name}</p>
       </div>
     </Link>
   )
