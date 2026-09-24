@@ -87,6 +87,7 @@ import { probes as cloudPlatforms } from './cloud-platforms'
 import { probes as cloudStorage } from './cloud-storage'
 import { probes as emailApis } from './email-apis'
 import { probes as virtualMailboxes } from './virtual-mailboxes'
+import { probes as payroll } from './payroll'
 
 export type { LocalProbe } from './types'
 
@@ -169,4 +170,5 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'cloud-storage': cloudStorage,
   'email-apis': emailApis,
   'virtual-mailboxes': virtualMailboxes,
+  payroll,
 }
