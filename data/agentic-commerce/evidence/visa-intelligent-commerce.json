@@ -45,7 +45,7 @@
     "id": "visa-intelligent-commerce-docs-7",
     "tier": "claimed-docs",
     "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
-    "excerpt": "Controls to ensure that the agent’s purchasing actions and the related authorizations align with the user’s authenticated instruction",
+    "excerpt": "Controls to ensure that the agent\u2019s purchasing actions and the related authorizations align with the user\u2019s authenticated instruction",
     "fetchedAt": "2026-09-14T23:23:48.257Z"
   },
   {
@@ -59,7 +59,7 @@
     "id": "visa-intelligent-commerce-docs-9",
     "tier": "claimed-docs",
     "url": "https://corporate.visa.com/en/sites/visa-perspectives/innovation/visa-mcp-server-agent-acceptance-toolkit.html",
-    "excerpt": "the toolkit helps developers and non-technical users to work with AI agents using plain language — no coding required.",
+    "excerpt": "the toolkit helps developers and non-technical users to work with AI agents using plain language \u2014 no coding required.",
     "fetchedAt": "2026-09-14T23:23:48.257Z"
   },
   {
@@ -98,10 +98,150 @@
     "fetchedAt": "2026-09-14T23:23:48.257Z"
   },
   {
+    "id": "visa-ic-supp-1",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
+    "excerpt": "Agent-scoped credentials are the core primitive: \"Provisioning and life cycle management of agent-specific payment tokens that can be used by agents to make secure transactions on behalf of the user\" \u2014 \"A new pass-through payment token, specific to agents, that is intended for use at Visa-accepting merchant locations.\" The page carries a maturity caveat, verbatim: \"This product is in the process of development and deployment.\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-2",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
+    "excerpt": "Human approval is passkey-anchored end to end: provisioning includes \"step up verification of the cardholder as well as setting up a Passkey that will be used by the agent to authenticate future instructions\"; before spending, \"The agent requests the user to authenticate the Payment Instruction using their Passkey and provides that instruction to the Visa Intelligent Commerce platform.\" Credential requests are then checked against that consent \u2014 \"The Visa Intelligent Commerce platform will validate that these requests match the authenticated user instruction and set network level controls.\" \u2014 and at authorization time, \"When authorization requests are received by VisaNet, controls will be enforce to ensure that the request originates from the intended merchant for the correct amount.\" (typo in original).",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-3",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-purchase-initiate-intro.html",
+    "excerpt": "Spend caps live in the purchase-intent mandate: Initiate a Purchase Intent (POST /acp/v1/instructions) exists \"to verify that your agent is acting in accordance with the customer's intent\", with required mandates fields declineThreshold (amount, currencyCode), effectiveUntilTime, mandateId, and description \u2014 the sample mandate sets a 10000.00 USD decline threshold and a consumerPrompt of \"Authorize payment to Best Buy\". Revocation is a documented follow-on: \"Your agent can cancel a purchase intent when the customer chooses to not make the purchase.\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-4",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-enroll-card-intro.html",
+    "excerpt": "\"Your agents can enroll a customer's card for tokenization during the customer's account registration or when the customer begins a new purchase intent\" via POST /acp/v1/tokens (https://api.visaacceptance.com production, https://apitest.visaacceptance.com test); a required field is paymentInformation.instrumentIdentifier.id (prerequisite page: \"Create an Instrument Identifier Token\"). Enrollment returns PENDING and \"the customer is immediately prompted to verify their identity in order to activate the enrolled card\" \u2014 the documented step-up rail includes \"Create a One-Time Password for Tokenized Card Authentication\" and passkey setup.",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-5",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-retrieve-credentials-intro.html",
+    "excerpt": "Credentials are scoped to an authenticated instruction: retrieval is POST /acp/v1/instructions/{instructionID}/credentials, and the request must declare where and for how much the credential will be used \u2014 required fields include \"merchantInformation.merchantName\", the merchant descriptor URL, and \"orderInformation.amountDetail.totalAmount\"; optional product-policy fields (\"policies.refundPolicy\", \"policies.disputePolicy\", cancellation/shipping policies) attach merchant terms to the credential request. \"During checkout, your agents display a list of the customer's tokenized cards.\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-6",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/trusted-agent-protocol-specifications",
+    "excerpt": "The Trusted Agent Protocol's agent recognition signature is HTTP Message Signatures \"defined by RCF 9421\" (typo in original), \"aligned with web-bot-auth\", and \"offers a secure, standardized, and verifiable way to ensure the legitimacy of clients (bots, agents, or any automated traffic) and the integrity of their requests\". Signatures carry a tag of \"agent-browser-auth\" or \"agent-payer-auth\" per interaction; \"Agents include timestamps (created, expires) and nonces in the signature. Servers are able to reject reused or expired signatures, thereby preventing replay attacks.\" \u2014 timestamps \"should not be more than 8 minutes apart\" \u2014 and merchants verify against Visa's public keys at https://mcp.visa.com/.well-known/jwks.",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-7",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/trusted-agent-protocol-specifications",
+    "excerpt": "TAP's signed Agentic Payment Container adapts to the merchant's rail: for guest-checkout key entry it carries a credential hash \u2014 \"If the hashes do not match, the information being key entered is most likely fraudulent and the Merchant should decline the transaction.\" For network-token merchants, \"The payload is encrypted using the Merchant's public key\". And when a merchant requests payment with an HTTP 402 response code, \"a payment IOU will be present\"; after verifying it, \"the Merchant can grant access with the expectation that the funds will be available when settlement occurs.\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-8",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
+    "excerpt": "Fees, verbatim from FEES & TERMS: \"Free to use in Sandbox. Contact Visa for fees in Production.\" On refunds/disputes the docs stop at evidence capture, not a dispute API: \"Collection of commerce signals that will provide the user\u2019s original instruction and the details of each authorized purchase allow for the quick resolution of most disputes\" and \"These signals, along with the user instructions can be used to resolve any disputes that may arise.\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-9",
+    "tier": "claimed-docs",
+    "url": "https://github.com/visa/trusted-agent-protocol",
+    "excerpt": "The TAP spec is public with a runnable reference implementation: \"Establishing a universal standard of trust between AI agents and merchants for the next phase of agentic commerce.\" The repo ships a complete sample ecosystem \u2014 tap-agent, merchant-frontend, cdn-proxy (RFC 9421 verification), merchant-backend, and agent-registry \u2014 so merchants can \"Instantly distinguish a legitimate, credentialed agent from an anonymous bot\" and confirm the agent \"Is it acting on behalf of a specific, authenticated user?\"",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-ic-supp-10",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/hello-world/agentic-sandbox.html",
+    "excerpt": "Merchant-side onboarding starts with a self-serve \"Intelligent Commerce Sandbox Sign up\" form (Organization ID, company, contact details, terms acceptance) on the Visa Acceptance developer portal: \"After completing the evaluation registration process, you will be able to send test transactions\" \u2014 account instructions arrive by email for the Test Enterprise Business Center.",
+    "fetchedAt": "2026-09-14T23:38:20.000Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-12",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
+    "excerpt": "Provisioning and life cycle management of agent-specific payment tokens that can be used by agents to make secure transactions on behalf of the user",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-13",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
+    "excerpt": "New controls to ensure that payment credential requests match the user\u2019s authenticated instructions and to validate that authorizat",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-14",
+    "tier": "claimed-docs",
+    "url": "https://corporate.visa.com/en/sites/visa-perspectives/innovation/visa-mcp-server-agent-acceptance-toolkit.html",
+    "excerpt": "Developers can now connect to Visa Intelligent Commerce APIs through the MCP Server, making it faster and eas",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-15",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/overview",
+    "excerpt": "As agent usage grows, merchants will need tools and controls to distinguish trusted, commerce-focused agents from malicious bots.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-gh-4",
+    "tier": "github",
+    "url": "https://github.com/visa/trusted-agent-protocol",
+    "excerpt": "Cryptographically Verify Agent Intent: Instantly distinguish a legitimate, credentialed agent from an anonymous bot.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-gh-5",
+    "tier": "github",
+    "url": "https://github.com/visa/trusted-agent-protocol",
+    "excerpt": "Confirm Transaction-Specific Authorization: Ensure the agent is authorized for the specific action it is taking (browsing or payment) as the signature is bound to your domain and the specific operation being performed.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-16",
+    "tier": "claimed-docs",
+    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/docs-getting-started",
+    "excerpt": "These snippets demonstrate the use of public keys and how to construct the signature_base strings, which are the critical first steps in verifying an agent's signature on your end.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-17",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/docs/vas/en-us/agent-toolkit/quick-start/all/na/agent-toolkit/agent-toolkit-intro.md",
+    "excerpt": "The specialized tools in the toolkit are designed to enable your AI agents to utilize the Pay by Link and Invoicing APIs. This allows your agents to create and manage payment links and invoices.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-18",
+    "tier": "claimed-docs",
+    "url": "https://developer.visaacceptance.com/docs/vas/en-us/agent-toolkit/quick-start/all/na/agent-toolkit/agent-toolkit-intro.md",
+    "excerpt": "The toolkit is built in TypeScript, and you can integrate it with the Vercel AI SDK or use it to access a Model Context Protocol (MCP) server.",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
+    "id": "visa-intelligent-commerce-docs-19",
+    "tier": "claimed-docs",
+    "url": "https://www.visa.com/en-us/solutions/intelligent-commerce",
+    "excerpt": "Visa Intelligent Commerce enables secure, trusted AI\u2011initiated transactions by embedding payment credentials, controls, authentication and protections into automated buying",
+    "fetchedAt": "2026-09-24T22:34:50.326Z"
+  },
+  {
     "id": "visa-intelligent-commerce-comm-1",
     "tier": "community",
     "url": "https://news.ycombinator.com/item?id=47371289",
-    "excerpt": "The Visa/Mastercard announcements are interesting but feel premature. The missing piece is standardized agent identity and capability declarations — something like 'this agent is authorized by user X to spend up to $Y on category Z'. That's more of an identity/permissions problem than a payments problem.",
+    "excerpt": "The Visa/Mastercard announcements are interesting but feel premature. The missing piece is standardized agent identity and capability declarations \u2014 something like 'this agent is authorized by user X to spend up to $Y on category Z'. That's more of an identity/permissions problem than a payments problem.",
     "fetchedAt": "2026-09-14T23:26:05.451Z"
   },
   {
@@ -116,97 +256,27 @@
     "tier": "probe",
     "url": "https://developer.visaacceptance.com/llms.txt",
     "excerpt": "PROBE llms.txt: HTTP 200 at https://developer.visaacceptance.com/llms.txt # VisaAcceptance Developer Center\n\n> This developer documentation site provides comprehensive technical resources for in",
-    "fetchedAt": "2026-09-14T23:26:48.423Z"
+    "fetchedAt": "2026-09-24T22:34:53.029Z"
   },
   {
     "id": "visa-intelligent-commerce-probe-2",
     "tier": "probe",
     "url": "https://github.com/visaacceptance/agent-toolkit",
     "excerpt": "official MCP server documented at https://github.com/visaacceptance/agent-toolkit",
-    "fetchedAt": "2026-09-14T23:26:48.423Z"
+    "fetchedAt": "2026-09-24T22:34:53.029Z"
   },
   {
     "id": "visa-ic-probe-rt-1",
     "tier": "probe",
     "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/trusted-agent-protocol-specifications",
-    "excerpt": "PROBE runtime (recorded 2026-09-14): the Trusted Agent Protocol is published in the open — https://raw.githubusercontent.com/visa/trusted-agent-protocol/main/README.md serves the spec README keylessly, and the repo ships a reference implementation (agent-registry, cdn-proxy, merchant-backend, tap-agent) under an open license.",
-    "fetchedAt": "2026-09-14T23:26:55.000Z"
+    "excerpt": "PROBE runtime (re-recorded 2026-09-24, same live result): the Trusted Agent Protocol is published in the open \u2014 https://raw.githubusercontent.com/visa/trusted-agent-protocol/main/README.md serves the spec README keylessly, and the repo ships a reference implementation (agent-registry, cdn-proxy, merchant-backend, tap-agent) under an open license.",
+    "fetchedAt": "2026-09-24T22:42:59.000Z"
   },
   {
     "id": "visa-ic-probe-rt-2",
     "tier": "probe",
     "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
-    "excerpt": "PROBE runtime (recorded 2026-09-14): Visa's developer gateway is live and credential-gated exactly as documented — a keyless GET to https://api.visa.com/vdp/helloworld answered with the structured challenge {\"responseStatus\":{\"status\":400,\"code\":\"9123\",...,\"message\":\"Expected input credential was not present\"}} — and the Visa Acceptance Agent Toolkit MCP server resolves on the public npm registry (npm view @visaacceptance/mcp → 0.0.96, Visa-staff maintainers).",
-    "fetchedAt": "2026-09-14T23:26:55.000Z"
-  },
-  {
-    "id": "visa-ic-supp-1",
-    "tier": "claimed-docs",
-    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
-    "excerpt": "Agent-scoped credentials are the core primitive: \"Provisioning and life cycle management of agent-specific payment tokens that can be used by agents to make secure transactions on behalf of the user\" — \"A new pass-through payment token, specific to agents, that is intended for use at Visa-accepting merchant locations.\" The page carries a maturity caveat, verbatim: \"This product is in the process of development and deployment.\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-2",
-    "tier": "claimed-docs",
-    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
-    "excerpt": "Human approval is passkey-anchored end to end: provisioning includes \"step up verification of the cardholder as well as setting up a Passkey that will be used by the agent to authenticate future instructions\"; before spending, \"The agent requests the user to authenticate the Payment Instruction using their Passkey and provides that instruction to the Visa Intelligent Commerce platform.\" Credential requests are then checked against that consent — \"The Visa Intelligent Commerce platform will validate that these requests match the authenticated user instruction and set network level controls.\" — and at authorization time, \"When authorization requests are received by VisaNet, controls will be enforce to ensure that the request originates from the intended merchant for the correct amount.\" (typo in original).",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-3",
-    "tier": "claimed-docs",
-    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-purchase-initiate-intro.html",
-    "excerpt": "Spend caps live in the purchase-intent mandate: Initiate a Purchase Intent (POST /acp/v1/instructions) exists \"to verify that your agent is acting in accordance with the customer's intent\", with required mandates fields declineThreshold (amount, currencyCode), effectiveUntilTime, mandateId, and description — the sample mandate sets a 10000.00 USD decline threshold and a consumerPrompt of \"Authorize payment to Best Buy\". Revocation is a documented follow-on: \"Your agent can cancel a purchase intent when the customer chooses to not make the purchase.\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-4",
-    "tier": "claimed-docs",
-    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-enroll-card-intro.html",
-    "excerpt": "\"Your agents can enroll a customer's card for tokenization during the customer's account registration or when the customer begins a new purchase intent\" via POST /acp/v1/tokens (https://api.visaacceptance.com production, https://apitest.visaacceptance.com test); a required field is paymentInformation.instrumentIdentifier.id (prerequisite page: \"Create an Instrument Identifier Token\"). Enrollment returns PENDING and \"the customer is immediately prompted to verify their identity in order to activate the enrolled card\" — the documented step-up rail includes \"Create a One-Time Password for Tokenized Card Authentication\" and passkey setup.",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-5",
-    "tier": "claimed-docs",
-    "url": "https://developer.visaacceptance.com/docs/vas/en-us/intelligent-commerce/developer/all/rest/intelligent-commerce/intelligent-commerce-retrieve-credentials-intro.html",
-    "excerpt": "Credentials are scoped to an authenticated instruction: retrieval is POST /acp/v1/instructions/{instructionID}/credentials, and the request must declare where and for how much the credential will be used — required fields include \"merchantInformation.merchantName\", the merchant descriptor URL, and \"orderInformation.amountDetail.totalAmount\"; optional product-policy fields (\"policies.refundPolicy\", \"policies.disputePolicy\", cancellation/shipping policies) attach merchant terms to the credential request. \"During checkout, your agents display a list of the customer's tokenized cards.\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-6",
-    "tier": "claimed-docs",
-    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/trusted-agent-protocol-specifications",
-    "excerpt": "The Trusted Agent Protocol's agent recognition signature is HTTP Message Signatures \"defined by RCF 9421\" (typo in original), \"aligned with web-bot-auth\", and \"offers a secure, standardized, and verifiable way to ensure the legitimacy of clients (bots, agents, or any automated traffic) and the integrity of their requests\". Signatures carry a tag of \"agent-browser-auth\" or \"agent-payer-auth\" per interaction; \"Agents include timestamps (created, expires) and nonces in the signature. Servers are able to reject reused or expired signatures, thereby preventing replay attacks.\" — timestamps \"should not be more than 8 minutes apart\" — and merchants verify against Visa's public keys at https://mcp.visa.com/.well-known/jwks.",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-7",
-    "tier": "claimed-docs",
-    "url": "https://developer.visa.com/capabilities/trusted-agent-protocol/trusted-agent-protocol-specifications",
-    "excerpt": "TAP's signed Agentic Payment Container adapts to the merchant's rail: for guest-checkout key entry it carries a credential hash — \"If the hashes do not match, the information being key entered is most likely fraudulent and the Merchant should decline the transaction.\" For network-token merchants, \"The payload is encrypted using the Merchant's public key\". And when a merchant requests payment with an HTTP 402 response code, \"a payment IOU will be present\"; after verifying it, \"the Merchant can grant access with the expectation that the funds will be available when settlement occurs.\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-8",
-    "tier": "claimed-docs",
-    "url": "https://developer.visa.com/capabilities/visa-intelligent-commerce",
-    "excerpt": "Fees, verbatim from FEES & TERMS: \"Free to use in Sandbox. Contact Visa for fees in Production.\" On refunds/disputes the docs stop at evidence capture, not a dispute API: \"Collection of commerce signals that will provide the user’s original instruction and the details of each authorized purchase allow for the quick resolution of most disputes\" and \"These signals, along with the user instructions can be used to resolve any disputes that may arise.\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-9",
-    "tier": "claimed-docs",
-    "url": "https://github.com/visa/trusted-agent-protocol",
-    "excerpt": "The TAP spec is public with a runnable reference implementation: \"Establishing a universal standard of trust between AI agents and merchants for the next phase of agentic commerce.\" The repo ships a complete sample ecosystem — tap-agent, merchant-frontend, cdn-proxy (RFC 9421 verification), merchant-backend, and agent-registry — so merchants can \"Instantly distinguish a legitimate, credentialed agent from an anonymous bot\" and confirm the agent \"Is it acting on behalf of a specific, authenticated user?\"",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
-  },
-  {
-    "id": "visa-ic-supp-10",
-    "tier": "claimed-docs",
-    "url": "https://developer.visaacceptance.com/hello-world/agentic-sandbox.html",
-    "excerpt": "Merchant-side onboarding starts with a self-serve \"Intelligent Commerce Sandbox Sign up\" form (Organization ID, company, contact details, terms acceptance) on the Visa Acceptance developer portal: \"After completing the evaluation registration process, you will be able to send test transactions\" — account instructions arrive by email for the Test Enterprise Business Center.",
-    "fetchedAt": "2026-09-14T23:38:20.000Z"
+    "excerpt": "PROBE runtime (re-recorded 2026-09-24, same live result): Visa's developer gateway is live and credential-gated exactly as documented \u2014 a keyless GET to https://api.visa.com/vdp/helloworld answered with the structured challenge {\"responseStatus\":{\"status\":400,\"code\":\"9123\",...,\"message\":\"Expected input credential was not present\"}} \u2014 and the Visa Acceptance Agent Toolkit MCP server resolves on the public npm registry (npm view @visaacceptance/mcp \u2192 0.0.96, Visa-staff maintainers).",
+    "fetchedAt": "2026-09-24T22:42:59.000Z"
   }
 ]
