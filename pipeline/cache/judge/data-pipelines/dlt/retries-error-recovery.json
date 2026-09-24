@@ -1,16 +1,17 @@
 {
-  "hash": "9b37c364b06d452289d16b5534781123d743cf85f6cada96295defa7833f4024",
+  "hash": "8f9a91f391eb2d5b2297f34f99201e99ef8282852a07dff109ee68c44396f8f1",
   "verdict": {
-    "productId": "dlt",
-    "storyId": "retries-error-recovery",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "dlt's incremental loading and state management provide checkpoint-like resume behavior (dlt-docs-18, dlt-docs-20, dlt-docs-27) so a pipeline can pick up from the last loaded point rather than fully restarting, but the evidence pack contains no explicit documentation of automatic retry logic for transient failures (e.g., network/API retries, backoff) — a core half of the story. Missing for 10: explicit retry/backoff mechanism for transient failures, and confirmation that resumption is automatic (not just incremental extraction) after mid-run interruption.",
+    "rationale": "dlt's incremental loading mechanism (tracking cursor/merge keys so only new/changed data is loaded on the next run) partially supports resuming without full restarts, but the evidence pack contains no explicit mention of automatic retry logic for transient failures (e.g., API rate limits, network errors) or true mid-run checkpoint resume after an interruption. Missing for 10: documentation of automatic retry/backoff on transient failures, evidence of resuming a partially-completed extraction mid-run rather than just skipping already-loaded records on the next scheduled run, and any hands-on/community confirmation of this reliability behavior.",
     "evidenceIds": [
+      "dlt-docs-27",
       "dlt-docs-18",
-      "dlt-docs-20",
-      "dlt-docs-27"
-    ]
+      "dlt-docs-35",
+      "dlt-docs-49"
+    ],
+    "productId": "dlt",
+    "storyId": "retries-error-recovery"
   }
 }
