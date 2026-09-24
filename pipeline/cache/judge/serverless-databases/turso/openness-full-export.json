@@ -1,17 +1,15 @@
 {
-  "hash": "f9d563e9fcff6aa2b62722713b5e802758a34a76005b79f44d85696bd73c39a1",
+  "hash": "aedf0245f7068381607e709469946f9c230b28235b7834ac7a383f1ac2843c29",
   "verdict": {
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso documents a straightforward export path (`turso db shell <db> .dump > dump.sql`, docs-47) and markets itself as fully SQLite-compatible (docs-24, docs-13), which would let a user take a clean SQL dump and leave. However hands-on community reports directly contradict full openness: once any Turso-specific feature (vector search, replication, etc.) is used, the file is no longer plain-SQLite compatible — 'the SQLite CLI no longer works, Litestream doesn't work, sqlite_rsync doesn't work, recovery tools don't work, SQLite UIs don't work' (comm-8), undermining the 'export in open formats and leave' promise for any non-trivial schema. Missing for 10: vendor documentation acknowledging or addressing this compatibility caveat, and evidence of successful re-import of a dumped Turso database (with extensions) into vanilla SQLite/another engine.",
+    "rationale": "Turso ships open export paths — local SQLite-compatible files, a `.dump` command producing SQL, and libSQL as an open-source fork — supporting the ability to take data out in standard formats [turso-docs-29][turso-docs-47][turso-gh-1]. However, a hands-on community report concretely contradicts full 'open format' portability: once any Turso-specific extension (e.g. vector search) is used in the schema, the resulting database is no longer true SQLite-file-compatible, breaking the SQLite CLI, Litestream, sqlite_rsync, recovery tools, and SQLite UIs [turso-comm-8]. Missing for 10: clear vendor guidance/tooling for converting an extension-using database back to vanilla SQLite before export, and independent confirmation that full data (including vectors) exports losslessly to an open format.",
     "evidenceIds": [
-      "turso-docs-47",
       "turso-docs-29",
-      "turso-docs-24",
-      "turso-docs-13",
-      "turso-comm-8",
-      "turso-comm-7"
+      "turso-docs-47",
+      "turso-gh-1",
+      "turso-comm-8"
     ],
     "productId": "turso",
     "storyId": "openness-full-export"
