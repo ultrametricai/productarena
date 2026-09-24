@@ -129,7 +129,7 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/processes/operating-rhythm', label: 'Operating rhythm', sublabel: 'What a startup actually does, daily through annual' },
   { href: '/virtual-startup', label: 'Virtual Startup', sublabel: 'Simulate a startup journey through the real processes' },
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },
-  { href: '/technologies', label: 'Control surfaces', sublabel: 'API, MCP, CLI & other agent surfaces, ranked by evidence' },
+  { href: '/technologies', label: 'Technologies — control surfaces', sublabel: 'API, MCP, CLI & other agent surfaces, ranked by evidence' },
   { href: '/missing', label: 'Missing startups', sublabel: 'Arena gaps where agent startups are missing' },
   { href: '/compare', label: 'Compare', sublabel: 'Any products, side by side' },
   { href: '/certified', label: 'Certified Agent-Ready', sublabel: 'The certification registry' },
