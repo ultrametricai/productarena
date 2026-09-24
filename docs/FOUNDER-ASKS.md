@@ -17,8 +17,8 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Improvement run 6a: /stacks "editorial" label → "AI judgement" | in-flight (orchestrator) |
 | Improvement run 6b: full-site evidence-driven review + repo currency check | queued |
 | Improvement run 7: Pulley (retired) still appears in some tables (e.g. homepage processes view) — exclude from active tables | in-flight (orchestrator) |
-| Improvement run 8: arena descriptions — one line each, rewritten/truncated, full width | in-lane (copy+account, dispatched 2026-09-23 after audit found it never launched) |
-| Improvement run 9: /account split — Account + My vendors as separate pages with a standard left sidebar | in-lane (copy+account, dispatched 2026-09-23 after audit found it never launched) |
+| Improvement run 8: arena descriptions — one line each, rewritten/truncated, full width | shipped 2026-09-23 (93/93 rewritten, max 107 chars, supplier-neutral) |
+| Improvement run 9: /account split — Account + My vendors as separate pages with a standard left sidebar | shipped 2026-09-23 (/account + /account/vendors + AccountNav sidebar) |
 | API-score pill makes the header's API ✓ glyph redundant — drop the glyph when the score renders | shipped 2026-09-23 |
 | Homepage tagline → "Open rankings for the AI era" (h1 + OG card og4.png + alt text) | shipped 2026-09-23 |
 | Homepage title moves ABOVE the Companies\|Processes tabs | shipped 2026-09-23 |
