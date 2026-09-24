@@ -5,12 +5,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Consensus has a verified live llms.txt (HTTP 200) plus an llms-full.txt agent-oriented doc detailing its API/MCP server, filters, and data schema, directly enabling agents to consume its docs. Missing for 10: broader per-page .md doc support (the .md probe returned 404), showing llms.txt coverage isn't uniformly extended site-wide.",
+    "rationale": "Consensus explicitly publishes an llms.txt and llms-full.txt (agent-oriented docs), confirmed live via HTTP 200 probe, describing its API/MCP server surface for agents. This directly satisfies pointing an agent at llms.txt for agentic consumption. Missing for 10: independent third-party confirmation that agents successfully consume these docs in practice beyond the vendor probe.",
     "evidenceIds": [
-      "consensus-probe-1",
       "consensus-docs-16",
-      "consensus-docs-18",
-      "consensus-probe-2"
+      "consensus-docs-29",
+      "consensus-docs-34",
+      "consensus-probe-1"
     ]
   },
   {
@@ -18,16 +18,18 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Consensus generates AI-driven insights directly in-product: synthesizing literature, extracting PICO/study design data, aggregating findings via the Consensus Meter, and providing citation-traceable answers, all embedded in search/library workflows rather than a separate tool. Missing for 10: independent/hands-on validation of insight quality and no user-reported examples beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Consensus generates AI-driven insights directly within the product: semantic search/synthesis, the Consensus Meter aggregating study verdicts, PICO extraction, study-design classification, literature review synthesis, and a research agent chaining citation crawling/DOI lookup, all with inline citations. Missing for 10: independent/hands-on third-party validation of insight quality and no user-facing UI screenshots/reviews confirming the experience beyond vendor docs.",
     "evidenceIds": [
-      "consensus-docs-10",
-      "consensus-docs-11",
       "consensus-docs-18",
       "consensus-docs-22",
       "consensus-docs-23",
       "consensus-docs-25",
-      "consensus-docs-24"
+      "consensus-docs-27",
+      "consensus-docs-24",
+      "consensus-docs-11",
+      "consensus-docs-10",
+      "consensus-docs-12"
     ]
   },
   {
@@ -35,23 +37,23 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Consensus offers research agent, API/MCP, search, and literature review capabilities, but no evidence shows scheduled or autonomous background automations (e.g., recurring searches triggered without user invocation). The 'research agent' and API features are invoked on-demand, not persistent background automations.",
+    "confidence": "high",
+    "rationale": "Consensus offers search, API/MCP access, and research agent chaining of retrieval tasks, but nothing in the evidence describes scheduled, autonomous background automations that run without user invocation.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus documents a built-in 'research agent' that autonomously chains citation crawling, DOI lookup, author search, and similar-papers retrieval on top of its search engine, plus Deep Search literature reviews and synthesis with citations — evidence of delegating multi-step research tasks to an in-product AI assistant. Missing for 10: no independent/hands-on validation of agentic task delegation, no detail on task scope/autonomy limits, and no explicit UI walkthrough of assigning a task to the assistant.",
+    "rationale": "Consensus offers a 'research agent' that chains citation crawling, DOI lookup, author search, etc., and features like Threads, Deep Search, and the Consensus Meter act as built-in AI assistance for research tasks within the product. However, this is framed as a research-search assistant rather than a general-purpose task-delegation assistant, and there's no evidence of a conversational agent that can perform arbitrary multi-step actions beyond literature search/synthesis. missing for 10: evidence of a general-purpose in-app assistant capable of broader task delegation (not just literature search), independent/hands-on corroboration of the research agent's autonomy.",
     "evidenceIds": [
       "consensus-docs-7",
       "consensus-docs-24",
-      "consensus-docs-8",
-      "consensus-docs-17",
-      "consensus-docs-11"
+      "consensus-docs-33",
+      "consensus-docs-31",
+      "consensus-docs-34"
     ]
   },
   {
@@ -60,10 +62,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Consensus exposes a REST API and MCP server that provide programmatic/headless access to its search and synthesis capabilities, which could be scripted into CI pipelines. However, there is no evidence of a CLI, official CI/CD integration examples, authentication/automation docs for unattended runs, or any hands-on confirmation of headless automation use. missing for 10: CI-specific documentation, CLI tool, examples of unattended/scripted automation, independent confirmation of headless use.",
+    "rationale": "Consensus exposes a REST API and MCP server that offer the same retrieval/synthesis surface as the web app, which enables scripted/automated invocation (e.g., in CI), and docs mention 'run automated searches with our API.' However, there's no explicit CI/headless usage documentation, no CLI, no auth/rate-limit or batch-job details, and no independent evidence of it running unattended in pipelines. Missing for 10: dedicated CI/headless setup docs, examples of automated pipeline integration, independent confirmation of unattended operation.",
     "evidenceIds": [
       "consensus-docs-16",
-      "consensus-docs-1",
+      "consensus-docs-29",
       "consensus-docs-15"
     ]
   },
@@ -73,20 +75,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Consensus exposes its own retrieval/synthesis as an MCP server (consensus-docs-16) — i.e., it is the server other agents connect to — but there is no evidence Consensus itself can act as an MCP client and plug in external MCP servers to use their tools. The story requires the reverse capability, which is unevidenced.",
-    "evidenceIds": [
-      "consensus-docs-16"
-    ]
+    "rationale": "Evidence only shows Consensus exposes its own MCP server (server-side, docs-16/29) so external agents can call Consensus's tools, not that Consensus itself can ingest/plug in external MCP servers to use their tools as a client. No documentation of an MCP-client or plugin-connector capability is present.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "Consensus is a research search/API platform, not itself an agent, so publishing an official MCP server is a fair axis and the evidence directly confirms one exists: \"a REST API and an MCP server expose the same retrieval and synthesis surface that powers the web app.\" This is first-party documentation of an official MCP server enabling agent connectivity to Consensus's synthesis/retrieval capabilities. Missing for 10: independent/hands-on confirmation the MCP server works, and setup/connection documentation details beyond the single mention.",
+    "confidence": "low",
+    "rationale": "Consensus is not itself an AI agent but a research service, so the MCP-server axis applies; docs explicitly state 'a REST API and an MCP server expose the same retrieval and synthesis surface that powers the web app,' indicating an official MCP server exists. However, there's no dedicated setup guide, connection instructions, or independent/hands-on confirmation of the MCP server working. missing for 10: dedicated MCP server documentation/setup guide, independent or hands-on verification of connecting an agent via it.",
     "evidenceIds": [
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
@@ -95,13 +96,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus's core interaction model is natural-language search/synthesis (an 'AI-native alternative to Google Scholar' that lets you ask questions and get cited answers), and its 'research agent' chains citation crawling, DOI lookup, and similar-paper search automatically on top of a query. This shows NL-driven operation and some agentic chaining, but there's no evidence of broader NL 'commands' for managing the product (e.g., library actions, exports, settings) beyond search/synthesis queries. Missing for 10: evidence of NL commands controlling non-search actions (library management, workflow automation beyond search), and independent/hands-on corroboration of the research-agent's command-following behavior.",
+    "rationale": "Consensus supports natural-language semantic search queries and conversational \"Threads\" for interacting with research, indicating NL commands drive core search/synthesis functionality. However, evidence is docs-only with no independent/hands-on confirmation of NL command breadth (e.g., complex multi-step actions via natural language beyond search). Missing for 10: independent verification of NL command coverage, examples of NL controlling library/API actions, hands-on user reports.",
     "evidenceIds": [
-      "consensus-docs-5",
+      "consensus-docs-26",
+      "consensus-docs-33",
       "consensus-docs-10",
-      "consensus-docs-24",
-      "consensus-docs-7",
-      "consensus-probe-1"
+      "consensus-docs-24"
     ]
   },
   {
@@ -109,8 +109,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a REST API and an MCP server, but no mention of an official CLI tool anywhere in the docs pack. Missing for 10: any reference to a CLI, command-line installer, or terminal-based interaction with Consensus.",
+    "confidence": "high",
+    "rationale": "Evidence shows a REST API and MCP server (consensus-docs-16, consensus-docs-29), but there is no mention of an official CLI tool anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -119,12 +119,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus documents a REST API (and even an MCP server) exposing its retrieval/synthesis capabilities, with a dedicated API page and llms-full.txt describing endpoints and features like automated searches. However, there's no evidence of detailed public API reference docs, auth/rate-limit specifics, or independent developer corroboration of usage. Missing for 10: detailed API reference/schema documentation, auth/versioning details, and third-party/hands-on confirmation of API usage.",
+    "rationale": "Consensus documents a REST API for retrieval/synthesis and an MCP server exposing the same surface, explicitly marketed as 'API and agent ready' (consensus-docs-16, -29, -15). However, there's no evidence of actual API reference docs (endpoints, auth, schemas) beyond marketing pages, and a docs.md probe returned 404, suggesting thin documentation depth. Missing for 10: detailed API reference/spec, authentication and rate-limit docs, independent developer corroboration of API usage.",
     "evidenceIds": [
-      "consensus-docs-1",
-      "consensus-docs-15",
       "consensus-docs-16",
-      "consensus-probe-1"
+      "consensus-docs-29",
+      "consensus-docs-15",
+      "consensus-probe-2"
     ]
   },
   {
@@ -132,23 +132,23 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Consensus offers a REST API and MCP server for retrieval/synthesis, but there is no mention of scoped or least-privilege API credential issuance, API key permission scoping, or agent-specific access controls. missing for 10: any documentation of API key scopes, permission levels, or least-privilege credential issuance for agents.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Consensus offers a REST API and MCP server for agents, but there is no mention of scoped or least-privilege API credentials, API key permission scoping, or role-based access controls for agent use.",
     "evidenceIds": [
-      "consensus-docs-1",
-      "consensus-docs-15",
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
     "productId": "consensus",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Consensus offers a REST API and mentions an MCP server exposing the same retrieval/synthesis surface, but evidence is limited to a single llms-full.txt line with no SDK documentation, language-specific client libraries, code samples, or independent developer corroboration. Missing for 10: official SDK packages (Python/JS/etc.), developer docs with code examples, authentication/rate-limit details, and third-party confirmation of SDK usage.",
+    "rationale": "Consensus documents a REST API and an MCP server that expose retrieval/synthesis capabilities for building integrations, but there is no evidence of official language-specific SDKs (e.g., Python/JS client libraries) — only a raw REST endpoint and MCP server are mentioned. missing for 10: dedicated SDK packages, SDK documentation/examples, versioned client libraries.",
     "evidenceIds": [
       "consensus-docs-16",
+      "consensus-docs-29",
       "consensus-docs-1",
       "consensus-docs-15"
     ]
@@ -158,8 +158,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of webhook support or event subscription; the API/MCP docs describe request-response retrieval and synthesis only, with no mention of webhooks or push-based event notifications.",
+    "confidence": "medium",
+    "rationale": "Evidence shows a REST API and MCP server for retrieval/synthesis, but nothing describes webhook subscriptions or event-driven push notifications for AI agents.",
     "evidenceIds": []
   },
   {
@@ -168,13 +168,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "The Consensus Meter explicitly classifies each relevant paper as supporting, refuting, or mixed/inconclusive for a given question and displays the distribution, directly surfacing agreement/disagreement across sources rather than a single unqualified answer. This is reinforced by study-design/PICO extraction and filters that let analysts see variation across study types. Missing for 10: independent/hands-on verification of the Meter's accuracy or reliability beyond vendor docs.",
+    "rationale": "The Consensus Meter explicitly classifies each relevant paper as supporting, refuting, or mixed/inconclusive and displays the distribution, directly surfacing agreement/disagreement across sources rather than a single unqualified answer, and citations trace each insight back to its source. Missing for 10: independent/hands-on corroboration beyond first-party docs, and no concrete example showing disagreement surfaced in a real query.",
     "evidenceIds": [
       "consensus-docs-18",
       "consensus-docs-22",
-      "consensus-docs-19",
-      "consensus-docs-25",
-      "consensus-docs-23"
+      "consensus-docs-34",
+      "consensus-docs-11",
+      "consensus-docs-25"
     ]
   },
   {
@@ -183,11 +183,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is evidence of an API and MCP server (consensus-docs-15, consensus-docs-16) but no mention of an interactive API reference, playground, or runnable examples for developers to explore. The probe for a docs markdown page returned 404, and no documentation site with interactive/try-it-out capabilities is cited.",
+    "rationale": "Evidence confirms Consensus offers a REST API and MCP server, but there is no mention of an interactive API reference (e.g., Swagger/OpenAPI playground) or runnable code examples anywhere in the docs pack.",
     "evidenceIds": [
+      "consensus-docs-1",
       "consensus-docs-15",
       "consensus-docs-16",
-      "consensus-probe-2"
+      "consensus-docs-29"
     ]
   },
   {
@@ -196,10 +197,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Consensus documents a REST API and MCP server (consensus-docs-15, consensus-docs-16) but no evidence shows a downloadable OpenAPI/Swagger spec or other machine-readable API schema; the llms.txt probes only show a text description, not an API spec file.",
+    "rationale": "Consensus documents a REST API and MCP server (consensus-docs-16, consensus-docs-29) and machine-readable llms.txt/llms-full.txt docs, but there is no mention or evidence of a downloadable OpenAPI/Swagger spec or equivalent formal machine-readable API schema for the REST API itself.",
     "evidenceIds": [
-      "consensus-docs-15",
       "consensus-docs-16",
+      "consensus-docs-29",
       "consensus-probe-1"
     ]
   },
@@ -209,7 +210,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research/literature-search product, not a system with production data or a sandbox/test-environment concept; no evidence pack item relates to sandbox testing or production-vs-test data separation. This axis is a category error for this product type.",
+    "rationale": "Consensus is a research/literature-search product, not a coding/dev-environment tool with production data or sandbox execution concerns; the sandbox-vs-production testing axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -218,11 +219,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Consensus has a REST API and MCP server, but there is no mention of API versioning scheme or any documented deprecation policy anywhere in the pack. Missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guidance.",
+    "rationale": "Evidence shows Consensus offers a REST API and MCP server, but there is no mention anywhere of API versioning scheme or a documented deprecation policy. Missing for 10: any versioning documentation, changelog, or deprecation/EOL policy for the API.",
     "evidenceIds": [
-      "consensus-docs-1",
       "consensus-docs-15",
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
@@ -231,13 +232,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus supports large-scale operations like importing thousands of papers in one click, running automated searches via its API, and Deep Searches across many studies, which map to bulk-operation needs for AI-native users. However, there is no documented batch/bulk API endpoint, rate limits, or explicit multi-item automation examples (e.g., processing hundreds of papers programmatically in one call) — missing for 10: explicit bulk API endpoint documentation, batch processing limits/examples, and independent confirmation of large-scale automation performance.",
+    "rationale": "Consensus supports bulk import of \"thousands of papers in one click\" into its Library, automated/batch searches via its API, and Deep Search literature reviews spanning many studies at once — all consistent with bulk operations across many items. However, there's no explicit documentation of a dedicated bulk-processing endpoint (e.g., batch query submission, bulk tagging/export, or bulk annotation across a set of papers) beyond import and search-at-scale. Missing for 10: explicit bulk API operations spec (batch requests/results), evidence of bulk export/annotation actions, and independent confirmation of large-scale throughput limits.",
     "evidenceIds": [
       "consensus-docs-3",
       "consensus-docs-13",
       "consensus-docs-15",
       "consensus-docs-17",
-      "consensus-docs-16"
+      "consensus-docs-24",
+      "consensus-docs-9"
     ]
   },
   {
@@ -246,7 +248,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research search/synthesis tool for academic literature, not an automation/workflow platform; there is no rule-trigger-on-event mechanism described anywhere in the evidence, and this capability is a category error for its product type.",
+    "rationale": "Consensus is a research/literature-search engine; there is no rule-based automation or event-trigger system in the evidence — this axis is a category error for this type of product, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -255,7 +257,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scheduling, recurring jobs, or automated recurring workflows anywhere in the pack — the API and research agent features support on-demand search/synthesis, not persistent scheduled automation. Missing for 10: any mention of scheduling, cron-like triggers, recurring alerts, or persistent automated workflow execution.",
+    "rationale": "Consensus offers search, literature review, an API, and an MCP server, but there is no evidence of scheduling, recurring jobs, or persistent automated workflows being triggered on a schedule; 'automated searches' via API refers to on-demand calls, not recurring/scheduled execution.",
     "evidenceIds": []
   },
   {
@@ -264,7 +266,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research search/synthesis engine, not an automation-builder product; there is no concept of 'automations' with versioning, review, or rollback in its evidence pack. This story applies to workflow/automation platforms, not a literature-search tool.",
+    "rationale": "Consensus is a research search/synthesis engine, not an automation/workflow builder; there is no concept of 'automations' to version, review, or roll back within the product.",
     "evidenceIds": []
   },
   {
@@ -273,12 +275,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus explicitly markets a 'Research Agent' that chains citation crawling, DOI lookup, author search, and similar-papers lookups on top of its search engine, plus 'Deep Searches' for more comprehensive multi-study literature reviews — evidence of autonomous multi-step investigation beyond single-pass Q&A. However, the depth of autonomy (how many steps, how it plans, error-correction) is thin, mostly marketing copy without a hands-on trace of an actual multi-step run. Missing for 10: independent/hands-on verification of the agent executing a multi-step investigation autonomously, detail on planning/iteration logic, and evidence of how it decides when to stop or go deeper.",
+    "rationale": "Consensus explicitly markets a 'Research Agent' that chains citation crawling, DOI lookup, author search, and similar-papers search on top of its search engine, plus 'Deep Search' for comprehensive multi-study literature reviews — going beyond a single-pass summary. However, all evidence is first-party marketing copy with no independent or hands-on demonstration of true autonomous multi-step reasoning, and the depth/steps involved in the 'agent' are not detailed beyond a list of chained functions. Missing for 10: independent/hands-on validation of autonomy, concrete example of a multi-step investigation trace, and detail on how the agent plans/iterates rather than just chaining fixed retrieval functions.",
     "evidenceIds": [
       "consensus-docs-7",
       "consensus-docs-24",
       "consensus-docs-17",
-      "consensus-docs-8"
+      "consensus-docs-31",
+      "consensus-docs-8",
+      "consensus-docs-28"
     ]
   },
   {
@@ -287,12 +291,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Consensus importing from Zotero/BibTeX/PDF/RIS into its Library, not exporting results out to documents, spreadsheets, or reference-manager formats; no mention of export functionality appears anywhere in the pack.",
+    "rationale": "Evidence documents import capabilities (Zotero, BibTeX, PDF, RIS) into the Consensus Library, but there is no evidence of exporting results to documents, spreadsheets, or reference-manager files — the pack only shows one-directional import, not export.",
     "evidenceIds": [
       "consensus-docs-14",
       "consensus-docs-21",
-      "consensus-docs-9",
-      "consensus-docs-20"
+      "consensus-docs-30"
     ]
   },
   {
@@ -301,8 +304,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack includes a pricing reference (consensus-docs-17) but it only mentions a feature name ('Deep Searches') without describing any free tier, trial, or free usage limits. No citation confirms that a researcher can meaningfully try Consensus for free.",
-    "evidenceIds": []
+    "rationale": "The evidence pack references a pricing page (consensus-docs-17) but gives no details about a free tier, trial length, or usage limits that a researcher could evaluate meaningfully. No documentation or hands-on report confirms a free/trial offering, so the axis applies but is unevidenced.",
+    "evidenceIds": [
+      "consensus-docs-17"
+    ]
   },
   {
     "productId": "consensus",
@@ -310,12 +315,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Consensus explicitly states every response includes citations tracing insights back to original sources, and provides study-level metadata (design classification, PICO extraction) enabling verification against underlying papers. missing for 10: independent/hands-on corroboration that citations are consistently accurate and complete across all response types, and detail on how paywalled/full-text sourced claims are cited.",
+    "rationale": "Consensus explicitly documents that every AI-generated response includes citations back to the original source paper, with per-paper metadata (study design, PICO extraction, journal, etc.) enabling verification. Missing for 10: independent/hands-on corroboration that citations are consistently accurate for every substantive claim rather than just a documented design goal.",
     "evidenceIds": [
       "consensus-docs-11",
       "consensus-docs-25",
       "consensus-docs-23",
-      "consensus-docs-4"
+      "consensus-docs-19"
     ]
   },
   {
@@ -324,12 +329,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Consensus offers deep searches, literature reviews, and a research agent, but nothing describes a long-running unattended job with a completion notification (email/push/webhook) to the analyst. Missing for 10: async job submission, background execution status, and a notification mechanism when results are ready.",
-    "evidenceIds": [
-      "consensus-docs-17",
-      "consensus-docs-24",
-      "consensus-docs-7"
-    ]
+    "rationale": "Evidence shows Deep Search/Literature Review features that run more comprehensive analyses ('Literature Reviews in Minutes', 'hours not weeks') but nothing describes an asynchronous, unattended long-running job with a completion notification (email/push/webhook) to the analyst.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
@@ -337,24 +338,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes standing searches, saved-search alerts, or notifications when new relevant papers appear; the pack covers search, library import, citation graphs, and API/MCP access but nothing about ongoing monitoring or alerting for new sources.",
+    "rationale": "No evidence pack item mentions saved searches, standing queries, or alerts that notify researchers of new matching papers over time; the product offers search, library import, citation graphs, and an API/MCP surface, but nothing describes recurring/automated monitoring for newly published sources.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus exposes an API and MCP server that cover core retrieval/synthesis functions (search, citations, Consensus Meter, filters, PICO extraction) matching much of the web UI, per docs-16/18/19/22/23/25. However, there's no evidence that UI-specific features like Library import/management, Citation Graph, or Deep Search literature reviews are fully exposed via API, so full UI-API parity is unconfirmed. missing for 10: evidence that Library/reference-manager, Citation Graph, and Deep Search/Lit Review UI features are all accessible via the API/MCP server, and independent confirmation of parity.",
+    "rationale": "Consensus explicitly markets a REST API (and MCP server) that 'expose the same retrieval and synthesis surface that powers the web app' (consensus-docs-16, consensus-docs-29), covering search, synthesis and automated discovery (consensus-docs-15). However, the docs don't confirm API parity for UI-specific features like Library import/reference management, Threads conversational mode, or Medical Mode, so full UI-API parity isn't demonstrated. Missing for 10: explicit API endpoints for library/reference-manager import, Threads-style conversational sessions, and independent confirmation of full feature parity beyond vendor claims.",
     "evidenceIds": [
       "consensus-docs-16",
-      "consensus-docs-18",
-      "consensus-docs-19",
-      "consensus-docs-22",
-      "consensus-docs-23",
-      "consensus-docs-25",
-      "consensus-docs-15"
+      "consensus-docs-29",
+      "consensus-docs-15",
+      "consensus-docs-24"
     ]
   },
   {
@@ -363,13 +361,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only documents importing papers into Consensus (Zotero, BibTeX, PDF, RIS) and API/MCP access to retrieval features, but there is no mention of any export functionality for a user's library, annotations, or synthesized data in open formats, nor any account-data export/portability mechanism for leaving the service.",
-    "evidenceIds": [
-      "consensus-docs-14",
-      "consensus-docs-21",
-      "consensus-docs-9",
-      "consensus-docs-13"
-    ]
+    "rationale": "Evidence covers importing papers (Zotero, BibTeX, PDF, RIS) and API/MCP access to Consensus's search corpus, but there is no mention of exporting a user's own library/data or account content in open formats for portability/exit.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
@@ -377,7 +370,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a closed, proprietary SaaS research search engine; there is no indication its source code is open or licensed for inspection, and open-sourcing source code is not a plausible axis for this type of hosted product.",
+    "rationale": "Consensus is a closed SaaS research search product, not open-source software; there is no source code to license or read. This axis applies to open-source projects, not to a proprietary hosted service like this.",
     "evidenceIds": []
   },
   {
@@ -386,7 +379,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a hosted SaaS research search/API platform with no evidence of any self-hostable core product or open-source release; self-hosting is not a plausible axis for this type of closed, proprietary cloud service.",
+    "rationale": "Consensus is a hosted SaaS research search engine backed by a proprietary corpus and ranking system, not an open-source or self-hostable product; self-hosting is a category error for this type of cloud service, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -395,11 +388,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus explicitly supports importing a personal corpus (PDF, BibTeX, RIS, Zotero) into a searchable AI-powered Library, and the Library is described as letting users 'search, find gaps, and put your collection to work' — a plausible fit for 'research over my own PDFs.' However, the evidence never confirms that full synthesis/screening/extraction (the literature-review and full-text analysis features) applies specifically to uploaded PDFs versus the pre-indexed 200M-paper corpus, and there's no hands-on confirmation of quality on arbitrary user PDFs. Missing for 10: explicit confirmation that synthesis/Q&A/full-text extraction works on user-uploaded PDFs (not just corpus papers), and independent/hands-on validation of this workflow.",
+    "rationale": "Consensus lets users import their own PDFs (and BibTex/RIS) into a Library and then search, find gaps, and 'put your collection to work' with AI-powered workspace features, which supports research over a user's own corpus. However, evidence doesn't clearly confirm deep synthesis/Q&A or full-text extraction specifically applied to arbitrary uploaded PDFs versus Consensus's own indexed papers. Missing for 10: explicit documentation of full-text analysis/synthesis pipeline running on user-uploaded PDFs, and independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
       "consensus-docs-3",
       "consensus-docs-13",
       "consensus-docs-14",
+      "consensus-docs-30",
       "consensus-docs-9",
       "consensus-docs-20"
     ]
@@ -409,8 +403,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance certifications for data location; the evidence focuses entirely on search, literature review, and API features. Missing for 10: any mention of data residency controls, region selection, or compliance documentation (SOC2/GDPR data location).",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or any data-location controls for Consensus; the axis applies to a data/AI platform but is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -419,7 +413,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data-training opt-out, privacy controls, or AI-model-training policies for user data; all evidence concerns search/research features.",
+    "rationale": "No evidence in the pack addresses data-training opt-out or privacy controls regarding AI model training; all citations focus on search, retrieval, and literature review features.",
     "evidenceIds": []
   },
   {
@@ -427,8 +421,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or user data management options; all evidence concerns search/research features. Missing for 10: any documentation on data retention settings, account/data deletion mechanisms, or privacy controls.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data handling settings for AI-native users; all evidence concerns search, citation, and literature-review features.",
     "evidenceIds": []
   },
   {
@@ -437,7 +431,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, opt-out settings, or privacy controls of any kind; the pack focuses entirely on research/search features and API capabilities.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, opt-out settings, or privacy controls for AI-native users; all evidence covers search/research features only.",
     "evidenceIds": []
   },
   {
@@ -446,13 +440,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Consensus is built specifically as an academic search engine over 200M+ peer-reviewed papers, with filters for study type, full-text analysis of paywalled papers, citation graphs, and study-design/PICO extraction—clearly distinct from general web search. Missing for 10: independent third-party corroboration of corpus quality/coverage beyond vendor claims.",
+    "rationale": "Consensus is explicitly built as a scholarly search engine over 200M+ academic papers, with full-text analysis including paywalled publisher content, citation tracing, and study-type/PICO metadata extraction — clearly scoped to peer-reviewed/primary literature rather than the open web. missing for 10: independent third-party benchmarking or hands-on corroboration of corpus quality beyond vendor claims.",
     "evidenceIds": [
+      "consensus-docs-5",
       "consensus-docs-10",
       "consensus-docs-4",
       "consensus-docs-19",
-      "consensus-docs-5",
       "consensus-docs-25",
+      "consensus-docs-11",
       "consensus-probe-1"
     ]
   },
@@ -461,21 +456,23 @@
     "storyId": "share-collaborate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes sharing sessions, reports, or collaborator access/build-on functionality; the pack focuses on search, library import, citation graphs, and API/MCP retrieval, none of which mention collaboration or sharing features.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions sharing sessions, reports, collaborators, team workspaces, or collaborative viewing/editing—only individual library import, search, and API/agent features are documented. missing for 10: any mention of sharing/collaboration features, team accounts, shared workspaces, or export-to-collaborator functionality.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "steer-effort-scope",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Consensus offers some scope controls like filters (study type, year, discipline), Deep Searches for more comprehensive lit reviews, and a research agent that chains multiple retrieval steps, which give users some ability to set scope before a run. However, there is no evidence of adjusting depth/effort or steering a run while it executes (mid-run interaction), nor of configurable parameters like number of sources or iteration depth. missing for 10: mid-execution steering, explicit depth/effort controls, evidence of interactive adjustment during a run.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Consensus offers pre-run controls for depth and scope: a distinct 'Deep Search' mode for more comprehensive literature reviews, and filters to narrow by study type, year, journal, open-access status, and discipline. However, there is no evidence of adjusting effort or scope mid-execution (steering 'while it runs'), and no explicit 'effort' dial beyond choosing search vs. deep-search modes. Missing for 10: in-flight/mid-run steering controls, an explicit effort/compute slider, and independent confirmation of these controls' granularity.",
     "evidenceIds": [
       "consensus-docs-17",
       "consensus-docs-19",
-      "consensus-docs-24"
+      "consensus-docs-31",
+      "consensus-docs-23",
+      "consensus-docs-25"
     ]
   },
   {
@@ -484,14 +481,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Consensus's Literature Review/Deep Search features synthesize evidence with structured elements like PICO extraction, study design classification, and the Consensus Meter distribution, which resemble report components, but there is no explicit evidence of a generated document with defined sections, formatted tables, and a shareable summary export for stakeholders. Missing for 10: explicit report/export functionality (PDF/doc generation), a documented 'sections + tables + summary' report template, and any evidence of sharing/collaboration on such reports.",
+    "rationale": "Consensus supports literature review synthesis with citations, PICO extraction, study design classification, and 'Deep Searches' producing more comprehensive lit reviews, which implies structured output, but there is no explicit evidence of a formatted report with distinct sections, tables, and a shareable summary artifact for stakeholders. Missing for 10: explicit documentation of report formatting/sections/tables, export/share functionality, and any hands-on example of a generated report shared with stakeholders.",
     "evidenceIds": [
       "consensus-docs-8",
       "consensus-docs-12",
       "consensus-docs-17",
-      "consensus-docs-22",
       "consensus-docs-23",
-      "consensus-docs-25"
+      "consensus-docs-25",
+      "consensus-docs-28"
     ]
   },
   {
@@ -500,15 +497,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus offers literature-review features (search, screen, extract, synthesize) with study-design/PICO extraction, filters by study type, and library import at scale, which support a systematic screening/extraction workflow. However, there is no evidence of consistent, auditable screening criteria (e.g., inclusion/exclusion rule configuration, PRISMA-style tracking, reviewer agreement) or exportable extraction tables across large batches — missing for 10: documented criteria-based screening controls, systematic review protocol support (e.g., PRISMA), and independent validation of consistency across large paper sets.",
+    "rationale": "Consensus documents search, screen, extract, and synthesize workflows with study-type filters, PICO extraction, and Deep Searches/Lit Reviews across many studies, which supports systematic screening/extraction at scale. However, all evidence is vendor-claimed docs with no independent or hands-on validation of consistency/rigor across large batches, and no evidence of exportable structured screening criteria or reproducible inter-study consistency checks. Missing for 10: independent verification of extraction consistency across many papers, hands-on evidence of systematic screening at scale, and detail on customizable screening criteria templates.",
     "evidenceIds": [
       "consensus-docs-8",
       "consensus-docs-12",
       "consensus-docs-19",
       "consensus-docs-23",
       "consensus-docs-25",
-      "consensus-docs-13",
-      "consensus-docs-17"
+      "consensus-docs-17",
+      "consensus-docs-3"
     ]
   },
   {
