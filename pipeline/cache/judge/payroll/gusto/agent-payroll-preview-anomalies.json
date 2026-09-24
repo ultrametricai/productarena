@@ -1,18 +1,16 @@
 {
-  "hash": "4e7ee85e62f2ecb631cc9a735c769a0a2226a98f34d6dee90186258fb530b5af",
+  "hash": "3e303a289157f5d1012061e1ac4bd8445f164dfe897d9a1bf5f323ad4f0902e7",
   "verdict": {
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Gusto's API exposes payroll preview/calculation-adjacent data (e.g., GET /v1/companies/{id}/payrolls, contractor payment preview endpoint, submission_blockers) and offers MCP servers (dev-assistant MCP for building integrations, and a remote MCP server for accessing account data via natural language) that an agent could use to pull payroll run data programmatically. However, there is no documented dedicated 'payroll preview' endpoint with anomaly detection, no evidence of a structured anomaly-flagging/review mechanism, and no documented approval workflow gating agent-run previews before submission. missing for 10: a dedicated payroll-preview API returning calculated totals for review, built-in anomaly/variance detection logic, and a documented approve/reject workflow tied to agent-surfaced anomalies.",
+    "rationale": "Gusto documents an API preview endpoint that validates inputs and surfaces submission_blockers before a payment/run is made (gusto-docs-27, gusto-docs-10), and the first-party agent-facing CLI explicitly implements a dry-run preview + agent JSON envelope + a human-approval confirm gate (exit 8 until --confirm) plus a bundled 'payroll-prep' skill that maps inputs to a draft payroll for review (gusto-contest-61-1, gusto-contest-61-5). This directly matches an agent previewing a run and surfacing blockers before approval.  Missing for 10: an explicitly documented full regular-payroll (not just contractor) preview/anomaly endpoint, and richer anomaly-detection beyond the submission_blockers field; the CLI itself also stops short of executing the run, so end-to-end approve-and-submit is not evidenced.",
     "evidenceIds": [
-      "gusto-docs-40",
-      "gusto-docs-46",
       "gusto-docs-27",
       "gusto-docs-10",
-      "gusto-docs-6",
-      "gusto-contest-52-1",
-      "gusto-probe-3"
+      "gusto-docs-40",
+      "gusto-contest-61-1",
+      "gusto-contest-61-5"
     ],
     "productId": "gusto",
     "storyId": "agent-payroll-preview-anomalies"
