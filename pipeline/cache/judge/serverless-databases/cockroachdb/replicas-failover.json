@@ -1,15 +1,16 @@
 {
-  "hash": "ed231969841038d590bf89d93a738e3cbf7ddc7d0e10abe5b633f8dc3bf11489",
+  "hash": "2db8cec06edd341ddfc1e9d55ec4701ae69642be9df48629a2ef2e7e78114ffd",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "CockroachDB's docs clearly document automatic replication and failover: it 'survives disk, machine, rack, and even datacenter failures with minimal latency disruption and no manual intervention,' with configurable multi-region survival goals and table locality, which functions as its answer to read-replica/HA needs. However, CockroachDB is architecturally a distributed consensus database rather than a primary/read-replica system, and community reports note that follower-reads (the closest analog to 'read replicas' for read scaling) were moved behind an enterprise license, which a platform engineer would need to navigate. Missing for 10: explicit 'read replica' terminology/setup guide, independent verification of failover behavior in production, and clarity on which HA/read-scaling features require paid tiers.",
+    "rationale": "CockroachDB's architecture inherently replicates data across nodes and documents 'survival goals' and automatic failover surviving disk/machine/rack/datacenter failures without manual intervention (docs-7, docs-14/20/26, multiregion-overview), which covers HA/failover behavior well. However, this is distributed multi-active replication rather than classic 'read replicas', and community evidence notes that related read-scaling features (Follower-Reads) were moved behind an enterprise license, complicating a straightforward 'add read replicas' story. missing for 10: explicit read-replica configuration docs, hands-on failover test corroboration, and clarity on Follower-Reads licensing tier.",
     "evidenceIds": [
+      "cockroachdb-docs-7",
       "cockroachdb-docs-14",
       "cockroachdb-docs-20",
-      "cockroachdb-docs-7",
-      "cockroachdb-docs-16",
+      "cockroachdb-docs-26",
+      "cockroachdb-docs-31",
       "cockroachdb-comm-9"
     ],
     "productId": "cockroachdb",
