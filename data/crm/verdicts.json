@@ -56,13 +56,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A live probe confirms docs.attio.com/llms.txt returns HTTP 200 with a structured index of agent-consumable documentation links, and Attio also ships AGENTS.md/CLAUDE.md files for AI-assisted app development plus an official MCP server, giving agents multiple sanctioned entry points into its docs. missing for 10: independent third-party confirmation that agents successfully use llms.txt in practice",
+    "rationale": "A probe directly confirms Attio serves a live llms.txt at https://docs.attio.com/llms.txt (HTTP 200) listing agent-oriented doc pages, and the docs also ship AGENTS.md/CLAUDE.md files and an SDK explicitly designed for AI-assisted development. Missing for 10: independent third-party confirmation that agents successfully consume/use the llms.txt content in practice.",
     "evidenceIds": [
       "attio-probe-1",
       "attio-docs-60",
       "attio-docs-81",
       "attio-docs-89",
-      "attio-probe-3"
+      "attio-docs-98"
     ]
   },
   {
@@ -131,15 +131,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Attio exposes a full REST API (with OAuth, webhooks, filtering/sorting, rate limits) that lets developers read/write workspace data and trigger events programmatically without the UI, which supports headless/CI-style automation, and the App SDK server functions run outside the UI as well. However there is no explicit CLI, testing/CI-specific tooling, or independent evidence of the API being used in CI pipelines. Missing for 10: dedicated CLI/automation tooling for CI, independent/hands-on confirmation of headless CI usage, and any mention of running Attio operations from a pipeline rather than via UI-triggered workflows.",
+    "rationale": "Attio exposes a full REST API, webhooks, SQL queries, and an App SDK with server functions that can be triggered programmatically without any UI, which supports headless/automated use (e.g., from scripts or CI pipelines). However, there is no explicit documentation of a CLI, CI/CD integration guide, or 'headless mode' terminology — automation is inferred from API/webhook/SDK capabilities rather than demonstrated CI usage. Missing for 10: explicit CI/CD pipeline examples, a dedicated CLI for automation, and confirmation of non-interactive/service-account auth flows for scripted contexts.",
     "evidenceIds": [
-      "attio-docs-65",
-      "attio-docs-7",
-      "attio-docs-5",
+      "attio-docs-2",
       "attio-docs-4",
-      "attio-docs-32",
-      "attio-docs-97",
-      "attio-docs-54"
+      "attio-docs-5",
+      "attio-docs-54",
+      "attio-docs-58",
+      "attio-docs-65"
     ]
   },
   {
@@ -148,7 +147,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Attio exposing its own MCP server so external AI tools (Claude, ChatGPT) can connect TO Attio (attio-docs-3, attio-probe-3) — the reverse direction. There is no evidence that Attio itself can act as an MCP client, letting users plug arbitrary external MCP servers into Attio so its AI agents/workflows can use their tools.",
+    "rationale": "Evidence shows Attio ships its own MCP server so external AI tools (Claude, ChatGPT) can connect to and manage Attio (attio-docs-3, attio-probe-3) — this is the reverse direction from the story, which asks whether Attio can consume/plug in external MCP servers to use their tools. No evidence shows Attio itself acting as an MCP client connecting to third-party MCP servers within its workflows or AI agents.",
     "evidenceIds": [
       "attio-docs-3",
       "attio-probe-3"
@@ -159,8 +158,8 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Attio documents an official MCP server allowing Claude, ChatGPT, or other AI tools to connect and search/update/manage the workspace, with a dedicated page at attio.com/mcp confirming this offering. Missing for 10: independent hands-on corroboration of the MCP server's reliability/tool coverage beyond first-party docs.",
+    "confidence": "medium",
+    "rationale": "Attio documents an official MCP server (attio.com/mcp) explicitly for connecting Claude, ChatGPT, or other AI tools to search, update, and manage the workspace. missing for 10: no independent/hands-on third-party corroboration confirming real-world reliability beyond vendor docs.",
     "evidenceIds": [
       "attio-docs-3",
       "attio-probe-3"
@@ -203,14 +202,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Attio documents a REST API for reading/writing workspace data, OAuth flows, filtering/sorting, rate limiting, and webhooks, giving AI-native users a fully documented public API to drive the product; llms.txt and docs.attio.com confirm developer-facing documentation. missing for 10: no discoverable OpenAPI/Swagger spec (probe found 404s) and no independent/third-party corroboration beyond vendor docs.",
+    "rationale": "Attio publishes an extensive public REST API with overview, auth (OAuth), filtering/sorting, rate limiting, and webhooks docs, giving AI-native users a documented way to programmatically read/write workspace data (attio-docs-65,7,6,32,80). Missing for 10: a discoverable OpenAPI/swagger spec (probe found 404s at standard OpenAPI paths) and independent third-party corroboration of API usability beyond first-party docs.",
     "evidenceIds": [
-      "attio-docs-2",
-      "attio-docs-5",
-      "attio-docs-6",
+      "attio-docs-65",
       "attio-docs-7",
+      "attio-docs-6",
       "attio-docs-32",
-      "attio-probe-1",
+      "attio-docs-80",
+      "attio-docs-2",
       "attio-probe-2"
     ]
   },
@@ -266,11 +265,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows extensive static REST API documentation (endpoints, filtering, webhooks, OAuth, rate-limiting) but no mention of an interactive API reference or runnable code examples (e.g., a 'try it' console or embedded sandbox). A direct probe for an OpenAPI/Swagger spec that would typically power such interactive docs returned 404s across all candidate paths, indicating no such interactive reference is exposed.",
+    "rationale": "Evidence shows a public REST API with guides (filtering, webhooks, rate limiting) but no mention of an interactive API reference or 'try it' runnable-example console; a probe for OpenAPI/Swagger spec files at standard paths returned 404s, suggesting no such interactive spec-driven reference is exposed.",
     "evidenceIds": [
       "attio-docs-65",
-      "attio-docs-7",
       "attio-docs-6",
+      "attio-docs-32",
       "attio-probe-2"
     ]
   },
@@ -280,10 +279,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Attio's REST API is documented, but a direct probe for standard OpenAPI/Swagger spec paths (openapi.json, swagger.json, etc.) returned 404 on all candidates, and no evidence pack item shows a downloadable machine-readable spec being offered.",
+    "rationale": "Attio documents a public REST API and an llms.txt file, but a direct probe for OpenAPI/Swagger specs at all standard paths returned 404, and no evidence pack item mentions a downloadable OpenAPI or equivalent machine-readable spec.",
     "evidenceIds": [
-      "attio-probe-2",
-      "attio-docs-65"
+      "attio-docs-65",
+      "attio-probe-1",
+      "attio-probe-2"
     ]
   },
   {
@@ -291,8 +291,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a dedicated sandbox/staging workspace or test environment separate from production data; docs cover REST API, SDK, webhooks, and workflows but never mention sandbox/test accounts.",
+    "confidence": "medium",
+    "rationale": "No evidence of a sandbox/test workspace or staging environment distinct from production; Attio's docs cover apps, API, webhooks, and workflows but nothing about a dedicated sandbox for safe testing without touching live data.",
     "evidenceIds": []
   },
   {
@@ -301,24 +301,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Attio has a documented public REST API with rate limiting, filtering, OAuth, and webhooks, so a versioning/deprecation story is a fair axis to ask about, but the evidence pack contains no mention of API version numbers, a versioning scheme, or any documented deprecation policy.",
-    "evidenceIds": []
+    "rationale": "The evidence pack documents Attio's REST API, webhooks, rate limiting, filtering, and OAuth, but contains no mention of API versioning scheme (e.g., v1/v2 headers) or any documented deprecation policy; the OpenAPI spec probe even returned 404s. Missing for 10: any documentation of API version numbering, a changelog, or a stated deprecation/sunset policy.",
+    "evidenceIds": [
+      "attio-docs-65",
+      "attio-docs-32",
+      "attio-probe-2"
+    ]
   },
   {
     "productId": "attio",
     "storyId": "auto-enrichment",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Attio's pricing page repeatedly lists 'Automatic data enrichment' and 'Real-time contact syncing' as included features across plans, and the platform/data page references pulling prospect context automatically 'from 100 [sources]' plus customizable firmographic attributes on Company records (e.g., Industry, 10+ attributes). However, this is only marketing-bullet evidence with no dedicated docs page explaining enrichment data sources, coverage, or setup, and no independent/hands-on confirmation it works reliably. Missing for 10: a documented enrichment guide/mechanism, named data providers, and third-party corroboration of enrichment accuracy.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Attio's pricing page explicitly lists 'Automatic data enrichment' and 'Real-time contact syncing' as included features across plans, and the platform/data page claims prospect context is 'automatically drawn from 100[+ sources]', supporting the story's core claim. However, evidence is limited to repeated marketing bullet points with no technical documentation of which firmographic/contact fields are enriched, data providers used, or how it integrates with company/person objects, and no independent/hands-on corroboration exists. Missing for 10: detailed docs on enrichment data sources/fields, technical implementation details, and independent verification of enrichment accuracy.",
     "evidenceIds": [
       "attio-docs-26",
       "attio-docs-45",
       "attio-docs-47",
-      "attio-docs-48",
-      "attio-docs-106",
       "attio-docs-35",
-      "attio-docs-107"
+      "attio-docs-106",
+      "attio-docs-113"
     ]
   },
   {
@@ -343,20 +346,19 @@
     "storyId": "automation-rules-engine",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Attio Workflows is a full rules/automation engine supporting event triggers (e.g., 'when a new deal is created'), conditional agent-based actions (routing, scoring, web research agents), webhooks for real-time event subscription, and custom workflow blocks/triggers built via the App SDK that can subscribe to external events or call external APIs. This directly satisfies defining rules that trigger actions on events. Missing for 10: independent/hands-on verification of the workflow builder's reliability and no detailed documentation of the full rule-condition syntax beyond marketing pages.",
+    "confidence": "medium",
+    "rationale": "Attio Workflows is a documented visual automation builder with rule-like triggers (e.g., 'when a new deal is created') that fire sequences of actions/blocks, plus webhooks and SDK-based custom triggers/steps that can subscribe to external events and call APIs as part of workflow runs. This directly matches defining rules that trigger actions on events.\n\nmissing for 10: independent/hands-on verification of workflow reliability, and detail on the full range of trigger event types beyond the deal-creation example.",
     "evidenceIds": [
       "attio-docs-17",
       "attio-docs-36",
-      "attio-docs-37",
-      "attio-docs-67",
       "attio-docs-51",
-      "attio-docs-77",
-      "attio-docs-90",
       "attio-docs-93",
       "attio-docs-103",
       "attio-docs-5",
-      "attio-docs-80"
+      "attio-docs-80",
+      "attio-docs-58",
+      "attio-docs-78",
+      "attio-docs-90"
     ]
   },
   {
@@ -380,13 +382,12 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence describes Attio's Workflows builder, workflow blocks, and AI-assisted workflow creation, but nowhere mentions version history, change review, or the ability to roll back automations to a prior state.",
+    "confidence": "medium",
+    "rationale": "Attio's Workflows builder (attio-docs-103, attio-docs-90, attio-docs-17) is documented as a visual automation tool with blocks, but no evidence describes version history, review/approval steps, or rollback capability for workflows or automations.",
     "evidenceIds": [
       "attio-docs-103",
-      "attio-docs-25",
-      "attio-docs-77",
-      "attio-docs-90"
+      "attio-docs-90",
+      "attio-docs-17"
     ]
   },
   {
@@ -395,15 +396,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Attio's REST API supports reading/writing records, webhooks for real-time change detection, and documented rate limiting with 429/Retry-After headers, covering much of the story. However, no explicit documentation of upsert semantics or a dedicated bulk-sync/scale strategy is present in the evidence. Missing for 10: explicit upsert endpoint documentation, guidance on syncing at scale (batching/pagination limits), and independent confirmation of rate-limit thresholds in practice.",
+    "rationale": "Attio's REST API supports reading/writing records (attio-docs-2, attio-docs-65), documented rate limiting with 429/Retry-After (attio-docs-32), filtering/sorting to scope syncs (attio-docs-6, attio-docs-31, attio-docs-79), and webhooks with signed payloads for real-time change detection (attio-docs-5, attio-docs-28, attio-docs-80). However, there is no explicit documentation of upsert semantics/endpoints or bulk/batch operations for scale, and no discussion of pagination limits or throughput guarantees. Missing for 10: explicit upsert endpoint documentation, bulk/batch sync endpoints, and scale/performance guidance beyond basic rate-limit headers.",
     "evidenceIds": [
       "attio-docs-2",
       "attio-docs-5",
-      "attio-docs-80",
       "attio-docs-28",
       "attio-docs-32",
       "attio-docs-6",
-      "attio-docs-31"
+      "attio-docs-31",
+      "attio-docs-65",
+      "attio-docs-80"
     ]
   },
   {
@@ -412,7 +414,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Attio's API, SDK, workflows, and AI features but contains no mention of calendar integration or meeting sync to contact/deal timelines specifically; 'real-time contact syncing' and 'full history of every interaction' are too generic to confirm calendar-meeting sync. Missing for 10: explicit calendar (Google/Outlook) sync documentation, evidence meetings populate timelines automatically.",
+    "rationale": "The evidence pack mentions 'real-time contact syncing' and general interaction history features, but nothing concretely documents calendar sync or meetings appearing on contact/deal timelines. Missing for 10: any documentation of calendar/meeting integration, calendar OAuth connection, or timeline entries specifically populated by synced calendar events.",
     "evidenceIds": []
   },
   {
@@ -421,13 +423,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Attio natively models People and Companies as linked, graph-connected records (attio-docs-9, attio-docs-14, attio-docs-66) with customizable fields (attio-docs-46) and provides 'instant visibility into the full history of every interaction' as an activity timeline on records (attio-docs-16), plus real-time contact syncing and enrichment (attio-docs-26). missing for 10: independent/hands-on corroboration of the activity timeline UI beyond marketing copy, and explicit detail on what activity types (emails, calls, notes) populate the timeline.",
+    "rationale": "Attio's core data model is built around linked People/Company records (with optional Deal object) connected via a graph model, custom attributes, and lists, and record pages show full interaction history (\"Get instant visibility into the full history of every interaction\") alongside real-time contact syncing. This directly matches ops needs for linked contact/company records with activity timelines. Missing for 10: independent/hands-on corroboration beyond vendor docs and more detail on what exactly populates the timeline (calls, emails, notes) versus marketing copy.",
     "evidenceIds": [
       "attio-docs-9",
       "attio-docs-14",
       "attio-docs-16",
+      "attio-docs-29",
       "attio-docs-46",
-      "attio-docs-66",
+      "attio-docs-107",
       "attio-docs-26"
     ]
   },
@@ -437,12 +440,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Attio references migration mostly via marketing-chat snippets promising deal history mapping and an onboarding migration checklist, but there is no documented import tool, CSV/CRM connector, owner-mapping mechanism, or independent verification that records/owners/history transfer intact. missing for 10: a documented migration tool or CRM-specific importer, evidence of owner/user mapping during migration, independent case studies or hands-on confirmation of successful full-history migration, and details on handling of activity/history data beyond a marketing anecdote.",
+    "rationale": "Marketing copy suggests Attio offers migration support ('we'll map it during onboarding, and I'll include a migration checklist' and confirms deal history can be brought across), implying some onboarding assistance for CRM migration, but there is no concrete documentation of a migration tool, CSV/CRM-specific import process, or explicit handling of 'owners' fields. missing for 10: documented migration/import tooling (e.g., CSV mapping, CRM-specific connectors), explicit handling of record ownership/assignee fields, and independent verification that history transfers intact.",
     "evidenceIds": [
       "attio-docs-15",
       "attio-docs-38",
-      "attio-docs-44",
-      "attio-docs-16"
+      "attio-docs-39",
+      "attio-docs-44"
     ]
   },
   {
@@ -451,7 +454,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Attio's docs show core building blocks for this story—custom fields/objects (attio-docs-8, attio-docs-46, attio-docs-66, attio-docs-84), filter/sort capability (attio-docs-6, attio-docs-27, attio-docs-31, attio-docs-91), and multiple view types like kanban/tables and private lists (attio-docs-34, attio-docs-83)—but nothing explicitly confirms that a non-admin ops user can create/share these without admin involvement, and some standard objects (e.g., Deals) explicitly require admin activation (attio-docs-13, attio-docs-33). missing for 10: explicit permission model showing ops users (non-admin) can create custom fields and share views without admin approval, and confirmation that view-sharing is not gated behind admin settings.",
+    "rationale": "Attio's data model clearly supports custom objects/attributes (attio-docs-8, attio-docs-46, attio-docs-66, attio-docs-84) and filtering/sorting is documented at the API level (attio-docs-6, attio-docs-27, attio-docs-31, attio-docs-79) with 'private lists' mentioned in pricing (attio-docs-83) implying list/view sharing controls exist. However, evidence never explicitly confirms an ops user (non-admin) can create/share views or add fields without admin permissions—only that certain standard objects like Deals require admin activation (attio-docs-13, attio-docs-33), leaving the permission boundary for custom-field/view creation unconfirmed. Missing for 10: explicit documentation of view creation/sharing UI workflow, and confirmation that ops-level (non-admin) users can add custom fields without elevated permissions.",
     "evidenceIds": [
       "attio-docs-8",
       "attio-docs-46",
@@ -460,7 +463,7 @@
       "attio-docs-6",
       "attio-docs-27",
       "attio-docs-31",
-      "attio-docs-34",
+      "attio-docs-79",
       "attio-docs-83",
       "attio-docs-13",
       "attio-docs-33"
@@ -472,13 +475,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Attio's docs explicitly support creating custom objects with custom fields, and linking objects via a graph model to build relationships beyond the standard people/company/deal objects (attio-docs-8, attio-docs-9, attio-docs-46, attio-docs-29). This is corroborated by API-level guidance for objects and lists as domain modeling primitives. missing for 10: independent/hands-on third-party confirmation of custom object creation limits or relationship types, and deeper API reference detail on relationship/field-type configuration.",
+    "rationale": "Attio's docs explicitly describe a flexible data model allowing custom objects and lists with a wide array of attribute types, plus linking objects together to model relationships beyond standard people/companies/deals (attio-docs-8, attio-docs-9, attio-docs-66, attio-docs-84, attio-docs-29). Custom fields/attributes are also confirmed (attio-docs-46). missing for 10: independent/hands-on developer corroboration outside Attio's own docs, and more detail on relationship/reference field types and limits.",
     "evidenceIds": [
       "attio-docs-8",
       "attio-docs-9",
+      "attio-docs-66",
+      "attio-docs-84",
       "attio-docs-46",
       "attio-docs-29",
-      "attio-docs-14"
+      "attio-docs-111"
     ]
   },
   {
@@ -486,8 +491,8 @@
     "storyId": "dedupe-merge-records",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Attio's data model, SDK, workflows, AI features, and API but contains no mention of duplicate detection or record merging for contacts/companies. This is a fair, mainstream CRM ops capability, but no documentation or feature evidence supports it here.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions duplicate detection or merging of contact/company records; only general data modeling, enrichment, and sync features are documented. This is a fair capability to expect from a CRM, but nothing in the evidence pack addresses it.",
     "evidenceIds": []
   },
   {
@@ -505,14 +510,14 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Marketing chat copy mentions mapping existing deal data and providing a migration checklist during onboarding, and the platform's flexible object/list model plus enrichment/sync features suggest a workspace could be set up quickly, but there is no concrete documentation of a self-serve import wizard, CSV/spreadsheet import flow, or any time-to-value evidence supporting a sub-hour, partner-free setup. Missing for 10: a documented self-serve data import/migration tool, a quick-start guide with concrete steps/time estimates, and independent evidence (case study, review) confirming fast unaided onboarding.",
+    "rationale": "Evidence only shows marketing-chat snippets implying an onboarding/migration process (\"we'll map it during onboarding, and I'll include a migration checklist\") and general customizable data-model docs, but nothing demonstrating a concrete self-serve import flow, time-to-value benchmarks, or independent confirmation of a sub-hour setup without help. missing for 10: self-serve CSV/import wizard documentation, concrete time-to-value evidence, independent/hands-on onboarding reports, confirmation no implementation partner is needed.",
     "evidenceIds": [
       "attio-docs-15",
       "attio-docs-38",
       "attio-docs-39",
       "attio-docs-44",
       "attio-docs-8",
-      "attio-docs-9"
+      "attio-docs-14"
     ]
   },
   {
@@ -521,14 +526,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Attio's platform docs describe a dedicated 'Routing Agent' that 'routes every lead to the right rep or channel' and a workflow builder with triggers (e.g., 'When a new deal is created') and custom workflow blocks that can encode assignment logic, directly matching the automated lead-routing story. Missing for 10: explicit mention of round-robin assignment mechanics and independent/hands-on verification beyond vendor marketing copy.",
+    "rationale": "Attio's Workflows platform explicitly documents a 'Routing Agent' that 'Routes every lead to the right rep or channel' and a 'Scoring Agent' that 'Assigns fit to leads based on your ICP criteria,' triggered off events like new deal/record creation, directly matching automatic lead routing. Missing for 10: independent/hands-on corroboration of round-robin assignment mechanics or configuration specifics beyond marketing copy.",
     "evidenceIds": [
       "attio-docs-18",
       "attio-docs-37",
       "attio-docs-67",
       "attio-docs-17",
-      "attio-docs-103",
-      "attio-docs-90"
+      "attio-docs-10"
     ]
   },
   {
@@ -537,29 +541,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Attio has a developer App SDK, REST API, webhooks, and an 'Ask Attio via AI' connector, but nothing indicates a curated marketplace of prebuilt one-click integrations for Slack, a support desk, marketing tools, or a data warehouse — only build-your-own-app tooling and a raw SQL query feature.",
-    "evidenceIds": [
-      "attio-docs-1",
-      "attio-docs-2",
-      "attio-docs-71",
-      "attio-docs-92",
-      "attio-docs-4"
-    ]
+    "rationale": "Evidence shows Attio's App SDK/REST API/webhooks for developers to build custom integrations, plus an MCP endpoint for AI tools, but there is no evidence of a prebuilt app marketplace (e.g., Slack, support desk, marketing, data warehouse connectors) that an ops user could browse and install without engineering effort.",
+    "evidenceIds": []
   },
   {
     "productId": "attio",
     "storyId": "multiple-pipelines",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Attio's data model lets ops create multiple custom objects/lists to model different business processes with kanban/table views (attio-docs-29, attio-docs-34, attio-docs-66, attio-docs-83), which implies support for separate pipelines with independent stage sets, but the evidence never explicitly documents per-list custom stage configuration or running multiple deal pipelines side-by-side. missing for 10: explicit documentation of per-list/per-object stage customization, a named example of multiple concurrent pipelines for different products/motions, and independent/hands-on confirmation of this workflow.",
+    "confidence": "low",
+    "rationale": "Attio's docs describe lists as a mechanism to 'aggregate records and model business processes' and objects/lists as flexible with custom attributes, which implies you could create separate lists (pipelines) with distinct stage fields for different products or motions, but no evidence explicitly confirms per-list custom stage sets or multiple concurrent pipelines with independent stage definitions. missing for 10: explicit documentation of creating multiple lists each with its own stage attribute/set, and any independent confirmation that stages are configurable per-pipeline rather than global.",
     "evidenceIds": [
       "attio-docs-29",
-      "attio-docs-34",
-      "attio-docs-66",
-      "attio-docs-83",
       "attio-docs-14",
-      "attio-docs-13"
+      "attio-docs-13",
+      "attio-docs-46",
+      "attio-docs-9"
     ]
   },
   {
@@ -600,7 +597,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Attio is a closed-source SaaS CRM; there is no evidence of any open-source licensing of its core product source, and 'reading source under open license' is not a fair axis for this kind of commercial SaaS product (as opposed to a framework/library). This is a category mismatch, not a missing feature.",
+    "rationale": "Attio is a closed-source SaaS CRM platform; there is no evidence of any open-source licensing of its core product source, and 'reading source under open license' is not a fair axis for this kind of proprietary hosted product beyond its (extension) SDK docs, which are documentation, not source code release.",
     "evidenceIds": []
   },
   {
@@ -609,7 +606,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Attio is a SaaS CRM product with no evidence of an on-premise/self-hostable deployment option; self-hosting the core product is not a plausible axis for this hosted SaaS category.",
+    "rationale": "Attio is a SaaS CRM with no evidence of any self-hosted/open-source deployment option; self-hosting is a category error for this cloud-native product.",
     "evidenceIds": []
   },
   {
@@ -618,7 +615,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Attio workspaces; the docs focus on API, SDK, workflows, and AI features. This is a fair question for a CRM/SaaS product storing customer data, but absence of evidence for an applicable capability means 'none'.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location options for Attio workspaces; all evidence covers API/SDK/workflow features unrelated to this axis.",
     "evidenceIds": []
   },
   {
@@ -627,7 +624,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any data privacy policy regarding model training; the evidence covers API, SDK, and product features only.",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or a data-privacy/AI-training policy for Attio; the docs focus on APIs, SDK, and workflow features. This is an applicable axis for a SaaS/CRM handling customer data, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -636,7 +633,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, export/erasure workflows, or data lifecycle management for AI-native usage; all evidence concerns SDK/API/workflow/reporting features unrelated to retention or deletion.",
+    "rationale": "The evidence pack contains no mention of data retention policies, deletion controls, export/erasure workflows, or privacy/compliance settings for AI-native users — only unrelated product features like SDK, workflows, and reporting.",
     "evidenceIds": []
   },
   {
@@ -645,7 +642,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out controls for AI-native usage; the documentation covers API, SDK, and platform features but is silent on telemetry settings. Missing for 10: any mention of telemetry collection, opt-out mechanism, or privacy settings documentation.",
+    "rationale": "No evidence pack items mention telemetry, usage tracking, opt-out controls, or privacy settings for Attio; this is an applicable axis for a SaaS/AI platform but no documentation supports it.",
     "evidenceIds": []
   },
   {
@@ -654,15 +651,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Attio's reporting platform pages describe building live dashboards with multiple chart types (line, bar, geospatial), combining visualizations into a full picture, running SQL queries directly against workspace data, and asking Attio for live pipeline data — all within the CRM UI, no spreadsheet export needed. This directly targets pipeline/activity/conversion reporting for founders.\n\nmissing for 10: independent/hands-on verification of the reporting UI in practice, and explicit mention of built-in conversion-funnel or activity-specific report templates beyond generic 'insights' language.",
+    "rationale": "Attio's reporting platform explicitly supports building live dashboards with multiple chart types (line, bar, geospatial), combining visualizations, and surfacing pipeline metrics like win rate, sales cycle, and stage conversion directly in-app, plus Ask Attio for live pipeline queries — no spreadsheet export needed. missing for 10: independent/hands-on corroboration beyond vendor marketing pages, and detail on activity-tracking dashboards specifically (call/activity metrics are mentioned but not deeply documented as reportable dashboard elements).",
     "evidenceIds": [
-      "attio-docs-4",
       "attio-docs-11",
       "attio-docs-20",
       "attio-docs-21",
+      "attio-docs-112",
       "attio-docs-69",
-      "attio-docs-43",
-      "attio-docs-70"
+      "attio-docs-16"
     ]
   },
   {
@@ -671,14 +667,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Attio's Deal object supports pipeline value and stage tracking, and its reporting engine offers customizable charts including a Funnel chart type, which could support pipeline visualization, but there is no explicit documentation of stage-probability weighting or a dedicated revenue forecast feature. Missing for 10: explicit stage-probability configuration, forecast calculation logic, and close-date-based revenue projection documentation.",
+    "rationale": "Attio's Deal object and reporting engine could support forecasting (deals have stages, and reporting shows win rate, sales cycle, stage conversion metrics), but no evidence documents an explicit revenue forecast feature combining pipeline value, stage probability, and close date. missing for 10: explicit forecast report/feature, deal probability field documentation, weighted pipeline value calculation.",
     "evidenceIds": [
       "attio-docs-13",
       "attio-docs-30",
+      "attio-docs-112",
       "attio-docs-20",
-      "attio-docs-21",
-      "attio-docs-57",
-      "attio-docs-86",
       "attio-docs-69"
     ]
   },
@@ -688,7 +682,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Marketing copy mentions Attio will 'map it during onboarding' and provide a 'migration checklist' when moving spreadsheet data over, implying assisted field mapping, but there is no documentation of an actual CSV/spreadsheet import tool, validation rules, or safeguards against silently dropping rows. missing for 10: self-serve import UI docs, explicit validation/error-reporting mechanics, confirmation that no rows are silently dropped, independent user corroboration.",
+    "rationale": "Evidence only shows marketing chat snippets promising that Attio will 'map it during onboarding' with a 'migration checklist' for deal history, implying a white-glove import/mapping process, but there is no documentation of a self-serve CSV import tool, validation rules, or safeguards against silently dropped rows. Missing for 10: documented import UI, field-mapping interface, validation/error reporting, and evidence that no rows are lost silently.",
     "evidenceIds": [
       "attio-docs-15",
       "attio-docs-38",
@@ -701,30 +695,26 @@
     "storyId": "two-way-email-sync",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a Gmail/Outlook connector, two-way email sync, or automatic email logging to CRM records — only vague pricing-page mentions of 'real-time contact syncing' and 'automatic data enrichment' which are not tied to email accounts. This is a plausible and expected CRM capability, but no first-party docs or feature pages in the evidence describe it.",
-    "evidenceIds": [
-      "attio-docs-26",
-      "attio-docs-45",
-      "attio-docs-47",
-      "attio-docs-48"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of Gmail/Outlook integration, two-way email sync, or automatic email logging to CRM records — only generic references to 'real-time contact syncing' and 'automatic data enrichment' in pricing pages, which do not describe email connectivity. As a CRM, this axis clearly applies, but no evidence documents the specific email-sync capability described in the story.",
+    "evidenceIds": []
   },
   {
     "productId": "attio",
     "storyId": "visual-pipeline-stages",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Attio's Deal object is a first-class, admin-enabled record type used for pipeline tracking, and lists/objects support kanban board views alongside custom fields for stage configuration (attio-docs-13, attio-docs-30, attio-docs-34, attio-docs-46, attio-docs-29). This directly supports a customizable visual deal pipeline. Missing for 10: explicit documentation of drag-and-drop stage-change interaction and independent/hands-on confirmation beyond vendor docs.",
+    "rationale": "Attio ships a standard Deal object that models pipeline stages, lists to aggregate business processes, customizable fields, and explicit kanban board visualization (\"From kanbans to tables, visualize your data the way that works for you\") plus stage-conversion reporting, all supporting a visual, customizable pipeline. Missing for 10: explicit documentation/screenshot confirming drag-and-drop stage updates specifically, and independent/hands-on corroboration beyond first-party marketing copy.",
     "evidenceIds": [
       "attio-docs-13",
+      "attio-docs-14",
+      "attio-docs-29",
       "attio-docs-30",
-      "attio-docs-33",
       "attio-docs-34",
       "attio-docs-46",
-      "attio-docs-29",
-      "attio-docs-14"
+      "attio-docs-112",
+      "attio-docs-111"
     ]
   },
   {
@@ -733,14 +723,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Attio Workflows is a documented visual automation builder with triggers (e.g., new record created), actions to update records, create tasks, and send notifications, plus workflow blocks and custom triggers/steps via the SDK. missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and more detail on native task-creation/notification action types beyond examples shown.",
+    "rationale": "Attio Workflows is an explicit visual automation builder supporting triggers (e.g., 'when a new deal is created'), record updates, notifications, and custom actions/agents (attio-docs-17,36,67,103,104,90,93), with webhooks and record-tab/action extensions reinforcing automation reach. missing for 10: independent/hands-on user reports of building multi-step workflows in production, and more detail on task-creation as a native workflow action beyond record updates/notifications.",
     "evidenceIds": [
-      "attio-docs-103",
+      "attio-docs-10",
       "attio-docs-17",
       "attio-docs-36",
-      "attio-docs-93",
-      "attio-docs-90",
+      "attio-docs-67",
+      "attio-docs-103",
       "attio-docs-104",
+      "attio-docs-90",
+      "attio-docs-93",
+      "attio-docs-77",
       "attio-docs-51"
     ]
   },
