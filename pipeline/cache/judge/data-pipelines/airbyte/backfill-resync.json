@@ -1,17 +1,19 @@
 {
-  "hash": "585e1a7ce5f9521e14add6634d68915f6eda6c03db4331811a0e6725d6e74ab1",
+  "hash": "f28e92794b2aa2da69f60000a73fad15cbbcaf7ff4c1ff3633f75f7758a41e86",
   "verdict": {
-    "productId": "airbyte",
-    "storyId": "backfill-resync",
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Airbyte's sync-mode docs show that syncs are configured per stream/table (full refresh vs incremental) and that a connection can be re-run to backfill history without touching other streams, matching the story's intent [airbyte-docs-7][airbyte-docs-23][airbyte-docs-22]. However, a hands-on account shows resyncing a very large (8B-row) single table required a manual workaround ('tricked Airbyte') rather than a clean built-in resync flow, indicating real-world limits [airbyte-comm-4]. Missing for 10: explicit docs on a UI/API 'reset/resync single stream' action, and independent confirmation that large-table resyncs work smoothly without workarounds.",
+    "rationale": "Airbyte's sync-mode/stream architecture (full refresh vs incremental, per-connection schema/version control) implies per-table reset/backfill without touching the whole pipeline, and the Connection Timeline lets engineers monitor individual stream sync history. However, no doc explicitly documents a 'resync single stream' button/workflow, and a hands-on report describes having to 'trick' Airbyte into recognizing a large table's first sync rather than a clean built-in resync path, showing real friction at scale. missing for 10: explicit documentation of the stream-level reset/backfill UI action, and confirmation it works smoothly for very large tables without workarounds.",
     "evidenceIds": [
       "airbyte-docs-7",
       "airbyte-docs-23",
+      "airbyte-docs-14",
       "airbyte-docs-22",
-      "airbyte-comm-4"
-    ]
+      "airbyte-docs-10",
+      "airbyte-comm-3"
+    ],
+    "productId": "airbyte",
+    "storyId": "backfill-resync"
   }
 }

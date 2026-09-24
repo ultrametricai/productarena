@@ -1,15 +1,14 @@
 {
-  "hash": "823b909b2ca7460d26639c1031c3484d7541ec2314c2f35bd435f13e951835dc",
+  "hash": "be7d1e7c1a7b940951104ca2c787c50a96778a5bf8101e6fda1115bbd40ae1bb",
   "verdict": {
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Fivetran's official MCP server documentation shows a FIVETRAN_SCOPE setting (read-only, read/write, read/write/delete) letting users configure least-privilege access for an agent, plus general RBAC and API key controls at the platform level. However, there's no detailed documentation on fine-grained scoped API key issuance beyond this single env var, and no independent/hands-on verification of enforcement. Missing for 10: granular per-resource scoping beyond the three tiers, first-party docs on REST API key scopes/permissions, and independent confirmation the scope restriction is enforced reliably.",
+    "rationale": "Fivetran's MCP server supports a scope environment variable (FIVETRAN_SCOPE = read/write/read-write-delete) and a DISALLOWED_ACTIONS denylist to restrict credential-endpoint and write/delete operations, which provides a coarse mechanism for limiting an agent's permissions. However, this is a self-configured env var/denylist rather than true API-issued scoped credentials (e.g., no evidence of per-agent API keys, token minting with granular scopes, or OAuth-style least-privilege credential issuance via the REST API). missing for 10: first-party support for generating distinct least-privilege API keys/tokens per agent, granular resource-level scoping beyond a few flags, and independent verification that these controls are enforced robustly.",
     "evidenceIds": [
       "fivetran-docs-29",
-      "fivetran-docs-28",
-      "fivetran-docs-16",
-      "fivetran-probe-4"
+      "fivetran-docs-60",
+      "fivetran-docs-22"
     ],
     "productId": "fivetran",
     "storyId": "agentic-scoped-keys"
