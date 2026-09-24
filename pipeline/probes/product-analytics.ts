@@ -42,4 +42,17 @@ export const probes: LocalProbe[] = [
     expect: /PostHog is the platform for self-driving products/,
     timeoutMs: 30_000,
   },
+  {
+    // Plausible publishes no agent-legible docs index on its own origin: /llms.txt answers a
+    // clean HTTP 404 (verified live 2026-09-23, matching the spike engine's recorded absence
+    // for this pass). An honest negative — the absence proof for the agent-docs surface.
+    probeId: 'own-llms-txt-absent',
+    productId: 'plausible',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 -o /dev/null -w "llms.txt HTTP %{http_code}\\n" https://plausible.io/llms.txt'],
+    displayCommand: 'curl -s -o /dev/null -w "llms.txt HTTP %{http_code}" https://plausible.io/llms.txt',
+    expect: /llms\.txt HTTP 404/,
+    timeoutMs: 30_000,
+  },
 ]

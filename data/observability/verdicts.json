@@ -680,22 +680,25 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probe confirms llms.txt exists and returns HTTP 200 with structured content, and docs pages are served in markdown format via .md suffix, both directly satisfying the agent-oriented docs story. Missing for 10: independent third-party confirmation of agents actually consuming these formats successfully in the wild.",
+    "rationale": "A probe confirms Grafana serves a working llms.txt at grafana.com/llms.txt (HTTP 200) plus markdown-accessible docs pages (.md suffix returns clean docs content), directly enabling agents to consume agent-oriented documentation. This is corroborated by first-party docs and an OpenAPI spec, giving multiple machine-readable paths into the docs. Missing for 10: no independent/community confirmation of agents actually using llms.txt in practice.",
     "evidenceIds": [
       "grafana-probe-1",
-      "grafana-probe-2"
+      "grafana-probe-2",
+      "grafana-probe-3"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Grafana Cloud markets natural-language driven understanding of production systems and provides an official MCP server so AI agents can query Grafana data (grafana-docs-7, grafana-docs-8), which implies AI-generated insights are emerging in the product. However, evidence is thin marketing copy with no concrete feature walkthrough, no independent/hands-on confirmation, and no detail on what 'insights and suggestions' actually look like. Missing for 10: detailed documentation of specific AI-insight features (e.g., anomaly detection, auto-generated explanations), independent/hands-on validation, and confirmation this is generally available rather than early-access marketing.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Grafana documents first-party AI features like Grafana Assistant, natural-language querying ('understand production systems faster using natural language'), a knowledge graph generating insights across metrics/logs/traces without complex queries, and AI observability monitoring—these are AI-generated insights delivered inside the product. Missing for 10: independent/hands-on validation of Assistant's insight quality, and detail on how broadly these AI features are rolled out versus still emerging/Cloud-only.",
     "evidenceIds": [
-      "grafana-docs-7",
-      "grafana-docs-8"
+      "grafana-docs-8",
+      "grafana-docs-44",
+      "grafana-docs-45",
+      "grafana-docs-46"
     ]
   },
   {
@@ -704,29 +707,25 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Grafana Alerting, on-call escalation, and incident workflows run continuously and autonomously once configured (grafana-docs-1, grafana-docs-6, grafana-docs-19, grafana-docs-24), and provisioning/as-code lets users automate deployment of these configs via CI/CD (grafana-docs-2, grafana-docs-16, grafana-docs-26). However, this is traditional monitoring automation, not an AI-native agentic automation framework—there's no evidence of AI agents autonomously executing multi-step tasks or scheduled agent runs beyond the MCP connector letting external agents query Grafana. Missing for 10: evidence of AI-driven autonomous task execution/orchestration, scheduled agent workflows, or an agent framework beyond alert/escalation rules.",
+    "rationale": "Grafana Alerting and on-call/incident workflows run continuously in the background, evaluating rules and triggering escalations/notifications without manual intervention (grafana-docs-1, grafana-gh-7, grafana-docs-19), which is a form of autonomous background automation. However, this is traditional rule-based alerting, not AI-agent-driven automation that an 'AI-native' user would configure; evidence of Grafana Assistant/Agent Observability (grafana-docs-45) shows AI features but no documented capability for users to set up autonomous AI agents/automations running independently in the background. Missing for 10: evidence of AI-driven or agentic automation setup (not just static alert rules), scheduling/triggering of autonomous agent tasks, and independent confirmation of such automations running unattended.",
     "evidenceIds": [
       "grafana-docs-1",
-      "grafana-docs-6",
+      "grafana-gh-7",
       "grafana-docs-19",
-      "grafana-docs-24",
-      "grafana-docs-2",
-      "grafana-docs-16",
-      "grafana-docs-26",
-      "grafana-docs-7"
+      "grafana-docs-45",
+      "grafana-docs-27"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Grafana's docs mention 'Understand production systems faster using natural language' on its Cloud AI-tools page, hinting at some built-in AI assistant capability, but the pack's concrete AI evidence is almost entirely about the MCP Server letting external AI agents connect TO Grafana (docs-7, probe-4) — the opposite direction of a user delegating tasks to an assistant embedded in the product. There is no documentation of assistant UI, task types it can perform, or hands-on validation of such a feature. Missing for 10: description of an actual built-in assistant interface, concrete examples of delegated tasks/actions it performs, and independent/community confirmation it works.",
+    "rationale": "Grafana Cloud explicitly advertises 'Grafana Assistant' as a built-in AI-powered capability and touts 'Understand production systems faster using natural language,' indicating an in-product AI assistant for delegating investigation tasks. However, evidence is limited to brief marketing mentions with no detailed documentation of task delegation, capabilities, or independent/hands-on validation. missing for 10: detailed docs on Grafana Assistant's task scope, hands-on user reports of using it, and confirmation it's generally available (not just Cloud-tier or beta).",
     "evidenceIds": [
-      "grafana-docs-8",
-      "grafana-docs-7",
-      "grafana-probe-4"
+      "grafana-docs-45",
+      "grafana-docs-8"
     ]
   },
   {
@@ -751,10 +750,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Grafana ships an MCP *server* (Cloud MCP Server / self-managed grafana-mcp) that lets external AI agents call Grafana's own tools — this is the reverse direction of the story, which asks whether Grafana itself can plug in and consume external MCP servers' tools. No evidence describes Grafana acting as an MCP client that connects to and uses external MCP servers.",
+    "rationale": "All MCP-related evidence describes Grafana exposing itself as an MCP server (Cloud MCP Server / open-source mcp-grafana) so external AI agents can call Grafana's tools — the opposite of the story, which asks whether Grafana can plug in and consume external MCP servers' tools. No evidence shows Grafana or Grafana Assistant acting as an MCP client that connects to third-party MCP servers.",
     "evidenceIds": [
       "grafana-docs-7",
-      "grafana-probe-4"
+      "grafana-probe-4",
+      "grafana-docs-45"
     ]
   },
   {
@@ -763,11 +763,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Grafana documents official MCP server support explicitly: both a fully hosted Cloud MCP Server and a self-managed open source MCP Server, confirmed by first-party docs and a dedicated GitHub repo (grafana/mcp-grafana). This directly satisfies connecting an agent via an official MCP server. Missing for 10: independent hands-on third-party review of the MCP server's reliability/functionality beyond vendor docs and repo existence.",
+    "rationale": "Grafana documents both a fully hosted Cloud MCP Server and a self-managed open source MCP Server for connecting AI agents, corroborated by an official GitHub repo (mcp-grafana). Missing for 10: independent hands-on user reports validating real-world agent integration beyond vendor docs/repo.",
     "evidenceIds": [
       "grafana-docs-7",
-      "grafana-probe-4",
-      "grafana-docs-8"
+      "grafana-docs-8",
+      "grafana-probe-4"
     ]
   },
   {
@@ -776,10 +776,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana Cloud markets natural-language understanding of systems and ships both a hosted and self-managed MCP Server that lets AI agents connect and act on Grafana data (querying, dashboards, alerts) via natural language, which is the main enabler of this story. However, this is delivered through a separate MCP layer/agent integration rather than a native NL command interface built into the core product, and there's no first-party or community evidence of end-to-end hands-on validation of NL commands actually working reliably. Missing for 10: native in-product NL command bar/assistant, independent hands-on reports confirming NL-driven actions succeed reliably, broader coverage beyond MCP-mediated access.",
+    "rationale": "Grafana Cloud markets 'Grafana Assistant' and natural-language understanding of production systems (grafana-docs-8, grafana-docs-45), plus a knowledge graph explicitly enabling insight generation 'no complex queries required' (grafana-docs-44), and supports AI agent connectivity via MCP servers (grafana-docs-7, grafana-probe-4) which would allow natural-language operation through an agent intermediary. However, the core product's native UI is dashboard/query-based (PromQL/LogQL), not natural-language-first, and there's no independent/hands-on evidence confirming the Grafana Assistant's natural-language command capability works well in practice. missing for 10: hands-on/independent validation of Grafana Assistant's NL command execution, detail on scope/limits of natural-language operations vs traditional query languages.",
     "evidenceIds": [
-      "grafana-docs-7",
       "grafana-docs-8",
+      "grafana-docs-44",
+      "grafana-docs-45",
+      "grafana-docs-7",
       "grafana-probe-4"
     ]
   },
@@ -801,15 +803,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Grafana exposes a documented public HTTP API confirmed by a live OpenAPI spec (grafana-probe-3), plus provisioning/as-code docs and a CLI for automation (grafana-docs-2, grafana-docs-26, grafana-probe-5), and even an official MCP server and llms.txt for AI-agent access (grafana-docs-7, grafana-probe-4, grafana-probe-1). This gives strong first-party and probe-verified evidence of a documented, machine-drivable API surface. Missing for 10: independent hands-on developer confirmation of API completeness/stability and rate-limit/versioning details.",
+    "rationale": "Grafana exposes a documented public HTTP API (openapi.json confirmed live), a documented CLI, and provisioning/observability-as-code workflows that let external tools and agents drive it programmatically. Missing for 10: independent hands-on developer accounts of building against the API/SDK, and clearer versioning/stability guarantees for the public API surface.",
     "evidenceIds": [
       "grafana-probe-3",
-      "grafana-docs-2",
-      "grafana-docs-26",
       "grafana-probe-5",
-      "grafana-docs-7",
-      "grafana-probe-4",
-      "grafana-probe-1"
+      "grafana-docs-3",
+      "grafana-docs-26",
+      "grafana-docs-2"
     ]
   },
   {
@@ -817,12 +817,9 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Grafana has an MCP server for agent connectivity (grafana-docs-7, grafana-probe-4) but contains no mention of scoped or least-privilege API keys, service accounts, or role-based credential issuance for agents. Absence of evidence for this applicable capability means it cannot be credited as delivered.",
-    "evidenceIds": [
-      "grafana-docs-7",
-      "grafana-probe-4"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Grafana's MCP server for connecting AI agents and CLI authentication, but contains no mention of scoped or least-privilege API credentials (e.g., service accounts, restricted API keys, or role-scoped tokens) that a user could issue specifically for an agent. This axis clearly applies to an observability platform with RBAC, but no supporting evidence is present in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "grafana",
@@ -841,20 +838,21 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Grafana alerting, dashboards, and MCP integration, but nothing documents webhook-based event subscription (e.g., outgoing alert webhooks or webhook triggers for agents). Missing for 10: any citation describing webhook contact points/notifiers or an event subscription API.",
+    "confidence": "low",
+    "rationale": "No evidence explicitly documents webhook subscriptions or webhook-based event notifications; alerting evidence only references built-in integrations like Slack, PagerDuty, OpsGenie without mentioning a generic webhook subscription mechanism for AI agents.",
     "evidenceIds": []
   },
   {
     "productId": "grafana",
     "storyId": "ai-incident-summaries",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Grafana markets natural-language understanding of production systems and offers an official MCP server for connecting AI agents to Grafana data, which could enable AI-generated incident summaries, but no evidence explicitly documents an AI summarization feature for incidents or alert context (e.g., no mention of an 'explain this alert' or auto-generated incident report capability). Incident management docs describe manual investigation workflows, not AI-generated summaries. Missing for 10: explicit product feature/docs describing AI-generated incident summaries, hands-on or docs evidence of alert-context summarization, independent corroboration of this specific capability.",
+    "rationale": "Grafana Cloud advertises AI-powered features like 'Grafana Assistant', 'Investigations', and natural-language understanding of production systems, and its knowledge-graph feature generates 'insights about issues' connecting metrics/logs/traces — suggestive of AI-assisted incident context. However, there is no explicit documentation describing AI-generated incident summaries specifically for responders during on-call/incident workflows (grafana-docs-19/27 describe incident tooling but without AI summarization detail). Missing for 10: concrete documentation/demo of AI-generated incident summaries, evidence of how Grafana Assistant/Investigations surface summarized alert context to responders, and independent corroboration of this specific capability.",
     "evidenceIds": [
+      "grafana-docs-45",
+      "grafana-docs-44",
       "grafana-docs-8",
-      "grafana-docs-7",
       "grafana-docs-19",
       "grafana-docs-27"
     ]
@@ -863,30 +861,28 @@
     "productId": "grafana",
     "storyId": "ai-root-cause-analysis",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Grafana docs mention natural-language understanding of production systems and MCP server integration that lets AI agents query Grafana data (alerts, dashboards, logs, traces), which could support an AI investigating an issue, but there is no explicit evidence of a built-in feature that automatically investigates an alert and proposes a probable root cause. Missing for 10: dedicated root-cause-analysis/investigation feature (e.g. an 'AI incident investigator'), first-party documentation of automated root-cause proposals, and independent/hands-on confirmation that this workflow works in practice.",
+    "rationale": "Grafana Cloud advertises AI-powered 'Grafana Assistant' and 'Investigations' features plus a knowledge graph that 'generates insights about issues' and connects metrics/logs/traces 'no complex queries required,' which map directly to the story of AI-assisted root-cause investigation. However, the evidence is limited to brief marketing blurbs with no detailed documentation of how alert investigation or root-cause proposal actually works, no independent/hands-on corroboration, and no example of it acting on a specific alert. Missing for 10: detailed docs/demo of Investigations analyzing a specific alert and proposing a root cause, independent user validation of AI-suggested root causes, and clarity on scope/limits of the feature.",
     "evidenceIds": [
-      "grafana-docs-7",
-      "grafana-docs-8",
-      "grafana-probe-4",
-      "grafana-docs-27"
+      "grafana-docs-45",
+      "grafana-docs-44",
+      "grafana-docs-8"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "alert-rules-routing",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Grafana Alerting supports querying/alerting across many data sources with consolidated management, and Grafana Cloud adds on-call scheduling, escalation, and incident coordination (routing/grouping analog to Alertmanager). SLO features let SREs define SLIs/SLOs to alert on reliability signals, and community evidence confirms multi-datasource alerting works in production (albeit with added complexity from needing separate services like Alertmanager). Missing for 10: explicit first-party documentation of silencing/grouping mechanics and independent confirmation of routing granularity beyond general alerting docs.",
+    "rationale": "Grafana Alerting explicitly supports creating queries/expressions across multiple data sources and consolidated alert management (grafana-docs-1, grafana-docs-25), with notifications routed to Slack, PagerDuty, OpsGenie, VictorOps (grafana-gh-7), and OnCall for escalation/schedules/incident coordination (grafana-docs-6, grafana-docs-19). Community evidence corroborates that alerting works across heterogeneous data sources in production (grafana-comm-5), though one comment notes added operational complexity from needing Alertmanager/extra services (grafana-comm-8). Missing for 10: explicit first-party documentation detail on notification grouping/silencing mechanics and independent hands-on validation of silencing specifically.",
     "evidenceIds": [
-      "grafana-docs-24",
+      "grafana-docs-1",
       "grafana-docs-25",
-      "grafana-docs-9",
-      "grafana-docs-19",
       "grafana-docs-6",
-      "grafana-docs-18",
+      "grafana-docs-19",
+      "grafana-gh-7",
       "grafana-comm-5",
       "grafana-comm-8"
     ]
@@ -897,16 +893,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack documents Grafana Alerting broadly (querying, notification management, on-call escalation) but never explicitly mentions webhook contact points/notifiers as a delivery mechanism for triggering automated remediation or agent-driven actions. Missing for 10: explicit documentation of webhook-based contact points/notification channels, evidence of configuring alerts to call external automation/agent endpoints, and any hands-on confirmation of this remediation workflow.",
-    "evidenceIds": []
+    "rationale": "The evidence pack describes Grafana Alerting sending notifications to systems like Slack, PagerDuty, VictorOps, OpsGenie (grafana-gh-7) and general 'take action on alerts' language (grafana-docs-24/25), but nowhere does it explicitly document a generic webhook contact point or integration designed to trigger automated remediation scripts/agents. Missing for 10: explicit webhook contact-point documentation, examples of webhook payloads triggering automation, and any mention of agent/remediation-triggering integration via alerts.",
+    "evidenceIds": [
+      "grafana-gh-7",
+      "grafana-docs-24",
+      "grafana-docs-25"
+    ]
   },
   {
     "productId": "grafana",
     "storyId": "anomaly-detection-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes anomaly detection, outlier detection, or ML-based threshold-free alerting; the pack only covers standard rule-based alerting, SLOs, provisioning, and on-call/incident tooling. missing for 10: any mention of anomaly/outlier detection algorithms, forecasting-based alert conditions, or ML-driven baseline detection features.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Grafana Alerting (threshold-based rules), SLOs, and AI-assistant/knowledge-graph features, but nowhere describes a built-in anomaly or outlier detection capability that replaces hand-written thresholds (e.g., Grafana ML forecasting/outlier detection is not cited). Alerting docs explicitly describe rule-based thresholds and expressions rather than automatic anomaly surfacing.",
     "evidenceIds": []
   },
   {
@@ -937,10 +937,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "There is no evidence of a dedicated sandbox/test environment feature isolated from production data; the closest is a suggestion to run Loki locally in monolithic mode for experimentation, which is a self-hosted local dev setup rather than a documented sandbox/testing environment for AI-native workflows. missing for 10: an official sandbox/staging environment offering, documentation on isolating test data from production, and any AI-agent-specific sandbox testing guidance.",
-    "evidenceIds": [
-      "grafana-docs-29"
-    ]
+    "rationale": "No evidence describes a sandbox/test environment feature isolated from production data for AI-native testing; only a mention of running Loki locally for experimentation, which is not framed as an AI-native sandbox against production separation. Missing for 10: dedicated sandbox/test environment for AI agents, documentation of data isolation from production, any first-party or community confirmation of such a testing mode.",
+    "evidenceIds": []
   },
   {
     "productId": "grafana",
@@ -948,7 +946,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There's an OpenAPI spec probe confirming an API exists, but no evidence of API versioning scheme or a documented deprecation policy for that API; no changelog/deprecation policy citations appear anywhere in the pack.",
+    "rationale": "Evidence shows Grafana exposes an OpenAPI spec (grafana-probe-3) and a CLI/HTTP API, but there is no documented API versioning scheme or deprecation policy anywhere in the pack. Missing for 10: documented API version numbering, deprecation/sunset policy, changelog or migration guide for breaking API changes.",
     "evidenceIds": [
       "grafana-probe-3"
     ]
@@ -958,15 +956,17 @@
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Grafana's provisioning-as-code system, CLI, and OpenAPI-documented API allow scripting bulk creation/management of dashboards, data sources, and alerts (e.g. version-controlled config files, CI/CD deployment, consolidated alert management view), which supports automation-depth bulk workflows. However, there is no explicit documentation of a dedicated bulk-operations API/UI (e.g. batch update/delete across many items in one call) — missing for 10: documented bulk API endpoints or UI multi-select actions, independent hands-on evidence of large-scale bulk operations succeeding, and any AI-native-specific bulk tooling beyond generic as-code/CLI mechanisms.",
+    "confidence": "low",
+    "rationale": "Grafana's provisioning-as-code, CLI, and OpenAPI API (grafana-docs-2/3/16/26, grafana-probe-3/5) enable scripted, multi-item changes to dashboards/data sources, and alerting can span many data sources at once (grafana-docs-1/25). However, there is no explicit documentation or example of true bulk operations (e.g., batch-editing or bulk-deleting many dashboards/alerts/users in one action) — the evidence only shows individual config-as-code and CLI primitives that could be scripted for bulk use, not a dedicated bulk-operation feature. Missing for 10: explicit bulk-edit/bulk-delete API or UI documentation, and independent confirmation that these primitives are actually used for bulk automation.",
     "evidenceIds": [
       "grafana-docs-2",
       "grafana-docs-3",
+      "grafana-docs-16",
       "grafana-docs-26",
       "grafana-docs-1",
-      "grafana-probe-5",
-      "grafana-probe-3"
+      "grafana-docs-25",
+      "grafana-probe-3",
+      "grafana-probe-5"
     ]
   },
   {
@@ -974,28 +974,31 @@
     "storyId": "automation-rules-engine",
     "verdict": "full",
     "quality": 7,
-    "confidence": "medium",
-    "rationale": "Grafana Alerting lets users define rules on metrics/logs from multiple data sources that trigger notifications, escalate to on-call schedules, and coordinate incident response automatically when conditions are met, directly matching the story. Community evidence corroborates real-world use of Grafana's alerting across heterogeneous data sources. Missing for 10: documented support for arbitrary custom actions beyond notification/escalation (e.g., automated remediation scripts, webhooks triggering external workflows) and independent hands-on validation of complex rule automation.",
+    "confidence": "high",
+    "rationale": "Grafana Alerting lets users define rules on metrics/logs across data sources and automatically trigger notifications/escalations to Slack, PagerDuty, OpsGenie, etc., and Incident/On-call features extend this into automated escalation and coordination workflows. missing for 10: evidence of arbitrary custom actions/webhooks beyond notification routing, and no independent/hands-on validation of complex automation chains beyond alert-to-notify.",
     "evidenceIds": [
       "grafana-docs-1",
-      "grafana-docs-6",
-      "grafana-docs-19",
       "grafana-docs-24",
       "grafana-docs-25",
+      "grafana-gh-7",
+      "grafana-docs-6",
+      "grafana-docs-19",
       "grafana-comm-5"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers alerting rule evaluation, on-call scheduling, and GitOps-style config provisioning, but none of these describe scheduling recurring jobs or automated workflows (e.g., scheduled reports, cron-like task execution) in the AI-native automation sense. Missing for 10: any documentation of scheduled report generation, recurring automated workflows, or job-scheduling APIs.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Grafana's alerting system supports continuously evaluated (recurring) alert rules and GitOps/CI-CD provisioning of dashboards and configs, which are forms of recurring automation, and Grafana now exposes an official MCP server so AI agents can interact with the platform. However, there is no evidence of a general-purpose job/workflow scheduler exposed to AI-native users, nor documentation showing an agent using the MCP server to create or manage recurring jobs/workflows end-to-end. missing for 10: explicit AI-agent-driven scheduling/automation workflow examples, a dedicated job/workflow scheduling API beyond alert rule evaluation, independent confirmation of MCP-based recurring task creation.",
     "evidenceIds": [
-      "grafana-docs-1",
-      "grafana-docs-6",
-      "grafana-docs-2"
+      "grafana-gh-7",
+      "grafana-docs-2",
+      "grafana-docs-3",
+      "grafana-docs-7",
+      "grafana-probe-4"
     ]
   },
   {
@@ -1004,13 +1007,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana's provisioning-as-code and 'observability as code' docs let dashboards, data sources, and alert configs be stored in version-controlled files with CI/CD pipelines, which supports versioning and review workflows (grafana-docs-2, grafana-docs-3, grafana-docs-16, grafana-docs-26). However, rollback is only implicit (via standard git revert), and there's no explicit mention of an in-product rollback/version-history UI for alerts or automations, nor of a formal review/approval workflow beyond generic CI/CD mention. Missing for 10: explicit rollback mechanism for automations/alerts, documented review/approval workflow, and independent evidence of these features being used in practice.",
+    "rationale": "Grafana's provisioning and observability-as-code docs show dashboards/data sources can be defined as code and version controlled via Git, enabling review and CI/CD-based rollback (grafana-docs-2, grafana-docs-3, grafana-docs-16, grafana-docs-26). However, there is no explicit documentation of a built-in rollback/revert UI for alerts or automations, nor independent evidence of teams using this workflow for review cycles. Missing for 10: explicit rollback/undo mechanism documentation, evidence of PR-based review workflows in practice, and community confirmation that this versioning process works well for automations beyond dashboards.",
     "evidenceIds": [
       "grafana-docs-2",
       "grafana-docs-3",
       "grafana-docs-16",
-      "grafana-docs-26",
-      "grafana-docs-11"
+      "grafana-docs-26"
     ]
   },
   {
@@ -1019,12 +1021,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Grafana Cloud's Adaptive Telemetry is documented as a cost-management feature that 'automatically identifies the data worth your attention and aggregates the rest, cutting telemetry costs by up to 80%,' and a community comment corroborates Grafana Cloud's cost advantage over competitors. However, there is no evidence of per-team/per-service cost attribution or a dedicated spend dashboard/billing-spike alerting workflow. Missing for 10: cost attribution by team/service, usage-spike alerting tied to billing thresholds, first-party dashboards for cost visibility, independent proof of the attribution workflow.",
+    "rationale": "Grafana Cloud's Adaptive Telemetry is documented as automatically identifying and aggregating low-value telemetry to cut costs (grafana-docs-14, grafana-docs-21, grafana-docs-28), showing some cost-management capability, but there is no evidence of per-team/service cost attribution dashboards, budget alerts, or spike-before-billing notifications. missing for 10: cost attribution by team/service, usage-spike/budget alerting tied to billing, independent hands-on confirmation of cost visibility features.",
     "evidenceIds": [
       "grafana-docs-14",
       "grafana-docs-21",
-      "grafana-docs-28",
-      "grafana-comm-7"
+      "grafana-docs-28"
     ]
   },
   {
@@ -1033,10 +1034,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Grafana's provisioning system explicitly supports defining dashboards, data sources, and alerts via version-controlled config files, and the observability-as-code docs describe JSON models, Terraform, and API/CLI-based provisioning for CI/CD pipelines. This is corroborated by an official OpenAPI spec and CLI docs enabling scripted/repeatable provisioning. Missing for 10: independent hands-on developer accounts specifically validating Terraform/JSON-as-code workflows in production, and no community evidence directly confirms this specific workflow (only general provisioning docs).",
+    "rationale": "Grafana has documented provisioning via config files for dashboards/data sources that are version-controllable (grafana-docs-2, grafana-docs-11), a dedicated observability-as-code workflow supporting Terraform-like/API-based CI/CD provisioning (grafana-docs-3, grafana-docs-16), and a CLI usable in CI/CD pipelines (grafana-docs-26, grafana-probe-5) plus an OpenAPI-described API (grafana-probe-3) that enables programmatic dashboard/alert management. Missing for 10: explicit first-party Terraform provider documentation/example and independent hands-on confirmation of Terraform-based provisioning workflows.",
     "evidenceIds": [
       "grafana-docs-2",
       "grafana-docs-3",
+      "grafana-docs-11",
       "grafana-docs-16",
       "grafana-docs-26",
       "grafana-probe-3",
@@ -1063,13 +1065,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Grafana ships Explore for ad-hoc querying/drilldown across data sources (grafana-gh-1, grafana-gh-2) and documents a dedicated query language, LogQL, with syntax details (grafana-docs-15), alongside general docs on querying/exploring metrics, logs, and traces (grafana-docs-9/23). This matches the developer story of ad hoc telemetry analysis with a documented query language. Missing for 10: deeper first-party documentation of PromQL itself (only Loki's LogQL is directly documented in the pack) and independent corroboration free of usability complaints—one community comment notes documentation gaps around pulling/dashboarding data (grafana-comm-3).",
+    "rationale": "Grafana documents ad-hoc, dynamic exploration ('Explore your data through ad-hoc queries and dynamic drilldown') and provides a documented query language (LogQL) for Loki, plus PromQL-style querying implied via Mimir/Prometheus and Explore mode for logs/metrics/traces. Community feedback confirms real-world use of ad-hoc alert/query flexibility across many datasources, though one comment notes documentation gaps for dashboard/data pulling. Missing for 10: no explicit dedicated 'Explore' feature docs cited beyond GitHub blurb, and no independent hands-on validation specifically of query-language usability beyond community anecdote.",
     "evidenceIds": [
       "grafana-gh-1",
-      "grafana-gh-2",
       "grafana-docs-15",
       "grafana-docs-9",
-      "grafana-docs-23",
+      "grafana-comm-5",
       "grafana-comm-3"
     ]
   },
@@ -1078,8 +1079,8 @@
     "storyId": "error-issue-tracking",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Grafana's dashboards, alerting, tracing (Tempo), logs (Loki), and SLOs, but contains no mention of application error grouping into issues, stack trace capture, release tracking, or regression detection—capabilities associated with dedicated error-tracking tools. This is a plausible axis for an observability platform to address, but nothing in the pack demonstrates it.",
+    "confidence": "high",
+    "rationale": "Grafana is an observability/dashboarding and metrics/logs/traces platform; the evidence shows tracing, logs, metrics, alerting, and infrastructure/application observability features, but there is no mention of application error grouping into 'issues' with stack traces, release tracking, or regression detection—capabilities specific to error-tracking tools like Sentry. This is a fair axis for query-analytics platforms generally, but no evidence shows Grafana ships it natively.",
     "evidenceIds": []
   },
   {
@@ -1087,13 +1088,14 @@
     "storyId": "high-cardinality-analysis",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Grafana's ecosystem (via Loki's LogQL and Tempo's trace search) supports label-based filtering and ad-hoc queries across metrics, logs, and traces without pre-aggregation, and GitHub docs mention ad-hoc queries/drilldown across data sources. However, no evidence explicitly addresses high-cardinality fields like user id or request id, or confirms index-free grouping/filtering at that granularity. Missing for 10: explicit documentation on high-cardinality field handling, benchmarks/examples of filtering by user id/request id without indexing, and independent validation of this specific capability.",
+    "confidence": "low",
+    "rationale": "Grafana's backing stores support unindexed, label-based querying (Loki indexes only label metadata, not the full log content, letting you filter/search on arbitrary fields like user_id or request_id at query time) and Tempo enables trace lookups by ID, plus Grafana Explore supports ad-hoc queries/drilldown without pre-built dashboards. However, none of the evidence explicitly discusses high-cardinality field grouping/filtering as a distinct capability, cardinality limits, or performance guarantees at scale, and this capability is largely delegated to the underlying data source rather than being a native Grafana feature. Missing for 10: explicit high-cardinality handling documentation, performance/scale guarantees for ungrouped ad-hoc queries, and independent validation of this specific use case.",
     "evidenceIds": [
+      "grafana-docs-35",
       "grafana-docs-15",
-      "grafana-gh-1",
       "grafana-docs-4",
-      "grafana-gh-4"
+      "grafana-docs-36",
+      "grafana-gh-1"
     ]
   },
   {
@@ -1101,8 +1103,8 @@
     "storyId": "incident-management-oncall",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Grafana Cloud's Incident Response Management (IRM) product explicitly supports on-call schedules, alert escalation, and incident coordination from declaration through post-incident review, with investigation using linked metrics/logs/traces during an incident (timelines). Community evidence corroborates that incident management is a real, priced offering alongside metrics/logs/alerts. Missing for 10: independent hands-on validation of the full timeline/escalation UX and deeper detail on post-incident review workflow beyond the doc summary.",
+    "confidence": "medium",
+    "rationale": "Grafana Cloud's Incident Response/IRM product explicitly supports on-call schedules, alert escalation, and incident coordination from declaration through post-incident review, with in-incident investigation tied to metrics/logs/traces. This is well documented first-party but lacks independent hands-on corroboration of the incident/timeline workflow specifically. Missing for 10: independent/community validation of the incident timeline and escalation features specifically (community evidence only covers alerting/dashboards broadly, plus one comment noting incident management as a newer, less mature add-on).",
     "evidenceIds": [
       "grafana-docs-6",
       "grafana-docs-19",
@@ -1113,15 +1115,18 @@
   {
     "productId": "grafana",
     "storyId": "integration-agent-breadth",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Evidence shows Grafana ingests data from many sources (Prometheus, CloudWatch, Loki, Tempo) and mentions Grafana Alloy as an agent for sending logs, plus community confirms broad usage across cloud and hardware monitoring, but there is no explicit documentation of a curated integrations library covering hosts/containers/Kubernetes/cloud-specific vendor agents beyond the single Alloy mention. missing for 10: dedicated docs on Grafana Cloud Integrations catalog, Kubernetes-specific agent/exporter guidance, and cloud-provider-specific integration setup instructions.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Grafana Cloud provides vendor-maintained monitoring for Kubernetes overview pages, cloud provider infrastructure (AWS/Azure/GCP), application observability, and OpenTelemetry-based agents (Grafana Alloy) covering hosts, containers, and cloud services, plus community validation of multi-source integration breadth (Prometheus, CloudWatch, etc.). missing for 10: explicit list/count of vendor-maintained integrations catalog, independent hands-on validation of Kubernetes/cloud agent setup ease, and confirmation of host-level (e.g. node-exporter style) agent parity with competitors.",
     "evidenceIds": [
-      "grafana-docs-29",
+      "grafana-docs-39",
+      "grafana-docs-40",
+      "grafana-docs-42",
+      "grafana-docs-38",
       "grafana-comm-5",
-      "grafana-comm-1",
-      "grafana-docs-9"
+      "grafana-comm-4",
+      "grafana-docs-29"
     ]
   },
   {
@@ -1130,26 +1135,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs reference an official CLI usable for 'local development' and CI/CD (grafana-docs-26), and provisioning/config-as-code docs describe defining dashboards and data sources in version-controlled files (grafana-docs-2, grafana-docs-16), which supports spinning up and configuring a dev instance for testing instrumentation. There is also a directly analogous local-instance workflow shown for a sibling Grafana Labs product, Loki ('Try it locally... run Loki in monolithic mode with a local filesystem backend', grafana-docs-29), implying the same open-source, self-hostable pattern applies to Grafana itself, though this isn't Grafana-core-specific evidence. Missing for 10: explicit first-party 'docker run grafana/grafana' or local quick-start install docs for Grafana core, and independent/hands-on confirmation of spinning up a local dev instance.",
+    "rationale": "Evidence shows Grafana's CLI and as-code tooling are explicitly designed for local development and CI/CD ('suitable for CI/CD pipelines, local development' — grafana-docs-26), and the ecosystem documents 'try it locally' workflows for related components (grafana-docs-29), plus an official CLI (grafana-probe-5) and provisioning-as-code for dashboards/data sources (grafana-docs-2, grafana-docs-3). However, there is no explicit first-party guidance in the pack (e.g., Docker/binary quick-start) for spinning up Grafana itself as a dev instance, nor hands-on community confirmation of this specific workflow. Missing for 10: explicit Grafana-core local install/docker instructions, and independent developer testimony validating ease of local setup for dashboard/instrumentation testing.",
     "evidenceIds": [
       "grafana-docs-26",
-      "grafana-docs-2",
-      "grafana-docs-16",
       "grafana-docs-29",
-      "grafana-probe-2"
+      "grafana-docs-2",
+      "grafana-docs-3",
+      "grafana-probe-5"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "nl-telemetry-queries",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana docs mention an official MCP server for connecting AI agents to Grafana and marketing copy claiming 'understand production systems faster using natural language,' suggesting some NL-to-query/chart capability exists via its AI/MCP integrations. However there is no concrete documentation, demo, or independent confirmation showing an end-to-end natural-language question producing an actual query or chart. Missing for 10: detailed docs/demo of the NL-to-query/chart workflow, hands-on or community validation that it works reliably, and clarity on which product tier/tool actually performs the translation.",
+    "rationale": "Grafana Cloud explicitly markets 'Grafana Assistant' and 'understand production systems faster using natural language,' plus a 'knowledge graph' feature connecting metrics/logs/traces without complex queries, indicating natural-language querying is a real first-party feature. However, evidence is limited to marketing copy without hands-on demonstration of returning a concrete query/chart artifact, and most of the pack focuses on traditional query languages (LogQL, PromQL) rather than NL-to-query generation. Missing for 10: independent/hands-on verification that Grafana Assistant returns actual runnable queries or charts, and detail on scope/limitations of the NL feature.",
     "evidenceIds": [
-      "grafana-docs-7",
       "grafana-docs-8",
-      "grafana-probe-4"
+      "grafana-docs-44",
+      "grafana-docs-45",
+      "grafana-docs-7"
     ]
   },
   {
@@ -1158,17 +1164,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana exposes a documented HTTP/OpenAPI API (grafana-probe-3), a CLI for admin tasks (grafana-docs-26, grafana-probe-5), and code/provisioning workflows for dashboards, data sources and alerts (grafana-docs-2, -3, -11, -16) plus an MCP server for agent access (grafana-probe-4, grafana-docs-7). However, there is no explicit documentation or independent confirmation that every UI capability (e.g., exploration/drilldown UX, node graph, incident workflows) has a full API equivalent, and a community comment notes friction/lack of docs for dashboard/data operations (grafana-comm-3). Missing for 10: an explicit statement or audit confirming 1:1 UI/API feature parity, and evidence covering less common UI features (node graph, incident management) via API/CLI.",
+    "rationale": "Grafana exposes a documented HTTP API (openapi.json), an official CLI, provisioning/as-code workflows, and an MCP server for AI agents, indicating broad programmatic access to dashboards, data sources, alerts, and admin tasks. However, no evidence explicitly confirms full feature parity between UI and API (e.g., newer visualization types, Explore, or Assistant features may lack API equivalents), and community comments hint at documentation gaps for dashboard/data operations. missing for 10: explicit parity statement or independent verification that every UI action (e.g. Explore, drilldowns, AI Assistant) is API-accessible, and any hands-on confirmation of no API-only or UI-only gaps.",
     "evidenceIds": [
       "grafana-probe-3",
-      "grafana-docs-26",
       "grafana-probe-5",
       "grafana-docs-2",
       "grafana-docs-3",
-      "grafana-docs-11",
-      "grafana-docs-16",
+      "grafana-docs-26",
       "grafana-probe-4",
-      "grafana-docs-7",
       "grafana-comm-3"
     ]
   },
@@ -1176,15 +1179,18 @@
     "productId": "grafana",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana's provisioning/observability-as-code docs show dashboards and data-source configs can be defined in version-controlled files (JSON/YAML) and managed via CLI, which supports exporting configuration in open formats, and Grafana itself is open-source software. However, actual telemetry data (metrics, logs, traces) lives in underlying data sources (Prometheus, Loki, Tempo) rather than Grafana itself, so there's no evidence of a comprehensive 'export all my data and leave' capability for the data layer itself. Missing for 10: explicit dashboard/data export tooling (e.g., JSON model export UI), documentation of bulk data migration/export for metrics-logs-traces, and independent confirmation that exported configs are fully portable without lock-in.",
+    "rationale": "Grafana's docs emphasize open-source data portability and avoiding vendor lock-in: OpenTelemetry integration explicitly says it protects users 'from vendor lock-in and ensuring data portability' (grafana-docs-38), Tempo supports open tracing protocols like Jaeger/Zipkin/OTel (grafana-docs-37), and dashboards/data sources can be defined as version-controlled code via provisioning and observability-as-code (grafana-docs-2, grafana-docs-3, grafana-docs-16, grafana-docs-26), enabling config export. However, there is no explicit documentation of a comprehensive 'export all my data' feature or migration tooling for bulk telemetry data itself (data typically lives in external stores like Prometheus/Loki, not Grafana), and community threads raise AGPLv3 licensing concerns that could complicate reuse (grafana-comm-9, grafana-comm-10) without directly disputing export capability. Missing for 10: explicit bulk data/dashboard export API or CLI documentation, independent hands-on confirmation of a full data-portability workflow, and clarity on how core telemetry data (not just configs) can be extracted.",
     "evidenceIds": [
+      "grafana-docs-38",
+      "grafana-docs-37",
       "grafana-docs-2",
       "grafana-docs-3",
-      "grafana-docs-11",
       "grafana-docs-16",
-      "grafana-probe-5"
+      "grafana-docs-26",
+      "grafana-comm-9",
+      "grafana-comm-10"
     ]
   },
   {
@@ -1204,28 +1210,30 @@
     "productId": "grafana",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Grafana OSS is well-documented as self-hostable (github.com/grafana/grafana repo, provisioning docs, CLI docs) and even AGPLv3 licensing is discussed by the community confirming open self-hosting, though with some enterprise/legal friction noted. missing for 10: no first-party step-by-step self-hosting/install guide citation in the pack, no independent hands-on report confirming a clean self-hosted deployment experience.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Grafana is shipped as an open-source project (github.com/grafana/grafana) with an OSS/Enterprise split noted in docs (grafana-probe-2, grafana-docs-32/33), and community discussion confirms real-world self-hosted deployments at scale under its AGPLv3 license (grafana-comm-4, grafana-comm-9/10). This is a core, well-established capability of the product's category.  missing for 10: explicit self-host installation/quickstart docs excerpt and independent hands-on setup report.",
     "evidenceIds": [
-      "grafana-docs-2",
-      "grafana-docs-26",
-      "grafana-probe-5",
+      "grafana-gh-1",
+      "grafana-docs-32",
+      "grafana-docs-33",
+      "grafana-comm-4",
       "grafana-comm-9",
-      "grafana-comm-10"
+      "grafana-comm-10",
+      "grafana-probe-2"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "otel-native-ingest",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The evidence pack never mentions OTLP, OpenTelemetry SDKs, or native OTLP ingestion endpoints in Grafana; the closest reference is sending logs to Loki via Grafana Alloy, which is an indirect, unrelated mention rather than documentation of first-class OTLP support in Grafana itself. Tracing/metrics docs (Tempo) discuss traces and exemplars but do not describe OTLP as a supported ingestion protocol.",
+    "rationale": "Grafana maintains a dedicated OpenTelemetry documentation page describing OTel-based collection of metrics, logs, traces, and profiles, and Tempo explicitly supports the OpenTelemetry protocol for trace ingestion alongside Jaeger/Zipkin. This demonstrates first-class OTLP/OTel support across the observability stack. Missing for 10: explicit documentation of a direct OTLP ingestion endpoint for metrics/logs (vs. via Alloy collector), and independent/hands-on corroboration of OTLP send reliability.",
     "evidenceIds": [
-      "grafana-docs-29",
-      "grafana-docs-4",
-      "grafana-docs-20"
+      "grafana-docs-38",
+      "grafana-docs-37",
+      "grafana-docs-29"
     ]
   },
   {
@@ -1233,8 +1241,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Grafana's querying, alerting, provisioning, and MCP integration but contains no mention of region selection, data residency options, or where Grafana Cloud stores customer data. While self-hosted Grafana inherently allows control over storage location, no evidence in this pack documents an explicit region/residency choice feature for Grafana Cloud users. missing for 10: any documentation of Grafana Cloud region selection, data residency guarantees, or compliance-driven storage location controls.",
+    "confidence": "low",
+    "rationale": "Grafana can connect to data sources wherever they are stored, but the evidence pack contains no mention of data residency/region selection features for Grafana Cloud storage itself (no region picker, no compliance/residency documentation).",
     "evidenceIds": []
   },
   {
@@ -1252,7 +1260,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Grafana is an observability platform, so data retention/deletion controls (e.g., log/metric retention policies, data source deletion) are a plausible axis, but the evidence pack contains no mentions of retention configuration, data deletion APIs, or privacy-oriented data lifecycle controls. Missing for 10: retention policy documentation, deletion/export APIs, GDPR-style data controls, any independent confirmation of these mechanisms.",
+    "rationale": "The evidence pack covers Grafana's observability, alerting, dashboarding, and AI-tooling features, but nothing addresses data retention policies, deletion controls, or privacy-posture configuration for an AI-native user. No documentation on retention periods, data deletion APIs, or GDPR-style controls is present.",
     "evidenceIds": []
   },
   {
@@ -1261,41 +1269,45 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Grafana itself (the product's own data collection about users), only observability/monitoring features and cost-reduction telemetry products; this is an applicable axis for any software product but no supporting documentation is present.",
+    "rationale": "No evidence in the pack addresses telemetry opt-out or usage-tracking controls for AI-native users; the pack covers unrelated features (alerting, dashboards, MCP, tracing, pricing) and community sentiment about licensing/cost, not privacy/telemetry opt-out settings.",
     "evidenceIds": []
   },
   {
     "productId": "grafana",
     "storyId": "production-self-host",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Grafana OSS is self-hostable with documented provisioning-as-code, GitOps workflows, and Loki upgrade/migration docs, and community evidence confirms it running as core self-hosted infrastructure ('monitoring everything from cloud stuff down to cryogenic fridges'). However, community hands-on feedback notes growing operational complexity requiring separate services (Alertmanager, etc.) and licensing (AGPLv3) concerns that complicate production self-hosting decisions, so the story is delivered with real caveats rather than a single polished architecture/upgrade guide. Missing for 10: a consolidated end-to-end production reference architecture doc, clearer unified upgrade path across the whole stack (not just Loki), and independent verification that complexity concerns have been resolved.",
+    "rationale": "Grafana OSS plus Loki/Tempo/Mimir are documented as self-hostable with provisioning-as-code and GitOps support, and community reports confirm large-scale self-hosted production use (cryogenic-fridge-to-cloud monitoring). Some upgrade-path documentation exists (Loki migrate/upgrade docs), but there's no single documented end-to-end architecture/upgrade guide for the full stack, and community feedback notes growing operational complexity from needing to run multiple additional services (Alertmanager, etc.) to get full functionality. Missing for 10: a unified documented architecture diagram and upgrade path covering the whole stack (not just Loki), and stronger independent corroboration that upgrades across the full stack are smooth in production.",
     "evidenceIds": [
       "grafana-docs-2",
-      "grafana-docs-3",
       "grafana-docs-22",
-      "grafana-probe-2",
+      "grafana-docs-29",
+      "grafana-docs-33",
       "grafana-comm-1",
       "grafana-comm-4",
-      "grafana-comm-8",
-      "grafana-comm-9"
+      "grafana-comm-5",
+      "grafana-comm-8"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "rich-dashboards",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Grafana natively supports rich visualization types across metrics/logs/traces (grafana-docs-9, grafana-gh-1/2/4), dashboard template variables as dropdowns (grafana-gh-3), and dashboards can be shared/provisioned and version-controlled (grafana-docs-2, grafana-docs-11). Community feedback corroborates real-world use for dashboarding across diverse data sources (grafana-comm-1, grafana-comm-5) though notes some visualization types (node graph) have datasource limitations (grafana-comm-6). Missing for 10: explicit first-party documentation/demo of dashboard sharing/export links or snapshot feature, and more independent hands-on validation of template variable UX beyond GitHub feature list.",
+    "rationale": "Grafana's core product is dashboard building with template variables (dropdown reusable variables per grafana-gh-3), rich panel/visualization plugins (grafana-gh-8, grafana-docs-30), multi-datasource mixing (grafana-gh-4/6), and provisioning/version control for GitOps-style shareable dashboards (grafana-docs-2, grafana-docs-11, grafana-docs-16). Community evidence corroborates real-world dashboard/graph consolidation usage (grafana-comm-4) though one user notes dashboard creation/documentation friction (grafana-comm-3) and a niche visualization limitation (grafana-comm-6). Missing for 10: deeper first-party detail on dashboard sharing/permissions mechanics and more independent validation of template variable robustness at scale.",
     "evidenceIds": [
       "grafana-gh-3",
-      "grafana-gh-1",
       "grafana-gh-4",
-      "grafana-docs-9",
+      "grafana-gh-6",
+      "grafana-gh-8",
+      "grafana-docs-30",
       "grafana-docs-2",
-      "grafana-comm-5",
+      "grafana-docs-11",
+      "grafana-docs-16",
+      "grafana-comm-4",
+      "grafana-comm-3",
       "grafana-comm-6"
     ]
   },
@@ -1316,16 +1328,17 @@
   {
     "productId": "grafana",
     "storyId": "slo-error-budgets",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Grafana Cloud offers a dedicated SLO product (Grafana SLO) explicitly for defining SLIs/SLOs and reacting when service falls below expected levels, paired with Grafana Alerting for multi-source alert rules and burn-rate style alerting logic. Missing for 10: explicit first-party documentation naming 'burn-rate alerts' or multi-window burn-rate templates, and independent/hands-on confirmation of the SLO burn-rate alerting workflow.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Grafana Cloud SLO explicitly supports defining SLIs/SLOs with acceptable service levels and reacting when service degrades, and Grafana Alerting supports multi-source alert rules; together these enable burn-rate style alerting on error budgets. However, the evidence never explicitly mentions 'error budget' or 'burn-rate' terminology/configuration, and SLO appears to be a Cloud-only feature rather than core OSS Grafana. Missing for 10: explicit error-budget/burn-rate alert documentation, confirmation of OSS availability vs Cloud-only, and independent/hands-on corroboration of the SLO feature.",
     "evidenceIds": [
       "grafana-docs-5",
       "grafana-docs-12",
       "grafana-docs-18",
       "grafana-docs-24",
-      "grafana-docs-25"
+      "grafana-docs-25",
+      "grafana-gh-7"
     ]
   },
   {
@@ -1334,13 +1347,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Grafana/Tempo docs explicitly describe linking traces to logs and metrics, including Prometheus exemplars to jump from metrics to Tempo traces, and Grafana's core UX of switching between metrics/logs/traces (\"switching from metrics to logs with preserved label filters\"); the incident response flow also confirms investigating with the same metrics/logs/traces that fired an alert, supporting end-to-end debugging. Missing for 10: independent hands-on account of trace-to-log/metric jump specifically (community evidence covers general cross-datasource correlation but not this exact trace-span workflow), and no explicit mention of trace-to-log correlation (only exemplars for metrics->traces).",
+    "rationale": "Grafana has explicit trace-to-logs/metrics correlation features: Tempo lets you link tracing data with logs and metrics, Prometheus exemplars let you jump from metrics to traces, and the metrics-to-logs 'preserved label filters' switch is highlighted as a signature feature; during incident response docs also describe investigating with the same metrics, logs, and traces that fired an alert. Missing for 10: no independent/hands-on account specifically confirming span-to-log jump in Explore, and no mention of trace-to-log correlation (vs. metric-to-trace) working seamlessly in practice.",
     "evidenceIds": [
       "grafana-docs-4",
       "grafana-docs-20",
-      "grafana-docs-27",
+      "grafana-docs-36",
       "grafana-gh-2",
-      "grafana-gh-5"
+      "grafana-gh-5",
+      "grafana-docs-27"
     ]
   },
   {
@@ -1349,11 +1363,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence confirms a public Grafana Cloud pricing page with a free tier ([grafana-docs-13]) and cost-reduction tooling (Adaptive Telemetry cutting costs up to 80%, [grafana-docs-21],[grafana-docs-28]), and community commentary corroborates that pricing is transparent and favorable compared to competitors ([grafana-comm-7]). However, no evidence details actual per-signal unit pricing (e.g., $/GB logs, $/series metrics, $/span traces) that an SRE would need to model exact costs without sales contact. Missing for 10: concrete per-signal price tables/units, documentation of self-serve cost calculator, and independent confirmation that pricing matches published rates in practice.",
+    "rationale": "Grafana Cloud has a public pricing page with a free tier (grafana-docs-13) and community commentary confirms cost is a known, comparably cheap differentiator (grafana-comm-7), suggesting pricing information is accessible without sales contact. However, the evidence pack lacks any concrete published per-signal unit rates (e.g., $/GB logs, $/series metrics, $/trace) that would let an SRE precisely model costs, and no mention of enterprise tiers requiring sales engagement is contrasted against self-serve tiers. Missing for 10: explicit per-signal pricing tables/units, confirmation that all tiers (including enterprise) publish self-serve rates, and independent verification that published prices match real invoiced costs.",
     "evidenceIds": [
       "grafana-docs-13",
       "grafana-docs-21",
-      "grafana-docs-28",
       "grafana-comm-7"
     ]
   },
@@ -1363,50 +1376,52 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Grafana explicitly unifies metrics, logs, and traces from any data source with cross-pivoting features: switching from metrics to logs with preserved label filters, Prometheus exemplars jumping to Tempo traces, mixed data-source graphs, and incident investigation using 'the same metrics, logs, and traces that fired the alert.' Community evidence corroborates it as the de facto consolidation platform supporting many backends (Graphite, InfluxDB, Prometheus, etc.) with unified alerting. Missing for 10: independent hands-on validation specifically of seamless cross-signal pivoting at scale (community comments focus more on alerting/cost than trace-log-metric correlation UX).",
+    "rationale": "Grafana's docs explicitly state it 'enables you to query, visualize, alert on, and explore your metrics, logs, and traces wherever they're stored' with cross-source alerting, exemplar-based jump from metrics to traces, log/metric label-preserving pivots, and unified incident investigation using the same metrics/logs/traces that fired an alert. Community evidence corroborates real-world use spanning multiple metric/log/trace backends unified in one alerting/visualization layer. Missing for 10: independent hands-on validation of seamless cross-signal pivoting UX (one community note flags gaps in dashboard/data documentation) and no third-party benchmark of trace-log-metric correlation accuracy.",
     "evidenceIds": [
       "grafana-docs-9",
-      "grafana-gh-2",
+      "grafana-docs-23",
       "grafana-docs-20",
+      "grafana-gh-2",
       "grafana-docs-27",
-      "grafana-gh-4",
+      "grafana-docs-36",
+      "grafana-comm-4",
       "grafana-comm-5",
-      "grafana-comm-4"
+      "grafana-comm-7"
     ]
   },
   {
     "productId": "grafana",
     "storyId": "vendor-neutral-instrumentation",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Grafana's evidence strongly supports backend-agnostic querying, visualization, and alerting across many data sources (Prometheus, Loki, Tempo, CloudWatch, etc.) and mixing data sources per-query, which supports the 'switch backends without re-instrumenting' half of the story. However, no evidence explicitly addresses OpenTelemetry-based instrumentation standards or confirms that OTel-instrumented telemetry can be freely repointed across backends without code changes — Grafana Alloy (an OTel collector) is only briefly mentioned once (docs-29) without detail. missing for 10: explicit OTel instrumentation-standard support/documentation, evidence of code-level portability across backends via OTel SDKs, and independent confirmation that switching backends requires no re-instrumentation.",
+    "rationale": "Grafana explicitly documents OpenTelemetry as a first-class open standard for instrumentation ('protecting you from vendor lock-in and ensuring data portability') and Tempo supports OTel/Jaeger/Zipkin protocols interchangeably, while Grafana's core value prop is querying/visualizing data 'wherever it's stored' across many data sources with per-query backend mixing. Community evidence corroborates real-world use of Grafana alerting/dashboards across many disparate backends (Graphite, InfluxDB, Prometheus, CloudWatch, PostgreSQL) without re-architecting the visualization layer. Missing for 10: a direct SRE case study of switching backends post-instrumentation without code changes, and clearer distinction between Grafana-the-visualizer vs. the OTel instrumentation layer itself.",
     "evidenceIds": [
-      "grafana-docs-1",
+      "grafana-docs-38",
+      "grafana-docs-37",
+      "grafana-docs-25",
       "grafana-gh-4",
       "grafana-gh-6",
-      "grafana-docs-4",
-      "grafana-docs-20",
-      "grafana-docs-29",
-      "grafana-comm-5"
+      "grafana-comm-5",
+      "grafana-docs-9"
     ]
   },
   {
     "productId": "honeycomb",
     "storyId": "agent-queries-telemetry",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Honeycomb documents an official MCP server that lets any external AI agent query traces/metrics and investigate issues using live Honeycomb data, plus a full REST API (with OpenAPI spec) for programmatic query/dataset/trigger management, and community reports confirm agents cross-referencing Honeycomb traces with other telemetry sources during incidents. missing for 10: independent hands-on verification of the MCP server's reliability/quality, and a directly reachable OpenAPI spec URL (probe found 404s on standard paths).",
+    "rationale": "Honeycomb documents an official MCP server that connects external AI agents to query live telemetry, investigate latency/error spikes, and identify outliers, alongside a full REST/OpenAPI-documented API for programmatic dataset/query/trigger/SLO management—directly enabling agent-driven debugging across metrics, logs, and traces. Community evidence confirms Honeycomb data is actively used within agent-based incident workflows. Missing for 10: independent hands-on verification of the MCP server's reliability/performance and a publicly reachable OpenAPI spec (probe found 404s on standard paths).",
     "evidenceIds": [
       "honeycomb-docs-9",
       "honeycomb-docs-10",
       "honeycomb-docs-11",
       "honeycomb-docs-21",
       "honeycomb-docs-27",
-      "honeycomb-comm-2",
+      "honeycomb-docs-34",
       "honeycomb-probe-3",
-      "honeycomb-probe-2"
+      "honeycomb-comm-2"
     ]
   },
   {
@@ -1415,11 +1430,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A direct probe confirms llms.txt is live at https://docs.honeycomb.io/llms.txt returning HTTP 200 with structured agent-readable docs, and Honeycomb also ships an official MCP server for agents to query docs/telemetry directly. missing for 10: no independent third-party report of an agent actually consuming llms.txt in practice.",
+    "rationale": "Honeycomb hosts a live llms.txt at docs.honeycomb.io/llms.txt (verified HTTP 200 via probe) with structured agent-oriented documentation links (.md variants like send-data.md, mcp/configuration-guide.md), and also documents an MCP server so agents can directly query docs and telemetry. Missing for 10: independent third-party confirmation that agents successfully consume this llms.txt in practice.",
     "evidenceIds": [
       "honeycomb-probe-1",
-      "honeycomb-docs-9",
-      "honeycomb-probe-3"
+      "honeycomb-docs-30",
+      "honeycomb-docs-34",
+      "honeycomb-docs-35",
+      "honeycomb-docs-9"
     ]
   },
   {
@@ -1428,14 +1445,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Honeycomb's Query Assistant translates natural-language questions into queries (AI-assisted analysis) and its MCP integration explicitly lets an AI agent 'investigate and diagnose latency or error spikes' and 'identify performance outliers and suggest optimization opportunities' using live Honeycomb data. However, the deeper insight/suggestion generation is delivered via an external MCP-connected agent rather than a fully native, always-on in-product AI insights panel, and BubbleUp (outlier detection) is mentioned only in pricing without AI framing. Missing for 10: evidence of a built-in AI-generated insights/summary feature independent of MCP agents, and independent/hands-on validation of suggestion quality.",
+    "rationale": "Honeycomb ships Query Assistant (NLQ-to-query generation) and BubbleUp for anomaly surfacing, plus a first-party MCP server and agent-skills plugin that let connected AI agents 'investigate and diagnose latency or error spikes' and 'identify performance outliers and suggest optimization opportunities' using live Honeycomb data. However, the deepest 'insights and suggestions' capability is delivered via an external AI agent connecting through MCP rather than a built-in in-product insights panel, and there's no independent evidence evaluating the quality of these suggestions. Missing for 10: native in-UI AI-generated insight summaries (not just query assistance), and independent/hands-on validation of MCP-driven suggestion quality.",
     "evidenceIds": [
       "honeycomb-docs-4",
       "honeycomb-docs-9",
       "honeycomb-docs-10",
       "honeycomb-docs-20",
-      "honeycomb-docs-26",
-      "honeycomb-docs-28"
+      "honeycomb-docs-23",
+      "honeycomb-docs-28",
+      "honeycomb-docs-35"
     ]
   },
   {
@@ -1443,14 +1461,17 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Honeycomb supports background automations via Triggers and SLOs that continuously evaluate conditions and fire alerts, plus an API to programmatically manage these automations — these run autonomously without user intervention. However, there is no evidence of AI-driven or agentic automation that acts autonomously (e.g., an agent scheduling investigations, auto-remediating, or running background tasks); the MCP integration is interactive (agent queries on request) rather than an autonomous background process. Missing for 10: evidence of AI/agent-initiated autonomous background workflows, scheduled agentic tasks, or autonomous remediation beyond static threshold-based triggers/SLOs.",
+    "confidence": "low",
+    "rationale": "Honeycomb offers Triggers/SLOs that autonomously fire alerts and route them to webhooks or third-party services based on defined thresholds, which is a form of background automation, and an API for programmatically managing these. However, there is no evidence of AI-native autonomous automations (e.g., agent-driven scheduled investigations, self-running remediation workflows, or scheduled AI tasks) — the MCP server and agent-skills integrations are reactive/query-driven, invoked by a human or agent session rather than running independently in the background. missing for 10: evidence of scheduled/autonomous AI-driven workflows, agentic background jobs, or automated investigation triggers beyond simple threshold alerts, and any independent corroboration of such capability.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
       "honeycomb-docs-8",
-      "honeycomb-docs-11",
-      "honeycomb-docs-9"
+      "honeycomb-docs-18",
+      "honeycomb-docs-33",
+      "honeycomb-docs-9",
+      "honeycomb-docs-34",
+      "honeycomb-probe-3"
     ]
   },
   {
@@ -1470,14 +1491,15 @@
     "productId": "honeycomb",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Honeycomb exposes a full API (and OpenAPI spec) for programmatically managing datasets, queries, triggers and SLOs, and OTel-based data ingestion is inherently headless-compatible, which supports scripted/CI automation. However there is no explicit CI/CD example, no documented CLI, and the probe shows the openapi.json spec itself 404s, so first-class 'headless in CI' support is only inferred rather than directly evidenced. Missing for 10: an explicit CI/CD pipeline example or GitHub Actions integration, a documented CLI tool, and a working OpenAPI spec download.",
+    "rationale": "Honeycomb exposes a full REST API and OpenAPI spec for programmatic management of datasets, queries, triggers, and SLOs, plus a dedicated CLI (honeymarker) for CRUD operations on markers — both usable non-interactively in CI pipelines. OTLP-based ingestion also works headlessly since instrumentation sends telemetry automatically without any UI. However, there is no explicit CI/CD integration guide, GitHub Action, or documented 'headless mode' workflow tying these pieces together for automation. Missing for 10: explicit CI/CD pipeline integration docs or examples, dedicated automation/headless-mode guide, and independent confirmation of using the API/CLI in real CI workflows.",
     "evidenceIds": [
       "honeycomb-docs-11",
       "honeycomb-docs-21",
       "honeycomb-docs-27",
-      "honeycomb-probe-2",
+      "honeycomb-docs-37",
+      "honeycomb-docs-1",
       "honeycomb-docs-15"
     ]
   },
@@ -1486,11 +1508,11 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All MCP evidence describes Honeycomb acting as an MCP *server* that other AI agents connect to in order to query Honeycomb's own telemetry data (honeycomb-docs-9, honeycomb-docs-10, honeycomb-probe-3) — the opposite of the story, which asks whether Honeycomb itself can plug in external MCP servers to use their tools. No evidence shows Honeycomb consuming or hosting third-party MCP tools as a client.",
+    "confidence": "high",
+    "rationale": "Evidence shows Honeycomb ships its own MCP server so external AI agents can query Honeycomb data (docs-9, docs-34, probe-3), but this is Honeycomb acting as an MCP server/tool provider, not as a client that plugs in other MCP servers to use their tools. No evidence describes Honeycomb's Query Assistant or any other feature consuming external MCP servers' tools.",
     "evidenceIds": [
       "honeycomb-docs-9",
-      "honeycomb-docs-10",
+      "honeycomb-docs-34",
       "honeycomb-probe-3"
     ]
   },
@@ -1498,13 +1520,13 @@
     "productId": "honeycomb",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Honeycomb ships an official MCP server integration allowing any MCP-compatible AI agent to query live telemetry, investigate latency/error spikes, and translate dashboards/alerts into Honeycomb's query language, documented with a dedicated configuration guide and concepts page. Missing for 10: independent hands-on third-party validation of the MCP server itself (community evidence discusses agent value generally but not this specific MCP server in practice).",
+    "rationale": "Honeycomb publishes an official MCP server with a configuration guide, letting any MCP-compatible agent query telemetry, investigate incidents, and translate dashboards/alerts into queries. This is documented first-party and confirmed via probe. Missing for 10: independent hands-on user report of connecting via MCP beyond docs/probe confirmation.",
     "evidenceIds": [
       "honeycomb-docs-9",
+      "honeycomb-docs-34",
       "honeycomb-docs-10",
-      "honeycomb-docs-20",
       "honeycomb-docs-23",
       "honeycomb-probe-3"
     ]
@@ -1515,23 +1537,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Honeycomb's Query Assistant lets users generate queries from natural-language input directly in the product, and the official MCP server lets AI agents query telemetry, diagnose issues, and translate dashboards/alerts using natural-language interaction with live data (honeycomb-docs-4, honeycomb-docs-9, honeycomb-docs-10, honeycomb-docs-23, honeycomb-probe-3). Missing for 10: independent/hands-on evidence validating NLQ accuracy and broader coverage of natural-language commands beyond querying (e.g., configuring triggers/SLOs via NL).",
+    "rationale": "Honeycomb's Query Assistant lets users generate queries from natural-language input (honeycomb-docs-4), and its MCP server plus 8-skill agent plugin let AI agents investigate, diagnose, and translate dashboards/alerts into Honeycomb's query language using natural-language interaction (honeycomb-docs-9, honeycomb-docs-10, honeycomb-docs-23, honeycomb-docs-34, honeycomb-docs-35). This covers the core of natural-language operation for an AI-native user. Missing for 10: independent/hands-on corroboration of NLQ accuracy and evidence of natural-language control beyond querying/investigation (e.g., configuring triggers/SLOs via NL).",
     "evidenceIds": [
       "honeycomb-docs-4",
       "honeycomb-docs-9",
       "honeycomb-docs-10",
       "honeycomb-docs-23",
-      "honeycomb-probe-3"
+      "honeycomb-docs-34",
+      "honeycomb-docs-35"
     ]
   },
   {
     "productId": "honeycomb",
     "storyId": "agentic-official-cli",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Evidence covers OpenTelemetry instrumentation, REST API, and an official MCP server, but no official CLI tool for Honeycomb is documented anywhere in the pack. Missing for 10: any mention of an official Honeycomb CLI, its installation, commands, or AI-native workflow usage.",
-    "evidenceIds": []
+    "rationale": "Honeycomb documents a lightweight CLI tool, 'honeymarker', for CRUD operations on markers via command line, which counts as an official CLI but is narrowly scoped (only marker management) rather than a general-purpose CLI for datasets, queries, triggers, or SLOs. Missing for 10: a comprehensive official CLI covering broader product operations (datasets, queries, triggers, SLOs) and any independent/hands-on validation of its use in AI-native automation workflows.",
+    "evidenceIds": [
+      "honeycomb-docs-37"
+    ]
   },
   {
     "productId": "honeycomb",
@@ -1539,7 +1564,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Honeycomb documents a public API for programmatically managing datasets, queries, triggers, SLOs, environments, and API keys, with a downloadable OpenAPI spec for tooling integration, which directly supports AI-native/agentic control of the product. Missing for 10: a live-hosted OpenAPI/swagger endpoint (probe found 404s on common paths) and independent third-party corroboration of API robustness beyond vendor docs.",
+    "rationale": "Honeycomb documents a public REST API to programmatically manage datasets, queries, triggers, SLOs, environments, and API keys, with a downloadable OpenAPI spec for tooling, directly enabling AI-native/agentic control of the product. Missing for 10: independent hands-on corroboration of API usage and the OpenAPI spec file itself returned 404 on probe (only doc mention), so live spec availability is unverified.",
     "evidenceIds": [
       "honeycomb-docs-11",
       "honeycomb-docs-21",
@@ -1550,14 +1575,15 @@
   {
     "productId": "honeycomb",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Honeycomb's API supports programmatic management of API keys and other resources (docs-11, docs-27), and agents can connect via the official MCP integration (docs-9), implying credential-based access, but there is no explicit documentation of scoped/least-privilege permission levels for API keys or agent-specific credential scoping. missing for 10: explicit docs on creating role-restricted or scoped API keys, least-privilege permission tiers, or agent-specific credential issuance workflow.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Honeycomb's API and MCP docs mention API keys and programmatic key management (honeycomb-docs-11, honeycomb-docs-27) and connecting an AI agent to Honeycomb via MCP (honeycomb-docs-9, honeycomb-docs-34), but there is no evidence of scoped, least-privilege, or role-restricted API key issuance specifically for agent use — no mention of permission tiers, scopes, or credential minimization features tied to agent access.",
     "evidenceIds": [
-      "honeycomb-docs-9",
       "honeycomb-docs-11",
-      "honeycomb-docs-27"
+      "honeycomb-docs-27",
+      "honeycomb-docs-9",
+      "honeycomb-docs-34"
     ]
   },
   {
@@ -1580,15 +1606,16 @@
   {
     "productId": "honeycomb",
     "storyId": "agentic-webhooks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Honeycomb lets users configure custom webhooks that receive JSON payloads whenever Triggers or SLO alerts fire, effectively enabling event subscription via webhooks alongside Slack/PagerDuty/Teams routing. Missing for 10: evidence of webhook subscriptions for a broader range of event types beyond triggers/SLOs, and independent/hands-on confirmation of webhook reliability for AI-native automation use cases.",
+    "rationale": "Honeycomb supports outbound webhooks that fire on Triggers and SLO burn alerts, delivering JSON payloads to custom endpoints with customizable templates/variables, which lets an AI-native consumer subscribe to event notifications. However, this is alert-based (threshold/SLO events) rather than a general-purpose event subscription system for arbitrary data changes, and there's no evidence of webhook subscriptions for other event types (e.g., dataset changes, marker creation, query completions) or a webhook management API endpoint. missing for 10: broader event-type coverage beyond triggers/SLOs, a documented webhook subscription/management API, and independent/hands-on confirmation of reliability.",
     "evidenceIds": [
       "honeycomb-docs-8",
       "honeycomb-docs-18",
-      "honeycomb-docs-6",
-      "honeycomb-docs-7"
+      "honeycomb-docs-33",
+      "honeycomb-docs-38",
+      "honeycomb-docs-39"
     ]
   },
   {
@@ -1597,30 +1624,32 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Honeycomb's MCP server lets connected AI agents investigate/diagnose latency or error spikes and suggest optimizations using live telemetry, which can produce incident/alert context summaries, and Query Assistant translates natural language into queries — but this is agent-mediated rather than a native built-in 'incident summary' feature for responders. Missing for 10: a first-party, no-agent-required feature that automatically generates written incident summaries or alert-context narratives, and any hands-on/community evidence validating summary quality for responders.",
+    "rationale": "Honeycomb's MCP server and agent-skills let an AI agent investigate incidents, diagnose latency/error spikes, and answer questions using live telemetry, and Query Assistant translates natural language into queries — these support AI-assisted incident investigation, but there is no direct evidence of an automated 'incident summary' artifact delivered to responders as part of alerting/triggers. Missing for 10: a documented feature that auto-generates a written incident/alert summary (vs. requiring an agent to be manually queried), and evidence of this integrated into the trigger/SLO notification flow.",
     "evidenceIds": [
       "honeycomb-docs-9",
       "honeycomb-docs-10",
       "honeycomb-docs-20",
       "honeycomb-docs-23",
-      "honeycomb-docs-4",
-      "honeycomb-probe-3"
+      "honeycomb-docs-34",
+      "honeycomb-docs-35",
+      "honeycomb-docs-4"
     ]
   },
   {
     "productId": "honeycomb",
     "storyId": "ai-root-cause-analysis",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Honeycomb's MCP integration lets connected AI agents query live telemetry, investigate/diagnose latency or error spikes, and identify performance outliers with optimization suggestions—close to proposing a probable root cause—but this requires an external MCP-compatible AI agent rather than a fully native, built-in 'Honeycomb AI' feature, and the docs stop short of explicit 'root cause' language. Missing for 10: a native (non-MCP-dependent) AI root-cause proposal feature, explicit 'root cause' framing, and independent/hands-on evidence of investigation accuracy.",
+    "rationale": "Honeycomb offers an official MCP server and 'agent-skills' plugin that let an AI agent query live telemetry to 'investigate and diagnose latency or error spikes' and 'suggest optimization opportunities' (honeycomb-docs-9, -10, -20, -26, -34, -35), which covers root-cause style investigation. However this capability is delivered by connecting an external AI agent to Honeycomb data rather than a fully native, always-on 'platform AI' that proactively investigates alerts and auto-generates root-cause reports, and there's no independent hands-on evidence of investigation quality. Missing for 10: native (non-MCP) automated root-cause reporting tied directly to trigger/SLO alerts, and independent verification of investigation accuracy.",
     "evidenceIds": [
       "honeycomb-docs-9",
       "honeycomb-docs-10",
       "honeycomb-docs-20",
-      "honeycomb-docs-23",
-      "honeycomb-probe-3",
-      "honeycomb-comm-2"
+      "honeycomb-docs-26",
+      "honeycomb-docs-34",
+      "honeycomb-docs-35",
+      "honeycomb-probe-3"
     ]
   },
   {
@@ -1629,26 +1658,30 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Honeycomb documents Triggers and SLO-based alerts that fire on threshold/burn-rate conditions and route notifications to Slack, PagerDuty, Microsoft Teams, or custom webhooks, covering alerting on telemetry signals and routing. However, the evidence pack contains no explicit documentation of alert grouping (deduplication/aggregation) or silencing/muting of notifications. missing for 10: explicit docs on notification grouping/deduplication, silencing or snoozing alerts.",
+    "rationale": "Honeycomb clearly supports alerting on telemetry via Triggers and SLO burn alerts, with routing to Slack, PagerDuty, Teams, or custom webhooks (docs-6,7,8,33). However, the evidence never documents alert grouping or silencing/muting capabilities, which are explicit parts of the story. missing for 10: explicit grouping of alerts, silencing/mute functionality for notifications, independent corroboration of alerting reliability.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
       "honeycomb-docs-8",
-      "honeycomb-docs-18"
+      "honeycomb-docs-18",
+      "honeycomb-docs-33",
+      "honeycomb-docs-38",
+      "honeycomb-docs-39"
     ]
   },
   {
     "productId": "honeycomb",
     "storyId": "alert-webhooks-drive-automation",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Honeycomb's Triggers and SLOs can route alert notifications to custom webhooks that receive JSON payloads on firing, which is exactly the mechanism needed to trigger automated remediation scripts or agents [honeycomb-docs-8][honeycomb-docs-18]. The API also allows programmatic management of triggers/SLOs for building such integrations [honeycomb-docs-11][honeycomb-docs-27]. Missing for 10: a concrete documented example of a webhook wired to an automated remediation workflow or AI agent, and independent/community confirmation that this webhook-to-agent pattern works in practice.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Honeycomb Triggers and SLO burn alerts can route to custom webhooks that accept JSON payloads, with docs detailing payload customization via variables and Go template functions to shape actionable content for downstream automation, which supports triggering remediation scripts or agents. This is well-documented first-party capability though there's no independent case study of an AI agent specifically receiving and acting on these webhooks. Missing for 10: independent/hands-on evidence of an agent consuming these webhooks end-to-end, and any built-in agent-specific webhook templates beyond generic JSON.",
     "evidenceIds": [
       "honeycomb-docs-8",
       "honeycomb-docs-18",
-      "honeycomb-docs-11",
-      "honeycomb-docs-27"
+      "honeycomb-docs-33",
+      "honeycomb-docs-38",
+      "honeycomb-docs-39"
     ]
   },
   {
@@ -1657,7 +1690,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Honeycomb's core alerting mechanism (Triggers, SLOs) is explicitly threshold-based (docs-6,7,8), not automated anomaly detection. BubbleUp is mentioned only in a pricing checklist (docs-28) with no doc detail on how it works, and the MCP-connected AI agent can 'identify performance outliers' (docs-10/20/26) but this is an on-demand investigative query tool, not a standing anomaly-detection alert that surfaces problems without human-defined thresholds. Missing for 10: documented automatic/passive anomaly-detection alerting, technical detail on BubbleUp's outlier algorithm, and evidence it triggers notifications without manual threshold configuration.",
+    "rationale": "Honeycomb's core alerting mechanisms (Triggers, SLO burn alerts) explicitly require hand-configured thresholds, not automated anomaly detection. However, BubbleUp (docs-28) and the MCP agent integration explicitly describe 'identifying performance outliers' (docs-10/20/26) during investigation, showing some threshold-free outlier surfacing, but this is investigative/on-demand rather than a proactive alerting feature that replaces threshold-based rules. Missing for 10: evidence of an automated, always-on anomaly-detection alert that fires without any configured threshold, and independent confirmation that BubbleUp/MCP outlier detection functions as a genuine alerting substitute rather than a manual investigation aid.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
@@ -1673,9 +1706,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs mention an API and a downloadable OpenAPI spec, but there is no evidence of an interactive, browsable API reference with runnable/try-it examples; a probe for common OpenAPI/swagger endpoints returned 404s, further indicating no discoverable interactive reference.",
+    "rationale": "Evidence only shows a downloadable OpenAPI spec (honeycomb-docs-21) and a general API intro, with no interactive reference UI or runnable code examples documented; a probe for standard OpenAPI/Swagger endpoints returned 404s, further suggesting no interactive API explorer is exposed.",
     "evidenceIds": [
-      "honeycomb-docs-11",
       "honeycomb-docs-21",
       "honeycomb-probe-2"
     ]
@@ -1699,11 +1731,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Honeycomb is an observability platform with a free tier and environments, but the evidence pack contains no mention of a sandbox/test environment for AI agents to safely experiment against without touching production telemetry data. Environments are mentioned only in passing (API key management), with no documented sandbox mode or synthetic-data test environment.",
-    "evidenceIds": [
-      "honeycomb-docs-11",
-      "honeycomb-docs-27"
-    ]
+    "rationale": "No evidence Honeycomb provides a sandbox/test environment separate from production for AI-native testing; the evidence pack covers instrumentation, querying, alerting, and MCP integration but nothing about isolated sandbox data or environments for safe testing.",
+    "evidenceIds": []
   },
   {
     "productId": "honeycomb",
@@ -1711,38 +1740,40 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an API and OpenAPI spec exist (honeycomb-docs-21, honeycomb-docs-27) but there is no mention of API versioning scheme or a documented deprecation policy anywhere in the pack, and a probe even failed to find an openapi.json at expected locations.",
+    "rationale": "Evidence shows an API with OpenAPI spec download but no mention of API versioning scheme or a documented deprecation policy anywhere in the pack; probe for openapi.json even 404s, suggesting weak public spec discoverability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "honeycomb",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Honeycomb's API allows programmatic management of datasets, queries, triggers, SLOs, environments, and API keys, which supports scripted bulk operations, and the MCP server/agent skills enable AI agents to query and investigate telemetry programmatically. However, there is no documented bulk-specific endpoint (e.g., batch create/update/delete across many items in one call) or evidence of bulk operation support in the API docs. missing for 10: explicit bulk/batch API endpoints or examples, evidence of bulk operations via MCP or agent skills, independent confirmation of bulk workflows at scale.",
     "evidenceIds": [
       "honeycomb-docs-11",
-      "honeycomb-docs-21",
+      "honeycomb-docs-27",
+      "honeycomb-docs-9",
+      "honeycomb-docs-34",
+      "honeycomb-docs-35",
       "honeycomb-probe-2"
     ]
   },
   {
     "productId": "honeycomb",
-    "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Honeycomb's API docs mention programmatic management of datasets, queries, triggers, SLOs, etc. (honeycomb-docs-11, honeycomb-docs-27), but no evidence describes batch/bulk endpoints or bulk-edit/delete workflows across many items at once; the docs only reference singular resource management.",
-    "evidenceIds": [
-      "honeycomb-docs-11",
-      "honeycomb-docs-27"
-    ]
-  },
-  {
-    "productId": "honeycomb",
     "storyId": "automation-rules-engine",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Honeycomb's Triggers let users define threshold-based rules that automatically fire alerts/actions (Slack, PagerDuty, Teams, or custom webhook) when conditions are met, and SLOs similarly alert on budget breaches — directly matching the 'rules trigger actions on events' pattern. The API also allows programmatic management of triggers for automated workflows. Missing for 10: AI-assisted or natural-language rule authoring specifically, more complex conditional/chained automation logic, and independent/hands-on validation of trigger reliability beyond vendor docs.",
+    "rationale": "Honeycomb Triggers and SLO burn alerts let users define threshold-based rules on events, and these can route to Slack, PagerDuty, Teams, or custom webhooks with templated JSON payloads to drive downstream automation. This covers rule-based alerting well but the evidence only shows notification/webhook dispatch, not built-in execution of arbitrary remediation actions. Missing for 10: evidence of native automated remediation/action execution (not just notification routing), and independent/hands-on confirmation of end-to-end automation reliability.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
       "honeycomb-docs-8",
       "honeycomb-docs-18",
-      "honeycomb-docs-27"
+      "honeycomb-docs-33",
+      "honeycomb-docs-38",
+      "honeycomb-docs-39"
     ]
   },
   {
@@ -1764,7 +1795,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Honeycomb offers Boards, Triggers, SLOs, and an API to manage configuration, but there is no evidence of version control, review workflows, or rollback capability for automations (triggers/SLOs/boards) — no changelog, diff, or revert feature is documented.",
+    "rationale": "Honeycomb's docs describe creating triggers, SLOs, boards, and webhooks, and managing them via API, but there is no evidence of version history, review workflows, or rollback capability for these automations. Missing for 10: version control/change history for triggers/SLOs/boards, review/approval workflow, rollback mechanism.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
@@ -1778,12 +1809,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only flat pricing tiers with volume caps (event/metrics limits) but nothing about per-team/service cost attribution, spend dashboards, or usage-spike alerting tied to billing; Triggers/SLOs in the pack are about reliability, not cost governance.",
+    "rationale": "Evidence only shows generic pricing tiers and event/metrics volume caps (honeycomb-docs-13, honeycomb-docs-29), but nothing about attributing observability spend to teams/services, a cost/usage dashboard, or alerts specifically for usage-spend spikes (triggers/SLOs are for telemetry data values, not billing usage). No evidence of a cost-tracking or spend-attribution feature.",
     "evidenceIds": [
       "honeycomb-docs-13",
-      "honeycomb-docs-29",
-      "honeycomb-docs-6",
-      "honeycomb-docs-7"
+      "honeycomb-docs-29"
     ]
   },
   {
@@ -1806,11 +1835,16 @@
   {
     "productId": "honeycomb",
     "storyId": "deploy-change-correlation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers OpenTelemetry ingestion, querying, boards, triggers/SLOs, and MCP integration, but nowhere mentions Honeycomb's deploy/release marker or annotation feature that would let a developer explicitly correlate regressions with deploys or config changes; this is a standard, fair capability for an observability platform, so its absence is a gap rather than an inapplicable axis.",
-    "evidenceIds": []
+    "rationale": "Honeycomb supports 'Markers' via a CLI/API (honeymarker) that lets teams CRUD markers (e.g., deploy events) on the timeline for correlation with telemetry, and Triggers/SLOs/BubbleUp can then be used to investigate regressions relative to those markers. However, the evidence pack contains only a single thin mention of the marker CLI and no detailed walkthrough of deploy/config-change tracking, no CI/CD integration examples, and no independent corroboration of this workflow in practice. missing for 10: dedicated docs/tutorial on deploy-marker correlation workflows, CI/CD integration examples, and community validation of using markers for regression-to-deploy correlation.",
+    "evidenceIds": [
+      "honeycomb-docs-37",
+      "honeycomb-docs-6",
+      "honeycomb-docs-7",
+      "honeycomb-docs-3"
+    ]
   },
   {
     "productId": "honeycomb",
@@ -1818,15 +1852,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Honeycomb's Query Builder is documented with a formal structured query language (SELECT/WHERE/GROUP BY/ORDER BY/LIMIT/HAVING clauses, relational span prefixes) for ad hoc exploration of telemetry, plus Boards/BubbleUp for saved analysis and a Query Assistant for NLQ-to-query generation, with community confirmation it accelerates investigations. Missing for 10: independent hands-on benchmarking of query language expressiveness/performance at scale beyond one HN comment.",
+    "rationale": "Honeycomb documents a full ad-hoc Query Builder with defined clauses (SELECT/WHERE/GROUP BY/ORDER BY/LIMIT/HAVING), relational field prefixes, BubbleUp for outlier investigation, and even a Query Assistant for natural-language querying, all clearly documented for interactive exploration. Community evidence corroborates it accelerates ad hoc investigations in practice. Missing for 10: independent hands-on benchmarking of query language expressiveness/limitations beyond vendor docs.",
     "evidenceIds": [
       "honeycomb-docs-3",
+      "honeycomb-docs-4",
       "honeycomb-docs-16",
-      "honeycomb-docs-17",
       "honeycomb-docs-24",
       "honeycomb-docs-25",
-      "honeycomb-docs-4",
-      "honeycomb-docs-19",
+      "honeycomb-docs-28",
+      "honeycomb-docs-32",
       "honeycomb-comm-1"
     ]
   },
@@ -1836,12 +1870,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Honeycomb's evidence focuses on traces/spans, OTel ingestion, ad-hoc querying, Boards, Triggers/SLOs, and BubbleUp outlier detection — none of the evidence describes grouping errors into 'issues,' capturing stack traces, release/version tracking, or automated regression detection, which are the hallmarks of dedicated error-tracking tools rather than Honeycomb's trace-analytics model.",
-    "evidenceIds": [
-      "honeycomb-docs-3",
-      "honeycomb-docs-12",
-      "honeycomb-docs-24"
-    ]
+    "rationale": "Honeycomb's evidence covers OpenTelemetry tracing, ad-hoc querying, boards, triggers/SLOs, and MCP integration, but nothing describes automatic error grouping into issues, stack trace capture, release tracking, or regression detection — capabilities associated with dedicated error-tracking tools rather than shown here.",
+    "evidenceIds": []
   },
   {
     "productId": "honeycomb",
@@ -1849,14 +1879,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Honeycomb's Query Builder supports GROUP BY, WHERE, and other clauses directly against raw event/trace data (including relational span prefixes like root./parent./child.) without requiring predefined indexes, and BubbleUp is referenced as an ad-hoc outlier/grouping tool — this is the core high-cardinality investigation workflow Honeycomb is built around, corroborated by community use for investigations. missing for 10: explicit documentation stating 'no pre-aggregation/no indexing required' or benchmarks/independent tests specifically demonstrating high-cardinality field grouping (e.g., by user_id) at scale.",
+    "rationale": "Honeycomb's Query Builder lets users construct ad-hoc queries with SELECT/WHERE/GROUP BY/ORDER BY/HAVING clauses on any field (including user id, request id) without needing pre-defined indexes, and BubbleUp helps isolate outliers by any field value on the fly [honeycomb-docs-3, honeycomb-docs-16, honeycomb-docs-24, honeycomb-docs-32, honeycomb-docs-28]. Relational field prefixes (root., parent., child., anyX.) further show flexible querying across trace structure without pre-aggregation [honeycomb-docs-17, honeycomb-docs-25]. Missing for 10: explicit documentation stating 'no indexing or pre-aggregation required' and independent hands-on benchmarks confirming high-cardinality performance at scale.",
     "evidenceIds": [
       "honeycomb-docs-3",
       "honeycomb-docs-16",
-      "honeycomb-docs-17",
       "honeycomb-docs-24",
+      "honeycomb-docs-32",
       "honeycomb-docs-28",
-      "honeycomb-comm-1"
+      "honeycomb-docs-17",
+      "honeycomb-docs-25"
     ]
   },
   {
@@ -1864,12 +1895,14 @@
     "storyId": "incident-management-oncall",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Honeycomb provides triggers and SLO alerts that route notifications to PagerDuty/Slack/Teams, but there is no evidence Honeycomb itself declares incidents, tracks incident timelines, manages on-call schedules, or defines escalation policies — those are delegated to external tools like PagerDuty.",
+    "confidence": "medium",
+    "rationale": "Honeycomb provides triggers and SLO burn alerts that route to PagerDuty, Slack, or webhooks, but there is no evidence of native incident declaration, timeline tracking, on-call scheduling, or escalation policy management within Honeycomb itself — it defers those functions to external tools like PagerDuty. missing for 10: incident declaration/lifecycle tracking, on-call schedule management, escalation policy configuration.",
     "evidenceIds": [
       "honeycomb-docs-6",
       "honeycomb-docs-7",
-      "honeycomb-docs-8"
+      "honeycomb-docs-8",
+      "honeycomb-docs-18",
+      "honeycomb-docs-33"
     ]
   },
   {
@@ -1878,12 +1911,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Honeycomb documents broad OpenTelemetry/OTLP ingestion (gRPC, HTTP/protobuf, HTTP/JSON) as its primary instrumentation path, which covers hosts, containers, and cloud services generically via the OTel ecosystem, but the evidence pack contains no vendor-maintained Honeycomb-specific agent, Kubernetes operator, or cloud-provider integration list — it relies entirely on the OTel standard rather than first-party agents for each surface. missing for 10: a Honeycomb-branded/maintained agent or K8s integration, explicit cloud-service (AWS/GCP/Azure) integrations, and independent confirmation of ease of setup across these environments.",
+    "rationale": "Honeycomb documents Kubernetes integration for logs/metrics (honeycomb-docs-40) and OpenTelemetry-based instrumentation for hosts/containers/apps (honeycomb-docs-1,2,14,15,30,31), but its own docs show the dedicated Kubernetes agent and Beelines (vendor-specific host/language agents) are being migrated away from in favor of generic OTel SDKs/collectors (honeycomb-docs-41), meaning there's no strong evidence of a broad, actively maintained portfolio of vendor-specific agents across hosts, containers, Kubernetes, and cloud services—OTel is the primary path. Missing for 10: dedicated vendor-maintained host/cloud-service agents (e.g., AWS/GCP/Azure integrations), current (non-deprecated) Kubernetes agent, and independent confirmation of broad agent coverage.",
     "evidenceIds": [
       "honeycomb-docs-1",
       "honeycomb-docs-2",
-      "honeycomb-docs-14",
-      "honeycomb-docs-15"
+      "honeycomb-docs-40",
+      "honeycomb-docs-41",
+      "honeycomb-docs-30",
+      "honeycomb-docs-31"
     ]
   },
   {
@@ -1892,22 +1927,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Honeycomb is described throughout as a cloud SaaS platform (OTLP ingestion, hosted query builder, boards, SLOs, API); no evidence of a local/self-hosted or on-prem dev instance for testing instrumentation and dashboards. The free tier (docs-13, docs-29) is still a hosted cloud account, not a local/dev deployment.",
-    "evidenceIds": []
+    "rationale": "Honeycomb is presented purely as a cloud-hosted SaaS platform with a free-tier plan; there is no evidence of a local, on-prem, or self-hosted/dev instance option for testing instrumentation and dashboards offline. All docs point to sending data to Honeycomb's hosted service via OTLP, and no self-host/docker/local-sandbox artifact is mentioned.",
+    "evidenceIds": [
+      "honeycomb-docs-13",
+      "honeycomb-docs-2",
+      "honeycomb-docs-15"
+    ]
   },
   {
     "productId": "honeycomb",
     "storyId": "nl-telemetry-queries",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Honeycomb's Query Assistant explicitly generates Honeycomb queries from natural-language input, directly matching the story, and the MCP integration extends this so AI agents can query telemetry and get real answers/charts back. missing for 10: independent/hands-on validation of Query Assistant's accuracy and no evidence of chart-specific output beyond query generation.",
+    "confidence": "high",
+    "rationale": "Honeycomb's Query Assistant explicitly generates real Honeycomb queries from natural-language input, directly matching the story, and this is reinforced by MCP integration letting AI agents query telemetry and produce answers/investigations from natural language. Missing for 10: independent hands-on evidence/reviews validating Query Assistant's accuracy or chart-generation quality beyond first-party docs.",
     "evidenceIds": [
       "honeycomb-docs-4",
+      "honeycomb-docs-3",
       "honeycomb-docs-9",
-      "honeycomb-docs-10",
-      "honeycomb-docs-23",
-      "honeycomb-probe-3"
+      "honeycomb-docs-34",
+      "honeycomb-docs-10"
     ]
   },
   {
@@ -1916,14 +1955,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Honeycomb's API lets users programmatically manage datasets, queries, triggers, SLOs, environments, and API keys (honeycomb-docs-11, honeycomb-docs-27), and an OpenAPI spec is downloadable (honeycomb-docs-21), covering much of the UI's core functionality. However, UI-only features like Query Assistant (NLQ), Boards/Board Templates, and BubbleUp are not documented as API-accessible, and a probe found no hosted OpenAPI spec at expected endpoints (honeycomb-probe-2), suggesting API parity may be incomplete or harder to discover. missing for 10: API-level access to Query Assistant/NLQ, Boards/Board Templates management via API, BubbleUp analysis via API, and a directly accessible OpenAPI spec confirming full endpoint coverage.",
+    "rationale": "Honeycomb's API docs claim broad programmatic control over datasets, queries, triggers, SLOs, environments, and API keys, and a downloadable OpenAPI spec is mentioned, showing meaningful parity with UI-driven workflows. However, evidence does not show that UI-specific features like Query Assistant (NLQ), Boards/Board Templates, or BubbleUp are exposed via the API, and a probe found the OpenAPI spec unreachable at expected paths, casting some doubt on programmatic completeness. Missing for 10: explicit API endpoints for Boards, Query Assistant, and BubbleUp, plus a verified working OpenAPI spec location.",
     "evidenceIds": [
       "honeycomb-docs-11",
-      "honeycomb-docs-27",
       "honeycomb-docs-21",
+      "honeycomb-docs-27",
       "honeycomb-docs-4",
       "honeycomb-docs-5",
-      "honeycomb-docs-19",
       "honeycomb-probe-2"
     ]
   },
@@ -1947,7 +1985,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Honeycomb is a closed, commercial SaaS observability platform; no evidence indicates its source code is published under any open license (only OpenAPI spec download and OSS OpenTelemetry standard support are mentioned, not the product's own source).",
+    "rationale": "Honeycomb is a closed, commercial SaaS observability platform; there is no evidence of an open-source license for its core product source code (only OpenTelemetry, an unrelated open standard, is mentioned). No repository or license is cited anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -1956,11 +1994,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Honeycomb is a SaaS observability platform with a free-tier pricing page and no evidence of a self-hostable/on-prem deployment option; all evidence points to hosted cloud service usage only.",
-    "evidenceIds": [
-      "honeycomb-docs-13",
-      "honeycomb-docs-29"
-    ]
+    "rationale": "Honeycomb is a hosted SaaS observability platform with a free-forever pricing tier, but no evidence pack item mentions a self-hosted/on-prem deployment option for the core product; all references point to the managed cloud service and its APIs/integrations.",
+    "evidenceIds": []
   },
   {
     "productId": "honeycomb",
@@ -1968,13 +2003,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly confirm Honeycomb natively ingests OTLP over gRPC, HTTP/protobuf, and HTTP/JSON, with first-class OpenTelemetry instrumentation guidance for traces, logs, and metrics. Missing for 10: independent hands-on verification of OTLP ingestion beyond vendor docs.",
+    "rationale": "Honeycomb documents native OTLP ingestion over gRPC, HTTP/protobuf, and HTTP/JSON, and explicitly supports sending traces, logs, and metrics via OpenTelemetry SDKs, including direct OTLP send if already instrumented. Missing for 10: independent/hands-on corroboration of OTLP ingestion reliability beyond vendor docs.",
     "evidenceIds": [
       "honeycomb-docs-1",
       "honeycomb-docs-2",
-      "honeycomb-docs-14",
       "honeycomb-docs-15",
-      "honeycomb-docs-12"
+      "honeycomb-docs-30",
+      "honeycomb-docs-31"
     ]
   },
   {
@@ -1983,7 +2018,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions data region/residency options, EU/US storage choices, or data localization controls for Honeycomb; the pack only covers ingestion, querying, alerting, MCP, and API features.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location options for Honeycomb; nothing addresses where telemetry data is physically stored or processed.",
     "evidenceIds": []
   },
   {
@@ -1992,7 +2027,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of AI/ML training data usage policies, opt-out mechanisms, or data privacy commitments regarding AI model training for Honeycomb's product data.",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-out policies, or data-use commitments for AI model training; this is an observability platform whose docs focus on telemetry, querying, and MCP integrations, with no privacy statement about training exclusion.",
     "evidenceIds": []
   },
   {
@@ -2000,11 +2035,9 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only mentions that Honeycomb tracks data 'past your retention period' for SLOs, implying a retention policy exists, but there is no documentation showing users can configure retention periods, request data deletion, or otherwise control data lifecycle as part of an AI-native privacy posture.",
-    "evidenceIds": [
-      "honeycomb-docs-22"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence only passively references a 'retention period' concept (honeycomb-docs-22) without describing any user-facing controls for configuring retention duration or deleting data/datasets. No docs describe data deletion APIs, retention settings, or GDPR/right-to-erasure mechanisms relevant to AI-native privacy posture.",
+    "evidenceIds": []
   },
   {
     "productId": "honeycomb",
@@ -2012,7 +2045,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack content addresses telemetry opt-out or usage-tracking controls for AI-native users; Honeycomb's docs focus on its role as a data-collection/observability platform, not on disabling tracking of its own product usage.",
+    "rationale": "The evidence pack contains no mention of a telemetry/usage-tracking opt-out mechanism for Honeycomb itself (e.g., product analytics, CLI/MCP tool telemetry collection settings); Honeycomb's docs focus on ingesting customer telemetry, not on the product's own usage-tracking of its users or AI tooling.",
     "evidenceIds": []
   },
   {
@@ -2021,11 +2054,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Honeycomb is a SaaS observability product; no evidence pack item mentions self-hosting, on-prem deployment, or an upgrade path for a self-managed stack — all docs reference Honeycomb's own hosted platform and pricing tiers. This is an applicable axis (self-hosted observability stacks exist as a category, e.g. open-source alternatives) but Honeycomb offers no documented self-hosted deployment option.",
-    "evidenceIds": [
-      "honeycomb-docs-13",
-      "honeycomb-docs-29"
-    ]
+    "rationale": "Honeycomb is documented exclusively as a hosted SaaS product (pricing plans, cloud ingestion via OTLP, cloud UI features); no evidence pack item mentions self-hosting, on-prem deployment, architecture diagrams for a self-managed stack, or an upgrade/versioning path for running Honeycomb yourself. Since self-hosted observability stacks are a legitimate category (e.g., Prometheus/Grafana), the axis applies, but there is no evidence Honeycomb supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "honeycomb",
@@ -2033,11 +2063,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Honeycomb Boards let SREs save, organize, and share analysis components, and pre-built Board Templates exist for common use cases, satisfying the shareable-dashboard and templating-for-speed aspect. However, evidence does not document dashboard 'template variables' (parameterized/dynamic dashboards) or a broad set of rich visualization types beyond query results and BubbleUp outlier views. Missing for 10: explicit template-variable support, documented visualization type gallery (e.g., heatmaps, gauges beyond BubbleUp), independent user validation of dashboard richness.",
+    "rationale": "Honeycomb Boards let SRE teams save, organize, and share analysis components with pre-built templates for common use cases, and queries can include grouping, visualizations, and derived columns. However, evidence does not confirm 'rich visualization types' beyond basic query graphs/BubbleUp, nor does it show explicit template variable support within Boards (parameterized/reusable dashboards) as a documented feature. missing for 10: explicit documentation of template variables in Boards, evidence of diverse visualization types (e.g., heatmaps, custom charts) beyond standard query results, and independent/hands-on corroboration of dashboard sharing workflow.",
     "evidenceIds": [
       "honeycomb-docs-5",
       "honeycomb-docs-19",
-      "honeycomb-docs-28"
+      "honeycomb-docs-3",
+      "honeycomb-docs-16"
     ]
   },
   {
@@ -2057,14 +2088,15 @@
     "productId": "honeycomb",
     "storyId": "slo-error-budgets",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Honeycomb docs explicitly document SLOs with error budgets ('be alerted when your SLO budget is threatened'), Budget Burndown/Historical Compliance tracking, and burn-rate style alerting routed to Slack/PagerDuty/Teams/webhooks, plus API support for programmatic SLO management. Missing for 10: no independent/hands-on validation of alert accuracy or burn-rate tuning specifics beyond docs.",
+    "rationale": "Docs explicitly cover defining SLOs with error budgets, burn-rate alerting routed to Slack/PagerDuty/Teams/webhooks, and API support for programmatic SLO management, plus best-practice guidance on budget burndown tracking. Missing for 10: independent/hands-on validation of SLO burn-rate accuracy in production use.",
     "evidenceIds": [
       "honeycomb-docs-7",
       "honeycomb-docs-8",
       "honeycomb-docs-22",
-      "honeycomb-docs-27"
+      "honeycomb-docs-27",
+      "honeycomb-docs-33"
     ]
   },
   {
@@ -2073,13 +2105,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Honeycomb ingests traces, logs, and metrics together via OpenTelemetry (docs-1, docs-14, docs-15) and its Query Builder can traverse trace structure with root/parent/child relational prefixes (docs-17, docs-25), suggesting some cross-signal correlation within a single dataset. However, there is no explicit documentation of a UI action to 'jump' from a specific span directly to its correlated logs/metrics view, and community evidence (honeycomb-comm-2) indicates practitioners still manually cross-reference separate tools (Honeycomb traces, OpenSearch logs, Prometheus metrics) during incidents, suggesting the seamless single-pane correlation described in the story isn't fully realized. Missing for 10: explicit docs/screenshots of an in-trace-view link/button to jump to correlated logs and metrics, and independent hands-on confirmation that this workflow is smooth.",
+    "rationale": "Honeycomb ingests traces, logs, and metrics all via OpenTelemetry into one dataset, and query builder supports trace-relational fields (root./parent./child.) so users can correlate span data within a trace, but the evidence pack contains no explicit UI feature or workflow described as 'click a span to jump to correlated logs/metrics.' Community evidence even shows practitioners still pivoting across separate tools (OpenSearch, Prometheus) for logs/metrics during incidents, suggesting cross-signal jumps aren't always seamless in practice. missing for 10: explicit documentation of a span-to-logs/metrics jump UI or workflow, independent hands-on confirmation that correlation works end-to-end within Honeycomb alone.",
     "evidenceIds": [
       "honeycomb-docs-1",
       "honeycomb-docs-14",
-      "honeycomb-docs-15",
       "honeycomb-docs-17",
       "honeycomb-docs-25",
+      "honeycomb-docs-30",
+      "honeycomb-docs-31",
       "honeycomb-comm-2"
     ]
   },
@@ -2088,8 +2121,8 @@
     "storyId": "transparent-published-pricing",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Honeycomb's public pricing page is referenced with a free tier and explicit volume caps (20M events/mo, 100M metric data points/mo) suggesting some self-serve, published tiers, but the evidence never shows actual per-signal dollar rates or a cost calculator, and higher tiers likely require sales contact. Missing for 10: explicit $/event or $/metric pricing figures, confirmation that all tiers (including enterprise) are self-serve without sales engagement, and independent corroboration that published pricing lets an SRE fully predict costs.",
+    "confidence": "medium",
+    "rationale": "Honeycomb has a public pricing page listing a free tier with event volume and metrics data point caps (honeycomb-docs-13, honeycomb-docs-28, honeycomb-docs-29), suggesting some self-serve cost transparency without contacting sales. However, the evidence never shows actual per-signal dollar rates (e.g., $/million events or spans) for paid tiers, nor confirms whether higher-usage tiers require sales contact, so an SRE cannot fully model costs from what's shown.  missing for 10: explicit $ per-event/span pricing figures, confirmation that all paid tiers are self-serve without sales engagement, cost calculator or usage-based rate card.",
     "evidenceIds": [
       "honeycomb-docs-13",
       "honeycomb-docs-28",
@@ -2099,16 +2132,23 @@
   {
     "productId": "honeycomb",
     "storyId": "unified-metrics-logs-traces",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Honeycomb documents ingesting traces, logs, and metrics all via OTLP into one platform, with a unified Query Builder (including relational span prefixes like root./parent./child.) and Boards to organize and pivot across analyses, satisfying much of the 'unified telemetry with shared context' story. However, community evidence shows at least one heavy Honeycomb user still relying on separate tools (OpenSearch for logs, Prometheus/VictoriaMetrics for metrics) alongside Honeycomb, suggesting real-world consolidation of all three signal types in one pane isn't always realized. Missing for 10: independent corroboration that logs/metrics pivoting works as seamlessly as traces, dedicated metrics-exploration UI documentation, and case studies of cross-signal correlation in practice.",
+    "rationale": "Honeycomb docs show a single ingestion path for traces, logs, and metrics via OpenTelemetry/OTLP (honeycomb-docs-1,2,14,15,30,31), a unified Query Builder with trace-aware relational fields (root./parent./child.) enabling pivoting across signals within one query (honeycomb-docs-3,16,17,24,25), plus Kubernetes-wide log/metric/trace collection (honeycomb-docs-40) and a dedicated traces-metrics-logs getting-started guide (honeycomb-docs-12). Community evidence corroborates that logs, metrics, and traces genuinely live together in Honeycomb (honeycomb-comm-1), though the same user still stitches in external tools for full incident context, showing real-world workflows aren't always single-pane. Missing for 10: explicit documentation of a single unified visualization/dashboard showing metrics+logs+traces together with one-click pivot, and stronger independent corroboration beyond one HN thread.",
     "evidenceIds": [
       "honeycomb-docs-1",
       "honeycomb-docs-2",
       "honeycomb-docs-3",
+      "honeycomb-docs-12",
+      "honeycomb-docs-16",
       "honeycomb-docs-17",
-      "honeycomb-docs-5",
+      "honeycomb-docs-24",
+      "honeycomb-docs-25",
+      "honeycomb-docs-30",
+      "honeycomb-docs-31",
+      "honeycomb-docs-40",
+      "honeycomb-comm-1",
       "honeycomb-comm-2"
     ]
   },
@@ -2118,28 +2158,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Honeycomb explicitly documents OpenTelemetry as its recommended instrumentation path, supporting native OTLP over gRPC/HTTP, meaning apps instrumented with vendor-neutral OTel SDKs can send data to Honeycomb without custom re-instrumentation, and could similarly point that same OTel pipeline at another OTLP-compatible backend. Missing for 10: explicit documentation/case study demonstrating a customer switching backends while reusing the same instrumentation, and independent confirmation of zero vendor lock-in beyond OTLP ingestion.",
+    "rationale": "Honeycomb documents native OTLP ingestion (gRPC/HTTP protobuf/JSON) and encourages instrumenting with vendor-neutral OpenTelemetry SDKs rather than proprietary agents, explicitly supporting the 'instrument once, switch backend' model; it also documents migration guidance away from its legacy Beelines toward OTel. Missing for 10: independent/hands-on evidence of actually switching backends without code changes, and more detail on parity of features (e.g., metrics/logs) across OTel vs proprietary paths.",
     "evidenceIds": [
       "honeycomb-docs-1",
       "honeycomb-docs-2",
       "honeycomb-docs-14",
       "honeycomb-docs-15",
-      "honeycomb-docs-12"
+      "honeycomb-docs-30",
+      "honeycomb-docs-41"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "agent-queries-telemetry",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "New Relic exposes NerdGraph, a documented GraphQL API for querying metrics, logs, and traces, plus NRQL for structured queries, and now an official MCP server that lets external AI agents connect and convert natural-language questions into NRQL for troubleshooting production issues. This directly matches the story of an external agent querying telemetry through documented APIs to debug production. Missing for 10: independent hands-on validation of the MCP server/API reliability from third parties beyond vendor docs.",
+    "rationale": "New Relic exposes NerdGraph, a documented GraphQL API for querying metrics, logs, and traces via NRQL, plus an official MCP server explicitly built to let AI dev tools/agents query telemetry data in plain language (converted to NRQL) for production troubleshooting. This directly satisfies an external agent debugging production via documented APIs. Missing for 10: independent/hands-on third-party validation of the MCP server or NerdGraph API in agentic workflows, and no public OpenAPI spec (only GraphQL).",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
+      "new-relic-docs-32",
       "new-relic-docs-11",
       "new-relic-docs-22",
-      "new-relic-docs-3",
+      "new-relic-docs-36",
       "new-relic-probe-3"
     ]
   },
@@ -2159,30 +2201,28 @@
     "productId": "new-relic",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "New Relic AI (docs-9, docs-10) provides in-product AI assistant for plain-language querying, troubleshooting suggestions, and query help, plus an MCP server (docs-11, docs-22) that converts natural language to NRQL for insights. This is first-party documented but lacks independent/hands-on corroboration of quality or depth of insights generated. Missing for 10: independent user validation of AI insight quality, detail on proactive/automated insight generation beyond query assistance, and depth of anomaly-detection or automated root-cause AI features.",
+    "rationale": "New Relic AI provides natural-language querying and troubleshooting assistance, and dedicated 'AI insights' features deliver AI-powered summaries of workload health, performance trends, and potential issues directly in the platform, with further automated remediation capabilities described. Missing for 10: independent/hands-on validation of the insight quality and no detail on how proactive/automatic (vs. on-demand) these AI-generated insights are.",
     "evidenceIds": [
       "new-relic-docs-9",
       "new-relic-docs-10",
-      "new-relic-docs-11",
-      "new-relic-docs-22"
+      "new-relic-docs-43",
+      "new-relic-docs-46"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "New Relic's alerting system lets you define thresholds and notification rules that run continuously in the background without further manual intervention (new-relic-docs-5, new-relic-docs-21/25), which is a basic autonomous background automation. However, the 'ai-native/agentic' framing (AI assistant, MCP server) is described as an interactive query/troubleshooting helper (new-relic-docs-9/10) or a connector for external AI tools (new-relic-docs-11/22) rather than an autonomous agent that itself sets up and runs background tasks. Missing for 10: evidence of AI-driven workflows/agents that autonomously configure or execute actions (not just user-defined alert rules), a documented automation/workflow engine beyond alerting, and independent corroboration that these run unattended reliably.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "New Relic documents an autonomous vulnerability-management agent that triages CVEs, drafts remediations, and opens Jira/GitHub tickets on its own, plus messaging about moving 'beyond assistance to automated remediation,' showing genuine background-running agentic automation. However, this is narrow (vulnerability management specifically) rather than a general-purpose automation/workflow builder for AI-native users across the platform. Missing for 10: evidence of a broader, user-configurable automation/agent-builder framework spanning multiple domains (not just CVE remediation), and independent/hands-on confirmation the autonomous agent works reliably in production.",
     "evidenceIds": [
-      "new-relic-docs-5",
-      "new-relic-docs-21",
-      "new-relic-docs-25",
-      "new-relic-docs-9",
-      "new-relic-docs-11",
-      "new-relic-docs-22"
+      "new-relic-docs-41",
+      "new-relic-docs-46",
+      "new-relic-docs-33",
+      "new-relic-docs-34"
     ]
   },
   {
@@ -2191,24 +2231,28 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "New Relic docs describe a built-in AI assistant (New Relic AI) that lets users ask questions in plain language, troubleshoot issues, explore telemetry data, and get help building NRQL queries directly inside the product. This matches the story of delegating tasks to an in-product AI assistant, though evidence is vendor-documentation only with no independent hands-on verification of task delegation depth or reliability. Missing for 10: independent/community corroboration of the assistant's real-world task delegation capability and quality, and more detail on the scope of tasks it can autonomously perform beyond Q&A/query help.",
+    "rationale": "New Relic AI is documented as a built-in assistant that lets users ask questions in plain language, troubleshoot, and explore telemetry, and even help construct/debug NRQL queries — a clear in-product AI delegate. Additional evidence of an agentic vulnerability-management agent that triages CVEs, drafts remediations, and opens tickets, plus messaging about moving 'beyond assistance to automated remediation,' shows real task delegation beyond simple Q&A. missing for 10: independent/hands-on user reports validating the assistant's real-world reliability and depth of autonomous task execution (community evidence covers pricing/UI/logging issues, not the AI assistant specifically).",
     "evidenceIds": [
       "new-relic-docs-9",
-      "new-relic-docs-10"
+      "new-relic-docs-10",
+      "new-relic-docs-41",
+      "new-relic-docs-46"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "New Relic ships an official CLI (newrelic-cli) for deployment markers and entity search, plus a GraphQL-based NerdGraph API, both of which are inherently scriptable/headless and usable in CI pipelines (e.g. recording deployment markers on release). However, there is no explicit CI/CD integration guide, pipeline example, or documented automation workflow tying these together for AI-native/agentic use. Missing for 10: explicit CI/CD pipeline documentation or examples, evidence of headless operation being a first-class supported workflow, and independent confirmation of CLI use in automated pipelines.",
+    "rationale": "New Relic ships a dedicated CLI (newrelic-cli) for entity search, deployment markers, tags, and workloads, plus a GraphQL API (NerdGraph) and Terraform provider for agent/config management—all of which are scriptable and CI-friendly, and deployment markers are a canonical CI/CD automation use case. There's also a diagnostics CLI (nrdiag) for automated checks. Missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions workflow snippets) and independent hands-on confirmation that these tools run reliably headlessly in real automation pipelines.",
     "evidenceIds": [
       "new-relic-gh-1",
       "new-relic-gh-2",
+      "new-relic-docs-38",
       "new-relic-docs-2",
-      "new-relic-docs-20",
+      "new-relic-docs-42",
+      "new-relic-docs-44",
       "new-relic-probe-4"
     ]
   },
@@ -2218,12 +2262,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows New Relic ships an official MCP server so external AI tools can connect to New Relic's data (new-relic-docs-11, new-relic-docs-22, new-relic-probe-3) — this is the reverse direction (New Relic as MCP server, not MCP client). No evidence indicates New Relic's own AI assistant or platform can consume/plug in external MCP servers to use their tools.",
+    "rationale": "Evidence shows New Relic ships an MCP *server* so external AI tools can query New Relic data (docs-11, docs-22, docs-36, probe-3), but this is the server/provider role, not the product acting as an MCP *client* that ingests external MCP servers' tools into its own AI assistant (New Relic AI). No evidence describes such client-side MCP plugin capability.",
     "evidenceIds": [
       "new-relic-docs-11",
       "new-relic-docs-22",
-      "new-relic-probe-3",
-      "new-relic-docs-9"
+      "new-relic-docs-36",
+      "new-relic-probe-3"
     ]
   },
   {
@@ -2231,11 +2275,12 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "New Relic ships an official MCP server (documented Nov 2025) that connects AI development tools to New Relic's platform context, including converting plain-English questions into NRQL queries. This is first-party vendor documentation with a dedicated release note and probe-confirmed URL, but lacks independent/hands-on corroboration of the MCP server's reliability. Missing for 10: independent or hands-on validation of the MCP server, detail on setup/auth flow and supported tool integrations.",
+    "confidence": "high",
+    "rationale": "New Relic documents an official MCP server that connects AI development tools/agents directly to New Relic platform data, converting natural-language questions into NRQL queries and returning results, corroborated by a dedicated probe confirming the announcement page exists. Missing for 10: independent/hands-on third-party verification of the MCP server in production use and details on setup/auth/tool coverage beyond the announcement post.",
     "evidenceIds": [
       "new-relic-docs-11",
       "new-relic-docs-22",
+      "new-relic-docs-36",
       "new-relic-probe-3"
     ]
   },
@@ -2243,27 +2288,28 @@
     "productId": "new-relic",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "New Relic AI lets users ask questions, troubleshoot, and explore telemetry in plain language, and the new MCP server explicitly converts natural-language questions into NRQL queries to retrieve results without requiring NRQL expertise. This directly delivers natural-language operation of the product for querying and troubleshooting. Missing for 10: independent/hands-on validation of the natural-language assistant's accuracy and broader coverage beyond querying (e.g., configuring alerts or dashboards via NL commands).",
+    "rationale": "New Relic AI is documented as a first-party feature letting users 'ask questions, troubleshoot issues, and explore telemetry data using plain language,' and the MCP server explicitly converts plain-English questions into NRQL queries, enabling natural-language operation of core observability workflows. Missing for 10: independent/hands-on corroboration of the AI assistant's reliability and broader coverage of natural-language control over configuration/alerting actions beyond querying and troubleshooting.",
     "evidenceIds": [
       "new-relic-docs-9",
       "new-relic-docs-10",
       "new-relic-docs-22",
-      "new-relic-docs-11",
-      "new-relic-probe-3"
+      "new-relic-docs-36"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "agentic-official-cli",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "New Relic ships an official open-source CLI (newrelic-cli) supporting entity search, deployment markers, and platform configuration, confirmed via GitHub repo and probe. However, the evidence doesn't show AI-native features specific to the CLI itself (e.g., natural-language query support, agentic workflows are only documented for the separate MCP server/AI assistant, not the CLI). Missing for 10: documentation of AI-native/agentic capabilities within the CLI itself, independent hands-on reviews of the CLI, and details on how it integrates with AI coding agents.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "New Relic ships an official, actively documented CLI (newrelic-cli) with concrete capabilities like entity search, tagging, workload definitions, and deployment markers, plus a separate nrdiag diagnostics CLI, confirmed both in GitHub repo and docs/tutorial pages. This is a general-purpose CLI rather than one purpose-built for AI-native/agentic workflows specifically. Missing for 10: evidence of AI-native features within the CLI itself (e.g., natural-language or agent-oriented commands) and independent hands-on validation of the CLI's usability.",
     "evidenceIds": [
       "new-relic-gh-1",
       "new-relic-gh-2",
+      "new-relic-docs-38",
+      "new-relic-docs-44",
       "new-relic-probe-4"
     ]
   },
@@ -2273,14 +2319,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "New Relic documents NerdGraph, a GraphQL API for querying data and configuring features, with an interactive explorer, plus an official CLI (newrelic-cli) that wraps API functionality for entity search and deployment markers. This constitutes a documented public API surface that can be driven programmatically outside the UI. Missing for 10: no discoverable OpenAPI/Swagger spec (probe found 404s) and no independent hands-on developer corroboration of NerdGraph usage beyond docs.",
+    "rationale": "New Relic exposes NerdGraph, a documented GraphQL API for querying and configuring data, complete with an interactive API explorer, plus an official CLI (newrelic-cli) for managing entities, tags, and deployments — giving AI-native users multiple documented, scriptable interfaces to drive the product. Missing for 10: independent/hands-on developer confirmation of API robustness and explicit versioning/rate-limit docs (the OpenAPI probe 404s, though NerdGraph's own GraphQL schema/explorer substitutes for that).",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
       "new-relic-gh-1",
       "new-relic-gh-2",
-      "new-relic-probe-2",
-      "new-relic-probe-4"
+      "new-relic-docs-38",
+      "new-relic-probe-2"
     ]
   },
   {
@@ -2289,29 +2335,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "New Relic offers API access (NerdGraph, user keys) and an MCP server for AI tools, but no evidence describes scoped/least-privilege credential issuance specifically for agents (e.g., fine-grained API key scoping, role-based agent tokens). Missing for 10: documentation of scoped API key creation, least-privilege permission models for agent credentials, or agent-specific token management.",
-    "evidenceIds": [
-      "new-relic-docs-2",
-      "new-relic-docs-11",
-      "new-relic-docs-22"
-    ]
+    "rationale": "The evidence pack contains no mention of API key types, scopes, or least-privilege credential issuance for agents/integrations (e.g., NerdGraph, MCP server, or CLI access). While New Relic is the kind of platform where scoped API keys would be a fair and plausible feature, nothing in the provided docs, GitHub, or community evidence documents this capability.",
+    "evidenceIds": []
   },
   {
     "productId": "new-relic",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "New Relic ships official first-party agents/SDKs for Go, Java, .NET, Node.js, PHP, Python, and Ruby, plus a GraphQL-based NerdGraph API with an interactive API explorer, OpenTelemetry instrumentation support, and an official CLI (newrelic-cli), giving developers multiple official, documented ways to build against the platform. Missing for 10: independent/hands-on corroboration of SDK developer experience and no explicit AI-native SDK features (e.g., no OpenAPI spec found, llms.txt 404).",
+    "rationale": "New Relic documents official APM/agent SDKs for Go, Java, .NET, Node.js, PHP, Python, and Ruby, plus dedicated SDK components for building New Relic apps and SDK-based Lambda instrumentation, giving AI-native developers multiple official language SDKs to build against. Missing for 10: independent/hands-on corroboration of SDK quality or completeness beyond first-party docs, and no explicit AI/agent-specific SDK beyond general agents.",
     "evidenceIds": [
       "new-relic-docs-1",
-      "new-relic-docs-2",
-      "new-relic-docs-4",
-      "new-relic-docs-20",
-      "new-relic-gh-1",
-      "new-relic-probe-4",
-      "new-relic-probe-1",
-      "new-relic-probe-2"
+      "new-relic-docs-24",
+      "new-relic-docs-39",
+      "new-relic-docs-40",
+      "new-relic-docs-4"
     ]
   },
   {
@@ -2319,12 +2358,9 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows alerts, dashboards, NerdGraph API, MCP server, and CLI capabilities, but no mention of webhook subscriptions for events or any pub/sub-style event notification mechanism for external systems. Alerts docs mention notifications but do not describe webhook subscription APIs. Missing for 10: any documentation of a webhooks feature, webhook configuration API, or event subscription endpoint.",
-    "evidenceIds": [
-      "new-relic-docs-5",
-      "new-relic-docs-2"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack describes New Relic's alerting/notification routing (docs-33, docs-34) and NerdGraph API, but never explicitly mentions webhook subscriptions or event-driven webhook delivery for AI-native consumption. Since alerting/notification platforms commonly offer webhook integrations, this axis applies, but no evidence confirms it.",
+    "evidenceIds": []
   },
   {
     "productId": "new-relic",
@@ -2332,37 +2368,41 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "New Relic AI (docs-9, docs-10) lets users ask questions and troubleshoot issues in plain language, and the MCP server (docs-11, docs-22) exposes platform context to AI tools, which supports AI-assisted incident triage — but no evidence explicitly shows auto-generated incident summaries or alert-specific responder context. Missing for 10: explicit incident-summary generation feature, alert-context packaging for responders, and independent/hands-on confirmation of this specific workflow.",
+    "rationale": "New Relic documents AI-powered summaries of workload health/performance trends (new-relic-docs-43) and a conversational AI assistant that helps troubleshoot issues and explore telemetry (new-relic-docs-9, new-relic-docs-10), which is adjacent to incident summarization for responders, but no docs explicitly describe AI-generated incident summaries or alert-context write-ups delivered to on-call responders. Missing for 10: explicit incident/alert AI-summary feature (e.g., auto-generated incident postmortems or alert enrichment for responders), and independent/hands-on validation of such a feature.",
     "evidenceIds": [
+      "new-relic-docs-43",
       "new-relic-docs-9",
       "new-relic-docs-10",
-      "new-relic-docs-11",
-      "new-relic-docs-22"
+      "new-relic-docs-5",
+      "new-relic-docs-46"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "ai-root-cause-analysis",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "New Relic AI is documented to let users 'ask questions, troubleshoot issues, and explore telemetry data using plain language' and the MCP server converts natural-language questions into NRQL queries, which supports AI-assisted investigation of issues, but the evidence never explicitly describes an AI that proactively investigates a specific alert/error and outputs a proposed root cause. Missing for 10: explicit documentation of an automated root-cause-analysis workflow tied to alerts/errors, hands-on/independent confirmation that the AI assistant produces accurate root-cause conclusions rather than just query help.",
+    "rationale": "New Relic AI is documented to let users 'ask questions, troubleshoot issues, and explore telemetry data using plain language' and AI Insights provide 'AI-powered summaries of your workload's health, performance trends, and potential issues,' which supports AI-assisted investigation of problems. However, the docs never explicitly describe an automated 'root cause' proposal for an alert/error specifically (the closest concrete root-cause-style flow, docs-41, is for CVE/vulnerability triage, not general alerts/errors), and there is no independent/hands-on evidence corroborating the quality of AI root-cause suggestions. Missing for 10: explicit alert/error root-cause workflow documentation, independent verification of AI diagnostic accuracy.",
     "evidenceIds": [
       "new-relic-docs-9",
       "new-relic-docs-10",
-      "new-relic-docs-22",
-      "new-relic-docs-11"
+      "new-relic-docs-43",
+      "new-relic-docs-46",
+      "new-relic-docs-41"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "alert-rules-routing",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "New Relic docs confirm NRQL-based alerting on any telemetry signal and thresholds with notification routing (\"who is notified and how\"), but the evidence pack contains no explicit mention of alert grouping or silencing/muting mechanisms. Missing for 10: documented grouping of related alerts, muting/silencing rules, and incident routing workflows with independent corroboration.",
+    "rationale": "Docs confirm alerting on any telemetry signal (NRQL-based alerts, threshold/anomaly detection) and explicit routing of issues to the correct team via notifications, backed by NerdGraph/CLI for configuration. However, the evidence pack never mentions grouping/deduplication of alerts into issues or silencing/muting rules, both core parts of this story. Missing for 10: explicit documentation of alert grouping/correlation and muting/silencing rules, plus independent/hands-on corroboration of the full alerting workflow.",
     "evidenceIds": [
       "new-relic-docs-5",
+      "new-relic-docs-33",
+      "new-relic-docs-34",
       "new-relic-docs-21",
       "new-relic-docs-25",
       "new-relic-docs-3"
@@ -2371,25 +2411,28 @@
   {
     "productId": "new-relic",
     "storyId": "alert-webhooks-drive-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes generic alerting configuration (thresholds, notification recipients) and a GraphQL API (NerdGraph) for configuring some features, but nowhere explicitly mentions webhook notification channels or integration with remediation/automation agents via webhooks. Given New Relic is an observability/alerting platform, this is a fair and applicable axis, but no direct evidence confirms webhook-triggered automation exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "New Relic's alerting docs describe routing issues to systems/teams via notifications and configurable thresholds (docs-5, docs-33, docs-34), and separate agentic features show automated remediation actions like opening Jira/GitHub tickets (docs-41) and a marketing claim to 'move beyond assistance to automated remediation' (docs-46), but the evidence never explicitly documents a webhook notification channel type for alert policies or a documented workflow of alert→webhook→external agent. Missing for 10: explicit webhook notification channel setup for alerts, a documented end-to-end example of an alert triggering a webhook that invokes an automation/agent, and independent confirmation this works in practice.",
     "evidenceIds": [
       "new-relic-docs-5",
-      "new-relic-docs-2"
+      "new-relic-docs-33",
+      "new-relic-docs-34",
+      "new-relic-docs-41",
+      "new-relic-docs-46"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "anomaly-detection-alerts",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack describes only threshold-based alerting ('you define the thresholds that if exceeded mean an issue') and NRQL-based alerts, with no mention of anomaly/outlier/baseline detection features that surface issues without hand-written thresholds.",
+    "rationale": "Docs confirm New Relic alerting can evaluate signals for 'abnormal behavior' in addition to fixed thresholds (new-relic-docs-33), implying baseline/anomaly detection capability, but the evidence pack gives no deeper explanation of how anomaly/baseline alerts are configured, no independent validation, and most alerting docs emphasize manual thresholds (new-relic-docs-5, new-relic-docs-25). Missing for 10: detailed docs on baseline anomaly alert setup, ML-based outlier detection specifics, and hands-on/independent confirmation it surfaces problems without manual tuning.",
     "evidenceIds": [
+      "new-relic-docs-33",
       "new-relic-docs-5",
-      "new-relic-docs-21",
       "new-relic-docs-25"
     ]
   },
@@ -2399,7 +2442,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "New Relic documents a NerdGraph API explorer for experimenting with its GraphQL API (new-relic-docs-20), which functions as an interactive, runnable reference for that API, but there's no evidence of a broader interactive API reference (e.g., REST API explorer/Swagger UI) covering the full platform, and probes show no OpenAPI spec or llms.txt exposed. Missing for 10: a comprehensive interactive reference across all New Relic APIs (not just NerdGraph), OpenAPI/Swagger-based explorer, and independent/hands-on confirmation of the explorer's usability.",
+    "rationale": "New Relic documents a NerdGraph API explorer for experimenting with its GraphQL API (new-relic-docs-20), which offers interactive, runnable query examples, but this is the only interactive API-reference tool evidenced. Probes confirm no OpenAPI/REST interactive reference exists (404s for openapi.json/swagger.json), so REST API documentation lacks an equivalent interactive explorer. Missing for 10: a full OpenAPI/Swagger-style interactive reference for REST endpoints, independent/hands-on corroboration of the NerdGraph explorer's usability, and coverage beyond the single GraphQL API surface.",
     "evidenceIds": [
       "new-relic-docs-20",
       "new-relic-docs-2",
@@ -2412,11 +2455,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "New Relic's primary API is NerdGraph (GraphQL), and explicit probes show no OpenAPI/swagger spec is served at any standard path (404s), with no other evidence of a downloadable machine-readable spec.",
+    "rationale": "New Relic's API surface (NerdGraph) is GraphQL-based, not OpenAPI/REST, and a direct probe for OpenAPI/swagger specs at docs.newrelic.com returned 404 on all candidate paths, with no other evidence of a downloadable machine-readable API spec.",
     "evidenceIds": [
+      "new-relic-probe-2",
       "new-relic-docs-2",
-      "new-relic-docs-20",
-      "new-relic-probe-2"
+      "new-relic-docs-20"
     ]
   },
   {
@@ -2425,8 +2468,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack of a sandbox/test environment, free trial account isolation, or any mechanism to test New Relic's features without touching production telemetry data; all references are to production monitoring, alerting, dashboards, and the MCP server connecting to real platform data. Missing for 10: any documented sandbox account, test-mode API, synthetic data environment, or explicit separation between test and production data ingestion.",
-    "evidenceIds": []
+    "rationale": "No evidence of a sandbox/test environment offering that isolates AI-native testing from production data; New Relic's free tier and pricing docs reference production data ingest, not a sandbox. Community comments even show users being billed for non-production environments (QA/UAT/Staging) as if production, undermining any notion of a distinct sandbox.",
+    "evidenceIds": [
+      "new-relic-comm-8"
+    ]
   },
   {
     "productId": "new-relic",
@@ -2434,7 +2479,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows NerdGraph API and NerdGraph explorer exist, but there is no documented API versioning scheme or deprecation policy; probes confirm no OpenAPI spec is discoverable, and no docs mention version numbers, sunset timelines, or breaking-change guarantees. Missing for 10: documented API versioning scheme, explicit deprecation/sunset policy, changelog or migration guide for breaking changes.",
+    "rationale": "Evidence shows NerdGraph API and NRQL exist, and an OpenAPI probe returned 404s on all candidate paths, with no documentation of API versioning scheme or a deprecation policy anywhere in the pack. No mention of API version numbers, sunset timelines, or deprecation notices for NerdGraph/REST APIs.",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
@@ -2447,12 +2492,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "NerdGraph GraphQL API and the newrelic-cli support programmatic/bulk operations like entity search across all accounts, and NRQL/dashboards can operate over aggregated data sets, but there's no explicit documentation of bulk create/update/delete operations across many items (e.g., bulk alert config, bulk entity tagging) as a first-class feature. missing for 10: explicit bulk-operation endpoints/examples (batch create/update/delete across many entities), hands-on evidence of bulk workflows succeeding at scale.",
+    "rationale": "NerdGraph GraphQL API, NRQL, and the CLI (entity search across accounts, tag management, deployment markers, Terraform for managing fleets of agents at scale) allow bulk querying and bulk configuration operations across many entities, which supports bulk operations at a programmatic/automation level. However, there's no direct evidence of a bulk-operations UI feature (e.g., batch-editing multiple dashboards/alerts/entities at once) or explicit documentation calling out 'bulk operations' as a named capability. missing for 10: explicit bulk-edit/batch UI capability, documented bulk API endpoints for mass updates, and independent hands-on confirmation of bulk automation working at scale.",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
       "new-relic-gh-1",
-      "new-relic-docs-3"
+      "new-relic-docs-38",
+      "new-relic-docs-42"
     ]
   },
   {
@@ -2461,12 +2507,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "New Relic's alerting system lets users define thresholds/conditions (including powerful NRQL-based conditions) and specify who/how to notify when those conditions are breached, which is the core of automated rule-triggered actions on events (new-relic-docs-5, new-relic-docs-3/21/25). missing for 10: evidence of richer automated remediation/workflow actions (e.g., auto-scaling, ticket creation, custom webhooks) beyond notification routing, and independent/hands-on confirmation that alert rules reliably trigger actions in production.",
+    "rationale": "New Relic's Alerts platform lets users configure NRQL-based conditions with thresholds on any signal, and automatically notify/route issues to teams or systems when thresholds are breached, and newer vulnerability-management agent features can auto-trigger remediation actions like opening Jira/GitHub tickets. This directly matches 'rules that trigger actions automatically on events.' Missing for 10: independent/hands-on validation of custom action integrations (e.g., webhooks, arbitrary automation beyond ticketing/notifications) and broader detail on workflow automation configuration.",
     "evidenceIds": [
       "new-relic-docs-5",
-      "new-relic-docs-3",
+      "new-relic-docs-33",
+      "new-relic-docs-34",
       "new-relic-docs-21",
-      "new-relic-docs-25"
+      "new-relic-docs-25",
+      "new-relic-docs-41",
+      "new-relic-docs-46"
     ]
   },
   {
@@ -2475,21 +2524,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "New Relic's evidence pack shows synthetic monitoring (docs-19) and alerting/dashboards, but there is no documentation of a general job/workflow scheduler, cron-like automation, or AI-native recurring workflow execution capability tied to its MCP server or NerdGraph API. The axis is plausible for a monitoring platform (e.g., scheduled synthetic checks), but no evidence confirms recurring job/workflow scheduling as a user-facing automation feature.",
-    "evidenceIds": [
-      "new-relic-docs-19",
-      "new-relic-docs-11",
-      "new-relic-docs-2"
-    ]
+    "rationale": "New Relic's evidence covers monitoring, alerting, dashboards, NRQL, and an MCP server for AI tool integration, but nothing describes an AI-native user scheduling recurring jobs or workflows (e.g., cron-like automation, workflow orchestration). Synthetic checks are mentioned only as location-based simulation, not as user-schedulable recurring jobs tied to AI-native workflows.",
+    "evidenceIds": []
   },
   {
     "productId": "new-relic",
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows NerdGraph API and CLI for configuring alerts/dashboards, but nothing about versioning, reviewing, or rolling back automations (e.g., alert configs, workflows) — no changelog, diff/review UI, or rollback mechanism is documented.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "New Relic offers configurable alerts, workflows, and dashboards that could be considered 'automations,' and Terraform-based IaC management is mentioned for agent fleets, but there is no evidence of built-in versioning, review workflows, or rollback capability for alerts/dashboards/synthetics configurations themselves. Missing for 10: version history for alert/dashboard configs, review/approval workflow, and a documented rollback mechanism.",
+    "evidenceIds": [
+      "new-relic-docs-5",
+      "new-relic-docs-33",
+      "new-relic-docs-42"
+    ]
   },
   {
     "productId": "new-relic",
@@ -2497,11 +2546,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is no evidence of a New Relic feature for attributing observability ingest/spend to specific teams or services, nor of proactive spend/usage-spike alerting on New Relic's own billing (the closest hit, new-relic-docs-15, is about monitoring customers' cloud/K8s spend, not New Relic's own consumption). Multiple community reports directly describe the opposite experience — unexpected multi-x ingest spikes and bill surges that were only discovered after the fact (new-relic-comm-4, new-relic-comm-5, new-relic-comm-8, new-relic-comm-9), with no mention of a dashboard or alert that would have caught them beforehand.",
+    "rationale": "The evidence pack has no documentation of a New Relic feature for tracking/attributing New Relic's own observability spend/ingest usage by team or service, or for alerting on usage spikes before billing (docs-15 covers monitoring customers' cloud/K8s cost, not NR's own consumption). Multiple community reports (new-relic-comm-4, new-relic-comm-5, new-relic-comm-6, new-relic-comm-8, new-relic-comm-9) describe unexpected bill spikes and overages that were not caught proactively, reinforcing the absence of this capability.",
     "evidenceIds": [
       "new-relic-docs-15",
       "new-relic-comm-4",
       "new-relic-comm-5",
+      "new-relic-comm-6",
       "new-relic-comm-8",
       "new-relic-comm-9"
     ]
@@ -2510,16 +2560,16 @@
     "productId": "new-relic",
     "storyId": "dashboards-monitors-as-code",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "NerdGraph is documented as a GraphQL API that can 'configure some New Relic features' and has an API explorer, implying dashboards/alerts could be provisioned programmatically, and the newrelic-cli exists for some automation tasks. However, the evidence pack never explicitly documents JSON dashboard definition files, a Terraform provider, or alerts-as-code workflows — dashboards are described mainly as built through the UI. Missing for 10: explicit Terraform provider docs, JSON dashboard schema/export-import examples, and alert-as-code API examples beyond generic NerdGraph mention.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "NerdGraph GraphQL API is documented as letting you 'configure some New Relic features' (new-relic-docs-2, new-relic-docs-20), and NRQL-based alerts imply programmatic definition (new-relic-docs-21/25), while Terraform is documented for managing New Relic agent fleets (new-relic-docs-42) — but none of this pack explicitly documents a Terraform provider for dashboards/alerts, JSON dashboard export/import, or a dedicated dashboards-as-code workflow. missing for 10: explicit Terraform provider resources for dashboards/alerts, JSON dashboard model documentation, worked example of repeatable API-based provisioning.",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
-      "new-relic-docs-5",
-      "new-relic-docs-7",
-      "new-relic-gh-1",
-      "new-relic-gh-2"
+      "new-relic-docs-21",
+      "new-relic-docs-25",
+      "new-relic-docs-42",
+      "new-relic-docs-5"
     ]
   },
   {
@@ -2528,27 +2578,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "New Relic's CLI supports recording deployment markers (change tracking) that appear alongside APM data, and NRQL/dashboards/alerts can be used to correlate metrics around deploy times, but the evidence pack lacks documentation of a dedicated change-tracking UI feature, automatic regression detection tied to deploys, or config-change tracking beyond deployment markers. missing for 10: dedicated change-tracking/regression-correlation UI docs, evidence of automatic config-change tracking, independent confirmation of deploy correlation workflow.",
+    "rationale": "New Relic ships explicit deployment marker support (CLI records deploys tied to APM applications) and NRQL/alerting can be layered on top to spot regressions after a deploy, giving the core of deploy-based change tracking. However, there's no evidence of dedicated 'configuration change tracking' beyond deployments, nor of a unified regression-correlation UI/workflow tying alerts directly to deploy markers. Missing for 10: configuration-change event tracking (not just app deploys), an explicit UI/workflow that overlays alerts/regressions against deployment markers, and independent/hands-on confirmation this correlation works well in practice.",
     "evidenceIds": [
       "new-relic-gh-2",
-      "new-relic-docs-21",
-      "new-relic-docs-3"
+      "new-relic-docs-38",
+      "new-relic-docs-5",
+      "new-relic-docs-33",
+      "new-relic-docs-32"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "documented-query-language",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "NRQL is a well-documented query language for ad hoc analysis (creating charts, troubleshooting, alerts), with an API explorer for experimentation via NerdGraph, and even an AI assistant to help construct queries. Missing for 10: independent hands-on validation of NRQL usability beyond vendor docs (community comments focus on cost/UI issues rather than the query language itself).",
+    "rationale": "NRQL is a well-documented SQL-like query language for ad hoc analysis, troubleshooting, charting, and alerting, with an interactive query interface and API explorer support (NerdGraph). Missing for 10: independent/hands-on developer corroboration of NRQL usability and no evidence of a fully documented syntax reference or examples cited directly in the pack.",
     "evidenceIds": [
       "new-relic-docs-3",
       "new-relic-docs-21",
       "new-relic-docs-25",
-      "new-relic-docs-2",
+      "new-relic-docs-32",
       "new-relic-docs-20",
-      "new-relic-docs-10"
+      "new-relic-docs-2"
     ]
   },
   {
@@ -2557,54 +2609,56 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers APM agent instrumentation, NRQL querying, dashboards, and deployment markers, but nowhere mentions error grouping into issues, stack trace capture, or regression detection — the core elements of this story. Missing for 10: any documentation of an 'errors inbox' or issue-grouping UI, stack trace capture, or regression detection tied to deployments/releases.",
+    "rationale": "The evidence pack shows APM agents, deployment markers, and general monitoring/alerting capabilities, but contains no mention of errors being grouped into issues, stack trace capture, or regression detection — the specific capabilities this story asks about. Only a tangential deployment-marker feature (gh-2) touches on 'release tracking', leaving the core of the story (error grouping, stack traces, regression detection) entirely unevidenced.",
     "evidenceIds": [
-      "new-relic-docs-1",
       "new-relic-gh-2",
-      "new-relic-docs-29"
+      "new-relic-docs-1"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "high-cardinality-analysis",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "NRQL is described as a flexible ad-hoc query language for exploring telemetry data and building charts/alerts (new-relic-docs-3, new-relic-docs-21, new-relic-docs-25), which implies some ability to filter/group on arbitrary attributes, but nothing in the evidence explicitly claims support for high-cardinality fields like user id or request id, or states that no pre-aggregation/indexing is required. A community report even notes 'constant problems with metric names exploding' (new-relic-comm-11), hinting at cardinality friction in practice. missing for 10: explicit documentation of high-cardinality attribute support, confirmation that NRQL/NRDB requires no schema/index definition for arbitrary fields, and hands-on evidence of filtering by user id/request id at scale.",
+    "rationale": "NRQL is described as a SQL-like ad-hoc query language over New Relic's event data that can filter logs/attributes and build charts, implying schema-flexible querying, but no evidence explicitly addresses high-cardinality fields (user id, request id), FACET/GROUP BY on arbitrary attributes, or the absence of pre-aggregation/index requirements. missing for 10: explicit documentation of high-cardinality grouping/filtering, confirmation that no indexing/schema definition is needed, and independent benchmarks or user reports validating this at scale.",
     "evidenceIds": [
+      "new-relic-docs-32",
       "new-relic-docs-3",
-      "new-relic-docs-21",
-      "new-relic-docs-25",
-      "new-relic-comm-11"
+      "new-relic-docs-37",
+      "new-relic-docs-21"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "incident-management-oncall",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "New Relic's alerting docs mention defining thresholds and who is notified (new-relic-docs-5, new-relic-docs-25), which touches escalation/notification, but there is no evidence of a dedicated incident timeline view, on-call scheduling, or formal escalation-policy management comparable to a dedicated incident-response tool. Missing for 10: documented incident timeline tracking, on-call schedule configuration, and escalation policy chains/rotations.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "New Relic's evidence covers alerting (thresholds, notification routing) and SLIs/SLOs, but there is no documentation of incident timelines, on-call schedules, or escalation policies — these are typically features of dedicated incident-management tools (e.g., PagerDuty/Opsgenie) that New Relic integrates with rather than natively provides. Missing for 10: on-call scheduling, escalation policy configuration, and incident timeline/postmortem tracking.",
     "evidenceIds": [
       "new-relic-docs-5",
-      "new-relic-docs-25"
+      "new-relic-docs-33",
+      "new-relic-docs-34"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "integration-agent-breadth",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "New Relic docs confirm vendor-maintained APM agents for major languages, infrastructure monitoring for hosts/containers/providers/network, OpenTelemetry support, Kubernetes/cloud cost visibility, and Lambda serverless monitoring—covering the breadth of hosts, containers, K8s, and cloud services the story asks for. However, community reports flag real friction (fragile in-cluster collection services, a logging-agent bug that dropped logs) suggesting operational rough edges rather than pure vendor-doc perfection. Missing for 10: independent hands-on validation of Kubernetes-specific agent reliability, dedicated K8s integration docs beyond generic infra visibility, and confirmation that in-cluster collection issues have been resolved.",
+    "rationale": "New Relic ships vendor-maintained language agents (Go, Java, .NET, Node.js, PHP, Python, Ruby), dedicated infrastructure monitoring for hosts/containers/providers/network, Kubernetes cost/visibility integration, AWS Lambda serverless instrumentation, OpenTelemetry support, and Terraform-based agent fleet management at scale — covering the full breadth of hosts, containers, Kubernetes, and cloud services the story asks for. Community feedback shows some real-world friction (a logging-agent bug that lost data, 'in-cluster collection services are frustratingly fragile') indicating occasional reliability issues but not a documented failure of the core instrumentation capability itself. missing for 10: independent benchmarking of integration breadth/quality across all cloud providers, and stronger resolution of the community-reported fragility of in-cluster/Kubernetes collectors.",
     "evidenceIds": [
       "new-relic-docs-1",
-      "new-relic-docs-4",
+      "new-relic-docs-31",
       "new-relic-docs-15",
       "new-relic-docs-18",
-      "new-relic-docs-31",
-      "new-relic-comm-14",
-      "new-relic-comm-1"
+      "new-relic-docs-4",
+      "new-relic-docs-42",
+      "new-relic-docs-45",
+      "new-relic-comm-1",
+      "new-relic-comm-14"
     ]
   },
   {
@@ -2613,8 +2667,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "New Relic is delivered as a hosted SaaS platform; none of the docs describe a way to run a local or self-hosted dev instance, and community evidence explicitly notes the 'removal of development mode & support' as a past feature that is no longer offered, confirming there is no current local/dev instance capability.",
+    "rationale": "New Relic is a cloud SaaS platform; the evidence pack shows only a free-tier sign-up (100GB/month) and no self-hosted or local dev-instance option for testing instrumentation/dashboards offline. One community comment even notes the removal of a prior 'development mode' feature, reinforcing that no local/dev deployment path currently exists.",
     "evidenceIds": [
+      "new-relic-docs-13",
+      "new-relic-docs-14",
       "new-relic-comm-3"
     ]
   },
@@ -2624,25 +2680,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "New Relic AI explicitly lets users ask questions, troubleshoot, and explore telemetry in plain language, and can help generate/fix NRQL queries; the new MCP server converts natural-language questions directly into NRQL and returns results, tying into chart/dashboard capabilities. missing for 10: independent/hands-on validation of natural-language-to-chart accuracy and no community corroboration of the AI assistant's real-world reliability.",
+    "rationale": "New Relic AI lets users ask questions and troubleshoot telemetry in plain language, and its MCP server explicitly converts natural language into NRQL queries to return real results, directly matching the story. Missing for 10: independent/hands-on verification of accuracy and chart-generation from natural language beyond vendor docs.",
     "evidenceIds": [
       "new-relic-docs-9",
       "new-relic-docs-10",
       "new-relic-docs-22",
-      "new-relic-docs-3",
-      "new-relic-docs-7"
+      "new-relic-docs-36",
+      "new-relic-docs-32",
+      "new-relic-probe-3"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "NerdGraph GraphQL API and CLI expose query, alerting, dashboard, and SLO configuration, but New Relic's own docs state NerdGraph lets you 'configure some New Relic features' — explicitly not full UI parity. No evidence every UI workflow (e.g., full dashboard builder, entity management edge cases) is API-exposed, and openapi probes 404 confirming no fully documented spec of complete surface. Missing for 10: explicit confirmation of 1:1 API/UI feature parity, comprehensive OpenAPI spec, and independent verification of coverage gaps.",
+    "rationale": "New Relic's NerdGraph API explicitly lets users query data and 'configure some New Relic features' (not all), plus a CLI and MCP server extend programmatic access to entities, tags, workloads, and deployment markers. However, docs themselves flag that only a subset of UI configuration is exposed via API, and no OpenAPI spec or explicit full-parity claim exists (openapi probe 404s). Missing for 10: an explicit full-parity statement or independent verification that all UI actions (e.g., dashboard building, SLO management) are achievable via NerdGraph/CLI, and confirmation there are no UI-only features.",
     "evidenceIds": [
       "new-relic-docs-2",
       "new-relic-docs-20",
+      "new-relic-docs-38",
       "new-relic-gh-1",
       "new-relic-gh-2",
       "new-relic-probe-2",
@@ -2652,14 +2710,14 @@
   {
     "productId": "new-relic",
     "storyId": "openness-full-export",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "New Relic exposes a GraphQL-based NerdGraph API and NRQL query language that could be used to pull data out programmatically, and it supports OpenTelemetry for ingestion, but there is no documented bulk 'export all my data' feature, no data-portability/exit tooling, and community comments note New Relic 'cares about where the server is' implying lock-in to their platform. missing for 10: dedicated bulk export/backup feature, explicit open-format export guarantee, independent confirmation of full data portability on exit.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows NerdGraph (GraphQL) and NRQL querying, and a CLI for managing entities, but nothing documents a bulk/full data-export feature in open, portable formats for leaving the platform. Community comments highlight vendor lock-in concerns (ingest costs, on-prem limitations) rather than any export capability.",
     "evidenceIds": [
       "new-relic-docs-2",
-      "new-relic-docs-4",
-      "new-relic-docs-20",
+      "new-relic-docs-32",
+      "new-relic-docs-38",
       "new-relic-comm-10"
     ]
   },
@@ -2681,23 +2739,22 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "New Relic is documented throughout as a SaaS platform (agents forwarding data to New Relic's cloud, hosted dashboards, cloud-based NRQL/NerdGraph APIs) with no mention of a self-hostable core product. A community comment explicitly notes New Relic doesn't offer on-premise deployment ('they do care about where the server is... huge underserved market for on-premise APMs'), confirming the absence.",
+    "confidence": "high",
+    "rationale": "New Relic is documented and used exclusively as a hosted SaaS platform; no evidence pack item describes an on-premise or self-hosted deployment option for the core product. Community evidence directly indicates the opposite — New Relic 'care[s] about where the server is' and does not offer on-prem APM, leaving that market underserved by competitors.",
     "evidenceIds": [
-      "new-relic-comm-10",
-      "new-relic-docs-13",
-      "new-relic-docs-14"
+      "new-relic-comm-10"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "otel-native-ingest",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "New Relic docs explicitly promote OpenTelemetry instrumentation for platform-agnostic observability, confirming OTLP/OTel support as a first-class ingestion path alongside native agents. However, evidence lacks technical detail on OTLP endpoint configuration, semantic-convention mapping fidelity, or independent hands-on validation of OTLP data quality. Missing for 10: detailed OTLP endpoint/setup docs, community/hands-on confirmation of OTLP ingestion working well, and specifics on semantic convention compatibility.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "New Relic has a dedicated OpenTelemetry integration path documented explicitly: 'Instrument your service with OpenTelemetry and gain platform-agnostic observability' and 'By integrating OpenTelemetry with New Relic, you can leverage a wide range of platform capabilities to analyze the data and diagnose problems,' confirming native OTLP ingestion and first-class OTel support. Missing for 10: independent/hands-on corroboration of OTLP endpoint reliability or performance, and more detail on OTLP-specific configuration (endpoints, auth headers) beyond high-level docs.",
     "evidenceIds": [
-      "new-relic-docs-4"
+      "new-relic-docs-4",
+      "new-relic-docs-45"
     ]
   },
   {
@@ -2705,8 +2762,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of region selection, EU/US data center choice, or data residency controls; community comments only note latency issues from non-US access, not an actual data-locality control. Since this is a plausible axis for a SaaS observability platform, absence of evidence yields 'none'.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack describes New Relic offering a choice of data storage region/residency; docs focus on agents, NRQL, dashboards, alerts, and MCP integration but never mention data residency controls. Community comments (e.g., trans-oceanic latency for non-US users) even hint at data being centralized rather than user-selectable by region, but this doesn't rise to a documented contradiction of a claimed feature—there's simply no claim to dispute.",
     "evidenceIds": [
       "new-relic-comm-15",
       "new-relic-comm-10"
@@ -2718,7 +2775,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI model training or an opt-out/data-privacy control for that purpose; the AI-related docs describe New Relic AI assistant features and MCP server, not training data policies. Missing for 10: any privacy policy, data processing agreement, or opt-out mechanism specifically regarding AI training use of customer data.",
+    "rationale": "No evidence pack item addresses AI-training data usage or an opt-out mechanism for New Relic's own AI features (e.g., New Relic AI/agentic assistant); this is a fair question given New Relic markets AI-powered features, but nothing in the docs or community evidence confirms or denies a data-training opt-out policy.",
     "evidenceIds": []
   },
   {
@@ -2727,7 +2784,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/compliance configuration for AI-native users; the pack covers monitoring, dashboards, alerts, and MCP/AI query features but nothing on retention/deletion controls.",
+    "rationale": "No evidence pack items address data retention policies, data deletion/right-to-be-forgotten controls, or configurable retention periods; the closest items relate to disabling log forwarding via env vars, not retention/deletion management. This axis applies to a data-ingesting SaaS platform like New Relic, but no documentation or community evidence demonstrates such controls.",
     "evidenceIds": []
   },
   {
@@ -2736,12 +2793,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No documentation addresses whether New Relic's AI features (New Relic AI assistant, MCP server) track usage/telemetry or provide an opt-out; the only related evidence (community tip on disabling APM log-forwarding via env vars) concerns application log collection, not AI-native usage tracking.",
-    "evidenceIds": [
-      "new-relic-comm-7",
-      "new-relic-docs-9",
-      "new-relic-docs-11"
-    ]
+    "rationale": "The evidence pack contains no documentation of an opt-out for New Relic's own telemetry/usage tracking of the platform or its AI/MCP features; the only related item (comm-7) is about disabling application log forwarding, not vendor usage analytics or AI feature telemetry.",
+    "evidenceIds": []
   },
   {
     "productId": "new-relic",
@@ -2749,26 +2802,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "New Relic is documented as a SaaS platform (agents forward data to New Relic-hosted cloud) with no self-hosted deployment architecture, upgrade path, or on-prem installation docs anywhere in the evidence. Community commentary explicitly notes New Relic controls 'where the server is' and that on-prem APM remains an underserved market they don't address, confirming no self-hosted offering exists.",
+    "rationale": "New Relic is documented exclusively as a cloud/SaaS observability platform (agents reporting to New Relic's hosted backend, NerdGraph API, hosted dashboards) with no documented self-hosted deployment architecture or upgrade path; community evidence explicitly notes New Relic controls server location and does not offer an on-premise option, unlike self-hostable APM alternatives.",
     "evidenceIds": [
       "new-relic-comm-10",
-      "new-relic-docs-30",
-      "new-relic-docs-13"
+      "new-relic-docs-1",
+      "new-relic-docs-2"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "rich-dashboards",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm New Relic dashboards support rich visualizations built via UI/NRQL and can be publicly shared via live dashboard URLs, satisfying most of the story. However, evidence does not explicitly mention template variables on dashboards, and there is no independent/hands-on corroboration of the dashboard-building experience (community evidence focuses on pricing/UI complaints unrelated to dashboard features). Missing for 10: explicit documentation of template variables support, independent verification of dashboard usability/quality.",
+    "rationale": "Docs confirm building and sharing rich, customizable dashboards with high-density interactive visualizations and public share URLs (new-relic-docs-7, -8, -26, -27, -35), and NRQL underpins chart creation (new-relic-docs-3, -21). However, no evidence explicitly documents template variables (dashboard-level parameterization) as a supported feature. Missing for 10: explicit documentation of template variables/parameterized dashboards, independent hands-on corroboration of dashboard-building workflow.",
     "evidenceIds": [
       "new-relic-docs-7",
       "new-relic-docs-8",
       "new-relic-docs-26",
       "new-relic-docs-27",
-      "new-relic-docs-3"
+      "new-relic-docs-35",
+      "new-relic-docs-3",
+      "new-relic-docs-21"
     ]
   },
   {
@@ -2791,28 +2846,29 @@
     "storyId": "slo-error-budgets",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "New Relic's Service Level Management explicitly supports defining and consuming SLIs/SLOs, and NRQL-based alerts (its 'primary and most powerful' alert type) can be layered to implement burn-rate style alerting on top of SLO data. Missing for 10: explicit first-party documentation of a native 'error budget burn-rate alert' template/wizard (as some competitors have) and independent/hands-on confirmation of this specific workflow beyond docs.",
+    "confidence": "high",
+    "rationale": "New Relic's Service Level Management docs explicitly support defining SLIs/SLOs, and NRQL-based alerts (the primary alert type) support threshold and burn-rate style configuration with routing/notification integration. missing for 10: explicit documentation of built-in 'error budget burn rate' alert templates and independent/hands-on confirmation of SLO alerting workflow.",
     "evidenceIds": [
       "new-relic-docs-6",
       "new-relic-docs-28",
       "new-relic-docs-21",
       "new-relic-docs-25",
-      "new-relic-docs-5"
+      "new-relic-docs-33",
+      "new-relic-docs-34"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "trace-log-correlation",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "New Relic's docs explicitly describe 'logs in context' where APM agents add metadata to logs enabling users to 'see logs data in various relevant places in our platform,' directly supporting jumping from traces to correlated logs, and log management ties together events, errors, and traces to reduce MTTR. Missing for 10: no independent/hands-on account specifically demonstrating the trace-span-to-log-and-metric pivot in the UI, and no detail on metrics correlation beyond logs-in-context.",
+    "rationale": "New Relic docs describe APM agents adding metadata for 'logs in context' so logs can be seen in relevant platform views, and log management is positioned to reduce MTTR by linking events, errors, traces together — supporting cross-signal correlation. However, the pack lacks explicit documentation of a trace-span-to-logs/metrics UI jump workflow or independent confirmation it works smoothly in practice. Missing for 10: explicit trace-span drill-down UI documentation, independent/hands-on confirmation of the correlation workflow, metrics correlation specifics beyond logs.",
     "evidenceIds": [
       "new-relic-docs-30",
-      "new-relic-docs-23",
       "new-relic-docs-29",
-      "new-relic-docs-31"
+      "new-relic-docs-23",
+      "new-relic-docs-37"
     ]
   },
   {
@@ -2821,13 +2877,13 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "New Relic does publish some pricing info (100GB free ingest tier) on its pricing page, giving a baseline for self-service cost estimation without sales contact, but multiple independent community reports describe billing as opaque and unpredictable in practice—per-user pricing changes causing 20x bill increases, environments/redundant AZs billed as extra 'production' instances, and ingest spikes (e.g. JFR enabled by default) sextupling costs unexpectedly. This directly contradicts the 'predict costs transparently' premise even though a published price list exists. Missing for 10: detailed per-signal (e.g., per-host, per-user, per-GB-by-data-type) pricing breakdown, and evidence that published prices reliably predict actual bills without support intervention.",
+    "rationale": "New Relic publishes a free-tier ingest figure (100GB/month) but the evidence pack shows no detailed transparent per-signal price list (e.g., $/GB, $/user, $/host) that would let an SRE model costs unaided; multiple hands-on community reports describe opaque, surprising billing changes (per-user pricing spikes, being billed 3x for non-prod environments, region/AZ multiplication, ingest overages) that directly contradict the idea of predictable self-service cost estimation. missing for 10: a published per-signal price sheet, evidence of accurate self-serve cost calculators, and corroboration that customers can predict bills without sales engagement.",
     "evidenceIds": [
       "new-relic-docs-13",
       "new-relic-docs-14",
       "new-relic-comm-2",
       "new-relic-comm-4",
-      "new-relic-comm-5",
+      "new-relic-comm-6",
       "new-relic-comm-8",
       "new-relic-comm-9"
     ]
@@ -2836,34 +2892,28 @@
     "productId": "new-relic",
     "storyId": "unified-metrics-logs-traces",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "New Relic's docs describe a single platform combining APM metrics (docs-1), OpenTelemetry traces (docs-4), infrastructure metrics (docs-31), and logs explicitly linked 'in context' with APM/trace data via automatic metadata tagging (docs-23, docs-29, docs-30), plus NRQL/dashboards to query and visualize across all these data types from 'anywhere in the platform' (docs-3, docs-7, docs-26). This directly matches the SRE story of unified metrics/logs/traces with cross-navigation.\n\nMissing for 10: independent/hands-on confirmation that pivoting between telemetry types is seamless in practice, and community feedback instead raises UI slowness/confusion (comm-13, comm-14) and a past logs-forwarding bug (comm-1) that temper full confidence without rising to a concrete contradiction of the unification claim itself.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "New Relic's docs describe a single platform ingesting metrics (APM agents), logs (with automatic 'logs in context' linking to APM data), and traces, all queryable together via NRQL/NerdGraph and visualized in shared dashboards, giving SREs cross-signal context in one place (new-relic-docs-24, -29, -30, -32, -35). OpenTelemetry support and infrastructure/APM/logs integration further reinforce unified telemetry pivoting.\nmissing for 10: independent/hands-on corroboration that pivoting between signals is seamless in practice (community feedback focuses on cost/UI complaints, not on failure of context-sharing), and no explicit deep-dive on distributed tracing UI beyond passing mentions.",
     "evidenceIds": [
-      "new-relic-docs-1",
-      "new-relic-docs-4",
-      "new-relic-docs-23",
+      "new-relic-docs-24",
       "new-relic-docs-29",
       "new-relic-docs-30",
-      "new-relic-docs-31",
-      "new-relic-docs-3",
-      "new-relic-docs-7",
-      "new-relic-docs-26",
-      "new-relic-comm-13",
-      "new-relic-comm-14"
+      "new-relic-docs-32",
+      "new-relic-docs-35",
+      "new-relic-docs-45"
     ]
   },
   {
     "productId": "new-relic",
     "storyId": "vendor-neutral-instrumentation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "New Relic docs confirm OpenTelemetry support ('Instrument your service with OpenTelemetry and gain platform-agnostic observability'), which addresses the open-standards instrumentation ask, but the evidence pack otherwise emphasizes proprietary APM agents, NRQL, and NerdGraph as the primary ingestion/analysis path, with no detail on OTLP endpoint configuration, semantic-convention parity, or documented ease of switching backends without re-instrumenting. Missing for 10: detailed OTel onboarding/ingestion docs, evidence of vendor-neutral backend portability, and independent/hands-on confirmation that OTel-instrumented apps get full feature parity vs proprietary agents.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "New Relic explicitly documents native OpenTelemetry ingestion ('Instrument your service with OpenTelemetry and gain platform-agnostic observability' and 'By integrating OpenTelemetry with New Relic, you can leverage a wide range of platform capabilities') which supports OTel-based instrumentation that could in principle move between backends. But the evidence pack has no independent confirmation that switching away from New Relic is friction-free, and most of New Relic's own tooling (NRQL, dashboards, alerts, CLI) is proprietary to its platform, implying some lock-in beyond raw OTel data. missing for 10: independent/hands-on validation of backend portability, clarity on which features work only with New Relic-specific instrumentation vs pure OTel.",
     "evidenceIds": [
       "new-relic-docs-4",
-      "new-relic-docs-24",
-      "new-relic-docs-1"
+      "new-relic-docs-45"
     ]
   },
   {
