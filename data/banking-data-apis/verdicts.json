@@ -686,42 +686,51 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX's Account Owner Identification product explicitly retrieves name and address data tied to a financial account, directly enabling ops to match account holder identity against a customer record; this is well documented with first-party docs. Missing for 10: independent/hands-on corroboration beyond MX's own docs, and no explicit mention of retrieving full contact data (phone/email) alongside name/address.",
+    "rationale": "MX's Account Owner Identification product explicitly retrieves name and address data tied to a financial account, directly enabling ops to match account holder identity against a customer record. Missing for 10: no evidence of retrieving broader contact data (phone/email) beyond name/address, and no independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "mx-docs-2",
-      "mx-docs-16"
+      "mx-docs-16",
+      "mx-docs-39"
     ]
   },
   {
     "productId": "mx",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "MX exposes a full Platform API (with OpenAPI spec) covering balances, transactions, account aggregation, connect sessions/members, and webhooks, and there is a documented MCP surface at docs.mx.com/mcp confirming an MCP entry point exists. However, the evidence pack lacks detail on MCP tool scoping, credential/permission scoping for agent use, or hands-on confirmation of agent-driven session creation and connection management via MCP. missing for 10: documented MCP tool list/schema, evidence of scoped credentials for agent access, independent/hands-on validation of the MCP surface in agentic workflows.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "MX's Platform API/OpenAPI spec supports the core banking-agent tasks (connect sessions via Connect Widget/Platform API, balances, transactions, account aggregation, connection management via webhooks/dashboard) and a probe finds a documented MCP endpoint at docs.mx.com/mcp, suggesting an MCP surface exists. However there is no detail on what the MCP server exposes, no documentation of scoped/limited credentials for agent use (API keys are only described as rotatable, not scope-restricted), and no first-party description of an 'agent' or AI-native operating mode. missing for 10: documented MCP tool/capability list, scoped-credential mechanism for agent access, explicit agent/AI use-case guidance.",
     "evidenceIds": [
-      "mx-probe-3",
-      "mx-gh-1",
+      "mx-docs-21",
       "mx-docs-4",
       "mx-docs-5",
-      "mx-docs-21",
-      "mx-docs-22"
+      "mx-docs-6",
+      "mx-docs-22",
+      "mx-docs-32",
+      "mx-docs-33",
+      "mx-gh-1",
+      "mx-probe-3"
     ]
   },
   {
     "productId": "mx",
     "storyId": "agent-ready-financial-data",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "MX publishes a full OpenAPI specification (mx-gh-1, mx-docs-12/26) covering structured request/response payloads across accounts, transactions, balances, identity, and verification endpoints, plus webhooks for event-driven consumption (mx-docs-7/22) and even an official MCP server for agent access (mx-probe-3), directly supporting machine-consumable, schema-documented data for automated workflows. Missing for 10: concrete sample JSON response bodies in the evidence pack and independent third-party corroboration that the schemas are agent-friendly without extra parsing.",
+    "rationale": "MX publishes a formal OpenAPI specification (mx-gh-1, mx-docs-12/26/31) documenting request/response schemas, offers webhooks for event-driven consumption (mx-docs-7/22/41), structured endpoints for balances/transactions/owner info (mx-docs-2/4/5/6/18/19/20), and even an official MCP server for agent access (mx-probe-3), plus data-driven intelligence/personalized insight features (mx-docs-13/14/27) suggesting enrichment beyond raw data. Missing for 10: concrete example JSON payloads/categorization schema documentation and independent verification that the data is heuristic-free/agent-ready in practice.",
     "evidenceIds": [
       "mx-gh-1",
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-docs-7",
-      "mx-probe-3",
-      "mx-probe-1"
+      "mx-docs-22",
+      "mx-docs-41",
+      "mx-docs-13",
+      "mx-docs-14",
+      "mx-docs-27",
+      "mx-probe-3"
     ]
   },
   {
@@ -730,10 +739,9 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "MX hosts a working llms.txt at docs.mx.com/llms.txt (confirmed HTTP 200 with structured doc links) and also documents an official MCP server, both explicitly agent-oriented entry points into their docs. Missing for 10: independent third-party confirmation of an AI agent successfully consuming these resources end-to-end.",
+    "rationale": "MX hosts a working llms.txt at docs.mx.com/llms.txt confirmed via direct probe (HTTP 200, listing 152 product pages), which is exactly what this story asks for. Missing for 10: no independent third-party confirmation that agents actually consume it successfully in practice.",
     "evidenceIds": [
-      "mx-probe-1",
-      "mx-probe-3"
+      "mx-probe-1"
     ]
   },
   {
@@ -754,13 +762,13 @@
     "productId": "mx",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "MX documents autonomous background behavior — automatic re-aggregation of accounts roughly every 24 hours and webhook callbacks for events — which could underpin background automations, and an MCP endpoint is referenced. However there's no evidence of a user-facing automation/workflow builder or agent-orchestration framework for setting up custom autonomous tasks. Missing for 10: explicit automation/workflow configuration tooling, evidence of AI-agent-driven autonomous task execution beyond scheduled sync, and independent confirmation of the MCP server's automation capabilities.",
+    "rationale": "MX supports background/autonomous processes such as automatic re-aggregation of accounts roughly every 24 hours and webhook-driven event notifications that let integrators build automated workflows, and it exposes an MCP server that could let AI agents invoke MX capabilities. However, there is no evidence of an AI-native automation builder, scheduling/orchestration UI, or explicit support for agents autonomously configuring and running multi-step automations. missing for 10: AI-native automation configuration UI/API, evidence of agent-triggered multi-step workflows, orchestration/scheduling beyond fixed 24h aggregation.",
     "evidenceIds": [
       "mx-docs-25",
       "mx-docs-7",
-      "mx-docs-22",
+      "mx-docs-41",
       "mx-probe-3"
     ]
   },
@@ -770,7 +778,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows MX enabling data connectivity and hints at conversational/personalized finance experiences (mx-docs-27, mx-docs-13/14) that MX's customers could build for their end-users, but there is no evidence of a built-in AI assistant inside the MX product itself that an AI-native user could delegate tasks to.",
+    "rationale": "MX's evidence shows consumer-facing conversational features (e.g., end consumers asking about their money in plain language) but nothing describing a built-in AI assistant that the platform's own (AI-native) user can delegate tasks to. The MCP server evidence (mx-probe-3) pertains to a different axis (external agent connectivity), not an in-product assistant.",
     "evidenceIds": []
   },
   {
@@ -779,14 +787,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "MX is an API-first platform with a documented REST/OpenAPI spec (mx-gh-1, mx-docs-12/26) and webhooks (mx-docs-7/22) that could be driven headlessly from CI, but there is no explicit evidence of a CLI, headless SDK mode, or documented CI/automation workflow — the Connect Widget appears UI-embedded (mx-docs-9, mx-docs-21) which cuts against pure headless use. missing for 10: explicit CI/headless usage docs, a CLI or automation-focused SDK, confirmation that Connect flows can run without embedded UI.",
+    "rationale": "MX exposes a documented REST/OpenAPI Platform API, developer API keys, webhooks, and a test platform with test institutions that together allow headless, credential-free automation (e.g., in CI) rather than requiring the embedded Connect Widget for every operation. However, there is no explicit documentation of CI usage, a CLI, or automated testing guidance beyond Postman import. Missing for 10: explicit CI/CD or automation-pipeline documentation, headless/CLI tooling, and independent evidence of running the API in an automated pipeline.",
     "evidenceIds": [
-      "mx-gh-1",
+      "mx-docs-8",
       "mx-docs-12",
       "mx-docs-26",
-      "mx-docs-7",
-      "mx-docs-9",
-      "mx-docs-21"
+      "mx-docs-32",
+      "mx-docs-22",
+      "mx-gh-1"
     ]
   },
   {
@@ -830,8 +838,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX is a financial data API/SDK platform; no evidence of an official CLI tool for developers or AI-native workflows appears in the evidence pack — only API specs, webhooks, and a widget/UI. Evidence exists of an MCP server and OpenAPI spec, but no CLI is documented.",
-    "evidenceIds": []
+    "rationale": "MX is a developer API/platform (financial data connectivity), and it would be plausible for such a platform to ship an official CLI, but no evidence pack item mentions any CLI tool — only OpenAPI spec, Postman collection, SDKs (React Native, Web), webhooks, and an MCP server reference. Missing for 10: any mention of an official CLI, its installation, or command usage.",
+    "evidenceIds": [
+      "mx-docs-26",
+      "mx-docs-31",
+      "mx-gh-1",
+      "mx-probe-2"
+    ]
   },
   {
     "productId": "mx",
@@ -839,15 +852,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX exposes a documented Platform API with OpenAPI spec (available via GitHub and Postman import), REST endpoints across account verification, aggregation, statements, and webhooks, plus llms.txt and an MCP endpoint enabling AI-native access. Missing for 10: the official openapi.json isn't directly hosted at expected docs.mx.com paths (probe 404s), and there's no independent third-party corroboration of API robustness beyond MX's own docs.",
+    "rationale": "MX exposes a fully documented Platform API with OpenAPI spec (hosted on GitHub), Postman import, developer API keys, webhooks, SDKs, and test institutions, all central to programmatic/agentic access — clearly satisfying an AI-native user's need to drive the product via API. missing for 10: independent/third-party corroboration of real-world API usage and a working openapi.json directly on the docs domain (probe found 404s there, mitigated by the GitHub spec).",
     "evidenceIds": [
       "mx-gh-1",
       "mx-docs-12",
       "mx-docs-26",
-      "mx-probe-1",
-      "mx-probe-3",
-      "mx-docs-21",
-      "mx-docs-7"
+      "mx-docs-31",
+      "mx-docs-32",
+      "mx-docs-33",
+      "mx-docs-41",
+      "mx-probe-2"
     ]
   },
   {
@@ -856,20 +870,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents—docs cover data connectivity, webhooks, OpenAPI spec, and even an MCP server reference, but nothing about issuing restricted-scope API keys/tokens for AI agent use.",
-    "evidenceIds": []
+    "rationale": "Evidence shows MX has basic API key issuance and rotation via the Client Dashboard (mx-docs-32, mx-docs-33), but there is no mention of scoped or least-privilege permission levels, role-based scopes, or agent-specific credential grants — the core ask of this story. Without evidence of granular scoping, this axis is unmet.",
+    "evidenceIds": [
+      "mx-docs-32",
+      "mx-docs-33"
+    ]
   },
   {
     "productId": "mx",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX publishes an official OpenAPI specification (mx-gh-1) and supports importing it into Postman for API exploration (mx-docs-12/26), which enables building typed/generated clients, but there is no evidence of dedicated first-party SDK libraries (e.g., Python, JS, Java) or SDK-specific documentation/examples. missing for 10: named official SDK packages/libraries, language-specific SDK docs, and independent confirmation of SDK usage.",
+    "rationale": "MX ships official SDKs for embedding the Connect Widget (Web SDK, React Native SDK) plus a first-party OpenAPI spec on GitHub and Postman collection for API integration, giving AI-native developers a documented path to build against MX programmatically. However, evidence shows no broad set of official server-side client-library SDKs (e.g., Python/Node/Java API clients) beyond the widget SDKs and generic OpenAPI spec, and a direct openapi.json probe 404'd, suggesting the spec isn't uniformly hosted as advertised. missing for 10: dedicated backend-language SDKs beyond widget embedding, working hosted OpenAPI endpoint, independent corroboration of SDK quality/usage.",
     "evidenceIds": [
+      "mx-docs-29",
+      "mx-docs-30",
+      "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-docs-12",
-      "mx-docs-26"
+      "mx-probe-2"
     ]
   },
   {
@@ -878,24 +898,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX documents a webhooks system that sends HTTPS POST callbacks so developers can subscribe to specific events, clearly supporting webhook-based event subscription. Missing for 10: an exhaustive list of supported event types and independent/hands-on confirmation beyond first-party docs.",
+    "rationale": "MX documents webhooks that send HTTPS POST callbacks to a chosen URL for subscribing to events, with a Client Dashboard UI to create, edit, test, and delete these webhook subscriptions. missing for 10: independent/hands-on corroboration of webhook reliability and a full list of supported event types.",
     "evidenceIds": [
       "mx-docs-7",
-      "mx-docs-22"
+      "mx-docs-22",
+      "mx-docs-41"
     ]
   },
   {
     "productId": "mx",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "MX publishes an OpenAPI spec (mx-gh-1) that users can import into Postman to explore requests/responses (mx-docs-12, mx-docs-26), and provides a sandbox test-platform with test institutions (mx-docs-8). However, there is no evidence of an embedded, in-docs interactive API reference with directly runnable examples (e.g., a Swagger/Redoc-style try-it-now console) — probes for a hosted openapi.json on the docs site 404 (mx-probe-2), meaning users must leave the docs and use an external tool like Postman to run calls. Missing for 10: an in-browser interactive explorer with click-to-run examples, and confirmation the OpenAPI spec is directly hosted/interactive on docs.mx.com rather than requiring external import.",
+    "rationale": "MX ships a downloadable OpenAPI spec (and a public GitHub repo) that can be imported into Postman to explore requests/responses, but there is no evidence of a native interactive API reference with in-page 'try it now' runnable examples — a probe for a hosted openapi.json/swagger UI on the docs site returned 404s. missing for 10: an embedded interactive/try-it API console on docs.mx.com, evidence of runnable code examples in-browser, and independent confirmation of the Postman workflow's usability.",
     "evidenceIds": [
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-docs-8",
       "mx-probe-2"
     ]
   },
@@ -903,12 +924,13 @@
     "productId": "mx",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "MX explicitly documents downloading its OpenAPI Specification for import into Postman, and a dedicated GitHub repo (mxenabled/openapi) hosts the machine-readable spec. Missing for 10: no evidence of a standard hosted openapi.json endpoint (probe found 404s at common paths), so discovery relies on docs/GitHub rather than a canonical URL.",
+    "rationale": "MX documents that developers can download an OpenAPI Specification and import it into Postman, and a dedicated GitHub repo (mxenabled/openapi) hosts the actual machine-readable spec for the MX Platform API. missing for 10: independent/hands-on confirmation that the hosted spec stays current and is discoverable at a standard well-known endpoint (probe found no /openapi.json at expected paths, relying on docs/GitHub instead).",
     "evidenceIds": [
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
       "mx-probe-2"
     ]
@@ -916,15 +938,16 @@
   {
     "productId": "mx",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX explicitly documents a test platform with four test institutions and OpenAPI spec/Postman import for exercising the API without touching real production financial data, plus dedicated guidance for testing the Connect Widget/OAuth flows. missing for 10: no explicit statement distinguishing a separate 'sandbox' credential set or environment isolation guarantee, and no independent/hands-on confirmation that test data never touches production systems.",
+    "rationale": "MX documents a dedicated test platform with four test institutions and an OpenAPI spec/Postman collection for exercising the API outside production, plus guidance on testing the Connect Widget/OAuth flows — a clear sandbox testing path. However, evidence doesn't explicitly frame this as an 'AI-native' or agentic testing workflow, nor confirm isolation guarantees (e.g., no real data ever touched) beyond the test institutions being separate from production. missing for 10: explicit AI-agent-oriented sandbox usage, independent/hands-on confirmation of full production-data isolation.",
     "evidenceIds": [
       "mx-docs-8",
       "mx-docs-12",
       "mx-docs-23",
-      "mx-docs-26"
+      "mx-docs-42",
+      "mx-docs-31"
     ]
   },
   {
@@ -933,12 +956,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms MX publishes an OpenAPI spec (mx-gh-1, mx-docs-12/26) but nowhere documents API versioning conventions or a formal deprecation policy for breaking changes. Missing for 10: documented version numbering scheme, deprecation timeline/notice policy, changelog of breaking changes.",
-    "evidenceIds": [
-      "mx-gh-1",
-      "mx-docs-12",
-      "mx-docs-26"
-    ]
+    "rationale": "MX documents API keys, OpenAPI specs, and webhooks, but there is no evidence of a documented API versioning scheme or a deprecation policy for its endpoints. The only lifecycle-related policy found (mx-docs-33) concerns API key rotation, not API version deprecation.",
+    "evidenceIds": []
   },
   {
     "productId": "mx",
@@ -946,7 +965,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes per-user/per-account connectivity, aggregation, and identity verification features, but nothing documents bulk or batch operations across many items/accounts/users at once. Missing for 10: any batch API endpoints, bulk data export/import operations, or documentation of multi-item processing at scale.",
+    "rationale": "The evidence pack documents connectivity products, webhooks, dashboard tools, and an OpenAPI spec, but nothing describes bulk/batch operations across many items (e.g., batch API calls, mass user management, or bulk data export endpoints). This is a plausible axis for an API-driven platform, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -955,11 +974,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "MX provides webhooks that let subscribers receive event notifications (e.g., aggregation completion) which developers can use to trigger their own downstream actions, but there is no evidence of a native rules/automation engine where users define conditional trigger-action logic within MX itself. missing for 10: a documented rules/automation builder or conditional trigger-action configuration UI, evidence of built-in actions (not just external webhook consumption).",
+    "rationale": "MX provides webhooks that notify a developer's system of events (mx-docs-7, mx-docs-22, mx-docs-41) and a dashboard to create/test/delete webhooks, which is the event-detection half of the story, but there is no evidence of a built-in rules engine where users define conditional actions that MX itself executes automatically — the 'action' side is left entirely to the developer's own downstream system. Missing for 10: a native rule/condition builder, documented automatic action execution (e.g., trigger a payment, alert, or workflow) tied to events, and any example of an end-to-end automated rule.",
     "evidenceIds": [
       "mx-docs-7",
       "mx-docs-22",
-      "mx-docs-25"
+      "mx-docs-41"
     ]
   },
   {
@@ -980,7 +999,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a financial data connectivity/aggregation API platform, not an automation-builder tool; there is no concept of 'automations' with version/review/rollback in its product surface, so this axis is a category error rather than an unmet capability.",
+    "rationale": "MX is a financial data connectivity/API platform, not an automation-builder product with workflows to version, review, or roll back; this axis does not apply to its category.",
     "evidenceIds": []
   },
   {
@@ -988,8 +1007,8 @@
     "storyId": "connection-repair-relink",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers MX's connectivity products (aggregation, IAV, AOI, microdeposits, webhooks) but never documents connection/member status codes (e.g., expired, revoked, challenged) or a dedicated re-authentication/update flow that lets users fix a broken link without re-onboarding. This is a plausible and expected capability for an account-aggregation platform, but nothing in the pack substantiates it.",
+    "confidence": "low",
+    "rationale": "The evidence pack shows connectivity, webhooks, and a user-lookup dashboard for viewing connection attempts, but nothing documents specific expired/revoked connection status codes or an 'update mode' re-authentication flow that preserves prior state. No citation addresses the reconnect/re-auth-without-restart mechanic the story asks about.",
     "evidenceIds": []
   },
   {
@@ -998,8 +1017,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers connectivity, aggregation, webhooks, and API testing but contains no documentation of a delete/disconnect flow for members or users, nor any statement about MX stopping data collection or purging held data upon request. This is a fair question for a financial data aggregator handling sensitive consumer data, but no supporting evidence exists.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers connectivity, data retrieval, webhooks, API key rotation, and dashboard features like webhook deletion or user lookup, but no documentation addresses deleting a user/connection, stopping ongoing data collection, or purging previously held data. This is a plausible and expected axis for a data-aggregation platform handling sensitive financial data, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": [
+      "mx-docs-34",
+      "mx-docs-41"
+    ]
   },
   {
     "productId": "mx",
@@ -1007,12 +1029,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX docs describe the Connect Widget as a ready-made, embeddable UI that prompts end users to authenticate with their institution credentials, paired with the Platform API for server-side session/member creation, matching the drop-in hosted flow with no custom institution UI needed. Webhooks and member/account tokens (e.g., guid-based member connections) round out the server-to-client flow.\nmissing for 10: explicit mention of a 'connect token' generation endpoint and independent/third-party confirmation of the end-to-end session-create-then-widget-open flow.",
+    "rationale": "MX's Connect Widget is a drop-in hosted flow embeddable via Web SDK or React Native SDK that prompts end users to authenticate with their institution, and the Platform API/webhooks allow server-side session creation and retrieval of a connected 'member' token without building institution UI. missing for 10: no independent/hands-on corroboration of the exact server-side session-create-then-open-widget-then-get-token sequence, and no explicit third-party account confirming ease of integration.",
     "evidenceIds": [
-      "mx-docs-9",
       "mx-docs-21",
-      "mx-docs-22",
-      "mx-docs-23",
+      "mx-docs-9",
+      "mx-docs-29",
+      "mx-docs-30",
+      "mx-docs-7",
       "mx-docs-25"
     ]
   },
@@ -1022,7 +1045,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX's evidence covers account aggregation, balances, identity/ownership verification, and general 'data intelligence' or 'personalized guidance' claims, but nothing documents a specific income/cash-flow signal product — no mention of recurring-income detection, payroll detection, or a named income verification offering built on transaction data.",
+    "rationale": "MX's evidence covers account aggregation, transaction history, balances, and identity/verification products, but nothing describes income/cash-flow signal derivation, recurring income stream detection, payroll detection, or a documented income-verification product built on this data.",
     "evidenceIds": []
   },
   {
@@ -1031,7 +1054,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers MX's connectivity products, APIs, and webhooks but contains no published figures on number of institutions reached, geographic coverage, or any coverage map/list a founder could check against their users' banks.",
+    "rationale": "The evidence pack contains extensive API/product documentation but no published institution-coverage numbers or geographic breakdowns (e.g., count of connected institutions, countries served) that a founder could check against their user base.",
     "evidenceIds": []
   },
   {
@@ -1040,8 +1063,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers connectivity, aggregation, webhooks, and test institutions, but there is no documented institution status dashboard, outage/degradation signal, or error-code taxonomy distinguishing bank-side failures from client-side issues. Missing for 10: institution health/status page, outage or degradation indicators, and documented error codes for bank vs integration failure.",
-    "evidenceIds": []
+    "rationale": "The evidence covers MX's connectivity products, webhooks, test institutions, and dashboard tools (e.g., User lookup for a single user's connection attempts) but nothing documents a per-institution status page, outage/degradation signals, or an error-code taxonomy that distinguishes institution-side failures from integrator-side problems. This is a fair ask for an aggregation platform whose core risk is bank-side outages, so absence of evidence is 'none' rather than 'na'.",
+    "evidenceIds": [
+      "mx-docs-34",
+      "mx-docs-8",
+      "mx-docs-7",
+      "mx-docs-41"
+    ]
   },
   {
     "productId": "mx",
@@ -1068,9 +1096,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows MX supports OAuth in its Connect Widget (mx-docs-23) but there is no documentation of overall OAuth coverage across institutions or any stated plan for retiring legacy credential-based (screen-scraped) connections, which is the core of this story.",
+    "rationale": "Evidence only shows a testing note about loading an institution's OAuth window in a WebView (mx-docs-23, mx-docs-42) and mentions that Connect prompts users to log in with credentials (mx-docs-9) — there is no documentation of OAuth coverage across institutions, nor any statement about retiring screen-scraped credential flows.",
     "evidenceIds": [
-      "mx-docs-23"
+      "mx-docs-23",
+      "mx-docs-42",
+      "mx-docs-9"
     ]
   },
   {
@@ -1079,7 +1109,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows MX automatically aggregates accounts on a ~24-hour cycle (mx-docs-25) and describes webhooks for event notifications, but there is no documented API endpoint or semantics for a developer-triggered on-demand refresh of a connected account's data.",
+    "rationale": "The evidence shows MX auto-aggregates data on ~24h cycles (mx-docs-25) and offers webhooks for events (mx-docs-7), but no documentation in this pack describes an on-demand/manual refresh API endpoint or its semantics (e.g., a member refresh call, sync status, or freshness guarantees). Missing for 10: an explicit on-demand refresh/sync API endpoint, documented refresh semantics (sync vs async, status polling), and confirmation that developers can trigger it outside the automatic 24h cycle.",
     "evidenceIds": [
       "mx-docs-25",
       "mx-docs-7"
@@ -1091,12 +1121,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "MX exposes a full Platform API (with public OpenAPI spec and even an MCP server) covering the same core capabilities as its Connect Widget UI—account verification, aggregation, balances, transaction history, webhooks—so most end-user and data flows are API-accessible. However, there is no explicit documentation confirming full parity between the API and MX's dashboard/admin UI (e.g., configuration, analytics, or account-management screens), so some UI-only functions may not be exposed. Missing for 10: explicit parity statement, evidence covering dashboard/admin functions via API, independent confirmation of no UI-only features.",
+    "rationale": "MX exposes a broad Platform API (aggregation, verification, balances, statements, webhooks) with an OpenAPI spec and SDKs, and the Client Dashboard also has API-key management, suggesting most functions are API-accessible. However, some dashboard-only features (SSO SAML setup, user lookup UI, mobile maintenance mode toggles, webhook creation via dashboard UI) are documented as dashboard actions without a clearly confirmed equivalent API endpoint, and there's no explicit statement of full UI/API parity. missing for 10: explicit parity statement or evidence that dashboard-only admin functions (SSO config, user lookup, mobile maintenance mode) are also exposed via API, independent confirmation of full coverage.",
     "evidenceIds": [
-      "mx-docs-21",
+      "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-probe-3",
-      "mx-docs-26"
+      "mx-docs-32",
+      "mx-docs-34",
+      "mx-docs-35",
+      "mx-docs-36",
+      "mx-docs-41"
     ]
   },
   {
@@ -1118,7 +1152,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a closed commercial fintech API/SaaS product; the only public GitHub repo (mx-gh-1) contains an OpenAPI specification for documentation/integration purposes, not the actual application source code, and no license grants access to MX's implementation source.",
+    "rationale": "MX is a closed commercial fintech data platform; the only GitHub artifact (mx-gh-1) is merely an OpenAPI specification file, not the product's actual source code, and no license terms for reading/using MX's core source are documented anywhere in the evidence.",
     "evidenceIds": [
       "mx-gh-1"
     ]
@@ -1129,7 +1163,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a cloud-hosted financial data connectivity API/SaaS platform with no evidence of any self-hostable core product; self-hosting is a category error for this kind of managed financial-data service.",
+    "rationale": "MX is a hosted financial data connectivity/SaaS API platform, not open-source software that could be self-hosted; the evidence pack shows only cloud API/dashboard access, not a deployable core product. Self-hosting is a category mismatch for this kind of managed banking-data service.",
     "evidenceIds": []
   },
   {
@@ -1138,7 +1172,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX's evidence covers account verification, aggregation, balance, transaction history, and identity data, plus 'Tokenized Account Numbers... for secure ACH money movement' (mx-docs-24), but there is no documented payment-initiation API/product, no description of initiating a bank payment/transfer, and no stated live geographies for such a capability.",
+    "rationale": "MX's docs cover account verification, aggregation, balance, and identity data, and mention Tokenized Account Numbers for 'secure ACH money movement,' but there is no documented pay-by-bank or payment-initiation product, no API for initiating a payment, and no stated live geographies for such a capability.",
     "evidenceIds": [
       "mx-docs-24",
       "mx-docs-15",
@@ -1151,7 +1185,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for MX's data; all citations concern connectivity, aggregation, and API/testing features. missing for 10: any mention of data residency/region options, compliance certifications tied to geographic storage, or configuration for where data is stored.",
+    "rationale": "No evidence in the pack discusses data residency, regional storage options, or data location controls for MX's platform; all citations concern connectivity, aggregation, webhooks, dashboards, etc.",
     "evidenceIds": []
   },
   {
@@ -1160,7 +1194,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy policy statement about model training; the pack is entirely about financial data connectivity, aggregation, and webhooks.",
+    "rationale": "MX is a financial data connectivity/API platform; nothing in the evidence pack addresses AI training data usage, opt-out controls, or data-usage privacy policies for AI model training. This is an applicable axis for any data-handling platform, but no evidence supports it being delivered.",
     "evidenceIds": []
   },
   {
@@ -1168,8 +1202,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data retention periods, deletion policies, or user/data-controller controls over stored financial data; all citations relate to connectivity, aggregation, and API features rather than privacy/data lifecycle controls.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers MX's data connectivity, aggregation, webhooks, dashboard, and API features extensively, but contains no mention of data retention policies, user-initiated deletion controls, or consent/data-lifecycle management. Missing for 10: any documentation of retention periods, deletion APIs/endpoints, user consent revocation, or compliance controls (GDPR/CCPA-style deletion) — the axis clearly applies to a financial data aggregator handling sensitive PII, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -1178,7 +1212,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item addresses telemetry, usage tracking, analytics opt-out, or data collection controls for AI-native usage; the docs focus entirely on financial data connectivity and APIs. Missing for 10: any mention of telemetry collection, an opt-out mechanism, or privacy settings related to usage tracking.",
+    "rationale": "No evidence anywhere in the pack addresses telemetry/usage-tracking opt-out controls for MX; the docs focus entirely on financial data connectivity, APIs, webhooks, and dashboard features. This is a fair question for an API/data platform, so the axis applies, but nothing in the evidence supports or denies such a capability.",
     "evidenceIds": []
   },
   {
@@ -1187,27 +1221,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "MX provides Instant Account Verification (account/routing numbers) and Tokenized Account Numbers (TANs) explicitly described as 'substitute account numbers used for secure ACH money movement,' which supports handing verified account credentials to processors for payment initiation, plus a Connect Widget/Platform API for linking accounts. However, evidence does not show explicit named integrations or token-exchange flows with specific third-party payment processors (e.g., Stripe, Plaid-style processor partnerships) beyond MX's own ACH/TAN mechanism. missing for 10: documented named processor/platform integrations or partner list, explicit token-exchange API examples handing credentials to a specific external processor, independent confirmation of processor handoff working in production.",
+    "rationale": "MX documents Instant Account Verification (account/routing numbers) and Tokenized Account Numbers (TANs) for secure ACH money movement, which serve as the mechanism for handing verified account credentials to third-party processors for payments. However, the evidence does not show explicit named integrations or documented token-exchange flows with specific third-party payment processors (e.g., named partnerships or processor-specific APIs) — it's mostly generic MX-to-bank connectivity described from MX's own docs. missing for 10: named third-party processor/platform integrations, explicit token-exchange API documentation with a payment processor, independent verification of processor handoff working in production.",
     "evidenceIds": [
       "mx-docs-1",
       "mx-docs-15",
       "mx-docs-24",
-      "mx-docs-21",
-      "mx-gh-1"
+      "mx-docs-17"
     ]
   },
   {
     "productId": "mx",
     "storyId": "quickstart-first-connection",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX provides developer-facing artifacts like a downloadable OpenAPI spec (importable into Postman), a public GitHub OpenAPI repo, and a test platform with sandbox test institutions, which support quick experimentation. However there's no evidence of a self-serve API key signup flow, a step-by-step quickstart guide, or officially maintained client libraries/SDKs in specific languages. missing for 10: self-serve API key/account signup flow, official quickstart tutorial, language-specific client libraries/SDKs.",
+    "rationale": "MX documents self-serve developer API keys via the Client Dashboard (free, easy to obtain) plus a sandbox with test institutions and an importable OpenAPI spec for Postman/API exploration, and offers Web/React Native SDKs to embed Connect. However there's no explicit 'quickstart' tutorial evidenced, client libraries are limited to JS/React Native (no broader multi-language SDK coverage), and the direct openapi.json endpoint 404s (spec only via GitHub repo). Missing for 10: explicit fast quickstart guide, multi-language client libraries beyond web/RN, and a working hosted OpenAPI endpoint.",
     "evidenceIds": [
+      "mx-docs-32",
       "mx-docs-8",
       "mx-docs-12",
       "mx-docs-26",
       "mx-gh-1",
+      "mx-docs-29",
+      "mx-docs-30",
       "mx-probe-2"
     ]
   },
@@ -1229,21 +1265,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX's evidence covers account aggregation, identity/verification, balances, transaction history and ACH microdeposit verification, plus tokenized account numbers for ACH money movement — but there is no mention of variable recurring payments, standing consents, or any recurring/scheduled debit payment-initiation flow.",
+    "rationale": "MX's evidence pack covers account verification, aggregation, balances, transaction history, and ACH microdeposits for account verification, but no evidence mentions recurring payment initiation, variable recurring payments, standing consents, or recurring debit flows built on the connection.",
     "evidenceIds": []
   },
   {
     "productId": "mx",
     "storyId": "sandbox-test-institutions",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX documents a dedicated test platform with four test institutions and an OpenAPI spec importable into Postman, plus guidance on testing the Connect Widget's OAuth flow end-to-end — directly supporting sandbox-based linking/testing before production use. However, the evidence does not show explicit documented test credentials for each test institution or guidance on simulating specific error states. Missing for 10: documented test credentials per institution, explicit error-state/failure simulation guidance.",
+    "rationale": "MX documents a dedicated test platform with four test institutions and a downloadable OpenAPI spec importable into Postman, and separately documents OAuth testing behavior in the Connect Widget, supporting end-to-end linking/testing before production. However, the evidence doesn't show documented test credentials per institution, explicit coverage of simulating error states, or examples of retrieving test transaction/account data end-to-end. Missing for 10: documented test credentials, explicit error-state simulation guidance, and a walkthrough tying test institutions to data retrieval and error handling.",
     "evidenceIds": [
       "mx-docs-8",
       "mx-docs-12",
+      "mx-docs-23",
       "mx-docs-26",
-      "mx-docs-23"
+      "mx-docs-42"
     ]
   },
   {
@@ -1252,14 +1289,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "MX splits data access into distinct products (Instant Account Verification, Account Owner Identification, Account Aggregation, Extended Transaction History, Balance), which implies a developer could integrate only the specific product/data type needed rather than one monolithic grant. However, there is no explicit documentation of a consent-scoping mechanism, a permission UI showing only requested scopes to end users, or stated data-minimization principles/controls. Missing for 10: explicit consent/scope management docs, evidence of end-user-facing scope selection in Connect Widget, and any stated data-minimization policy.",
+    "rationale": "MX offers distinct, separately documented products (Instant Account Verification, Account Owner Identification, Account Aggregation, Extended Transaction History, balance, statements) that a developer could choose to integrate individually, implying some product-level scoping, but there is no evidence of a formal consent/permission scoping mechanism, granular OAuth-like scopes, or documented data-minimization controls letting a developer request only specific fields/products at the API/consent layer. missing for 10: explicit scope/permission model documentation, granular consent API or configuration for limiting requested data fields, independent confirmation that products are enforced as separate consent grants rather than bundled under one broad authorization.",
     "evidenceIds": [
       "mx-docs-1",
       "mx-docs-2",
       "mx-docs-5",
       "mx-docs-6",
       "mx-docs-4",
-      "mx-docs-21"
+      "mx-docs-10"
     ]
   },
   {
@@ -1268,13 +1305,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers connectivity, verification, aggregation, webhooks, and testing tools, but never documents transaction enrichment specifics like cleaned merchant names, categorization, or logos — only vague references to 'data-driven intelligence' and 'account and transaction history in one view.' Since enrichment is a fair and expected capability for a financial-data-aggregation platform, but no concrete documentation of merchant cleansing/categories/logos appears, this is 'none' rather than 'na'.",
-    "evidenceIds": [
-      "mx-docs-13",
-      "mx-docs-28",
-      "mx-docs-5",
-      "mx-docs-19"
-    ]
+    "rationale": "The evidence pack covers connectivity, account verification, balances, transaction history, webhooks, and vague 'data-driven intelligence' claims, but nowhere documents transaction enrichment specifics like cleaned merchant names, categorization, or logos. This is a standard capability question for an account-aggregation platform like MX, so it applies, but no citation concretely supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "mx",
@@ -1301,24 +1333,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers MX's data connectivity products (account verification, aggregation, transaction history) and webhooks, but contains no mention of any end-user-facing consent dashboard, permissions center, or revocation portal where users can view/manage which apps hold access to their bank data. missing for 10: documented consent/permissions portal, revocation flow, any UI or API for end users to view/manage connected app access.",
+    "rationale": "Evidence shows a Client Dashboard for MX's business customers (API keys, user lookup, webhooks, SSO) but nothing describing an end-user-facing consent portal where the bank's actual end users can view and revoke which apps hold access to their data. 'User lookup' (mx-docs-34) is for the client/developer to inspect connection attempts, not for the consumer to self-manage access.",
     "evidenceIds": [
-      "mx-docs-9",
-      "mx-docs-21",
-      "mx-docs-11"
+      "mx-docs-32",
+      "mx-docs-34",
+      "mx-docs-35",
+      "mx-docs-36"
     ]
   },
   {
     "productId": "mx",
     "storyId": "webhook-data-events",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "MX docs confirm webhooks with HTTPS POST callbacks for subscribing to events like transaction/balance/connection changes, and note that account aggregation runs automatically (~every 24h) with webhook notification rather than requiring polling. Missing for 10: explicit documentation of webhook payload signing/verification mechanism and a full enumerated list of event types, plus independent/hands-on corroboration beyond first-party docs.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "MX docs confirm webhooks deliver HTTPS POST callbacks for events like connection state changes and can be managed/tested via the Client Dashboard, supporting event-driven freshness instead of polling. However, none of the evidence explicitly describes webhook payload signing/verification, nor do docs confirm coverage specifically for new transactions and balance updates as webhook triggers. Missing for 10: explicit signature/verification mechanism for webhooks, confirmation that transaction/balance events trigger webhooks, and independent/hands-on corroboration.",
     "evidenceIds": [
       "mx-docs-7",
       "mx-docs-22",
-      "mx-docs-25"
+      "mx-docs-41"
     ]
   },
   {
