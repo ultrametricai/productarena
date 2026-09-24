@@ -4050,18 +4050,20 @@
     "storyId": "agent-self-provisions",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop's core product is programmatic sandbox (Devbox) provisioning, execution, and teardown via API/SDK/CLI, explicitly designed for AI agents — including an Agents API for creating/managing/deploying agents, blueprints for reusable environments, snapshots for state capture, and suspend/resume lifecycle, all achievable without human intervention (docs-1, docs-13, docs-22, docs-23, docs-2, docs-4, docs-27, docs-12). The quickstart shows a devbox spun up in ~1 minute and CLI/SDK access covers execution and result retrieval end-to-end.\nmissing for 10: independent/hands-on third-party verification of a full agent-driven provision→execute→teardown loop, and a concrete code example showing an agent reading execution results programmatically.",
+    "confidence": "high",
+    "rationale": "Runloop's API/SDK and CLI let an agent programmatically create a Devbox (sandbox), execute commands with streamed/logged results (execute-commands, execution-logs, PTY, named shells, file access), and then shut it down or suspend/resume — all documented as callable via SDKs without human interaction, and reinforced by an 'Agents API' and GitHub Action for automated deployment. Missing for 10: no independent/hands-on third-party confirmation of a fully autonomous end-to-end run (only first-party docs/tutorials), and no explicit example showing an agent autonomously deciding to tear down its own sandbox without a workflow script.",
     "evidenceIds": [
       "runloop-docs-1",
-      "runloop-docs-13",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-63",
+      "runloop-docs-64",
       "runloop-docs-22",
+      "runloop-docs-48",
       "runloop-docs-23",
-      "runloop-docs-2",
-      "runloop-docs-4",
-      "runloop-docs-27",
-      "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-8"
     ]
   },
   {
@@ -4070,11 +4072,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probe evidence confirms a working llms.txt file (HTTP 200) with a documentation index, plus docs-md endpoints explicitly pointing agents to fetch llms.txt for full documentation, and Cursor rules files further supporting agent-oriented consumption of docs. missing for 10: independent third-party confirmation that agents successfully use these docs in practice.",
+    "rationale": "Direct probe confirms llms.txt is live (HTTP 200) with structured agent-oriented content, and docs pages expose a .md variant plus an explicit documentation index pointing to llms.txt, showing deliberate agent-readable doc infrastructure. Docs also mention adding API context to LLMs and Cursor rule files for AI assistant context, reinforcing agent-native doc design. Missing for 10: no independent/third-party confirmation that agents actually consume it successfully in practice.",
     "evidenceIds": [
       "runloop-probe-1",
       "runloop-probe-2",
-      "runloop-docs-29"
+      "runloop-docs-36"
     ]
   },
   {
@@ -4083,21 +4085,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is sandbox/infrastructure tooling for running AI coding agents (Devboxes, blueprints, benchmarks, agent APIs) — it is not a data platform that ingests a user's data and surfaces AI-generated insights or suggestions. This story is a category error for this product type.",
+    "rationale": "Runloop is infrastructure for running sandboxed devboxes/agents, not a data product that surfaces AI-generated insights or suggestions from a user's own data; this story targets analytics/insight-generation features, which is a different axis for this kind of developer infrastructure tool.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop's Axons feature gives agents a persistent event stream letting them suspend when idle, wake on demand, recover state, and hand off between agents 'without you building the plumbing' (runloop-docs-17, runloop-docs-18), and devboxes support suspend/resume to preserve state across runs (runloop-docs-27). The GitHub Action for agent deployment (runloop-docs-24) supports triggering agent runs from CI workflows, enabling background automation setups. Missing for 10: no explicit cron/scheduler primitive, no independent/hands-on account of long-running unattended automations actually working in production, and no example of a full always-on autonomous pipeline beyond docs claims.",
+    "rationale": "Runloop provides infrastructure primitives (Axons with persistent event streams for suspend/wake/recover, Devbox suspend-resume, GitHub Action-triggered agent deployment, benchmark scheduling) that support autonomous background execution, but there's no evidence of a native cron/schedule-trigger system or dashboard for defining recurring/background 'automations' as a first-class user-facing feature. missing for 10: a documented scheduler/trigger UI for recurring automations, independent/hands-on evidence of long-running background jobs succeeding, and explicit 'automation' framing beyond agent lifecycle plumbing.",
     "evidenceIds": [
       "runloop-docs-17",
       "runloop-docs-18",
       "runloop-docs-27",
-      "runloop-docs-24"
+      "runloop-docs-24",
+      "runloop-docs-55",
+      "runloop-docs-6"
     ]
   },
   {
@@ -4106,7 +4110,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is a sandbox/infrastructure platform for running and orchestrating AI coding agents (Devboxes, Agents API, benchmarks), not an end-user product with its own embedded AI assistant to delegate tasks to. The evidence describes tools for building/hosting agents (and integrating with external assistants like Cursor), not a built-in assistant persona within Runloop itself.",
+    "rationale": "Runloop is infrastructure for building/running AI agents and sandboxes (Devboxes, Axons, Agents API, benchmarks) — it is a platform for developers to deploy their own agents, not a product with a built-in assistant that end-users delegate tasks to. This is a category mismatch: the story applies to end-user products with an embedded assistant, not to a sandbox/agent-hosting infrastructure platform.",
     "evidenceIds": []
   },
   {
@@ -4115,34 +4119,40 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop provides a CLI (rli), SDKs, an Agents API, GitHub Actions integration for deploying agents, and benchmark jobs runnable via CLI—all supporting headless/CI automation of sandboxes and agents. missing for 10: no independent/hands-on CI case study, and no explicit CI provider-specific guide beyond GitHub Actions example.",
+    "rationale": "Runloop offers a CLI (rli) and SDKs for scripting devbox lifecycle, an official GitHub Action (deploy-agent) for CI-driven agent deployment, a benchmarks CLI that provisions devboxes and runs agents/scoring end-to-end, and headless execution primitives (execute-commands, named shells, PTY, logs) suitable for automation pipelines. Missing for 10: no independent/hands-on report of a full CI pipeline in production, and no explicit 'headless mode' framing beyond CLI/API/GitHub Action usage.",
     "evidenceIds": [
-      "runloop-docs-6",
       "runloop-docs-8",
-      "runloop-docs-22",
       "runloop-docs-23",
-      "runloop-docs-24"
+      "runloop-docs-24",
+      "runloop-docs-6",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-45"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows Runloop publishes its own MCP server so external agents can call Runloop's tools (runloop-probe-4), but there is no evidence that Runloop itself can act as an MCP client and plug in third-party MCP servers to use their tools. missing for 10: any documentation of an MCP-client integration point, config for adding external MCP servers, or examples of Devboxes/agents consuming external MCP tool servers.",
+    "rationale": "Runloop documents an 'MCP Hub' feature explicitly giving agents access to MCP tool servers without exposing credentials, directly matching the story of plugging MCP servers in so the product's agents can use their tools. Missing for 10: no independent/hands-on corroboration of the MCP Hub in practice, and limited detail on configuration/setup breadth beyond the single doc line.",
     "evidenceIds": [
-      "runloop-probe-4"
+      "runloop-docs-66"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop is a sandbox/devbox platform (not itself an agent), so shipping an official MCP server is a valid axis, and the docs explicitly reference one at docs.runloop.ai/docs/tools/ai-tools. This confirms the capability exists, though the evidence pack lacks detail on the specific tools/resources exposed or independent hands-on confirmation. Missing for 10: detailed documentation of MCP server tool surface, independent/community verification of usage.",
+    "rationale": "Runloop documents an official MCP server (ai-tools page, confirmed by probe) that lets LLMs/agents pull Runloop API context, and separately an 'MCP Hub' for giving agents access to MCP tool servers without exposing credentials. This shows a real, documented MCP server offering, but the evidence is thin—no detailed setup guide, transport details, or independent confirmation of hands-on connection success. Missing for 10: detailed MCP server documentation/setup steps, independent/hands-on verification of connecting an agent to it, and clarity on tool coverage.",
     "evidenceIds": [
+      "runloop-docs-36",
+      "runloop-docs-66",
       "runloop-probe-4"
     ]
   },
@@ -4150,13 +4160,15 @@
     "productId": "runloop",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop exposes an official MCP server and ships Cursor '.mdc' rule files that give AI assistants context on the SDK (devbox lifecycle, file ops, blueprints, snapshots, tunnels), enabling natural-language operation through AI coding assistants rather than a bespoke NL interface. There's no first-party chat/NL command surface of Runloop's own, and no independent evidence of how well the MCP/Cursor integration performs in practice. Missing for 10: dedicated natural-language interface docs, hands-on/independent validation of the MCP or Cursor integration actually working end-to-end.",
+    "rationale": "Runloop offers an official MCP server and Cursor `.mdc` rule files that give AI assistants context on the Runloop SDK, letting an AI-native user drive devbox creation/management via connected agents rather than only the CLI/dashboard. However, there is no evidence of a native built-in natural-language command interface for Runloop itself (the CLI is a traditional CLI/TUI, not NL-driven). Missing for 10: evidence of a first-party conversational/NL interface built into Runloop's own CLI or dashboard, and independent confirmation that MCP-based control reliably covers all platform actions.",
     "evidenceIds": [
-      "runloop-probe-4",
       "runloop-docs-29",
-      "runloop-docs-8"
+      "runloop-docs-36",
+      "runloop-docs-44",
+      "runloop-probe-4",
+      "runloop-docs-66"
     ]
   },
   {
@@ -4165,12 +4177,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop ships an official CLI (`rli`) with both interactive TUI and traditional commands for managing devboxes, blueprints, SSH sessions, and benchmarks, documented directly in first-party docs and confirmed by probe. This is clearly built for AI-native/agentic workflows (blueprint creation, benchmark submission, devbox lifecycle management). Missing for 10: independent/hands-on community corroboration beyond vendor docs, and no changelog/version history showing active CLI maintenance cadence.",
+    "rationale": "Runloop documents an official CLI (`rli`) offering both an interactive terminal UI and traditional CLI commands for managing devboxes, blueprints, SSH, and more, confirmed by both docs and probe evidence. missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and no full command reference shown.",
     "evidenceIds": [
       "runloop-docs-8",
       "runloop-docs-9",
       "runloop-docs-2",
-      "runloop-docs-6",
       "runloop-probe-5"
     ]
   },
@@ -4180,14 +4191,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop documents a full public API surface: Devboxes API, Agents API, SDKs in common languages, CLI (rli), and GitHub Action integration, all callable programmatically for agent-driven workflows. This is strong first-party documentation of a public API, though probes show no discoverable OpenAPI spec, slightly weakening independent verification. Missing for 10: a published OpenAPI/swagger spec and independent third-party corroboration of API usage.",
+    "rationale": "Runloop exposes a full REST API surface (Agents API, Devboxes, Storage Objects, Secrets, etc.) plus official SDKs in multiple languages, a CLI (rli), and llms.txt/markdown docs explicitly designed for AI-native consumption, all clearly documented for programmatic use. This strongly supports driving the product entirely through documented public APIs rather than only a UI. Missing for 10: a discoverable machine-readable OpenAPI spec (probe found 404s on standard OpenAPI paths) and independent third-party corroboration of API completeness/stability.",
     "evidenceIds": [
       "runloop-docs-22",
       "runloop-docs-23",
       "runloop-docs-8",
-      "runloop-docs-24",
+      "runloop-probe-1",
+      "runloop-probe-2",
       "runloop-probe-3",
-      "runloop-probe-5"
+      "runloop-probe-5",
+      "runloop-docs-36"
     ]
   },
   {
@@ -4196,23 +4209,31 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop's Agent Gateways let agents call LLM APIs like Anthropic/OpenAI 'without ever seeing your API keys,' which is a direct least-privilege credentialing mechanism for agents. However, the docs give only a single brief mention with no detail on fine-grained scopes, per-agent permission levels, revocation, or audit logging. Missing for 10: detailed scoping/permission model documentation, credential rotation/revocation controls, and independent verification of the gateway's isolation guarantees.",
+    "rationale": "Runloop documents mechanisms consistent with least-privilege credential handling for agents: Agent Gateways let agents call LLM APIs 'without ever seeing your API keys' (runloop-docs-10), account-level Secrets are encrypted and injected as env vars rather than exposed directly (runloop-docs-21/42), MCP Hub gives agents access to tool servers 'without exposing credentials' (runloop-docs-66), and network policies let you control egress (runloop-docs-58). However, there's no explicit documentation of issuing scoped/permission-limited Runloop platform API keys (e.g., role-based or read-only API tokens) for agents themselves. Missing for 10: explicit scoped API-key/token issuance with configurable permission levels for Runloop's own API, and independent confirmation of least-privilege enforcement.",
     "evidenceIds": [
       "runloop-docs-10",
-      "runloop-docs-21"
+      "runloop-docs-21",
+      "runloop-docs-42",
+      "runloop-docs-66",
+      "runloop-docs-58"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents official SDKs in common languages for interacting with its API, plus tutorials integrating with SDKs like OpenAI Agents SDK, supporting an AI-native builder workflow. However, evidence lacks specifics on which languages are covered, versioning/maturity, or independent developer corroboration. Missing for 10: enumerated language list/maturity details, independent hands-on confirmation, changelog/versioning evidence.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop explicitly documents official SDKs 'in common languages to interact with the Runloop API' plus a CLI (rli), Cursor IDE rule files for SDK-aware assistance, and multiple tutorials showing SDK usage (OpenAI Agents SDK integration, Browserbase, Kernel, OpenCode) demonstrating real-world SDK-based builds. Missing for 10: no explicit list of supported languages/versions, no independent third-party corroboration of SDK quality, and no public OpenAPI spec was found (probe shows 404s) which would strengthen SDK completeness claims.",
     "evidenceIds": [
       "runloop-docs-23",
-      "runloop-docs-27",
-      "runloop-docs-29"
+      "runloop-docs-8",
+      "runloop-docs-29",
+      "runloop-docs-49",
+      "runloop-docs-50",
+      "runloop-docs-51",
+      "runloop-probe-3",
+      "runloop-probe-5"
     ]
   },
   {
@@ -4220,8 +4241,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence mentions webhooks or event subscription mechanisms; Runloop's docs describe devbox lifecycle events via Axons event streams but nothing about webhook subscriptions for external systems. Missing for 10: any documentation of a webhooks API, subscription/callback URLs, or event delivery mechanism to external endpoints.",
+    "confidence": "medium",
+    "rationale": "Runloop's docs describe persistent event streams via Axons for agent lifecycle management, but there is no evidence of a webhook subscription mechanism (HTTP callback registration) for external event notifications, which is a plausible capability for a platform with an API/SDK.",
     "evidenceIds": []
   },
   {
@@ -4230,7 +4251,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; the explicit probe for OpenAPI/swagger specs returned 404s across all candidate paths, and docs mention SDKs/CLI but not a runnable API explorer.",
+    "rationale": "The evidence pack shows an explicit probe for an interactive API reference (OpenAPI/Swagger spec) that returned 404 on all candidate paths, and no other citation describes a runnable, interactive API explorer—only static SDK docs, CLI docs, and tutorials are present.",
     "evidenceIds": [
       "runloop-probe-3"
     ]
@@ -4240,8 +4261,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Runloop offers SDKs and a CLI but there is no evidence of a downloadable OpenAPI/Swagger spec; explicit probes to common OpenAPI paths (openapi.json, swagger.json, etc.) all returned 404, confirming absence rather than just lack of mention.",
+    "confidence": "medium",
+    "rationale": "Runloop offers SDKs and a documented API, but a direct probe for a machine-readable OpenAPI/Swagger spec at all standard locations (openapi.json, swagger.json, api/openapi.json, .well-known/openapi.json) returned 404, and no evidence pack item links to a downloadable API spec.",
     "evidenceIds": [
       "runloop-probe-3",
       "runloop-docs-23"
@@ -4252,15 +4273,15 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop's Devboxes are isolated sandbox execution environments (secure, snapshot/blueprint-based, no production data by default) explicitly designed for testing AI agents, fully separate from any production system. missing for 10: no independent/hands-on corroboration beyond vendor docs, no explicit statement contrasting sandbox vs production data isolation guarantees.",
+    "confidence": "high",
+    "rationale": "Runloop's core product is isolated Devbox sandboxes for AI agents, explicitly separate from any production environment, with network egress controls, secrets management, snapshots, and no shared state with production systems by design. Docs emphasize secure, isolated execution ('secure sandboxed execution environments'), egress network policy control, and secrets scoped to the sandbox, directly supporting safe testing without touching production data. Missing for 10: no explicit case study or independent hands-on account confirming production-data isolation in a real deployment, and no direct statement contrasting sandbox vs production data access.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
+      "runloop-docs-58",
+      "runloop-docs-21",
       "runloop-docs-4",
-      "runloop-docs-15",
-      "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-19"
     ]
   },
   {
@@ -4269,7 +4290,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probe returned 404s and no changelog/versioning docs are cited.",
+    "rationale": "No evidence in the pack mentions API versioning scheme or a documented deprecation policy; the OpenAPI spec probe even returned 404s across candidate paths, and no changelog/versioning docs are cited.",
     "evidenceIds": [
       "runloop-probe-3"
     ]
@@ -4277,14 +4298,14 @@
   {
     "productId": "runloop",
     "storyId": "auto-teardown-timeouts",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop documents suspend/resume to \"save state and costs\" and Axons that let agents \"suspend when idle, wake on demand,\" indicating some idle-triggered lifecycle management, but there is no explicit documentation of a developer-configurable timeout parameter that auto-shuts-down a Devbox and stops billing after inactivity or completion. missing for 10: explicit timeout/idle-shutdown configuration API or CLI flag, confirmation that suspension halts billing automatically without agent action.",
+    "rationale": "Runloop docs explicitly document controlling automatic shutdown and idle behaviors for Devboxes (start-stop) plus suspend/resume workflows to save state and costs when idle, directly matching the timeout/idle-shutdown story. Missing for 10: independent/hands-on confirmation of billing stopping exactly on timeout and granular configuration examples (e.g. exact timeout parameters) beyond doc titles.",
     "evidenceIds": [
-      "runloop-docs-17",
+      "runloop-docs-64",
       "runloop-docs-27",
-      "runloop-docs-18"
+      "runloop-docs-55"
     ]
   },
   {
@@ -4293,12 +4314,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop supports running 10k+ parallel sandboxes, benchmark jobs that provision devboxes/run agents/aggregate outputs 'with a single command,' and snapshots for fan-out across multiple approaches — evidence of bulk/parallel operation across many devboxes. However, there's no explicit documentation of a generic bulk-operation API/CLI verb (e.g., bulk delete, bulk update, batch create) for arbitrary resources beyond devboxes/benchmarks. missing for 10: explicit bulk CRUD operations across resources like snapshots/storage objects/secrets, documented batch API endpoints, and independent evidence of large-scale bulk usage beyond vendor docs.",
+    "rationale": "Runloop supports scale-oriented bulk operations: 10k+ parallel sandboxes, benchmark runs comparing multiple agents side-by-side with a single command, and blueprints/snapshots reused across many devboxes for fan-out workflows. However, this is scale/parallelism at the sandbox-provisioning level rather than a documented generic 'bulk operation' API for arbitrary items (e.g., batch file ops, bulk resource updates via a single call). missing for 10: explicit bulk/batch API endpoints for managing many resources (devboxes, secrets, storage objects) in one call, and independent evidence validating claimed 10k+ parallel scale in practice.",
     "evidenceIds": [
-      "runloop-docs-12",
       "runloop-docs-6",
+      "runloop-docs-12",
       "runloop-docs-15",
-      "runloop-docs-7"
+      "runloop-docs-16"
     ]
   },
   {
@@ -4307,10 +4328,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Runloop's Axons give agents a persistent event stream that can suspend on idle, wake on demand, recover state, and hand off between agents, which is a form of automatic event-driven behavior, and the Broker component sits between Axon and agent process to manage this. However, there's no documentation of a general user-facing rules engine where arbitrary conditions map to arbitrary actions across the platform (e.g., webhooks, triggers on Devbox/snapshot events, custom rule definitions). Missing for 10: a documented rules/trigger definition interface, examples of custom event-to-action mappings beyond agent suspend/wake, and evidence of triggers on other platform events (snapshots, storage, secrets).",
+    "rationale": "Runloop's Axons/Broker system provides an event stream for agent lifecycle (suspend on idle, wake on demand, recover state, hand off) and devbox start/stop offers idle-based automatic shutdown, which are event-driven primitives an AI-native user could build on. However, there is no documented rule-definition mechanism (e.g., a conditional 'on event X do action Y' API/UI) — the evidence shows infrastructure for event streaming and lifecycle state, not a general-purpose automation rules engine.  Missing for 10: explicit user-defined trigger/rule syntax or API, examples of arbitrary custom actions bound to events, and any UI for rule management.",
     "evidenceIds": [
       "runloop-docs-17",
-      "runloop-docs-18"
+      "runloop-docs-38",
+      "runloop-docs-39",
+      "runloop-docs-64"
     ]
   },
   {
@@ -4319,20 +4342,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Devboxes, snapshots, benchmarks, and Axons for event-driven suspend/resume, but nothing about scheduling recurring jobs or cron-like recurring workflows. Absence of evidence for this applicable automation capability yields 'none'.",
+    "rationale": "The evidence pack covers Devbox lifecycle (start/stop, suspend/resume), benchmarks, GitHub Actions deployment, and event-stream/Axon workflows, but nowhere documents a scheduler, cron-like trigger, or recurring job/workflow capability. Scheduling recurring automation is a fair capability to expect from an agent sandbox platform, so its total absence from docs means this axis is unmet.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop's Snapshots explicitly support rolling back Devbox state to a known good point, and Blueprints let you version/reuse startup configurations, giving a rudimentary rollback mechanism for agent environments. However, there is no evidence of a review workflow (diffs, approvals, audit trail) or of 'automations' as a first-class versioned object distinct from raw disk/environment snapshots. Missing for 10: explicit review/diff tooling for automations, first-class automation versioning (not just devbox/environment snapshots), audit/history UI for changes.",
+    "rationale": "Runloop's Snapshots let users save a Devbox's disk state and explicitly 'roll back to a known good point in time' or branch from prior states, and Blueprints let you version/reuse environment setup steps — covering rollback and some versioning of the automation's execution environment. However there's no evidence of a review/audit trail or diff view for agent automations themselves (only environment state), and 'review' is only loosely covered by the general Dashboard monitoring feature. Missing for 10: explicit version history/diffing of agent automation logic (not just environment snapshots), a dedicated review/audit UI for automation changes, and independent corroboration of rollback in practice.",
     "evidenceIds": [
+      "runloop-docs-4",
       "runloop-docs-15",
+      "runloop-docs-32",
+      "runloop-docs-2",
       "runloop-docs-14",
-      "runloop-docs-4"
+      "runloop-docs-57"
     ]
   },
   {
@@ -4341,9 +4367,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence Runloop supports running a headless browser or desktop GUI inside its Devbox sandboxes; the only browser-related tutorial explicitly states the architecture avoids this, running Chromium externally via Browserbase and connecting over CDP so 'no Chromium ever runs in the devbox.' Blueprints/docs never mention GUI, X11, VNC, or bundled browser binaries as a supported environment type.",
+    "rationale": "Runloop's own docs explicitly describe browser automation as running externally (via Browserbase or Kernel) with Playwright connecting over CDP, stating 'no Chromium ever runs in the devbox' — the opposite of running a headless browser inside the sandbox. There is no mention anywhere in the docs of a full desktop/GUI environment running inside a Devbox either. Since all evidence comes from a single tier (claimed-docs/probe), this cannot be marked 'disputed', but the applicable capability is not delivered as described in the story.",
     "evidenceIds": [
-      "runloop-docs-28"
+      "runloop-docs-28",
+      "runloop-docs-51",
+      "runloop-docs-52"
     ]
   },
   {
@@ -4352,9 +4380,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Runloop's marketing site claims support for 10k+ parallel sandboxes and sub-2s startup for 10GB images, showing scale is a design goal, but there is no documented concurrency limit, quota tiering, or rate-limit table a platform engineer could plan capacity around. Missing for 10: explicit documented per-account/org concurrency limits, guidance on requesting increases, and independent benchmarks validating the 10k+ claim at sustained load.",
+    "rationale": "Runloop's marketing page claims support for '10k+ parallel sandboxes' with fast image startup, and docs mention running benchmarks 'at scale' in secure environments, suggesting fleet-scale concurrency is a designed capability. However, there is no dedicated documentation page specifying concrete concurrency limits, quota tiers, or how limits scale with plan/account, nor any independent benchmark verifying the 10k figure. missing for 10: a documented concurrency-limits/quota page, per-plan limit specifics, and independent verification of the scale claim.",
     "evidenceIds": [
-      "runloop-docs-12"
+      "runloop-docs-12",
+      "runloop-docs-16",
+      "runloop-docs-6"
     ]
   },
   {
@@ -4363,24 +4393,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop's Blueprints support building custom sandbox images from a Dockerfile (`rli blueprint from-dockerfile`), plus reusable prebuilt blueprints and snapshotting of custom states, directly enabling developers to bring their own container image or define custom templates. Missing for 10: independent/hands-on verification of Dockerfile-based blueprint builds and more detail on supported image registries or base image constraints.",
+    "rationale": "Runloop explicitly supports custom Blueprints built via 'rli blueprint from-dockerfile', letting developers bring their own container image, plus prebuilt public blueprints and reusable startup-action templates for customizing Devbox environments. missing for 10: independent/hands-on verification beyond first-party docs, and no explicit mention of pulling arbitrary existing registry images vs Dockerfile-based builds.",
     "evidenceIds": [
       "runloop-docs-2",
       "runloop-docs-3",
       "runloop-docs-14",
-      "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-31"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "expose-public-url",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents devbox tunnels for securely accessing ports on a devbox over a simple URL, directly matching the story's requirement to expose a service port publicly. Missing for 10: independent/hands-on confirmation of tunnel reliability and details on URL persistence/security controls beyond the doc snippet.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly describe devbox tunnels for securely exposing ports over a URL, with a dedicated tutorial for sharing a live preview link in pull requests using devbox tunnels—directly matching the story's provisioning-lifecycle need. missing for 10: no independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
-      "runloop-docs-5"
+      "runloop-docs-5",
+      "runloop-docs-33",
+      "runloop-docs-54"
     ]
   },
   {
@@ -4388,23 +4419,25 @@
     "storyId": "fast-cold-starts",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "Runloop's marketing site documents '10GB image startup time in <2s' and a 1-minute quickstart, supporting sub-second-to-few-second cold starts, but this is a single first-party marketing claim without detailed benchmarks, methodology, or independent corroboration. missing for 10: independent/third-party benchmark confirmation, documentation of cold start times across varying image sizes/configurations, and reproducible performance data beyond the single homepage claim.",
+    "confidence": "low",
+    "rationale": "Runloop's marketing site explicitly claims a documented cold-start metric (\"10GB image startup time in <2s\", supporting 10k+ parallel sandboxes), and docs also describe quickstart getting a devbox running in ~1 minute and suspend/resume for fast state recovery. However, this is a single marketing-page claim rather than a detailed benchmark methodology, and there's no independent or hands-on corroboration of actual cold-start latency across image sizes. Missing for 10: reproducible benchmark methodology/independent verification, breakdown of cold-start times across different image sizes/configs, third-party performance reports.",
     "evidenceIds": [
       "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-26",
+      "runloop-docs-47",
+      "runloop-docs-27"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "filesystem-io",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm the SDK/CLI supports 'file operations' as part of Devbox management (mentioned alongside lifecycle, command execution, etc. in the Cursor rules integration), implying read/write file capability, but no dedicated documentation page or code sample specifically shows upload/download or read/write file APIs. Missing for 10: explicit SDK method docs for file read/write, and explicit upload/download examples or independent corroboration.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly cover a dedicated 'Give your AI agent access to modify and interact with files on your devbox' file operations feature, and Cursor rule files mention SDK 'file operations' as a core covered capability alongside SDKs in common languages to interact with the API. This strongly implies read/write/upload/download file support via the SDK, though the evidence lacks explicit upload/download method names or code snippets. Missing for 10: explicit SDK code examples showing read/write/upload/download calls and independent hands-on confirmation.",
     "evidenceIds": [
+      "runloop-docs-63",
       "runloop-docs-29",
-      "runloop-docs-13",
       "runloop-docs-23"
     ]
   },
@@ -4413,11 +4446,13 @@
     "storyId": "free-tier-start",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Runloop's trial includes $50 free credits with no credit card required, and a quickstart lets a developer spin up a first devbox in about a minute, both without any sales contact. Missing for 10: independent/community confirmation of the free-tier signup experience and clarity on long-term free-tier limits beyond trial credits.",
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly state new accounts get a Pro Trial with $50 in free credits and no credit card required to sign up, and the quickstart shows a developer can create a devbox in under a minute without any sales contact. Missing for 10: independent/third-party confirmation of the self-serve signup flow and any explicit mention of ongoing free-tier limits beyond the trial credits.",
     "evidenceIds": [
       "runloop-docs-25",
-      "runloop-docs-26"
+      "runloop-docs-46",
+      "runloop-docs-26",
+      "runloop-docs-47"
     ]
   },
   {
@@ -4425,22 +4460,27 @@
     "storyId": "gpu-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Devboxes, blueprints, snapshots, mounts, storage, and networking features but never mentions GPU support or GPU-attached compute for sandboxed workloads; nothing indicates hardware acceleration is available.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "The evidence covers Devbox sizes, mounts, storage, secrets, networking, and execution features, but there is no mention of GPU support or GPU-attached compute in any documented Devbox configuration (e.g. runloop-docs-65 on 'predefined sizes' lists no GPU option). No evidence anywhere confirms GPU attachment is possible for sandboxed workloads.",
+    "evidenceIds": [
+      "runloop-docs-65",
+      "runloop-docs-19",
+      "runloop-docs-40"
+    ]
   },
   {
     "productId": "runloop",
     "storyId": "hard-isolation-boundary",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Runloop repeatedly describes Devboxes as \"secure sandboxed execution environments\" and \"isolated Linux sandbox environments,\" implying some isolation boundary, but the evidence never names or documents the actual isolation mechanism (e.g., microVM, Firecracker, gVisor, container-only) or any architecture diagram/security whitepaper explaining the boundary. missing for 10: explicit documentation of the underlying isolation technology (microVM/hypervisor-level or equivalent), any security architecture doc or third-party audit confirming hard isolation guarantees.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Runloop repeatedly markets Devboxes as 'secure sandboxed execution environments' and documents adjacent security controls (network egress policies, encrypted secrets, SSH end-to-end encryption), but none of the evidence specifies the actual isolation mechanism — no mention of microVMs, Firecracker, gVisor, hypervisor-level isolation, or any technical architecture describing a hard boundary between sandboxes and host/tenant systems. Missing for 10: explicit documentation of the isolation technology (microVM or equivalent), any architecture diagram or security whitepaper describing tenant separation, and independent verification of the isolation boundary's strength.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
-      "runloop-docs-16",
-      "runloop-probe-1"
+      "runloop-docs-30",
+      "runloop-docs-58",
+      "runloop-docs-67"
     ]
   },
   {
@@ -4449,13 +4489,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop Devboxes explicitly support long-running persistence via snapshots (save/restore disk state), suspend/resume to pause and continue exactly where left off, and Axons providing a persistent event stream that lets agents suspend when idle and wake on demand/recover state — directly addressing multi-hour/multi-day agent sessions without losing progress. Combined with SSH/tunnel access and mounts/secrets for long tasks, this covers the core story well. Missing for 10: independent/hands-on evidence (e.g., a third-party report) confirming multi-day session stability at scale, and explicit documented max session duration/limits.",
+    "rationale": "Runloop docs explicitly support long-running sessions: suspend/resume to pause and later resume a devbox exactly where it left off, idle/shutdown controls, persistent event streams (Axons) for suspend-on-idle/wake-on-demand/state recovery, and snapshotting for state persistence across sessions — all aimed at long agent workflows spanning hours/days. Missing for 10: no independent/hands-on evidence (e.g., a third-party report) confirming multi-day session stability at scale, and no explicit stated max session duration/SLA.",
     "evidenceIds": [
-      "runloop-docs-4",
-      "runloop-docs-15",
       "runloop-docs-27",
       "runloop-docs-17",
-      "runloop-docs-18"
+      "runloop-docs-55",
+      "runloop-docs-64",
+      "runloop-docs-4",
+      "runloop-docs-38"
     ]
   },
   {
@@ -4464,23 +4505,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop's Devboxes are described as full-featured secure sandboxed execution environments that can run arbitrary commands (via blueprints, SSH, CLI) which implies multi-language support, but there is no explicit documentation of a code-execution API returning 'rich results' (e.g., structured outputs, images, dataframes) as in dedicated code-interpreter products. missing for 10: explicit multi-language runtime examples (Python/JS/etc.), rich/structured result formatting (e.g., stdout+images+tables), and independent confirmation of these capabilities.",
+    "rationale": "Runloop's Devboxes are full sandboxed Linux environments where you can execute commands/code (docs-59, docs-61, docs-62) and blueprints can be built from Dockerfiles to support any language runtime (docs-2, docs-3), implying multi-language support. However, the evidence never explicitly documents Python/JavaScript-specific execution APIs or 'rich' structured result formats (e.g., images, dataframes) as in a code-interpreter product — execution is framed generically around shell commands, logs, and PTYs rather than language-aware rich outputs. Missing for 10: explicit multi-language runtime docs (Python/JS SDK code-exec examples), evidence of rich/structured result payloads (images, tables, exceptions) beyond raw logs/stdout.",
     "evidenceIds": [
-      "runloop-docs-1",
-      "runloop-docs-13",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
       "runloop-docs-2",
-      "runloop-docs-8",
-      "runloop-docs-23"
+      "runloop-docs-13"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "network-egress-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item describes network egress controls, firewall rules, or allow/deny policies for Devbox sandboxes; tunnels and secrets features are documented but network egress policy configuration is never mentioned.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Runloop has a dedicated network-policies doc explicitly stating 'Control egress network access for your Devboxes,' directly matching the platform-engineer story of restricting/allowing sandbox egress. However, the evidence is a single thin doc snippet with no detail on policy granularity (allow/deny lists, protocols) and no independent/hands-on corroboration. Missing for 10: detailed policy configuration examples, verification that granular rules work in practice, independent confirmation.",
+    "evidenceIds": [
+      "runloop-docs-58"
+    ]
   },
   {
     "productId": "runloop",
@@ -4488,13 +4532,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop is API-first: the CLI (rli) wraps SDKs/API for devboxes, blueprints, snapshots, benchmarks, agents, secrets, etc., suggesting broad API/CLI parity with any dashboard functionality. However there is no explicit statement claiming full UI/API feature parity, no documented OpenAPI spec (404s on all probed paths), and no direct dashboard-vs-API comparison. Missing for 10: explicit parity claim between web dashboard and API, published OpenAPI/reference spec, confirmation that all dashboard-only actions (e.g., billing, org settings) are also API-accessible.",
+    "rationale": "Runloop is API-first: Devboxes, blueprints, snapshots, benchmarks, agents, secrets, and mounts are all documented as API/CLI/SDK operations, and the Dashboard is described as a management/monitoring UI layered on top of that same API (runloop-docs-57, runloop-docs-8). This strongly suggests API-UI parity for a developer-tool product, but there is no explicit statement or independent confirmation that literally every dashboard action has an API equivalent (or vice versa), and the OpenAPI spec probe failed, leaving the full surface unverifiable. missing for 10: explicit documentation or independent confirmation of full UI/API parity, a discoverable OpenAPI spec, and any hands-on account of dashboard-only or API-only features.",
     "evidenceIds": [
+      "runloop-docs-57",
       "runloop-docs-8",
-      "runloop-docs-22",
       "runloop-docs-23",
-      "runloop-docs-6",
-      "runloop-probe-3"
+      "runloop-probe-3",
+      "runloop-docs-9"
     ]
   },
   {
@@ -4515,8 +4559,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence indicates Runloop's core source (the sandbox platform, Devboxes, Axons, etc.) is released under an open license; the evidence pack shows only docs, CLI, and SDK references without any license or open-source repository disclosure.",
+    "confidence": "high",
+    "rationale": "Runloop is a closed, commercial cloud platform; the evidence pack contains no mention of an open-source license or publicly available source code for the core product—only docs, SDKs, and CLI tooling. missing for 10: any evidence of an open-source license, public source repository, or licensing terms for the core Runloop platform.",
     "evidenceIds": []
   },
   {
@@ -4525,20 +4569,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is presented entirely as a hosted cloud platform (Devboxes, Agents API, benchmarks) with no evidence of an on-premises or self-hostable deployment option, open-source core, or self-hosting documentation.",
-    "evidenceIds": []
+    "rationale": "Runloop is presented entirely as a hosted cloud platform (Devboxes, Axons, Storage Objects, dashboard) with no mention of a self-hostable/on-prem deployment option, open-source core, or Docker/Helm packaging for running the platform yourself; all evidence points to a managed SaaS with trial credits and cloud sandboxes.",
+    "evidenceIds": [
+      "runloop-docs-1",
+      "runloop-docs-12",
+      "runloop-docs-25",
+      "runloop-docs-57"
+    ]
   },
   {
     "productId": "runloop",
     "storyId": "pause-resume-state",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents 'Suspend and resume' functionality that pauses sandboxes to save state and resume exactly where left off, plus snapshot capability that saves disk state and can recreate Devboxes from that state. This directly matches the story's pause/resume with filesystem+memory state intact. Missing for 10: no independent/hands-on corroboration of memory-state fidelity across suspend/resume, and no detailed technical explanation of how memory state (not just disk) is preserved.",
+    "confidence": "high",
+    "rationale": "Runloop explicitly documents suspend/resume of Devboxes with state preservation ('Suspend and resume: Pause sandboxes to save state and costs, then resume exactly where you left off') and provides a dedicated tutorial workflow demonstrating suspending a devbox to preserve state and resuming to continue work, plus underlying snapshot mechanics that save disk state for later restoration. missing for 10: independent/hands-on third-party confirmation that memory (not just filesystem/disk) state is fully preserved across suspend/resume, and explicit detail on process/memory state handling beyond disk snapshots.",
     "evidenceIds": [
       "runloop-docs-27",
+      "runloop-docs-55",
       "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-32",
+      "runloop-docs-64"
     ]
   },
   {
@@ -4546,9 +4597,13 @@
     "storyId": "per-second-billing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item states an explicit per-second or usage-based billing model; the only tangential mention is that suspend/resume can 'save costs' (runloop-docs-27), which doesn't establish a per-second pricing mechanism.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Runloop docs mention suspend/resume to 'save costs' and idle-shutdown controls, but there is no evidence of a per-second (or any granular) billing model for sandbox compute usage — no pricing page, billing docs, or cost-per-second claims appear in the evidence pack.",
+    "evidenceIds": [
+      "runloop-docs-27",
+      "runloop-docs-55",
+      "runloop-docs-64"
+    ]
   },
   {
     "productId": "runloop",
@@ -4556,7 +4611,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls anywhere in Runloop's docs; the pack covers sandboxes, blueprints, snapshots, secrets, and tooling but never data-location choice.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls anywhere in Runloop's docs; the evidence covers execution sandboxes, snapshots, networking, and agent tooling but never data location choices. Missing for 10: any mention of region/residency options, data center locations, or compliance certifications tied to geography.",
     "evidenceIds": []
   },
   {
@@ -4565,7 +4620,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses AI training data usage, opt-out policies, or data-retention commitments for model training; the docs focus on sandbox infrastructure (Devboxes, secrets, gateways) but never mention training-data policy.",
+    "rationale": "Runloop is a sandbox/devbox infrastructure platform for AI agents; there is no evidence of any policy, opt-out, or data-training statement addressing whether user data/code is used to train AI models. No privacy-posture or data-usage terms are documented in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -4574,12 +4629,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers sandboxing, blueprints, snapshots, secrets encryption, and tooling, but contains no documentation of data retention policies, data deletion controls, or user-facing privacy/compliance settings for Devboxes, snapshots, or storage objects. missing for 10: explicit data retention policy docs, user-initiated deletion/purge APIs, compliance/privacy documentation.",
-    "evidenceIds": [
-      "runloop-docs-21",
-      "runloop-docs-4",
-      "runloop-docs-20"
-    ]
+    "rationale": "Runloop's docs cover secrets encryption, snapshots, storage objects, and network egress policies, but there is no evidence of any explicit data retention policy, data deletion controls/APIs, or user-facing settings for purging stored data, secrets, snapshots, or logs. No mention of retention periods, deletion endpoints, or compliance/privacy controls addressing this axis.",
+    "evidenceIds": []
   },
   {
     "productId": "runloop",
@@ -4587,23 +4638,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, analytics opt-out, or usage-tracking controls for Runloop; the docs cover sandboxing, blueprints, snapshots, secrets, etc., but nothing about a privacy/telemetry toggle.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism; the docs cover sandboxing, devboxes, benchmarks, secrets, and networking but never address telemetry/privacy opt-out controls.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "run-coding-agents-inside",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop documents running AI coding agents generally inside Devboxes (blueprints, benchmarks, Agents API, OpenAI Agents SDK tutorial) but no specific vendor recipe or tutorial naming Claude Code or Codex is present in the evidence. missing for 10: explicit Claude Code/Codex quickstart or blueprint, named integration guide for these specific agents.",
+    "rationale": "Runloop provides devbox sandboxes with explicit vendor tutorials for running coding agents (e.g. OpenAI Agents SDK, OpenCode, Browserbase/Kernel browser agents) plus generic 'running agents on sandboxes' guides, agent mounts, and a deploy-agent GitHub Action, showing a real recipe-based workflow for agent execution inside sandboxes. However, no vendor documentation specifically names Claude Code or Codex as supported agents with a dedicated recipe/tutorial.\nmissing for 10: explicit Claude Code and/or Codex integration tutorial, independent hands-on confirmation of running those specific agents.",
     "evidenceIds": [
-      "runloop-docs-6",
-      "runloop-docs-7",
-      "runloop-docs-22",
-      "runloop-docs-27",
-      "runloop-docs-2",
-      "runloop-docs-3"
+      "runloop-docs-48",
+      "runloop-docs-50",
+      "runloop-docs-49",
+      "runloop-docs-68",
+      "runloop-docs-45",
+      "runloop-docs-22"
     ]
   },
   {
@@ -4612,28 +4663,31 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop's core product is Devboxes, secure sandboxed execution environments purpose-built to run AI agent/code workloads isolated from user infrastructure, with snapshots, tunnels, secrets isolation, and scaling to 10k+ parallel sandboxes. This directly matches the story of executing untrusted AI-generated code without risking one's own infra. Missing for 10: independent/third-party hands-on validation of isolation guarantees, and explicit documentation of the underlying sandboxing/virtualization technology or security boundary details.",
+    "rationale": "Runloop's core offering is Devboxes—isolated Linux sandboxes explicitly designed to run AI-agent-generated code without touching user infrastructure, with supporting isolation features like network egress policies, encrypted secrets, SSH access, and execute/run APIs. Extensive first-party docs cover the full lifecycle (create, execute, snapshot, suspend/resume, tunnel) reinforcing safe untrusted-code execution. Missing for 10: independent/hands-on third-party validation of isolation/security guarantees and any incident-based evidence of sandbox escape resistance.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
-      "runloop-docs-12",
-      "runloop-docs-4",
-      "runloop-docs-5",
+      "runloop-docs-58",
+      "runloop-docs-59",
       "runloop-docs-21",
+      "runloop-docs-67",
+      "runloop-docs-27",
       "runloop-probe-1"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "secrets-stay-out",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop's Devboxes are documented as sandboxed execution environments with encrypted secrets and, notably, Agent Gateways that let agents call LLM APIs 'without ever seeing your API keys' — directly supporting the isolation-of-credentials use case. However, secrets are also stated to be 'automatically made available as environment variables' inside Devboxes, which is somewhat in tension with 'unreachable by code' and isn't clarified as scoped/restricted; there's no independent/hands-on verification of secret unreachability or a security audit. missing for 10: independent verification of secret isolation, clarity on env-var secret exposure vs true unreachability, and details on network/filesystem-level credential isolation guarantees.",
+    "rationale": "Runloop's Devboxes are documented as secure sandboxed execution environments with explicit mechanisms to keep secrets isolated from agent code: Agent Gateways let agents call LLM APIs 'without ever seeing your API keys', MCP Hub gives agents access to tool servers 'without exposing credentials', account secrets are encrypted at rest and injected only as env vars, and network egress can be controlled via network policies. This directly matches the story of isolating host credentials from agent-run code. Missing for 10: independent/hands-on security audits or third-party penetration testing corroborating these isolation claims beyond first-party docs.",
     "evidenceIds": [
       "runloop-docs-10",
+      "runloop-docs-66",
       "runloop-docs-21",
-      "runloop-docs-1",
+      "runloop-docs-42",
+      "runloop-docs-58",
       "runloop-docs-13"
     ]
   },
@@ -4641,14 +4695,17 @@
     "productId": "runloop",
     "storyId": "shell-and-packages",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Runloop Devboxes are full Linux execution environments with SSH access via the CLI (runloop-docs-9) and blueprints built from Dockerfiles that install packages/dependencies at startup (runloop-docs-2, runloop-docs-14), implying arbitrary shell command execution and package installation. However, the evidence pack lacks a direct hands-on example of running an explicit shell command or apt/pip install inside a Devbox. missing for 10: explicit example/output of running an arbitrary shell command and installing a package inside a Devbox, independent third-party confirmation.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop Devboxes explicitly support executing arbitrary shell commands (execute-commands, named-shells, PTY, SSH access) and blueprints/Dockerfiles allow installing packages/custom environments, with quickstart docs confirming ease of setup. Missing for 10: independent/hands-on verification beyond first-party docs and explicit example of arbitrary package install commands (e.g., apt/pip) in action.",
     "evidenceIds": [
-      "runloop-docs-9",
+      "runloop-docs-59",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-67",
       "runloop-docs-2",
-      "runloop-docs-14",
-      "runloop-docs-13"
+      "runloop-docs-9",
+      "runloop-docs-26"
     ]
   },
   {
@@ -4656,11 +4713,12 @@
     "storyId": "snapshot-restore-fork",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Runloop's docs explicitly describe snapshotting a Devbox's disk state and creating new Devboxes from that saved state, including fan-out use cases (multiple approaches from one snapshot) and rollback scenarios, directly matching the snapshot/restore/fork story. missing for 10: independent/hands-on corroboration beyond first-party docs, and no explicit code example showing the fork API call in the evidence pack.",
+    "confidence": "medium",
+    "rationale": "Runloop's docs explicitly describe Snapshots as saving disk state of a Devbox and creating new Devboxes from that saved state, including use cases like rollback and fan-out (branching) to attempt multiple approaches — directly matching snapshot/restore/fork. Missing for 10: independent/hands-on verification of fork behavior and no explicit CLI/SDK code example shown in evidence pack.",
     "evidenceIds": [
       "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-15",
+      "runloop-docs-32"
     ]
   },
   {
@@ -4669,14 +4727,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs describe Devbox creation via SDK/CLI/API, quickstart claiming ~1 minute to a running devbox, blueprints/prebuilt images for fast startup, and marketing claims of 10k+ parallel sandboxes with <2s startup for a 10GB image, matching the one-call, seconds-to-live-environment story. missing for 10: independent/hands-on benchmark confirming real-world provisioning latency beyond vendor claims.",
+    "rationale": "Runloop's Devboxes are explicitly documented as isolated sandboxed execution environments provisioned via SDK/API or CLI, with quickstart docs claiming a first devbox in under a minute and site marketing claiming <2s startup for 10GB images and 10k+ parallel sandboxes. SDKs, CLI, blueprints/prebuilt images, and a free trial all support quick one-call provisioning; missing for 10: independent/hands-on benchmark confirming actual startup latency claims beyond vendor docs.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-12",
-      "runloop-docs-13",
-      "runloop-docs-26",
       "runloop-docs-23",
-      "runloop-docs-3"
+      "runloop-docs-26",
+      "runloop-docs-47",
+      "runloop-docs-25"
     ]
   },
   {
