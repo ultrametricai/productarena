@@ -712,16 +712,15 @@
   {
     "productId": "crossmint",
     "storyId": "agent-cart-create",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Crossmint's Agent Checkouts API is a documented protocol call that lets an agent submit a product URL and spending cap to create an order/checkout, and runtime probing confirms the endpoint is live and agent-scoped (requiring ServerKeyAgent auth). The lifecycle supports polling for status updates, which functions as order-draft state updates, and agent cards similarly document order-intent creation/tracking (total, reserved, spent, available). missing for 10: no explicit 'update cart' verb or partial-order-edit API, no OpenAPI/schema confirmation (openapi.json probes 404), and no independent third-party corroboration beyond first-party docs and the vendor's own runtime probe.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crossmint's Agent Checkouts API lets an agent submit a product URL plus spending cap and Crossmint completes the checkout, with order lifecycle tracked via polling (docs-4, docs-15, supp-7) — this is a documented protocol call to create an order draft. However, it's poll-only with no webhooks or staging environment in v1, and there's no explicit 'update' semantics for an existing cart/order beyond creation and polling status. missing for 10: documented update/modify-order-draft endpoint (not just create+poll), webhook-based lifecycle events for checkouts (docs-18 covers general payments not agent checkouts specifically), and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "crossmint-docs-4",
+      "crossmint-docs-15",
       "crossmint-supp-7",
-      "crossmint-probe-rt-1",
-      "crossmint-supp-8",
-      "crossmint-supp-2"
+      "crossmint-docs-11"
     ]
   },
   {
@@ -730,10 +729,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint's agent products (Agent Cards, Agent Wallets, Agent Checkouts) are all payment/execution infrastructure that require the agent to already have a specific product URL or merchant endpoint — 'hand it a product URL and a spending cap' — none of the evidence describes a search or product-discovery API across merchants. There is no documented catalog search, product query, or merchant-discovery endpoint; discovery is assumed to happen elsewhere before Crossmint is invoked.",
+    "rationale": "Crossmint's agent stack (Agent Cards, Agent Wallets, Agent Checkouts) covers payment execution — given a product URL or merchant endpoint, an agent can pay — but nothing in the evidence describes a search or product-discovery API that lets an agent query/browse products or services across merchants. Agent Checkouts explicitly requires the agent to already have a product URL, implying discovery happens elsewhere.",
     "evidenceIds": [
-      "crossmint-supp-7",
       "crossmint-docs-4",
+      "crossmint-supp-7",
       "crossmint-supp-1"
     ]
   },
@@ -742,14 +741,16 @@
     "storyId": "agent-checkout-complete",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Crossmint's Agent Checkouts API lets an agent be handed a product URL and spending cap and complete checkout on the user's behalf, with delegated payment credentials (agent cards/order intents or delegated wallet signer permissions) and a poll-driven order lifecycle to confirm terminal state; runtime probe confirms the endpoint is live and enforces agent-scoped auth. missing for 10: independent/third-party confirmation of a fully completed order in production (docs note no staging/test environment and no webhooks in v1, so end-to-end success is self-reported), and no public case study of a real merchant purchase completing.",
+    "confidence": "medium",
+    "rationale": "Crossmint's Agent Checkouts API lets an agent take a merchant product URL and spending cap, initiate checkout, and complete an order end-to-end, backed by Agent Cards (order intent = delegated, scoped, revocable payment credential) or Agent Wallets (onchain-enforced delegated signer), matching the full checkout-session → delegated-credential → confirmed-order flow. Docs are detailed and first-party but there's no independent/hands-on corroboration, and the lifecycle is poll-only with no staging environment for testing. missing for 10: independent/hands-on verification of a completed order, staging/sandbox testing environment, and webhook-based (vs poll-only) order status confirmation.",
     "evidenceIds": [
-      "crossmint-docs-4",
+      "crossmint-supp-1",
+      "crossmint-supp-2",
+      "crossmint-supp-4",
       "crossmint-supp-7",
       "crossmint-supp-8",
-      "crossmint-supp-4",
-      "crossmint-probe-rt-1"
+      "crossmint-docs-4",
+      "crossmint-docs-24"
     ]
   },
   {
@@ -758,7 +759,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Crossmint documents dispute handling for its general Checkout product (Crossmint absorbs card dispute risk via authorization holds, per crossmint-supp-10) and describes spend caps/order-intent controls for agent cards and wallets, but explicitly notes this chargeback/liability coverage is not specific to agent-initiated transactions. There is no dedicated documentation defining fraud/liability/chargeback allocation rules for agent checkouts or agent-card/agent-wallet flows. missing for 10: explicit agent-transaction-specific liability/chargeback policy, merchant-facing dispute-resolution terms for agent checkouts, and clarity on who bears risk when an agent-initiated purchase is fraudulent or disputed.",
+    "rationale": "Crossmint documents dispute/chargeback handling for its general Checkout product (\"Crossmint will take on the risk and manage disputes directly with the bank\" via an authorization-hold model) and describes network-enforced spend limits for agent cards via Visa/Mastercard rails, but the evidence itself notes this chargeback coverage is documented for general Checkout, not specifically for agent-initiated transactions, and no explicit liability/fraud-responsibility statement exists for agent wallets or agent checkouts. Missing for 10: an explicit merchant-facing liability/fraud-responsibility policy for agent-initiated card and stablecoin transactions, and documentation of chargeback rules specific to agent checkouts (which run on a poll-only, no-staging-environment flow).",
     "evidenceIds": [
       "crossmint-supp-10",
       "crossmint-supp-2",
@@ -770,14 +771,14 @@
     "productId": "crossmint",
     "storyId": "agent-identity-tiers",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Crossmint's agent stack does embed verifiable-identity mechanisms — onchain delegated signer keys with scoped, revocable permissions (crossmint-supp-4), card-network verified 'Agent Cards' secured by Visa VIC/Mastercard Agent Pay (crossmint-supp-1, -3), and a distinct 'ServerKeyAgent' credential type confirmed live at the Agent Checkouts endpoint (crossmint-probe-rt-1). These give merchants some cryptographic/network-level basis to distinguish agent-initiated, permissioned transactions from anonymous traffic. However, there is no documented merchant-facing registry, trust-tier system, or API for merchants to look up/verify an agent's identity or reputation directly — the verification lives inside Crossmint/card-network infrastructure rather than being exposed as a merchant-consumable signal. Missing for 10: an explicit merchant-facing agent identity/reputation lookup or trust-tier classification, and independent confirmation that merchants can actually distinguish trust levels using this data.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Crossmint's agent-payment stack does embed some verifiable-identity mechanics — a delegated signer bound to a user-approved, onchain-enforced permission set, and card-network 'Agent Pay' recognition (Visa VIC/Mastercard Agent Pay) that flags a transaction as agent-initiated with scoped spend limits — which gives merchants indirect signal that a transaction is from an authorized, rule-bound agent rather than an anonymous actor. However, none of the evidence describes a merchant-facing registry, trust-tier system, or verifiable agent profile/signature merchants can inspect independently of the payment rails. Missing for 10: an explicit agent identity/credential merchants can query or verify, a trust-tier classification system, and any documentation framing this as a bot-vs-trusted-agent traffic signal rather than pure payment authorization.",
     "evidenceIds": [
       "crossmint-supp-1",
-      "crossmint-supp-3",
       "crossmint-supp-4",
-      "crossmint-probe-rt-1"
+      "crossmint-supp-3",
+      "crossmint-supp-8"
     ]
   },
   {
@@ -786,7 +787,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes agent payment mechanisms (cards, wallets, checkouts, spending rules) but contains no mention of merchant-facing reporting, dashboards, or transaction filtering by originating agent — the core of this story. Order intents and delegated signers are documented for controlling agent spend, not for merchant attribution/reporting.",
+    "rationale": "Evidence covers agent payment mechanics (agent cards, delegated wallets, checkouts) and general webhook/order-lifecycle tracking, but nothing indicates merchant-facing reporting or filtering of transactions by originating agent identity. No dashboard, API field, or webhook payload is documented as exposing agent attribution to a merchant.",
     "evidenceIds": []
   },
   {
@@ -795,11 +796,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe agent checkouts as poll-driven — 'no webhooks in v1... you poll until it reaches a terminal state' — and order intents/rails each carry their own status, so an agent can query order status after purchase via polling. However, this is documented only for the Agent Checkouts flow (not agent cards or wallet payments), lacks any true package/shipment tracking detail, and has no independent or hands-on corroboration beyond first-party docs. Missing for 10: shipment/delivery tracking detail, webhook or push-based status updates, and third-party verification of the polling flow actually working in production.",
+    "rationale": "Docs confirm order lifecycle tracking exists for agent checkouts — agents can poll an order until it reaches a terminal state, and card-based order intents track total/reserved/spent/available amounts — but the agent-checkout flow explicitly lacks webhooks in v1 ('no webhooks in v1... you poll until it reaches a terminal state') and has no staging environment for testing. General order/payment webhooks (crossmint-docs-18) exist for standard Checkout, not confirmed for agent checkouts specifically. missing for 10: real-time push notifications/webhooks for agent-initiated orders, a documented status/tracking API endpoint schema, and independent confirmation the polling mechanism works reliably in production.",
     "evidenceIds": [
       "crossmint-supp-7",
-      "crossmint-docs-11",
-      "crossmint-docs-4"
+      "crossmint-supp-2",
+      "crossmint-supp-8",
+      "crossmint-docs-18"
     ]
   },
   {
@@ -808,26 +810,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence details user-side and agent-side spending controls (spend caps, counterparties, time windows, order intents) but nothing about merchants controlling which agents/agent platforms may access their catalog or checkout, nor any rate-limiting/allow-deny mechanism exposed to merchants. Crossmint's agent-checkout flow treats the merchant as an arbitrary third-party target ('buy from any merchant'), not as a Crossmint customer configuring agent access policies.",
-    "evidenceIds": [
-      "crossmint-supp-7",
-      "crossmint-supp-4",
-      "crossmint-supp-8"
-    ]
+    "rationale": "Crossmint's agent evidence covers spend limits, delegation, and payment rails controlled by the wallet/card owner (the agent's principal), not merchant-side controls over which agents/platforms may access a merchant's catalog or checkout, nor any rate-limiting or allow/deny list for incoming agent traffic. No merchant-facing agent-access-control feature is documented anywhere in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "crossmint",
     "storyId": "agent-wallet-provisioning",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Crossmint's Agent Wallets docs show a user-owned, non-custodial wallet that a user funds and controls, with the agent authorized as a scoped, revocable delegated signer (spend cap, counterparties, time window) enforced onchain, and a working stablecoin-wallet quickstart (crossmint-docs-3, crossmint-supp-4, crossmint-supp-5). However, the evidence never explicitly documents a balance-visibility feature (e.g., a balance/dashboard API for the funding user) — missing for 10: explicit balance-check/visibility API or UI evidence, independent/hands-on corroboration of the wallet flow.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Crossmint's Agent Wallets docs describe user-owned, non-custodial smart wallets where the user funds and grants scoped, revocable, onchain-enforced permissions (spend cap, counterparties, time window) to an agent signer, matching the story's provision/fund/control model. Balance visibility is supported via wallet webhooks (transfers) and the general wallet/API infrastructure for querying wallet state. Missing for 10: no explicit first-party doc snippet showing a 'get balance' API call or dashboard UI screenshot, and no independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
-      "crossmint-docs-3",
-      "crossmint-supp-1",
       "crossmint-supp-4",
-      "crossmint-supp-5",
-      "crossmint-supp-6"
+      "crossmint-docs-3",
+      "crossmint-docs-14",
+      "crossmint-docs-17",
+      "crossmint-supp-1"
     ]
   },
   {
@@ -836,11 +834,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Crossmint serves a live llms.txt (confirmed by direct probe returning HTTP 200 with agent-oriented content) and every docs page is also available as markdown via the same URL + .md suffix, directly matching the story of pointing an agent at llms.txt or agent-oriented docs. Missing for 10: no independent third-party report of an agent successfully consuming these docs end-to-end, and no OpenAPI spec (all candidates 404) to complement the llms.txt for structured agent consumption.",
+    "rationale": "Crossmint has a live llms.txt at docs.crossmint.com confirmed via a 200 probe, plus a dedicated docs page for ingesting docs into AI coding assistants like Cursor/Copilot, directly matching the agent-oriented docs discovery story. Missing for 10: independent third-party confirmation that agents successfully consume this llms.txt in practice.",
     "evidenceIds": [
       "crossmint-probe-1",
-      "crossmint-probe-rt-2",
-      "crossmint-probe-2"
+      "crossmint-docs-20"
     ]
   },
   {
@@ -849,7 +846,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is blockchain/payments infrastructure (wallets, agent payments, checkout APIs) for developers, not an analytics or data product that surfaces AI-generated insights/suggestions from a user's own data; this axis is a category error for its product type.",
+    "rationale": "Crossmint is a wallet/payments infrastructure API for enabling agent payments, not a data/analytics product; there is no concept of user data being analyzed for AI-generated insights or suggestions. This axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -872,22 +869,28 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is infrastructure/API (wallets, payments, agent checkout tooling) for developers to build agentic payment flows into their own apps — it is not itself a product with a built-in AI assistant that a user interacts with directly. The evidence describes enabling external agents to transact, not delegating tasks to an in-product assistant, so this axis is a category error for this product type.",
-    "evidenceIds": []
+    "rationale": "Crossmint is an API/infrastructure platform for wallets, payments, and agent enablement — it is not itself an AI assistant product with a built-in assistant UI to delegate tasks to; its docs even describe integrating with external AI code helpers (Cursor, Copilot) rather than shipping its own assistant.",
+    "evidenceIds": [
+      "crossmint-docs-20",
+      "crossmint-probe-1"
+    ]
   },
   {
     "productId": "crossmint",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossmint's core products are REST/headless APIs (explicit 'headless checkout API', agent checkouts API, wallet API) designed for programmatic, UI-less automation, and probes confirm keyless API-key-based auth suitable for scripted/CI calls. However there is no explicit documentation of CI pipeline usage, SDK examples for automated test suites, or non-interactive auth setup, and agent-checkouts testing is noted as production-only with no staging environment, complicating CI use. Missing for 10: documented CI/automation examples, staging/sandbox support for safe automated testing, and explicit non-interactive credential provisioning guidance.",
+    "rationale": "Crossmint is fundamentally a REST API/SDK platform — wallets, payments, agent cards, checkouts, onramp/offramp are all exposed as programmatic APIs meant to be called by agents or backend code without any UI (crossmint-docs-1, crossmint-docs-7, crossmint-docs-19, crossmint-supp-4/5/6 show agents authenticating and transacting purely via API/signer keys). Agent quickstarts (crossmint-docs-2 to -6) explicitly walk through headless, non-interactive agent flows (delegated signers, x402/MPP payment clients) that are inherently CI/automation-friendly. Missing for 10: no explicit CI/CD pipeline example, dedicated server-side automation guide, or CLI/SDK reference tailored to headless test/build environments — the docs describe agent runtime usage but not automated testing/deployment workflows explicitly.",
     "evidenceIds": [
+      "crossmint-docs-1",
       "crossmint-docs-7",
-      "crossmint-docs-4",
-      "crossmint-supp-7",
-      "crossmint-probe-rt-1",
-      "crossmint-docs-1"
+      "crossmint-docs-2",
+      "crossmint-docs-3",
+      "crossmint-supp-4",
+      "crossmint-supp-5",
+      "crossmint-supp-6",
+      "crossmint-docs-19"
     ]
   },
   {
@@ -896,17 +899,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a wallet/payments infrastructure API for agents (wallets, cards, checkouts), not an AI agent product that consumes tools via MCP client integration; no evidence addresses plugging MCP servers into Crossmint. This is a category mismatch rather than a missing feature.",
-    "evidenceIds": []
+    "rationale": "Crossmint is a wallet/payments infrastructure platform, not an AI agent or MCP-client product; there is no evidence of it consuming/plugging in MCP servers as a client. The evidence only shows Crossmint's own APIs/docs being consumed by AI coding assistants (docs-20), which is unrelated to acting as an MCP client that plugs in external tool servers.",
+    "evidenceIds": [
+      "crossmint-docs-20"
+    ]
   },
   {
     "productId": "crossmint",
     "storyId": "agentic-mcp-server",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossmint is a wallet/payments infrastructure API for agents, not itself an agent, but the evidence contains no mention of an official MCP server offering — all APIs are REST/SDK based (agent cards, wallets, checkouts). Since Crossmint is a service provider (not an agent), an MCP server would be a plausible axis, but there is zero evidence of one; however this story specifically concerns 'connecting an agent via an MCP server' which for a payments infrastructure product without any MCP-server evidence should be judged as no capability shown.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "Crossmint is not itself an AI agent, so the axis applies, but the evidence pack shows only REST APIs, docs ingestible by AI coding assistants (Cursor, Copilot), and no mention of an official MCP server or endpoint for connecting agents.",
+    "evidenceIds": [
+      "crossmint-docs-20",
+      "crossmint-probe-2"
+    ]
   },
   {
     "productId": "crossmint",
@@ -914,11 +922,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossmint's evidence describes REST APIs, SDKs, and agent-delegated payment flows (cards, wallets, checkouts, x402/MPP), but nothing shows a natural-language command interface for the human/AI-native user to directly operate Crossmint itself — no chat UI, NL-to-API translation layer, or documented conversational control surface. The axis is fair to ask of a product marketed as 'payment infrastructure for AI agents,' but no such capability is evidenced.",
+    "rationale": "Crossmint's evidence is entirely about REST/API integration for developers and agent-to-merchant/payment flows (e.g., agent cards, wallets, x402/MPP quickstarts) and about feeding its docs into AI coding assistants like Cursor/Copilot for faster integration — none of this describes an end-user natural-language command interface for operating Crossmint itself. There is no chat/NL interface, skill, or MCP-style command layer through which a user issues natural-language instructions to drive wallet or checkout actions.",
     "evidenceIds": [
-      "crossmint-docs-1",
+      "crossmint-docs-20",
       "crossmint-supp-1",
-      "crossmint-probe-2"
+      "crossmint-docs-2"
     ]
   },
   {
@@ -936,69 +944,69 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Crossmint exposes a documented REST API surface (wallets, agent cards, agent checkouts, payment flows) with quickstarts and runtime probes confirming the endpoints are live and API-key/agent-key authenticated, and llms.txt/markdown docs are served for machine consumption. The main gap is the absence of a discoverable formal OpenAPI/Swagger spec (probe-2 shows all standard OpenAPI paths 404), so full machine-readable API introspection isn't confirmed. Missing for 10: a published OpenAPI/Swagger schema, independent third-party confirmation of API robustness beyond Crossmint's own docs.",
+    "rationale": "Crossmint provides a documented public REST API surface (wallets, agent cards, checkouts, onramp/offramp) with a browsable API reference and live testing, plus explicit docs oriented to AI coding assistants. Missing for 10: a discoverable OpenAPI/swagger spec (probe found 404s on standard paths) and independent third-party corroboration of API usability.",
     "evidenceIds": [
       "crossmint-docs-1",
-      "crossmint-docs-4",
+      "crossmint-docs-19",
+      "crossmint-docs-20",
+      "crossmint-docs-21",
       "crossmint-probe-1",
-      "crossmint-probe-2",
-      "crossmint-probe-rt-1",
-      "crossmint-probe-rt-2",
-      "crossmint-supp-1"
+      "crossmint-probe-2"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "agentic-scoped-keys",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Crossmint documents explicit least-privilege delegation for agents: user-owned wallets grant an agent a bound signer key with a spend cap, allowed counterparties, and a time window, all enforced onchain and revocable at any time; agent cards similarly use order-intent 'fixed allowance' credentials with amount/expiration limits and network-level enforcement. A runtime probe further shows an agent-specific credential type (ServerKeyAgent) is live on the Agent Checkouts API, confirming agent-scoped API keys exist in practice, not just in docs. Missing for 10: independent/third-party corroboration of these scoping guarantees, and clearer documentation of general-purpose (non-payment) API key scoping/role management beyond the wallet/card/checkout domain.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Crossmint documents multiple mechanisms for issuing scoped, least-privilege credentials to agents: agent cards with bounded order-intent allowances, merchant locking, and expiration (crossmint-supp-2, crossmint-supp-8); non-custodial agent wallets with onchain-enforced delegation limited by spend cap, counterparties, and time window, revocable by the user (crossmint-supp-4); and API keys with client-side scoping (crossmint-docs-21). These map directly to 'scoped/least-privilege API credentials for an agent.' missing for 10: independent/third-party verification of the enforcement claims (only vendor docs), and no explicit documentation of granular API-key scopes/permissions system beyond client-side vs server-side distinction.",
     "evidenceIds": [
-      "crossmint-supp-4",
+      "crossmint-supp-1",
       "crossmint-supp-2",
+      "crossmint-supp-4",
       "crossmint-supp-8",
-      "crossmint-probe-rt-1",
-      "crossmint-supp-1"
+      "crossmint-docs-13",
+      "crossmint-docs-14",
+      "crossmint-docs-21"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Crossmint's docs show a single REST API accessed via quickstarts (agent checkouts, cards, stablecoin wallets) and protocol-specific clients like @x402/core and mppx, implying SDK-style tooling, but no evidence names an official multi-language SDK package (e.g., npm/pip installable Crossmint SDK) and the OpenAPI probe found no published spec, undercutting a clean 'official SDK' story. missing for 10: explicit official SDK package names/install instructions, multi-language SDK coverage, and a discoverable OpenAPI/schema reference.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack extensively documents Crossmint's REST APIs, webhooks, and AI-assistant doc ingestion, but never mentions an official SDK (no JS/Python/etc. client library, package name, or SDK reference) — only a live API reference explorer and raw endpoints. The openapi probe also 404s across all candidate paths, suggesting no discoverable SDK/spec artifact. missing for 10: any mention of a named SDK package, language bindings, or SDK-specific quickstart/reference.",
     "evidenceIds": [
-      "crossmint-docs-3",
-      "crossmint-docs-4",
-      "crossmint-supp-5",
-      "crossmint-supp-6",
+      "crossmint-docs-19",
+      "crossmint-docs-20",
       "crossmint-probe-2"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The only explicit evidence about webhooks states the opposite of the story: Agent Checkouts documentation says 'no webhooks in v1' and requires polling until a terminal state is reached, with no other evidence pack item describing a webhook subscription mechanism anywhere in Crossmint's API.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Crossmint documents webhooks for wallet events (transfers, signer exports) and for payment/order lifecycle status, giving clear subscribe-to-events support for those product lines. However, the Agent Checkouts product explicitly states 'no webhooks in v1' and requires polling until a terminal state, so the newest agentic surface lacks webhook support. Missing for 10: webhook coverage for agent checkouts, and independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
+      "crossmint-docs-17",
+      "crossmint-docs-18",
       "crossmint-supp-7"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The evidence shows only markdown-based docs and an llms.txt feed; explicit probes for an OpenAPI/Swagger spec (openapi.json, swagger.json, etc.) all returned 404, and no evidence mentions an interactive API console, sandbox, or runnable code examples.",
+    "rationale": "Docs explicitly describe an interactive API reference where users can 'Explore the APIs and test them live from the browser' (crossmint-docs-19), which directly matches the story. However, missing for 10: independent/hands-on corroboration of the runnable examples working, and no discoverable public OpenAPI spec (probe found 404s), limiting confidence in coverage/completeness.",
     "evidenceIds": [
-      "crossmint-probe-2",
-      "crossmint-probe-1",
-      "crossmint-probe-rt-2"
+      "crossmint-docs-19",
+      "crossmint-probe-2"
     ]
   },
   {
@@ -1006,11 +1014,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe found no OpenAPI/Swagger spec at any standard path (all 404s), and while an llms.txt/markdown docs format exists, that is not a machine-readable API spec. missing for 10: an OpenAPI/Swagger JSON or YAML spec, any documented spec download link, or equivalent machine-readable API schema.",
+    "confidence": "medium",
+    "rationale": "Crossmint has an interactive API reference for browsing/testing endpoints (crossmint-docs-19), but there is no documented downloadable OpenAPI/Swagger spec, and a direct probe for standard OpenAPI file paths (openapi.json, swagger.json, etc.) returned 404 across all checked locations (crossmint-probe-2).",
     "evidenceIds": [
-      "crossmint-probe-2",
-      "crossmint-probe-1"
+      "crossmint-docs-19",
+      "crossmint-probe-2"
     ]
   },
   {
@@ -1031,8 +1039,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents API versioning conventions or a deprecation policy; the only version-related signal is an endpoint path containing 'unstable' (crossmint-probe-rt-1), which if anything suggests unversioned/experimental APIs rather than a documented deprecation policy.",
-    "evidenceIds": []
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the docs pack; the API reference is mentioned only as browsable/testable, and OpenAPI spec probes all 404. missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guides, version lifecycle commitments.",
+    "evidenceIds": [
+      "crossmint-docs-19",
+      "crossmint-probe-2"
+    ]
   },
   {
     "productId": "crossmint",
@@ -1040,12 +1051,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers single-item agent payment flows (cards, wallets, checkouts, x402/MPP) and mentions managing funds 'at scale' in passing, but there is no documented batch/bulk API, bulk wallet creation, or multi-item transaction endpoint that would let a user perform operations across many items at once.",
-    "evidenceIds": [
-      "crossmint-docs-10",
-      "crossmint-docs-4",
-      "crossmint-supp-7"
-    ]
+    "rationale": "Crossmint's docs describe single-item flows (one wallet, one order intent, one checkout) via API, but nothing in the evidence pack shows a batch/bulk endpoint or multi-item operation capability (e.g., bulk wallet creation, batch payments, bulk checkouts). Since Crossmint is a programmable API platform, bulk operations are a fair axis to ask about, but no evidence supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "crossmint",
@@ -1053,12 +1060,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Crossmint lets users define scoped rules (spend caps, counterparty allow-lists, time windows) that once set let an agent act autonomously without per-action prompts, and states 'Transaction rules enforced onchain' — a form of automatic rule-based action. However this is closer to pre-authorized permission bounds than true event-triggered automation, and the docs explicitly note agent checkouts have 'no webhooks in v1', meaning event-driven triggering isn't supported there. Missing for 10: an explicit rules/automation engine that fires actions on arbitrary external or on-chain events, webhook/event-subscription support, and independent confirmation of automated rule execution beyond spend-limit enforcement.",
+    "rationale": "Crossmint exposes webhooks for wallet and order events (transfers, signer exports, payment status) that could be wired into external automation, and it lets users define scoped spending rules (caps, counterparties, time windows) under which an agent can act automatically without per-action prompts. However, there is no evidence of a native rule engine where a user declares 'on event X, trigger action Y' inside Crossmint itself — automation still requires building your own listener/orchestration on top of the webhooks.  missing for 10: a built-in conditional trigger/rule-definition UI or API (if-this-then-that style), evidence of chained multi-step automated actions, and any first-party example of event-to-action wiring beyond webhook delivery.",
     "evidenceIds": [
-      "crossmint-docs-12",
+      "crossmint-docs-17",
+      "crossmint-docs-18",
       "crossmint-supp-4",
-      "crossmint-supp-2",
-      "crossmint-supp-7"
+      "crossmint-supp-2"
     ]
   },
   {
@@ -1067,7 +1074,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a wallet/payments infrastructure API for agents, not a job scheduler or workflow orchestrator; the evidence pack covers wallets, cards, checkouts, and payment protocols with no mention of scheduling, cron-like jobs, or recurring workflow triggers. This axis is a category error for this product type.",
+    "rationale": "Crossmint is a wallet/payments infrastructure API, not a workflow/job orchestration platform; scheduling recurring jobs is outside its product category and not a fair axis for this type of product.",
     "evidenceIds": []
   },
   {
@@ -1076,7 +1083,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a payments/wallet infrastructure API for agents, not a workflow/automation-builder product; there is no concept of versioning, reviewing, or rolling back 'automations' (e.g., no workflow definitions, change history, or rollback of agent logic) in the evidence. This story targets automation-builder platforms, which is a different product category than wallet/payment infrastructure.",
+    "rationale": "Crossmint is a wallet/payments infrastructure API for agents, not a workflow/automation-builder product with versioned automation configs; there is no concept of 'automations' to version, review, or roll back in this evidence pack. This story applies to automation-orchestration tools, not to a payments/wallet infrastructure API — wrong axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -1085,7 +1092,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a payments/wallet infrastructure platform for enabling agents to pay merchants — it is not a merchant catalog/product-feed publishing tool. The evidence is entirely about agent payment rails (cards, wallets, checkouts, x402/MPP), not about merchants publishing product listings for agent discovery, so this axis is a category error for this product.",
+    "rationale": "Crossmint is a payments/wallet infrastructure platform for agent transactions, not a catalog/feed publishing tool; the evidence pack is entirely about payment rails, wallets, and checkout APIs, not product/service catalog discovery feeds for agents. This is a category mismatch — merchant catalog publishing is outside Crossmint's product surface.",
     "evidenceIds": []
   },
   {
@@ -1107,11 +1114,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossmint documents payment flows (x402, MPP, agent checkouts) but there is no evidence of a versioned commerce protocol with a published schema or conformance/validation tooling — probes for OpenAPI/swagger specs all 404'd, and the live agent-checkouts endpoint is explicitly path-versioned as '/api/unstable/', signaling the opposite of a stable published protocol.",
+    "rationale": "Crossmint documents REST APIs and support for third-party payment protocols (x402, MPP) but there's no evidence of Crossmint itself publishing a versioned commerce protocol with a formal schema or conformance/validation tooling — the openapi.json/swagger.json probes all returned 404, and the 'live API reference' (crossmint-docs-19) is interactive docs, not a schema or conformance suite. missing for 10: published protocol schema (e.g. OpenAPI spec), version history/changelog for the protocol, and any conformance or validation tooling for third-party implementers.",
     "evidenceIds": [
       "crossmint-probe-2",
-      "crossmint-probe-rt-1",
-      "crossmint-supp-7"
+      "crossmint-docs-19",
+      "crossmint-docs-4",
+      "crossmint-docs-5",
+      "crossmint-docs-6"
     ]
   },
   {
@@ -1120,7 +1129,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The only relevant evidence states that Crossmint itself absorbs dispute risk and manages chargebacks directly with the bank on the user's behalf (crossmint-supp-10), which is for the general Checkout product, not agent-specific. There is no documentation of any developer-facing API for submitting dispute evidence, checking dispute status, or retrieving outcomes. Missing for 10: any dispute-management API endpoints, evidence-submission workflow, or status/outcome reporting for agent transactions.",
+    "rationale": "Evidence shows Crossmint absorbs chargeback/dispute risk itself for card checkout ('Crossmint will take on the risk and manage disputes directly with the bank') rather than exposing a developer-facing API for evidence submission, dispute status, or outcomes; no dispute/chargeback API endpoints, evidence-submission flow, or status objects are documented anywhere in the pack, including for agent cards or agent checkouts.",
     "evidenceIds": [
       "crossmint-supp-10"
     ]
@@ -1131,7 +1140,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint publishes general wallet MAU overage pricing and checkout fee tiers, but the evidence pack explicitly states 'No agent-card- or agent-checkout-specific price is published on the pricing page' (crossmint-supp-9), meaning a merchant cannot price the agent-specific channels (Agent Cards, Agent Checkouts) without contacting sales.",
+    "rationale": "The pricing page publishes wallet MAU overages and generic checkout/onramp/offramp fee tiers, but explicitly does not publish any fee specific to agent cards or agent checkouts — the actual agent-originated transaction channels — per crossmint-supp-9's own note that 'No agent-card- or agent-checkout-specific price is published on the pricing page.' A merchant wanting to price the agentic channel itself would still need to contact sales.",
     "evidenceIds": [
       "crossmint-supp-9"
     ]
@@ -1142,12 +1151,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All Crossmint evidence describes agents/wallets *paying* x402 or MPP-protected endpoints (client/payer side) — e.g. crossmint-supp-6 and crossmint-supp-5 explain how a Crossmint wallet reads a 402 challenge and retries with payment proof. There is no evidence of tooling for a developer to stand up their own API/service that returns HTTP 402 challenges and receives/settles per-call agent payments (the monetization/merchant side of x402). Missing for 10: any docs or API for creating/serving a 402-gated endpoint, receiving settlement, or configuring per-call pricing as a service provider — evidence only covers the consuming side.",
+    "rationale": "All x402/MPP evidence describes Crossmint wallets acting as the *payer* (agent) that pays a 402-protected endpoint owned by someone else — e.g. 'pay x402-protected endpoints using a Crossmint wallet' and the mppx client that 'pays via Tempo and retries the request.' There is no evidence of Crossmint providing seller-side tooling for a developer to put their own API behind a 402 paywall and receive per-call agent payments without a checkout UI.",
     "evidenceIds": [
-      "crossmint-supp-6",
-      "crossmint-supp-5",
       "crossmint-docs-5",
-      "crossmint-docs-6"
+      "crossmint-docs-6",
+      "crossmint-supp-5",
+      "crossmint-supp-6"
     ]
   },
   {
@@ -1170,8 +1179,8 @@
     "storyId": "merchant-agent-onboarding",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers agent-side integrations (agent wallets, agent cards, x402/MPP payment flows, agent checkouts) but nothing documents a merchant-facing onboarding step — no setting to enable, agreement to sign, or endpoint-publishing guide aimed at merchants who want to accept agent traffic. The 'buy from any merchant' framing implies merchants need no explicit action, but this is never documented as a self-serve merchant enablement path.",
+    "confidence": "high",
+    "rationale": "Crossmint's docs describe agents paying merchants (agent wallets, agent cards, agent checkouts) and general payments/checkout infrastructure, but there is no evidence of a merchant-facing self-serve path — no toggle, agreement, or endpoint-publishing guide — for a merchant to explicitly opt in to accepting agent-driven traffic (e.g., no documented way to register as an x402-accepting seller or join an 'agent checkout' merchant program).",
     "evidenceIds": []
   },
   {
@@ -1179,8 +1188,8 @@
     "storyId": "multi-implementer-adoption",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence describes Crossmint as a single-vendor proprietary API/platform (wallets, checkout, agent cards) — even where it interoperates with external protocols like x402 or MPP, those are third-party specs Crossmint merely consumes, not evidence that independent parties implement Crossmint's own protocol/platform. No evidence pack item shows any other company or independent implementer building a competing or parallel implementation of Crossmint's infrastructure.",
+    "confidence": "high",
+    "rationale": "Crossmint is described throughout as a single-vendor proprietary API/platform (wallets, cards, checkout) with no evidence that any independent third party implements Crossmint's own protocol or platform; it only consumes external open protocols (x402, MPP) rather than being reimplemented by others. No evidence of alternate independent implementations of Crossmint's wallet/agent-card/checkout APIs exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -1189,9 +1198,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossmint documents its own REST/agent APIs (cards, wallets, checkouts) but the evidence shows no open, versioned specification of its own commerce protocol — the OpenAPI/swagger probe returned 404 on all candidate paths, and no spec repository or versioning scheme is mentioned. While Crossmint implements external protocols like x402 and MPP, it does not publish its own commerce protocol as an open spec.",
+    "rationale": "Crossmint's core offering is a proprietary REST API/wallet platform gated by API keys and accounts (docs-21, requires client/server API keys), not an open, versioned specification developers can read and implement without signing anything. While Crossmint integrates with open protocols like x402 and MPP built by others, no evidence shows Crossmint publishing its own commerce protocol as an open spec, and the OpenAPI probe returned 404s across all candidate paths, indicating no publicly discoverable machine-readable spec.",
     "evidenceIds": [
-      "crossmint-probe-2"
+      "crossmint-probe-2",
+      "crossmint-docs-21",
+      "crossmint-docs-19"
     ]
   },
   {
@@ -1200,12 +1211,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Crossmint is built API-first — wallets, agent cards, agent checkouts, and headless checkout are all exposed as REST APIs, with headless checkout explicitly positioned as the API-only alternative to Crossmint's embedded iframe UI, giving 'full control of the user experience' (crossmint-docs-1, crossmint-docs-7, crossmint-docs-8, crossmint-supp-1). However, there's no explicit claim or evidence of full UI/API feature parity across the whole platform, and the probe found no discoverable OpenAPI spec (404s on all candidate paths), suggesting some API surface may be undocumented or incomplete relative to the dashboard. Missing for 10: an explicit parity statement or audit showing every dashboard/UI action (account/team management, dispute handling, analytics) has an API equivalent, and a published OpenAPI spec confirming full API surface.",
+    "rationale": "Crossmint's docs consistently frame everything (wallets, agent cards, checkouts, onramp/offramp) as API-first with headless/full-control options (crossmint-docs-7, crossmint-docs-26, crossmint-docs-19) and even an embedded iframe alternative (crossmint-docs-8) implying UI features are optional wrappers over the same API. However, there's no explicit statement or audit confirming full UI/API parity, and the openapi.json probe returned 404 across all standard paths, suggesting no discoverable machine-readable API spec despite an interactive API reference existing. Missing for 10: an explicit parity statement or audit showing every UI-exposed action (e.g., dashboard-only settings) has an API equivalent, and a working OpenAPI/machine-readable spec for API-native tooling.",
     "evidenceIds": [
-      "crossmint-docs-1",
       "crossmint-docs-7",
       "crossmint-docs-8",
-      "crossmint-supp-1",
+      "crossmint-docs-19",
+      "crossmint-docs-26",
       "crossmint-probe-2"
     ]
   },
@@ -1214,8 +1225,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Crossmint's wallet, checkout, and agent-payment APIs in depth, but nothing addresses data export, open-format portability, or account/data takeout for users leaving the platform. Missing for 10: any documented data export feature, open-format (e.g., CSV/JSON) export tooling, or explicit portability/exit guarantees for user data.",
+    "confidence": "low",
+    "rationale": "The evidence pack documents wallet infrastructure, agent payments, and checkout APIs, but contains no mention of a data export feature, open-format data dump, or account-closure/data-portability mechanism for end users. Non-custodial wallet ownership is implied but explicit 'export everything and leave' capability is not documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -1233,18 +1244,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a hosted API/SaaS platform for wallets, payments, and agent commerce, not open-source software distributed for self-hosting; no evidence pack item mentions self-hosting or an installable core product, and the category (managed infra reliant on card-network/onchain integrations) is not the kind of product that ships a self-hostable core.",
+    "rationale": "Crossmint is a hosted API/SaaS wallet-and-payments infrastructure platform, not an open-source project with a self-hostable core; the evidence pack contains no self-hosting deployment story, and asking a managed API platform to be self-hosted is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "crossmint",
     "storyId": "order-event-webhooks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossmint's own docs explicitly state agent checkouts have 'no webhooks in v1' and require polling until a terminal state is reached, meaning there is no programmatic push-based subscription to order lifecycle events (created/updated/fulfilled/canceled). No other product area (wallets, cards) documents webhook/event subscription either.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Crossmint's general Checkout product documents webhooks for order lifecycle and payment status (crossmint-docs-18), which covers backend subscription to created/updated/fulfilled/canceled-style events for standard checkout orders. However, for the Agent Checkouts product — the one most relevant to 'agent... can subscribe to order lifecycle events' — the docs explicitly state 'no webhooks in v1' and that developers must poll until a terminal state is reached (crossmint-supp-7), a documented limitation from the same first-party source rather than an independent contradiction. missing for 10: webhook/event push support specifically for agent checkout order intents, independent/hands-on confirmation that the general checkout webhooks fire reliably for all lifecycle states, and any evidence of push-based subscription for agent-initiated orders beyond polling.",
     "evidenceIds": [
-      "crossmint-supp-7"
+      "crossmint-docs-18",
+      "crossmint-supp-7",
+      "crossmint-docs-17"
     ]
   },
   {
@@ -1252,8 +1265,8 @@
     "storyId": "payable-service-directory",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence covers Crossmint's payment rails (cards, wallets, x402, MPP, checkouts) but nothing describes a published directory or discovery index of payable services/APIs that an agent could browse or query; llms.txt is a docs-crawling aid, not a service discovery index. This is a fair axis for an agent-payments platform, but no capability is evidenced.",
+    "confidence": "medium",
+    "rationale": "Crossmint's evidence covers agent payment execution (cards, wallets, x402/MPP payment flows, checkouts) but contains no mention of a published directory, registry, or discovery index that lets an agent find payable services or APIs to transact with. The docs assume the agent already has a target URL/merchant/endpoint rather than discovering one through Crossmint.",
     "evidenceIds": []
   },
   {
@@ -1262,7 +1275,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls; Crossmint's docs focus on wallets, payments, and blockchain infra with no data-residency/GDPR-region options mentioned. This is a fair question for a platform handling user data/payments, so absence of evidence means 'none' rather than 'na'.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage choices, or compliance controls for where user/agent data is stored; Crossmint's docs focus entirely on wallets, payments, and checkout infrastructure with no mention of data residency options.",
     "evidenceIds": []
   },
   {
@@ -1271,7 +1284,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossmint is a blockchain wallet/payments infrastructure product for agents; AI model training data usage opt-out is unrelated to its wallet/payment API category and not a fair axis for this product type.",
+    "rationale": "Crossmint is a wallet/payments infrastructure product, not an AI model or chatbot service that trains on user data; the evidence pack contains no AI-model-training context at all, making this axis a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1297,12 +1310,13 @@
     "storyId": "refund-via-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers dispute/chargeback risk absorption for general card Checkout (crossmint-supp-10), but this describes Crossmint handling bank disputes, not a developer-facing refund API for initiating/tracking refunds on agent-placed orders. No refund endpoint, refund object, or tracking mechanism is documented anywhere for Agent Cards, Agent Wallets, or Agent Checkouts. Missing for 10: any refund API/endpoint, refund status tracking, and agent-order-specific refund workflow documentation.",
+    "confidence": "high",
+    "rationale": "The evidence covers dispute/chargeback handling for general card checkout (Crossmint absorbing dispute risk with banks) and order-lifecycle webhooks/polling, but no citation describes a refund API, refund initiation endpoint, or refund status tracking specifically for agent-placed orders (agent cards, agent checkouts, or wallet payments). Disputes and refunds are distinct concepts, and no programmatic refund mechanism is documented anywhere in the pack.",
     "evidenceIds": [
       "crossmint-supp-10",
-      "crossmint-supp-7",
-      "crossmint-supp-2"
+      "crossmint-docs-18",
+      "crossmint-supp-2",
+      "crossmint-supp-7"
     ]
   },
   {
@@ -1311,27 +1325,29 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Crossmint's Agent Cards give agents a one-time card number, expiration, and CVC scoped by an order intent with amount, description, merchant lock, and expiration — never exposing the real card number — enforced via Visa/Mastercard network rails (crossmint-supp-2, crossmint-supp-3, crossmint-supp-8). This is corroborated by a live runtime probe showing the agent-scoped checkout endpoint requiring agent-specific credentials (crossmint-probe-rt-1). Missing for 10: independent third-party (non-vendor) verification of the card-scoping behavior in production beyond the docs and single runtime probe.",
+    "rationale": "Crossmint's Agent Cards product directly delivers this story: order intents give agents a fixed allowance with amount, description, and expiration, enforced by Visa/Mastercard network rails, with the agent never seeing the real card number, and merchant locking restricts the credential to a single merchant for its lifetime. Documentation details revocability, expiry-based deactivation, and eligibility scoping. Missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "crossmint-supp-2",
       "crossmint-supp-3",
       "crossmint-supp-8",
-      "crossmint-probe-rt-1",
-      "crossmint-docs-2"
+      "crossmint-docs-13",
+      "crossmint-docs-11"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "settlement-payout-clarity",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence shows transaction-lifecycle tracking (order intents track total/reserved/spent/available amounts) and a documented authorization-hold/capture and dispute-management model for card checkout, which are reconciliation-adjacent, plus tiered per-transaction pricing. But there is no documented merchant payout schedule, settlement-to-bank-account flow, transaction reporting dashboard, or export/reconciliation tooling specific to agent-originated payments, and the agent-checkouts flow explicitly lacks webhooks ('no webhooks in v1' — poll until terminal state), undermining real-time reconciliation. Missing for 10: merchant payout/settlement documentation, reporting/dashboard or export tools, reconciliation-specific guidance for agent transactions, and webhook-based confirmation.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crossmint documents payout/settlement primitives merchants could reconcile against — webhooks for order lifecycle/payment status on general checkout, offramp APIs to cash stablecoins to a saved bank account, and order-intent accounting that tracks total/reserved/spent/available for agent cards. But for the agent-checkout flow specifically, the docs state there are 'no webhooks in v1' and reconciliation is poll-driven only, with no staging environment, meaning the most agent-native payment rail lacks the same event-driven reporting as other channels. Missing for 10: agent-checkout-specific webhook/reporting parity, a unified merchant reconciliation/reporting dashboard, and independent confirmation that payouts settle predictably in production for agent-originated volume.",
     "evidenceIds": [
-      "crossmint-supp-2",
       "crossmint-supp-7",
-      "crossmint-supp-10",
-      "crossmint-supp-9"
+      "crossmint-docs-18",
+      "crossmint-docs-27",
+      "crossmint-docs-28",
+      "crossmint-supp-2",
+      "crossmint-supp-10"
     ]
   },
   {
@@ -1339,43 +1355,42 @@
     "storyId": "spend-caps-revocation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Crossmint documents onchain-enforced per-agent spend caps, allowed counterparties, and time windows for agent wallets, plus order-intent allowances with amount/expiration for agent cards, and explicitly states permissions are revocable at any time by the user. This is corroborated by detailed docs on delegation mechanics and a runtime probe confirming agent-scoped auth is live in production. Missing for 10: independent (non-vendor) confirmation that revocation is instantaneous in practice, and no evidence of a unified dashboard/UI for setting caps or revoking across all three agent products (cards, wallets, checkouts) in one place.",
+    "confidence": "medium",
+    "rationale": "Docs describe explicit per-agent spend caps (max spend amount, allowed counterparties, time window) enforced onchain for wallets, and scoped fixed-allowance order intents for agent cards, both described as revocable at any time by the user (crossmint-supp-4, crossmint-supp-2, crossmint-docs-13). This directly matches the story of setting spend caps/usage limits and instant revocation of agent payment authority.\nmissing for 10: independent/hands-on corroboration of instant revocation actually working in practice, and confirmation that revocation is truly instantaneous rather than eventual (e.g., on next transaction check).",
     "evidenceIds": [
-      "crossmint-supp-2",
       "crossmint-supp-4",
+      "crossmint-supp-2",
+      "crossmint-docs-13",
       "crossmint-supp-1",
-      "crossmint-supp-8",
-      "crossmint-probe-rt-1"
+      "crossmint-supp-8"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "stablecoin-settlement",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Crossmint documents stablecoin settlement for agent payments via user-owned wallets with delegated signer permissions (USDXM/USDC), and explicit rails including x402 and MPP protocols with runtime-verified endpoint behavior, giving strong first-party and probe corroboration of documented stablecoin rails. missing for 10: independent (non-vendor) real-world case studies of production stablecoin settlement volume, and confirmation the x402/MPP flows work beyond testnet/Base Sepolia examples.",
+    "rationale": "Crossmint documents stablecoin wallets for agents with delegated signer permissions, and explicit rails (x402, MPP) for settling agent payments in stablecoins, with quickstarts, code-level flow (fetch retry with payment proof, settlement receipt extraction), and prerequisites clearly documented. Missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "crossmint-docs-3",
       "crossmint-docs-5",
       "crossmint-docs-6",
-      "crossmint-supp-4",
       "crossmint-supp-5",
       "crossmint-supp-6",
-      "crossmint-probe-rt-1"
+      "crossmint-supp-4"
     ]
   },
   {
     "productId": "crossmint",
     "storyId": "structured-offer-data",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossmint's docs describe agent checkout as handing it a merchant product URL and letting Crossmint execute the purchase, but nowhere is there evidence that Crossmint itself exposes machine-readable offer data (price, availability, variants, checkout links) for developers to read — it's a payment/checkout executor, not a product-data or listing API. Missing for 10: any API/schema returning structured product price/availability/variant data, any catalog or listing endpoint, any documentation of reading offer metadata rather than just completing a purchase given a URL.",
+    "rationale": "Crossmint is payment/wallet infrastructure that lets agents pay merchants or complete checkouts given a product URL — it does not itself list products or expose a machine-readable catalog of price/availability/variants for arbitrary goods. That capability belongs to merchants, not to a payments/wallet rail, so this axis is a category mismatch for Crossmint's product type.",
     "evidenceIds": [
       "crossmint-supp-7",
-      "crossmint-docs-4"
+      "crossmint-docs-15"
     ]
   },
   {
