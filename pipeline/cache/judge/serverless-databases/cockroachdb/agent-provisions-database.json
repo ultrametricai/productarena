@@ -1,16 +1,19 @@
 {
-  "hash": "5a4ec1b27e29f8c75dc260d46723e2611bdb26a6746e6dc5b250122c1bf06e69",
+  "hash": "2bcfc8d456622a585d12bd19447b02ef3ba69bb932e6578c318fbee1487bfbc0",
   "verdict": {
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Local provisioning and full SQL schema/query workflows are verified end-to-end via CLI (`cockroach demo` booted a keyless cluster and executed a real CREATE TABLE/INSERT/SELECT roundtrip with no cloud account), and CockroachDB Cloud has a dedicated `ccloud` CLI for creating/connecting clusters plus an official MCP server that supports natural-language table listing, statement execution, and row inserts. However, the managed MCP endpoint is OAuth-gated (401 requiring bearer auth against a protected resource), meaning cloud provisioning via MCP/API isn't fully dashboard-free without an auth setup step, and no REST/API spec was found (openapi probes all 404'd). Missing for 10: a demonstrated single continuous agent flow (create→connect→schema→query) purely through API or MCP without any OAuth/dashboard touchpoint, and a documented REST API surface.",
+    "rationale": "The `ccloud` CLI can create, manage, and connect to CockroachDB Cloud clusters (docs-10, docs-17), and the official CockroachDB Cloud MCP server lets an agent explore schemas and run read/write queries via natural language (docs-4, docs-28, probe-4). Combined with SQL/Postgres-wire compatibility (gh-1) and `cockroach demo`/single-node CLI setup (docs-1, docs-2, probe-5), an agent can provision a cluster, get a connection string, and run queries without the dashboard, but there's no documented general REST/OpenAPI provisioning surface (probe-3 shows 404s) and no single evidenced end-to-end script tying CLI+MCP together. missing for 10: a documented REST/API provisioning endpoint, and a concrete end-to-end example combining CLI creation + MCP schema/query steps in one workflow.",
     "evidenceIds": [
-      "cockroachdb-docs-4",
       "cockroachdb-docs-10",
       "cockroachdb-docs-17",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-probe-rt-3",
+      "cockroachdb-docs-4",
+      "cockroachdb-docs-28",
+      "cockroachdb-probe-4",
+      "cockroachdb-docs-1",
+      "cockroachdb-docs-2",
+      "cockroachdb-gh-1",
       "cockroachdb-probe-3"
     ],
     "productId": "cockroachdb",

@@ -740,13 +740,16 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Local provisioning and full SQL schema/query workflows are verified end-to-end via CLI (`cockroach demo` booted a keyless cluster and executed a real CREATE TABLE/INSERT/SELECT roundtrip with no cloud account), and CockroachDB Cloud has a dedicated `ccloud` CLI for creating/connecting clusters plus an official MCP server that supports natural-language table listing, statement execution, and row inserts. However, the managed MCP endpoint is OAuth-gated (401 requiring bearer auth against a protected resource), meaning cloud provisioning via MCP/API isn't fully dashboard-free without an auth setup step, and no REST/API spec was found (openapi probes all 404'd). Missing for 10: a demonstrated single continuous agent flow (create→connect→schema→query) purely through API or MCP without any OAuth/dashboard touchpoint, and a documented REST API surface.",
+    "rationale": "The `ccloud` CLI can create, manage, and connect to CockroachDB Cloud clusters (docs-10, docs-17), and the official CockroachDB Cloud MCP server lets an agent explore schemas and run read/write queries via natural language (docs-4, docs-28, probe-4). Combined with SQL/Postgres-wire compatibility (gh-1) and `cockroach demo`/single-node CLI setup (docs-1, docs-2, probe-5), an agent can provision a cluster, get a connection string, and run queries without the dashboard, but there's no documented general REST/OpenAPI provisioning surface (probe-3 shows 404s) and no single evidenced end-to-end script tying CLI+MCP together. missing for 10: a documented REST/API provisioning endpoint, and a concrete end-to-end example combining CLI creation + MCP schema/query steps in one workflow.",
     "evidenceIds": [
-      "cockroachdb-docs-4",
       "cockroachdb-docs-10",
       "cockroachdb-docs-17",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-probe-rt-3",
+      "cockroachdb-docs-4",
+      "cockroachdb-docs-28",
+      "cockroachdb-probe-4",
+      "cockroachdb-docs-1",
+      "cockroachdb-docs-2",
+      "cockroachdb-gh-1",
       "cockroachdb-probe-3"
     ]
   },
@@ -754,13 +757,13 @@
     "productId": "cockroachdb",
     "storyId": "agent-safe-sql-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "CockroachDB Cloud ships an official MCP server (confirmed live and OAuth-gated in probe) that lets an agent run natural-language-driven SQL operations including listing tables, executing statements, and inserting rows, which supports the 'agent runs SQL via tools' half of the story. However, no evidence describes distinct scoped tools separating read-only from destructive/write actions, or any safety controls for delegation. Missing for 10: documented read-only vs. write/destructive tool separation, permission scoping or confirmation gates for destructive operations, and any independent hands-on account of using these MCP tools safely.",
+    "rationale": "CockroachDB documents an official Cloud MCP server that lets AI tools explore live schemas and perform read and write operations (listing tables, executing statements, inserting rows) via OAuth/API-key auth, which supports agent-driven SQL work. However, there is no evidence of tool-level scoping that distinguishes read-only from destructive/write actions, nor any documented safety guardrails for schema-altering or destructive operations. missing for 10: explicit read-only vs write/destructive tool separation, permission scoping or confirmation gates for destructive schema/data operations, independent corroboration of safe agent delegation in practice.",
     "evidenceIds": [
       "cockroachdb-docs-4",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-docs-28",
+      "cockroachdb-probe-4"
     ]
   },
   {
@@ -769,7 +772,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "CockroachDB serves a working llms.txt at docs.cockroachlabs.com/llms.txt (HTTP 200, indexing 6364 pages) plus a docs/.md agent-oriented endpoint, both confirmed live via direct probes rather than just vendor claims. missing for 10: no independent/community confirmation that agents actually consume these endpoints successfully, and no OpenAPI spec (404s) to complement the docs for agent tooling.",
+    "rationale": "A probe confirms docs.cockroachlabs.com/llms.txt returns HTTP 200 with a structured documentation index, and the docs-md endpoint explicitly points agents to this llms.txt as the master index — directly matching the story. Missing for 10: independent/community confirmation that agents actually consume this file successfully, and broader agent-oriented doc formats beyond the single llms.txt/docs-md pair.",
     "evidenceIds": [
       "cockroachdb-probe-1",
       "cockroachdb-probe-2"
@@ -778,15 +781,11 @@
   {
     "productId": "cockroachdb",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "CockroachDB Cloud's official MCP server lets users issue natural-language prompts to query and manipulate data, and a runtime probe confirms the endpoint is live and OAuth-gated as documented, which enables AI-agent-driven exploration of data. However, this is a natural-language query interface, not a native AI insights/suggestions engine (e.g., automatic anomaly detection, recommended optimizations, or generated summaries) built into the product. Missing for 10: evidence of built-in generative insights/analytics beyond NL query passthrough, and independent hands-on validation of insight quality.",
-    "evidenceIds": [
-      "cockroachdb-docs-4",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-3"
-    ]
+    "rationale": "CockroachDB provides vector search and an MCP server for AI agents to query/manipulate data, and manual resource-usage diagnostics, but there is no evidence of the product itself generating AI-driven insights, recommendations, or suggestions from a user's data (e.g., automated query/index advisors, anomaly detection, natural-language summaries of data trends).",
+    "evidenceIds": []
   },
   {
     "productId": "cockroachdb",
@@ -794,13 +793,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "CockroachDB documents background data mechanisms like changefeeds and backups, but there is no evidence of an AI-native automation framework where an agent can configure tasks that run autonomously in the background; the MCP server evidence only covers interactive read/write operations, not scheduled or persistent automations.",
-    "evidenceIds": [
-      "cockroachdb-docs-5",
-      "cockroachdb-docs-6",
-      "cockroachdb-docs-4",
-      "cockroachdb-probe-rt-3"
-    ]
+    "rationale": "CockroachDB's evidence covers traditional DB background features (changefeeds, scheduled backups, MCP server for querying) but none describe AI-native users setting up autonomous, agent-driven background automations; the MCP server (docs-4, docs-28) only supports interactive read/write prompts, not persistent autonomous automation setup.",
+    "evidenceIds": []
   },
   {
     "productId": "cockroachdb",
@@ -808,25 +802,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows CockroachDB Cloud's MCP server, which lets external AI agents connect to and query CockroachDB using natural language — this is CockroachDB acting as a tool for outside AI agents, not a built-in assistant inside the product to which a user delegates tasks. No evidence of an in-console AI assistant/copilot feature exists in the pack.",
+    "rationale": "Evidence only shows CockroachDB exposing itself as an MCP server so external AI tools/agents can query it (docs-4, docs-28, docs-32) — this is the reverse of a built-in assistant embedded in the product that a user delegates tasks to. There is no evidence of any native, in-product AI assistant/copilot users can converse with inside CockroachDB or its console.",
     "evidenceIds": [
       "cockroachdb-docs-4",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-docs-28",
+      "cockroachdb-docs-32",
+      "cockroachdb-probe-4"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "The `cockroach demo` and `cockroach start-single-node` commands can run entirely headlessly with no interactive shell or account (verified by a runtime probe executing SQL via `-e` flag, offline, insecure mode), and CockroachDB installs via simple package managers (brew) suitable for CI pipelines. missing for 10: no explicit CI recipe/Docker/GitHub Actions example in docs, and no independent CI-integration case study.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "CockroachDB ships a CLI (cockroach start-single-node, cockroach demo, ccloud) that can be scripted, and PostgreSQL-wire-protocol compatibility allows standard drivers to be used in automated/CI pipelines, implying headless operation is feasible. However, there is no explicit documentation or example of running CockroachDB in CI pipelines, headless test harnesses, or automation-specific tooling/guides. Missing for 10: dedicated CI/headless automation docs or examples, non-interactive flags/exit-code guidance for scripting, and independent evidence of CI usage.",
     "evidenceIds": [
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-docs-1",
       "cockroachdb-docs-2",
-      "cockroachdb-docs-21"
+      "cockroachdb-docs-1",
+      "cockroachdb-docs-17",
+      "cockroachdb-gh-1",
+      "cockroachdb-probe-5"
     ]
   },
   {
@@ -835,37 +831,33 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "CockroachDB is a database; the evidence shows it ships an MCP *server* (docs-4, probe-4, probe-rt-3) so AI agents can call into CockroachDB Cloud, which is the opposite direction of this story (the product acting as an MCP *client* that plugs in and consumes other servers' tools). Databases are not agentic actors that consume MCP tool servers, so this axis is a category error for this product type.",
-    "evidenceIds": [
-      "cockroachdb-docs-4",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-3"
-    ]
+    "rationale": "This story asks whether CockroachDB can act as an MCP *client*, consuming external MCP servers' tools. CockroachDB is a database, not an agentic/AI-assistant product; the evidence instead shows CockroachDB exposing its own MCP *server* for AI tools to connect to it (docs-4, docs-28, probe-4) — the opposite direction. There is no indication CockroachDB itself invokes or consumes other MCP servers' tools, so this client-side axis is a category mismatch for a database product.",
+    "evidenceIds": []
   },
   {
     "productId": "cockroachdb",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "CockroachDB Cloud offers an official, documented MCP server enabling natural-language agent interactions (listing tables, executing statements, inserting rows), and a runtime probe confirms the endpoint is live and OAuth-gated exactly as documented. Missing for 10: independent/community hands-on validation of agent workflows beyond first-party docs and probes, and details on feature completeness/limits of the MCP server's tool surface.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "CockroachDB Cloud documents an official MCP server that lets AI tools connect via OAuth/API key to explore schemas and run queries, including natural-language read/write operations. missing for 10: independent or hands-on community corroboration of the MCP server working in practice, and details on self-hosted (non-Cloud) MCP support.",
     "evidenceIds": [
       "cockroachdb-docs-4",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-docs-28",
+      "cockroachdb-probe-4"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "CockroachDB Cloud ships an official MCP server that explicitly lets users issue natural-language prompts to list tables, execute statements, and insert rows, and a runtime probe confirms the documented MCP endpoint is live and OAuth-gated exactly as described. This is a direct, first-party natural-language interface to database operations rather than just NL-to-SQL translation elsewhere. Missing for 10: independent/hands-on evidence of an actual successful NL command being executed end-to-end (beyond auth handshake), and confirmation that this capability extends to self-hosted (non-Cloud) CockroachDB deployments.",
+    "rationale": "CockroachDB Cloud ships an official MCP server that lets AI tools issue natural-language prompts to list tables, run statements, and insert rows via OAuth/API-key auth (cockroachdb-docs-4, cockroachdb-docs-28, cockroachdb-probe-4). This is first-party documentation but scoped to CockroachDB Cloud rather than the core self-hosted product, and there is no independent/hands-on corroboration of the natural-language experience. Missing for 10: evidence of NL support in self-hosted/core CockroachDB, independent user reports validating the MCP NL experience.",
     "evidenceIds": [
       "cockroachdb-docs-4",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-docs-28",
+      "cockroachdb-probe-4"
     ]
   },
   {
@@ -874,43 +866,44 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "CockroachDB ships an official `cockroach` CLI (demo, start, sql shell) verified via runtime probes performing real SQL roundtrips, plus a separate `ccloud` CLI for cloud cluster management, both documented and hands-on confirmed. This is a general-purpose DB CLI rather than one purpose-built for AI-native/agentic workflows, though the product does offer an MCP server for natural-language agent interaction as a complementary path. Missing for 10: CLI features explicitly marketed toward AI-agent automation (e.g., structured/JSON output modes tailored for agent consumption, agent-specific CLI subcommands) and independent third-party corroboration of ccloud CLI usage.",
+    "rationale": "CockroachDB ships official CLIs — the `cockroach` binary (with `demo`, `start-single-node`, install via Homebrew) and the `ccloud` CLI for managing Cloud clusters — well documented in first-party docs, giving AI-native/agentic users scriptable command-line access to spin up clusters and run SQL. Missing for 10: no CLI-specific AI-native features (e.g., agent-oriented subcommands) or independent hands-on corroboration of AI-agent CLI usage specifically.",
     "evidenceIds": [
-      "cockroachdb-docs-5",
+      "cockroachdb-docs-1",
+      "cockroachdb-docs-2",
       "cockroachdb-docs-10",
       "cockroachdb-docs-17",
-      "cockroachdb-probe-5",
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2"
+      "cockroachdb-docs-21",
+      "cockroachdb-probe-5"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "CockroachDB exposes a well-documented, driver-agnostic PostgreSQL wire protocol (verified live via `cockroach demo` running real SQL) plus a documented MCP server for natural-language driving of read/write operations, both confirmed live in the probes. However, there is no discoverable OpenAPI/REST spec (all candidate paths 404), so a fully machine-readable HTTP API for cloud/cluster management is absent — missing for 10: a public OpenAPI/REST spec for cluster administration, independent hands-on confirmation of the MCP server's read/write actions beyond the documented claim.",
+    "rationale": "CockroachDB exposes a well-documented SQL/PostgreSQL wire-protocol API and a CLI (ccloud) for managing clusters, plus an MCP server allowing AI tools to query schemas and run queries via OAuth/API key, all documented in official docs. However, no dedicated REST/OpenAPI specification was found (probe for openapi.json/swagger.json returned 404s), and there's no independent corroboration of programmatic completeness beyond SQL access. Missing for 10: a discoverable OpenAPI/REST API spec, independent verification of API robustness/versioning, and broader ecosystem confirmation of AI-driven API usage beyond docs.",
     "evidenceIds": [
       "cockroachdb-gh-1",
+      "cockroachdb-docs-10",
+      "cockroachdb-docs-17",
       "cockroachdb-docs-4",
+      "cockroachdb-docs-28",
       "cockroachdb-probe-3",
-      "cockroachdb-probe-4",
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-probe-4"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows CockroachDB's Cloud MCP server is gated by OAuth (401 + WWW-Authenticate Bearer, resource_metadata endpoint) and that SQL-level roles exist in general, but nothing in the pack documents an actual mechanism for issuing scoped, least-privilege API credentials specifically for an AI agent (e.g., agent-specific API keys, granular OAuth scopes, or role templates for automated clients). Missing for 10: documentation of scoped credential/token issuance workflow for agents, evidence of least-privilege role templates tied to the MCP/API surface, and any hands-on confirmation that such scoping works as intended.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "CockroachDB's Cloud MCP server documentation states that AI tools can authenticate and explore/query clusters using OAuth or API key authentication, implying some form of credentialed agent access, but there is no explicit documentation of scoping those credentials to least-privilege roles or restricting an agent's permissions (e.g., read-only or table-level grants) beyond generic API key auth. Missing for 10: explicit least-privilege/role-scoping guidance for agent API keys, documented permission granularity for MCP/agent credentials, and independent verification that scoped credentials are enforced.",
     "evidenceIds": [
+      "cockroachdb-docs-28",
       "cockroachdb-docs-4",
-      "cockroachdb-probe-rt-3"
+      "cockroachdb-probe-4"
     ]
   },
   {
@@ -931,7 +924,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows CockroachDB changefeeds with at-least-once delivery guarantees (cockroachdb-docs-5), but no citation explicitly confirms webhook sinks or a webhook subscription mechanism as part of the changefeed feature; older community comments even note the lack of a 'change notification' mechanism. Missing for 10: explicit documentation of webhook sink configuration, webhook payload/auth setup, and any hands-on confirmation of webhook delivery.",
+    "rationale": "The evidence describes CockroachDB changefeeds (with delivery/ordering guarantees) but never mentions a webhook sink or webhook-based subscription mechanism specifically; no documentation or community evidence confirms webhook support for event subscription.",
     "evidenceIds": [
       "cockroachdb-docs-5",
       "cockroachdb-comm-12"
@@ -943,7 +936,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers CockroachDB's OLTP features (ACID transactions, backups, changefeeds, multi-region, vector indexes) but contains no mention of analytical/OLAP acceleration, columnar execution, materialized views, or benchmarks showing fast large-table aggregation performance suitable for dashboards. Nothing addresses avoiding a separate warehouse for analytics. missing for 10: any documentation of analytical query performance, columnar/vectorized execution engine, dashboard-scale aggregation benchmarks, or HTAP-specific tooling.",
+    "rationale": "The evidence pack shows CockroachDB as a distributed, strongly-consistent OLTP SQL database (ACID transactions, scaling, backups, vector indexes) but contains no evidence of columnar storage, vectorized execution, or any analytical/OLAP acceleration features that would make heavy aggregations over large tables fast enough for dashboards. Nothing in docs or community discussion addresses analytical query performance or HTAP-style capabilities that would obviate a separate warehouse.",
     "evidenceIds": []
   },
   {
@@ -952,7 +945,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "CockroachDB documents SQL reference, quickstarts, and an interactive `cockroach demo` shell, but there is no evidence of an interactive API reference (e.g., an OpenAPI/Swagger-style explorer with runnable examples) — the openapi probe explicitly found all candidate spec paths returning 404. This axis is plausible for a database's developer docs site, so the absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "The evidence pack shows only SQL docs, CLI demo instructions, and quickstart guides — no interactive API reference or runnable-example explorer is documented, and a direct probe for OpenAPI/Swagger specs returned 404 on all candidate paths.",
     "evidenceIds": [
       "cockroachdb-probe-3"
     ]
@@ -963,7 +956,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "CockroachDB Cloud does offer a management API/CLI, but the evidence pack shows an explicit probe for a machine-readable API spec (openapi.json, swagger.json, etc.) at the docs domain returning 404 on every candidate path, and no other citation surfaces an OpenAPI or equivalent spec anywhere in the docs or cloud console.",
+    "rationale": "A direct probe for OpenAPI/Swagger spec files at common paths returned 404 across all candidates, and no evidence pack item shows a downloadable machine-readable API spec; CockroachDB Cloud does have a REST API elsewhere but no spec artifact is documented here.",
     "evidenceIds": [
       "cockroachdb-probe-3"
     ]
@@ -972,13 +965,14 @@
     "productId": "cockroachdb",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "`cockroach demo` spins up a temporary, in-memory, single-node/multi-node cluster with a real interactive SQL shell that runs entirely offline with no cloud account, letting an AI-native user run test queries/CRUD without touching production data — confirmed by both docs and a hands-on runtime probe showing a full CREATE/INSERT/SELECT roundtrip. missing for 10: independent third-party corroboration beyond vendor docs/probe, and explicit documentation tying this sandbox workflow specifically to AI-agent/MCP-driven testing rather than manual SQL shell use.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "CockroachDB offers `cockroach demo` for spinning up temporary, in-memory clusters and single-node clusters explicitly for testing/dev use, plus Cockroach Continuum which supports virtual clusters for developers and agents to deploy separately from a dedicated host cluster — all clearly separable from production data. Missing for 10: explicit documentation framing this as an AI-agent 'sandbox' workflow, isolation/security guarantees between virtual clusters and production, and independent confirmation of these features in practice.",
     "evidenceIds": [
       "cockroachdb-docs-1",
       "cockroachdb-docs-2",
-      "cockroachdb-probe-rt-2"
+      "cockroachdb-docs-32",
+      "cockroachdb-probe-5"
     ]
   },
   {
@@ -987,21 +981,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of API versioning schemes or a deprecation policy for CockroachDB's SQL/client APIs, MCP server, or Cloud APIs. While such a policy is plausible for a database product (SQL compatibility, wire protocol versions, Cloud API), nothing in the provided evidence addresses it, so it cannot be credited.",
-    "evidenceIds": []
+    "rationale": "No evidence of versioned APIs (SQL wire protocol version negotiation aside) with a documented deprecation policy; OpenAPI/spec probes all 404 and no deprecation policy docs appear in the pack.",
+    "evidenceIds": [
+      "cockroachdb-probe-3"
+    ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "automated-backups",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs describe full/incremental backups and point-in-time restore as available features (cockroachdb-docs-6, cockroachdb-docs-15), but there's no evidence of a visible/configurable backup schedule UI or self-serve founder-facing controls, and community reports concretely contradict self-serve availability: 'backup/restore feature... is currently locked behind their enterprise version' and 'the old licensing model was pretty brutal if you required any enterprise features (ex: incremental backup)' — meaning for a founder on the free/core tier, backups may not be truly self-serve or automatic. Missing for 10: evidence of a schedule visibility/config UI, confirmation that free-tier founders get automatic scheduled backups without enterprise licensing, and independent hands-on confirmation of restore self-service.",
+    "rationale": "Docs confirm full/incremental backups and point-in-time restore capability (cockroachdb-docs-6, -15, -30), which supports the 'restores are self-serve' half of the story, but there is no evidence of a visible, configurable backup schedule/dashboard that a founder could see and adjust. A community report also notes backup/restore was historically gated behind an enterprise license, undercutting the 'self-serve' framing for non-enterprise users (cockroachdb-comm-8). Missing for 10: documentation of a schedule UI/CLI showing backup cadence, evidence of self-serve schedule configuration, and confirmation that this isn't enterprise-gated for the target persona.",
     "evidenceIds": [
       "cockroachdb-docs-6",
       "cockroachdb-docs-15",
-      "cockroachdb-comm-8",
-      "cockroachdb-comm-1"
+      "cockroachdb-docs-30",
+      "cockroachdb-comm-8"
     ]
   },
   {
@@ -1010,11 +1006,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "CockroachDB is a distributed SQL database and standard SQL/Postgres-compatible clients naturally support batch INSERTs, transactions, and bulk import/export via backup-restore, but the evidence pack has no explicit documentation of bulk/batch operations (e.g., IMPORT, multi-row INSERT, bulk API) and the MCP server docs only mention inserting single rows via natural language rather than bulk multi-item operations. Missing for 10: explicit bulk-insert/IMPORT documentation, evidence of the MCP or CLI performing multi-item bulk operations in one call, and independent confirmation of bulk-operation performance at scale.",
+    "rationale": "CockroachDB's standard SQL API (inherently supporting multi-row INSERT/UPDATE/DELETE) and its backup/restore and changefeed features imply bulk data operations, and the MCP server lets an AI agent execute statements and insert rows via natural language. However, no evidence explicitly documents batch/bulk operation support (e.g., IMPORT, batched writes, or bulk API semantics) for AI-driven workflows. Missing for 10: explicit documentation of bulk/batch operation APIs or IMPORT tooling, and evidence that the MCP/agent interface supports operating on many items in a single call rather than one at a time.",
     "evidenceIds": [
+      "cockroachdb-gh-3",
       "cockroachdb-docs-4",
+      "cockroachdb-docs-28",
       "cockroachdb-docs-6",
-      "cockroachdb-gh-1"
+      "cockroachdb-docs-30"
     ]
   },
   {
@@ -1051,13 +1049,12 @@
     "storyId": "autoscaling-under-load",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "CockroachDB Cloud's Serverless/Basic tier documents automatic request-unit scaling, including scale-to-zero on inactivity, which aligns with autoscaling compute without manual resizing. However, evidence is thin on how it scales up under load or guarantees against downtime, and CockroachDB's core distributed architecture (self-hosted) generally requires manual node provisioning for scaling, so this capability is specific to the managed cloud tier only. missing for 10: detailed scale-up mechanics/limits, evidence of zero-downtime during scale events, independent/hands-on confirmation of autoscaling behavior under real load.",
+    "confidence": "medium",
+    "rationale": "Evidence shows CockroachDB Cloud (Basic/Standard) bills via Request Units that scale to zero when idle, implying some automatic compute elasticity, but there's no explicit documentation of automatic scale-up under load or guarantees of zero-downtime resizing beyond the zero-activity case. missing for 10: explicit description of automatic scale-up behavior under load, confirmation of no manual intervention/downtime during scale events, and independent verification of autoscaling in production workloads.",
     "evidenceIds": [
       "cockroachdb-docs-18",
       "cockroachdb-docs-22",
-      "cockroachdb-docs-9",
-      "cockroachdb-docs-19"
+      "cockroachdb-docs-9"
     ]
   },
   {
@@ -1066,19 +1063,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers CockroachDB's backup/restore and point-in-time restore features but contains no mention of a 'branch' concept, branch creation, or resetting a branch from its parent — capabilities central to this story. Since database branching is a reasonable feature category for a modern SQL database to offer, its total absence here means the story is unmet rather than out-of-category.",
-    "evidenceIds": [
-      "cockroachdb-docs-6",
-      "cockroachdb-docs-15"
-    ]
+    "rationale": "The evidence pack shows backup/restore and point-in-time restore of whole clusters/databases (cockroachdb-docs-6, cockroachdb-docs-15, cockroachdb-docs-30) and virtual cluster deployment via Cockroach Continuum (cockroachdb-docs-32), but nothing describing a git-like 'branch' concept that can be reset from its parent or rolled back independently as a lightweight dev workflow. No evidence of branch creation, branch reset, or branch-level state restoration distinct from full cluster backup/restore.",
+    "evidenceIds": []
   },
   {
     "productId": "cockroachdb",
     "storyId": "builtin-connection-pooling",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows CockroachDB supports the Postgres wire protocol and various client drivers, but nowhere documents a built-in connection pooler (equivalent to pgbouncer) that manages thousands of concurrent client connections. No mention of connection pooling, session multiplexing, or proxy-replacement architecture appears in any docs, community, or probe items.",
+    "confidence": "high",
+    "rationale": "The evidence pack only discusses PostgreSQL wire-protocol compatibility, CLI/cloud tooling, backups, and multi-region features — there is no mention of a built-in connection pooler, PgBouncer-like proxy, or connection-multiplexing capability. The axis is fair for any distributed SQL database, but no evidence shows CockroachDB ships or claims this feature.",
     "evidenceIds": [
       "cockroachdb-gh-1",
       "cockroachdb-docs-13"
@@ -1089,28 +1083,28 @@
     "storyId": "ci-preview-branches",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a branching feature (e.g., copy-on-write database branches per PR) or CI/deploy-platform integration for automated branch creation/teardown; only unrelated capabilities like `cockroach demo` (ephemeral in-memory instance) and ccloud cluster creation are documented, neither of which supports per-PR branch lifecycle automation.",
+    "confidence": "medium",
+    "rationale": "CockroachDB documents a `ccloud` CLI for creating/managing clusters and a Continuum feature for deploying 'virtual clusters' on a host cluster, but there is no evidence of a database-branching feature (schema/data copy-on-write branches tied to a PR) or documented CI/deploy-platform integration for automatic branch creation/teardown as in dedicated branching databases.",
     "evidenceIds": [
-      "cockroachdb-docs-1",
       "cockroachdb-docs-10",
-      "cockroachdb-docs-17"
+      "cockroachdb-docs-17",
+      "cockroachdb-docs-32"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "cli-daily-workflow",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "The `cockroach` CLI covers the daily loop: `cockroach demo`/`cockroach start-single-node` create and connect to a cluster with an interactive SQL shell, verified hands-on via runtime probes showing a keyless install and real SQL roundtrip entirely offline. Docs and probes confirm install (brew), demo/shell, and Postgres-wire-protocol connectivity for inspection via any SQL client. Missing for 10: independent (non-vendor) third-party validation of the full CLI daily loop beyond the single runtime probe, and explicit CLI subcommand documentation for 'inspect' beyond SQL shell usage.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "The CLI (`cockroach`) supports the full daily loop: `cockroach start-single-node`/`demo` to create a local cluster, `cockroach demo` opens an interactive SQL shell for querying/inspecting data, and `ccloud` covers create/manage/connect for cloud clusters, all installable via Homebrew without touching a dashboard. Missing for 10: explicit documentation of dedicated 'inspect' subcommands (e.g., listing tables/schemas outside the SQL shell) and independent hands-on developer testimonials confirming this exact daily workflow.",
     "evidenceIds": [
       "cockroachdb-docs-1",
       "cockroachdb-docs-2",
+      "cockroachdb-docs-10",
+      "cockroachdb-docs-17",
       "cockroachdb-docs-21",
-      "cockroachdb-probe-5",
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2"
+      "cockroachdb-gh-1"
     ]
   },
   {
@@ -1118,8 +1112,8 @@
     "storyId": "database-branching",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a copy-on-write branching feature for schema+data in CockroachDB; the pack only shows backups/restores, demo clusters, and single-node dev instances, none of which provide instant branchable copies of production data.",
+    "confidence": "medium",
+    "rationale": "No evidence of copy-on-write database branching (schema+data) for dev/test purposes; CockroachDB offers backup/restore, demo clusters, and virtual clusters via Continuum, but none described as instant branchable copies of production data.",
     "evidenceIds": []
   },
   {
@@ -1128,11 +1122,11 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "CockroachDB documents and demonstrates real PostgreSQL wire-protocol compatibility (standard pg drivers work, `cockroach demo` runs actual SQL round-trips) rather than a toy subset, but hands-on community reports concretely contradict 'full' Postgres compatibility — e.g. missing array columns ('it lacks array columns, which Postgres supports') and, historically, missing change-notification/CDC — meaning code written against real Postgres dialect features can break. There is no MySQL or SQLite dialect compatibility at all, only Postgres. Missing for 10: MySQL/SQLite compatibility, resolution of the array-column and other documented Postgres feature gaps, and independent verification that these gaps are now closed.",
+    "rationale": "CockroachDB advertises itself as \"PostgreSQL compatible\" and supports the Postgres wire protocol/drivers, but it deliberately implements only a \"familiar SQL API\" rather than full Postgres semantics, and hands-on community reports cite concrete gaps — e.g. missing array columns (a core Postgres feature) that made it a non-starter for a real migration, and historically no change-notification/CDC mechanism. This means it is not a drop-in engine replacement, contradicting the 'not a lookalike subset' expectation. Missing for 10: evidence of full extension/data-type parity (e.g. array support, full pg_catalog compatibility), and no MySQL/SQLite compatibility claims exist at all.",
     "evidenceIds": [
-      "cockroachdb-gh-1",
       "cockroachdb-docs-13",
-      "cockroachdb-probe-rt-2",
+      "cockroachdb-gh-1",
+      "cockroachdb-gh-3",
       "cockroachdb-comm-13",
       "cockroachdb-comm-12"
     ]
@@ -1143,29 +1137,28 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "CockroachDB Cloud offers a programmatic CLI (`ccloud`) for creating/managing clusters and serverless billing that scales to zero when idle, which could support cost-efficient per-tenant provisioning, and `cockroach demo`/single-node clusters show lightweight instance creation is possible. However there is no evidence of a purpose-built mechanism for creating thousands of cheap, isolated databases (e.g., per-agent/tenant sandboxes) or bulk/programmatic fleet management at that scale. Missing for 10: evidence of bulk/batch database creation APIs, per-database cost/isolation guarantees at thousands-scale, and documented tenant-isolation patterns for AI-agent workflows.",
+    "rationale": "CockroachDB's 'Cockroach Continuum' feature explicitly targets this use case, describing cluster virtualization that lets 'application developers and agents deploy virtual clusters on a dedicated host cluster,' and ccloud CLI plus Request-Unit scale-to-zero billing support programmatic, cost-elastic cluster management. However, there is no concrete evidence of per-tenant/per-agent database creation at scale (thousands), pricing at that granularity, or API/CLI examples for bulk provisioning of isolated databases. Missing for 10: concrete API/CLI examples for programmatically spinning up many isolated databases, pricing/cost data at thousand-database scale, and independent/hands-on confirmation of Continuum's agent-oriented workflow.",
     "evidenceIds": [
+      "cockroachdb-docs-32",
       "cockroachdb-docs-10",
       "cockroachdb-docs-17",
       "cockroachdb-docs-18",
-      "cockroachdb-docs-1",
-      "cockroachdb-probe-rt-2"
+      "cockroachdb-docs-9"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "free-tier-depth",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "CockroachDB offers a genuinely free local path (open-source binary, `cockroach demo` running real SQL with no account per probe-rt-1/rt-2) plus a Cloud free trial with $400 credit and serverless scale-to-zero billing (docs-8, docs-25, docs-18), which supports real prototyping. However, community reports concretely contradict full 'free tier usability' — free/core users still need an annual license key, and key features prototypers would want (incremental backup/restore, CDC, follower-reads) are locked behind the paid Enterprise tier, pushing some users back to Postgres (comm-4, comm-8, comm-9). missing for 10: evidence that backup/restore, CDC, and other blocked features are truly available for free, and confirmation the license-key requirement doesn't undermine 'free' framing.",
+    "rationale": "Docs show a genuine no-cost path: CockroachDB Cloud Serverless scales Request Unit consumption to zero when idle (docs-18) and there's a $400 free-trial-credit quickstart (docs-8, docs-25), plus local `cockroach demo`/single-node modes for offline prototyping (docs-1, docs-2). However, community feedback repeatedly notes core operational features (backup/restore, follower-reads, CDC, multi-region) are enterprise-gated (comm-8, comm-9, comm-2), which could limit how 'real' a prototype can get before hitting paywalls. Missing for 10: independent hands-on confirmation that the free/serverless tier alone supports a full realistic prototype without early enterprise-feature friction, and explicit ongoing (non-trial) free tier limits/quotas documentation.",
     "evidenceIds": [
       "cockroachdb-docs-8",
-      "cockroachdb-docs-25",
       "cockroachdb-docs-18",
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-comm-4",
+      "cockroachdb-docs-25",
+      "cockroachdb-docs-1",
+      "cockroachdb-docs-2",
       "cockroachdb-comm-8",
       "cockroachdb-comm-9"
     ]
@@ -1173,16 +1166,15 @@
   {
     "productId": "cockroachdb",
     "storyId": "global-low-latency",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "CockroachDB's docs describe explicit multi-region primitives—survival goals and table locality—for placing data/replicas close to users to reduce latency, plus survives datacenter failures with minimal latency disruption, directly matching the story. Missing for 10: independent latency benchmarks confirming real-world regional read-latency improvements, and community comments (comm-2) note multi-region can be restricted under certain licensing tiers, which is a real-world caveat on availability of the feature.",
+    "rationale": "First-party docs describe multi-region capabilities explicitly aimed at 'running global applications' with survival goals and table locality that determine how data is optimized/placed relative to regions (docs-7, docs-16, docs-24, docs-31), directly supporting region-aware placement for latency. However, a community comment notes multi-region functionality can be disabled/gated depending on tier ('For me it was the multiple regions... Data residency is the whole point'), signaling real-world licensing caveats not reflected in the docs. Missing for 10: concrete walkthrough/benchmark showing reduced read latency per region, and clarity on which tiers/plans include full multi-region placement without restriction.",
     "evidenceIds": [
       "cockroachdb-docs-7",
       "cockroachdb-docs-16",
       "cockroachdb-docs-24",
-      "cockroachdb-docs-14",
-      "cockroachdb-docs-20",
+      "cockroachdb-docs-31",
       "cockroachdb-comm-2"
     ]
   },
@@ -1192,40 +1184,41 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The docs index references a dedicated 'Migrate' / migration-overview page (MOLT) suggesting a documented migration path exists, but the evidence pack contains no actual content describing minimal-downtime steps, replication/cutover tooling, or verified success stories. Missing for 10: detailed migration guide content, explanation of minimal-downtime mechanics (e.g., live migration/replication tooling), and independent/hands-on confirmation of a low-downtime cutover.",
+    "rationale": "Docs reference a dedicated 'Migrate' page (MOLT migration overview) and PostgreSQL wire-protocol compatibility that would ease migration, but the evidence pack contains no actual detail on the migration process, minimal-downtime techniques, or step-by-step guidance. Missing for 10: concrete migration tool documentation (e.g. MOLT fetch/replicator steps), downtime/cutover guidance, and independent confirmation of successful production migrations.",
     "evidenceIds": [
-      "cockroachdb-docs-12"
+      "cockroachdb-docs-12",
+      "cockroachdb-gh-1",
+      "cockroachdb-comm-13"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "instant-provisioning",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "CockroachDB ships both `cockroach demo` (verified live in a runtime probe to instantly spin up a keyless in-memory cluster with real SQL roundtrip) and the `ccloud quickstart` CLI which interactively creates a CockroachDB Serverless/Basic cluster with request-unit billing that scales to zero, removing the need for capacity planning. Docs also describe a free-trial quickstart flow for going from zero to a connected cluster in seconds via CLI.  missing for 10: no runtime probe verifying the cloud `ccloud quickstart` actually provisions a ready-to-connect serverless cluster (only local `cockroach demo` was runtime-tested), and no first-class REST/API path for cluster creation beyond the CLI is evidenced.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "CockroachDB Serverless/Standard clusters can be created in seconds via the `ccloud quickstart` CLI or Cloud API with autoscaling Request Units (scales to zero, no capacity planning needed), and `cockroach demo`/single-node start offer instant local ready-to-connect databases. missing for 10: no independent hands-on timing benchmark or third-party confirmation of the 'seconds' claim, and no explicit API (REST/Terraform) walkthrough beyond CLI docs.",
     "evidenceIds": [
+      "cockroachdb-docs-10",
       "cockroachdb-docs-17",
       "cockroachdb-docs-18",
-      "cockroachdb-docs-10",
       "cockroachdb-docs-8",
-      "cockroachdb-probe-rt-2",
+      "cockroachdb-docs-1",
       "cockroachdb-docs-2"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "local-keyless-engine",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "CockroachDB ships as a downloadable binary (brew install) and `cockroach demo`/single-node start modes that spin up a full in-memory or local cluster with an interactive SQL shell, requiring no account, license key entry, or cloud dependency; a runtime probe confirms a keyless offline SQL roundtrip actually executed. This directly satisfies local/offline dev and CI use since the same open-source engine runs identically to production.\n\nmissing for 10: explicit first-party documentation or example of wiring `cockroach demo`/single-node mode into a CI pipeline, and independent (non-vendor) confirmation of CI usage.",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "CockroachDB docs show clear local, no-cloud-account paths (cockroach demo in-memory cluster, single-node cluster for dev/testing, brew install) supporting offline dev/CI use (cockroachdb-docs-1, cockroachdb-docs-2, cockroachdb-docs-21). However, community evidence directly contradicts the 'keyless' claim: a user reports 'even free users need an annual license key' (cockroachdb-comm-4), undermining the no-account/no-license premise. missing for 10: first-party confirmation that no license/account is needed for local/CI runs, and clarity on enterprise-feature gating that may require keys even locally.",
     "evidenceIds": [
       "cockroachdb-docs-1",
       "cockroachdb-docs-2",
       "cockroachdb-docs-21",
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2"
+      "cockroachdb-comm-4"
     ]
   },
   {
@@ -1233,31 +1226,29 @@
     "storyId": "openness-api-parity",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "CockroachDB exposes core capabilities via SQL (Postgres wire protocol), a CLI (`ccloud`) for cluster creation/management, and an MCP server for natural-language read/write operations, giving API-level parity for data operations and basic cluster admin. However the evidence pack shows Cloud Console-specific features (cost estimation, resource-usage dashboards, cluster overview page) documented only as UI pages with no confirmed API/CLI equivalent, and no general REST/OpenAPI surface was found (probe for openapi.json returned 404s). Missing for 10: documented Cloud API/REST parity for console-only features like billing/cost estimates and resource monitoring, and confirmation that all UI actions are scriptable via API.",
+    "confidence": "low",
+    "rationale": "CockroachDB exposes a SQL/Postgres-wire API for all data operations and a `ccloud` CLI for cluster lifecycle management, plus an MCP server letting AI agents query schemas and run statements, but there's no explicit documentation claiming full API/CLI parity with the Cloud console (billing views, resource-usage dashboards, cluster management UI) — missing for 10: explicit UI/API parity statement, coverage of console-only features like billing/monitoring dashboards via API, independent confirmation that all cloud console actions are scriptable.",
     "evidenceIds": [
       "cockroachdb-docs-10",
       "cockroachdb-docs-17",
       "cockroachdb-docs-4",
-      "cockroachdb-probe-rt-3",
-      "cockroachdb-probe-3",
-      "cockroachdb-docs-9",
-      "cockroachdb-docs-19"
+      "cockroachdb-docs-28",
+      "cockroachdb-docs-19",
+      "cockroachdb-gh-1"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "openness-full-export",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "CockroachDB docs describe full/incremental backup and restore plus PostgreSQL wire-protocol compatibility, which could support exporting data in open, portable formats, but community hands-on reports state the backup/restore feature (needed to actually get data out) was 'locked behind their enterprise version' for non-paying users, directly undercutting a free, no-strings ability to export and leave. Additional community feedback notes real PostgreSQL-compatibility gaps (e.g., no array columns) limiting true open-format portability. Missing for 10: a documented open/standard export format (e.g., SQL dump, CSV) freely available without enterprise licensing, and confirmation that exports are usable outside CockroachDB without vendor lock-in.",
+    "confidence": "low",
+    "rationale": "CockroachDB's PostgreSQL wire-protocol compatibility means data can be queried and extracted using standard Postgres client tools (e.g., pg_dump-like exports), and it documents backup/restore features for getting data out of a cluster. However, there is no explicit documentation of exporting data to open interchange formats (CSV/Parquet/etc.) for a full migration-and-leave scenario, and community comments note backup/restore capabilities have historically been gated behind enterprise licensing for self-hosted deployments, undermining unrestricted portability. Missing for 10: explicit open-format bulk export documentation, confirmation that full export/leave is unrestricted across all tiers, and independent verification of successful full data migration out of CockroachDB.",
     "evidenceIds": [
+      "cockroachdb-gh-1",
       "cockroachdb-docs-6",
-      "cockroachdb-docs-15",
-      "cockroachdb-comm-8",
-      "cockroachdb-comm-13",
-      "cockroachdb-gh-1"
+      "cockroachdb-docs-30",
+      "cockroachdb-comm-8"
     ]
   },
   {
@@ -1277,16 +1268,19 @@
   {
     "productId": "cockroachdb",
     "storyId": "openness-self-host",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "CockroachDB core is open-source and can be installed and run entirely locally without any cloud account, verified by runtime probes showing brew install and cockroach demo/single-node clusters running full SQL workloads offline and keylessly. Docs also describe single-node and multi-node self-hosted deployment options. missing for 10: independent third-party confirmation of full multi-node self-hosted cluster beyond demo mode, and clarity on which enterprise features require licensing when self-hosted (per community complaints about backup/CDC being enterprise-gated).",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm CockroachDB Core is open-source and self-hostable (single-node install via Homebrew, cockroach demo/start commands, GitHub repo) [cockroachdb-docs-21][cockroachdb-docs-2][cockroachdb-docs-1][cockroachdb-gh-1]. However community evidence shows real friction in self-hosting the core product for production use: mandatory annual license keys even for free/core installs, mandatory telemetry, and enterprise-only gating of key features like backup/restore and follower-reads that pushed some users away [cockroachdb-comm-3][cockroachdb-comm-4][cockroachdb-comm-8][cockroachdb-comm-9]. missing for 10: clear first-party documentation of full feature parity in self-hosted Core vs Enterprise, and independent confirmation that licensing/telemetry requirements don't hinder pure self-hosting.",
     "evidenceIds": [
-      "cockroachdb-probe-rt-1",
-      "cockroachdb-probe-rt-2",
-      "cockroachdb-docs-2",
       "cockroachdb-docs-21",
-      "cockroachdb-docs-1"
+      "cockroachdb-docs-2",
+      "cockroachdb-docs-1",
+      "cockroachdb-gh-1",
+      "cockroachdb-comm-3",
+      "cockroachdb-comm-4",
+      "cockroachdb-comm-8",
+      "cockroachdb-comm-9"
     ]
   },
   {
@@ -1295,7 +1289,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "CockroachDB advertises PostgreSQL wire-protocol compatibility, implying general compatibility with Postgres-based ORMs/drivers, but the evidence pack contains no documented, ORM-specific guides (Prisma, Drizzle, Django, Rails) and one community report notes incompatibilities (missing array columns) that break real-world Postgres-client usage. missing for 10: dedicated official guides for Prisma, Drizzle, Django, and Rails integration, and confirmation that ORM-specific features work without workarounds.",
+    "rationale": "Evidence confirms PostgreSQL wire-protocol compatibility allowing reuse of standard Postgres drivers/clients, which underlies ORM support, but there are no documented framework-specific guides for Prisma, Drizzle, Django, or Rails in the pack, and a community report notes missing array-column support that can break Postgres-based ORM compatibility. missing for 10: dedicated ORM/framework quickstart guides (Prisma, Drizzle, Django, Rails), confirmation of full type/feature parity needed by these ORMs, and independent hands-on reports of successful ORM integration.",
     "evidenceIds": [
       "cockroachdb-gh-1",
       "cockroachdb-comm-13"
@@ -1307,10 +1301,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm full/incremental backups with revision history enabling restore to an arbitrary point in time within the backup window (docs-6, docs-15), directly matching the 'restore to any point in time' part of the story. However, there is no evidence of a database-branching capability (e.g., cloning a live copy at a timestamp for testing), and community reports note that backup/restore (and other reliability features) are gated behind enterprise licensing, adding a real cost/access caveat (comm-8, comm-1). Missing for 10: evidence of branching/cloning functionality, and confirmation that PITR restore is available outside enterprise tier.",
+    "rationale": "Docs confirm point-in-time restore from backup revision history and full/incremental backups (cockroachdb-docs-15, -6, -30), directly supporting the 'restore to any point in time' part of the story, but there is no evidence of a 'branching' capability, and community reports indicate backup/restore has historically been gated behind the enterprise license (cockroachdb-comm-1, cockroachdb-comm-8), adding a real caveat. missing for 10: evidence of database branching/cloning, explicit retention-window configuration details, and confirmation restore is available without enterprise licensing.",
     "evidenceIds": [
-      "cockroachdb-docs-6",
       "cockroachdb-docs-15",
+      "cockroachdb-docs-6",
+      "cockroachdb-docs-30",
       "cockroachdb-comm-8",
       "cockroachdb-comm-1"
     ]
@@ -1319,13 +1314,14 @@
     "productId": "cockroachdb",
     "storyId": "privacy-data-residency",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "CockroachDB's multi-region docs (survival goals, table locality) explicitly let you place data by region, which is what data residency requires — but community reports (comm-2) note that region/residency-only features have at times been gated to enterprise/paid tiers, adding a real caveat that data residency 'is the whole point' but can be restricted depending on license/tier. Missing for 10: independent/hands-on confirmation of granular region pinning in practice, and clarity on which specific product tier includes full multi-region/residency controls.",
+    "rationale": "CockroachDB's multi-region docs explicitly describe survival goals and table locality controls that let users pin data to specific regions for residency/compliance, and community commentary confirms this is a core value proposition (\"Data residency is the whole point\"). However, the same community thread notes multi-region capabilities have at times been restricted/enterprise-gated, and there's no independent hands-on walkthrough confirming ease of granular region pinning for an AI-native workflow. Missing for 10: independent verification of region-pinning in practice, clarity on whether residency controls are gated behind paid tiers, and AI-specific tooling guidance for setting region locality.",
     "evidenceIds": [
       "cockroachdb-docs-7",
       "cockroachdb-docs-16",
       "cockroachdb-docs-24",
+      "cockroachdb-docs-31",
       "cockroachdb-comm-2"
     ]
   },
@@ -1334,8 +1330,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of any AI-model-training opt-out, data-usage policy, or privacy commitment regarding customer data being used to train AI models. CockroachDB Cloud does handle customer data and has AI-adjacent features (natural-language MCP interface), so the axis is a fair question for the product, but no documentation or community evidence addresses this specific privacy control. missing for 10: any documented policy on AI-training data usage, opt-out mechanism, or explicit privacy statement about model training.",
+    "confidence": "low",
+    "rationale": "No evidence addresses whether CockroachDB or CockroachDB Cloud uses customer data to train AI models; while the product has AI-adjacent features (vector indexes, MCP server, natural-language queries) that make this a fair privacy question, the pack only shows unrelated telemetry complaints and no explicit data-use/AI-training policy statement.",
     "evidenceIds": []
   },
   {
@@ -1357,7 +1353,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack shows a documented telemetry opt-out mechanism; instead, community feedback explicitly states the telemetry is mandatory ('the only thing I don't like is the mandatory telemetry'), indicating no user-facing opt-out exists.",
+    "rationale": "No documentation in the evidence pack describes a telemetry opt-out setting, and a community comment explicitly states 'the only thing I don't like is the mandatory telemetry,' indicating telemetry cannot be disabled by users.",
     "evidenceIds": [
       "cockroachdb-comm-3"
     ]
@@ -1365,13 +1361,14 @@
   {
     "productId": "cockroachdb",
     "storyId": "query-insights",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs reference a resource-usage page that helps 'find and optimize queries and processes that may be consuming excessive resources' and a Clusters overview page, hinting at some performance monitoring, but there's no evidence of a dedicated built-in insights view naming slow queries or explicit index recommendations. Missing for 10: documentation of a specific 'Insights' or performance-insights UI, evidence of index recommendation output, and independent/hands-on confirmation of these features actually surfacing in the console.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack only references generic resource-usage/cost pages (docs-11, docs-29) and a general 'Clusters' overview page (docs-19), with no mention of a built-in insights view surfacing slow queries or index recommendations. Nothing in the pack describes CockroachDB's DB Console statement diagnostics or index-recommendation features, so this operations-insights capability is unevidenced.",
     "evidenceIds": [
       "cockroachdb-docs-11",
-      "cockroachdb-docs-19"
+      "cockroachdb-docs-19",
+      "cockroachdb-docs-29"
     ]
   },
   {
@@ -1380,12 +1377,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "CockroachDB's docs clearly document automatic replication and failover: it 'survives disk, machine, rack, and even datacenter failures with minimal latency disruption and no manual intervention,' with configurable multi-region survival goals and table locality, which functions as its answer to read-replica/HA needs. However, CockroachDB is architecturally a distributed consensus database rather than a primary/read-replica system, and community reports note that follower-reads (the closest analog to 'read replicas' for read scaling) were moved behind an enterprise license, which a platform engineer would need to navigate. Missing for 10: explicit 'read replica' terminology/setup guide, independent verification of failover behavior in production, and clarity on which HA/read-scaling features require paid tiers.",
+    "rationale": "CockroachDB's architecture inherently replicates data across nodes and documents 'survival goals' and automatic failover surviving disk/machine/rack/datacenter failures without manual intervention (docs-7, docs-14/20/26, multiregion-overview), which covers HA/failover behavior well. However, this is distributed multi-active replication rather than classic 'read replicas', and community evidence notes that related read-scaling features (Follower-Reads) were moved behind an enterprise license, complicating a straightforward 'add read replicas' story. missing for 10: explicit read-replica configuration docs, hands-on failover test corroboration, and clarity on Follower-Reads licensing tier.",
     "evidenceIds": [
+      "cockroachdb-docs-7",
       "cockroachdb-docs-14",
       "cockroachdb-docs-20",
-      "cockroachdb-docs-7",
-      "cockroachdb-docs-16",
+      "cockroachdb-docs-26",
+      "cockroachdb-docs-31",
       "cockroachdb-comm-9"
     ]
   },
@@ -1395,7 +1393,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of online DDL, schema-change safety, migration tooling, or branch/merge workflows for schema changes — topics like backups, changefeeds, multiregion survival, and MCP/CLI tools are covered but schema migration safety is entirely absent. Missing for 10: any documentation or community evidence of online/non-blocking schema changes, migration CLI/tooling, or safe rollout mechanisms for DDL.",
+    "rationale": "CockroachDB is a distributed SQL database where online schema changes are a plausible, expected capability, but the evidence pack contains no documentation of online DDL, safe migration tooling, or branch/merge schema workflows — the only migration-related reference (cockroachdb-docs-12) points to migrating *from* other databases, not to safe schema-change mechanics.",
     "evidenceIds": []
   },
   {
@@ -1419,7 +1417,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "CockroachDB supports the standard PostgreSQL wire protocol via TCP connections and any Postgres driver, but there is no evidence of an official HTTP/WebSocket driver designed for stateless, short-lived serverless/edge function connections (unlike e.g. Neon's serverless driver). No documentation or product mentions this capability.",
+    "rationale": "No evidence of an official HTTP/WebSocket driver or serverless/edge-optimized client for CockroachDB; evidence only shows standard PostgreSQL wire-protocol drivers, which require persistent TCP connections, not HTTP/WebSocket-based short-lived connections suited for edge/serverless functions.",
     "evidenceIds": [
       "cockroachdb-gh-1",
       "cockroachdb-comm-13"
@@ -1429,13 +1427,14 @@
     "productId": "cockroachdb",
     "storyId": "spend-caps-alerts",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "CockroachDB Cloud provides Request Unit usage monitoring and a monthly cost estimate/extrapolation tool, plus a 'diagnose and optimize resource consumption' guide, giving founders some visibility into spend before a bill arrives. However, there is no evidence of an actual configurable spend cap or proactive usage alert/notification mechanism (e.g., budget thresholds that trigger emails or auto-throttling) — the pack only shows passive dashboards and estimates. Missing for 10: documented spend-cap/budget-limit feature, documented usage-threshold alerting/notifications, and any hands-on confirmation these prevent runaway bills.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "CockroachDB Cloud provides Request Unit consumption tracking, a monthly cost estimate, and resource-usage diagnostics pages (docs-9, docs-11, docs-22, docs-29), giving founders visibility into spend before it grows, but there is no evidence of an actual configurable spend cap or automated usage alert/notification feature that stops or warns about runaway queries before billing occurs. missing for 10: explicit spend-cap/budget-limit configuration, proactive alerting/notification mechanism (email/webhook) tied to usage thresholds, and confirmation that caps actually throttle/stop billing rather than just reporting after the fact.",
     "evidenceIds": [
       "cockroachdb-docs-9",
       "cockroachdb-docs-11",
       "cockroachdb-docs-22",
+      "cockroachdb-docs-29",
       "cockroachdb-docs-18"
     ]
   },
@@ -1445,24 +1444,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows CockroachDB Cloud tracks Request Unit usage and provides a monthly cost *estimate* tool, plus free trial credits, but no evidence pack item publishes actual per-unit dollar rates for compute, storage, or traffic that a founder could use to predict a bill in advance. Community comments even highlight surprise/confusion about cost (e.g., being quoted 10x pricier than alternatives), suggesting pricing isn't transparently published upfront.",
+    "rationale": "Evidence covers usage metrics like Request Units and cost estimation via extrapolation, but there is no documentation of actual published per-unit prices (e.g., $/RU, $/GB storage, $/GB egress) that would let a founder predict a bill before committing.",
     "evidenceIds": [
       "cockroachdb-docs-9",
       "cockroachdb-docs-18",
       "cockroachdb-docs-22",
-      "cockroachdb-comm-5"
+      "cockroachdb-docs-29"
     ]
   },
   {
     "productId": "cockroachdb",
     "storyId": "vector-embeddings",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "CockroachDB documents a native VECTOR type and vector indexes supporting efficient approximate nearest neighbor (ANN) search on high-dimensional columns, compatible with the pgvector extension, meaning developers can store embeddings and run similarity search directly in CockroachDB without a separate vector DB. Missing for 10: hands-on/independent corroboration of vector search performance or real-world usage reports, and no community discussion validating this feature in practice.",
+    "rationale": "CockroachDB documents native VECTOR column type and vector indexes for approximate nearest-neighbor similarity search over embeddings, compatible with the pgvector extension, directly satisfying the story without a separate vector database. Missing for 10: independent/hands-on corroboration of vector search performance or adoption reports, and community discussion validating real-world use at scale.",
     "evidenceIds": [
       "cockroachdb-docs-3",
-      "cockroachdb-docs-23"
+      "cockroachdb-docs-23",
+      "cockroachdb-docs-27"
     ]
   },
   {
