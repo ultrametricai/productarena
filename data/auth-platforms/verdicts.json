@@ -2,17 +2,17 @@
   {
     "productId": "auth0",
     "storyId": "act-as-oauth-provider",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0's core value proposition includes acting as an OAuth 2.0 authorization server that lets you 'secure your own API' and issue access tokens via flows like Client Credentials (M2M) and Authorization Code, which is the mechanism for turning an app into a token issuer for other clients (auth0-docs-2, auth0-docs-8/25, auth0-docs-54). Organizations also let you configure federated login for external business partners (auth0-docs-6/44). However, the evidence pack lacks explicit documentation of a self-service 'third-party app' registration/consent flow (dynamic client registration, developer marketplace, per-client consent screens) that fully mirrors 'Sign in with my app' for arbitrary third-party developers, missing for 10: dedicated third-party client registration/consent UI docs, dynamic client registration support, and independent hands-on confirmation of building a public OAuth provider on Auth0.",
+    "rationale": "Auth0 core docs describe exactly this: registering your own API as an OAuth 2.0 resource server (auth0-docs-2), issuing tokens to third-party/M2M clients via Client Credentials flow (auth0-docs-8, auth0-docs-25, auth0-docs-54), and general access-management docs note scopes work 'whether it's for first-party apps, third-party integrations, or Machine-to-Machine communications' (auth0-docs-81, auth0-docs-56). This is Auth0's standard authorization-server role. Missing for 10: explicit documentation of third-party developer onboarding/dynamic client registration workflow and independent hands-on corroboration of building a public OAuth provider on Auth0 (evidence is vendor docs only).",
     "evidenceIds": [
       "auth0-docs-2",
       "auth0-docs-8",
       "auth0-docs-25",
       "auth0-docs-54",
-      "auth0-docs-6",
-      "auth0-docs-44"
+      "auth0-docs-56",
+      "auth0-docs-81"
     ]
   },
   {
@@ -20,8 +20,8 @@
     "storyId": "active-session-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes session/device visibility or revocation features (active session lists, per-device revocation, or 'log out all devices' controls) for end users or admins; the pack covers login flows, MFA, SSO, RBAC, migration, and AI agent integrations but never session management.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack describes session/device visibility or revocation features (e.g., a sessions dashboard, 'log out all devices' or per-session revoke API) for end users or admins; coverage is limited to login methods, MFA, SSO, RBAC, migration, logging, and AI-agent auth, none of which address session/device management.",
     "evidenceIds": []
   },
   {
@@ -30,11 +30,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Auth0 has a live llms.txt file (HTTP 200) that serves as a documentation index, and individual docs pages expose .md variants pointing agents back to the llms.txt index, directly matching the agent-oriented docs pattern. Missing for 10: no independent/community confirmation that agents actually consume this successfully in practice.",
+    "rationale": "Auth0 has a confirmed llms.txt at auth0.com/llms.txt (HTTP 200) and provides .md versions of docs pages plus a documentation index pointer, directly enabling agents to consume agent-oriented docs. missing for 10: no independent/third-party corroboration of agents actually using llms.txt successfully in the wild.",
     "evidenceIds": [
       "auth0-probe-1",
-      "auth0-probe-2",
-      "auth0-docs-63"
+      "auth0-probe-2"
     ]
   },
   {
@@ -65,12 +64,12 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Auth0 documents an MCP server that lets external AI tools (Claude, Cursor, Windsurf) manage the tenant via natural language, and features for building AI agents into customer apps — but this is the reverse of the story: Auth0 itself does not ship a built-in AI assistant inside its own product/dashboard that users delegate tasks to. No evidence of an in-product Auth0 assistant exists in the pack.",
+    "confidence": "high",
+    "rationale": "Auth0's evidence shows an MCP server that lets external AI tools (Claude Desktop, Cursor) manage an Auth0 tenant, and features for securing third-party AI agents — but there is no evidence of a built-in AI assistant embedded inside the Auth0 product itself that users can delegate tasks to.",
     "evidenceIds": [
       "auth0-docs-13",
-      "auth0-docs-41",
-      "auth0-gh-1"
+      "auth0-gh-1",
+      "auth0-docs-41"
     ]
   },
   {
@@ -79,12 +78,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Auth0 supports headless/CI-friendly automation via the Client Credentials (M2M) flow for machine-to-machine auth, an official CLI (auth0-cli) for managing tenant config and automating tasks, and Management/Authentication APIs suitable for scripted use. However, evidence doesn't show CI-specific guides, service-account key rotation patterns, or non-interactive testing/staging workflows tailored for CI pipelines. missing for 10: CI-specific documentation/examples, headless testing guidance, evidence of CI pipeline integration patterns.",
+    "rationale": "Auth0 supports headless/CI automation via the Client Credentials (M2M) flow for machine-to-machine auth, an official CLI for managing tenant config/automation in dev/deploy workflows, and Actions for scripted customization, all of which are usable without a UI. However, evidence is docs-only with no hands-on CI usage reports or pipeline examples. missing for 10: independent/hands-on evidence of CI pipeline integration, CLI usage examples in automation scripts, and confirmation of non-interactive auth flows beyond docs claims.",
     "evidenceIds": [
       "auth0-docs-8",
       "auth0-docs-25",
-      "auth0-probe-5",
-      "auth0-docs-61"
+      "auth0-docs-72",
+      "auth0-docs-61",
+      "auth0-docs-77",
+      "auth0-probe-5"
     ]
   },
   {
@@ -135,11 +136,12 @@
     "productId": "auth0",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Auth0 ships an official CLI (github.com/auth0/auth0-cli, documented at auth0.com/docs/deploy-monitor/auth0-cli) for managing tenant configuration and automating tasks, which fits the 'official CLI' story for AI-native/agentic workflows. Missing for 10: no independent/hands-on review of the CLI's scripting or automation ergonomics, and no explicit detail on machine-readable output formats for agent integration.",
+    "rationale": "Auth0 documents an official CLI (auth0-cli) for managing tenant configuration, automating tasks, and integrating into dev/deployment workflows, corroborated by an official GitHub repo, which fits the 'ai-native user wants official CLI' story for a platform product. Missing for 10: independent hands-on review of the CLI's AI-native ergonomics and no evidence of AI-specific CLI features (e.g., natural-language CLI usage) beyond the separate MCP server offering.",
     "evidenceIds": [
       "auth0-docs-61",
+      "auth0-docs-77",
       "auth0-probe-5"
     ]
   },
@@ -165,47 +167,49 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Auth0 explicitly documents scoped, least-privilege credential issuance for AI agents: M2M client-credentials flow with defined scopes, Token Vault for scoped third-party API tokens, and Auth0 for AI Agents messaging that agents avoid 'broad, unrestricted access' via OAuth 2.0 scoping and unique per-agent identities. This directly matches the story of issuing scoped/least-privilege API credentials to an agent. missing for 10: independent/hands-on verification of scope granularity in practice, and no example showing a concrete least-privilege scope configuration for an agent use case.",
+    "confidence": "medium",
+    "rationale": "Auth0 documents Client Credentials/M2M flow with scopes for machine identities, RBAC/FGA for fine-grained permissions, and a dedicated 'Auth0 for AI Agents' product line explicitly describing OAuth 2.0 scoped API access 'preventing agents from having broad, unrestricted access to user data' plus unique per-agent identities and Token Vault-managed scoped third-party tokens. This directly matches issuing least-privilege credentials for agents. Missing for 10: independent/hands-on verification that agent-scoped credential issuance works as documented in practice, and no community evidence specifically testing this AI-agent scoping feature.",
     "evidenceIds": [
       "auth0-docs-8",
+      "auth0-docs-25",
+      "auth0-docs-81",
       "auth0-docs-16",
-      "auth0-docs-17",
       "auth0-docs-20",
       "auth0-docs-30",
-      "auth0-docs-59",
-      "auth0-docs-68"
+      "auth0-docs-56",
+      "auth0-docs-62",
+      "auth0-docs-19"
     ]
   },
   {
     "productId": "auth0",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Auth0 publishes a dedicated AI-agent developer surface (auth0.com/ai/docs) covering agent identity, Token Vault for API access, CIBA async approvals, and FGA for RAG pipelines, described as implementable with 'just a few lines of code,' implying official SDK-level integration for AI-native builders. However, the evidence pack never explicitly names or links a concrete 'Auth0 AI SDK' package, code sample, or language-specific SDK reference for AI agent workflows. Missing for 10: explicit SDK package/repo names for AI agent integration, code snippets/quickstart demonstrating SDK usage, and independent developer corroboration of building against these SDKs.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Auth0's AI-specific docs (auth0.com/ai/docs, auth0.com/ai.md) describe building agentic identity flows 'with just a few lines of code,' and mention Token Vault, CIBA, FGA, and MCP server integrations for AI agents, implying developer SDK/tooling support, but the pack never explicitly names or links to a dedicated 'Auth0 AI SDK' or language-specific SDK docs. Missing for 10: explicit official SDK/package documentation (e.g., named SDK repos, install instructions, code samples), and independent/hands-on developer corroboration of building against it.",
     "evidenceIds": [
-      "auth0-docs-15",
-      "auth0-docs-16",
+      "auth0-docs-68",
+      "auth0-docs-78",
       "auth0-docs-17",
-      "auth0-docs-18",
-      "auth0-docs-19",
-      "auth0-docs-20",
-      "auth0-docs-68"
+      "auth0-docs-89",
+      "auth0-docs-13",
+      "auth0-gh-1"
     ]
   },
   {
     "productId": "auth0",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Auth0 has log streaming (export tenant logs to analysis services) which is an event-export mechanism, but this is not a true webhook subscription API for arbitrary event types—it's log streaming to specific integrations (Datadog, Splunk, etc.), not a generic webhook subscription model. There's no documented dedicated webhook subscription API/endpoint for AI-native agents to subscribe to auth events. Missing for 10: a dedicated webhooks/event-subscription API, documentation of webhook payload formats and subscription management, and any AI-agent-specific webhook integration.",
+    "rationale": "The evidence pack describes Auth0's log-streaming feature (exporting tenant logs to an analysis service) and MCP/agent integrations, but none of the citations explicitly describe a webhook subscription mechanism for events (e.g., user signup, login, MFA events) that an AI-native user could hook into. Missing for 10: explicit webhook endpoint documentation, event types list, and subscription/management API for webhooks.",
     "evidenceIds": [
       "auth0-docs-12",
       "auth0-docs-27",
       "auth0-docs-47",
-      "auth0-docs-58"
+      "auth0-docs-58",
+      "auth0-docs-74"
     ]
   },
   {
@@ -214,10 +218,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; the OpenAPI probe explicitly returned 404 on all candidate paths, and docs are static markdown/prose rather than an interactive try-it-out console.",
+    "rationale": "No evidence in the pack describes an interactive API reference with runnable examples; probes for OpenAPI/swagger specs returned 404 across all candidate paths, and no docs mention a 'try it' or sandboxed API explorer experience.",
     "evidenceIds": [
-      "auth0-probe-3",
-      "auth0-probe-2"
+      "auth0-probe-3"
     ]
   },
   {
@@ -226,7 +229,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows an explicit probe for OpenAPI/swagger spec files at Auth0's common paths, all returning 404, and no other citation mentions a downloadable machine-readable API spec (only llms.txt discovery files and MCP/CLI tooling are documented).",
+    "rationale": "No evidence in the pack shows Auth0 publishing a downloadable OpenAPI/Swagger spec; a direct probe for common OpenAPI file paths returned 404s, and no docs or GitHub references confirm a machine-readable API spec.",
     "evidenceIds": [
       "auth0-probe-3"
     ]
@@ -245,10 +248,12 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items reference API versioning, version numbers, or a documented deprecation policy for Auth0's Management/Authentication APIs; the openapi.json probe even returned 404s. Missing for 10: any documentation of API versioning scheme, deprecation notices/changelog policy, or sunset timelines for breaking changes.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows extensive Auth0 product documentation, an MCP server, CLI, and AI-agent integration docs, but nothing about API versioning schemes or a documented deprecation policy for Auth0's APIs; an OpenAPI spec probe even returned 404s. This axis clearly applies to an auth platform with public APIs, but no evidence supports the specific claim of versioned APIs with a documented deprecation policy.",
     "evidenceIds": [
-      "auth0-probe-3"
+      "auth0-probe-3",
+      "auth0-docs-63",
+      "auth0-docs-79"
     ]
   },
   {
@@ -257,12 +262,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Auth0 documents a log streaming service that exports tenant logs (including auth/admin activity) to log analysis services in near real-time, which covers the SIEM export/streaming part of the story. However, no evidence addresses tamper-evidence (immutability, cryptographic integrity, WORM storage) of the audit logs, nor lists specific SIEM integrations or retention guarantees. Missing for 10: explicit tamper-evident/immutable log guarantees, named SIEM integrations (e.g., Splunk, Datadog, Sumo Logic), and independent verification of log integrity.",
+    "rationale": "Auth0 documents a log-streaming service that exports tenant logs (including auth and admin activity) in near real-time to log analysis/SIEM tools, which covers the 'stream/export to SIEM' portion of the story with fairly deep documentation across many sources (e.g. auth0-docs-12, -47, -58, -74). However, there is no evidence addressing 'tamper-evident' properties of these logs (e.g. cryptographic signing, immutability, chain-of-custody) or explicit coverage of admin-activity audit trails beyond generic 'tenant logs' language. Missing for 10: explicit tamper-evidence/immutability guarantees, dedicated admin-activity audit log documentation, and independent/hands-on confirmation of SIEM integration reliability.",
     "evidenceIds": [
       "auth0-docs-12",
       "auth0-docs-27",
       "auth0-docs-47",
-      "auth0-docs-58"
+      "auth0-docs-58",
+      "auth0-docs-74"
     ]
   },
   {
@@ -271,13 +277,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Auth0's log streaming service (auth0-docs-12/27/47/58) lets developers export tenant logs — including auth events — in near real-time to external log-analysis/webhook-style destinations, which can be used to keep other systems in sync, and Actions can trigger custom logic on login/signup events. However, the evidence never explicitly documents a webhook subscription model scoped to specific event types (sign-up, sign-in, user changes) as a first-class event-stream API. Missing for 10: explicit webhook endpoint documentation, granular event-type subscription docs, and independent/hands-on confirmation of reliable real-time sync use.",
+    "rationale": "Auth0's log streaming service exports tenant logs (including auth events like sign-ups/sign-ins) 'in near real-time' to external log analysis services, which partially satisfies the event-streaming need for keeping systems in sync, but the evidence describes destinations as log-analysis services rather than generic webhook endpoints or a dedicated event/webhook subscription API for specific auth events like user changes. Missing for 10: explicit webhook subscription mechanism, granular event-type filtering (sign-up vs sign-in vs profile update), and independent/hands-on confirmation of real-time sync use cases.",
     "evidenceIds": [
       "auth0-docs-12",
       "auth0-docs-27",
       "auth0-docs-47",
       "auth0-docs-58",
-      "auth0-docs-52"
+      "auth0-docs-74"
     ]
   },
   {
@@ -299,15 +305,14 @@
   {
     "productId": "auth0",
     "storyId": "automation-rules-engine",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 Actions are versioned, event-triggered Node.js functions that let users define custom logic firing automatically on login/identity events (e.g., post-login, M2M token issuance), which directly matches the 'rules that trigger actions on events' story, and log streaming further extends automated event export to external systems. Missing for 10: independent/hands-on validation of Actions' event-trigger breadth, and no explicit AI-native framing of this specific automation feature (AI-agent evidence in the pack focuses on auth flows, not rule/event automation).",
+    "rationale": "Auth0 Actions (and legacy Rules) let developers write versioned Node.js functions that automatically fire on tenant events such as login, pre-user-registration, and other identity flows, which is exactly the 'define rules that trigger actions on events' capability (auth0-docs-52, auth0-docs-83, auth0-docs-79). Missing for 10: independent/hands-on corroboration of Actions in practice, a full enumerated list of supported trigger/event types, and explicit tie-in to AI-native workflows (the AI agent docs focus on auth/token delegation rather than the Actions rules engine itself).",
     "evidenceIds": [
       "auth0-docs-52",
-      "auth0-docs-12",
-      "auth0-docs-47",
-      "auth0-docs-58"
+      "auth0-docs-83",
+      "auth0-docs-79"
     ]
   },
   {
@@ -316,7 +321,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Auth0 is an identity/authentication platform; scheduling recurring jobs or workflows is not a capability within its product category, and nothing in the evidence suggests it offers job/workflow scheduling.",
+    "rationale": "Auth0 is an identity/authentication platform; scheduling recurring jobs or workflows is outside its product category and not a capability an auth product would be expected to ship — this is a wrong-axis question, not a gap in Auth0's offering.",
     "evidenceIds": []
   },
   {
@@ -334,14 +339,15 @@
     "productId": "auth0",
     "storyId": "bot-attack-protection",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Auth0 docs explicitly describe proactive IP-blocking against consecutive failed login attempts to prevent brute-force/DDoS, breached-password detection using a compromised-credential database to block credential stuffing, and bot-detection-adjacent adaptive MFA that only challenges risky logins. These directly address bot/credential-stuffing/brute-force protection on auth flows. missing for 10: no explicit CAPTCHA/bot-detection documentation detail, no independent/hands-on validation of attack-blocking efficacy, and no security-engineer testimonial confirming real-world effectiveness.",
+    "rationale": "Auth0 docs explicitly describe brute-force/bot protection (blocking IPs after consecutive failed logins to avoid DDoS), breached-password detection using a compromised-credentials database to stop credential stuffing/account takeover, and adaptive/risk-based MFA that steps up authentication on suspicious logins — directly matching the security-engineer's ask. These are first-party documented, product-level security features rather than third-party bolt-ons.  missing for 10: independent/hands-on validation (e.g., pen-test or analyst report) confirming real-world efficacy of these anti-bot/brute-force controls, since only vendor docs are cited.",
     "evidenceIds": [
+      "auth0-docs-35",
       "auth0-docs-36",
       "auth0-docs-55",
       "auth0-docs-50",
-      "auth0-docs-35"
+      "auth0-docs-87"
     ]
   },
   {
@@ -381,15 +387,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Auth0 documents the OAuth 2.0 Device Authorization Flow explicitly for input-constrained devices/CLIs (docs-9, docs-26, docs-40), and its own MCP Server product uses this exact flow to let AI tools like Claude Desktop authenticate against a tenant without pasting long-lived secrets (docs-13, docs-41, auth0-gh-1). This is a first-party, standards-based implementation directly matching the CLI/headless-agent use case in the story.  missing for 10: independent/hands-on third-party verification of the device flow specifically in CLI/agent contexts beyond Auth0's own docs and MCP server example.",
+    "rationale": "Auth0 documents a dedicated OAuth 2.0 Device Authorization Flow explicitly for input-constrained devices/CLIs (auth0-docs-9, auth0-docs-26, auth0-docs-40), and even Auth0's own MCP Server uses this exact flow to let AI tools like Claude Desktop authenticate against a tenant without long-lived secrets (auth0-docs-13, auth0-docs-41, auth0-gh-1), directly matching the ai-native/agent-auth use case. Missing for 10: independent/hands-on developer corroboration outside vendor docs and GitHub description confirming real-world device-flow usage for headless agents.",
     "evidenceIds": [
       "auth0-docs-9",
       "auth0-docs-26",
       "auth0-docs-40",
       "auth0-docs-13",
       "auth0-docs-41",
-      "auth0-gh-1",
-      "auth0-probe-4"
+      "auth0-gh-1"
     ]
   },
   {
@@ -397,8 +402,8 @@
     "storyId": "edge-middleware-route-protection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Auth0's general auth features, MFA, SSO, MCP server, and AI agent tooling, but contains no mention of Next.js SDK, edge middleware, or session verification at the edge — no evidence of first-party framework SDK/middleware integration for route protection.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of Auth0's Next.js SDK, middleware, or edge session verification—only generic overview, MFA, RBAC, Organizations, and AI-agent related docs. Since framework-specific SDK/middleware integration is a fair and plausible capability for an auth platform, but no evidence in this pack demonstrates it, this is 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -407,11 +412,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 explicitly documents SAML-based enterprise authentication (auth0-docs-33), federating an existing enterprise directory service so employees can log in with existing credentials (auth0-docs-37), and pricing/tenant features listing 'Enterprise Connection,' 'Self-Service SSO,' and 'SCIM' as core capabilities (auth0-docs-21), which is Auth0's well-known Enterprise Connections feature covering SAML/OIDC federation with providers like Okta, Entra, and Google Workspace. Missing for 10: explicit named documentation citing Okta/Entra ID/Google Workspace as specific supported enterprise connections, and independent/hands-on corroboration of these specific IdP integrations working in practice.",
+    "rationale": "Auth0 docs explicitly describe enterprise federation (SAML web apps, federating enterprise directories) and Enterprise Connections/pricing tier including SCIM and self-service SSO, supporting workforce sign-in via SAML/OIDC with directories like Okta/Entra/Google Workspace. However, no first-party doc explicitly names Okta, Entra ID, or Google Workspace as workforce IdP connectors, and no independent/hands-on evidence confirms real-world enterprise SSO setup success. missing for 10: explicit named connector docs for Okta/Entra/Google Workspace as enterprise IdPs, independent verification of SAML/OIDC enterprise federation working in practice.",
     "evidenceIds": [
       "auth0-docs-33",
       "auth0-docs-37",
       "auth0-docs-21",
+      "auth0-docs-90",
       "auth0-docs-4"
     ]
   },
@@ -421,12 +427,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 explicitly offers Auth0 FGA, described as 'a unified, relationship-based platform that helps secure multi-tenant B2B APIs and apps, and decouples complex authorization logic from your code,' going beyond basic RBAC, plus document-level access control for RAG pipelines and 'advanced authorization mechanics for more flexible access control.' This directly matches the relationship/policy-based fine-grained authorization ask, distinct from the separate RBAC docs. Missing for 10: deeper technical documentation on FGA's authorization model/policy language, and independent/hands-on validation of FGA in production beyond marketing copy.",
+    "rationale": "Auth0 documents Auth0 FGA, a relationship-based fine-grained authorization system explicitly positioned beyond RBAC for multi-tenant B2B APIs/apps and RAG document-level access control, alongside standard RBAC roles/permissions and scopes for coarser control. missing for 10: independent/hands-on validation of FGA in production use, deeper docs on policy modeling (e.g. Zanzibar-style relationship tuples) within this pack, and community corroboration of FGA's real-world fit.",
     "evidenceIds": [
       "auth0-docs-62",
       "auth0-docs-19",
       "auth0-docs-42",
-      "auth0-docs-56"
+      "auth0-docs-7",
+      "auth0-docs-39",
+      "auth0-docs-56",
+      "auth0-docs-81"
     ]
   },
   {
@@ -450,10 +459,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Auth0 explicitly documents CIBA support for agent workflows: 'Using standards like CIBA (Client-Initiated Backchannel Authentication), agents can request approval for sensitive operations via push notifications, SMS, or email, even when the user is not actively using the application,' directly matching the async human-approval-for-sensitive-agent-transaction story. This is first-party vendor documentation specifically targeted at AI agent use cases (auth0.com/ai/docs), though there is no independent/hands-on corroboration or deeper implementation detail (e.g., code samples, latency/timeout behavior). Missing for 10: independent/hands-on verification of CIBA-for-agents in practice, and detailed implementation/config documentation beyond the marketing-level description.",
+    "rationale": "Auth0's AI docs explicitly describe CIBA-based human-in-the-loop approval: agents can request approval for sensitive operations via push, SMS, or email even when the user isn't actively in the app, framed specifically as securing AI agent transactions with human-in-the-loop controls. This is directly first-party documented as part of the Auth0 for AI Agents offering. Missing for 10: independent/hands-on validation of the CIBA-for-agents flow in production and more implementation detail (e.g., SDK code samples) beyond marketing/docs summaries.",
     "evidenceIds": [
       "auth0-docs-18",
       "auth0-docs-31",
+      "auth0-docs-78",
       "auth0-docs-16"
     ]
   },
@@ -463,24 +473,30 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Auth0 has dedicated first-party documentation on the Client Credentials flow explicitly for M2M applications like daemons and backend services (auth0-docs-8/25), plus a dedicated Machine-to-Machine feature page describing Client ID/Secret exchange for access tokens without human interaction (auth0-docs-54). This directly matches the story's requirement of credential issuance for backend/agent authentication without a human in the loop. missing for 10: independent/hands-on third-party corroboration specifically confirming the M2M client-credentials flow works as documented (community evidence covers general Auth0 sentiment, not this specific flow).",
+    "rationale": "Auth0 explicitly documents the Client Credentials flow as the recommended mechanism for M2M applications (CLIs, daemons, backend services) authenticating via Client ID/Secret to obtain an access token without user involvement, and this is reinforced by a dedicated machine-to-machine feature page and broader agent-auth docs (unique agent identities, Token Vault, CIBA) showing this extends into AI-agent scenarios. Missing for 10: independent/hands-on third-party validation specifically of the M2M flow for AI agents (community evidence is general sentiment, not concrete testing of this flow).",
     "evidenceIds": [
       "auth0-docs-8",
       "auth0-docs-25",
-      "auth0-docs-54"
+      "auth0-docs-72",
+      "auth0-docs-54",
+      "auth0-docs-81",
+      "auth0-docs-20"
     ]
   },
   {
     "productId": "auth0",
     "storyId": "mfa-second-factors",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Auth0 docs explicitly list MFA factors including one-time passwords (TOTP) and recovery codes (backup codes) [auth0-docs-38, auth0-docs-23], and Adaptive MFA documentation shows risk-based, step-up-like enforcement that only prompts for MFA when a login looks risky [auth0-docs-50]. These are all vendor-first-party docs with no independent corroboration or explicit 'step-up authentication' API walkthrough in the pack. Missing for 10: independent/hands-on confirmation of step-up enforcement behavior, and explicit docs using the term 'step-up' tied to specific high-risk actions rather than just adaptive login risk scoring.",
+    "rationale": "Docs confirm Auth0 supports one-time passwords (TOTP) and explicit 'Recovery codes' as backup codes alongside other MFA factors, and mention Adaptive/risk-based MFA and Strong Customer Authentication for sensitive-operation approval, which imply conditional/step-up-like enforcement. However, no citation explicitly documents a 'step-up authentication' policy/rule mechanism (e.g., per-app or per-action MFA enforcement) distinct from adaptive risk scoring. missing for 10: explicit step-up authentication policy documentation, hands-on/independent confirmation of TOTP+backup-code step-up flows in production.",
     "evidenceIds": [
       "auth0-docs-38",
       "auth0-docs-23",
-      "auth0-docs-50"
+      "auth0-docs-50",
+      "auth0-docs-87",
+      "auth0-docs-91",
+      "auth0-docs-69"
     ]
   },
   {
@@ -489,15 +505,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 documents core OAuth2/OIDC flows including client credentials (M2M), device authorization flow (explicitly noted as ratified OAuth 2.0), and general authentication/authorization via Universal Login and SDKs, sparing developers from implementing protocol details themselves. However, the evidence pack lacks explicit first-party documentation or quickstart specifically calling out 'authorization code with PKCE' or refresh token rotation/handling details, and there is no independent hands-on confirmation of PKCE support quality. missing for 10: explicit PKCE flow documentation, refresh token rotation/handling details, independent developer corroboration of authorization-code+PKCE implementation ease.",
+    "rationale": "Auth0's docs cover multiple standard OAuth2/OIDC flows in depth—client credentials (M2M), device authorization flow, and refresh/access token handling via Token Vault—clearly positioning Auth0 as a drop-in OAuth2/OIDC implementation rather than requiring hand-rolled protocol logic. However, the evidence pack lacks explicit documentation calling out the authorization code flow with PKCE by name, so full breadth of the specific flows named in the story isn't directly evidenced. missing for 10: explicit authorization-code-with-PKCE flow documentation, independent hands-on verification of refresh-token rotation behavior.",
     "evidenceIds": [
       "auth0-docs-8",
       "auth0-docs-9",
-      "auth0-docs-40",
       "auth0-docs-25",
-      "auth0-docs-2",
-      "auth0-comm-7",
-      "auth0-comm-8"
+      "auth0-docs-26",
+      "auth0-docs-40",
+      "auth0-docs-54",
+      "auth0-docs-89",
+      "auth0-docs-59"
     ]
   },
   {
@@ -521,12 +538,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Auth0 documents bulk export/import of user data and log streaming export (auth0-docs-46, auth0-docs-66, auth0-docs-12), showing some data portability, but there is no explicit claim of exporting *all* tenant/user data in standardized open formats, and community commentary notes 'strong vendor lock-in' (auth0-comm-15) as a caveat. missing for 10: explicit open-format (e.g., JSON/CSV standard) full-tenant export guarantee, independent confirmation that a customer successfully exported and migrated away, and no evidence of a comprehensive one-click 'leave with all data' feature.",
+    "rationale": "Auth0 documents user data export/import via bulk export and gradual migration, plus log streaming export of tenant logs, giving some data-portability capability. However, docs don't specify the export format as an open standard (e.g., JSON/CSV schema) for full account data, and community commentary explicitly flags 'strong vendor lock-in' as a known limitation, undercutting a clean 'leave freely' narrative. Missing for 10: explicit open-format specification for exported data, full GDPR-style data portability documentation, and independent evidence users can fully migrate away without lock-in friction.",
     "evidenceIds": [
       "auth0-docs-46",
       "auth0-docs-66",
+      "auth0-docs-57",
       "auth0-docs-12",
-      "auth0-docs-27",
+      "auth0-docs-47",
       "auth0-comm-15"
     ]
   },
@@ -535,9 +553,13 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Auth0 is a proprietary, closed-source SaaS identity platform; there is no evidence of an open-license source release for the core product (only an MCP server and CLI are on GitHub, which are tooling, not the product itself).",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Auth0's core identity platform is a closed, proprietary SaaS with no evidence of an open-license source release; only peripheral tooling (CLI, MCP server) is open-sourced on GitHub, which does not constitute the product's own source being open.",
+    "evidenceIds": [
+      "auth0-probe-5",
+      "auth0-gh-1",
+      "auth0-probe-3"
+    ]
   },
   {
     "productId": "auth0",
@@ -545,10 +567,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Auth0 is offered exclusively as a managed SaaS (with a Private Cloud option deployed by Auth0 on AWS/Azure, not self-hosted by the customer); there is no evidence of an open-source or self-hostable core product that an AI-native user could run on their own infrastructure.",
+    "rationale": "Auth0 is offered only as a SaaS or as a vendor-managed 'Private Cloud' deployment on AWS/Azure (auth0-docs-14, auth0-docs-48, auth0-docs-64) — these are still Auth0-managed instances, not customer self-hosted software. No evidence of an open-source, self-hostable core product package or on-prem installer exists in the pack.",
     "evidenceIds": [
       "auth0-docs-14",
-      "auth0-docs-28",
       "auth0-docs-48",
       "auth0-docs-64"
     ]
@@ -557,13 +578,16 @@
     "productId": "auth0",
     "storyId": "org-level-sso-domains",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 Organizations lets security engineers represent each B2B customer/partner and configure branded, federated login flows per business (auth0-docs-6, auth0-docs-24, auth0-docs-44), and pricing page shows Enterprise Connection, Self-Service SSO, and SCIM as organization-related add-ons (auth0-docs-21). However, the evidence pack lacks explicit documentation of verified/claimed domains for automatic org routing or of just-in-time provisioning behavior tied to organizations. missing for 10: explicit docs on domain verification/home-realm-discovery per organization, explicit JIT provisioning documentation scoped to Organizations, and independent/hands-on confirmation of this multi-tenant SSO setup working end-to-end.",
+    "rationale": "Auth0 Organizations lets each B2B customer have its own branded, federated (enterprise) connection, with self-service SSO setup, domain-ownership verification, and directory sync via SCIM or Google Workspace (auth0-docs-6, auth0-docs-90, auth0-docs-21, auth0-docs-70). This covers per-org SSO connections and verified domains well, but the pack never explicitly documents just-in-time (JIT) user provisioning for these connections — SCIM sync is shown as the provisioning mechanism, not JIT-on-login. Missing for 10: explicit documentation of JIT provisioning behavior for org SSO connections, and independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "auth0-docs-6",
       "auth0-docs-24",
       "auth0-docs-44",
+      "auth0-docs-65",
+      "auth0-docs-70",
+      "auth0-docs-90",
       "auth0-docs-21"
     ]
   },
@@ -571,16 +595,18 @@
     "productId": "auth0",
     "storyId": "organizations-multitenant",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 docs explicitly describe an Organizations feature for representing B2B customers/partners, managing their membership, and configuring branded federated login flows per business (auth0-docs-6/24/44/65), plus RBAC for role-based permissions (auth0-docs-7/39/45). However, the evidence pack contains no mention of invitation flows or invitation APIs for organization members, which is a core part of the story. Missing for 10: explicit documentation of organization invitation/onboarding flows, and independent/hands-on corroboration of multi-tenant org setup working end-to-end.",
+    "rationale": "Auth0 Organizations is well documented for representing B2B customers/partners, managing membership, and per-organization branding/connections (auth0-docs-6, -44, -65, -70, -24), plus a dedicated B2B SaaS page describing self-serve customer admin, SSO, and SCIM directory sync (auth0-docs-80, -90). However, the evidence pack never explicitly documents invitation flows (e.g., invite-by-email, invitation API/UI) as part of Organizations. Missing for 10: explicit invitation-flow documentation, membership-management API detail, and independent/hands-on confirmation of the full org+invite workflow.",
     "evidenceIds": [
       "auth0-docs-6",
-      "auth0-docs-24",
       "auth0-docs-44",
       "auth0-docs-65",
-      "auth0-docs-7",
-      "auth0-docs-39"
+      "auth0-docs-70",
+      "auth0-docs-24",
+      "auth0-docs-80",
+      "auth0-docs-90",
+      "auth0-docs-21"
     ]
   },
   {
@@ -588,14 +614,15 @@
     "storyId": "passkeys-passwordless-login",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Auth0 documents WebAuthn (security keys and device biometrics) as an MFA factor, a dedicated Passwordless feature (email/SMS OTP, magic links), and email/SMS one-time code login as first-class sign-in options alongside password/social login. This covers passkeys/WebAuthn and passwordless magic link/OTP as first-class methods per official docs and feature pages. Missing for 10: independent hands-on developer confirmation specifically of passkey/WebAuthn setup ease, and clearer documentation of magic link (vs OTP) as a distinct flow.",
+    "confidence": "medium",
+    "rationale": "Auth0 docs explicitly list WebAuthn with security keys and device biometrics, passkeys, and passwordless (email/SMS OTP, magic links) as first-class sign-in options, confirming this story's core capability across multiple pages (auth0-docs-38, 82, 88, 34, 51). Missing for 10: independent/hands-on corroboration specifically of passkey/passwordless setup experience, and no detail on magic link configuration specifics beyond passing mention.",
     "evidenceIds": [
       "auth0-docs-38",
-      "auth0-docs-51",
+      "auth0-docs-82",
+      "auth0-docs-88",
       "auth0-docs-34",
-      "auth0-docs-5",
-      "auth0-docs-23"
+      "auth0-docs-51",
+      "auth0-docs-5"
     ]
   },
   {
@@ -604,15 +631,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 documents hosted Universal Login for sign-in/sign-up with password/social/passwordless options, plus no-code Forms editor and Actions for customizing identity flows, and community evidence (HN) corroborates that Universal Login works well and doesn't require JavaScript. However, evidence lacks explicit detail on prebuilt embeddable UI component libraries (e.g., Lock widget) or a dedicated self-service profile-management UI, and one comment notes the offering can be 'rough around the edges.' Missing for 10: explicit documentation of embeddable/prebuilt UI SDK components, dedicated user profile self-management UI, and independent hands-on confirmation of profile management specifically.",
+    "rationale": "Auth0 documents Universal Login as production-ready, brandable hosted pages (auth0-docs-49, auth0-docs-85), a no-code Forms editor to customize signup/login UI (auth0-docs-53, auth0-docs-86), and Actions to customize login/identity flows (auth0-docs-52), with a hands-on HN comment confirming Universal Login works well without requiring custom JS (auth0-comm-1). However, evidence for prebuilt profile-management UI components specifically is thin/absent, relying mostly on general user-management docs rather than a documented profile UI widget. Missing for 10: explicit documentation of a prebuilt profile-management UI/component, independent hands-on validation of the customization depth beyond one HN quote.",
     "evidenceIds": [
       "auth0-docs-49",
+      "auth0-docs-85",
       "auth0-docs-53",
+      "auth0-docs-86",
       "auth0-docs-52",
-      "auth0-docs-1",
-      "auth0-docs-22",
-      "auth0-comm-1",
-      "auth0-comm-4"
+      "auth0-comm-1"
     ]
   },
   {
@@ -635,7 +661,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Auth0 is an identity/authentication platform, not a data-holding AI model provider or content platform where 'training data opt-out' would be a relevant axis; nothing in the evidence pack relates to AI model training data usage at all.",
+    "rationale": "Auth0 is an identity/authentication platform, not an AI model provider or data-processing service that trains models on user data; 'preventing my data from being used to train AI models' is a wrong-axis question for this product category.",
     "evidenceIds": []
   },
   {
@@ -644,13 +670,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers user migration/export/import, log streaming, and SSO/MFA, but nothing addresses configurable data retention periods or user data deletion controls (e.g., right-to-be-forgotten, account deletion APIs, retention policy settings). Absence of evidence for this applicable privacy-posture axis means it is unverified.",
-    "evidenceIds": [
-      "auth0-docs-46",
-      "auth0-docs-57",
-      "auth0-docs-66",
-      "auth0-docs-12"
-    ]
+    "rationale": "The evidence pack contains no documentation of data retention policies, deletion APIs, or AI-agent-specific data lifecycle controls; it only covers unrelated areas like user migration/export, log streaming, and RBAC. No mention of deletion/right-to-be-forgotten, retention windows, or AI-agent data purging is present, so this applicable privacy-posture axis is unaddressed.",
+    "evidenceIds": []
   },
   {
     "productId": "auth0",
@@ -658,48 +679,49 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Auth0 or its AI/MCP tooling; all documentation covers authentication, MFA, SSO, RBAC, migration, and AI-agent identity features unrelated to telemetry controls.",
+    "rationale": "No evidence pack items address telemetry/usage-tracking opt-out controls for Auth0 itself or its tools; the axis applies since it's a fair question for a developer platform, but nothing documents an opt-out mechanism.",
     "evidenceIds": []
   },
   {
     "productId": "auth0",
     "storyId": "rbac-roles-in-tokens",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Auth0 docs clearly describe RBAC where roles are assigned to users and permissions to roles (auth0-docs-7, auth0-docs-39, auth0-docs-45), and the broader access-management platform page confirms role-based access control for apps and APIs (auth0-docs-56). Auth0's RBAC is standardly surfaced via permissions claims in access tokens for authorization checks, consistent with the OAuth2-based API security flows documented (auth0-docs-2, auth0-docs-8). Missing for 10: explicit first-party documentation snippet showing the permissions/roles claim appearing inside issued session/access tokens, and independent hands-on confirmation of token enforcement behavior.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Auth0's RBAC docs clearly describe defining roles, assigning permissions to roles, and assigning roles to users (auth0-docs-7, 39, 45, 71), which supports the core of the story. However, none of the evidence explicitly confirms that permissions/roles are surfaced as claims inside access/session tokens for authorization checks (e.g., via 'Add Permissions in Access Token' settings), leaving that specific mechanism unproven from the pack. Missing for 10: explicit documentation of role/permission claims appearing in issued tokens, and independent/hands-on confirmation of token-based enforcement.",
     "evidenceIds": [
       "auth0-docs-7",
       "auth0-docs-39",
       "auth0-docs-45",
-      "auth0-docs-56",
-      "auth0-docs-2"
+      "auth0-docs-71"
     ]
   },
   {
     "productId": "auth0",
     "storyId": "scim-directory-sync",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "SCIM appears only as a bullet item ('SCIM New') on the pricing page listing enterprise features, with no documentation describing how SCIM provisioning/deprovisioning actually works, how groups sync, or how IdP-triggered deprovisioning revokes app access. Missing for 10: dedicated SCIM configuration docs, deprovisioning behavior details, group sync specifics, and any independent/hands-on confirmation it works as described.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Auth0 explicitly advertises SCIM as a feature for synchronizing customer directories/users (auth0-docs-21, auth0-docs-90), which implies group/user provisioning parity with the IdP. However, the evidence pack lacks dedicated technical documentation walking through SCIM setup, group mapping, or explicit confirmation that IdP-side deprovisioning revokes app access, and there is no independent/hands-on corroboration of this workflow. Missing for 10: detailed SCIM configuration docs, explicit deprovisioning behavior confirmation, and third-party validation.",
     "evidenceIds": [
-      "auth0-docs-21"
+      "auth0-docs-21",
+      "auth0-docs-90"
     ]
   },
   {
     "productId": "auth0",
     "storyId": "scoped-agent-identities",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0 explicitly markets giving each AI agent a unique machine identity (auth0-docs-20, auth0-docs-68) via M2M Client Credentials flow with distinct Client ID/Secret and scoped tokens (auth0-docs-8, auth0-docs-25, auth0-docs-54), plus RBAC to scope permissions narrowly (auth0-docs-7, auth0-docs-39, auth0-docs-45). Missing for 10: explicit documentation of instant/one-click revocation for agent credentials, and independent hands-on validation of this specific agent-identity workflow beyond vendor docs.",
+    "rationale": "Auth0 documents machine-to-machine Client Credentials flow for authenticating applications/agents instead of users, RBAC/scopes for narrow permissions, and explicit agent-identity messaging ('Give each agent a unique digital identity for more secure access to APIs, apps, and MCP servers') plus fine-grained AI-agent authorization docs. This covers least-privilege, per-agent machine identity well, but the pack lacks explicit documentation of instant/immediate revocation mechanics for agent credentials specifically (only general log-streaming/monitoring is shown). Missing for 10: explicit instant-revocation workflow for agent/M2M credentials, independent hands-on verification of agent identity issuance and revocation in practice.",
     "evidenceIds": [
-      "auth0-docs-20",
-      "auth0-docs-68",
       "auth0-docs-8",
       "auth0-docs-25",
       "auth0-docs-54",
+      "auth0-docs-20",
+      "auth0-docs-68",
+      "auth0-docs-81",
       "auth0-docs-7",
       "auth0-docs-39"
     ]
@@ -709,15 +731,14 @@
     "storyId": "secure-mcp-server-auth",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Auth0's 'AI for Agents' marketing explicitly claims agents can be given unique identities and 'connect to MCP servers more securely' via OAuth 2.0, and mentions Token Vault/CIBA for scoped, verifiable access, but there is no technical documentation showing MCP-spec-specific features (dynamic client registration, resource indicators/RFC8707, PKCE enforcement for MCP resource servers) or a hands-on example of fronting a self-built MCP server with Auth0 as authorization server — the only concrete MCP server doc (auth0-docs-13/41) is Auth0's own tenant-management MCP server, not a customer's protected MCP endpoint. missing for 10: concrete technical walkthrough of protecting a custom MCP server with Auth0-issued scoped tokens, evidence of MCP-spec conformance (DCR, resource metadata), independent/hands-on verification.",
+    "confidence": "medium",
+    "rationale": "Auth0's 'Auth0 for AI' line explicitly positions the product to let agents 'connect to MCP servers more securely' and to secure agent-to-API calls with OAuth 2.0, delegated authorization, and CIBA (auth0-docs-20, auth0-docs-68, auth0-docs-16, auth0-docs-78), showing the vendor markets exactly this use case. However, the evidence is largely repeated marketing taglines rather than a concrete technical walkthrough of standing up a spec-compliant OAuth authorization server in front of a self-built MCP resource server (e.g., dynamic client registration, resource-indicator/audience-scoped tokens per the MCP auth spec), and there is no independent/hands-on corroboration that this flow works end-to-end for remote agent connections. Missing for 10: a concrete implementation guide showing MCP-spec-compliant OAuth (PKCE, dynamic client registration, resource indicators) protecting a third-party MCP server, and independent verification of scoped/verifiable token issuance in practice.",
     "evidenceIds": [
       "auth0-docs-20",
       "auth0-docs-68",
       "auth0-docs-16",
-      "auth0-docs-17",
-      "auth0-docs-18",
-      "auth0-docs-13"
+      "auth0-docs-78",
+      "auth0-docs-17"
     ]
   },
   {
@@ -726,7 +747,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers login flows, SSO, MFA, RBAC, Organizations, and AI-agent security features, but contains no documentation of session lifetime configuration, refresh-token rotation/expiry controls, or an API/dashboard action for immediately revoking a live session — a core, expected capability for an identity platform. Since this is a fair and applicable axis for Auth0 but no supporting evidence is present, it cannot be credited as full/partial.",
+    "rationale": "The evidence pack covers login methods, MFA, SSO, RBAC, Organizations, machine-to-machine flows, and AI-agent token handling, but contains no documentation of session expiry configuration, refresh-token session renewal for end-user sessions, or server-side forced session revocation for a compromised session. Token Vault language (auth0-docs-89) refers to third-party API tokens for AI agents, not end-user session lifecycle control.",
     "evidenceIds": []
   },
   {
@@ -735,14 +756,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Auth0's docs explicitly describe adding social login (Facebook, X, etc.) alongside enterprise federation and SAML as configurable connection options rather than custom code, which is a core, well-documented Auth0 capability (auth0-docs-1/22/32/37/33). Missing for 10: an explicit enumerated list of all supported social/OAuth providers and independent hands-on verification that adding a new provider truly requires zero code.",
+    "rationale": "Auth0's docs explicitly describe social login (Facebook, X, etc.) alongside enterprise SSO, passwordless, and other identity methods that can be added via configuration rather than custom code, and Universal Login/features docs reinforce a 'wide range of login methods, including...social IDs, enterprise SSO' configurable centrally. Community commentary (auth0-comm-7) corroborates that integrating social auth via Auth0 is fast compared to alternatives like Cognito, supporting the config-over-code claim.\n\nmissing for 10: an explicit enumerated list/count of supported social/OAuth providers, and independent hands-on verification that adding a new provider truly requires zero code beyond dashboard configuration.",
     "evidenceIds": [
       "auth0-docs-1",
       "auth0-docs-22",
       "auth0-docs-32",
+      "auth0-docs-43",
+      "auth0-docs-82",
       "auth0-docs-37",
-      "auth0-docs-33",
-      "auth0-docs-43"
+      "auth0-comm-7"
     ]
   },
   {
@@ -750,15 +772,16 @@
     "storyId": "token-vending-for-agent-tools",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Auth0 documents a dedicated Token Vault that obtains, stores, and refreshes short-lived tokens for third-party APIs (Google, Slack, GitHub, Gmail, Spotify, etc.) so agents can act on the user's behalf without handling raw credentials, plus CIBA-based user consent/approval flows for sensitive operations. This directly matches the story's core ask of delegated, user-consented, short-lived token exchange for third-party tool calls. Missing for 10: independent/hands-on verification of the Token Vault in production agent workflows and more detail on token lifetime/scoping guarantees beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Auth0's Token Vault is explicitly documented to obtain, store, and refresh short-lived tokens for third-party APIs (Google, Slack, GitHub, 30+ integrations) so agents act under the user's delegated authority, with CIBA supporting async user consent for sensitive operations. missing for 10: independent/hands-on developer corroboration of Token Vault in production use, and more detail on token scoping/expiry guarantees beyond first-party docs.",
     "evidenceIds": [
       "auth0-docs-17",
       "auth0-docs-30",
       "auth0-docs-59",
+      "auth0-docs-89",
       "auth0-docs-18",
       "auth0-docs-31",
-      "auth0-docs-16"
+      "auth0-docs-78"
     ]
   },
   {
