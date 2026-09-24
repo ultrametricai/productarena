@@ -100,12 +100,12 @@ describe('mount applies URL params (invalids fall back silently)', () => {
 
 describe('interactions write params; defaults remove them', () => {
   it('a rank-by preset writes ?rank=, and the default preset removes it', () => {
-    const { getByText } = mount()
-    fireEvent.click(getByText('Most popular'))
+    const { getByRole } = mount()
+    fireEvent.click(getByRole('button', { name: 'Most popular' }))
     expect(params().get('rank')).toBe('popularity')
-    fireEvent.click(getByText('Highest Overall score'))
+    fireEvent.click(getByRole('button', { name: 'Highest Overall score' }))
     expect(params().get('rank')).toBe('initScore')
-    fireEvent.click(getByText('Most agent-ready')) // the default sort — param gone
+    fireEvent.click(getByRole('button', { name: 'Most agent-ready' })) // the default sort — param gone
     expect(params().get('rank')).toBeNull()
   })
 
@@ -136,8 +136,8 @@ describe('interactions write params; defaults remove them', () => {
 
   it('patches, never rebuilds: co-mounted params (?view, ?order) survive a sort click', () => {
     setUrl('?view=processes&order=risk')
-    const { getByText } = mount()
-    fireEvent.click(getByText('Most popular'))
+    const { getByRole } = mount()
+    fireEvent.click(getByRole('button', { name: 'Most popular' }))
     expect(params().get('view')).toBe('processes')
     expect(params().get('order')).toBe('risk')
     expect(params().get('rank')).toBe('popularity')

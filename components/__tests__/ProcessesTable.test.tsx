@@ -84,12 +84,12 @@ describe('mount applies URL params (invalids fall back silently)', () => {
 
 describe('interactions write params; defaults remove them', () => {
   it('an ordering preset writes ?order=, and the default preset removes it', () => {
-    const { getByText } = mount()
-    fireEvent.click(getByText('Riskiest'))
+    const { getByText, getByRole } = mount()
+    fireEvent.click(getByRole('button', { name: 'Riskiest' }))
     expect(params().get('order')).toBe('risk')
-    fireEvent.click(getByText('Founder timeline'))
+    fireEvent.click(getByRole('button', { name: 'Founder timeline' }))
     expect(params().get('order')).toBe('timeline') // human-readable alias, not order=order
-    fireEvent.click(getByText('Most automatable')) // the default sort — param gone
+    fireEvent.click(getByRole('button', { name: 'Most automatable' })) // the default sort — param gone
     expect(params().get('order')).toBeNull()
   })
 
@@ -119,8 +119,8 @@ describe('interactions write params; defaults remove them', () => {
 
   it("patches, never rebuilds: MegaTable's ?rank/?q and HomeModes' ?view survive (homepage co-mount)", () => {
     setUrl('?view=processes&rank=popularity&q=stripe')
-    const { getByText } = mount()
-    fireEvent.click(getByText('Growth-focused'))
+    const { getByText, getByRole } = mount()
+    fireEvent.click(getByRole('button', { name: 'Growth-focused' }))
     const p = params()
     expect(p.get('view')).toBe('processes')
     expect(p.get('rank')).toBe('popularity')

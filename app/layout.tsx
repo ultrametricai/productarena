@@ -263,7 +263,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <header className="border-b border-zinc-800">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4">
+          <div className="mx-auto flex max-w-7xl flex-nowrap items-center justify-between gap-x-3 px-3 py-3 sm:gap-x-4 sm:px-5 sm:py-4">
             <div className="flex shrink-0 items-baseline gap-2">
               <a
                 href="https://ultrametric.ai"
@@ -291,7 +291,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 buyer lenses, methodology/pipeline/proofs/MCP), then the three tools (Stacks,
                 Processes, Compare), GitHub, and search. One menu for all secondary destinations
                 instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
-            <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-400 sm:gap-3">
+            <nav className="flex flex-nowrap items-center gap-1.5 text-sm text-zinc-400 sm:flex-wrap sm:gap-3">
               {/* Founder 2026-09-23: Arenas sits LEFT of Processes. */}
               <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
               <Link
@@ -305,7 +305,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   top-level entry — a dropdown-only link wasn't discoverable. */}
               <Link
                 href="/technologies"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="technologies" title="Technologies — API, MCP, CLI & other control surfaces, ranked from fleet-wide judged evidence" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Technologies
@@ -357,14 +357,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   page headers/sections), hidden on the smallest screens to keep the row tight. */}
               <Link
                 href="/stacks"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="stacks" title="Stacks — proven product combinations" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Stacks
               </Link>
                             <Link
                 href="/compare"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="compare" title="Compare — side-by-side product comparison" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Compare
@@ -375,7 +375,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href={`https://github.com/${REPO}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="hidden shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
                 <svg viewBox="0 0 16 16" width={14} height={14} fill="currentColor" aria-hidden>
                   <path
