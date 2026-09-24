@@ -3282,11 +3282,15 @@
   {
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "agentic-agent-docs",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "This is a hardware GPU product, not a software agent, service, or docs platform; the concept of pointing an agent at llms.txt or agent-oriented docs is a category error for a physical workstation GPU.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "A probe confirms developer.nvidia.com (the domain hosting RTX PRO 6000's CUDA/developer docs) serves a live llms.txt file with a real summary, showing some agent-oriented discoverability. However, other agent-friendly formats fail — the docs-as-markdown endpoint 404s and no OpenAPI/agent API descriptors exist — and there's no RTX PRO 6000-specific llms.txt or agent-oriented doc page. Missing for 10: page-specific llms.txt for the product, working .md doc mirrors, and any first-party statement that these are intended for agent consumption.",
+    "evidenceIds": [
+      "nvidia-rtx-pro-6000-probe-1",
+      "nvidia-rtx-pro-6000-probe-2",
+      "nvidia-rtx-pro-6000-probe-3"
+    ]
   },
   {
     "productId": "nvidia-rtx-pro-6000",
@@ -3294,7 +3298,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a hardware GPU, not an application that holds 'your data' and surfaces AI-generated insights within a product UI; it merely accelerates AI/data-science software that others build. This story targets SaaS/analytics-style products with embedded AI copilots, which is a category mismatch for a workstation GPU.",
+    "rationale": "The RTX PRO 6000 is a hardware GPU that accelerates AI/data workloads run by other software; it has no native application UI or 'your data inside the product' concept that could surface AI-generated insights or suggestions. This story presumes an end-user application (e.g., analytics or SaaS tool), which is a category mismatch for a discrete GPU product.",
     "evidenceIds": []
   },
   {
@@ -3312,17 +3316,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a GPU hardware product enabling AI workloads (running agents, LLMs) on top of it, but it is not itself a software product with a built-in assistant UI to delegate tasks to; this is a wrong axis for a GPU.",
+    "rationale": "RTX PRO 6000 is a GPU hardware product, not an application with a built-in assistant UI; it enables running AI agents/software but does not itself embed a delegable assistant persona. This is a category mismatch (na), not an unmet capability.",
     "evidenceIds": []
   },
   {
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "agentic-headless",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "RTX PRO 6000 is a physical workstation GPU, not a software agent or CLI tool that itself 'runs' in CI/headless automation pipelines — that capability belongs to software stacks (CUDA, frameworks) that consume the GPU, not the hardware product itself. The evidence pack focuses entirely on hardware specs (memory, ray tracing, codecs, MIG partitioning) with no CI/automation framing, confirming this is a category mismatch for the product type.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "CUDA Toolkit docs note that GPU-accelerated applications can be developed and deployed across desktop workstations, enterprise data centers, cloud platforms and supercomputers, implying headless/server operation, and MIG allows isolated GPU instances suitable for automated multi-tenant workloads. However there is no explicit mention of CI/CD pipelines, headless driver installation, or automation tooling for this specific GPU. missing for 10: explicit CI/automation documentation, headless-mode setup guides, driver/automation scripting examples.",
+    "evidenceIds": [
+      "nvidia-rtx-pro-6000-docs-28",
+      "nvidia-rtx-pro-6000-docs-11"
+    ]
   },
   {
     "productId": "nvidia-rtx-pro-6000",
@@ -3330,7 +3337,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a hardware GPU product, not an AI agent, assistant, or platform with a tool-plugin interface; plugging MCP servers into a workstation GPU is a category error—wrong axis for this product type.",
+    "rationale": "This is a GPU hardware product, not an agent, application, or platform that consumes MCP tools; MCP server integration is a wrong axis for a hardware component.",
     "evidenceIds": []
   },
   {
@@ -3339,7 +3346,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a hardware GPU product, not an agent or software platform that could expose an official MCP server; this axis is a category error for a workstation GPU.",
+    "rationale": "RTX PRO 6000 is a GPU hardware product, not an agent platform or service that could expose an official MCP server; connecting agents via MCP is not a meaningful axis for a workstation GPU.",
     "evidenceIds": []
   },
   {
@@ -3348,7 +3355,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a hardware GPU product; natural-language command operation is a software/agent-interface axis that does not apply to a physical GPU card itself.",
+    "rationale": "RTX PRO 6000 is a hardware GPU product; natural-language command operation is an interface/agentic-software capability that applies to software products/assistants, not to a physical accelerator card. This is a category error for the product type, so the axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -3364,16 +3371,16 @@
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "NVIDIA documents CUDA Toolkit, CUDA Tile C++/cuTile Python, and Transformer Engine libraries as programmatic interfaces for GPU compute, which count as a documented API surface, but these are low-level GPU programming SDKs rather than a product-level public API designed for AI-native/agentic control, and probes for an OpenAPI/REST surface returned 404s. Missing for 10: an agent-oriented public API/CLI/SDK for orchestrating the product end-to-end, and any independent corroboration that AI agents actually drive the GPU via a documented API rather than just writing CUDA kernels.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "The RTX PRO 6000 exposes CUDA-based programmatic interfaces (CUDA Toolkit, cuTile Python/C++, GPU-accelerated libraries) that are documented and let developers programmatically drive the GPU for AI workloads, which is the closest analog to a 'public API' for a hardware accelerator. However, this is a low-level compute API rather than a higher-level agentic/product-control API, and probes found no REST/OpenAPI-style public API (404s for openapi.json/swagger.json and docs-md), so there's no evidence of an agent-friendly control surface beyond raw CUDA programming. Missing for 10: evidence of a higher-level, agent-oriented API/SDK for driving the product (not just raw GPU programming), and any independent corroboration of API usability for autonomous agents.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-3",
       "nvidia-rtx-pro-6000-docs-4",
       "nvidia-rtx-pro-6000-docs-19",
       "nvidia-rtx-pro-6000-docs-20",
-      "nvidia-rtx-pro-6000-probe-1",
-      "nvidia-rtx-pro-6000-probe-2"
+      "nvidia-rtx-pro-6000-probe-2",
+      "nvidia-rtx-pro-6000-probe-3"
     ]
   },
   {
@@ -3382,7 +3389,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a service or platform that issues API credentials for agents; scoped API credential management is entirely outside its product category.",
+    "rationale": "RTX PRO 6000 is a hardware GPU product, not an API/cloud service that issues credentials or manages agent identity/permissions; scoped API credential management is not a fair axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -3408,17 +3415,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a hardware GPU product, not a service or platform that exposes event subscriptions; webhooks are a wrong axis for this category.",
+    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a service or platform with an event/notification system; webhook subscriptions are a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "api-interactive-docs",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a software service/API with a developer reference; an interactive API reference with runnable examples is a category error for this product type.",
-    "evidenceIds": []
+    "rationale": "No evidence of an interactive API reference with runnable examples; probes for OpenAPI/swagger specs and markdown docs returned 404s, and no docs mention interactive/runnable code samples.",
+    "evidenceIds": [
+      "nvidia-rtx-pro-6000-probe-2",
+      "nvidia-rtx-pro-6000-probe-3"
+    ]
   },
   {
     "productId": "nvidia-rtx-pro-6000",
@@ -3426,9 +3436,9 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a physical workstation GPU, not a web service or API product; downloadable OpenAPI specs are not a relevant axis for hardware. The probe evidence confirms no OpenAPI endpoint exists, consistent with this being a category mismatch rather than a missing feature.",
+    "rationale": "RTX PRO 6000 is a workstation GPU hardware product, not an API/service platform; asking for a downloadable OpenAPI spec is a category error for this product type, and the probe confirms no such spec exists.",
     "evidenceIds": [
-      "nvidia-rtx-pro-6000-probe-2"
+      "nvidia-rtx-pro-6000-probe-3"
     ]
   },
   {
@@ -3437,7 +3447,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The RTX PRO 6000 is a physical workstation GPU, not a software service or platform with a distinct 'production data' environment to sandbox against; this axis concerns application-level testing isolation, which is a category error for a hardware accelerator product.",
+    "rationale": "RTX PRO 6000 is a hardware GPU product, not a software service or agentic platform with sandbox/production data environments; the concept of testing against a sandbox vs production data does not apply to this category of product.",
     "evidenceIds": []
   },
   {
@@ -3446,7 +3456,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a physical GPU/hardware product, not an API service; versioned APIs with deprecation policies is a category error for this axis.",
+    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a software service exposing versioned APIs with a deprecation policy; this axis is a category error for hardware.",
     "evidenceIds": []
   },
   {
@@ -3455,7 +3465,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a hardware GPU product; 'bulk operations across many items' is a software/application-layer automation concept, not applicable to a physical GPU component's own capabilities.",
+    "rationale": "RTX PRO 6000 is a GPU hardware product, not an application or API surface with 'items' to bulk-operate on; this story is a category error for hardware, applying instead to software built on top of it.",
     "evidenceIds": []
   },
   {
@@ -3464,7 +3474,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a hardware GPU product; defining event-triggered automation rules is a software/platform-level automation feature entirely outside the scope of a GPU's product category.",
+    "rationale": "This story concerns rule-based automation/triggers, which is an application/software-layer capability, not applicable to a hardware GPU product like the RTX PRO 6000.",
     "evidenceIds": []
   },
   {
@@ -3473,7 +3483,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a GPU hardware product; scheduling recurring jobs/workflows is an orchestration/software-platform capability, not something a GPU card itself provides—wrong axis for this product category.",
+    "rationale": "RTX PRO 6000 is a GPU hardware product, not a workflow/job scheduling or automation platform; scheduling recurring jobs is an orchestration-layer concern handled by software built on top of the hardware, not the GPU itself.",
     "evidenceIds": []
   },
   {
@@ -3482,7 +3492,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This story concerns versioning, reviewing, and rolling back automations, which is a software/workflow-orchestration concept entirely outside the scope of a GPU hardware product; the RTX PRO 6000 is a hardware accelerator with no automation-management layer.",
+    "rationale": "This story concerns versioning, reviewing, and rolling back automations, which applies to workflow/automation software, not a GPU hardware product. RTX PRO 6000 is a compute accelerator card and has no automation-authoring or workflow-management surface to version or roll back.",
     "evidenceIds": []
   },
   {
@@ -3491,12 +3501,13 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "NVIDIA's CUDA Toolkit and CUDA-X docs explicitly list this Blackwell workstation GPU class as a supported target, with tile programming (CUDA Tile C++/cuTile Python) and Transformer Engine support cited, and community reports confirm real-world multi-GPU inference workloads (41k tok/s) running on it. However, hands-on community feedback notes the SM120 architecture used here lacks tcgen05/tmem support and that 'main libraries' are focused on datacenter SM100 parts instead, meaning some CUDA library features are not yet fully supported on this SKU. missing for 10: independent benchmark/doc confirming full parity of major CUDA libraries (cuBLAS/cuDNN/etc.) with SM100 datacenter parts, ROCm/HIP is not applicable so no cross-vendor toolchain evidence.",
+    "rationale": "NVIDIA's CUDA Toolkit and developer.nvidia.com/rtx docs explicitly list this Blackwell-based workstation GPU as a supported CUDA target, with libraries (RAPIDS, cuTile, Transformer Engine, CUDA-X) and hands-on community usage (multi-GPU inference at 41k tok/s) confirming real deployment. However, community evidence also flags a concrete gap: as an SM120 part it lacks tmem/tcgen05 support and 'main libraries' focus is on SM100 (B300) instead, meaning some newer CUDA library features are not yet fully supported on this specific chip. Missing for 10: first-party documentation explicitly addressing SM120 library-support gaps, and clearer confirmation that all CUDA-X libraries fully support this exact SKU rather than the data-center Blackwell variant.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-3",
       "nvidia-rtx-pro-6000-docs-19",
       "nvidia-rtx-pro-6000-docs-20",
       "nvidia-rtx-pro-6000-docs-21",
+      "nvidia-rtx-pro-6000-docs-28",
       "nvidia-rtx-pro-6000-comm-1",
       "nvidia-rtx-pro-6000-comm-4"
     ]
@@ -3504,16 +3515,16 @@
   {
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "creator-media-acceleration",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Vendor docs confirm enhanced AV1/HEVC encode and decode support (4:2:2, doubled NVDEC throughput) and hardware media engine improvements from Blackwell, plus mention of livestreaming/real-time editing use cases. However there is no explicit mention of ISV certification programs (e.g., Adobe, Autodesk, DaVinci Resolve certifications) or dedicated professional driver support documentation, and no independent corroboration of creator-app acceleration claims. Missing for 10: ISV-certified driver documentation, third-party creator-app benchmark/validation, independent corroboration of encoder claims.",
+    "rationale": "NVIDIA documents strong hardware media-engine capabilities for this GPU: enhanced AV1/HEVC(H.265) encode and decode support, 4:2:2 encode/decode hardware, and ~3x throughput AV1 encoding via NVENC/NVDEC (docs-9, docs-16, docs-24, docs-25, docs-27), directly serving creator livestreaming/editing workflows. However, explicit ISV/professional-app certification claims (e.g., named certifications with Adobe, Autodesk, etc.) are not present in the evidence pack. missing for 10: explicit ISV-certified driver/application certification list, independent benchmark corroboration of encoder claims.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-9",
       "nvidia-rtx-pro-6000-docs-16",
       "nvidia-rtx-pro-6000-docs-24",
       "nvidia-rtx-pro-6000-docs-25",
-      "nvidia-rtx-pro-6000-docs-8"
+      "nvidia-rtx-pro-6000-docs-27"
     ]
   },
   {
@@ -3522,12 +3533,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Vendor docs describe the RTX PRO 6000 as a workstation/desktop GPU (PCIe Gen5, 96GB GDDR7, DisplayPort, multi-monitor bandwidth) with no mention of NVLink, Infinity Fabric, or rack-scale multi-GPU interconnect; the only shared-architecture claim is a compute engine (FP8 Transformer Engine) 'shared with data center-class Blackwell GPUs,' not an interconnect fabric. Community evidence of 4-card builds shows standard PCIe workstation configs with power/cooling hacks (water-blocking, 2.4kW circuits) and explicit complaints that this SM120 part 'lacks tmem/tcgen05 and support in main libraries' compared to true datacenter Blackwell (B300/SM100), confirming it is not built or documented for datacenter-scale interconnect or rack deployment.",
+    "rationale": "The evidence pack contains no documentation of NVLink, Infinity Fabric, or rack-scale multi-GPU deployment for the RTX PRO 6000 — only PCIe Gen5 and MIG partitioning are mentioned, which are workstation-class features, not datacenter interconnect. Community evidence (comm-4) explicitly notes these cards are SM120 workstation parts 'so no tmem/tcgen05 and lack of support in main libraries,' with users suggesting a datacenter-class B300 instead for true multi-GPU scale-out, confirming this card is not positioned for rack-scale training/serving.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-13",
-      "nvidia-rtx-pro-6000-docs-21",
-      "nvidia-rtx-pro-6000-comm-1",
-      "nvidia-rtx-pro-6000-comm-3",
+      "nvidia-rtx-pro-6000-docs-11",
       "nvidia-rtx-pro-6000-comm-4"
     ]
   },
@@ -3537,10 +3546,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack lacks any documented official power envelope (TDP) from NVIDIA’s own specs and contains no independent performance-per-watt benchmarking; only scattered community mentions of raw power draw (600W per card, 2.4kW for a quad setup) and skepticism about energy efficiency versus a competing part exist, none of which constitute efficiency testing.",
+    "rationale": "No documented power envelope (TDP or Max-Q rating) with independent performance-per-watt benchmarks is provided; NVIDIA's marketing pages mention 'efficiency' only in vague, unquantified terms, and the only concrete power figures come from community reports (600W/card, 2.4kW system draw) which discuss power delivery/circuit concerns rather than perf-per-watt testing.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-comm-3",
-      "nvidia-rtx-pro-6000-comm-4"
+      "nvidia-rtx-pro-6000-comm-4",
+      "nvidia-rtx-pro-6000-docs-11",
+      "nvidia-rtx-pro-6000-docs-23"
     ]
   },
   {
@@ -3548,8 +3559,8 @@
     "storyId": "high-refresh-4k-gaming",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The RTX PRO 6000 Blackwell is positioned and documented as a professional workstation GPU for AI, data science, and 3D content creation; none of the vendor docs give gaming-specific performance claims (e.g., FPS at 4K/high refresh) and no independent game benchmarks appear anywhere in the evidence pack. Community discussion focuses on AI throughput, power draw, pricing, and manufacturing issues, not gaming performance, so there is no corroborated gaming-performance claim to credit.",
+    "confidence": "high",
+    "rationale": "The evidence pack is entirely about professional/workstation workloads (AI, data science, rendering, video codecs) with only generic mentions of DLSS 4 and ray tracing; there are no vendor FPS/frame-rate gaming performance claims and no independent game benchmark corroboration anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -3558,7 +3569,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains NVIDIA product marketing pages, CUDA toolkit descriptions, and community discussion of hardware issues, pricing, and power draw, but none of it documents Linux driver releases for the RTX PRO 6000 or independent Linux-specific benchmarking/testing of the card. Community posts about running LLM workloads on multiple cards imply some OS usage but never confirm Linux nor discuss driver support/quality on Linux.",
+    "rationale": "The evidence pack contains no documented Linux driver release notes and no explicit mention that the community testing (waterblock mods, tok/s benchmarks, SM120 library support) was conducted on Linux specifically; all NVIDIA docs cited are generic feature/spec pages with no OS-specific driver guidance.",
     "evidenceIds": []
   },
   {
@@ -3567,12 +3578,13 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "NVIDIA docs claim a second-gen FP8 Transformer Engine for LLM inference/prototyping and market the card for 'agentic AI' workloads (docs-21, docs-23), and community reports show real inference throughput being achieved (41k tok/s across cards) (comm-1). However, no named serving-stack support (TensorRT-LLM, vLLM, ROCm, llama.cpp) or FP4 evidence is given, and a technical community comment explicitly notes the RTX PRO 6000's SM120 architecture lacks tmem/tcgen05 support and that 'main libraries' are focusing on datacenter SM100/B300 parts instead, a concrete counter to the general 'documented inference story' claim (comm-4). missing for 10: explicit named serving-stack support (TensorRT-LLM/vLLM/ROCm/llama.cpp), FP4 format documentation, and resolution of the SM120 library-support gap.",
+    "rationale": "NVIDIA's own pages tout a second-gen FP8 Transformer Engine for 'LLM prototyping, inference, and AI development across frameworks like TensorFlow and PyTorch' (docs-21) and generic agentic-AI/fine-tuning claims (docs-1, docs-23), but none of the evidence names FP4 support or any of the specific serving stacks in the story (TensorRT-LLM, vLLM, ROCm, llama.cpp). A hands-on community report directly complicates the story, noting the card's SM120 architecture 'lack[s] support in main libraries' because ecosystem focus has shifted to B300/SM100 (comm-4), even though another user reports functioning multi-GPU inference at 41k tok/s (comm-1) — a real but partial and contested picture rather than a clean documented story. Missing for 10: explicit FP4 documentation, named integration with TensorRT-LLM/vLLM/llama.cpp, and resolution of the SM120 library-support gap flagged by the community.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-21",
       "nvidia-rtx-pro-6000-docs-23",
-      "nvidia-rtx-pro-6000-comm-1",
-      "nvidia-rtx-pro-6000-comm-4"
+      "nvidia-rtx-pro-6000-docs-1",
+      "nvidia-rtx-pro-6000-comm-4",
+      "nvidia-rtx-pro-6000-comm-1"
     ]
   },
   {
@@ -3596,7 +3608,7 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "NVIDIA's own docs state the FP8 Transformer Engine accelerates work 'across frameworks like TensorFlow and PyTorch' (docs-21), and the CUDA Toolkit is described as the general dev/runtime stack for GPU-accelerated libraries (docs-3), implying standard framework compatibility. However, hands-on community reports specifically call out that this card's SM120 architecture lacks tmem/tcgen05 support and that 'main libraries' haven't caught up compared to SM100/B300 parts, meaning real-world framework/library support is less complete than the marketing implies. Missing for 10: an official PyTorch/TensorFlow support matrix or install guide confirming full feature parity, and independent benchmarks showing mainstream training/inference works without workarounds on SM120.",
+    "rationale": "NVIDIA's official docs claim the FP8 Transformer Engine accelerates 'LLM prototyping, inference, and AI development across frameworks like TensorFlow and PyTorch' and point to the general CUDA Toolkit as the supported software stack, but a hands-on community report explicitly notes the RTX PRO 6000's SM120 architecture 'lacks support in main libraries' since ecosystem focus has gone to B300/SM100, a concrete technical gap rather than vague skepticism. Missing for 10: an official PyTorch/framework support matrix or install guide specific to this card, and evidence resolving the SM120 library-support gap raised by users.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-21",
       "nvidia-rtx-pro-6000-docs-3",
@@ -3609,7 +3621,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "NVIDIA is well known for closed proprietary drivers (with only a partial open-source kernel module for some GPUs), but the evidence pack contains no documentation of open-source kernel modules or upstream Linux driver support for the RTX PRO 6000 specifically; all docs focus on CUDA, DLSS, RT cores, and workstation features.",
+    "rationale": "No evidence of open-source kernel modules or upstream Linux driver support being documented for the RTX PRO 6000; all driver-related material references CUDA toolkit and proprietary NVIDIA stack only.",
     "evidenceIds": []
   },
   {
@@ -3618,7 +3630,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a physical GPU hardware product with no user-facing UI/API duality — the story about API-vs-UI parity is a category error for this product type.",
+    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a UI/API-driven SaaS product; there is no 'UI' to compare against an 'API' for parity purposes, so this API/UI-parity axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3627,7 +3639,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a hardware GPU product, not a data-hosting SaaS/platform; data export/portability of user data is not an applicable axis for a workstation GPU.",
+    "rationale": "This story concerns data export/portability and 'leave' from a service or platform holding user data; the RTX PRO 6000 is a physical GPU hardware product with no data-hosting or lock-in relationship to export from — the axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3636,7 +3648,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a hardware GPU product; source-code openness is a category error for physical hardware, not a software product with a source repository.",
+    "rationale": "This is a hardware product (a GPU); 'reading source code under an open license' does not apply to physical silicon/hardware products in the way it would to software—there is no source code to release for the GPU itself.",
     "evidenceIds": []
   },
   {
@@ -3645,7 +3657,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "As a physical GPU card, the RTX PRO 6000 is inherently self-hosted hardware; NVIDIA's docs explicitly market it for running LLMs and autonomous AI agents 'locally and securely' and accelerating data science 'without relying on costly cloud or data center resources.' Community hands-on evidence corroborates real self-hosted multi-GPU deployments (four cards achieving 41k tok/s locally), confirming the capability works in practice. Missing for 10: no independent benchmark or security audit specifically validating the 'secure local hosting' claim beyond marketing language.",
+    "rationale": "The RTX PRO 6000 is a physical GPU purchased and installed in a user's own workstation—self-hosting is its native mode of operation. Docs explicitly market running LLMs, fine-tuning, and autonomous AI agents 'locally and securely' without cloud/data-center reliance, and community evidence corroborates real hands-on multi-GPU local deployments achieving high local inference throughput. Missing for 10: no first-party self-hosting guide/tutorial beyond marketing copy, and some community concerns about power/cost for local setups.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-1",
       "nvidia-rtx-pro-6000-docs-10",
@@ -3672,7 +3684,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a local GPU/workstation hardware product; 'data residency/region storage' is a cloud-service concept that doesn't apply to on-prem hardware that runs locally rather than in a hosted region.",
+    "rationale": "The RTX PRO 6000 is a local workstation GPU, not a cloud/SaaS service with data storage regions; 'choosing where data is stored' is not a fair capability question for on-prem hardware — data resides wherever the user's own machine is located, with no region-selection mechanism to evaluate.",
     "evidenceIds": []
   },
   {
@@ -3690,7 +3702,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "RTX PRO 6000 is a local workstation GPU/hardware product, not a data-handling service or platform; data retention/deletion controls are a SaaS/cloud-service concern and do not apply to a hardware accelerator that simply runs local workloads.",
+    "rationale": "This is a hardware GPU product (workstation/data-center chip), not a data service or SaaS platform that stores/processes user data on a vendor's behalf; data retention/deletion policies apply to the local system owner running software on the hardware, not to the GPU itself, making this a category error for the product type.",
     "evidenceIds": []
   },
   {
@@ -3699,7 +3711,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This is a hardware GPU product (a workstation card), not a software/SaaS service that collects usage telemetry from the user in a way that requires an opt-out control; the evidence pack contains no telemetry/data-collection features to opt out of, and this axis is a category error for a physical GPU product.",
+    "rationale": "RTX PRO 6000 is a physical GPU hardware product, not a software service with telemetry/usage-tracking settings a user could opt out of; this axis is a category error for a GPU product.",
     "evidenceIds": []
   },
   {
@@ -3722,19 +3734,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains only qualitative marketing claims (FP8 Transformer Engine, RT Cores, memory bandwidth, PCIe Gen5) and community pricing/power discussions, but no actual TFLOPS/TOPS figures broken out by precision (FP8/FP16/INT8) or with sparsity stated — the exact 'bare marketing number' problem the story asks to avoid. No spec sheet or datasheet citation with concrete throughput numbers is present.",
+    "rationale": "The evidence pack contains only marketing descriptions (memory size, architecture features, codec support, ray tracing claims) but never cites actual TFLOPS/TOPS figures broken out by precision (FP8/FP16/INT8/INT4) or with/without sparsity, which is what an ML engineer needs to size training/inference. Community threads discuss pricing and hardware defects but not throughput specs either.",
     "evidenceIds": []
   },
   {
     "productId": "nvidia-rtx-pro-6000",
     "storyId": "upscaling-frame-generation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "NVIDIA's docs confirm DLSS 4 AI upscaling is supported on this Blackwell-based card, but there's no mention of frame generation modes, no FSR support, and no list of supported games or broad game compatibility — this is a professional workstation GPU with no gaming-focused benchmarks or driver notes in evidence. missing for 10: FSR/frame-generation details, documented game compatibility list, independent gaming benchmarks.",
+    "rationale": "NVIDIA's own product page explicitly documents DLSS 4 AI-upscaling/frame-gen support on the RTX PRO 6000 and ties it to ray-tracing and 'AI-enhanced graphics tools' for gaming use cases, but this is a professional workstation card whose docs give no game-count or compatibility list, and FSR (competitor tech) is not mentioned at all. Missing for 10: explicit broad game-support list/benchmarks, FSR support details, independent gaming-performance corroboration.",
     "evidenceIds": [
       "nvidia-rtx-pro-6000-docs-17",
-      "nvidia-rtx-pro-6000-docs-18"
+      "nvidia-rtx-pro-6000-docs-18",
+      "nvidia-rtx-pro-6000-docs-8",
+      "nvidia-rtx-pro-6000-docs-22",
+      "nvidia-rtx-pro-6000-docs-26"
     ]
   }
 ]
