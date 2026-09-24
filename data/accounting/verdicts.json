@@ -2765,40 +2765,42 @@
     "storyId": "accountant-collaboration-access",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Mercury Books explicitly supports inviting bookkeepers/accountants in-product with role-tailored permissions and no seat caps, allowing them to view transactions, categorizations, and comment/tag on entries. Missing for 10: no independent/hands-on corroboration of the granularity of role-scoping (e.g., specific permission levels) and no detail on whether accountants can directly adjust vs. only comment.",
+    "confidence": "medium",
+    "rationale": "Mercury Books explicitly supports inviting bookkeepers/accountants directly into the account with role-tailored permissions and no seat caps, letting them view transactions, categorizations, and comment/tag on entries. This directly matches the founder story of role-scoped external collaborator access. Missing for 10: independent/hands-on verification of the granularity of role permissions and no detail on whether accountants can 'adjust' books versus just comment/view.",
     "evidenceIds": [
-      "mercury-books-docs-6",
       "mercury-books-supp-accountant",
+      "mercury-books-docs-6",
       "mercury-books-supp-accounting-page"
     ]
   },
   {
     "productId": "mercury-books",
     "storyId": "agent-answers-affordability",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Mercury's own docs frame the accounting API and MCP layer for external agents as a future ('Soon') capability, not something shipped today, and direct probes for an OpenAPI spec or llms.txt on Mercury's docs return 404s, indicating no live API for third-party agents yet. The only grounded Q&A shown (Command) is an in-product assistant, not an externally callable API an outside agent could query.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Mercury's Command assistant already answers financial questions 'grounded in your account data' (mercury-books-supp-command), satisfying the query semantics of 'can we afford X', but this happens inside Mercury's own UI, not via an external API that an arbitrary agent could call. The dedicated accounting API and MCP layer needed for third-party agents to pull live ledger data are explicitly future ('Soon...') per mercury-books-docs-1/10/11, and probes confirm no public OpenAPI/llms.txt exists yet (mercury-books-probe-1, mercury-books-probe-2). Missing for 10: a live, documented API/MCP endpoint that external agents can call today, and evidence of an agent (not just Command's built-in chat) answering affordability questions grounded in that API.",
     "evidenceIds": [
+      "mercury-books-supp-command",
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
-      "mercury-books-probe-2",
-      "mercury-books-supp-command"
+      "mercury-books-probe-2"
     ]
   },
   {
     "productId": "mercury-books",
     "storyId": "agent-flags-spend-anomalies",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence shows Command can answer questions and bulk-categorize/reconcile transactions, and an MCP layer for agents is only promised as 'soon,' but nothing describes proactive anomaly detection, duplicate-transaction flagging, or pre-close audit alerts.",
+    "rationale": "Mercury ships duplicate-bill detection and an AI assistant (Command) that can answer spend questions and clear categorization backlog, which are adjacent building blocks, but there is no documented anomaly-detection or pre-close audit workflow, and the MCP layer needed for agents to autonomously monitor and flag issues is explicitly described as 'soon' (not yet shipped). Missing for 10: dedicated ledger anomaly/duplicate-transaction detection beyond bill pay, an explicit pre-close review/flagging workflow, and a shipped (not planned) agent/MCP integration for autonomous monitoring.",
     "evidenceIds": [
+      "mercury-books-docs-13",
       "mercury-books-supp-command",
-      "mercury-books-supp-auto-rec",
-      "mercury-books-docs-1",
-      "mercury-books-supp-honest-scope"
+      "mercury-books-docs-11",
+      "mercury-books-docs-10"
     ]
   },
   {
@@ -2806,10 +2808,12 @@
     "storyId": "agent-posts-journal-entries",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The only mention of a programmatic API and MCP layer for agents is explicitly framed as a future roadmap item ('Soon, a full accounting API... will let AI agents handle bookkeeping tasks end-to-end'), not a shipped capability, and probes confirm no live OpenAPI/MCP endpoints exist today (404s on all candidate paths). While Command can draft journal entries via chat and accountants can be invited to collaborate, there is no evidence of an API-driven posting workflow or a formal 'review queue' gating agent-drafted entries for accountant approval.",
+    "confidence": "high",
+    "rationale": "The story requires an agent to draft/post journal entries via an API and route them to a review queue for the accountant, but Mercury's own docs state the accounting API and MCP layer for agents are 'soon' — not yet shipped (mercury-books-docs-1, -10, -11), and probes confirm no discoverable API/OpenAPI spec exists today (mercury-books-probe-1, -2). Command can draft journal entries via a chat assistant inside the product (mercury-books-supp-command) and accountants can be invited to review transactions (mercury-books-supp-accountant), but this is not an API-driven agent workflow with a dedicated review queue as the story requires.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2",
       "mercury-books-supp-command",
@@ -2822,26 +2826,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury Books has continuous automatic reconciliation/categorization and Command can answer questions and offload bookkeeping tasks like journal entries and bulk categorization, but Mercury explicitly states automation is not 'autopilot' and requires human decision-making, and there's no evidence of an agent autonomously running a full month-end close with exception flagging and review prep end-to-end — the MCP/agent layer is only announced as 'soon'. missing for 10: evidence of an actual agent (not just Command chat) performing a full month-end close, explicit exception-flagging workflow, and a shipped MCP/API layer rather than a 'soon' roadmap item.",
+    "rationale": "Mercury Books does provide continuous automatic reconciliation/categorization and an AI assistant (Command) that can be handed bookkeeping tasks in plain language, which covers part of the 'agent reconciles the month' story. However, the MCP layer that would let an external AI agent 'handle bookkeeping tasks end-to-end' is explicitly described as forthcoming ('Soon...an MCP layer will let AI agents handle bookkeeping tasks end-to-end'), not yet shipped, and Mercury itself cautions that automation is a 'starting point' not 'autopilot,' implying human judgment/exception handling still required rather than an agent doing full month-end close prep. Missing for 10: a shipped agent/API interface for autonomous end-to-end reconciliation, explicit exception-flagging workflow for agents, and evidence of an agent (not just Command chat) preparing a close package for human review.",
     "evidenceIds": [
       "mercury-books-supp-auto-rec",
       "mercury-books-supp-command",
-      "mercury-books-supp-honest-scope",
-      "mercury-books-docs-1",
-      "mercury-books-supp-launch"
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
+      "mercury-books-supp-honest-scope"
     ]
   },
   {
     "productId": "mercury-books",
     "storyId": "agentic-agent-docs",
-    "verdict": "disputed",
-    "quality": 2,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury's blog promises a future MCP layer for agents, but direct probes show no llms.txt file (404) and no discoverable OpenAPI/agent-oriented docs at any candidate path, meaning there is currently nothing an agent could be pointed at. Missing for 10: a live llms.txt or agent-readable docs file, a shipped API/MCP endpoint, any evidence of the promised MCP layer actually existing.",
+    "rationale": "There is no llms.txt or agent-oriented documentation endpoint; probes explicitly show 404s for llms.txt and OpenAPI/swagger paths. The only agent-related capability (MCP layer) is described as a future roadmap item, not something currently available to point an agent at.",
     "evidenceIds": [
-      "mercury-books-docs-1",
       "mercury-books-probe-1",
-      "mercury-books-probe-2"
+      "mercury-books-probe-2",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11"
     ]
   },
   {
@@ -2850,11 +2855,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Mercury Command lets users ask natural-language questions about their financial data and get AI-grounded answers, plus AI-driven GL code suggestions and categorization, directly inside Books. missing for 10: independent/hands-on verification of insight quality, no detail on proactive suggestion generation beyond categorization/GL coding, and Mercury's own caveat that automation is not full autopilot.",
+    "rationale": "Mercury Command is a built-in AI assistant that answers questions grounded in account data and surfaces suggestions like GL codes, categorization rules, and journal entries directly inside Mercury Books, and AI-driven GL code suggestions are cited as a concrete insight feature. This is first-party vendor documentation only, with no independent/hands-on corroboration of quality or accuracy, and the company itself cautions automation has limits (not full 'autopilot'). Missing for 10: independent/hands-on verification of Command's insight quality, and evidence of breadth/depth of proactive suggestions beyond categorization and Q&A.",
     "evidenceIds": [
       "mercury-books-supp-command",
-      "mercury-books-supp-accounting-page",
       "mercury-books-docs-5",
+      "mercury-books-supp-accounting-page",
       "mercury-books-supp-honest-scope"
     ]
   },
@@ -2864,13 +2869,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury Books documents continuous, automatic categorization/reconciliation and a Command assistant that can be handed bookkeeping tasks in plain language (bulk GL coding, categorization rules), which is real background automation. However, the vendor itself explicitly cautions that 'a connected system isn't the same as fully automated' and that it should not be treated as 'putting your books on autopilot,' and the promised MCP/agent layer for end-to-end autonomous handling is described as 'soon,' not shipped. Missing for 10: a live, user-configurable autonomous automation/agent layer (MCP) with independent confirmation it runs unattended in production.",
+    "rationale": "Mercury Books ships several always-on automations (continuous reconciliation/categorization, recurring invoices, multi-layer bill approval rules, duplicate-bill detection) that run in the background without user intervention, but true AI-agent-driven end-to-end automation (the accounting API and MCP layer for agents) is explicitly described as 'soon,' not yet available, and Mercury's own blog cautions that connected bookkeeping is 'not the same as fully automated' and should not be treated as 'autopilot.' All evidence is vendor-provided claimed-docs (plus failed probes for an API/llms.txt), so there's no independent corroboration either way. missing for 10: shipped MCP/agent API enabling autonomous end-to-end bookkeeping automations, independent/hands-on confirmation that existing automations run reliably unattended, and clarity on what 'autonomous' automation setup actually looks like today versus roadmap promises.",
     "evidenceIds": [
       "mercury-books-supp-auto-rec",
-      "mercury-books-supp-command",
-      "mercury-books-docs-4",
-      "mercury-books-supp-honest-scope",
-      "mercury-books-docs-1"
+      "mercury-books-docs-12",
+      "mercury-books-docs-13",
+      "mercury-books-docs-14",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
+      "mercury-books-supp-honest-scope"
     ]
   },
   {
@@ -2879,12 +2886,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Mercury Books ships a built-in AI assistant called Command that users can query in plain language and delegate bookkeeping tasks to (journal entries, chart of accounts organization, bulk categorization), described as 'AI built-in, not bolted on.' Missing for 10: independent/hands-on verification of Command's task-delegation reliability, and the vendor's own caveat that automation isn't 'autopilot' tempers full agentic delegation claims.",
+    "rationale": "Mercury Books ships a built-in AI assistant, Command, which users can ask questions about their finances or directly hand off bookkeeping tasks like writing journal entries, categorization, and chart-of-accounts organization in plain language. This is vendor-documented as a core, currently-available feature, not just a roadmap item (the MCP/agent-to-agent layer is separate and future). Missing for 10: independent/hands-on verification of Command's task-delegation reliability, and clarity on scope/limits of what tasks it can fully execute versus assist with (the vendor's own 'not autopilot' caveat suggests some human oversight is still needed).",
     "evidenceIds": [
       "mercury-books-supp-command",
       "mercury-books-docs-5",
-      "mercury-books-supp-launch",
-      "mercury-books-supp-honest-scope"
+      "mercury-books-supp-honest-scope",
+      "mercury-books-supp-launch"
     ]
   },
   {
@@ -2893,9 +2900,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury explicitly frames a full API and MCP layer as a future roadmap item ('Soon...'), and direct probes for API/OpenAPI/llms.txt endpoints all returned 404s, confirming no headless/CI-usable interface exists today. Command is a plain-language, in-app assistant, not a scriptable or automatable interface.",
+    "rationale": "Mercury Books is a web-based accounting product with no evidence of a CLI, headless mode, or API/automation interface currently available; the accounting API and MCP layer are explicitly described as future ('soon') features, and probes for llms.txt and OpenAPI specs both returned 404s.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2905,10 +2914,11 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The only MCP-related evidence is a forward-looking statement that an MCP layer is coming 'soon' to let external agents call Mercury Books' own actions — this describes Mercury exposing an MCP server, not the product consuming external MCP servers' tools, and it is explicitly not yet shipped (confirmed by 404 probes for API/openapi endpoints). There is no evidence users can plug third-party MCP servers into Mercury Books today.",
+    "confidence": "high",
+    "rationale": "Mercury Books only mentions a future, unreleased MCP layer ('Soon...an MCP layer will let AI agents handle bookkeeping tasks end-to-end') with no evidence it currently exists, is documented, or can be plugged into by users; probes for API/OpenAPI specs return 404s. This is a roadmap promise, not a shipped capability.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2918,10 +2928,12 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Mercury only states that an MCP layer is coming 'soon' for AI agents, with no evidence it currently exists; probes for API/OpenAPI/llms.txt endpoints all return 404s, confirming no official MCP server is live today.",
+    "confidence": "high",
+    "rationale": "The MCP layer is explicitly described as a future plan ('Soon... an MCP layer will let AI agents handle bookkeeping tasks end-to-end'), not a shipped official MCP server; probes for API/openapi specs return 404s, confirming no current programmatic/MCP access exists.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2929,14 +2941,17 @@
   {
     "productId": "mercury-books",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mercury Command lets users ask questions and hand off bookkeeping tasks 'in plain language,' directly matching the natural-language command story, and this is documented across multiple first-party sources describing bulk actions, categorization, and Q&A. Missing for 10: independent/hands-on verification of Command's NL capabilities and confirmation that the broader agent-facing API/MCP layer (still described as 'soon') doesn't gate deeper command coverage.",
+    "rationale": "Mercury Command lets users ask questions and hand off bookkeeping tasks 'in plain language' (natural-language commands within the product), and Command can bulk-assign GL codes, write journal entries, and answer finance questions conversationally. However, this is a built-in assistant scoped to bookkeeping tasks, not a general natural-language command interface for the whole product, and the broader agentic API/MCP layer for full programmatic natural-language control is explicitly future ('soon'), with probes confirming no API/OpenAPI spec exists yet. Missing for 10: evidence of natural-language control beyond Command's scoped tasks, a shipped API/MCP layer, and independent hands-on confirmation of NL command reliability.",
     "evidenceIds": [
-      "mercury-books-docs-5",
       "mercury-books-supp-command",
-      "mercury-books-docs-4"
+      "mercury-books-docs-5",
+      "mercury-books-docs-4",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
+      "mercury-books-probe-2"
     ]
   },
   {
@@ -2945,9 +2960,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a CLI; only future-planned API/MCP layer is mentioned, and probes for llms.txt/openapi endpoints returned 404s, indicating no current programmatic or CLI tooling exists.",
+    "rationale": "No evidence of any official CLI for Mercury Books; the product only mentions a future API and MCP layer (not yet shipped), and probes for API/docs endpoints returned 404s.",
     "evidenceIds": [
-      "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2958,9 +2974,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury explicitly says a full accounting API and MCP layer are coming 'soon,' not currently available, and direct probes for llms.txt and OpenAPI docs both returned 404s, confirming no public API exists today.",
+    "rationale": "The API and MCP layer are explicitly described as future ('Soon, a full accounting API will make every core Books action available programmatically') rather than shipped, and direct probes for OpenAPI/llms.txt endpoints returned 404s, indicating no current documented public API exists.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2971,9 +2989,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence only mentions a future accounting API and MCP layer as 'soon' (not yet shipped), with no mention of API keys, OAuth scopes, or least-privilege credential issuance; probes confirm no OpenAPI/spec or docs endpoints currently exist. There is no evidence Mercury Books lets a user issue scoped credentials for an agent today.",
+    "rationale": "Evidence only mentions a future 'MCP layer' and API for agents, with no mention of scoped or least-privilege credential issuance, API keys, or permission granularity for agents. No current API exists (probes show 404s for API specs), so no credentialing mechanism can be evaluated.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2984,9 +3004,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury explicitly frames the accounting API and MCP layer as future ('Soon'), and probes confirm no live OpenAPI/llms.txt endpoints exist yet — there is no official SDK currently available to build against.",
+    "rationale": "The API and MCP layer for programmatic access are explicitly described as forthcoming ('Soon, a full accounting API...'), not yet available, and probes confirm no live OpenAPI/llms.txt endpoints exist today. No official SDK currently exists to build against.",
     "evidenceIds": [
-      "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -2997,9 +3018,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions webhooks or event subscriptions; the only programmatic-access claim is a forward-looking 'soon' API/MCP mention, and probes confirm no public API/openapi spec exists yet. Missing for 10: any webhook documentation, event types, or subscription mechanism.",
+    "rationale": "No evidence of webhook subscription capability anywhere in the pack; even the future API/MCP layer is only 'soon' and doesn't mention webhooks or event subscriptions, and probes confirm no public API/OpenAPI spec exists yet.",
     "evidenceIds": [
-      "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3010,12 +3032,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Mercury Books generates P&L, cash flow, and balance sheet reports and mentions 'bill pay' as a data source, but there is no mention of an accounts payable aging report or vendor-balance tracking feature anywhere in the evidence pack. missing for 10: AP aging report, vendor balance report/ledger, point-in-time vendor balance lookups.",
-    "evidenceIds": [
-      "mercury-books-docs-7",
-      "mercury-books-supp-launch",
-      "mercury-books-supp-double-entry"
-    ]
+    "rationale": "Evidence confirms bill pay features (approval rules, duplicate detection) and general financial reports (P&L, cash flow, balance sheet), but nothing describes an accounts payable aging report or vendor-level balance tracking, let alone at a specific point in time.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury-books",
@@ -3023,9 +3041,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of any interactive API reference or runnable examples; the API is described only as 'soon' coming, and probes for openapi/llms.txt specs both returned 404s, indicating no public API docs exist yet.",
+    "rationale": "The API is described as forthcoming ('Soon, a full accounting API...') with no current interactive reference or runnable examples, and probes for openapi/swagger specs and llms.txt returned 404s, confirming no accessible API reference exists today.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3036,11 +3055,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for llms.txt and OpenAPI/Swagger spec files all return 404, and docs only mention a future accounting API/MCP layer as an upcoming feature, not something currently downloadable. No machine-readable API spec exists today.",
+    "rationale": "Mercury explicitly states the accounting API is not yet available ('Soon, a full accounting API will make every core Books action available programmatically'), and direct probes for OpenAPI/spec endpoints all returned 404s, confirming no machine-readable API spec currently exists to download.",
     "evidenceIds": [
-      "mercury-books-probe-1",
+      "mercury-books-docs-1",
+      "mercury-books-docs-10",
       "mercury-books-probe-2",
-      "mercury-books-docs-1"
+      "mercury-books-probe-1"
     ]
   },
   {
@@ -3049,12 +3069,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any sandbox, staging, or test environment for Mercury Books; the API/MCP layer is described only as forthcoming with no mention of a non-production mode, and probes for docs/OpenAPI endpoints returned 404s.",
-    "evidenceIds": [
-      "mercury-books-docs-1",
-      "mercury-books-probe-1",
-      "mercury-books-probe-2"
-    ]
+    "rationale": "No evidence of a sandbox/test environment, staging mode, or test-data separation for Mercury Books; this is a real financial accounting product dealing with live banking/accounting data, and no sandbox capability is documented. Missing for 10: any mention of a sandbox environment, test API keys/mode, or staging account isolation from production financial data.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury-books",
@@ -3062,9 +3078,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The API is described as forthcoming ('Soon, a full accounting API will make every core Books action available programmatically'), and direct probes for openapi/llms.txt specs return 404s, showing no versioned API or deprecation policy currently exists.",
+    "rationale": "No evidence of any versioned API or deprecation policy exists today; the accounting API is only announced as forthcoming ('Soon, a full accounting API...'), and probes for OpenAPI/llms.txt specs return 404s, indicating no current API documentation at all, let alone versioning or deprecation policy.",
     "evidenceIds": [
-      "mercury-books-docs-1",
+      "mercury-books-docs-10",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3075,10 +3091,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Mercury Books documents P&L, cash flow, and balance sheet reports and mentions invoicing as one of the pulled-in transaction types, but no evidence describes accounts-receivable aging reports or per-customer balance tracking specifically. missing for 10: AR aging report feature, per-customer balance view, any invoicing/AR-specific reporting documentation.",
+    "rationale": "Mercury Books documentation covers invoicing creation/tracking, recurring invoices, and general financial statements (P&L, cash flow, balance sheet), but there is no mention of AR aging reports or per-customer balance tracking anywhere in the evidence pack.",
     "evidenceIds": [
+      "mercury-books-docs-9",
+      "mercury-books-docs-14",
       "mercury-books-docs-7",
-      "mercury-books-supp-launch",
       "mercury-books-supp-double-entry"
     ]
   },
@@ -3100,13 +3117,15 @@
     "productId": "mercury-books",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury Command explicitly supports bulk actions like bulk GL code assignment, categorization rules, and clearing categorization backlogs in bulk, which directly addresses bulk operations for an AI-native user. However, this is limited to bookkeeping/categorization tasks rather than a general-purpose bulk API, and the promised full accounting API/MCP layer for broader programmatic bulk actions is only 'coming soon,' with probes confirming no public API/OpenAPI spec exists yet. missing for 10: a live public API or MCP layer enabling arbitrary bulk operations, independent/hands-on verification of bulk actions working at scale, and documentation of bulk operation limits or scope beyond categorization/GL codes.",
+    "rationale": "Mercury Command supports bulk GL code assignment and categorization rules, and invoicing can bill many customers programmatically, showing some bulk-operation capability today. However, the full accounting API and MCP layer that would enable comprehensive AI-driven bulk operations are explicitly described as forthcoming, not yet available (probes confirm no live API/OpenAPI spec exists). Missing for 10: a shipped, documented API/MCP layer enabling arbitrary bulk operations, independent hands-on verification of bulk actions at scale.",
     "evidenceIds": [
       "mercury-books-docs-4",
       "mercury-books-supp-command",
-      "mercury-books-docs-1",
+      "mercury-books-docs-9",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3117,9 +3136,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury Command explicitly supports creating 'categorization rules' and bulk GL code assignment, which is a form of user-defined rule-based automation triggered by transaction events, and automatic categorization/reconciliation is built-in. However, there's no evidence of a general-purpose rule/trigger-action framework beyond categorization (e.g., rules for invoicing, alerts, or other business events), and Mercury's own docs caution that automation isn't full autopilot. Missing for 10: broader event types beyond categorization, explicit rule configuration UI/API details, and independent confirmation of rule reliability.",
+    "rationale": "Mercury Books supports several built-in rule-like automations: categorization rules via Mercury Command, automatic GL coding, multi-layered bill approval rules, duplicate-bill detection, and recurring invoices — all of which trigger actions on specific events (docs-4, docs-12, docs-13, docs-14, supp-command). However, these are fixed, domain-specific automations rather than a general-purpose 'define any rule for any event/action' framework, and Mercury itself cautions that the system is a 'better starting point,' not full autopilot (supp-honest-scope). missing for 10: a general user-configurable rule/trigger builder spanning arbitrary events and actions, independent verification of rule flexibility, and evidence beyond categorization/approval/invoicing domains.",
     "evidenceIds": [
       "mercury-books-docs-4",
+      "mercury-books-docs-12",
+      "mercury-books-docs-13",
+      "mercury-books-docs-14",
       "mercury-books-supp-command",
       "mercury-books-supp-honest-scope"
     ]
@@ -3130,10 +3152,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows automatic categorization/reconciliation and an AI assistant (Command) that can be asked to do tasks, but there is no mention of user-defined recurring/scheduled jobs or workflows; the API/MCP layer that might enable this is explicitly described as 'soon' (not yet shipped), and probes for API endpoints 404. Missing for 10: any documented scheduling/recurring-workflow feature, evidence of a live automation API or MCP layer, and independent confirmation of scheduled task execution.",
+    "rationale": "The only recurring-workflow feature shown is manual recurring invoicing via UI clicks (docs-14), not an AI-native or programmatic scheduling mechanism. The API and MCP layer that would let agents automate/schedule bookkeeping workflows is explicitly described as future ('soon a full accounting API... an MCP layer will let AI agents handle bookkeeping tasks end-to-end'), and probes confirm no live API/OpenAPI spec exists yet (mercury-books-probe-2). No evidence of a shipped mechanism for AI-native users to schedule recurring jobs/workflows today.",
     "evidenceIds": [
-      "mercury-books-docs-1",
-      "mercury-books-supp-command",
+      "mercury-books-docs-14",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-2"
     ]
   },
@@ -3143,16 +3166,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Mercury Books has automation features (Command AI assistant, categorization rules, bulk GL code assignment) but nothing about versioning automation rules, reviewing changes, or rolling back automated actions/decisions. No audit trail, undo, or history/version-control feature is mentioned anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "No evidence of versioning, review, or rollback of automations/categorization rules/AI actions — Command can execute bulk categorization and journal entries but there's no mention of audit-trail, undo, version history, or approval-before-apply workflow for these AI-driven changes. Mercury's own honest-scope note even emphasizes it is 'not autopilot' but does not describe any rollback/versioning mechanism.",
+    "evidenceIds": [
+      "mercury-books-supp-command",
+      "mercury-books-docs-4",
+      "mercury-books-supp-honest-scope"
+    ]
   },
   {
     "productId": "mercury-books",
     "storyId": "bank-feeds-auto-import",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Mercury Books explicitly supports linking external bank accounts, cards, and payroll platforms with transactions pulled in automatically and reconciled/categorized continuously in real time, directly matching the founder story. Multiple first-party docs corroborate this (linking, auto-categorization, continuous reconciliation) and Mercury even publishes an honest caveat that 'connected' isn't 'fully automated,' showing transparency rather than contradiction. missing for 10: independent/hands-on verification beyond Mercury's own docs, and detail on daily import cadence/reliability guarantees.",
+    "confidence": "medium",
+    "rationale": "Docs clearly describe linking bank/card/payroll accounts with continuous, automatic daily reconciliation and categorization, backed by a launch post detailing real-time import ('pulled in automatically... reconciles in real time'). Mercury itself notes automation has limits (not full 'autopilot'), which is a scope caveat rather than contradiction. Missing for 10: independent/hands-on verification beyond vendor claims, and detail on frequency/reliability guarantees for the daily import cadence.",
     "evidenceIds": [
       "mercury-books-docs-3",
       "mercury-books-supp-auto-rec",
@@ -3166,12 +3193,13 @@
     "storyId": "bank-reconciliation-workflow",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Mercury Books claims accounts 'reconcile in real time' automatically with categorization pulled directly from linked banking data (mercury-books-supp-auto-rec, mercury-books-supp-launch), and Mercury's own honest-scope post acknowledges that full automation still requires human review of ambiguous decisions (mercury-books-supp-honest-scope), implying some reconciliation review workflow exists. However, none of the evidence specifically describes a UI or workflow that surfaces matched, unmatched, and duplicate transactions as distinct categories for accountant review — the emphasis is on automation eliminating manual reconciliation work entirely rather than a structured review interface. Missing for 10: explicit documentation of matched/unmatched/duplicate transaction states, a dedicated reconciliation review screen, and independent/hands-on confirmation of this workflow.",
+    "confidence": "medium",
+    "rationale": "Mercury Books explicitly claims automatic, continuous, real-time reconciliation of banking, card, and other transaction data (mercury-books-supp-auto-rec, mercury-books-supp-launch), and its own honest-scope post acknowledges that full automation still leaves items needing human review (mercury-books-supp-honest-scope), implying some exception-surfacing workflow. However, none of the evidence explicitly describes a matched/unmatched/duplicate transaction review screen for bank reconciliation specifically — the only duplicate-detection claim found (mercury-books-docs-13) is scoped to bill pay, not bank-to-ledger reconciliation. missing for 10: explicit documentation of a reconciliation review UI showing matched vs unmatched vs duplicate bank transactions, and independent/hands-on confirmation that discrepancies are surfaced rather than silently auto-categorized.",
     "evidenceIds": [
       "mercury-books-supp-auto-rec",
       "mercury-books-supp-launch",
-      "mercury-books-supp-honest-scope"
+      "mercury-books-supp-honest-scope",
+      "mercury-books-docs-13"
     ]
   },
   {
@@ -3180,24 +3208,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Mercury Books explicitly supports linking external bank accounts, cards, and payroll platforms, plus named integrations with Stripe, PayPal, and Gusto, with activity flowing automatically into the ledger via continuous categorization and reconciliation. Mercury itself is candid that this is a strong starting point rather than full autopilot, which tempers but doesn't contradict the core claim. Missing for 10: independent/hands-on verification of these integrations working in practice, and a public API/OpenAPI spec was found to 404, indicating limited programmatic verification.",
+    "rationale": "Mercury Books explicitly connects banking, cards, invoicing, bill pay natively, plus third-party payments/payroll integrations (Stripe, PayPal, Gusto) and external bank/payroll linking, with automatic categorization and real-time reconciliation feeding the ledger. Mercury itself candidly notes automation has limits and still needs human review, which is a reasonable caveat rather than a contradiction. Missing for 10: independent/hands-on verification of integration reliability and broader payroll/payment provider coverage beyond Gusto/Stripe/PayPal.",
     "evidenceIds": [
       "mercury-books-docs-3",
       "mercury-books-supp-external-integrations",
-      "mercury-books-supp-auto-rec",
       "mercury-books-supp-launch",
-      "mercury-books-supp-honest-scope",
-      "mercury-books-docs-8"
+      "mercury-books-supp-auto-rec",
+      "mercury-books-supp-honest-scope"
     ]
   },
   {
     "productId": "mercury-books",
     "storyId": "bill-capture-approval-payment",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence only shows that 'bill pay' transactions are pulled into Mercury Books automatically alongside banking and invoicing data, implying some underlying bill-pay capability exists, but there is no description of a capture-to-approval-to-payment-scheduling workflow, approval routing, or scheduled payments within Books itself. missing for 10: vendor bill capture/OCR, approval routing rules, payment scheduling UI, evidence tying bill pay into an AP-specific workflow rather than just a transaction category.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Mercury Bill Pay evidence shows bill capture, multi-layered approval routing (including Slack/mobile approval), duplicate detection, and payment scheduling within one workflow, and Command/Books ties this into the broader accounting system. Missing for 10: independent/hands-on verification of the end-to-end bill-to-payment flow and no explicit detail on payment scheduling mechanics (e.g., due-date automation).",
     "evidenceIds": [
+      "mercury-books-docs-12",
+      "mercury-books-docs-13",
+      "mercury-books-supp-command",
       "mercury-books-supp-launch"
     ]
   },
@@ -3221,19 +3251,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes an audit trail, change log, user attribution, or history of edits across the ledger; the pack focuses on automation, categorization, reporting, and accountant seat invites, none of which document who-changed-what-when tracking. This is a plausible and expected feature for a full accounting system, so absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "Evidence shows accountant collaboration (unlimited seats, comments/tags) and mentions of categorization/reconciliation automation, but there is no mention of a change log, edit history, or audit trail feature showing who changed what and when across the ledger.",
     "evidenceIds": []
   },
   {
     "productId": "mercury-books",
     "storyId": "create-send-invoices",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence only mentions 'invoicing' as one of many transaction types Mercury Books pulls in automatically (alongside banking, bill pay); there is no evidence of invoice creation/sending, online payment collection, or view/paid status tracking within Mercury Books itself.",
+    "rationale": "Mercury supports creating, sending, customizing, and tracking invoices at scale, including recurring invoices (docs-9, docs-14, docs-17), which covers the core invoicing and tracking-of-status story. However, evidence doesn't explicitly confirm online payment options on invoices or explicit read/paid receipt notifications (view/paid status tracking is implied by 'track' but not detailed), and no independent/hands-on corroboration exists. missing for 10: explicit confirmation of online payment collection method on invoices, explicit 'viewed' and 'paid' status notifications, independent verification beyond vendor docs.",
     "evidenceIds": [
-      "mercury-books-supp-launch",
-      "mercury-books-supp-external-integrations"
+      "mercury-books-docs-9",
+      "mercury-books-docs-14",
+      "mercury-books-docs-17"
     ]
   },
   {
@@ -3242,10 +3273,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Mercury Books generates standard P&L, cash flow, and balance sheet reports, and mentions attaching 'Classes' to transactions only for customers with enriched QuickBooks/NetSuite integrations — not a native custom report builder. No evidence of location or tag dimensions, or of building custom reports filtered/grouped by these dimensions within Books itself.",
+    "rationale": "Evidence only shows standard P&L/cash flow/balance sheet reports and mentions 'Classes' being attachable to transactions for customers with enriched QuickBooks/NetSuite integrations — not a native custom report builder within Mercury Books that filters/groups by class, location, or tag dimensions. No mention of 'location' or 'tag' dimensions at all, nor of custom report configuration UI.",
     "evidenceIds": [
       "mercury-books-docs-7",
-      "mercury-books-docs-8"
+      "mercury-books-docs-8",
+      "mercury-books-supp-double-entry"
     ]
   },
   {
@@ -3254,7 +3286,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Mercury Books explicitly generates P&L, cash-flow, and balance-sheet reports on demand from real-time reconciled data, with cash/accrual choice, positioned as a full double-entry replacement for QuickBooks. This is a core advertised feature with detailed first-party docs, though there's no independent/hands-on corroboration of report accuracy and Mercury itself cautions that automation isn't fully hands-off. Missing for 10: independent verification of statement accuracy, and confirmation that reports are audit-grade/error-free in practice.",
+    "rationale": "Mercury Books explicitly generates P&L, balance sheet, and cash-flow statements on demand from real-time reconciled data, with choice of cash/accrual basis, directly addressing the founder's need (mercury-books-docs-7, mercury-books-supp-double-entry, mercury-books-supp-launch). Mercury's own honest caveat that 'connected' isn't fully automated tempers accuracy claims slightly but doesn't contradict the core reporting capability. Missing for 10: independent/third-party verification of report accuracy, and detail on historical-period reporting flexibility beyond 'today's numbers'.",
     "evidenceIds": [
       "mercury-books-docs-7",
       "mercury-books-supp-double-entry",
@@ -3269,9 +3301,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence explicitly states a full accounting API is only planned ('Soon, a full accounting API will make every core Books action available programmatically'), and direct probes for OpenAPI/llms.txt docs returned 404s, confirming no current documented API for pulling GL/trial balance data in open formats.",
+    "rationale": "The API for pulling GL/trial balance data is explicitly described as forthcoming ('Soon, a full accounting API will make every core Books action available programmatically'), not currently shipped, and probes for openapi/llms.txt endpoints returned 404s, confirming no documented API exists today.",
     "evidenceIds": [
-      "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3281,8 +3314,8 @@
     "storyId": "lock-closed-periods",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions period locking, closing periods, or preventing edits to prior-period transactions without explicit reopening; the evidence covers categorization, reconciliation, reports, and accountant invites but not period lock controls.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions period locking, closing periods, or restricting edits to prior-period transactions; continuous real-time reconciliation is described but nothing about explicit period close/reopen controls.",
     "evidenceIds": []
   },
   {
@@ -3304,11 +3337,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes an import/migration tool for bringing historical transaction-level data in from QuickBooks/NetSuite or other systems; in fact Mercury explicitly frames Books as a replacement rather than an integration/sync layer for prior accounting systems, and the cited third-party integrations (Stripe, PayPal, Gusto, bank feeds) are for ongoing data flow, not one-time historical migration.",
+    "rationale": "Evidence describes ongoing sync/integration with QuickBooks, NetSuite, Xero and linking of external accounts, but nothing addresses importing or migrating historical transaction-level detail from a prior accounting system into Mercury Books. In fact Mercury explicitly frames Books as a replacement 'not an add-on or integration layer' and 'built to replace it, not sync with it,' with no documented historical data import/migration tool or process.",
     "evidenceIds": [
       "mercury-books-docs-2",
-      "mercury-books-supp-double-entry",
-      "mercury-books-supp-external-integrations"
+      "mercury-books-docs-15",
+      "mercury-books-supp-double-entry"
     ]
   },
   {
@@ -3330,8 +3363,8 @@
     "storyId": "multi-entity-consolidation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack mentions multiple legal entities, inter-company eliminations, or consolidated financial statements across entities; all documentation describes a single-business books setup with one set of P&L/balance sheet/cash flow reports.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack mentions multi-entity management or consolidated financials across entities; Mercury Books appears designed around a single business/account. This is a fair and applicable axis for accounting software (multi-entity consolidation is a common professional accounting need), but there's no indication Books supports it.",
     "evidenceIds": []
   },
   {
@@ -3339,10 +3372,12 @@
     "storyId": "openness-api-parity",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Mercury's own docs say a full accounting API is coming 'soon' — it does not exist yet — and probes for llms.txt/openapi specs both return 404, confirming no current API parity with the UI.",
+    "confidence": "medium",
+    "rationale": "The full accounting API and MCP layer that would let AI agents replicate UI actions are explicitly described as future ('Soon') rather than shipped, and probes for OpenAPI/llms.txt endpoints returned 404s, indicating no current programmatic parity with the UI.",
     "evidenceIds": [
       "mercury-books-docs-1",
+      "mercury-books-docs-10",
+      "mercury-books-docs-11",
       "mercury-books-probe-1",
       "mercury-books-probe-2"
     ]
@@ -3353,11 +3388,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions any data export feature, open format (CSV/OFX/JSON) download, or account-closure data portability path; the only related probes (llms.txt, openapi.json) return 404s, and Mercury explicitly positions Books as a replacement system rather than an interoperable one ('not an add-on or integration layer for another platform').",
+    "rationale": "There is no evidence of a full data export feature in open formats; the only relevant capability (a full accounting API) is described as a future 'soon' promise, not yet shipped, and Mercury explicitly positions Books as a replacement system 'not an add-on or integration layer,' suggesting data stays within Mercury rather than easily portable out. Sync features with QuickBooks/Xero/NetSuite exist but are one-way enrichment/sync, not a documented full-data-export-and-leave capability.",
     "evidenceIds": [
       "mercury-books-docs-2",
-      "mercury-books-probe-1",
-      "mercury-books-probe-2"
+      "mercury-books-docs-10",
+      "mercury-books-docs-15",
+      "mercury-books-supp-double-entry"
     ]
   },
   {
@@ -3375,7 +3411,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury Books is a cloud SaaS banking/accounting product with no self-hosting option; self-hosting the core product is a category error for a hosted financial platform tied to Mercury's own bank accounts and infrastructure.",
+    "rationale": "Mercury Books is a cloud SaaS banking/accounting product with no self-hosted deployment option in evidence or in its category; self-hosting is a category error for a fintech SaaS tied to Mercury's banking infrastructure.",
     "evidenceIds": []
   },
   {
@@ -3383,8 +3419,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence anywhere in the pack discusses data residency, region selection, or storage location controls for Mercury Books; the material covers accounting features, AI assistant capabilities, and integrations only.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack addresses data residency, regional storage choice, or data location controls for Mercury Books; this is an accounting/banking product for which data residency is a fair question, but nothing indicates it is offered.",
     "evidenceIds": []
   },
   {
@@ -3393,7 +3429,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data-training opt-outs, AI model training policies, or privacy controls specific to preventing customer data from being used to train AI models; Mercury Books' AI features (Command) are described functionally but with no privacy-posture documentation on this axis. Missing for 10: any privacy policy language, opt-out mechanism, or documentation addressing whether user financial data is used to train AI models.",
+    "rationale": "No evidence pack item addresses AI training data usage, opt-out controls, or any data-privacy policy regarding model training; Mercury Books' evidence focuses on accounting features, AI assistant capabilities, and pricing, not data usage/privacy controls for AI training.",
     "evidenceIds": []
   },
   {
@@ -3401,8 +3437,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of data retention policies, deletion controls, export/purge mechanisms, or any privacy-posture settings a user could control; it focuses entirely on accounting features, AI assistant capabilities, and pricing. This is a fair axis for a financial SaaS product handling sensitive business data, but no supporting evidence exists.",
+    "confidence": "medium",
+    "rationale": "No evidence describes any data retention policy, export/deletion controls, or privacy settings for AI-native users; the evidence pack focuses on accounting features, AI assistant (Command) capabilities, and integrations but never mentions data retention/deletion controls. missing for 10: data retention policy documentation, deletion/export mechanisms, user-facing privacy controls for AI-processed data.",
     "evidenceIds": []
   },
   {
@@ -3411,19 +3447,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions telemetry, usage tracking, data collection settings, or opt-out controls; the material focuses entirely on accounting features, AI assistant capabilities, and pricing. This is a fair privacy-posture question for any SaaS product, so absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, data collection settings, or an opt-out mechanism for AI-native or any users; the pack focuses on accounting features, AI assistant capabilities, and integrations.",
     "evidenceIds": []
   },
   {
     "productId": "mercury-books",
     "storyId": "recurring-invoices-reminders",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack mentions invoicing only as one data stream feeding into books (transactions across 'banking, invoicing, bill pay'), but there is no mention of recurring invoice scheduling or automated overdue payment reminders anywhere in the docs. This is a fair capability for a full accounting system to offer, so absence of evidence is 'none' rather than 'na'.",
+    "rationale": "Recurring invoicing is explicitly documented ('Make it recurring in a few clicks and at your chosen frequency'), but there is no evidence of automatic payment reminders for overdue customers—only general invoice tracking is mentioned. Missing for 10: explicit documentation of automated overdue-payment reminder emails/notifications, and any independent confirmation of this reminder feature.",
     "evidenceIds": [
-      "mercury-books-supp-launch",
-      "mercury-books-docs-3"
+      "mercury-books-docs-14",
+      "mercury-books-docs-9"
     ]
   },
   {
