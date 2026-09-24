@@ -47,16 +47,35 @@ export default function TableControls<C extends string>({
   after?: ReactNode
 }) {
   // Founder 2026-09-23: one line — rank-by presets left, scope + filter pushed right; narrow
-  // viewports wrap naturally.
+  // viewports wrap naturally. Founder 2026-09-24 (mobile): below sm the preset pills collapse
+  // into one "Rank by" <select> so the controls fit a phone width.
+  const activePreset = presets.find((p) => p.col === activeColumn && presetActive)
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs uppercase tracking-widest text-zinc-500">Rank by</span>
+      <span className="hidden text-xs uppercase tracking-widest text-zinc-500 sm:inline">Rank by</span>
+      <span className="relative inline-flex sm:hidden">
+        <select
+          value={activePreset?.col ?? ''}
+          onChange={(e) => e.target.value !== '' && onPreset(e.target.value as C)}
+          aria-label="Rank by"
+          className="max-w-[10rem] appearance-none rounded-lg border border-zinc-800 bg-zinc-900 py-1.5 pl-2.5 pr-7 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+        >
+          {/* The empty option shows when the reader column-sorted into a non-preset view. */}
+          {activePreset === undefined && <option value="">Rank by…</option>}
+          {presets.map((p) => (
+            <option key={p.col} value={p.col}>
+              {p.label}
+            </option>
+          ))}
+        </select>
+        <span aria-hidden className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-emerald-400">▾</span>
+      </span>
       {presets.map((p) => (
         <button
           key={p.col}
           type="button"
           onClick={() => onPreset(p.col)}
-          className={presetButtonClass(activeColumn === p.col && presetActive)}
+          className={`hidden sm:inline-block ${presetButtonClass(activeColumn === p.col && presetActive)}`}
         >
           {p.label}
         </button>

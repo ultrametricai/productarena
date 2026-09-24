@@ -19,7 +19,7 @@ describe('ArenaTable', () => {
   it('activates the preset and re-sorts when a preset button is clicked', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
-    fireEvent.click(screen.getByText('Most agent-ready'))
+    fireEvent.click(screen.getByRole('button', { name: 'Most agent-ready' }))
     const header = screen.getAllByText('Agent-ready').map((el) => el.closest('th')).find((th) => th !== null)
     expect(header?.getAttribute('aria-sort')).toBe('descending')
   })

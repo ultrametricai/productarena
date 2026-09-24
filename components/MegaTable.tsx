@@ -242,8 +242,10 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
       />
 
       {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
-          viewport still gets the horizontal scroll container instead of page-level overflow. */}
-      <div className="overflow-x-auto rounded-2xl border border-zinc-800 lg:overflow-x-visible">
+          viewport still gets the horizontal scroll container instead of page-level overflow.
+          Mobile (founder 2026-09-24): the table bleeds edge-to-edge (-mx-5 cancels main's px-5;
+          side borders and corner radius drop so no space is wasted). */}
+      <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-2xl sm:border lg:overflow-x-visible">
         <table className="w-full border-collapse text-[15px]">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
