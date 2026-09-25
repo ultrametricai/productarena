@@ -2512,13 +2512,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Token2 ships an open-source CLI (fido2-manage) for local device configuration and a PowerShell bulk-enrollment script that automates pre-registering keys into Microsoft Entra ID via Microsoft's Graph API — some scriptable, agent-drivable provisioning exists. However, there is no evidence of Token2's own documented enterprise API for ordering or assigning keys to users, and probes confirm no OpenAPI/swagger spec exists on their site. missing for 10: a Token2-owned ordering API, an assignment/fleet-management API, and any documented enterprise API surface beyond third-party (Microsoft) integration scripts.",
+    "rationale": "Token2 offers a bulk enrollment tool that automates FIDO2 pre-registration into Entra ID via Microsoft's Graph API and PowerShell, showing some API-driven provisioning flow, but there is no evidence of Token2-owned enterprise APIs for key ordering or fleet-wide assignment, and probes confirm no public OpenAPI/swagger spec or machine-readable docs. missing for 10: documented Token2 ordering API, assignment/inventory API, machine-readable API spec (openapi.json returns 404), evidence of end-to-end agent-driven provisioning beyond registration.",
     "evidenceIds": [
-      "token2-docs-2",
-      "token2-gh-1",
-      "token2-gh-4",
-      "token2-probe-3",
-      "token2-probe-rt-1"
+      "token2-docs-22",
+      "token2-docs-25",
+      "token2-probe-3"
     ]
   },
   {
@@ -2527,14 +2525,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Token2's open-source fido2-manage CLI/GUI tool (scriptable over USB/NFC) can view device information, list resident credentials (passkeys) with user handle, manage PINs, and enumerate biometric templates — giving an agent a scriptable path to audit key state across a fleet. However, no evidence documents reading serial numbers, firmware version, or 'enabled applications' specifically, nor is there a structured/JSON API, OpenAPI spec, or llms.txt for machine-readable output (confirmed 404s), so agent-friendly programmatic access is only partially evidenced. Missing for 10: documented serial/firmware-version fields, explicit 'enabled applications' enumeration, and a structured machine-readable output/API for agent consumption.",
+    "rationale": "The open-source fido2-manage CLI (with optional GUI) can list resident credentials, view device info, and 'dump device info + relying parties to JSON or CSV' — machine-readable output an agent could parse programmatically to audit a key's state (token2-gh-1, token2-gh-6, token2-docs-21). However there is no explicit evidence the audit output includes serial number or firmware version, and no documented fleet-wide (multi-device, remote) audit workflow — each invocation targets a locally connected key via USB/NFC. Missing for 10: explicit serial/firmware-version fields in exported data, and a fleet-scale (multi-key/remote) audit or API surface beyond single-device CLI export.",
     "evidenceIds": [
       "token2-gh-1",
-      "token2-gh-2",
-      "token2-gh-3",
+      "token2-gh-6",
+      "token2-docs-21",
       "token2-docs-7",
-      "token2-probe-3",
-      "token2-probe-rt-1"
+      "token2-gh-3",
+      "token2-gh-5"
     ]
   },
   {
@@ -2543,11 +2541,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes show no llms.txt (404) and no markdown-accessible docs (404), and no OpenAPI/agent-oriented documentation exists; Token2 is a hardware security key vendor with no evidence of agent-discoverable docs.",
+    "rationale": "Token2 is a hardware security-key vendor with no evidence of llms.txt or agent-oriented documentation; probes explicitly confirm llms.txt and markdown-docs endpoints return 404, and there's no mention of agent-friendly docs elsewhere.",
     "evidenceIds": [
       "token2-probe-1",
-      "token2-probe-2",
-      "token2-probe-3"
+      "token2-probe-2"
     ]
   },
   {
@@ -2556,7 +2553,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key vendor with management/provisioning tools (FIDO2 device management, TOTP tools, PIV tools); it has no data analytics, AI-generated insights, or suggestion features, and this is a category mismatch rather than a missing capability for its product type.",
+    "rationale": "Token2 is a hardware security key / FIDO2-PIV-OTP management product; there is no data analytics or AI-insights feature applicable to this category — this axis is a category error, not a missing capability.",
     "evidenceIds": []
   },
   {
@@ -2565,7 +2562,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/FIDO2 management product; there is no concept of autonomous background automations in its evidence. This is a category mismatch (agenticness axis) rather than a missing feature for this authentication-tool product.",
+    "rationale": "Token2 is a FIDO2/PIV/OTP security key management product; nothing in its evidence pack relates to AI agent automations or background autonomous task execution — this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2574,23 +2571,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/authentication management product (FIDO2/PIV/TOTP tooling); there is no AI assistant feature or agentic task-delegation concept applicable to this product category.",
+    "rationale": "Token2 is a hardware security-key/FIDO2 management product line, not an AI assistant or agentic platform; delegating tasks to a built-in AI assistant is outside its product category.",
     "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Token2 ships a PowerShell bulk-enrollment script (fido2_bulkenroll_entraid) that could in principle be scripted/automated, and fido2-manage exposes some command-line-style operations (PIN, SSH key management) beyond its Python/tkinter GUI, suggesting some automation potential. However, the flagship tool is explicitly GUI-based and requires physical FIDO2 hardware interaction over USB/NFC, and there is no documented headless mode, CI integration, or automation-focused CLI/API (no OpenAPI, no llms.txt, no CI examples). Missing for 10: dedicated headless/CI-mode documentation, evidence of non-interactive scripted runs without physical key presence, and any CI/pipeline integration guide.",
+    "rationale": "Token2 ships CLI/scriptable tools (fido2-manage CLI, PowerShell/GraphAPI bulk-enrollment for Entra ID) that could in principle be invoked in automated pipelines, but there is no documentation describing headless execution, CI integration, or non-interactive operation modes — and most tools inherently require a physically-inserted USB/NFC key, undercutting true headless use. Missing for 10: explicit CI/headless-mode documentation, evidence of non-interactive execution without physical hardware presence, and any CI/pipeline integration examples.",
     "evidenceIds": [
-      "token2-docs-2",
       "token2-gh-4",
-      "token2-docs-8",
-      "token2-probe-4",
-      "token2-probe-3",
-      "token2-probe-1"
+      "token2-docs-22",
+      "token2-docs-25",
+      "token2-probe-4"
     ]
   },
   {
@@ -2599,7 +2594,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key/authentication vendor with FIDO2/PIV management tools; MCP server integration for AI tool-use is entirely outside its product category.",
+    "rationale": "Token2 is a hardware security key/FIDO2-PIV management product; it has no relation to AI agents or MCP tool integration, so this axis is a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2608,7 +2603,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key vendor with management tools (desktop apps, CLI, browser demos), not an AI agent or a platform that could plausibly expose an MCP server for agent connectivity; this axis is a category error for this product type.",
+    "rationale": "Token2 is a hardware security key/FIDO2/PIV/OTP authentication vendor, not an AI agent or agent-serving platform; there is no concept of AI agent connectivity via MCP applicable to this product category.",
     "evidenceIds": []
   },
   {
@@ -2617,22 +2612,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/FIDO2 management product (GUI apps, CLI tools, browser demos); natural-language command operation is a wrong axis for this category of product — no evidence of any NL interface, and none would be expected.",
+    "rationale": "Token2 is a hardware security-key/FIDO2/PIV/OTP management product, not an AI agent or assistant; natural-language command operation is not a relevant axis for this category of product.",
     "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "agentic-official-cli",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Token2 publishes official open-source tools (fido2-manage, fido2_bulkenroll_entraid) that expose scriptable command operations (list/delete/generate/upload for keys, PIN, biometrics, SSH) usable from the command line, and the PowerShell bulk-enroll tool is inherently a CLI-style utility, but neither is explicitly branded or documented as an 'official CLI' for AI-native/agentic workflows — the flagship fido2-manage tool is described primarily as a GUI (Python/tkinter) application with underlying scriptable functions rather than a dedicated documented CLI interface. Missing for 10: explicit CLI documentation/binary/flags, examples of scripting/automation for AI agents, and independent confirmation the tool is used headlessly.",
+    "rationale": "Token2 ships an official open-source CLI (fido2-manage) for managing FIDO2 devices, including scriptable operations (PIN/bio management, JSON/CSV export, SSH key handling) that could be invoked programmatically, but there is no evidence it is designed or marketed for AI-native/agentic workflows (no agent integration, no mention of automation-for-AI use cases, no MCP or scripting-first framing beyond basic export formats). missing for 10: explicit AI-native design intent, agent/automation integration examples, structured machine-readable I/O beyond CSV/JSON export, and independent corroboration of CLI use in agentic pipelines.",
     "evidenceIds": [
+      "token2-gh-1",
       "token2-gh-2",
       "token2-gh-3",
       "token2-gh-4",
-      "token2-docs-2",
-      "token2-probe-rt-1",
+      "token2-gh-5",
+      "token2-gh-6",
+      "token2-gh-7",
+      "token2-docs-19",
       "token2-probe-4"
     ]
   },
@@ -2642,12 +2640,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key vendor; probes explicitly show no public API, no OpenAPI/Swagger spec, and no llms.txt (404s across all checked endpoints). Its tools (fido2-manage CLI, GUI, browser demos) are device-management utilities over USB/NFC/WebAuthn, not a documented public API for programmatic/agentic control.",
+    "rationale": "Token2 is a hardware security-key vendor with device management tools (GUI/CLI utilities, browser demos), but there is no evidence of a documented public API for programmatic/AI-driven control—probes for OpenAPI/swagger specs and llms.txt all returned 404, and no REST/GraphQL API docs are cited.",
     "evidenceIds": [
       "token2-probe-1",
       "token2-probe-2",
-      "token2-probe-3",
-      "token2-gh-1"
+      "token2-probe-3"
     ]
   },
   {
@@ -2656,7 +2653,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key (FIDO2/TOTP/PIV) vendor with management tools for keys and passkeys; it has no concept of API credentials or agent-scoped access tokens. Issuing scoped least-privilege API credentials for an AI agent is outside this product's category entirely.",
+    "rationale": "Token2 is a hardware security key / FIDO2/PIV/OTP authenticator management product, not an API/credential-issuing platform for AI agents; issuing scoped API credentials is outside its product category.",
     "evidenceIds": []
   },
   {
@@ -2674,7 +2671,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key/FIDO2 vendor with device management tools; webhooks for event subscription are not a fit for this product category, which involves no event-driven API or service to subscribe to.",
+    "rationale": "Token2 is a hardware security key / FIDO2/PIV/OTP management product line, not an event-driven or automation platform; webhooks for event subscription are not a relevant capability for this product category.",
     "evidenceIds": []
   },
   {
@@ -2696,11 +2693,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key vendor with desktop/browser tools and a CLI, but there is no evidence of a machine-readable API spec; explicit probes for OpenAPI/Swagger endpoints and llms.txt all returned 404.",
+    "rationale": "Token2 is a hardware security key / FIDO2 management product, not an API/service; probes explicitly show no OpenAPI or machine-readable spec exists (all candidate paths 404), and no evidence pack item mentions any API spec.",
     "evidenceIds": [
+      "token2-probe-3",
       "token2-probe-1",
-      "token2-probe-2",
-      "token2-probe-3"
+      "token2-probe-2"
     ]
   },
   {
@@ -2709,7 +2706,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key vendor with companion tools (FIDO2 management, TOTP generation, PIV/miniDriver tools), not a platform or API with distinct production/sandbox environments; the concept of testing against a sandbox without touching production data does not apply to this product category.",
+    "rationale": "Token2 is a hardware security key / FIDO2-PIV-OTP vendor with management tools, not an API/platform product with a sandbox vs production data environment concept. This axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -2742,25 +2739,26 @@
     "productId": "token2",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Token2 provides fido2_bulkenroll_entraid, a dedicated PowerShell tool for bulk-provisioning FIDO2 keys into Entra ID, and fido2-manage is a scriptable CLI (list/delete/edit passkeys, PIN and bio-template management, SSH key handling) that can be run in loops/scripts to act across many devices. This is real automation-depth for security-key/credential management but is narrow in scope (security keys/passkeys, one specific IdP integration) rather than a general bulk-operations API. Missing for 10: a general-purpose bulk API/SDK, documented batch endpoints beyond the Entra-specific script, and independent evidence of large-scale bulk use in production.",
+    "rationale": "Token2 provides a dedicated bulk-enrollment tool (fido2_bulkenroll_entraid) that automates registering FIDO2 keys in Microsoft Entra ID via the Graph API, including setting random PINs and logging results, plus PowerShell/GraphAPI automated registration guides and an audit/export function that dumps device info and relying parties to JSON/CSV across devices. These support bulk operations on many keys/devices, but they are admin/scripting tools rather than AI-native agent-driven automation, and there's no evidence of natural-language or agent-callable bulk interfaces (e.g., API/CLI designed for AI agents). Missing for 10: AI-agent-oriented interface/API for bulk actions, independent verification of bulk enrollment at scale, and evidence of bulk operations beyond FIDO2/Entra ID enrollment.",
     "evidenceIds": [
       "token2-docs-2",
-      "token2-gh-1",
-      "token2-gh-3",
-      "token2-gh-4",
-      "token2-probe-rt-1"
+      "token2-docs-25",
+      "token2-docs-22",
+      "token2-gh-6"
     ]
   },
   {
     "productId": "token2",
     "storyId": "automation-rules-engine",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/authentication vendor with management tools for FIDO2/PIV devices; there is no automation/event-trigger rules engine in its product category, and the evidence pack covers device management, provisioning, and demos only, not conditional automation.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Token2 is a FIDO2/PIV/TOTP security-key management toolset; the only automation-like behavior evidenced is a fixed system tray watcher that opens its GUI when a key is inserted (token2-gh-7), which is a hardcoded behavior, not a user-configurable rule engine for defining custom triggers and actions across events. No evidence of a rules/automation engine, webhooks, or user-defined event-action bindings.",
+    "evidenceIds": [
+      "token2-gh-7"
+    ]
   },
   {
     "productId": "token2",
@@ -2768,7 +2766,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key/authentication tool vendor; nothing in its product scope relates to scheduling recurring jobs or workflows, which is an automation/orchestration concern outside a security-key management product's category.",
+    "rationale": "Token2 is a hardware security-key / FIDO2/PIV/OTP management product; scheduling recurring jobs or workflows is not a relevant capability for this product category and no evidence relates to automation/job scheduling.",
     "evidenceIds": []
   },
   {
@@ -2777,7 +2775,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/FIDO2 management product; 'automations' with version/review/rollback is a concept from workflow/agent automation platforms, not applicable to a security key management toolset.",
+    "rationale": "Token2 is a hardware security-key / FIDO2 management product line; there is no automation/workflow concept here to version, review, or roll back. This story applies to AI-native automation platforms, not a security-key management toolset.",
     "evidenceIds": []
   },
   {
@@ -2797,13 +2795,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Token2 offers a PowerShell-based bulk enrollment tool for Entra ID (fido2_bulkenroll_entraid) and an open-source fido2-manage CLI/GUI for per-key PIN, biometric, and passkey configuration, which supports pre-registration and bulk configuration workflows. However, there is no evidence of an organization-wide inventory, dashboard, or lifecycle-tracking system for issued keys beyond individual device management and Entra-specific scripting. Missing for 10: centralized fleet inventory/dashboard, cross-platform (non-Entra ID) bulk provisioning, and lifecycle status tracking (issued/revoked/expired) across an organization.",
+    "rationale": "Token2 provides scripts/tools for bulk enrollment into Entra ID (PowerShell/GraphAPI-based fido2_bulkenroll_entraid) with random PIN assignment and logging, plus an open-source fido2-manage CLI that can audit/export device info and relying parties to JSON/CSV — covering some pre-registration and inventory needs. However there is no evidence of a centralized admin console, org-wide key inventory database, or ongoing lifecycle tracking (issuance, revocation, replacement) beyond the Entra ID import/export scripts.  Missing for 10: a unified fleet-management dashboard, cross-directory (not just Entra ID) bulk provisioning, and lifecycle/revocation tracking across the organization.",
     "evidenceIds": [
       "token2-docs-2",
-      "token2-gh-1",
-      "token2-gh-3",
-      "token2-probe-rt-1",
-      "token2-docs-8"
+      "token2-docs-25",
+      "token2-gh-6",
+      "token2-docs-22"
     ]
   },
   {
@@ -2811,24 +2808,26 @@
     "storyId": "certified-hardened-models",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers management tools and software (companion apps, FIDO2 demo, PIV miniDriver) but contains no mention of FIPS 140 validation, Common Criteria certification, or physical durability specifications (water/crush resistance) for any Token2 hardware devices. missing for 10: FIPS 140 validation certificates, Common Criteria certification listings, IP rating or crush-resistance test documentation for hardware keys.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers FIDO2/PIV management tools, companion apps, and integration guides, but contains no mention of FIPS 140 validation, Common Criteria certification, or physical durability testing (water/crush resistance) for any Token2 hardware model.",
     "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "cli-key-management",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "fido2-manage is an official open-source Token2 tool that supports PIN set/change, resident-credential (passkey) and biometric slot management, and device info viewing, and a probe confirms it is documented as a CLI, giving genuine scriptable control over FIDO2 keys. However most docs describe it primarily as a Python/tkinter GUI rather than a dedicated CLI, and there's no explicit mention of an 'enable applications' feature or comprehensive CLI usage examples/API reference. missing for 10: explicit CLI command reference/examples, 'enable applications' capability, independent hands-on CLI scripting confirmation.",
+    "rationale": "fido2-manage is an official, open-source command-line tool (with optional GUI) built on libfido2 that scriptably manages FIDO2 devices: setting/changing PINs, resident credential (passkey) management, biometric enrollment, SSH key provisioning, and dumping device info/relying parties to JSON/CSV for auditing — covering enable/configure, PIN, slot-like credential management, and state reads. missing for 10: no explicit 'enable application/slot' terminology (Yubikey-style applet toggling) and no independent third-party corroboration beyond vendor's own GitHub docs.",
     "evidenceIds": [
+      "token2-gh-1",
       "token2-gh-2",
       "token2-gh-3",
-      "token2-gh-1",
-      "token2-docs-8",
-      "token2-probe-4",
-      "token2-probe-rt-1"
+      "token2-gh-4",
+      "token2-gh-5",
+      "token2-gh-6",
+      "token2-gh-7",
+      "token2-docs-19"
     ]
   },
   {
@@ -2836,8 +2835,8 @@
     "storyId": "connector-lineup",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack focuses entirely on software tools (FIDO2 management apps, TOTP toolset, PIV drivers) and never describes Token2's physical hardware lineup, connector types (USB-C/USB-A), or form factors (keychain, nano). No mention of product SKUs, dimensions, or port types is present, so there's no basis to confirm coverage of power-user form-factor variety. Missing for 10: hardware product listings, connector-type specs, form-factor descriptions (nano/keychain), any comparison chart of models.",
+    "confidence": "high",
+    "rationale": "The evidence pack is entirely about software companion tools (FIDO2 management apps, PIV minidriver, TOTP toolset, CLI utilities) and contains no mention of physical hardware variants, port types (USB-A/USB-C), or form factors (keychain, nano). While this axis clearly applies to a hardware security-key vendor, none of the provided evidence supports or describes the actual product lineup's physical form factors.",
     "evidenceIds": []
   },
   {
@@ -2846,14 +2845,13 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "fido2-manage (with GUI and CLI) lists resident credentials/passkeys with user handle, allows delete and edit metadata, and works over USB/NFC for any FIDO2.1 device, directly covering list/delete of passkeys stored on the key. However, there is no explicit evidence of a feature reporting remaining credential capacity or slot count before the key fills up. Missing for 10: explicit credential-capacity/slots-remaining reporting, independent hands-on confirmation of listing/deleting behavior.",
+    "rationale": "The open-source fido2-manage tool (with GUI) explicitly supports listing resident credentials/passkeys with user handle and deleting them, per token2-gh-1 and token2-gh-3. However, no evidence shows a explicit credential-capacity indicator (e.g., number of slots used/remaining before the key fills up) — missing for 10: explicit credential slot/capacity reporting, independent hands-on confirmation of capacity behavior.",
     "evidenceIds": [
       "token2-gh-1",
-      "token2-gh-2",
       "token2-gh-3",
       "token2-docs-7",
       "token2-docs-8",
-      "token2-probe-rt-1"
+      "token2-gh-6"
     ]
   },
   {
@@ -2862,14 +2860,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows solid cross-OS/browser support (Windows control panel, Chromium browsers, macOS/Linux companion app, PIV miniDriver) and manufacturer-agnostic FIDO2.1 tooling, but there is no published catalog listing which third-party services/relying parties are certified compatible with Token2 keys. missing for 10: a published service/RP compatibility catalog, independent cross-browser/OS corroboration beyond vendor docs.",
+    "rationale": "Token2 documents strong cross-OS/browser support (Windows control panel, Chromium on macOS/Linux, cross-platform Companion App, iOS/Android app, open-source fido2-manage CLI/GUI) and even an AAGUID/authenticator lookup tool, but there is no published catalog of which third-party services/relying parties are compatible or certified to work with the keys — only a generic 'manufacturer-agnostic FIDO2.1' claim. missing for 10: a published compatibility catalog of supported services/relying parties, independent corroboration of the OS/browser claims.",
     "evidenceIds": [
-      "token2-docs-7",
+      "token2-docs-13",
       "token2-docs-14",
       "token2-docs-15",
-      "token2-docs-12",
-      "token2-docs-9",
-      "token2-gh-2"
+      "token2-docs-1",
+      "token2-docs-18",
+      "token2-docs-10",
+      "token2-docs-9"
     ]
   },
   {
@@ -2877,8 +2876,8 @@
     "storyId": "enterprise-delivery-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers device management, bulk enrollment, and provisioning tools but nothing about a logistics/delivery service (e.g., automated shipping of physical keys to distributed employees) driven by API or console. No fulfillment, shipping, or distribution capability is documented anywhere in the evidence pack.",
+    "confidence": "medium",
+    "rationale": "Token2's evidence pack covers key management tools (FIDO2/PIV provisioning, bulk enrollment via Entra ID Graph API), but there is no evidence of a physical delivery/shipping/logistics service for distributing hardware keys to distributed employees, nor an API/console driving shipping logistics. This is a distinct fleet-management capability (shipping logistics) not addressed anywhere in the evidence.",
     "evidenceIds": []
   },
   {
@@ -2887,14 +2886,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Token2 sells FIDO2 hardware keys explicitly supporting resident/discoverable credentials (passkeys), with documentation and an open-source companion tool (fido2-manage) that lists, edits, and manages resident credentials including user handles, plus a browser-based demo to register and authenticate via WebAuthn without typing a username. Independent GitHub evidence corroborates the resident-key management feature set (list with user handle, delete, edit metadata).\n\nmissing for 10: no explicit third-party/independent test confirming passwordless username-less sign-in flow in production RP scenarios, and no FIDO Alliance certification citation for discoverable credential compliance.",
+    "rationale": "Token2's FIDO2 keys support resident/discoverable credentials (passkeys), evidenced by the fido2-manage tool listing resident credentials with user handle, and the WebAuthn demo tool allowing registration/login with passkeys. Docs also reference passkey management via companion apps (desktop/mobile) and browser-native settings. Missing for 10: independent third-party certification testing or hands-on confirmation of true usernameless sign-in flow with a relying party beyond Token2's own demo.",
     "evidenceIds": [
       "token2-gh-1",
-      "token2-gh-2",
       "token2-docs-5",
       "token2-docs-7",
       "token2-docs-8",
-      "token2-probe-rt-1"
+      "token2-gh-2",
+      "token2-docs-16",
+      "token2-docs-18"
     ]
   },
   {
@@ -2903,7 +2903,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers key management tools (PIN, passkeys, PIV, SSH) but contains no security advisories, CVE/vulnerability disclosure process, affected-model lookup tool, or firmware update delivery mechanism for Token2 devices.",
+    "rationale": "Evidence covers device management tools (FIDO2 companion apps, PIV miniDriver, bulk enrollment) but contains no security advisories, CVE/vulnerability disclosure process, affected-model lookup, or firmware update delivery mechanism.",
     "evidenceIds": []
   },
   {
@@ -2912,17 +2912,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Token2 provides multiple avenues for onboarding: a browser-based FIDO2/passkey demo to test registration (token2-docs-5, token2-docs-16), OS-native guidance for macOS/Linux/Chrome and Windows control panel (token2-docs-13/14/15), a companion GUI app for device/passkey management (token2-docs-1/7/8), and an FAQ entry on setting up a backup key (token2-docs-17). This gives a reasonably guided path but is scattered across docs/tools rather than a single cohesive first-time setup wizard that walks a user through registering with specific real-world accounts (e.g., Google, Microsoft, GitHub). Missing for 10: a unified step-by-step onboarding flow/app tailored to major account providers, and independent user reports confirming ease of first-time setup.",
+    "rationale": "Token2 provides multiple guided-setup resources: a browser-based FIDO2/passkey registration demo (token2-docs-5/16), a backup-key setup FAQ (token2-docs-17), platform-specific integration guides for Entra ID, Intune, and Active Directory (token2-docs-22/23/25), and PIV/miniDriver configuration guides (token2-docs-11/24), plus companion apps for managing keys post-registration. However, there is no single unified onboarding wizard walking a first-time user end-to-end, and no independent/hands-on confirmation that these guides are beginner-friendly. Missing for 10: a first-party interactive setup wizard/app that walks a user through initial account registration, independent user reports confirming ease of first-time setup.",
     "evidenceIds": [
       "token2-docs-5",
       "token2-docs-16",
-      "token2-docs-13",
-      "token2-docs-14",
-      "token2-docs-15",
       "token2-docs-17",
-      "token2-docs-1",
-      "token2-docs-7",
-      "token2-docs-8"
+      "token2-docs-22",
+      "token2-docs-23",
+      "token2-docs-11",
+      "token2-docs-24",
+      "token2-docs-25"
     ]
   },
   {
@@ -2930,54 +2929,51 @@
     "storyId": "hardware-approval-for-agents",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Token2's evidence covers FIDO2 key management, PIV, TOTP tools, and WebAuthn demos, but nothing shows integration with AI agents or automated workflows that would use a physical touch as an approval gate for agent-initiated actions. Missing for 10: any documentation of agent/automation integration, an approval-step API or SDK, or a workflow example tying physical touch to AI-agent action authorization.",
-    "evidenceIds": [
-      "token2-docs-1",
-      "token2-docs-5",
-      "token2-gh-1",
-      "token2-docs-9"
-    ]
+    "confidence": "low",
+    "rationale": "Token2 provides FIDO2/PIV/OTP hardware key management tools (companion apps, CLI, SSH key resident credentials) but nothing in the evidence pack ties physical key touch to gating or approving AI-agent-initiated or automated actions specifically; all documented use cases are standard authentication/login/enrollment scenarios, not agentic-workflow approval steps.",
+    "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "hardware-backed-ssh",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Token2's fido2-manage tool explicitly supports SSH security keys (generate, list resident, download/rehydrate, ssh-copy-id, add to local ssh-agent), directly evidencing FIDO2 sk-ssh hardware-backed key workflows. PIV is also supported via the Windows miniDriver and Companion App for smartcard-based certificate enrollment, but there is no mention of OpenPGP support for SSH auth. missing for 10: OpenPGP-based SSH key support, independent/hands-on verification of the sk-ssh workflow, and cross-platform PIV parity beyond Windows/macOS.",
+    "rationale": "The fido2-manage tool explicitly supports SSH security keys (generate, list resident, download, upload via ssh-copy-id, add to local ssh-agent), giving hardware-backed FIDO2 sk-ssh keys with touch confirmation, and Token2 also ships PIV management via the miniDriver/Companion App for smartcard-based login. However, there is no evidence of OpenPGP-based SSH key support, and the SSH-key features are only demonstrated in a third-party open-source GUI tool rather than deeply documented first-party guidance. missing for 10: OpenPGP SSH key support, first-party documentation/tutorial specifically for sk-ssh with servers, independent hands-on corroboration of ssh-agent workflow.",
     "evidenceIds": [
       "token2-gh-4",
       "token2-docs-3",
       "token2-docs-11",
       "token2-docs-12",
-      "token2-probe-rt-1"
+      "token2-docs-24",
+      "token2-gh-2"
     ]
   },
   {
     "productId": "token2",
     "storyId": "idp-policy-integration",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Token2 documents a dedicated Entra ID bulk-enrollment tool leveraging the Graph API, showing concrete IdP integration for one provider, and its keys are standard FIDO2 devices that any IdP could require via WebAuthn policy. However, there is no evidence of Okta or Google Workspace-specific integration tooling, nor documentation of admin-side policy enforcement (e.g., conditional access rules mandating hardware-key auth) — these are typically the IdP's own settings, not something Token2 documents supporting or configuring. Missing for 10: Okta integration evidence, Google Workspace integration evidence, and any documentation of fleet-wide policy enforcement/reporting.",
+    "rationale": "Token2 provides concrete Entra ID integration (bulk FIDO2 enrollment via Graph API, PowerShell automation, Intune passwordless workstation login guide), which supports IT-admin fleet provisioning against one major IdP. However, there is no evidence of native Okta or Google Workspace integration guides/tools, and no documentation of policy-enforcement mechanisms (e.g., requiring hardware-key-only auth) beyond standard FIDO2/WebAuthn compliance. Missing for 10: Okta integration documentation, Google Workspace integration documentation, explicit hardware-key enforcement/policy configuration guidance.",
     "evidenceIds": [
       "token2-docs-2",
-      "token2-probe-rt-1",
-      "token2-docs-11"
+      "token2-docs-22",
+      "token2-docs-23",
+      "token2-docs-25"
     ]
   },
   {
     "productId": "token2",
     "storyId": "nfc-mobile-tap",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Token2's own tooling confirms its FIDO2 keys support NFC as a communication transport (used by the fido2-manage companion app to manage keys over USB or NFC), which implies NFC-capable hardware, but there is no explicit documentation stating that users can tap the key on a phone to authenticate within mobile browsers or apps via WebAuthn/CTAP2 NFC. Missing for 10: explicit end-user documentation or demo of phone-NFC-based authentication in mobile browsers/apps, and any independent confirmation of this specific mobile use case.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence confirms NFC connectivity is used for key *management* (e.g., fido2-manage over USB/NFC, mobile companion app for configuring keys) but no evidence describes tapping the key via NFC to actually authenticate/log in within mobile browsers or apps.",
     "evidenceIds": [
       "token2-docs-8",
       "token2-gh-2",
-      "token2-docs-9"
+      "token2-docs-18"
     ]
   },
   {
@@ -2986,17 +2982,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only management/admin tools (fido2-manage GUI/CLI, bulk enrollment for Entra ID, browser-based WebAuthn demo) rather than an official SDK or library for embedding the key's authentication into a developer's own desktop/mobile applications. No mention of a downloadable SDK, API bindings, or mobile library is found anywhere in the pack.",
-    "evidenceIds": [
-      "token2-docs-1",
-      "token2-gh-1",
-      "token2-gh-2",
-      "token2-gh-3",
-      "token2-gh-4",
-      "token2-docs-5",
-      "token2-probe-3",
-      "token2-probe-4"
-    ]
+    "rationale": "The evidence only documents end-user/admin management tools (desktop/mobile companion apps, fido2-manage CLI/GUI, PIV minidriver, Entra ID bulk-enroll scripts) — these let users and admins manage keys, but none of them constitute an official SDK/library that developers can embed into their own desktop or mobile apps to integrate key functionality. FIDO2/WebAuthn is referenced only via standard browser APIs, not a Token2-provided SDK.",
+    "evidenceIds": []
   },
   {
     "productId": "token2",
@@ -3004,41 +2991,29 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence concerns open-source host-side management tools (fido2-manage GUI, companion app, bulk-enrollment scripts) that run on a computer to manage the keys — none of it addresses whether the actual device firmware running on the Token2 hardware key itself is open source or has undergone independent security audit.",
+    "rationale": "Evidence pack only shows open-source companion/management software (fido2-manage, bulk enrollment scripts, companion apps) — none of it addresses the actual device firmware being open source or independently audited. There is no mention of firmware source availability, reproducible builds, or third-party security audits of the hardware/firmware itself.",
     "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "openness-api-parity",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Token2 ships an open-source CLI (fido2-manage) that overlaps with much of the companion GUI's functionality — resident credential/passkey management, PIN setup, biometric template management, and SSH key operations can all be scripted — giving some AI-native/automation parity with the desktop UI. However, there is no true REST/HTTP API (probes confirm openapi.json/swagger.json all 404), and several UI-only web tools (TOTP toolset, WebAuthn browser demo, factory reset) have no documented programmatic equivalent. Missing for 10: a formal API surface (REST/OpenAPI) covering all UI functions, CLI/API parity for the web-based demo and TOTP tools, and independent confirmation that CLI coverage is fully equivalent to the GUI.",
-    "evidenceIds": [
-      "token2-gh-1",
-      "token2-gh-3",
-      "token2-gh-4",
-      "token2-docs-7",
-      "token2-docs-4",
-      "token2-docs-5",
-      "token2-probe-3",
-      "token2-probe-4",
-      "token2-probe-rt-1"
-    ]
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Token2 is a hardware security-key vendor with GUI/CLI companion tools and integration guides for managing FIDO2/PIV/OTP devices; it is not an AI-native platform with a UI whose functionality is meant to be mirrored via a general API. This axis is a category error for this product type, not a missing capability.",
+    "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Token2 supports exporting TOTP seeds as open CSV/JSON files for Entra ID import, and its open-source fido2-manage tool lets users list, download, and rehydrate resident credentials and SSH keys from FIDO2 devices, plus it's explicitly manufacturer-agnostic (works with any FIDO2.1 key), supporting migration away from Token2 hardware without lock-in. However, this covers only specific data types (TOTP seeds, credentials, SSH keys) rather than a full account/data export, and there's no unified 'export everything' feature or documentation. Missing for 10: comprehensive account-wide data export, first-party documentation framing this as a full data portability/exit feature, independent verification of export completeness.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "There is genuine open-format export evidence (audit dump of device info + relying parties to JSON/CSV, and TOTP seed export to CSV/JSON), which supports local data portability, but Token2 is a hardware security-key vendor rather than a data-hosting platform, so the 'export everything and leave' story is thin and narrowly scoped to device/credential metadata. missing for 10: comprehensive account/data export beyond device credentials, explicit data-portability policy, independent confirmation the export is complete/lossless.",
     "evidenceIds": [
+      "token2-gh-6",
       "token2-docs-6",
-      "token2-gh-1",
-      "token2-gh-4",
-      "token2-docs-9",
-      "token2-probe-rt-1"
+      "token2-gh-1"
     ]
   },
   {
@@ -3047,13 +3022,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Token2 open-sources some companion tooling on GitHub (fido2-manage, fido2_bulkenroll_entraid) with real activity (112 stars, recent pushes), letting an AI-native user inspect that code, but the core hardware product/firmware and several web tools (TOTP toolset, FIDO2 demo) are not shown to have public source, and no explicit license file/type is cited. Missing for 10: confirmed OSI license text, source availability for the full product line (not just auxiliary management tools).",
+    "rationale": "Several Token2 companion tools (desktop/mobile FIDO2 management apps, fido2-manage) are explicitly described as open-source with public GitHub repos, letting an AI-native user read that source code. However, no explicit license file/type is cited, and the core hardware/firmware product itself is not claimed to be open source. missing for 10: explicit license identification (e.g., MIT/Apache), confirmation that core product (not just companion tools) is open source.",
     "evidenceIds": [
       "token2-docs-1",
+      "token2-docs-18",
+      "token2-docs-19",
       "token2-gh-1",
       "token2-gh-2",
-      "token2-docs-2",
-      "token2-probe-rt-1"
+      "token2-probe-4"
     ]
   },
   {
@@ -3077,13 +3053,14 @@
   {
     "productId": "token2",
     "storyId": "otp-legacy-slots",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence only shows a browser-based TOTP toolset (docs-4, docs-6) and Entra ID seed export, unrelated to the FIDO2 security key itself carrying TOTP/HOTP slots or challenge-response capability; no documentation shows the hardware key supports legacy OTP protocols. Missing for 10: any spec sheet or docs stating the key itself implements TOTP/HOTP slots, challenge-response mode, or dual-protocol firmware.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Token2 offers a browser-based TOTP toolset for generating/verifying codes and exporting seeds (token2-docs-4, token2-docs-6), and mentions a future all-in-one app that will add 'OTP functionality' alongside FIDO2/PIV (token2-docs-20), but there is no evidence the security keys themselves currently expose programmable HOTP slots or challenge-response modes for legacy services. Missing for 10: concrete documentation that the physical key supports HOTP/TOTP slot programming or challenge-response (e.g., Yubikey-style OTP slot), and confirmation that the OTP feature in the unified app is shipped rather than planned.",
     "evidenceIds": [
       "token2-docs-4",
-      "token2-docs-6"
+      "token2-docs-6",
+      "token2-docs-20"
     ]
   },
   {
@@ -3091,27 +3068,28 @@
     "storyId": "pin-biometric-verification",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Evidence confirms FIDO2 PIN setup/change and biometric template enrollment/management via the companion tool and fido2-manage (PIN management, min PIN length, biometric templates: list, rename, delete, enroll), and browsers/OS natively prompt for PIN when required, satisfying on-device user verification against theft. missing for 10: no independent/hands-on third-party testing confirming UV enforcement during actual authentication ceremonies, and no explicit CTAP2 'uv' flag/attestation documentation.",
+    "confidence": "medium",
+    "rationale": "Token2 keys support FIDO2 PIN setup/change and biometric template enrollment/management (bio models: list, rename, delete, enroll) via the companion app and fido2-manage tool, and browsers prompt for PIN setup when required, confirming on-device user verification is supported. missing for 10: independent/hands-on verification of biometric UV actually being enforced during authentication (vs. just configurable), and no explicit statement that all Token2 key models include a biometric sensor.",
     "evidenceIds": [
       "token2-gh-3",
+      "token2-gh-5",
       "token2-docs-7",
       "token2-docs-13",
-      "token2-docs-8",
-      "token2-probe-rt-1"
+      "token2-docs-8"
     ]
   },
   {
     "productId": "token2",
     "storyId": "piv-smartcard-login",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Token2 documents PIV support via a Windows miniDriver and macOS Companion App enabling smartcard-based certificate enrollment and login with on-prem AD, which covers workstation sign-in use cases. However, there is no evidence for VPN integration or code signing use cases specifically, nor independent/hands-on verification of PIV certificate workflows beyond vendor docs. missing for 10: VPN certificate-auth evidence, code-signing use case evidence, independent/hands-on validation of PIV smartcard login, detail on key non-exportability guarantees for PIV certs.",
+    "rationale": "Token2 documents PIV support via Windows miniDriver for smartcard-based certificate enrollment/login with on-prem AD, and PIV configuration via the Companion App on macOS with a guide for PIV-based macOS login, indicating workstation sign-in support. However, evidence is thin on VPN integration and code signing use cases specifically, and there is no independent/hands-on corroboration of certificate-based login working end-to-end. Missing for 10: explicit VPN client integration guidance, code-signing workflow documentation, and independent verification of PIV certificate login in practice.",
     "evidenceIds": [
       "token2-docs-3",
       "token2-docs-11",
-      "token2-docs-12"
+      "token2-docs-12",
+      "token2-docs-24"
     ]
   },
   {
@@ -3120,7 +3098,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security-key/authenticator vendor with local management tools; it does not store user data in a cloud service, so data residency/region selection is not an applicable axis for this product category.",
+    "rationale": "Token2 is a hardware security key/FIDO2 management tool ecosystem, not a data-hosting or cloud service with data residency options; there is no concept of user data being stored in selectable regions since keys operate locally/offline. This axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3129,19 +3107,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Token2 is a hardware security key/FIDO2 authentication vendor; it has no AI model training data pipeline or data-usage policy relevant to AI training. This axis is a category error for a hardware authentication product line.",
+    "rationale": "Token2 is a hardware security-key/FIDO2/PIV management product, not an AI model or AI service that trains on user data; preventing AI training on user data is a wrong-axis question for this product category.",
     "evidenceIds": []
   },
   {
     "productId": "token2",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Token2's tools give users direct control to delete data stored on their own security keys — resident credentials/passkeys can be listed, edited, and deleted, biometric templates can be deleted, and factory resets are supported (token2-gh-1, token2-gh-3, token2-docs-7). This covers device-level data deletion but there is no documentation of server-side retention policies, account-level data deletion, or how long any cloud-side telemetry/data is retained. Missing for 10: server-side/account data retention policy documentation, explicit data-deletion request process for any cloud-stored data, independent confirmation of retention practices.",
+    "rationale": "Token2's fido2-manage tool and Companion App let users delete resident credentials/passkeys, delete or rename biometric templates, and perform factory resets, giving concrete control over data deletion stored on the security key. However, there's no documentation addressing 'retention' policies (e.g., automatic expiry, data lifecycle controls) or deletion of any cloud-side data (e.g., Entra ID enrollment records), only local on-device deletion. missing for 10: explicit retention-period controls, deletion of any server/cloud-stored data, independent corroboration beyond vendor docs/GitHub.",
     "evidenceIds": [
       "token2-gh-1",
       "token2-gh-3",
+      "token2-gh-5",
       "token2-docs-7",
       "token2-docs-8"
     ]
@@ -3159,15 +3138,17 @@
     "productId": "token2",
     "storyId": "webauthn-second-factor",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Token2 provides standards-based FIDO2/WebAuthn/U2F hardware keys with strong first-party tooling for Microsoft Entra ID enrollment and a general WebAuthn demo/testing tool, implying broad cross-service compatibility as a certified FIDO2.1 device. However, there is no direct documentation or independent confirmation of successful registration/use with Google, GitHub, or specific password managers. Missing for 10: explicit vendor or third-party evidence of working as a 2FA/passkey with Google, GitHub, and named password managers.",
+    "rationale": "Token2 keys are documented as standards-compliant FIDO2/WebAuthn/U2F authenticators with explicit, detailed Microsoft Entra ID/Active Directory integration guides and provisioning tools, plus a generic browser-based WebAuthn demo showing register/login flows. However, there is no explicit documentation or evidence of compatibility/testing with Google accounts, GitHub, or specific password managers — the story's named services are only partially covered. Missing for 10: explicit Google account 2FA setup guide, GitHub security-key registration guide, and named password-manager (e.g., Bitwarden, 1Password) compatibility confirmation.",
     "evidenceIds": [
-      "token2-docs-2",
-      "token2-docs-5",
       "token2-docs-9",
-      "token2-docs-16",
-      "token2-gh-2"
+      "token2-docs-5",
+      "token2-docs-22",
+      "token2-docs-2",
+      "token2-docs-13",
+      "token2-docs-14",
+      "token2-docs-15"
     ]
   },
   {
