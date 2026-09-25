@@ -332,7 +332,10 @@ async function generateOne(t: PromptTarget): Promise<{ prompt: string; calls: nu
     raw = await llmJson({
       schema: RawPromptSchema,
       system: SYSTEM,
-      prompt: generationPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Rewrite the prompt correcting it; every other rule still applies.`),
+      // Correction-round message only — the initial prompt and PROMPT_VERSION stay untouched
+      // (email-lane precedent 2026-09-23; vendor_010 Composio trap 2026-09-25: the model kept
+      // naming the canonical vendor, so the reminder now spells the placeholder rule out).
+      prompt: generationPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Rewrite the prompt correcting it; every other rule still applies. CRITICAL REMINDERS: never write ANY vendor's actual name — not even the canonical/top-ranked vendor for this step — always the literal {{vendor}} token wherever the vendor is meant; keep every other vendor mention generic ("your registrar", "your CRM").`),
     })
     calls += 1
     violation = validatePrompt(t, raw.prompt)

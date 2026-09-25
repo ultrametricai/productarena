@@ -22,8 +22,17 @@ function toClientGlyph(glyph: AccessGlyph, arenaId: string, productId: string): 
   }
 }
 
+// Hardware-class arenas (naDimensions suppresses agentReady — a CPU/GPU has no agent-drivable
+// surface of its own) are EXCLUDED from the homepage company/product rankings (founder
+// 2026-09-25: "Intel Core Ultra 7 258V under 'most agent-ready' makes no sense"). They keep
+// their own arena pages, the /arenas directory, and /experiments views — just not this table.
+export function isHardwareClass(data: CategoryData): boolean {
+  return (data.category.naDimensions ?? []).includes('agentReady')
+}
+
 export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
   const rows: MegaTableRow[] = []
+  categories = categories.filter((d) => !isHardwareClass(d))
   // 🔥 flags (see lib/hotProducts.ts) are global per product — computed once over the whole
   // fleet, then serialized as a plain reason string per row.
   const hotFlags = computeHotFlags(categories)
@@ -121,7 +130,7 @@ export interface MegaTableArenaOption {
 }
 
 export function buildMegaTableArenaOptions(categories: CategoryData[]): MegaTableArenaOption[] {
-  return categories.map((data) => ({
+  return categories.filter((d) => !isHardwareClass(d)).map((data) => ({
     id: data.category.id,
     name: data.category.name,
     icon: (arenaIcons as Record<string, string>)[data.category.id],
