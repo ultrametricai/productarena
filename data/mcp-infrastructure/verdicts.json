@@ -3,15 +3,14 @@
     "productId": "composio",
     "storyId": "agent-framework-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio docs describe a general 'provider' adapter concept that turns Composio tools into the native format for a target framework (composio-docs-12), implying multi-framework support, and it also exposes MCP and CLI integration paths (composio-docs-4, composio-docs-10, composio-probe-3/4). However, the evidence pack never names or documents adapters for the specific frameworks in the story (Vercel AI SDK, LangChain, CrewAI, OpenAI/Anthropic SDKs), so the breadth and quality of per-framework documentation can't be confirmed. Missing for 10: explicit documented adapter pages/examples for Vercel AI SDK, LangChain, CrewAI, and OpenAI/Anthropic SDKs, plus any independent confirmation these integrations work in practice.",
+    "rationale": "Docs describe a generic 'provider' adapter concept that converts Composio tools into the native format for 'any AI framework' without writing glue code, and reference an OpenAPI spec plus MCP/CLI integration paths, but no evidence explicitly names or documents adapters for Vercel AI SDK, LangChain, CrewAI, or OpenAI/Anthropic SDKs specifically. missing for 10: named documented adapters/examples for LangChain, CrewAI, Vercel AI SDK, OpenAI/Anthropic SDKs, independent corroboration of these specific integrations.",
     "evidenceIds": [
       "composio-docs-12",
-      "composio-docs-4",
-      "composio-docs-10",
-      "composio-probe-3",
-      "composio-probe-4"
+      "composio-docs-28",
+      "composio-docs-34",
+      "composio-probe-2"
     ]
   },
   {
@@ -20,9 +19,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at docs.composio.dev/llms.txt (HTTP 200) with a clear agent-oriented summary, and the docs also expose an agent-specific setup guide (agent-setup.md) and agent skill install instructions, showing genuine agent-native documentation design. Missing for 10: no independent/community confirmation that agents actually consume llms.txt successfully in practice.",
+    "rationale": "Composio hosts a working llms.txt endpoint (HTTP 200) with a concise agent-oriented summary of its docs, alongside an OpenAPI spec and agent-oriented CLI/plugin docs, so an agent can be pointed directly at machine-readable docs. missing for 10: no independent/community confirmation that agents actually consume llms.txt successfully in practice.",
     "evidenceIds": [
       "composio-probe-1",
+      "composio-probe-2",
       "composio-docs-18",
       "composio-docs-25"
     ]
@@ -33,7 +33,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Composio is a developer infrastructure platform for connecting AI agents to third-party tools/apps (auth, tool discovery, execution, triggers, MCP) — it is not itself a data product with a UI that surfaces AI-generated insights or suggestions from a user's own data. This story fits analytics/BI/CRM-type products, not an agent-tooling backend, so the axis does not apply here.",
+    "rationale": "Composio is an agent-tool-integration/orchestration platform (auth, tool discovery, execution across apps) rather than a data/analytics product that surfaces AI-generated insights or suggestions from a user's own dataset — this axis doesn't apply to its category.",
     "evidenceIds": []
   },
   {
@@ -42,12 +42,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio's triggers system lets connected-app events (new Slack message, GitHub commit, incoming email) be pushed as structured, signed payloads to a webhook the user's app controls, which is the core building block for background automations reacting to real-world events without manual polling. However, Composio itself doesn't run or orchestrate the automation loop end-to-end (scheduling, retries, autonomous decision-making) — that logic still lives in the user's own agent/app that consumes the webhook, so 'runs autonomously in the background' is only partially delivered by Composio's infrastructure. Missing for 10: evidence of a built-in scheduler/workflow runner, autonomous multi-step execution without external orchestration, and independent confirmation that triggers reliably fire and are consumed hands-off in production.",
+    "rationale": "Composio provides triggers that deliver connected-app events to a registered webhook (docs-9, docs-21) and supports unattended agent authentication via `composio login --agent` (docs-19/33), which together let an AI-native builder wire up event-driven automations without a human in the loop. However, Composio itself is a tool/auth layer, not an orchestration or scheduling engine — there's no evidence of a persistent background runner, cron-like scheduler, or hosted execution loop that keeps an automation running autonomously; that responsibility falls to the consuming agent/app. missing for 10: evidence of a built-in scheduler or persistent background execution engine, and independent/hands-on confirmation that trigger-based automations run reliably unattended.",
     "evidenceIds": [
       "composio-docs-9",
       "composio-docs-21",
-      "composio-docs-16",
-      "composio-docs-14"
+      "composio-docs-19",
+      "composio-docs-33",
+      "composio-docs-20"
     ]
   },
   {
@@ -56,71 +57,70 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Composio is a tool/infrastructure platform for connecting AI agents to external apps and APIs, not itself an AI assistant product with a built-in assistant persona to delegate tasks to; this axis is a category error for this product type.",
+    "rationale": "Composio is an infrastructure/tooling platform that lets external AI agents and frameworks connect to tools, accounts, and MCP servers—it is not itself an AI assistant product with a built-in assistant to delegate tasks to. The evidence describes enabling other agents (Codex, Claude Code, custom agents) via CLI, MCP, and SDK, not a first-party assistant inside Composio itself, so this consumer-assistant axis is a category mismatch.",
     "evidenceIds": []
   },
   {
     "productId": "composio",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Composio provides an SDK/API (composio.sessions.create, REST/OpenAPI) and a CLI with an unattended `composio login --agent` mode plus `composio setup --target auto`, which supports scripted/headless use, and webhooks for event-driven automation without a UI. However there is no explicit CI/headless-pipeline example, no documented service-account/API-key-only auth flow for fully non-interactive server use, and the CLI docs emphasize interactive terminal/agent use rather than CI pipelines. missing for 10: explicit CI/CD pipeline example, documented service-account or non-interactive API key flow for headless auth, independent confirmation of CI usage.",
+    "rationale": "Composio ships a programmatic SDK (session creation via API, no UI required), a CLI usable from terminals/scripts, an OpenAPI spec for direct API automation, and explicit unattended authentication (`composio login --agent`) designed to sign in without a browser — all core requirements for CI/headless automation. Missing for 10: no explicit CI/CD pipeline example (e.g., GitHub Actions) or independent confirmation of headless runs in production.",
     "evidenceIds": [
       "composio-docs-1",
       "composio-docs-19",
-      "composio-docs-11",
-      "composio-docs-9",
+      "composio-docs-33",
+      "composio-docs-24",
+      "composio-docs-29",
       "composio-probe-2",
-      "composio-docs-24"
+      "composio-probe-4"
     ]
   },
   {
     "productId": "composio",
     "storyId": "agentic-mcp-client",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Composio documents concrete mechanisms for exposing/consuming MCP: sessions can opt into MCP mode (`mcp: true`) to get a hosted MCP URL scoped to chosen toolkits, `composio.mcp.create` builds single-toolkit MCP servers, and 'Composio Connect' is an official MCP server URL (connect.composio.dev/mcp) giving agents access to 1000+ apps' tools through meta-tools for discovery/auth/execution. This is corroborated by a dedicated probe confirming the official MCP server documentation page. Missing for 10: independent/hands-on confirmation that plugging in an arbitrary third-party MCP server (not just Composio's own toolkits) works, and no community success story specifically validating MCP tool use end-to-end (only an unrelated Instagram-connect complaint and a security incident, neither about MCP functionality itself).",
+    "rationale": "The evidence pack extensively documents Composio *exposing* MCP servers (via `mcp: true` sessions, `composio.mcp.create()`, and the hosted Composio Connect MCP endpoint) for other agents to consume, but shows no capability for the user to plug in arbitrary third-party MCP servers so that Composio's own agent/session can use their tools. Composio's tool surface is instead built from its own 1000+ toolkit catalog and meta-tools, not from imported external MCP servers.",
     "evidenceIds": [
       "composio-docs-4",
-      "composio-docs-13",
-      "composio-docs-14",
       "composio-docs-23",
       "composio-docs-26",
-      "composio-probe-3"
+      "composio-docs-13",
+      "composio-docs-35"
     ]
   },
   {
     "productId": "composio",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Composio ships an official hosted MCP server (Composio Connect at https://connect.composio.dev/mcp) plus per-session MCP endpoints (`mcp: true`) that expose meta-tools and toolkit-specific tool sets, documented in first-party docs and confirmed live via probe. Missing for 10: independent/hands-on confirmation that agents actually connect and operate successfully through the MCP endpoint (only unrelated connector-specific community complaints exist, not about MCP itself).",
+    "rationale": "Composio explicitly ships a hosted official MCP server (Composio Connect at https://connect.composio.dev/mcp) plus session-based MCP opt-in (mcp: true), documented with concrete setup and tool schemas across multiple docs pages and a probe confirming the endpoint. Missing for 10: independent hands-on verification of the MCP connection itself (the community evidence found relates to Instagram auth and a leaked key, not MCP connectivity).",
     "evidenceIds": [
       "composio-docs-4",
-      "composio-docs-5",
       "composio-docs-13",
+      "composio-docs-14",
       "composio-docs-26",
-      "composio-docs-23",
+      "composio-docs-31",
       "composio-probe-3"
     ]
   },
   {
     "productId": "composio",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio's meta-tools, agent plugins, and Connect Link flows are explicitly designed so an AI agent (driven by natural-language conversation) can discover, authorize, and execute tools without manual UI/config, and this extends to CLI use from within a coding agent's chat session. Missing for 10: independent hands-on validation that end-to-end NL command flows work smoothly (one community report notes friction/failures with specific app connections), and no first-party demo of a human directly issuing free-form NL commands to Composio outside an agent context.",
+    "rationale": "Composio is a tool-orchestration/integration layer, not itself a conversational agent; natural-language control happens through the agent frameworks it plugs into (via CLI plugins, meta-tools like COMPOSIO_SEARCH_TOOLS that let an agent 'search by task' rather than needing exact tool slugs). Docs show agent plugins letting Codex/Claude Code use natural language to find and run tools, and meta-tools enabling task-based discovery, but there's no evidence of a standalone NL interface for non-agent human users. missing for 10: independent/hands-on validation of natural-language control quality, and evidence of an end-user-facing NL interface outside of agent-framework integrations.",
     "evidenceIds": [
-      "composio-docs-6",
       "composio-docs-14",
       "composio-docs-25",
-      "composio-docs-27",
-      "composio-docs-10",
-      "composio-comm-1"
+      "composio-docs-30",
+      "composio-docs-24",
+      "composio-docs-10"
     ]
   },
   {
@@ -128,14 +128,16 @@
     "storyId": "agentic-official-cli",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Composio ships an official CLI (docs.composio.dev/docs/cli) that gives coding agents and terminals a local tool surface to connect apps, execute tools, inspect schemas, and debug, with agent-specific setup like `composio setup --target auto` for Codex/Claude Code and `composio login --agent` for unattended agent auth — clearly designed for AI-native workflows. Missing for 10: independent/hands-on verification of the CLI itself (community evidence only covers unrelated cloud/auth issues, not the CLI).",
+    "confidence": "medium",
+    "rationale": "Composio ships an official CLI explicitly designed for AI-native workflows, giving coding agents (Codex, Claude Code) and terminal users a local tool surface to connect apps, execute tools, inspect schemas, and debug projects, plus agent-specific auth (`composio login --agent`) and setup (`composio setup --target auto`). This is documented across multiple first-party docs pages and confirmed by a probe hit. missing for 10: independent/hands-on corroboration of the CLI itself (only cloud-auth issues are reported in community evidence, not CLI-specific complaints).",
     "evidenceIds": [
       "composio-docs-10",
       "composio-docs-11",
       "composio-docs-19",
       "composio-docs-24",
       "composio-docs-25",
+      "composio-docs-29",
+      "composio-docs-33",
       "composio-probe-4"
     ]
   },
@@ -145,27 +147,27 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Composio ships a documented public API (SDK sessions, openapi.json spec verified live) plus CLI and MCP endpoints, letting AI-native users programmatically create sessions, discover/execute tools, and manage auth — all with first-party docs and a probe confirming a valid OpenAPI spec. Missing for 10: independent third-party corroboration of API stability/versioning beyond docs and probes.",
+    "rationale": "Composio provides a documented public API (SDK, sessions, REST/OpenAPI spec) plus CLI and MCP interfaces, confirmed by both docs and a live openapi.json probe. missing for 10: independent third-party hands-on confirmation of API stability/versioning beyond docs and probes.",
     "evidenceIds": [
       "composio-docs-1",
-      "composio-probe-2",
       "composio-docs-16",
-      "composio-docs-24",
-      "composio-probe-1"
+      "composio-probe-2",
+      "composio-probe-1",
+      "composio-docs-24"
     ]
   },
   {
     "productId": "composio",
     "storyId": "agentic-scoped-keys",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Composio's docs show real scoping mechanisms — sessions restricted to specific `toolkits`, MCP servers created with `allowed_tools` lists (composio-docs-3, composio-docs-5, composio-docs-23), and per-user credential isolation via userID (composio-docs-20) — supporting the claim that an agent can be issued a narrowed, least-privilege credential surface. However, independent security research found a leaked Composio key returned live Gmail, GitHub, and CircleCI tokens, indicating that in practice keys can expose broad, unscoped access rather than the tightly scoped surface the docs describe (composio-comm-2). Missing for 10: evidence that scoping is enforced server-side against key compromise, and no rebuttal/fix documentation addressing the leaked-key finding.",
+    "rationale": "Composio's docs show concrete mechanisms for scoping agent credentials: sessions can be restricted to specific `toolkits` (composio-docs-3), MCP servers can be created with `allowed_tools` lists per toolkit and `auth_config` (composio-docs-23, composio-docs-5), and by default a session has broad access but this can be explicitly restricted (composio-docs-35). This directly matches issuing least-privilege credentials for an agent's runtime. Missing for 10: independent/hands-on verification that scoping is enforced correctly in production, and the community report of a leaked Composio key yielding live Gmail/GitHub/CircleCI tokens (composio-comm-2) raises some doubt about how tightly scoped real-world keys end up being, reducing confidence.",
     "evidenceIds": [
       "composio-docs-3",
       "composio-docs-5",
-      "composio-docs-20",
       "composio-docs-23",
+      "composio-docs-35",
       "composio-comm-2"
     ]
   },
@@ -173,14 +175,15 @@
     "productId": "composio",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs show concrete first-party SDK usage (composio.sessions.create, composio.mcp.create) plus a 'providers' adapter layer that maps Composio tools into native SDK/framework formats, and an OpenAPI spec is live, indicating a real programmable SDK surface for AI-native builders. missing for 10: explicit multi-language SDK listing (e.g., JS/TS vs Python parity), independent developer corroboration of SDK quality/reliability beyond docs.",
+    "rationale": "Composio ships official Python/TS SDKs (composio.sessions.create, composio.mcp.create), a documented OpenAPI spec, and 'provider' adapters that convert Composio tools into native formats for any AI framework, plus a CLI for agent-native workflows — all clearly aimed at AI-native developers building programmatically. missing for 10: independent/hands-on developer corroboration of SDK ergonomics beyond first-party docs.",
     "evidenceIds": [
       "composio-docs-1",
       "composio-docs-12",
-      "composio-docs-23",
-      "composio-probe-2"
+      "composio-docs-28",
+      "composio-probe-2",
+      "composio-docs-24"
     ]
   },
   {
@@ -189,7 +192,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Composio's Triggers feature explicitly supports webhook subscriptions: users register a webhook URL once per project, and Composio POSTs signed structured payloads for events like new Slack messages, GitHub commits, or incoming emails, letting an AI-native app/agent react to real-time events. missing for 10: no independent/hands-on corroboration of webhook delivery reliability, and no detail on subscription filtering/retry semantics.",
+    "rationale": "Composio docs explicitly document a webhook-based triggers system: register a webhook URL once per project, and Composio POSTs signed structured payloads for events in connected apps (Slack messages, GitHub commits, emails, etc.), enabling agents to subscribe to and react to external events. This is a first-party, well-documented feature directly matching the story. Missing for 10: independent/hands-on corroboration of webhook delivery reliability and signature verification in practice.",
     "evidenceIds": [
       "composio-docs-9",
       "composio-docs-21"
@@ -201,11 +204,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Composio publishes an OpenAPI spec (probe-2) and extensive docs with code snippets (docs-1, docs-23), which could back an interactive reference, but there is no direct evidence of a Swagger/Redoc-style 'try it now' playground or explicitly runnable examples in the docs. missing for 10: confirmation of an interactive 'try it' console, evidence of live/executable code snippets in the docs UI, independent user reports of using the interactive reference.",
+    "rationale": "An OpenAPI spec is exposed publicly (composio-probe-2) which typically powers interactive API reference tools, and docs contain code snippets (e.g. composio-docs-1, composio-docs-23) showing usage examples, but there is no direct evidence of a live 'try-it-out' interactive reference UI with runnable examples. Missing for 10: explicit interactive API explorer/playground evidence, confirmation that examples are executable in-browser, independent user corroboration of using such a reference.",
     "evidenceIds": [
       "composio-probe-2",
       "composio-docs-1",
-      "composio-docs-23"
+      "composio-docs-23",
+      "composio-probe-1"
     ]
   },
   {
@@ -214,7 +218,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms an OpenAPI spec is live and machine-readable at docs.composio.dev/openapi.json, and Composio also publishes an llms.txt for AI-native discovery. Missing for 10: no independent/community corroboration that the spec is complete or actively used by third-party tooling.",
+    "rationale": "A probe confirms Composio publishes a machine-readable OpenAPI spec at https://docs.composio.dev/openapi.json returning HTTP 200 with an 'openapi' key, plus an llms.txt for AI-native discovery. Missing for 10: no independent third-party corroboration of spec completeness/accuracy.",
     "evidenceIds": [
       "composio-probe-2",
       "composio-probe-1"
@@ -225,32 +229,35 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a sandbox/staging environment or test mode distinct from production data; all docs describe live sessions, real connected accounts, and production API calls with no mention of sandbox testing capabilities. Missing for 10: any sandbox environment, test/staging mode, mock data, or explicit separation from production data.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Composio's docs describe live sessions, real OAuth connections to production apps (Gmail, GitHub, Slack, etc.) and a 'remote workbench' sandbox that only serves to run Python for bulk processing, not to isolate test data from production accounts. There is no documented sandbox/test-mode for toolkits or connections that would let a user exercise tools without touching real, live data.",
+    "evidenceIds": [
+      "composio-docs-15",
+      "composio-docs-16",
+      "composio-docs-20",
+      "composio-docs-35"
+    ]
   },
   {
     "productId": "composio",
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "There's evidence of an OpenAPI spec existing, but no evidence of API versioning scheme or any documented deprecation policy anywhere in the pack. Missing for 10: version numbering/versioned endpoints documentation, deprecation policy or changelog, migration guides, sunset timelines for old API versions.",
-    "evidenceIds": [
-      "composio-probe-2"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack shows an OpenAPI spec exists and docs cover features, but nothing documents API versioning practices or a deprecation policy for AI-native users to rely on. missing for 10: versioning scheme documentation, deprecation policy/notice process, changelog or migration guides.",
+    "evidenceIds": []
   },
   {
     "productId": "composio",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio documents parallel tool execution via meta-tools and a remote sandbox workbench explicitly for 'bulk operations or processing large tool responses,' supporting some bulk automation across many items. However, there's no dedicated bulk-operation API, batch endpoint, or hands-on evidence demonstrating bulk operations at scale, and one community report shows a basic connection failure (Instagram 400 error), raising reliability doubts. missing for 10: a documented batch/bulk API or endpoint, concrete examples of bulk operations across many items, independent hands-on verification of bulk workflows succeeding at scale.",
+    "rationale": "Composio documents parallel tool execution across apps via meta-tools and a dedicated remote sandbox (COMPOSIO_REMOTE_WORKBENCH) explicitly for 'bulk operations or processing large tool responses', supporting bulk-style automation. However there's no concrete example, benchmark, or hands-on evidence of large-scale bulk operations (e.g., batch processing hundreds of items) actually working end-to-end. missing for 10: worked examples of bulk/batch operations at scale, independent corroboration, quantitative limits or performance details.",
     "evidenceIds": [
       "composio-docs-14",
       "composio-docs-15",
-      "composio-comm-1"
+      "composio-docs-35"
     ]
   },
   {
@@ -259,7 +266,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Composio's Triggers feature delivers structured event payloads (new Slack message, GitHub commit, incoming email, etc.) to a webhook you control, which is the event-detection half of the story, but the docs describe only event delivery, not a built-in rules engine or automatic action-execution layer inside Composio itself — the 'rule' and resulting action logic must be implemented in the consuming app/agent, not defined declaratively in Composio. Missing for 10: evidence of a native rule/condition-definition interface, automatic action dispatch without external code, and any first-party or community proof of end-to-end trigger-to-action automation working reliably.",
+    "rationale": "Composio's Triggers feature lets developers register events from connected apps (Slack message, GitHub commit, etc.) and receive them as signed webhook payloads, which is the event-detection half of an automation rule [composio-docs-9][composio-docs-21]. However, there's no evidence of a built-in rule/condition engine or automatic action execution inside Composio itself — the docs describe delivering the event to 'your webhook URL,' implying the user's own app must implement the trigger-to-action logic. Missing for 10: a documented rule/condition definition mechanism, evidence of Composio automatically invoking actions post-trigger without external code, and any hands-on confirmation that triggers reliably fire (community evidence only shows an unrelated connection failure).",
     "evidenceIds": [
       "composio-docs-9",
       "composio-docs-21"
@@ -271,7 +278,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Composio's docs describe event-driven triggers (webhooks fired when something happens in a connected app) but no evidence of cron-like recurring/scheduled job execution, which is a distinct capability. Missing for full/partial credit: any scheduler, cron syntax, recurring workflow definition, or time-based trigger documentation.",
+    "rationale": "Composio's docs describe event-driven triggers (webhooks fired when something happens in a connected app) and session/tool execution, but there is no evidence of a scheduler, cron-like recurring job, or workflow-orchestration feature for time-based automation.",
     "evidenceIds": [
       "composio-docs-9",
       "composio-docs-21"
@@ -283,7 +290,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of versioning, review workflows, or rollback of automations/workflows; Composio's docs focus on sessions, auth, triggers, and tool execution with no mention of version control or undo capabilities for automations.",
+    "rationale": "Composio is a tool-integration/authentication layer for agents (sessions, MCP servers, meta-tools, triggers), but nothing in the evidence pack addresses versioning automations, reviewing changes, or rolling back workflows. No changelog, version history, diff/review UI, or rollback mechanism is documented anywhere in the docs.",
     "evidenceIds": []
   },
   {
@@ -292,7 +299,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions a browser-based inspector or playground UI for testing Composio's MCP server tools; evidence only covers SDK sessions, CLI, agent plugins, and the hosted MCP endpoint URL. missing for 10: any documentation of a web-based inspector/playground, screenshots or references to an interactive tool-testing UI, and any first-party or community confirmation of such a feature.",
+    "rationale": "No evidence of a browser-based inspector or playground UI for testing MCP server tools; evidence covers SDK sessions, CLI, agent plugins, and hosted MCP servers but nothing about a web-based interactive test/inspector tool.",
     "evidenceIds": []
   },
   {
@@ -301,7 +308,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item describes a tool-call audit log, execution history, or replay capability; docs cover sessions, MCP, triggers, and auth but not logging/auditing of tool calls. missing for 10: audit log documentation, tool-call history/replay feature, retention/detail guarantees for compliance use.",
+    "rationale": "The evidence pack covers sessions, MCP, CLI, triggers, and auth but contains no mention of an audit log, tool-call history, or replay capability for platform engineers; triggers are for outbound events, not an audit trail of tool calls. No documentation or probe evidence supports a searchable/exportable log of tool invocations.",
     "evidenceIds": []
   },
   {
@@ -321,8 +328,8 @@
     "storyId": "free-tier-start",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention pricing tiers, free-tier limits, or a free plan for prototyping; the docs describe technical capabilities (sessions, MCP, CLI) but never address cost or plan structure. Missing for 10: any mention of a free tier, usage limits, or pricing page details.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains extensive technical documentation on sessions, MCP, CLI, and auth, but no mention anywhere of pricing tiers, free tier limits, or cost structure for prototyping. Since a developer platform like this plausibly could offer a free tier, the axis applies, but there is no evidence it does.",
     "evidenceIds": []
   },
   {
@@ -331,8 +338,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Composio's docs show hosting MCP servers built from its own pre-built toolkits (composio.mcp.create with toolkits/allowed_tools) and session-based MCP exposure, but there is no evidence of ingesting an arbitrary OpenAPI spec or custom code and turning it into a hosted MCP server without protocol plumbing.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Composio can expose its own pre-built toolkits (Gmail, Slack, etc.) as hosted MCP servers via `mcp: true` or `composio.mcp.create()`, but there is no evidence of importing a developer's own OpenAPI spec or custom code to auto-generate a hosted MCP server — the closest capability (custom tools) is unmentioned.",
+    "evidenceIds": [
+      "composio-docs-4",
+      "composio-docs-23",
+      "composio-docs-26",
+      "composio-docs-31"
+    ]
   },
   {
     "productId": "composio",
@@ -355,13 +367,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Composio's documented model is the reverse: it hosts MCP servers/toolkits and exposes them to agents (sessions with mcp:true, composio.mcp.create, Composio Connect at connect.composio.dev/mcp), and its CLI gives local agents a tool surface to reach Composio's cloud. There is no evidence of a feature to take a developer's own locally-running MCP server and bridge/proxy it into Composio as a managed remote connection without deployment.",
+    "rationale": "Composio's docs describe hosting MCP servers for its own toolkit catalog (composio.mcp.create, sessions with mcp:true) and a shared Composio Connect MCP endpoint, but none of the evidence describes importing or bridging a developer's own locally-running MCP server into Composio as a managed remote connection without deployment. This is a distinct capability (reverse-tunneling a local server) not evidenced anywhere in the pack.",
     "evidenceIds": [
       "composio-docs-4",
+      "composio-docs-17",
       "composio-docs-23",
       "composio-docs-26",
-      "composio-docs-13",
-      "composio-docs-10"
+      "composio-docs-31"
     ]
   },
   {
@@ -370,11 +382,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Composio's docs describe automated OAuth via Connect Links and per-user credential storage with automatic refresh (composio-docs-6, composio-docs-20, composio-docs-27), but there's no explicit documentation of encryption-at-rest for the vault, and an independent security report found a leaked Composio API key exposed live Gmail, GitHub and CircleCI tokens, showing the credential vault did not protect tokens as claimed in practice (composio-comm-2). missing for 10: explicit encryption-at-rest documentation, security audit/certification, and resolution/mitigation evidence for the leaked-key incident.",
+    "rationale": "Docs describe Composio handling the OAuth flow end-to-end (Connect Link, callback_url, white-labeled auth pages) and explicitly state credentials are stored and refreshed per user (docs-20), but there is no documentation of encryption-at-rest/vaulting specifics, and independent security research found that a leaked Composio API key returned live Gmail/GitHub/CircleCI tokens, indicating stored credentials can be retrieved in usable form if access is compromised — undercutting the 'vaulted, encrypted' security claim. missing for 10: explicit encryption-at-rest/vaulting documentation, independent confirmation that leaked-key incident doesn't apply broadly, hands-on verification of refresh reliability.",
     "evidenceIds": [
       "composio-docs-6",
+      "composio-docs-7",
+      "composio-docs-9",
       "composio-docs-20",
-      "composio-docs-27",
       "composio-comm-2"
     ]
   },
@@ -384,14 +397,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Composio explicitly hosts a shared MCP server at https://connect.composio.dev/mcp that any MCP-compatible client can point at directly to reach 1000+ downstream apps without deploying infrastructure, and also supports creating per-session hosted MCP URLs via mcp:true with no server deployment required. This is documented clearly with concrete URLs and setup steps, though there's a community report of a connection failure for one specific integration (Instagram), which is a minor edge case rather than a systemic failure of the hosted-server model. Missing for 10: independent third-party verification of uptime/reliability at scale beyond the single anecdotal failure report.",
+    "rationale": "Composio provides a hosted MCP server (Composio Connect) at a fixed URL (https://connect.composio.dev/mcp) that any MCP-compatible client can point at to reach 1000+ downstream apps without deploying infrastructure, and also supports creating custom hosted MCP session URLs via mcp:true. Docs and probes confirm the server is live and documented as a single-URL connection requiring no SDK/session setup. Missing for 10: independent hands-on confirmation of a client successfully connecting and executing tools end-to-end (only one unrelated community complaint about a specific Instagram auth failure, not about the MCP hosting itself).",
     "evidenceIds": [
-      "composio-docs-26",
       "composio-docs-13",
+      "composio-docs-26",
       "composio-docs-4",
-      "composio-docs-17",
-      "composio-probe-3",
-      "composio-comm-1"
+      "composio-docs-31",
+      "composio-probe-3"
     ]
   },
   {
@@ -400,14 +412,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio is API/SDK-first (sessions, meta-tools, MCP, CLI, webhooks) with an OpenAPI spec confirming broad programmatic coverage, and the dashboard appears mainly for auxiliary config like white-labeling and connection management rather than being the primary interface. However, evidence doesn't confirm true parity — e.g. white-labeling/branding and dashboard-based auth config are UI-only per docs, and there's no explicit statement that all dashboard settings (branding, project config) are also exposed via API. missing for 10: confirmation that dashboard-only features like white-labeling/branding are configurable via API, independent verification of full UI/API parity, and hands-on confirmation beyond docs.",
+    "rationale": "Composio is API/SDK-first with a documented OpenAPI spec, CLI, session/MCP creation endpoints, and toolkit configuration all exposed programmatically (composio-probe-2, composio-docs-1, composio-docs-23, composio-docs-35), suggesting most functionality is API-native by design. However, some settings (e.g. white-labeling branding, logo/theme) are explicitly described as configured 'in the dashboard' with no documented API equivalent shown. Missing for 10: explicit API endpoints for dashboard-only settings like white-labeling/branding, and independent confirmation that no UI-only feature exists.",
     "evidenceIds": [
+      "composio-probe-2",
       "composio-docs-1",
+      "composio-docs-23",
+      "composio-docs-35",
       "composio-docs-8",
       "composio-docs-22",
-      "composio-probe-2",
-      "composio-docs-14",
-      "composio-docs-26"
+      "composio-docs-24"
     ]
   },
   {
@@ -415,8 +428,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a data export feature or open-format data portability for users leaving the platform; documentation covers sessions, MCP, auth, triggers, and CLI but nothing about exporting stored connection/user data or account deletion/export flows.",
+    "confidence": "low",
+    "rationale": "No evidence of any data export feature, open-format export of user connections/history/credentials, or account portability tooling; docs cover integration, auth, MCP, and CLI but nothing about exporting or leaving with one's data.",
     "evidenceIds": []
   },
   {
@@ -424,8 +437,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of Composio's source code being available under an open license — the evidence pack only covers docs, CLI, MCP, and API features, with no repository or license mentioned.",
+    "confidence": "medium",
+    "rationale": "No evidence of an open-source license or public source repository for Composio; evidence pack only covers docs, API, CLI, and MCP features, none of which address source availability or licensing.",
     "evidenceIds": []
   },
   {
@@ -433,8 +446,8 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Composio is presented entirely as a hosted cloud/SaaS platform (sessions, MCP server, CLI, dashboard) with no mention of self-hosting the core service or an open-source deployment option; evidence pack has no self-hosting docs, Docker images, or on-prem deployment guides. Missing for 10: any documentation of self-hosted deployment, open-source repo for the core engine, or on-prem installation instructions.",
+    "confidence": "medium",
+    "rationale": "No evidence of a self-hosted deployment option; all docs describe Composio as a hosted cloud service (sessions, MCP servers, dashboards) with no mention of self-hosting the core platform.",
     "evidenceIds": []
   },
   {
@@ -442,14 +455,14 @@
     "storyId": "per-end-user-multi-tenant-auth",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Composio's core model is per-user sessions keyed by user_id, with each end user connecting their own accounts (Gmail, GitHub, Slack, etc.) and Composio storing/refreshing credentials scoped to that userID, plus Connect Links for per-user OAuth and toolkit/tool scoping via allowed_tools. This directly supports platform engineers isolating each end user's agent to only that user's credentials. missing for 10: independent/hands-on verification of strict cross-user isolation in production, and details on scoped-token expiry/revocation guarantees beyond docs claims.",
+    "confidence": "medium",
+    "rationale": "Composio's session model is explicitly keyed to a user_id, and docs state each user's own connected accounts (Gmail, GitHub, Slack, etc.) are stored and refreshed against that specific userID, with sessions/MCP servers further scoped by toolkit or allowed_tools lists — directly matching the platform-engineer story of per-end-user credential isolation. missing for 10: independent/hands-on verification that isolation holds under load or misconfiguration, and clarity that default sessions expose all toolkits unless explicitly restricted, which is a partial caveat on strict per-user scoping.",
     "evidenceIds": [
       "composio-docs-1",
       "composio-docs-20",
-      "composio-docs-6",
+      "composio-docs-3",
       "composio-docs-23",
-      "composio-docs-3"
+      "composio-docs-35"
     ]
   },
   {
@@ -458,7 +471,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or configurable data location; documentation covers sessions, MCP, auth, and CLI but nothing about choosing where data is stored.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Composio's cloud/session data; documentation covers auth, MCP, CLI, and triggers but nothing about regional data storage choices.",
     "evidenceIds": []
   },
   {
@@ -467,7 +480,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or data retention policies for model training; the docs focus on tool integration, authentication, and sessions, not privacy/data-training controls.",
+    "rationale": "No evidence in the pack addresses AI-training data usage, opt-out policies, or data retention/training controls; Composio's docs focus on tool integration, auth, and sessions, not privacy/training-data commitments.",
     "evidenceIds": []
   },
   {
@@ -475,19 +488,17 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes data retention policies, deletion controls, or user-facing tools to purge stored credentials/data; docs mention storing and refreshing credentials but nothing about deletion/retention settings, and a leaked-key security report is unrelated to this axis. Missing for 10: documented data retention policy, user/account deletion API or dashboard control, data export/erasure mechanism.",
-    "evidenceIds": [
-      "composio-docs-20"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack documents session creation, authentication, triggers, MCP, and CLI features, but contains no mention of data retention policies, deletion controls, data export, or user-initiated erasure of stored credentials/data. A leaked-key security incident is noted but does not address retention/deletion controls.",
+    "evidenceIds": []
   },
   {
     "productId": "composio",
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Composio; the docs cover sessions, MCP, auth, and CLI but nothing about data collection controls.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Composio; all documentation focuses on sessions, MCP, auth, and CLI tooling. Missing for 10: any mention of telemetry/data collection practices, opt-out settings, or privacy configuration options.",
     "evidenceIds": []
   },
   {
@@ -496,7 +507,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Composio lets a developer create/configure their own hosted MCP server (composio.mcp.create, session mcp:true) for their own app's use, and Composio itself is a pre-built MCP server aggregator — but there is no evidence of a public marketplace/registry where a developer can publish a custom MCP server for other third-party users to discover and install.",
+    "rationale": "Composio lets developers create hosted MCP servers for their own sessions/toolkits (composio.mcp.create, sessions-via-mcp) and exposes its own Composio Connect MCP endpoint, but there is no evidence of a marketplace/registry feature where a developer publishes their own custom MCP server for other users to discover and install. missing for 10: a public server directory/registry, discovery mechanism for third-party-authored servers, and install flow for consumers of a published server.",
     "evidenceIds": [
       "composio-docs-4",
       "composio-docs-23",
@@ -508,16 +519,16 @@
     "productId": "composio",
     "storyId": "publisher-cli-workflow",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The Composio CLI documents authentication (`composio login --agent`) and installing native plugins into coding agents (`composio setup --target auto`), plus generic tool execution/debugging (composio-docs-10,11,19,24,25). However, building or 'staging' an MCP server and pushing it is shown only via the Python SDK (`composio.mcp.create(...)`) rather than the CLI itself, so the CLI-driven build-and-push half of the workflow is unevidenced. missing for 10: CLI commands to stage/build a server, CLI commands to push/deploy a server, independent confirmation of the full CLI workflow end-to-end.",
+    "rationale": "The Composio CLI documents authentication (`composio login --agent`) and installing agent plugins into Codex/Claude Code (`composio setup --target auto`), covering the auth and install-into-agents ends of the workflow. But building/staging and pushing an actual MCP server is only shown via the Python SDK (`composio.mcp.create(...)`), not via any CLI subcommand — the CLI docs describe connecting apps, executing tools, inspecting schemas and debugging, not building or deploying servers. Missing for 10: CLI commands for staging/building an MCP server, CLI push/deploy command, and any hands-on confirmation of a full CLI-driven publish pipeline.",
     "evidenceIds": [
       "composio-docs-10",
       "composio-docs-11",
       "composio-docs-19",
-      "composio-docs-24",
-      "composio-docs-25",
-      "composio-docs-23"
+      "composio-docs-23",
+      "composio-docs-33",
+      "composio-probe-4"
     ]
   },
   {
@@ -526,7 +537,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of published quality signals for tool/server comparison — no usage counts, health/liveness checks, scores, or verification badges are documented anywhere in the evidence pack; docs focus on session creation, auth, MCP hosting, and CLI usage rather than curation metadata.",
+    "rationale": "No evidence of published quality signals for comparing servers/tools — no usage counts, health/liveness checks, quality scores, or verification badges are documented anywhere in the evidence pack; docs focus on sessions, auth, CLI, and providers instead.",
     "evidenceIds": []
   },
   {
@@ -535,14 +546,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Composio exposes meta-tools that let agents discover toolkits/tools at runtime (composio-docs-2, composio-docs-14), plus a documented OpenAPI spec (composio-probe-2) and llms.txt for programmatic discovery (composio-probe-1), alongside MCP-based catalog access (composio-docs-26, composio-docs-4). This directly supports an AI agent programmatically querying the registry/catalog via documented APIs. missing for 10: independent/hands-on confirmation of registry query results (only vendor docs and probes cited), and no explicit example of a raw REST 'list tools/servers' endpoint call shown end-to-end.",
+    "rationale": "Composio exposes documented meta-tools (e.g., COMPOSIO_SEARCH_TOOLS) and an OpenAPI-documented API that let agents discover toolkits/servers programmatically, plus MCP session creation and a live openapi.json confirming a documented API surface. missing for 10: independent/hands-on confirmation of programmatic registry queries beyond vendor docs, and no explicit example of a raw catalog-listing API call/response.",
     "evidenceIds": [
-      "composio-docs-2",
       "composio-docs-14",
-      "composio-probe-1",
+      "composio-docs-35",
+      "composio-docs-16",
       "composio-probe-2",
-      "composio-docs-26",
-      "composio-docs-4"
+      "composio-probe-1",
+      "composio-docs-23"
     ]
   },
   {
@@ -551,14 +562,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Composio's docs explicitly describe a small fixed set of 7 meta-tools that let agents discover, authorize, and execute tools across 1000+ apps at runtime instead of loading all tool definitions into context, with options to restrict toolkits or expose via MCP for exact tool sets. This is well documented with concrete API examples and consistent across multiple doc pages. Missing for 10: independent/hands-on benchmark or third-party corroboration of context-size savings in practice.",
+    "rationale": "Docs clearly describe a small fixed set of meta-tools (7) that discover, authorize, and execute tools at runtime, with COMPOSIO_SEARCH_TOOLS enabling on-demand discovery across 1000+ apps instead of loading all tool definitions upfront, plus session-level restriction options. This directly matches the story's tool-curation-via-meta-tools pattern. Missing for 10: independent/hands-on confirmation of actual context-size savings or benchmarks beyond vendor docs.",
     "evidenceIds": [
       "composio-docs-2",
       "composio-docs-14",
-      "composio-docs-16",
+      "composio-docs-30",
+      "composio-docs-35",
       "composio-docs-3",
-      "composio-docs-26",
-      "composio-probe-3"
+      "composio-docs-16"
     ]
   },
   {
@@ -567,10 +578,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence that Composio scans, audits, or vet-checks listed toolkits/servers for malicious or vulnerable behavior; docs cover tool discovery, auth, MCP session creation, and execution but nothing about security scanning of listed servers. Community evidence even shows a leaked-key incident, further indicating no visible security vetting pipeline. missing for 10: any mention of security scanning, vulnerability assessment, or vetting process for listed tools/servers before agent use.",
-    "evidenceIds": [
-      "composio-comm-2"
-    ]
+    "rationale": "No evidence that Composio scans, audits, or vetted listed toolkits/servers for malicious or vulnerable behavior; docs cover authentication, session/tool discovery, and MCP exposure but nothing about security scanning of tools before agent use. There's even a community report of a leaked key exposing live tokens, but that's a credential-leak issue, not evidence about (absence of) scanning — still, no scanning capability is documented anywhere.",
+    "evidenceIds": []
   },
   {
     "productId": "composio",
@@ -578,29 +587,30 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Composio's CLI and meta-tools let an agent/developer discover available toolkits, inspect tool schemas, and execute tools (composio-docs-10, composio-docs-14, composio-docs-24), and creating an MCP server lets you specify allowed_tools per toolkit (composio-docs-23), implying visibility into what tools exist. But there's no documented registry view showing transport type or hosting attributes for listed servers before connecting — discovery is framed as runtime tool/toolkit lookup rather than a browsable server catalog with schema/transport/hosting metadata upfront. Missing for 10: a registry UI or API listing servers with explicit transport and hosting attributes, and pre-connection schema browsing independent of session creation.",
+    "rationale": "Composio's CLI and docs let a developer inspect tool schemas and execute tools locally, and session/creation calls let you restrict to specific toolkits/allowed_tools and choose transport (SDK vs hosted MCP), which covers part of the 'inspect before connecting' story. However there's no evidence of a browsable registry listing per-server hosting attributes (e.g., self-hosted vs hosted, region, uptime) alongside transport and schema info prior to connection — discovery is mostly done at runtime via meta-tools or CLI rather than a pre-connect catalog view. missing for 10: a registry/catalog UI or API showing hosting attributes and transport per listed server, independent/hands-on confirmation of schema inspection workflow.",
     "evidenceIds": [
       "composio-docs-10",
-      "composio-docs-14",
-      "composio-docs-23",
       "composio-docs-24",
-      "composio-docs-26"
+      "composio-docs-29",
+      "composio-docs-23",
+      "composio-docs-35",
+      "composio-probe-3",
+      "composio-probe-4"
     ]
   },
   {
     "productId": "composio",
     "storyId": "server-registry-search",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio documents a large catalog (1000+/1500+ toolkits/apps) and runtime 'meta-tools' that let an agent discover and authorize tools dynamically, plus a `toolkits` parameter to scope sessions, implying some discovery/browse capability. However there is no evidence of a developer-facing search/browse UI or catalog listing tools by capability before integration — discovery here is agent-runtime, not a pre-wiring browsing experience. Missing for 10: a documented searchable/browsable catalog UI or API for exploring tools by capability prior to agent wiring, and independent confirmation of such a browsing experience.",
+    "rationale": "Composio documents a large catalog (1000+/1500+ toolkits) and built-in discovery mechanisms like COMPOSIO_SEARCH_TOOLS meta-tool and agent-based task search (docs-30, docs-35, docs-16), letting agents find tools by capability at runtime. However, there is no clear evidence of a developer-facing browsable registry/catalog UI for searching tools by capability *before* wiring them in, distinct from runtime agent discovery. Missing for 10: a dedicated searchable catalog/registry page or API for pre-integration browsing, independent hands-on confirmation of search-by-capability accuracy.",
     "evidenceIds": [
-      "composio-docs-2",
-      "composio-docs-3",
-      "composio-docs-14",
+      "composio-docs-30",
+      "composio-docs-35",
       "composio-docs-16",
-      "composio-probe-1",
-      "composio-docs-26"
+      "composio-docs-14",
+      "composio-probe-1"
     ]
   },
   {
@@ -608,13 +618,12 @@
     "storyId": "tool-allowlist-access-control",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Composio supports restricting toolsets via `toolkits` param on session creation, and explicit `allowed_tools` allowlisting when creating an MCP server (e.g. GMAIL_FETCH_EMAILS, GMAIL_SEND_EMAIL), plus combining mcp:true with a direct-tools preset to expose exactly a chosen tool set via one MCP URL. This directly matches per-server and per-tool allowlisting for platform engineers. Missing for 10: no evidence of role-based or team-wide policy enforcement across multiple agents, and no independent/hands-on confirmation that access control is enforced robustly in production.",
+    "confidence": "high",
+    "rationale": "Composio lets platform engineers restrict sessions to specific toolkits (composio-docs-3, composio-docs-35) and create MCP servers scoped to specific toolkits and an explicit allowed_tools list (composio-docs-23), directly matching allowlist/per-tool access control for gateway-controls. Default sessions expose all toolkits unless restricted, and restriction is opt-in rather than enforced by default. missing for 10: independent/hands-on verification that access-control restrictions are actually enforced at runtime (e.g., denied calls for non-allowlisted tools), and no evidence of role-based or per-agent policy management beyond session/MCP-server creation parameters.",
     "evidenceIds": [
       "composio-docs-3",
-      "composio-docs-5",
       "composio-docs-23",
-      "composio-docs-17"
+      "composio-docs-35"
     ]
   },
   {
@@ -623,7 +632,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item discusses pricing, per-tool-call costs, connection fees, or documented rate limits; all evidence is about sessions, MCP, auth, CLI, and unrelated security/community items.",
+    "rationale": "No evidence pack items mention pricing, cost per tool call/connection, billing tiers, or documented rate limits anywhere in the docs or community sources; all evidence covers technical features (sessions, MCP, CLI, auth) rather than pricing/plans.",
     "evidenceIds": []
   },
   {
@@ -632,21 +641,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention dashboards, metrics, call volumes, error rates, user analytics, or cost tracking for tools/servers; the docs focus on sessions, auth, MCP, CLI, and triggers only.",
+    "rationale": "No evidence pack items describe any usage analytics, dashboards, call-volume/error metrics, per-user breakdowns, or cost tracking for servers/tools consumed or published; docs focus on sessions, auth, triggers, CLI, and MCP setup with nothing on observability/analytics reporting.",
     "evidenceIds": []
   },
   {
     "productId": "composio",
     "storyId": "white-label-auth",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Composio explicitly documents white-labeling the auth flow (custom logo, app title, theme across all four branding surfaces) plus supporting custom OAuth app credentials via auth_config, satisfying both branding and BYO-credentials aspects of the story. missing for 10: independent/hands-on confirmation that white-labeled OAuth apps work end-to-end without residual Composio branding leaking through.",
+    "rationale": "Composio explicitly documents white-labeling: swapping logo/name and restyling the auth page, configurable via dashboard (composio-docs-8, composio-docs-22, composio-docs-32). However, evidence does not confirm bringing your own OAuth app credentials (client ID/secret) as part of this white-label flow versus using Composio's shared OAuth apps — the auth_config references (composio-docs-23) suggest custom auth configs exist but the story's 'own OAuth app credentials' aspect isn't explicitly tied to the white-labeling docs. missing for 10: explicit confirmation that white-labeled flow uses platform-engineer's own OAuth client ID/secret, independent/hands-on corroboration of the branding customization actually working end-to-end.",
     "evidenceIds": [
       "composio-docs-8",
       "composio-docs-22",
-      "composio-docs-23",
-      "composio-docs-7"
+      "composio-docs-32",
+      "composio-docs-23"
     ]
   },
   {
@@ -654,11 +663,13 @@
     "storyId": "agent-framework-integrations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Glama's docs show pre-filled configs for MCP clients like Cursor, Claude Desktop, Claude Code, and VS Code, but there is no evidence of documented adapters or integration guides for Vercel AI SDK, LangChain, CrewAI, or the OpenAI/Anthropic SDKs as requested in the story.",
+    "confidence": "high",
+    "rationale": "Glama's docs show pre-filled configs only for MCP clients like Cursor, Claude Desktop, Claude Code, and VS Code (glama-docs-13, glama-docs-25, glama-docs-26); there is no mention of adapters or integration guides for Vercel AI SDK, LangChain, CrewAI, or OpenAI/Anthropic SDKs anywhere in the evidence pack.",
     "evidenceIds": [
       "glama-docs-13",
       "glama-docs-14",
+      "glama-docs-25",
+      "glama-docs-26",
       "glama-docs-9"
     ]
   },
@@ -668,7 +679,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe confirms glama.ai/llms.txt returns HTTP 200 with substantive content describing the directory, meaning an agent can be pointed at this URL to get agent-oriented documentation. This is first-party, verified via hands-on probe rather than just claimed docs. Missing for 10: no llms-full.txt or additional agent-oriented doc formats (mcp.md and openapi.json both 404), and no independent community confirmation of agents actually consuming it.",
+    "rationale": "A direct probe confirms Glama serves a populated llms.txt file at the root domain (HTTP 200 with structured content describing the registry), which is exactly the agent-oriented docs entry point the story asks for. Missing for 10: no additional agent-doc formats (mcp.md returned 404, no discoverable OpenAPI spec) and no first-party documentation explicitly describing llms.txt as an intentional agent-onboarding feature.",
     "evidenceIds": [
       "glama-probe-1",
       "glama-probe-2",
@@ -679,16 +690,15 @@
     "productId": "glama",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Glama Chat lets users upload their own documents and get AI-generated answers with page references, compare model outputs, and turn text into diagrams — a form of AI-generated insight from user data (glama-docs-18, glama-docs-17, glama-docs-19). Separately, the TDQS quality-scoring system auto-generates insights/suggestions about a user's own MCP server listings (glama-comm-1), though community reports show the scoring pipeline was unreliable and undocumented (glama-comm-2, glama-comm-3). Missing for 10: evidence of proactive AI suggestions/insights generated from a user's operational MCP usage data (e.g., analytics on tool calls, gateway traffic) rather than just chat-uploaded documents, and independent corroboration that chat insight features work reliably.",
+    "rationale": "Glama's chat product lets users upload documents and get AI-generated answers with page references, compare model responses, and generate diagrams from text, which counts as AI-generated insights from user data, but this is a separate chat feature rather than insights drawn from the user's own MCP/gateway usage data or registry activity. Missing for 10: evidence of AI-generated insights/suggestions tied to the user's own MCP servers, gateway logs, or registry usage (e.g., recommendations based on their tool usage), and independent corroboration of the chat insight features working as described.",
     "evidenceIds": [
-      "glama-docs-18",
       "glama-docs-17",
+      "glama-docs-18",
       "glama-docs-19",
-      "glama-comm-1",
-      "glama-comm-2",
-      "glama-comm-3"
+      "glama-docs-29",
+      "glama-docs-23"
     ]
   },
   {
@@ -697,7 +707,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Glama's pricing page mentions automating workflows via schedules or webhooks, which suggests some autonomous background automation capability, but there is no further documentation, hands-on evidence, or detail on how these automations are configured, triggered, or monitored. Missing for 10: detailed docs/tutorials on scheduling automations, evidence of autonomous multi-step agent workflows running unattended, and independent confirmation the feature works as described.",
+    "rationale": "The pricing page mentions \"Automate workflows using schedules or webhooks\" (glama-docs-10), suggesting some background automation capability, but there is no further documentation, examples, or independent corroboration on how this works, what triggers or persists autonomously, or how it integrates with agents. Missing for 10: detailed docs on schedule/webhook automation setup, evidence of autonomous background execution, hands-on or community confirmation that automations run reliably.",
     "evidenceIds": [
       "glama-docs-10"
     ]
@@ -708,12 +718,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Glama offers a built-in multi-model chat (glama.ai/chat) where users can ask questions, compare model answers, upload documents, and get instant answers — a lightweight AI assistant surface — but there's no evidence of it autonomously executing multi-step tasks or acting as an agent (e.g., invoking MCP tools, running workflows) rather than just chatting/comparing responses. Missing for 10: evidence of task delegation/execution capabilities (tool use, workflow automation) by the chat assistant itself, and independent corroboration of its agentic behavior beyond a chat UI.",
+    "rationale": "Glama's chat product lets users converse with multiple LLMs, compare answers, analyze documents, and generate diagrams, which is an AI assistant of sorts, but there's no evidence it can autonomously execute delegated tasks (e.g., call tools, run workflows, take actions) rather than just answer chat prompts. Missing for 10: evidence of task delegation/tool-calling/agentic execution by the built-in assistant, and independent corroboration of its capabilities beyond marketing copy.",
     "evidenceIds": [
       "glama-docs-17",
       "glama-docs-18",
+      "glama-docs-19",
       "glama-docs-23",
-      "glama-docs-10"
+      "glama-docs-29"
     ]
   },
   {
@@ -722,10 +733,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Glama's hosting/gateway lets deployed MCP servers run as always-on headless endpoints, and the pricing page mentions automating workflows via schedules or webhooks, suggesting some non-interactive automation support. However there's no documented CLI, API/OpenAPI spec (probe shows 404s), or explicit CI integration guidance, so it's unclear how an AI-native user would drive Glama itself headlessly in a pipeline. Missing for 10: CLI/API docs for headless control, explicit CI/CD integration examples, and independent confirmation of the schedules/webhooks automation feature.",
+    "rationale": "Glama's docs mention only a single line about automating workflows via schedules or webhooks (glama-docs-10), which suggests some headless/automation capability, but there is no explicit CI documentation, CLI, or API reference (probe shows no OpenAPI/spec found) to support running Glama in a CI pipeline. Missing for 10: dedicated CI/headless usage guide, CLI or API reference for scripted invocation, and independent confirmation of automation in production pipelines.",
     "evidenceIds": [
       "glama-docs-10",
-      "glama-docs-15",
       "glama-probe-2",
       "glama-probe-3"
     ]
@@ -733,18 +743,20 @@
   {
     "productId": "glama",
     "storyId": "agentic-mcp-client",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Glama's docs show it functions as an MCP directory/gateway/hosting layer: users can search and connect to thousands of servers, get pre-filled config blocks for clients, and route all MCP calls through Glama's Gateway which sits in front of any deployed server (glama-docs-4, glama-docs-11, glama-docs-13, glama-docs-14, glama-docs-15, glama-docs-6). This supports plugging in MCP servers so tools flow through the product, but the evidence centers on hosting/proxying infrastructure rather than Glama's own chat/agent directly invoking tools end-to-end, and community reports note friction (undocumented billing gating rebuilds) that complicates the pipeline. Missing for 10: first-party or hands-on evidence that Glama's own chat/agent interface actually calls and uses tools from a connected server, and independent confirmation the gateway experience works smoothly in practice.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Glama provides a searchable registry of thousands of MCP servers with pre-filled config blocks for popular MCP clients (Cursor, Claude Desktop, Claude Code, VS Code), plus an inspector to test any MCP server's tools and a gateway that fronts deployed servers so agent calls flow through it. Community feedback corroborates active usage of the registry/quality-scoring system, though it also notes friction (undocumented billing gating rescans). Missing for 10: independent third-party validation of tool invocation end-to-end and no evidence of a public API/OpenAPI spec for programmatic integration.",
     "evidenceIds": [
-      "glama-docs-4",
       "glama-docs-11",
       "glama-docs-13",
       "glama-docs-14",
+      "glama-docs-25",
+      "glama-docs-26",
       "glama-docs-15",
-      "glama-docs-6",
-      "glama-comm-2"
+      "glama-docs-4",
+      "glama-comm-1",
+      "glama-comm-4"
     ]
   },
   {
@@ -753,28 +765,31 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Glama operates as an MCP gateway/hosting platform: deploying any registry server automatically places Glama's Gateway in front of it, giving agents a single official MCP endpoint to connect through, and each server page ships pre-filled config blocks for major clients (Cursor, Claude Desktop, Claude Code, VS Code). This directly satisfies 'connect an agent via an official MCP server' since Glama itself becomes the MCP server/gateway endpoint agents call. Missing for 10: independent/hands-on verification that the hosted Gateway endpoint works reliably in production (community evidence only covers quality-score/rebuild issues, not gateway connectivity) and no public OpenAPI/spec confirming the endpoint contract.",
+    "rationale": "Glama documents that any registry server deployed to Glama gets an automatic Gateway endpoint through which agent calls are logged and access-controlled, and every server page ships pre-filled connection config for Cursor, Claude Desktop, Claude Code, and VS Code, making it straightforward to connect an agent to an official Glama-hosted MCP server. Missing for 10: independent/hands-on evidence confirming the connection flow works smoothly in practice (community evidence only covers quality-score sync issues, not the connect experience).",
     "evidenceIds": [
-      "glama-docs-4",
       "glama-docs-15",
+      "glama-docs-27",
+      "glama-docs-28",
       "glama-docs-13",
       "glama-docs-14",
-      "glama-docs-6",
-      "glama-docs-11"
+      "glama-docs-4"
     ]
   },
   {
     "productId": "glama",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Glama's chat product (glama-docs-17..23) lets users interact naturally in text with AI models, and the MCP inspector/gateway are configured via UI/JSON rather than natural-language commands. There is no evidence that core platform actions (deploying servers, managing gateway policies, hosting config) can be driven by natural-language commands. missing for 10: NL command interface for registry/hosting/gateway management, evidence of conversational control over platform operations beyond chat with models.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Glama Chat provides a natural-language conversational interface (asking questions, uploading docs, generating diagrams/math, comparing model responses) which supports NL-driven interaction, but the core MCP hosting/gateway/registry operations are configured via manual JSON edits, Dockerfiles, and UI panels rather than natural-language commands. missing for 10: evidence that MCP hosting, gateway routing, or per-tool access control can be driven by NL commands rather than manual config/UI.",
     "evidenceIds": [
       "glama-docs-17",
       "glama-docs-18",
-      "glama-docs-22",
-      "glama-docs-23"
+      "glama-docs-19",
+      "glama-docs-20",
+      "glama-docs-23",
+      "glama-docs-25",
+      "glama-docs-26"
     ]
   },
   {
@@ -782,8 +797,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions an official CLI tool for Glama; the evidence covers web-based inspector, hosting, gateway, and chat features but nothing about a command-line interface. Missing for 10: any mention of a CLI product, its installation, or documentation.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack of Glama shipping an official CLI tool; all references are to web UI, browser inspector, hosting/gateway, and chat features. Probes for docs/openapi also return 404s, and no CLI is mentioned in docs or community posts.",
     "evidenceIds": []
   },
   {
@@ -792,7 +807,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Probes for OpenAPI/swagger specs and a docs.md all returned 404, and no evidence pack item shows a documented public API for programmatic control of Glama; the only API mention is a community complaint about undocumented API rebuild issues (glama-comm-2/3), which underscores absence of clear API docs rather than presence.",
+    "rationale": "Probes explicitly show no OpenAPI/Swagger spec and no docs.md/API reference (all 404s), and while a community comment mentions 'manual resyncs and API attempts' this implies an undocumented, unreliable API rather than a documented public one. No first-party docs describe endpoints, auth, or usage for a public API.",
     "evidenceIds": [
       "glama-probe-2",
       "glama-probe-3",
@@ -804,13 +819,13 @@
     "productId": "glama",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Glama's Gateway lets users control what MCP calls an agent can make and enable/disable individual tools, which approximates least-privilege access, and it supports OAuth 2.1 for servers, but there is no explicit documentation of issuing scoped/least-privilege API credentials or tokens for agents themselves. Missing for 10: dedicated credential/token issuance flow for agents, scoping documentation (e.g., per-agent API keys with defined permissions), and any independent confirmation of this capability.",
+    "rationale": "Glama's Gateway lets users control what an agent can do (per-tool enable/disable, access-controlled and 'credential-managed' calls) which approximates least-privilege access, but there is no explicit documentation of issuing scoped, per-agent API keys/tokens with defined permission scopes. Missing for 10: explicit API key/token issuance flow, scope definitions per credential, and any evidence of revocation or expiry controls tied to specific agents.",
     "evidenceIds": [
       "glama-docs-4",
       "glama-docs-5",
-      "glama-docs-12"
+      "glama-docs-28"
     ]
   },
   {
@@ -819,7 +834,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of official SDKs (e.g., Python/TS SDK packages) for building against Glama; documentation covers directory, hosting, gateway, and inspector features but no SDK offering, and probes for OpenAPI/spec files return 404.",
+    "rationale": "No evidence of official SDKs for building against Glama's platform/APIs; probes for OpenAPI/docs specs return 404s, and all evidence covers MCP server hosting, inspector, and chat features rather than any SDK for developers.",
     "evidenceIds": [
       "glama-probe-2",
       "glama-probe-3"
@@ -831,7 +846,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Glama's pricing page mentions automating workflows via webhooks, implying some webhook support, but there is no documentation describing how to subscribe to specific events, configure endpoints, or an event catalog. missing for 10: webhook subscription API/docs, list of event types, setup instructions, independent confirmation of use.",
+    "rationale": "Glama's pricing page mentions automating workflows via webhooks, implying webhook support exists, but there is no documentation of a subscription/event API, event types, payload schema, or setup instructions. Missing for 10: webhook event catalog, subscription/configuration docs, payload examples, independent confirmation of working webhooks.",
     "evidenceIds": [
       "glama-docs-10"
     ]
@@ -857,26 +872,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probe explicitly checked common OpenAPI/swagger endpoints and all returned 404, and no docs mention a machine-readable API spec; only an llms.txt and a connector JSON schema exist, which are not API specs.",
+    "rationale": "A direct probe for OpenAPI/Swagger specs at common paths returned 404 across the board, and no evidence pack item references a downloadable machine-readable API spec; only an llms.txt and schema for connector.json exist, neither of which is an API spec.",
     "evidenceIds": [
       "glama-probe-3",
-      "glama-probe-2",
-      "glama-probe-1"
+      "glama-probe-2"
     ]
   },
   {
     "productId": "glama",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Glama's MCP Inspector lets users test any MCP server from the browser (including local servers via tunnel) without deploying to production, and hosting is 'private by default' with per-tool access control — functionally supporting isolated testing before going live. However, there is no explicit sandbox/staging environment concept, no mention of test vs production data separation, and no independent confirmation of this workflow. Missing for 10: explicit sandbox/staging environment terminology, guarantees about production data isolation, and third-party validation of safe pre-production testing.",
+    "rationale": "Glama's Inspector lets users test any MCP server from the browser (even local servers via tunnel) without needing to deploy to a live/production endpoint, which loosely maps to a sandboxed testing flow, and 'Private by default' hosting suggests staging before going public. However, there is no explicit documentation of a dedicated sandbox environment, test-data isolation, or guarantees against touching production data. Missing for 10: explicit sandbox/staging environment documentation, data isolation guarantees, and independent confirmation that testing via Inspector never affects production resources.",
     "evidenceIds": [
       "glama-docs-1",
       "glama-docs-7",
-      "glama-docs-8",
-      "glama-docs-5",
-      "glama-docs-12"
+      "glama-docs-24",
+      "glama-docs-8"
     ]
   },
   {
@@ -885,10 +898,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any versioned API or a documented deprecation policy; OpenAPI/spec probes returned 404s and no docs mention API versioning or deprecation.",
+    "rationale": "No evidence of any versioned API or a documented deprecation policy; probes for OpenAPI/spec files all returned 404s, and no docs mention API versioning or deprecation schedules.",
     "evidenceIds": [
-      "glama-probe-2",
-      "glama-probe-3"
+      "glama-probe-3",
+      "glama-probe-2"
     ]
   },
   {
@@ -896,13 +909,9 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Glama's docs describe searching/comparing thousands of servers, single-server deployment, per-tool toggles, and schedule/webhook automation, but there is no evidence of bulk/batch operations (e.g., mass-editing, batch deploying, or multi-item actions performed in one call) across many items at once. missing for 10: evidence of batch APIs, bulk import/export, or multi-item management actions.",
-    "evidenceIds": [
-      "glama-docs-10",
-      "glama-docs-11",
-      "glama-docs-6"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence covers per-server search, hosting, gateway, and chat features, but nothing describes performing bulk/batch operations across many items at once (e.g., bulk deploy, bulk config changes, batch API calls).",
+    "evidenceIds": []
   },
   {
     "productId": "glama",
@@ -910,7 +919,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Only a single passing mention of automating workflows via schedules or webhooks exists (glama-docs-10), with no documentation of rule/condition definitions, trigger types, or event-based action configuration. Missing for 10: detailed rule-definition UI/API, event trigger types beyond schedule/webhook, conditional logic support, and any hands-on/community confirmation of this automation working.",
+    "rationale": "The pricing page mentions 'Automate workflows using schedules or webhooks,' which implies some event/trigger-based automation, but there is no documentation of a rules engine, conditional logic, or event-triggered actions beyond this one-line claim. missing for 10: detailed docs on rule definition syntax, event types supported, conditional trigger logic, and independent/hands-on evidence of automation working as described.",
     "evidenceIds": [
       "glama-docs-10"
     ]
@@ -921,7 +930,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "A single pricing-page mention states Glama supports automating workflows via schedules or webhooks, but there is no documentation of how to configure recurring jobs, no examples, and no independent/hands-on corroboration. Missing for 10: detailed scheduling docs/UI, examples of recurring job configuration, community or hands-on verification that scheduled workflows work reliably.",
+    "rationale": "Only a single pricing-page mention of automating workflows via schedules or webhooks exists, with no docs detailing job definitions, monitoring, or recurring workflow management; missing for 10: detailed scheduling docs, examples of recurring jobs, UI/API for managing schedules, independent corroboration.",
     "evidenceIds": [
       "glama-docs-10"
     ]
@@ -932,19 +941,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Glama's evidence covers MCP server hosting, gateway, chat features, and directory search, but nothing describes versioning, review workflows, or rollback of automations/workflows themselves. No evidence of version history, diffing, approval/review process, or rollback mechanism for automations.",
+    "rationale": "Glama is an MCP directory/hosting/gateway and chat product; no evidence of versioning, review workflows, or rollback capabilities for automations — the evidence only covers server hosting, gateway logging, and chat features.",
     "evidenceIds": []
   },
   {
     "productId": "glama",
     "storyId": "browser-inspector-playground",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Glama offers a browser-based MCP Inspector that explicitly claims to test any MCP server's tools, resources, prompts, and other features directly from the browser, including a tunnel option for local servers before integration. This directly matches the story of exercising tools pre-integration. Missing for 10: independent hands-on confirmation of the inspector's tool-execution UX and no community testimonial specifically about using the inspector itself (community evidence focuses on quality scoring, not the inspector).",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Glama's browser-based Inspector explicitly tests MCP servers with full protocol support (tools, resources, prompts, sampling, OAuth) with no login required, and even supports local servers via tunneling before integration into clients like Cursor/Claude Desktop. This directly matches the story of exercising tools pre-integration. Missing for 10: independent hands-on verification of the inspector's tool-execution UX beyond vendor docs.",
     "evidenceIds": [
       "glama-docs-1",
       "glama-docs-12",
+      "glama-docs-24",
       "glama-docs-7"
     ]
   },
@@ -952,13 +962,13 @@
     "productId": "glama",
     "storyId": "call-logging-replay",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Glama's gateway docs state that every MCP call flows through Glama so admins know what agents are doing and can control tool access, implying some visibility, but there is no explicit documentation of a persisted call log, audit trail, or replay capability. Missing for 10: explicit log storage/retention details, audit UI or export, and replay functionality demonstrating reconstructable tool-call history.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Glama's Gateway docs state that every MCP call is routed through Glama and is \"logged, access-controlled, and credential-managed,\" which supports a basic tool-call audit trail (glama-docs-4, glama-docs-28, glama-docs-15). However, there is no evidence of a viewable log UI, log detail/schema, retention policy, export, or replay functionality that would let a platform-engineer reconstruct or replay an agent's actions. Missing for 10: log viewing/export interface, replay capability, log retention/detail specifics, independent confirmation of logging depth.",
     "evidenceIds": [
       "glama-docs-4",
-      "glama-docs-15",
-      "glama-docs-5"
+      "glama-docs-28",
+      "glama-docs-15"
     ]
   },
   {
@@ -978,10 +988,10 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Glama's docs promote free-sounding capabilities like testing MCP servers and browsing the catalog (glama-docs-1, glama-docs-6), but no evidence pack item actually describes a free pricing tier or its limits, and a hands-on report shows a user's MCP rebuild/rescan silently failed for days until a credit card was added — an undocumented paywall blocking core functionality (glama-comm-2, glama-comm-3). This directly contradicts the idea of a functional free prototyping tier. Missing for 10: explicit free-tier plan details/limits, confirmation that tool-connection prototyping works fully without payment, and resolution of the undocumented credit-card requirement.",
+    "rationale": "Glama offers a no-login browser Inspector for testing MCP servers (glama-docs-24, glama-docs-1), suggesting free prototyping is possible, but community reports show that actually deploying/rebuilding an MCP server's quality score silently required adding a credit card—an undocumented paid gate that blocked iteration for days (glama-comm-2, glama-comm-3), directly contradicting the idea of a meaningful free tier for hosting/testing tool connections. missing for 10: documented free-tier limits on hosting/gateway usage, confirmation that deployment/build steps work without payment, and independent corroboration that the free tier suffices for real prototyping.",
     "evidenceIds": [
+      "glama-docs-24",
       "glama-docs-1",
-      "glama-docs-6",
       "glama-comm-2",
       "glama-comm-3"
     ]
@@ -989,14 +999,16 @@
   {
     "productId": "glama",
     "storyId": "generate-server-from-openapi",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Glama's hosting docs describe deploying already-built MCP servers (via Dockerfile, npm/PyPI package, or GitHub repo build) plus a gateway/inspector layer — but nothing shows converting an OpenAPI spec or arbitrary custom code into MCP protocol handling automatically. The user still has to write/implement the MCP server themselves before Glama hosts it, which is the opposite of 'without writing protocol plumbing'.",
+    "rationale": "Glama's hosting lets you deploy a Dockerfile, npm/PyPI package, or GitHub repo as a hosted MCP server with the Gateway automatically wired in, so custom code can become a hosted MCP endpoint without protocol plumbing (glama-docs-2, glama-docs-3, glama-docs-15, glama-docs-27). However there is no evidence of an OpenAPI-spec-to-MCP-server conversion feature — the docs never mention ingesting an OpenAPI definition to auto-generate a server. Missing for 10: OpenAPI import/definition-to-MCP generation, independent confirmation of the code-to-server build pipeline working smoothly.",
     "evidenceIds": [
       "glama-docs-2",
       "glama-docs-3",
-      "glama-docs-15"
+      "glama-docs-15",
+      "glama-docs-27",
+      "glama-docs-8"
     ]
   },
   {
@@ -1019,38 +1031,41 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Glama's inspector lets a developer expose a locally running MCP server via a public tunnel (mcp-proxy) for browser-based testing, which is a real form of bridging a local server into the platform without deploying it — but this is framed purely as a testing/inspection feature, not as a persistent 'managed remote connection' comparable to a registry-listed or gateway-fronted server. Missing for 10: evidence that a tunneled local server can be registered/listed as a managed connector, receive a stable Gateway endpoint, or persist beyond an inspector test session.",
+    "rationale": "Glama's inspector lets you expose a locally running MCP server via a public tunnel (mcp-proxy) for testing, which is a form of bridging without full deployment, but this is documented only for browser-based testing/inspection, not as a persistent managed remote connection routed through the Gateway with logging/access-control like deployed servers get. Missing for 10: explicit documentation of a local server being registered as a first-class managed remote connector (with Gateway logging, credentials, catalog listing) rather than a temporary test tunnel, and independent confirmation this tunneling path works reliably.",
     "evidenceIds": [
       "glama-docs-7",
-      "glama-docs-1",
-      "glama-docs-15"
+      "glama-docs-24",
+      "glama-docs-15",
+      "glama-docs-28"
     ]
   },
   {
     "productId": "glama",
     "storyId": "managed-oauth-vaulting",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence that Glama runs OAuth flows on behalf of users for downstream tools or vaults credentials with automatic token refresh; the only OAuth mention is that its inspector supports testing OAuth 2.1 flows, not managing/storing credentials.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Glama's gateway docs state calls are 'credential-managed' and the inspector supports OAuth 2.1, hinting at some credential handling, but there is no explicit documentation of the platform running OAuth flows on behalf of users, encrypting/vaulting resulting credentials, or automatic token refresh. Missing for 10: explicit OAuth flow initiation/consent handling, encrypted credential vault details, automatic refresh mechanism, and any independent confirmation.",
     "evidenceIds": [
-      "glama-docs-12"
+      "glama-docs-28",
+      "glama-docs-12",
+      "glama-docs-15"
     ]
   },
   {
     "productId": "glama",
     "storyId": "one-endpoint-hosted-connection",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Glama hosts MCP servers and automatically fronts them with a Gateway endpoint ('Deploy any server from the registry to Glama and we automatically put the Gateway in front of it... No proxy setup, no manual wiring – the endpoint you get is the Gateway'), and each server page provides pre-filled config blocks for popular clients (Cursor, Claude Desktop, Claude Code, VS Code) to point at that URL, meaning a developer can connect without deploying infra themselves. Missing for 10: independent hands-on confirmation of the remote-URL connection actually working end-to-end, and more detail on reliability/uptime of hosted endpoints beyond docs claims.",
+    "rationale": "Glama's docs show the core capability directly: deploying a registry server puts a Gateway in front of it and gives a single hosted endpoint URL with no proxy setup or manual wiring, and every server page provides a pre-filled JSON config to paste into Cursor/Claude/VS Code — matching the story of pointing a client at a remote URL without deploying infrastructure. Missing for 10: independent/hands-on confirmation that the hosted Gateway endpoint reliably reaches downstream tools in practice (community evidence only discusses quality-score/rebuild issues, not remote connectivity).",
     "evidenceIds": [
       "glama-docs-15",
+      "glama-docs-27",
+      "glama-docs-28",
       "glama-docs-13",
       "glama-docs-14",
-      "glama-docs-2",
-      "glama-docs-3",
-      "glama-probe-1"
+      "glama-docs-6"
     ]
   },
   {
@@ -1059,11 +1074,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documented public API or OpenAPI spec exists (openapi/docs probes all 404), and while community comments mention ad-hoc 'API attempts' for resync, there's no evidence of a comprehensive API mirroring UI features like chat, hosting, or the inspector.",
+    "rationale": "No evidence of a documented public API that mirrors UI capabilities: OpenAPI/swagger endpoints all 404 and no API docs page exists, while the community report describes 'API attempts' failing to trigger a rebuild that the UI could do once billing was fixed — suggesting the API is limited/undocumented rather than a full UI-equivalent surface.",
     "evidenceIds": [
       "glama-probe-2",
       "glama-probe-3",
-      "glama-comm-2"
+      "glama-comm-2",
+      "glama-comm-3"
     ]
   },
   {
@@ -1072,8 +1088,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any data export feature, open-format export, or account portability mechanism; the evidence pack covers MCP hosting, gateway, chat features, and API probes (404s for openapi), none addressing user data export or account deletion/exit.",
-    "evidenceIds": []
+    "rationale": "No evidence of any data export feature, open-format export, or account data portability for chat history, saved conversations, or registry data; API/OpenAPI probes also failed (404s), indicating no accessible export mechanism.",
+    "evidenceIds": [
+      "glama-probe-2",
+      "glama-probe-3"
+    ]
   },
   {
     "productId": "glama",
@@ -1099,7 +1118,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers MCP server hosting, gateway, catalog, and chat features, but nothing addresses per-end-user connected accounts or scoped tokens that let a platform-engineer isolate each end user's credentials within a multi-tenant product. Missing for 10: any mention of end-user identity scoping, multi-tenant credential isolation, or per-user OAuth token vaulting.",
+    "rationale": "Glama's evidence covers MCP server hosting, gateway logging/access-control, and a chat UI, but nothing describes per-end-user account isolation or scoped tokens issued per user of a platform-engineer's own product. There's no mention of multi-tenant credential separation or user-scoped OAuth/token management for downstream end users.",
     "evidenceIds": []
   },
   {
@@ -1108,7 +1127,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance controls for choosing where data is stored; the docs cover hosting, gateway, inspector, and chat features but never data residency.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic controls for where data is stored; this is an applicable privacy axis for a hosting/gateway product but is unaddressed. Missing for 10: any documentation of region selection, data residency guarantees, or storage location controls.",
     "evidenceIds": []
   },
   {
@@ -1116,8 +1135,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data-training opt-out or privacy controls regarding AI model training on user data; only unrelated hosting, gateway, and chat features are documented.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out controls, or privacy commitments regarding training data; the pack only covers MCP hosting, gateway, inspector, and chat features.",
     "evidenceIds": []
   },
   {
@@ -1126,7 +1145,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy settings for user data/chats/MCP traffic; the evidence covers hosting, gateway, inspector, and chat features but nothing about retention/deletion controls.",
+    "rationale": "No evidence in the pack addresses data retention controls, deletion policies, or user-managed data lifecycle settings for chats, logs, or hosted MCP servers. Missing for 10: retention policy documentation, deletion/export mechanisms, data lifecycle controls for gateway logs and chat history.",
     "evidenceIds": []
   },
   {
@@ -1135,7 +1154,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, opt-out settings, or privacy controls of any kind; the pack covers hosting, gateway, chat, and inspector features only.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics, or an opt-out mechanism for Glama's products; the axis is applicable to any SaaS/AI tool but absent here.",
     "evidenceIds": []
   },
   {
@@ -1161,13 +1180,15 @@
     "storyId": "publisher-cli-workflow",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows Glama's hosting/publish workflow is web-based (connect GitHub repo, upload Dockerfile/npm/PyPI package, per-server config pages) and installation into agents is via copy-paste JSON config blocks, not an official CLI. No documentation, probe, or community evidence mentions a CLI tool for authenticating, staging, building, or pushing servers.",
+    "confidence": "medium",
+    "rationale": "Glama's docs describe web-based hosting/deploy flows (connect a GitHub repo, upload a Dockerfile/npm/PyPI package, copy pre-filled JSON config into agent clients) but there is no mention anywhere of an official CLI for authenticating, staging/building, pushing, or installing servers into agents — all workflows described are browser/UI or manual config-paste based.",
     "evidenceIds": [
       "glama-docs-2",
       "glama-docs-3",
       "glama-docs-13",
       "glama-docs-14",
+      "glama-docs-25",
+      "glama-docs-26",
       "glama-probe-2",
       "glama-probe-3"
     ]
@@ -1178,15 +1199,13 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Glama publishes a quality scoring system (TDQS) and a scanned/scored catalog (glama-probe-1: '90,845 servers... every one scanned, scored'; glama-docs-6, glama-docs-11 support search/compare with capability inspection; glama-docs-16 shows a verified-ownership badge mechanism), and one community member praises the TDQS scoring concept (glama-comm-1). However, hands-on reports directly contradict reliable functioning of this quality signal: a user's score wouldn't rerun for 3 days despite resyncs, traced to an undocumented credit-card requirement (glama-comm-2), and neither the user nor their AI agent could diagnose why the retest wasn't triggering after 4 days (glama-comm-3). This is a concrete operational failure of the very quality-signal feature being judged. Missing for 10: documented usage-count metrics, explicit liveness/health-check indicators, and independent confirmation that scores/badges update reliably without hidden paywalls.",
+    "rationale": "Glama does publish quality signals: its scanned/scored registry (91,626 servers, 'every one scanned, scored') and a TDQS quality-score system that a community member praised for helping them improve their MCP listing, plus ownership verification via a claim panel/token. However, hands-on community reports document the score system breaking in practice — a quality-score retest silently failed to rerun for days despite manual resyncs, with the real (undocumented) cause being a missing credit-card/credits requirement, and neither the user nor their AI agent could diagnose it from docs. This is a concrete documented failure of the scoring mechanism working as advertised, not mere skepticism. Missing for 10: clear usage-count metrics, explicit liveness/health-check indicators, and independent corroboration that the score system reliably updates without hidden gating.",
     "evidenceIds": [
-      "glama-docs-6",
-      "glama-docs-11",
       "glama-probe-1",
-      "glama-docs-16",
       "glama-comm-1",
       "glama-comm-2",
-      "glama-comm-3"
+      "glama-comm-3",
+      "glama-docs-16"
     ]
   },
   {
@@ -1211,62 +1230,66 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Glama provides a registry, gateway, and inspector for discovering and connecting MCP servers, but there is no evidence of a meta-tool/dynamic tool-search mechanism that lets an agent search and load tools at runtime instead of loading full tool definitions into context — the gateway routes calls and applies per-tool access control, but doesn't describe a runtime tool-discovery API for agents.",
+    "rationale": "Glama's evidence shows a static registry/search UI and per-tool enable/disable configuration (glama-docs-5, glama-docs-6, glama-docs-11) plus gateway logging/access control (glama-docs-4, glama-docs-28), but nothing describes an agent-facing meta-tool that lets an AI dynamically search and load tool definitions at runtime to avoid context bloat. No documentation or probe evidence mentions such a runtime tool-discovery API for agents.",
     "evidenceIds": [
-      "glama-docs-4",
       "glama-docs-5",
       "glama-docs-6",
       "glama-docs-11",
-      "glama-docs-15"
+      "glama-docs-4",
+      "glama-docs-28"
     ]
   },
   {
     "productId": "glama",
     "storyId": "security-scanning-inspection",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Glama's llms.txt claims every listed server is 'scanned, scored' and community comments reference a TDQS quality-score system, suggesting some automated vetting exists, and the Inspector lets users manually test server capabilities. However, no evidence specifies that scanning targets malicious or vulnerable behavior (vs. general documentation/quality metrics), and community reports describe reliability issues with the scoring pipeline (stalled rescans, undocumented paywall gating rebuilds). Missing for 10: explicit documentation of security/malware/vulnerability scanning criteria, evidence of automated flagging of malicious servers, and independent confirmation the score reflects safety rather than just quality/popularity.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Glama's llms.txt claims every listed server is \"scanned, scored\" (glama-probe-1) and provides a browser-based inspector to test server capabilities before use (glama-docs-1, glama-docs-12, glama-docs-24), suggesting some vetting pipeline exists. However, the community evidence (glama-comm-1, glama-comm-2, glama-comm-3) shows the scoring system (TDQS) is framed around general quality metrics rather than explicit malicious/vulnerability detection, and reveals real operational friction (score not updating, undocumented paywall) that undercuts confidence in a robust, automated security-scanning pipeline. Missing for 10: explicit documentation of security/malicious-code scanning methodology, evidence of vulnerability detection specifically (not just quality scoring), and independent verification that the scan reliably catches malicious servers.",
     "evidenceIds": [
       "glama-probe-1",
+      "glama-docs-1",
+      "glama-docs-12",
+      "glama-docs-24",
       "glama-comm-1",
       "glama-comm-2",
-      "glama-comm-3",
-      "glama-docs-1",
-      "glama-docs-12"
+      "glama-comm-3"
     ]
   },
   {
     "productId": "glama",
     "storyId": "server-metadata-inspection",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Glama's registry lets developers search and inspect server capabilities and use an in-browser inspector that supports full MCP features (tools, resources, prompts, OAuth), and each listing provides pre-filled client configs (transport) for popular clients. However, there is no explicit evidence that listings show detailed input schemas or hosting attributes (e.g., where/how a server runs) prior to connecting - those docs mostly describe hosting configuration for servers you deploy yourself, not inspection of third-party listings. Missing for 10: explicit UI showing per-tool input schemas on server pages, and hosting/runtime attribute display for arbitrary registry listings before connection.",
+    "rationale": "Glama's registry pages let developers search/compare servers, inspect their capabilities via the browser-based Inspector (tools, resources, prompts, sampling, OAuth) before connecting, and hosting docs describe deployment attributes (Docker/npm/PyPI, public/private, per-tool access control). Pre-filled config blocks give connection details for clients. Missing for 10: explicit confirmation that a server's listing page displays raw input JSON schemas and transport type (stdio/SSE/HTTP) directly, and independent verification beyond vendor docs.",
     "evidenceIds": [
-      "glama-docs-1",
       "glama-docs-6",
       "glama-docs-11",
       "glama-docs-12",
       "glama-docs-13",
-      "glama-docs-14"
+      "glama-docs-14",
+      "glama-docs-24",
+      "glama-docs-3",
+      "glama-docs-8"
     ]
   },
   {
     "productId": "glama",
     "storyId": "server-registry-search",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Glama's core product is a searchable registry/catalog of MCP servers with capability inspection (glama-docs-6, glama-docs-11, glama-probe-1 confirming ~90k servers and 23k connectors), plus tooling to inspect capabilities before wiring in (inspector, pre-filled client configs in glama-docs-13/14). Community evidence corroborates real usage of the catalog and quality scoring, though notes it's easy to get lost among many listings. Missing for 10: independent benchmark of search/filter quality by capability, and confirmation of robust capability-based filtering UI beyond text search.",
+    "rationale": "Glama's core value prop is a searchable catalog ('Search, compare, and connect to thousands of MCP servers') with 91,626 servers and 23,749 connectors indexed, capability inspection via the browser inspector, and per-server config blocks for quick wiring into agents. Community evidence corroborates real usage of the catalog and scoring system, though one comment notes it's easy to get lost among many listings. Missing for 10: independent benchmarking of search/filter quality by capability beyond text search.",
     "evidenceIds": [
-      "glama-docs-6",
       "glama-docs-11",
+      "glama-docs-6",
+      "glama-docs-24",
       "glama-docs-13",
       "glama-docs-14",
       "glama-probe-1",
-      "glama-comm-4",
-      "glama-comm-1"
+      "glama-comm-1",
+      "glama-comm-4"
     ]
   },
   {
@@ -1275,10 +1298,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe per-tool access control (enable/disable individual tools) and gateway routing that lets operators decide what agents are allowed to do, which directly supports allowlist-style restrictions. However there is no evidence of server-level allowlisting, role-based policies, or multi-agent/team-level access control beyond per-tool toggles, and no independent/hands-on confirmation of this specific control working in practice. Missing for 10: server-level allowlists, granular per-agent/team policy management, independent verification of access-control enforcement.",
+    "rationale": "Glama's docs explicitly describe per-tool access control (enable/disable individual tools) and a gateway that access-controls and logs every call, which directly supports the story. However, there's no evidence of allowlisting specific servers per-agent or granular role-based policies beyond simple enable/disable toggles, and no independent/hands-on confirmation of this control in practice. Missing for 10: evidence of server-level allowlists per agent/identity, role-based or policy-driven access rules, and independent verification of access control enforcement.",
     "evidenceIds": [
       "glama-docs-4",
       "glama-docs-5",
+      "glama-docs-28",
       "glama-docs-15"
     ]
   },
@@ -1288,7 +1312,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows a generic /pricing page reference (workflow automation) with no per-tool-call or per-connection pricing figures, and no documented rate limits anywhere in the docs or probes. Community reports (glama-comm-2, glama-comm-3) actually describe an undocumented billing requirement (a credit card needed for rebuilds) that surprised users, further indicating the platform lacks the transparent, documented pricing/rate-limit information the story asks for.",
+    "rationale": "The evidence pack contains no documentation of per-tool-call or per-connection pricing, nor any rate-limit specifications; the only pricing reference (glama-docs-10) merely mentions workflow automation, not cost structure. Community reports (glama-comm-2, glama-comm-3) describe an undocumented credit-card requirement blocking rebuilds, directly undermining any claim of pricing/billing transparency, but since no first-party transparent-pricing claim exists in the pack, this is best classified as an unmet axis rather than a dispute.",
     "evidenceIds": [
       "glama-docs-10",
       "glama-comm-2",
@@ -1298,12 +1322,13 @@
   {
     "productId": "glama",
     "storyId": "usage-analytics-dashboard",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The gateway docs mention that calls flow through Glama so you can 'know exactly what your AI is doing', hinting at monitoring, but there is no evidence of any actual analytics dashboard showing call volumes, per-user breakdowns, error rates, or cost tracking for servers/tools an org consumes or publishes.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Glama's Gateway logs every call flowing through it and provides access control and credential management (glama-docs-4, glama-docs-28), implying some visibility into usage, but there is no evidence of a dedicated analytics dashboard showing call volumes, per-user breakdowns, error rates, or cost tracking. Missing for 10: explicit usage/analytics dashboard UI, error-rate reporting, per-user consumption breakdown, cost/billing analytics tied to server/tool usage.",
     "evidenceIds": [
       "glama-docs-4",
+      "glama-docs-28",
       "glama-docs-15"
     ]
   },
@@ -1313,7 +1338,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions white-labeling, custom branding, or bringing your own OAuth app credentials for the authorization flow; Glama's docs only cover hosting, gateway, inspector, and directory features. This is a plausible axis for a hosting/gateway platform, so the absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "No evidence in the pack mentions white-labeling the authorization flow, custom branding, or bringing your own OAuth app credentials; Glama's docs only cover MCP inspection, hosting, gateway, and chat features, none of which address customizable OAuth branding.",
     "evidenceIds": []
   },
   {
@@ -2674,14 +2699,17 @@
     "productId": "pipedream-mcp",
     "storyId": "agent-framework-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pipedream documents MCP integration with a dedicated 'ai-frameworks' page, explicit examples for Vercel's AI SDK (chat app) and Claude's native MCP connector, plus generic 'automatic tool loading' client code, but the evidence never names LangChain, CrewAI, or the OpenAI SDK as documented adapters — only 'popular AI frameworks and LLMs' is claimed generically. missing for 10: explicit LangChain adapter docs, CrewAI adapter docs, OpenAI SDK integration example, independent confirmation these adapters work in practice.",
+    "rationale": "Pipedream documents concrete adapters for the Vercel AI SDK (dedicated 'ai-frameworks' docs page, code example loading tools, chat app demo) and a native Claude/Anthropic Messages API MCP connector, plus generic 'point any MCP client' compatibility. However, the evidence never names LangChain, CrewAI, or an OpenAI SDK-specific adapter, so the story's broader framework list is only partly covered. Missing for 10: explicit documented adapters/examples for LangChain, CrewAI, and OpenAI SDK.",
     "evidenceIds": [
       "pipedream-mcp-docs-4",
       "pipedream-mcp-docs-14",
       "pipedream-mcp-docs-16",
-      "pipedream-mcp-docs-21"
+      "pipedream-mcp-docs-21",
+      "pipedream-mcp-docs-26",
+      "pipedream-mcp-docs-27",
+      "pipedream-mcp-docs-31"
     ]
   },
   {
@@ -2690,12 +2718,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pipedream hosts an llms.txt (probed HTTP 200) and also offers .md versions of docs pages plus a documentation index at docs/llms.txt, explicitly designed for agent/LLM consumption. This directly matches the story of pointing an agent at agent-oriented docs. Missing for 10: no independent third-party confirmation that agents successfully consume these files in practice.",
+    "rationale": "Probes confirm a working llms.txt (HTTP 200 at pipedream.com/llms.txt) and markdown-friendly docs (.md endpoints like /docs/connect/mcp.md and per-app docs like clickup.md, openai.md) explicitly pointing agents to a documentation index at /docs/llms.txt, matching the agent-oriented docs pattern. Missing for 10: no independent/third-party confirmation that agents actually consume this successfully in practice.",
     "evidenceIds": [
       "pipedream-mcp-probe-1",
       "pipedream-mcp-probe-2",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20"
+      "pipedream-mcp-docs-36"
     ]
   },
   {
@@ -2704,70 +2732,79 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pipedream MCP is an infrastructure layer that exposes API/tool-calling capabilities to AI agents; it does not itself hold or analyze a user's data to generate insights or suggestions — that's a different product category (analytics/BI), so this axis doesn't apply.",
+    "rationale": "Pipedream MCP is a connector/infrastructure layer that exposes tool-calling and managed auth to 3,000+ APIs for agents to use — it does not itself analyze user data or surface AI-generated insights/suggestions within a product UI. This 'insights from my data' axis is a category mismatch for a tool-calling/connectivity layer rather than an analytics or insight-generation product.",
     "evidenceIds": []
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Pipedream MCP as a tool-calling/auth layer that lets agents invoke 3,000+ APIs synchronously on behalf of users, but contains no mention of scheduling, triggers, or workflows that run autonomously in the background independent of an active agent session. Missing for 10: any documentation of background/scheduled execution, event-driven triggers, or autonomous run capability tied to the MCP server itself.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence focuses on MCP tool-calling where an agent invokes tools live on behalf of a user (auth, transport, SDKs), not on scheduled or event-driven automations that run without an active agent session. One item mentions 'triggers' for an app (openai.md) hinting at event-driven capability, but this isn't developed into a clear autonomous background-automation story for Pipedream MCP specifically. missing for 10: explicit documentation of scheduled/triggered workflows running unattended via MCP, evidence of persistent background execution, independent confirmation of autonomous runs.",
     "evidenceIds": [
-      "pipedream-mcp-docs-1",
+      "pipedream-mcp-docs-36",
       "pipedream-mcp-docs-4",
-      "pipedream-mcp-docs-10"
+      "pipedream-mcp-docs-24"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Pipedream MCP is an MCP server/tool-provisioning layer for AI agents and apps, not an AI assistant product itself; the chat.pipedream.com reference is merely a demo app showing how developers can use the MCP server, not a built-in assistant inside Pipedream MCP for end users to delegate tasks to.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Pipedream MCP is fundamentally an MCP server/tool-provider for external agents, but docs mention a demo 'chat app' (chat.pipedream.com) built with Vercel's AI SDK where users can try out MCP tools, which functions as a minimal built-in assistant. This is presented as a demo/testing surface rather than a core product feature for task delegation. Missing for 10: evidence of a fully-fledged, production-grade built-in assistant integrated into the core product, richer descriptions of assistant capabilities, and independent corroboration of real-world use.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-9",
+      "pipedream-mcp-docs-21",
+      "pipedream-mcp-docs-27"
+    ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pipedream MCP is architected as a remote HTTP/SSE server accessed via API calls with bearer tokens, project IDs, and environment headers (dev/prod), which supports fully programmatic, non-interactive use suitable for automation contexts. However, there is no explicit documentation or example showing CI/CD pipeline usage, headless mode flags, or automation-specific guidance. Missing for 10: explicit CI/CD examples, headless-mode documentation, automation/runbook guidance beyond generic API connection snippets.",
+    "rationale": "Pipedream MCP is exposed as a remote HTTP/SSE MCP server callable via bearer-token headers and TypeScript/Python/Java SDKs/REST API, which is inherently headless and scriptable from any backend or CI process without a UI (docs-12, docs-19, docs-29, docs-33, docs-35). No interactive step is required beyond initial OAuth setup for connected accounts, and development-mode access is free, supporting automated pipelines (docs-10, docs-22).\n\nmissing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions), documentation of non-interactive service-account auth patterns for fully unattended runs, and independent verification of headless operation in production automation.",
     "evidenceIds": [
       "pipedream-mcp-docs-12",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-22",
-      "pipedream-mcp-docs-5"
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-33",
+      "pipedream-mcp-docs-35",
+      "pipedream-mcp-docs-10",
+      "pipedream-mcp-docs-22"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-mcp-client",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Pipedream MCP's product role is to BE an MCP server (exposing 10,000+ tools/APIs to AI apps and agents), not to act as an MCP client/host that plugs in other third-party MCP servers. All evidence describes Pipedream serving tools to consuming agents/frameworks (Claude, Vercel AI SDK, etc.), never Pipedream itself importing external MCP servers' tools — this is the inverse axis and does not apply to this product's role.",
+    "confidence": "medium",
+    "rationale": "All evidence describes Pipedream itself acting as the MCP server that other clients/agents connect to (e.g., 'Point any MCP client at Pipedream's remote server'), not Pipedream acting as an MCP client that ingests external MCP servers to use their tools. As a platform (not an AI agent), this capability could plausibly apply, but there is no evidence Pipedream lets users plug arbitrary MCP servers into it for tool consumption.",
     "evidenceIds": [
-      "pipedream-mcp-docs-1",
-      "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-14"
+      "pipedream-mcp-docs-23",
+      "pipedream-mcp-docs-30",
+      "pipedream-mcp-docs-18"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Pipedream is itself an MCP server product (not an agent), and evidence directly documents an official MCP server (mcp.pipedream.com / remote.mcp.pipedream.net) that agents can connect to for tool calls across thousands of APIs, with docs, code snippets, and a live probe confirming the endpoint. Missing for 10: independent/hands-on third-party corroboration beyond vendor docs and probes.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Pipedream provides a well-documented official remote MCP server (mcp.pipedream.net / mcp.pipedream.com), with docs describing connecting any MCP client, per-app dedicated servers, managed auth, and framework integrations (Vercel AI SDK, Claude). This is a strong, first-party, extensively documented MCP server offering. missing for 10: independent/hands-on third-party verification beyond vendor docs.",
     "evidenceIds": [
       "pipedream-mcp-docs-1",
+      "pipedream-mcp-docs-5",
       "pipedream-mcp-docs-6",
-      "pipedream-mcp-docs-12",
       "pipedream-mcp-docs-18",
+      "pipedream-mcp-docs-23",
+      "pipedream-mcp-docs-30",
       "pipedream-mcp-probe-3"
     ]
   },
@@ -2777,13 +2814,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Pipedream MCP is designed to be driven by AI agents/LLMs (Claude's native MCP connector, Vercel AI SDK chat app, and mcp.pipedream.com) which interpret natural-language user requests and translate them into tool calls across 10,000+ APIs, matching the 'operate via natural language' story for an AI-native user. Missing for 10: no independent/hands-on transcripts showing actual NL command sessions, and no detail on how ambiguous NL requests are resolved into specific tool calls.",
+    "rationale": "Pipedream MCP exposes tools via the Model Context Protocol, which by design lets AI agents/LLMs invoke tools through natural-language reasoning, and Pipedream provides a chat app (chat.pipedream.com) built with Vercel's AI SDK explicitly for trying this natural-language interaction, plus automatic tool loading/execution for agents. Missing for 10: independent/hands-on evidence of natural-language command quality or reliability, and no detail on NL parsing/intent-matching beyond first-party docs.",
     "evidenceIds": [
-      "pipedream-mcp-docs-9",
-      "pipedream-mcp-docs-16",
-      "pipedream-mcp-docs-21",
       "pipedream-mcp-docs-4",
-      "pipedream-mcp-docs-11"
+      "pipedream-mcp-docs-9",
+      "pipedream-mcp-docs-15",
+      "pipedream-mcp-docs-21",
+      "pipedream-mcp-docs-24",
+      "pipedream-mcp-docs-26"
     ]
   },
   {
@@ -2792,7 +2830,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers MCP server integration, SDKs, and framework support, but there is no mention of an official CLI tool for Pipedream MCP anywhere in the pack.",
+    "rationale": "The evidence pack documents SDKs (TypeScript, Python, Java) and a REST API for Pipedream Connect/MCP, but nowhere mentions an official CLI tool for interacting with Pipedream MCP.",
     "evidenceIds": []
   },
   {
@@ -2800,16 +2838,16 @@
     "storyId": "agentic-public-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Pipedream MCP exposes a documented public API/protocol surface (MCP endpoints, SSE/streamable HTTP transports, per-app dedicated servers, header-based auth like x-pd-external-user-id, proxy endpoints for uncovered API calls) with extensive first-party docs and example code for driving it programmatically from an agent. missing for 10: independent/hands-on developer corroboration beyond Pipedream's own documentation.",
+    "confidence": "medium",
+    "rationale": "Pipedream documents a REST API plus TypeScript/Python/Java SDKs for the Connect service, concrete MCP server endpoints (remote.mcp.pipedream.net), header/auth schemas, and an llms.txt for machine-readability—clearly enabling AI-native/programmatic driving of the product. missing for 10: independent/hands-on confirmation beyond first-party docs, and no changelog/versioning details for API stability.",
     "evidenceIds": [
-      "pipedream-mcp-docs-1",
-      "pipedream-mcp-docs-5",
-      "pipedream-mcp-docs-12",
-      "pipedream-mcp-docs-18",
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-33",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20",
-      "pipedream-mcp-probe-3"
+      "pipedream-mcp-docs-35",
+      "pipedream-mcp-docs-12",
+      "pipedream-mcp-probe-1",
+      "pipedream-mcp-probe-2"
     ]
   },
   {
@@ -2818,38 +2856,40 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Pipedream MCP issues per-app, per-user dedicated MCP servers with encrypted, revocable credentials that are never directly exposed to the AI model, which supports scoped, least-privilege-style credential issuance for agents. However, there's no documented fine-grained scope/permission control (e.g., read-only vs write, rate limits) beyond app-level segregation and user revocation. Missing for 10: granular per-action scope configuration, evidence of independent/third-party validation of least-privilege enforcement.",
+    "rationale": "Pipedream MCP issues per-user credentials via external-user-id, keeps them encrypted at rest and proxied so the agent/model never sees raw tokens, and lets users revoke access at any time — a de facto least-privilege model per connected account/app. However there's no documented mechanism for an admin to define custom scopes or restrict which specific actions/tools an agent can use beyond the app-level tool boundary. missing for 10: explicit scope/permission configuration UI, independent verification of revocation behavior.",
     "evidenceIds": [
-      "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-7",
-      "pipedream-mcp-docs-17",
       "pipedream-mcp-docs-6",
-      "pipedream-mcp-docs-12"
+      "pipedream-mcp-docs-7",
+      "pipedream-mcp-docs-12",
+      "pipedream-mcp-docs-17",
+      "pipedream-mcp-docs-18"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Pipedream documents integration with official SDKs from AI frameworks (Vercel AI SDK, Claude Messages API, MCP client SDKs) and provides code snippets for using its MCP server with these SDKs, showing agentic developers can build against them. However, there is no dedicated official Pipedream SDK reference or comprehensive SDK documentation beyond framework-specific snippets, and no independent/hands-on corroboration of SDK reliability. Missing for 10: dedicated official Pipedream SDK docs/reference, independent developer corroboration, broader language/SDK coverage beyond JS-centric examples.",
+    "rationale": "Pipedream explicitly documents official TypeScript, Python, and Java SDKs plus a REST API for building against Connect/MCP, alongside first-party integration guides for AI frameworks (Vercel AI SDK, Claude Messages API) showing concrete code usage of these SDKs. missing for 10: independent/hands-on developer corroboration beyond vendor docs, and detail on SDK versioning/maintenance cadence.",
     "evidenceIds": [
-      "pipedream-mcp-docs-4",
-      "pipedream-mcp-docs-14",
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-33",
+      "pipedream-mcp-docs-26",
       "pipedream-mcp-docs-16",
-      "pipedream-mcp-docs-21",
-      "pipedream-mcp-docs-12"
+      "pipedream-mcp-docs-4"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Pipedream MCP as enabling AI agents to make tool calls against 10,000+ APIs with managed auth, but nothing describes subscribing to or receiving webhook-based event notifications via MCP — all documented flows are request/response tool execution, not event push/subscription mechanisms.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 2,
+    "confidence": "low",
+    "rationale": "Pipedream's docs mention that individual app integrations expose 'triggers' (e.g., '46 actions · 4 triggers' for OpenAI), implying webhook-based event triggers exist in the catalog, but there is no documentation showing how an AI-native user subscribes to these via the MCP protocol itself (no MCP tool call examples for creating/subscribing to webhook triggers). missing for 10: explicit MCP tool/API for subscribing to webhook events, example of an agent registering a webhook trigger, confirmation that trigger tools are exposed identically to action tools via MCP.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-36"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -2857,13 +2897,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pipedream provides extensive docs with code snippets (e.g., docs-4, docs-12) and a hosted chat app (chat.pipedream.com) to try MCP tools interactively (docs-9), plus per-app tool/API references (docs-19, docs-20), which together approximate an interactive reference experience. However, there is no explicit evidence of a dedicated 'API reference' UI with embedded runnable/live examples akin to a Swagger/Postman-style explorer. Missing for 10: a documented interactive API explorer with inline runnable code, and independent user confirmation of using it as a reference tool.",
+    "rationale": "Pipedream provides per-app reference pages listing tools/actions (e.g., openai.md, clickup.md) plus a hosted chat app and MCP demo where users can try out tool calls interactively, which partially satisfies the 'interactive reference with runnable examples' story. However, there's no evidence of a true live/sandboxed API reference UI (like Swagger/Postman-style docs) with inline runnable code snippets per endpoint. missing for 10: dedicated interactive API-reference UI, in-browser runnable code snippets per tool/endpoint, independent user corroboration of the reference experience.",
     "evidenceIds": [
       "pipedream-mcp-docs-9",
-      "pipedream-mcp-docs-4",
+      "pipedream-mcp-docs-37",
+      "pipedream-mcp-docs-36",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20",
-      "pipedream-mcp-docs-21"
+      "pipedream-mcp-docs-20"
     ]
   },
   {
@@ -2872,12 +2912,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Pipedream exposes machine-readable equivalents like llms.txt indexes, per-app .md docs, and MCP's own tool-schema discovery (mcpClient.tools() dynamically loads tool definitions), but there is no explicit OpenAPI/Swagger spec file offered for download. Missing for 10: an actual OpenAPI/JSON-schema spec document, explicit 'download spec' feature, and independent confirmation of spec completeness.",
+    "rationale": "Pipedream exposes machine-readable documentation surfaces (llms.txt, per-app .md endpoint docs, and MCP's dynamic tool-schema listing via mcpClient.tools()) that function as an 'equivalent' machine-readable spec for AI consumption, but there is no explicit OpenAPI spec file or dedicated spec-download endpoint documented. Missing for 10: an actual OpenAPI/JSON schema document users can download, explicit spec versioning, and independent confirmation the .md/llms.txt files are treated as a formal API spec rather than docs.",
     "evidenceIds": [
-      "pipedream-mcp-docs-4",
       "pipedream-mcp-probe-1",
       "pipedream-mcp-probe-2",
-      "pipedream-mcp-docs-19"
+      "pipedream-mcp-docs-19",
+      "pipedream-mcp-docs-35",
+      "pipedream-mcp-docs-4"
     ]
   },
   {
@@ -2885,12 +2926,13 @@
     "storyId": "api-sandbox",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Pipedream explicitly supports a free 'development mode' for building/testing (docs-10, docs-22) and exposes an `x-pd-environment` header to distinguish environments (docs-19), implying a dev/test environment separate from production. However, there's no explicit documentation stating that development mode uses isolated sandbox data or guarantees no impact on production data/accounts. missing for 10: explicit sandbox data isolation guarantees, documentation on how dev vs prod environments prevent cross-contamination, and independent verification of this separation.",
+    "confidence": "low",
+    "rationale": "Docs reference a distinct `x-pd-environment` header and free 'development' mode for Pipedream Connect/MCP, implying a sandbox mode separate from production before going live, but there is no explicit documentation describing data isolation guarantees or confirming that test-mode API calls don't touch real production data/accounts. missing for 10: explicit documentation of sandbox data isolation, independent/hands-on confirmation that dev-mode tool calls avoid production side-effects.",
     "evidenceIds": [
-      "pipedream-mcp-docs-10",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-22"
+      "pipedream-mcp-docs-35",
+      "pipedream-mcp-docs-22",
+      "pipedream-mcp-docs-10"
     ]
   },
   {
@@ -2899,7 +2941,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers MCP setup, authentication, tool access, and transport details, but contains no mention of API versioning, version numbers, or a deprecation policy for the MCP server or Connect APIs. Missing for 10: any documentation of API versioning scheme, changelog, or deprecation/sunset policy.",
+    "rationale": "The evidence pack shows extensive MCP feature docs but no mention of API versioning conventions or a documented deprecation policy; a lone '/v3' endpoint reference is not a stated versioning/deprecation policy. Missing for 10: explicit versioning scheme documentation, deprecation timeline/policy, changelog or migration guide.",
     "evidenceIds": []
   },
   {
@@ -2908,7 +2950,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Pipedream MCP as enabling individual tool calls to APIs (auth, proxying, per-app servers) but contains no mention of batch/bulk operations across many items in a single call or workflow. Missing for 10: any documentation of batch processing, multi-item loops, or bulk API calls via MCP tools.",
+    "rationale": "The evidence pack documents single tool calls, authentication, and API connectivity via Pipedream MCP, but contains no mention of batch/bulk endpoints, looping over many items, or any bulk-operation-specific tooling. Missing for 10: any documentation of batch APIs, bulk actions, or multi-item processing within the MCP tool surface.",
     "evidenceIds": []
   },
   {
@@ -2917,11 +2959,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Pipedream MCP as a tool-calling layer that lets agents invoke APIs on behalf of users (auth, tool execution, transport), but contains no mention of defining rules or triggers that fire actions automatically on events—the classic workflow/automation-trigger capability. Missing for 10: any mention of event triggers, conditional rules, or workflow automation tied to MCP usage.",
+    "rationale": "The evidence pack is entirely about Pipedream MCP as a tool-calling layer (agents invoking pre-built API actions on demand, with managed auth and transport handling); it contains no documentation of users defining rule-based triggers or event-driven automations through the MCP interface. The one passing mention of 'triggers' (docs-36, tool counts for the OpenAI app) is just a catalog metric, not evidence of an automation-rule capability exposed to AI-native users via MCP.",
     "evidenceIds": [
-      "pipedream-mcp-docs-1",
-      "pipedream-mcp-docs-4",
-      "pipedream-mcp-docs-15"
+      "pipedream-mcp-docs-36"
     ]
   },
   {
@@ -2930,8 +2970,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack focuses entirely on Pipedream MCP as an on-demand tool-calling server (managed auth, tool execution, transports) with no mention of cron-style scheduling, recurring triggers, or persistent workflow automation via MCP. Since Pipedream's broader platform is workflow automation, a buyer could reasonably expect scheduling support, but nothing in this evidence pack demonstrates that Pipedream MCP itself exposes or manages recurring jobs.",
-    "evidenceIds": []
+    "rationale": "The evidence pack is entirely about Pipedream MCP's tool-calling, authentication, and transport capabilities for agents; it mentions 'triggers' in passing (pipedream-mcp-docs-36) but provides no documentation of scheduling recurring jobs or workflows via the MCP interface itself.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-36"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -2939,7 +2981,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers MCP tool connectivity, authentication, and credential handling, but contains no mention of versioning, review workflows, or rollback capabilities for automations built via Pipedream MCP.",
+    "rationale": "The evidence pack covers MCP tool connectivity, managed auth, and API access, but contains no mention of versioning, review workflows, or rollback capabilities for automations built via Pipedream MCP.",
     "evidenceIds": []
   },
   {
@@ -2948,11 +2990,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pipedream explicitly offers a browser-based 'chat app' (chat.pipedream.com) built with Vercel's AI SDK to 'try out Pipedream MCP' before integrating into your own app, which functions as a hosted playground for exercising MCP tools. However, the evidence doesn't describe a dedicated tool-by-tool inspector (e.g., a UI to browse/list individual tool schemas and invoke them ad hoc) — it's framed as a chat interface rather than an explicit inspector/playground UI. Missing for 10: a documented tool-listing/inspector UI showing individual tool schemas and manual invocation, and any independent/hands-on confirmation of this chat app's tool-exercising capability.",
+    "rationale": "Pipedream documents a browser-based chat app (chat.pipedream.com) and an 'MCP demo' link where developers can try out MCP tools before integrating into their own app, functioning as a playground. However, evidence doesn't describe a dedicated tool-by-tool inspector (e.g., viewing schemas, invoking arbitrary tool calls with parameter forms) — it's framed as a chat interface rather than a full inspector UI. Missing for 10: detailed documentation of an inspector-style UI for listing/testing individual tool schemas, independent hands-on confirmation of the playground's capabilities.",
     "evidenceIds": [
       "pipedream-mcp-docs-9",
       "pipedream-mcp-docs-21",
-      "pipedream-mcp-docs-6"
+      "pipedream-mcp-docs-37"
     ]
   },
   {
@@ -2960,18 +3002,23 @@
     "storyId": "call-logging-replay",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers auth, tool execution, and transport but nowhere mentions logging, audit trails, or replay capability for tool calls. Missing for 10: any documentation of call logging, audit log UI/API, retention, or replay/export functionality.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Pipedream MCP handles auth, tool execution, and proxying, and vaguely claims 'Conduit adds the security and observability IT teams need,' but there is no concrete description of a tool-call log, audit trail, or replay capability. Nothing documents log retention, log format, searchability, or replay tooling for platform engineers.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-38"
+    ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "downstream-event-triggers",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes Pipedream MCP as a tool-calling/action layer (making API calls on behalf of users, managed auth, transport details) — none of it describes subscribing an agent to triggers, webhooks, or event streams from downstream apps via MCP. The axis is plausible for an integration platform like Pipedream, but no evidence shows this event-driven capability being exposed through MCP.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Pipedream's MCP tool listing for at least one app explicitly counts '4 triggers' alongside 46 actions, implying trigger-based (event) tools are exposed through the MCP interface, but no documentation explains how an agent actually subscribes to or receives pushed webhook events via MCP (vs. just invoking trigger-setup tools). Missing for 10: explicit description of event/webhook subscription mechanism over MCP transport, confirmation that triggers push asynchronous events to the agent rather than requiring polling or external workflow configuration, and hands-on/independent corroboration.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-36",
+      "pipedream-mcp-docs-5"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -2979,10 +3026,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state developers can use Pipedream MCP for free in 'development mode' and that Pipedream offers 'a generous free plan and free access to Pipedream Connect while in development,' directly supporting free-tier prototyping of tool connections before paying. Missing for 10: independent/third-party confirmation of the free tier's practical limits and no detail on specific usage caps or when paid tier becomes required.",
+    "rationale": "Docs explicitly state developers can use Pipedream MCP for free in 'development mode' with free access to Connect, plus a generous free plan overall, enabling prototyping of tool connections before paying (docs-10, docs-22). Missing for 10: independent/hands-on confirmation of free-tier limits and no evidence of specific usage caps or rate limits that define what 'meaningful' free tier actually allows.",
     "evidenceIds": [
       "pipedream-mcp-docs-10",
-      "pipedream-mcp-docs-22"
+      "pipedream-mcp-docs-22",
+      "pipedream-mcp-docs-28"
     ]
   },
   {
@@ -2991,11 +3039,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Pipedream hosts MCP servers for its built-in catalog of 3,000+ pre-integrated APIs/apps (Slack, ClickUp, etc.) and lets developers connect to those without protocol plumbing, but nothing in the pack shows a workflow for importing a developer's own OpenAPI spec or custom code and turning it into a hosted MCP server — the ClickUp 'proxy forwards request' example is about pre-existing app credentials, not custom API onboarding.",
+    "rationale": "Evidence shows Pipedream MCP exposes pre-built, app-specific MCP servers for 3,000+ existing APIs with managed auth, but there is no documentation of a workflow to ingest a developer's own OpenAPI spec or custom code and auto-generate a hosted MCP server. The closest hint ('Or call any API from code') is unelaborated and not tied to MCP server creation. missing for 10: OpenAPI-spec-to-MCP-server generation feature, custom-code-to-hosted-MCP-server workflow, any docs describing developer-authored tool definitions being converted into an MCP endpoint.",
     "evidenceIds": [
       "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20",
+      "pipedream-mcp-docs-25",
       "pipedream-mcp-docs-1"
     ]
   },
@@ -3005,13 +3052,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs and probes consistently confirm Pipedream MCP exposes 10,000+ tools across 3,000+ APIs, with per-app dedicated MCP servers (e.g., Slack, ClickUp) and managed auth, corroborated independently by the llms.txt probe listing 3,224 apps. missing for 10: independent third-party benchmark or hands-on review counting/verifying actual live tool coverage beyond vendor-provided figures.",
+    "rationale": "Pipedream's docs and probe consistently claim access to 3,000+ APIs and 10,000+ tools via MCP, with per-app dedicated MCP servers (e.g., ClickUp, OpenAI, Slack) and a proxy for endpoints without pre-built tools, confirmed by an independent llms.txt probe citing 3,223 apps. Missing for 10: independent third-party verification of the exact catalog size beyond Pipedream's own docs/probe.",
     "evidenceIds": [
       "pipedream-mcp-docs-1",
       "pipedream-mcp-docs-11",
       "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-8",
       "pipedream-mcp-docs-19",
+      "pipedream-mcp-docs-20",
+      "pipedream-mcp-docs-36",
       "pipedream-mcp-probe-1"
     ]
   },
@@ -3021,8 +3069,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Pipedream's MCP docs describe it as a hosted MCP server exposing Pipedream's own 3,000+ API integrations/tools remotely (mcp.pipedream.com), not a mechanism for taking a developer's own locally-running MCP server and exposing it as a managed remote endpoint without deployment. No evidence describes any bridging/tunneling feature for arbitrary local MCP servers.",
-    "evidenceIds": []
+    "rationale": "The evidence describes Pipedream hosting its own remote MCP servers for 3,000+ apps that developers/clients connect to, and managing auth for those connections — but nothing shows a mechanism for taking a developer's own locally-running MCP server and exposing it as a managed remote endpoint without redeployment. Missing for 10: any documentation of importing/bridging an arbitrary local MCP server, tunneling/proxying a local process, or converting an existing local server into a Pipedream-hosted remote endpoint.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-5",
+      "pipedream-mcp-docs-18",
+      "pipedream-mcp-docs-23",
+      "pipedream-mcp-docs-30"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -3030,27 +3083,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state Pipedream Connect handles OAuth/authorization flows and token storage/refresh automatically with no developer implementation required, credentials are encrypted at rest, requests proxied through Pipedream's servers (never exposing creds to models), and users can revoke access at any time. This directly matches the story's requirements for managed OAuth, encrypted vaulting, and automatic refresh. Missing for 10: no independent/hands-on verification of refresh behavior or encryption implementation beyond vendor docs.",
+    "rationale": "Docs explicitly state Pipedream Connect/MCP handles built-in user authentication, OAuth-style token storage, and refresh automatically with no developer implementation required, and credentials are encrypted at rest and never exposed to models; users can also revoke access. This directly matches the story's requirement for platform-run OAuth, vaulted encrypted credentials, and automatic refresh. Missing for 10: independent/hands-on verification of token refresh behavior and encryption implementation beyond vendor docs.",
     "evidenceIds": [
       "pipedream-mcp-docs-2",
       "pipedream-mcp-docs-3",
       "pipedream-mcp-docs-13",
       "pipedream-mcp-docs-17",
-      "pipedream-mcp-docs-7"
+      "pipedream-mcp-docs-7",
+      "pipedream-mcp-docs-6"
     ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "one-endpoint-hosted-connection",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Pipedream documents a hosted remote MCP server (mcp.pipedream.net / mcp.pipedream.com) that developers can connect to directly via URL and headers with no infrastructure deployment, supporting SSE/streamable HTTP transports and built-in auth handling. Docs show explicit connection code with a remote URL and confirm no server setup is required by the developer. missing for 10: independent/hands-on corroboration beyond vendor docs and probes.",
+    "rationale": "Docs explicitly show a hosted remote MCP endpoint (https://remote.mcp.pipedream.net) that clients connect to via URL and headers, with no server deployment required, supporting SSE/streamable HTTP transports, managed auth, and thousands of downstream tools/APIs. This directly matches the story of pointing an MCP client at a hosted URL to reach tools without infrastructure. Missing for 10: independent/hands-on third-party verification beyond vendor docs.",
     "evidenceIds": [
-      "pipedream-mcp-docs-5",
       "pipedream-mcp-docs-12",
-      "pipedream-mcp-docs-6",
-      "pipedream-mcp-docs-18",
+      "pipedream-mcp-docs-23",
+      "pipedream-mcp-docs-30",
+      "pipedream-mcp-docs-5",
+      "pipedream-mcp-docs-35",
       "pipedream-mcp-probe-3"
     ]
   },
@@ -3058,14 +3113,16 @@
     "productId": "pipedream-mcp",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Evidence shows Pipedream's MCP/API layer exposes thousands of tools and even proxies raw API calls for endpoints without pre-built tools (docs-20), suggesting broad API coverage, but there is no explicit claim or comparison that every UI capability (e.g., workflow building, dashboard management, account configuration) is exposed via the API/MCP interface. missing for 10: explicit UI-to-API parity statement, coverage of non-tool UI features like workflow builder or billing/admin actions, independent confirmation of full parity.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pipedream exposes a full REST API, SDKs (TS/Python/Java), and MCP servers that let developers manage auth, connect accounts, and call any of 3,000+ APIs programmatically, including a proxy for endpoints without pre-built tools — suggesting the core functionality of the UI (connecting accounts, managed auth, tool calls) is API/MCP-accessible. However, the evidence never explicitly claims full UI/API feature parity or lists any UI-only capability not exposed via API. Missing for 10: explicit parity statement enumerating all UI features vs API/MCP equivalents, and independent/hands-on confirmation that no UI-only functionality exists.",
     "evidenceIds": [
+      "pipedream-mcp-docs-2",
       "pipedream-mcp-docs-20",
-      "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-1"
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-33",
+      "pipedream-mcp-docs-6",
+      "pipedream-mcp-docs-28"
     ]
   },
   {
@@ -3073,8 +3130,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of any data export functionality or open-format data portability for users; Pipedream MCP docs focus on connecting accounts, tool calls, and revoking access, but nothing about exporting stored data or leaving with it in an open format. missing for 10: any data export feature, open-format export documentation, or account data portability/exit mechanism.",
+    "confidence": "high",
+    "rationale": "No evidence of any data export feature or open-format data portability for end users leaving Pipedream — the evidence pack covers MCP tool connectivity, auth, and API access, not data export/portability.",
     "evidenceIds": []
   },
   {
@@ -3083,7 +3140,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pipedream MCP is a hosted connector/service product; there's no evidence about open-licensing its source code, and source availability is not a fair axis for this kind of hosted API/service offering (as opposed to an open-source library or framework).",
+    "rationale": "Pipedream MCP is a hosted managed-auth/API-integration service, not a codebase whose source a user would inspect; no evidence pack item concerns open-sourcing the product's source code, so the axis is a category error for this product's role.",
     "evidenceIds": []
   },
   {
@@ -3092,11 +3149,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence describes Pipedream MCP as a hosted, managed service (mcp.pipedream.com, remote.mcp.pipedream.net) with managed auth and credential storage; there is no mention of self-hosting the core MCP server or platform. Self-hosting is a fair question for a developer platform, so this is 'none' rather than 'na'.",
+    "rationale": "Pipedream MCP is offered exclusively as a managed remote service (mcp.pipedream.com / remote.mcp.pipedream.net) with no documentation of a self-hosted or open-source deployment option; all evidence points to a cloud-only architecture with Pipedream's own servers handling auth, credentials, and execution.",
     "evidenceIds": [
       "pipedream-mcp-docs-6",
       "pipedream-mcp-docs-12",
-      "pipedream-mcp-docs-17"
+      "pipedream-mcp-docs-17",
+      "pipedream-mcp-docs-23",
+      "pipedream-mcp-docs-30"
     ]
   },
   {
@@ -3105,15 +3164,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Pipedream Connect explicitly supports per-end-user connected accounts via the x-pd-external-user-id header, with managed auth, encrypted credential storage, per-user revocation, and credentials never exposed to the model, directly matching the platform-engineer story. missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and more detail on token scoping granularity per user across multiple apps.",
+    "rationale": "Docs show explicit per-end-user identification via `x-pd-external-user-id`, per-user connected accounts, encrypted credential storage, proxy calls made with 'the connected user's credentials attached', and user-level revocation — directly matching the platform-engineer's need to isolate each user's agent to only that user's credentials. Missing for 10: independent/hands-on verification of isolation guarantees and more detail on token scoping granularity beyond app-level connections.",
     "evidenceIds": [
-      "pipedream-mcp-docs-2",
-      "pipedream-mcp-docs-6",
-      "pipedream-mcp-docs-7",
       "pipedream-mcp-docs-12",
       "pipedream-mcp-docs-17",
+      "pipedream-mcp-docs-20",
+      "pipedream-mcp-docs-7",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20"
+      "pipedream-mcp-docs-6"
     ]
   },
   {
@@ -3122,7 +3180,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers encryption at rest, credential handling, and revocable access, but no mention of data region/residency selection or storage location controls anywhere in the docs pack.",
+    "rationale": "No evidence of data residency/region selection options anywhere in the docs; encryption at rest and revocable access are mentioned but nothing about choosing storage region or jurisdiction.",
     "evidenceIds": []
   },
   {
@@ -3131,7 +3189,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers auth, credential encryption, and revocable access, but there is no mention of any AI-training opt-out or data-usage control policy for Pipedream MCP.",
+    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any data-training policy for Pipedream MCP; only credential encryption and revocable account access are mentioned, which is unrelated to training-data opt-out.",
     "evidenceIds": []
   },
   {
@@ -3139,8 +3197,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Docs confirm users can revoke access to connected accounts at any time and that credentials are encrypted at rest, giving some control over access, but there is no explicit documentation of data retention periods, data export, or deletion of stored data/logs. Missing for 10: explicit retention policy, data deletion/export mechanisms, and confirmation that revocation actually purges stored data rather than just disabling access.",
+    "confidence": "low",
+    "rationale": "Docs mention users can revoke connected-account access at any time and that credentials are encrypted at rest, which touches on control over access/data exposure, but there is no explicit documentation of data retention periods, logs/data deletion mechanisms, or export/erasure controls for AI-native users. missing for 10: explicit retention period policy, data deletion/export workflow, confirmation that revocation also purges stored data/logs.",
     "evidenceIds": [
       "pipedream-mcp-docs-7",
       "pipedream-mcp-docs-17"
@@ -3152,7 +3210,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out setting; the docs discuss auth, credentials, and tool execution but not data collection controls.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Pipedream MCP; docs focus on auth, tool execution, and credential handling instead.",
     "evidenceIds": []
   },
   {
@@ -3161,12 +3219,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence describes Pipedream hosting its own pre-built MCP servers for 3,000+ existing apps and letting developers *consume* them (with managed auth) — none of it shows a mechanism for a developer to publish, list, or distribute their own custom MCP server on Pipedream for discovery/installation by other users.",
-    "evidenceIds": [
-      "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-1",
-      "pipedream-mcp-probe-1"
-    ]
+    "rationale": "Evidence describes Pipedream's own pre-built MCP servers (one per app) and how developers can embed/consume Pipedream MCP in their apps, but nothing shows a mechanism for a developer to author and publish their own custom MCP server onto the platform for others to discover and install.",
+    "evidenceIds": []
   },
   {
     "productId": "pipedream-mcp",
@@ -3174,8 +3228,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Pipedream provides a hosted/remote MCP server that clients can connect to (via URL/headers) and use for authentication and tool calls, but there is no mention of an official CLI for authenticating, staging/building, pushing, or installing a server into agents — the workflow described is connecting to an existing hosted server, not a CLI-driven publish-and-deploy pipeline.",
-    "evidenceIds": []
+    "rationale": "Pipedream provides hosted MCP servers, SDKs (TypeScript/Python/Java), and REST APIs for connecting to its Connect service, but there is no evidence of an official CLI that lets a developer authenticate, stage/build a custom MCP server, push it, and install it into agents — the flow described is entirely about connecting to Pipedream's pre-built remote server, not publishing one's own.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-12",
+      "pipedream-mcp-docs-23"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -3183,22 +3241,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Pipedream MCP's connectivity, auth, and tool coverage but contains no published quality signals like usage counts, health/liveness checks, scores, or verification badges for comparing servers. missing for 10: usage/popularity metrics, health or uptime checks, quality scores, verification badges.",
+    "rationale": "The evidence pack covers Pipedream MCP's architecture, auth handling, and tool catalog, but contains no published quality signals such as usage counts, health/liveness checks, scores, or verification badges for comparing servers or tools.",
     "evidenceIds": []
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "registry-programmatic-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pipedream documents per-app MCP servers and an automatic `mcpClient.tools()` call that loads all available tools for a given server, and exposes a machine-readable app catalog via llms.txt/app-slug markdown pages (e.g. clickup.md) that lists thousands of integrations — giving some programmatic discoverability. However there's no evidence of a single documented registry/catalog API endpoint returning structured metadata across all servers/tools for agent-driven discovery beyond the standard MCP tools/list per connected app. Missing for 10: a dedicated catalog/registry API spec (params, response schema) and independent corroboration of agents querying it programmatically.",
+    "rationale": "Pipedream documents an MCP client library that auto-loads all available tools (mcpClient.tools()) and a REST API/SDKs for Connect, plus per-app dedicated MCP servers listing tools (e.g. openai.md showing 46 actions/4 triggers), which supports programmatic tool discovery. However, there's no explicit documented registry/catalog search API (e.g., a dedicated endpoint to query across the 3,000+ apps/10,000+ tools catalog by keyword or category) distinct from per-app MCP servers or the SDK's tools() call. missing for 10: a documented cross-catalog registry search/query endpoint, independent evidence of agents using this discovery API in production, and clarity on catalog metadata (versioning, categories) beyond per-app tool lists.",
     "evidenceIds": [
       "pipedream-mcp-docs-4",
       "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-19",
-      "pipedream-mcp-probe-1",
-      "pipedream-mcp-probe-2"
+      "pipedream-mcp-docs-29",
+      "pipedream-mcp-docs-36",
+      "pipedream-mcp-probe-1"
     ]
   },
   {
@@ -3206,12 +3264,12 @@
     "storyId": "runtime-tool-search",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows Pipedream MCP servers load all available tools automatically into the client's context (docs-4: 'Automatically loads all available tools') and organizes by per-app dedicated servers, not by an agent-facing meta-tool search/load pattern. No mention of a 'search_tools' or 'load_tool_by_name' meta-tool mechanism that would let an agent avoid stuffing thousands of definitions into context.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Pipedream MCP servers expose tools per-app and clients typically call `mcpClient.tools()` to 'automatically load all available tools' (docs-4, docs-18), which is the opposite of a runtime search/meta-tool pattern for avoiding context bloat. No documentation describes a search-tool or dynamic tool-loading meta-tool interface that lets an agent query and fetch only relevant tools on demand.",
     "evidenceIds": [
       "pipedream-mcp-docs-4",
       "pipedream-mcp-docs-18",
-      "pipedream-mcp-docs-11"
+      "pipedream-mcp-docs-1"
     ]
   },
   {
@@ -3219,23 +3277,27 @@
     "storyId": "security-scanning-inspection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers auth, credential encryption, and tool execution but contains no mention of scanning, vetting, or inspecting listed servers/tools for malicious or vulnerable behavior before use.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence covers credential encryption, revocable access, and managed auth, but nothing describes Pipedream scanning or vetting the 10,000+ tools/servers for malicious or vulnerable behavior before agents use them. The vague 'Conduit adds security and observability' mention does not describe any scanning/inspection process.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-17",
+      "pipedream-mcp-docs-7",
+      "pipedream-mcp-docs-38"
+    ]
   },
   {
     "productId": "pipedream-mcp",
     "storyId": "server-metadata-inspection",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show each app has a dedicated MCP server with app-specific tool docs (e.g., ClickUp's tool/header list) and transport details (SSE/streamable HTTP) are documented generally, and a chat app lets developers try tools before integrating. However there's no evidence of a structured registry UI exposing full input schemas or explicit hosting attributes per server prior to connecting. Missing for 10: explicit input-schema inspection, per-server hosting/self-host vs managed disclosure, a unified discovery/registry browsing interface.",
+    "rationale": "Docs show per-app pages listing tool counts (e.g., '46 actions · 4 triggers'), dedicated MCP servers per app, transport details (SSE/streamable HTTP), and connection headers/hosting endpoint — enough for a developer to get a sense of what's available before connecting. However, no evidence shows actual input schemas for individual tools or a registry browsing UI that surfaces per-tool argument details. Missing for 10: documented input schemas per tool, a searchable registry listing with schema previews, independent confirmation of pre-connection inspection workflow.",
     "evidenceIds": [
+      "pipedream-mcp-docs-5",
       "pipedream-mcp-docs-18",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-20",
-      "pipedream-mcp-docs-5",
-      "pipedream-mcp-docs-9"
+      "pipedream-mcp-docs-35",
+      "pipedream-mcp-docs-36"
     ]
   },
   {
@@ -3244,12 +3306,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pipedream is documented as an 'App marketplace' with 3,000+ APIs/10,000+ tools, each app having its own dedicated MCP server and per-app docs (e.g. clickup.md) listing available tools, which supports browsing by app/capability. However there's no explicit evidence of a dedicated search-by-capability interface or catalog UI beyond app-level docs pages. missing for 10: explicit search/filter UI evidence, independent hands-on confirmation of browsing workflow.",
+    "rationale": "Pipedream documents 3,000+ APIs/10,000+ tools with per-app dedicated MCP servers (e.g., ClickUp, OpenAI tool lists) and an app marketplace, showing tools are discoverable by app/capability, but there is no evidence of a searchable/browsable registry UI or catalog search API specifically for exploring tools by capability before wiring in — most evidence focuses on connecting and auto-loading tools rather than pre-integration discovery. missing for 10: a dedicated searchable catalog/registry UI or API for browsing tools by capability, independent hands-on confirmation of search/browse functionality, and documentation of filtering/searching mechanics.",
     "evidenceIds": [
-      "pipedream-mcp-probe-1",
+      "pipedream-mcp-docs-1",
       "pipedream-mcp-docs-18",
       "pipedream-mcp-docs-19",
-      "pipedream-mcp-docs-8"
+      "pipedream-mcp-docs-36",
+      "pipedream-mcp-probe-1"
     ]
   },
   {
@@ -3258,8 +3321,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes managed auth, credential encryption, and per-app dedicated MCP servers, but there is no mention of a platform-engineer-facing allowlist or per-tool access-control mechanism to restrict which servers/tools an agent may call.",
-    "evidenceIds": []
+    "rationale": "The evidence shows Pipedream lets you select an app-specific MCP server via an app slug and mentions general security/observability via 'Conduit', but there is no documentation of allowlisting specific servers/tools or per-tool access control that a platform engineer could configure to restrict what an agent may call. Missing for 10: explicit allowlist/denylist configuration, per-tool permission scoping, and admin-facing gateway controls documentation.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-18",
+      "pipedream-mcp-docs-19",
+      "pipedream-mcp-docs-38"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -3267,10 +3334,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only mentions a 'generous free plan' and free access in development mode, but provides no documented per-tool-call or per-connection pricing, no pricing tiers, and no rate limit specifications anywhere in the pack.",
+    "rationale": "Evidence only shows a vague mention of a 'generous free plan' and free access in development mode, with no documented per-tool-call pricing, connection-based pricing tiers, or specific rate limits disclosed anywhere in the pack. missing for 10: per-tool-call or per-connection pricing tables, production pricing tiers, documented rate limits/quotas.",
     "evidenceIds": [
-      "pipedream-mcp-docs-22",
-      "pipedream-mcp-docs-10"
+      "pipedream-mcp-docs-22"
     ]
   },
   {
@@ -3278,9 +3344,11 @@
     "storyId": "usage-analytics-dashboard",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers MCP connectivity, auth, and tool access but contains no mention of usage analytics, dashboards, call volumes, error rates, per-user metrics, or cost reporting for org-consumed or published servers/tools.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence covers MCP connectivity, managed auth, tool execution, and security/encryption, but there is no mention of usage analytics dashboards, call volume metrics, per-user breakdowns, error rates, or cost tracking for consumed/published servers and tools. One line mentions 'Conduit adds the security and observability IT teams need' but gives no concrete detail on analytics features. missing for 10: analytics dashboard, call volume/error metrics, per-user usage breakdown, cost tracking evidence.",
+    "evidenceIds": [
+      "pipedream-mcp-docs-38"
+    ]
   },
   {
     "productId": "pipedream-mcp",
@@ -3288,13 +3356,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Pipedream's managed/built-in authentication (Pipedream's own servers, encrypted credentials, revocable access) but contains no mention of white-labeling, custom branding, or bringing your own OAuth app credentials for the authorization flow. Since the axis is plausible for a platform-engineer-facing auth product, but no evidence supports it here, this is 'none' rather than 'na'.",
-    "evidenceIds": [
-      "pipedream-mcp-docs-2",
-      "pipedream-mcp-docs-13",
-      "pipedream-mcp-docs-17",
-      "pipedream-mcp-docs-7"
-    ]
+    "rationale": "Evidence only shows Pipedream's own managed/built-in authentication (Pipedream handles OAuth via its own servers and credentials) with no mention of allowing platform engineers to white-label the flow with their own branding or supply their own OAuth app client credentials.",
+    "evidenceIds": []
   },
   {
     "productId": "smithery",

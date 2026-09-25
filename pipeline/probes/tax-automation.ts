@@ -191,4 +191,16 @@ export const probes: LocalProbe[] = [
     expect: /# Kintsugi Developer Docs/,
     timeoutMs: 30_000,
   },
+  {
+    // Honest negative from the 2026-09-24 depth spike: Anrok's API docs host publishes no
+    // llms.txt (404) — the queue's recorded absence, pinned as a replayable proof.
+    probeId: 'docs-llms-txt-absent',
+    productId: 'anrok',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://apidocs.anrok.com/llms.txt'],
+    displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://apidocs.anrok.com/llms.txt',
+    expect: /HTTP 404/,
+    timeoutMs: 30_000,
+  },
 ]
