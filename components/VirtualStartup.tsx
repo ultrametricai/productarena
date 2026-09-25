@@ -312,7 +312,7 @@ export default function VirtualStartup({
               </p>
               <p className="mt-1 text-xs text-zinc-500">
                 Corpus time estimate: {formatMinutes(stats.totalMinutes)} (~{dayOf(stats.totalMinutes)} simulated days,
-                incl. {stats.asyncSteps} async wait{stats.asyncSteps === 1 ? '' : 's'}) — from each step's recorded
+                incl. {stats.asyncSteps} async wait{stats.asyncSteps === 1 ? '' : 's'}) — from each step&apos;s recorded
                 estimate, not invented.
               </p>
             </div>
