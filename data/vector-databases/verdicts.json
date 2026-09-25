@@ -1374,10 +1374,11 @@
     "storyId": "access-control-rbac",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "LanceDB Enterprise docs confirm API key and OAuth2 authentication for remote table access, plus SOC2/HIPAA/GDPR compliance claims, but there is no evidence of role-based access control or per-collection/table-level permission granularity. Missing for 10: documented roles/RBAC system, per-collection or per-table permission scoping, and any admin API/UI for managing granular access policies.",
+    "confidence": "low",
+    "rationale": "LanceDB Enterprise documents authentication via API keys and OAuth 2.0 for db:// remote tables, and mentions SOC2/HIPAA/GDPR compliance, but there is no evidence of role-based access control or per-collection/table-level permission granularity. missing for 10: documented RBAC, per-collection/table permission scoping, evidence of granular authorization enforcement beyond simple authentication.",
     "evidenceIds": [
       "lancedb-docs-11",
+      "lancedb-docs-26",
       "lancedb-docs-16"
     ]
   },
@@ -1387,25 +1388,24 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A direct probe confirms LanceDB serves a structured llms.txt at docs.lancedb.com/llms.txt (HTTP 200) listing quickstart and other docs, and the docs site exposes markdown (.md) versions of every page, making it straightforward for an agent to consume documentation directly. Missing for 10: no independent/community confirmation that agents actually use this file successfully in practice.",
+    "rationale": "Probe confirms a live llms.txt file at docs.lancedb.com/llms.txt (HTTP 200) listing docs pages, and LanceDB also ships agent-oriented docs like build-with-ai-agents.md and agent-branch-experiments.md aimed at coding agents. Missing for 10: no independent/community confirmation that agents successfully consume llms.txt in practice.",
     "evidenceIds": [
       "lancedb-probe-1",
-      "lancedb-docs-1",
-      "lancedb-docs-14"
+      "lancedb-docs-14",
+      "lancedb-docs-15"
     ]
   },
   {
     "productId": "lancedb",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "LanceDB's evidence covers vector/hybrid search, reranking, embeddings, and agent-driven branching/experiments as infrastructure for building AI applications, but nothing shows the product itself surfacing AI-generated insights or suggestions about the user's data inside the product (e.g., auto-summaries, natural-language Q&A, anomaly detection). It positions itself as a database/storage layer for others to build such features, not as a tool that generates insights itself.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "LanceDB is primarily a vector-database/lakehouse, but it exposes building blocks that could produce AI-generated insights: a UDF provider to 'embed text and generate completions using OpenAI models' and a RAG tutorial showing how to build retrieval+generation pipelines with time-travel/audit features. There is no evidence of a native, built-in feature that automatically surfaces AI-generated insights or suggestions from a user's data inside the product UI itself — these are developer-assembled pipelines, not an out-of-the-box insight generator. Missing for 10: a first-party 'insights/suggestions' UI or automated analysis feature, evidence of the completions UDF producing summarized insights, independent corroboration of this capability in use.",
     "evidenceIds": [
-      "lancedb-docs-13",
-      "lancedb-docs-14",
-      "lancedb-docs-15",
-      "lancedb-docs-17"
+      "lancedb-docs-29",
+      "lancedb-docs-43",
+      "lancedb-docs-14"
     ]
   },
   {
@@ -1414,7 +1414,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "LanceDB is a vector database/storage layer, not an automation/agent-orchestration platform; there is no concept of scheduled or autonomous background 'automations' as a product feature. This axis is a category error for a database product, so it does not apply.",
+    "rationale": "LanceDB is a vector database/storage layer, not an automation/orchestration platform; setting up autonomous background automations is outside its product category (a wrong axis for this kind of product).",
     "evidenceIds": []
   },
   {
@@ -1430,13 +1430,14 @@
     "productId": "lancedb",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "LanceDB is an embeddable, disk-first vector database usable purely via SDK/API calls (Python/Node/Rust) with no GUI requirement, and community evidence confirms embedding it directly into applications (e.g., Electron), which implies it can run headlessly. However, there is no explicit documentation or evidence describing CI/automation pipelines, headless deployment guides, or CI-specific tooling. Missing for 10: explicit CI/automation documentation, headless deployment guides, examples of running in CI pipelines or scripted test environments.",
+    "rationale": "LanceDB is fundamentally a code/SDK-first embedded database (Python/JS/Rust snippets throughout, e.g. lancedb-docs-19, lancedb-docs-33) with no GUI dependency, and API-key auth that 'works in every SDK' (lancedb-docs-26) supports scripted/automated connections suitable for CI. However, there is no explicit documentation, example, or CI-pipeline reference (e.g. GitHub Actions integration, headless test harness) demonstrating running LanceDB in an automated pipeline. Missing for 10: explicit CI/automation documentation or examples, a documented CLI/headless mode, and independent confirmation of CI usage.",
     "evidenceIds": [
-      "lancedb-comm-1",
-      "lancedb-docs-12",
-      "lancedb-docs-10"
+      "lancedb-docs-19",
+      "lancedb-docs-33",
+      "lancedb-docs-26",
+      "lancedb-docs-13"
     ]
   },
   {
@@ -1445,7 +1446,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "LanceDB is a vector database/storage platform, not an agentic assistant with its own tool-calling loop; the evidence only shows AI coding agents building pipelines on top of LanceDB (the reverse direction), not LanceDB itself consuming MCP servers as a client. This axis (product consuming external MCP tool servers) is a category error for a database product.",
+    "rationale": "LanceDB is a vector/multimodal database product, not an agent or agent-host platform that consumes MCP servers' tools; this axis is a category error for this product type. Evidence shows AI coding agent plugins for building pipelines with LanceDB, but nothing about LanceDB itself connecting to MCP servers as a client.",
     "evidenceIds": []
   },
   {
@@ -1454,8 +1455,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an official MCP server for LanceDB; the closest items describe using AI coding agents to build pipelines or agent-driven branch experiments, not an MCP server integration. Since LanceDB is a database platform (not itself an agent), this axis applies but no supporting evidence exists.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows AI-agent-adjacent features (branching for agent experiments, a coding-agent plugin for building pipelines) but no mention of an official MCP server for connecting agents to LanceDB. As a database product, this axis applies, but absence of evidence means it cannot be credited.",
+    "evidenceIds": [
+      "lancedb-docs-14",
+      "lancedb-docs-15"
+    ]
   },
   {
     "productId": "lancedb",
@@ -1474,49 +1478,54 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions a LanceDB CLI tool; documentation covers SDKs, search, indexing, and AI-agent build guides but nothing about an official command-line interface.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions an official LanceDB CLI tool; documentation covers SDK usage (Python/JS/Rust), embedding, indexing, and an AI-agent plugin, but no dedicated CLI is described or referenced.",
     "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "LanceDB ships extensive public documentation covering its SDK API surface (vector/full-text/hybrid search, filtering, indexing, versioning, branching, embedding API, enterprise auth) and even an llms.txt for AI-native consumption, indicating a documented public API a user could drive programmatically. However, no machine-readable OpenAPI/swagger spec was found (404s across candidate paths), and independent community feedback calls the documentation 'poorly written,' which are real caveats. Missing for 10: a formal machine-readable API spec (OpenAPI/swagger), and stronger independent corroboration that docs are high quality rather than confusing.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "LanceDB exposes a well-documented, multi-language API (Python, JS/TS, Rust) with concrete code examples for search, filtering, indexing, embeddings, versioning, and table management, plus an llms.txt for AI-native consumption. Missing for 10: a formal OpenAPI/REST spec (probe shows 404s on openapi.json/swagger.json) and independent developer corroboration beyond one mixed HN comment on docs quality.",
     "evidenceIds": [
-      "lancedb-docs-1",
-      "lancedb-docs-5",
-      "lancedb-docs-10",
+      "lancedb-docs-19",
+      "lancedb-docs-31",
+      "lancedb-docs-33",
+      "lancedb-docs-34",
       "lancedb-docs-13",
       "lancedb-probe-1",
       "lancedb-probe-2",
-      "lancedb-comm-1"
+      "lancedb-comm-2"
     ]
   },
   {
     "productId": "lancedb",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Enterprise docs confirm API key and OAuth 2.0 authentication for remote tables, showing some credential mechanism exists, but there is no evidence of scoped or least-privilege permission granularity (e.g., read-only vs write, table-level scoping, agent-specific tokens). Missing for 10: explicit scoped/role-based API key documentation, least-privilege permission model, and any agent-specific credential issuance workflow.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "LanceDB Enterprise docs describe authentication via long-lived API keys or OAuth 2.0, but there is no evidence of scoped/least-privilege credential issuance (e.g., per-agent scopes, roles, or permission boundaries) — the API key is explicitly described as a shared secret rather than a scoped token.",
     "evidenceIds": [
-      "lancedb-docs-11"
+      "lancedb-docs-11",
+      "lancedb-docs-26"
     ]
   },
   {
     "productId": "lancedb",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Docs explicitly reference 'multi-language SDK support' for the embedding API, and community evidence confirms a JS/Node SDK (npm package) is actively used alongside the documented Python-first APIs seen throughout the docs. This shows official SDKs exist and are usable for building AI-native apps, though the evidence pack doesn't enumerate all supported languages or link directly to SDK reference pages. Missing for 10: an explicit SDK reference/installation page listing all official languages (Python, JS/TS, Rust) and independent hands-on confirmation beyond one HN comment.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs and code samples show official SDKs across Python, JavaScript/TypeScript, and Rust (e.g., quickstart JS snippet, Rust table.delete/NewColumnTransform, Python create_fts_index), plus an embedding API with 'multi-language SDK support'. Community evidence corroborates real-world hands-on use of the JS/npm SDK in production apps. Missing for 10: independent benchmarking of SDK feature parity across languages and clearer versioning/release cadence documentation.",
     "evidenceIds": [
       "lancedb-docs-13",
-      "lancedb-comm-1",
-      "lancedb-comm-2"
+      "lancedb-docs-19",
+      "lancedb-docs-33",
+      "lancedb-docs-34",
+      "lancedb-docs-24",
+      "lancedb-comm-1"
     ]
   },
   {
@@ -1525,19 +1534,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of webhook support or event subscription mechanisms anywhere in the docs, probes, or community reports; LanceDB's evidence focuses on search, indexing, versioning, and storage, with nothing about event-driven notifications.",
+    "rationale": "No evidence anywhere in the pack of webhook support or event subscription mechanisms in LanceDB; the docs focus on search, indexing, versioning, and storage but never mention webhooks or event-driven notifications.",
     "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs pages describe features with static code examples, but there is no evidence of an interactive API reference with runnable examples; a probe for OpenAPI/Swagger specs explicitly returned 404 on all candidate paths, indicating no interactive API explorer exists.",
+    "rationale": "Docs contain many concrete, copy-pasteable code snippets across Python/JS/Rust (e.g. lancedb-docs-19, 25, 31, 33, 34), showing example-rich reference material, but there is no evidence of an interactive, runnable API reference (no OpenAPI/Swagger spec found — lancedb-probe-2 shows all candidate OpenAPI endpoints 404) and community feedback calls the documentation confusing/poorly organized (lancedb-comm-1). missing for 10: an interactive sandbox or live-executable API explorer, an OpenAPI/reference generator, and independent confirmation that examples are actually runnable in-browser.",
     "evidenceIds": [
+      "lancedb-docs-19",
+      "lancedb-docs-25",
+      "lancedb-docs-31",
+      "lancedb-docs-33",
+      "lancedb-docs-34",
       "lancedb-probe-2",
-      "lancedb-docs-1"
+      "lancedb-comm-1"
     ]
   },
   {
@@ -1546,7 +1560,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger specs at all standard locations returned 404s, and no evidence pack item shows a downloadable machine-readable API spec being offered.",
+    "rationale": "A direct probe for OpenAPI/swagger specs at all standard candidate paths returned 404s, and no evidence pack item shows a downloadable machine-readable API spec being offered.",
     "evidenceIds": [
       "lancedb-probe-2"
     ]
@@ -1556,12 +1570,13 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "LanceDB's branching feature explicitly supports forking isolated, writable lines of table history to run experiments without disturbing production reads, and a dedicated doc describes using branches to isolate agent-driven experiments from main before promoting a winner. missing for 10: no independent/hands-on corroboration of branch-based sandboxing in practice, and no explicit mention of a dedicated 'sandbox mode' or test-data seeding workflow.",
+    "confidence": "medium",
+    "rationale": "LanceDB documents branching to fork isolated, writable table history for running experiments without disturbing production reads on main, explicitly framed for agent-driven experimentation and evaluation before promoting a winner. This directly supports a sandbox-vs-production workflow. Missing for 10: independent/hands-on corroboration of the branching feature in practice, and no explicit 'sandbox environment' terminology beyond branching docs.",
     "evidenceIds": [
       "lancedb-docs-6",
       "lancedb-docs-15",
-      "lancedb-docs-7"
+      "lancedb-docs-28",
+      "lancedb-docs-35"
     ]
   },
   {
@@ -1570,7 +1585,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any documented API versioning scheme or deprecation policy for LanceDB's client APIs; probes for OpenAPI specs returned 404s and no changelog/deprecation docs are cited. Table versioning docs refer to data snapshots, not API contract stability.",
+    "rationale": "No evidence of API versioning scheme, semantic versioning policy, or documented deprecation timeline for LanceDB's APIs; probes show no OpenAPI spec and docs cover table/data versioning (time-travel, branching) not API versioning contracts.",
     "evidenceIds": [
       "lancedb-probe-2",
       "lancedb-docs-7"
@@ -1579,14 +1594,18 @@
   {
     "productId": "lancedb",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "LanceDB's docs mention filtering with predicate pushdown and an optimize()/reindexing operation that processes updated data in bulk, implying some batch-oriented workflows, but there is no explicit documentation of bulk insert/update/delete APIs for operating across many items at once. missing for 10: explicit bulk insert/update/delete API docs, batch size guidance, and independent confirmation of large-scale bulk operation performance.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "LanceDB supports bulk operations such as batch deletes/updates via SQL-like predicates, multi-vector batch search with query_index mapping, incremental reindexing/optimize() across full tables, and bulk embedding pipelines via UDFs/embedding registry, all documented as first-class operations across many rows at once. missing for 10: independent/hands-on benchmarks of bulk throughput at scale, and no explicit bulk-insert/bulk-upsert API documentation beyond delete/update examples.",
     "evidenceIds": [
-      "lancedb-docs-5",
+      "lancedb-docs-33",
+      "lancedb-docs-34",
+      "lancedb-docs-37",
       "lancedb-docs-8",
-      "lancedb-comm-2"
+      "lancedb-docs-23",
+      "lancedb-docs-13",
+      "lancedb-docs-29"
     ]
   },
   {
@@ -1604,7 +1623,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "LanceDB is a vector database/storage layer, not a workflow orchestration or job-scheduling product; scheduling recurring jobs/workflows is outside its category and would be handled by external orchestrators, not by the database itself.",
+    "rationale": "LanceDB is a vector database/storage layer, not an orchestration or job-scheduling platform; scheduling recurring jobs/workflows is outside its product category (though it has indexing/reindex operations, these are not recurring job schedulers).",
     "evidenceIds": []
   },
   {
@@ -1613,11 +1632,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "LanceDB documents table versioning (snapshots, audit trails), branching to fork isolated writable lines for experiments, and explicit guidance on using branches to isolate agent-driven experiments and promote winners—covering version/rollback of automation pipelines built on it. However 'review' tooling (diffing, approval workflows) is only implied via 'audit trails' with no concrete detail, and there is no independent/hands-on corroboration of these features working as described. Missing for 10: detailed review/diff UI or workflow, independent user validation of branching/versioning in practice, and clearer tie to 'automations' beyond data/table state.",
+    "rationale": "LanceDB documents table versioning, time-travel, and branching explicitly framed for agent-driven experiments (branch, evaluate, promote/roll back) and audit trails, which maps to 'version and roll back' for AI-native automation pipelines. However, this is data/table versioning, not versioning of automation logic/workflows themselves, and there's no dedicated 'review' UI/diff tooling evidenced. missing for 10: explicit review/diff tooling for changes, versioning of automation/workflow definitions (not just data tables), independent hands-on corroboration of rollback/branching in production use.",
     "evidenceIds": [
       "lancedb-docs-6",
       "lancedb-docs-7",
-      "lancedb-docs-15"
+      "lancedb-docs-15",
+      "lancedb-docs-28",
+      "lancedb-docs-43",
+      "lancedb-docs-35"
     ]
   },
   {
@@ -1626,10 +1648,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "LanceDB's versioning docs explicitly mention 'data snapshots' and version control/audit trails, and branching lets teams fork isolated table history, which together provide snapshot-like and rollback capability. However, there is no explicit 'backup'/'restore' API, no documentation on exporting/importing snapshots to external storage for disaster recovery, and no community validation of this workflow. Missing for 10: dedicated backup/restore commands or docs, disaster-recovery guidance, independent confirmation of restore reliability.",
+    "rationale": "LanceDB's versioning docs explicitly mention 'version control, data snapshots, and audit trails' and time-travel capabilities for reproducibility/compliance, and branching lets you fork isolated points-in-time for experiments/rebuilds, which functions as a coarse backup/restore mechanism. However, there is no dedicated 'backup' or 'restore' API/CLI, no documentation on exporting/restoring a collection to a different cluster or after data loss, and no disaster-recovery workflow described. Missing for 10: explicit backup/export command, restore-to-new-location workflow, disaster-recovery guidance, and independent confirmation of snapshot/restore reliability.",
     "evidenceIds": [
       "lancedb-docs-7",
-      "lancedb-docs-6"
+      "lancedb-docs-6",
+      "lancedb-docs-43"
     ]
   },
   {
@@ -1638,21 +1661,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "LanceDB natively supports BM25-based full-text/keyword search inside the database (lancedb-docs-2), plus hybrid search combining FTS and vector search (lancedb-docs-3) and rerankers to tune relevance (lancedb-docs-4), all without a separate search engine. missing for 10: independent hands-on benchmarking or community validation specifically of FTS/BM25 quality (community evidence only covers filtering, not FTS).",
+    "rationale": "Docs show native BM25-based full-text search (create_fts_index, FTS reindexing) integrated directly with the vector store, plus hybrid search combining FTS and vector search without a separate search engine. Missing for 10: independent/hands-on corroboration of FTS quality and scale beyond vendor docs.",
     "evidenceIds": [
       "lancedb-docs-2",
+      "lancedb-docs-40",
+      "lancedb-docs-25",
+      "lancedb-docs-23",
       "lancedb-docs-3",
-      "lancedb-docs-4"
+      "lancedb-docs-39"
     ]
   },
   {
     "productId": "lancedb",
     "storyId": "bulk-import-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers search, indexing, versioning, branching, storage, and security, but contains no documentation or examples of bulk-importing or bulk-exporting vectors and metadata in specific documented formats (e.g., Parquet, CSV, Arrow). This is a fair capability to expect from a vector database's data-lifecycle story, but no evidence confirms it.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs show data is created/queried via Arrow tables (e.g. arrow.Field, table.search) and LanceDB can directly scan Lance datasets via hf:// URIs on Hugging Face, implying an Arrow/Lance-based interchange format for ingest, but there is no explicit documentation of a dedicated bulk-import/export workflow (e.g. CSV/Parquet import commands, export utilities) for vectors plus metadata. missing for 10: explicit bulk-export documentation, explicit bulk-import CLI/API examples, named supported file formats (CSV/Parquet/JSON) beyond Arrow/Lance, independent corroboration of import/export usage.",
+    "evidenceIds": [
+      "lancedb-docs-19",
+      "lancedb-docs-45",
+      "lancedb-docs-42",
+      "lancedb-docs-33"
+    ]
   },
   {
     "productId": "lancedb",
@@ -1660,10 +1691,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "A hands-on community report confirms LanceDB works as an embeddable vector database used directly inside an application (Electron), and docs describe a disk-first storage layer that can run on local NVMe without a server, consistent with embedded/local use. However, no first-party quickstart/API doc snippet is included that explicitly walks through in-process initialization or 'local mode' setup. Missing for 10: first-party docs excerpt on embedded/in-process API usage, more than one independent corroboration.",
+    "rationale": "Community hands-on evidence confirms LanceDB is used as an embeddable vector database within an application process (Electron app), and docs confirm its storage layer runs on local NVMe/disk as well as object stores, consistent with lightweight local/embedded use. missing for 10: explicit first-party quickstart snippet showing local file-based connection code, and independent benchmarks on resource footprint for small workloads.",
     "evidenceIds": [
       "lancedb-comm-1",
-      "lancedb-docs-12"
+      "lancedb-docs-12",
+      "lancedb-docs-27"
     ]
   },
   {
@@ -1672,11 +1704,9 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "The core LanceDB engine is Apache-2.0 licensed and can be run/embedded for free indefinitely, which supports free prototyping, but the evidence pack contains no explicit pricing page, free-tier quota, or cloud sign-up details — only mentions of an 'Enterprise' tier with auth/security features implying paid plans exist. missing for 10: explicit free-tier terms/limits for the hosted LanceDB Cloud offering, pricing page evidence, and confirmation that cloud usage (not just self-hosted OSS) has a no-cost tier.",
+    "rationale": "LanceDB's core library is Apache-2.0 licensed and open source, meaning developers can prototype fully for free without a paywall (lancedb-github-license-1). However, there is no evidence in the pack describing a specific hosted/cloud pricing plan with a defined 'free tier' (usage limits, quotas, upgrade path) versus paid tiers. Missing for 10: explicit cloud pricing page details, free-tier quota/limits documentation, evidence of a paid plan structure to compare against.",
     "evidenceIds": [
-      "lancedb-github-license-1",
-      "lancedb-docs-16",
-      "lancedb-docs-11"
+      "lancedb-github-license-1"
     ]
   },
   {
@@ -1685,24 +1715,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes sharding, multi-node clustering, or distributed deployment; storage docs only mention pluggable object-store backends (S3-compatible, NVMe, EBS/EFS) which is about storage location, not compute scaling across nodes. Enterprise docs cover auth and security but never mention horizontal scaling or distributed query execution.",
-    "evidenceIds": [
-      "lancedb-docs-12",
-      "lancedb-docs-11",
-      "lancedb-docs-16"
-    ]
+    "rationale": "No evidence pack item describes multi-node sharding, cluster deployment, or horizontal scaling architecture for LanceDB; only storage-layer flexibility across NVMe/EBS/S3 is mentioned, which addresses storage location, not distributed compute/sharding.",
+    "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "hybrid-dense-sparse-search",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "LanceDB has explicit docs for full-text/BM25 search and a dedicated hybrid-search page describing combining vector + keyword search with fusion, plus reranking support to improve relevance ranking of fused results. Missing for 10: independent hands-on validation of fusion ranking quality/tuning options and more detail on fusion algorithm configurability beyond docs.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe hybrid search combining vector and BM25-based full-text search with reranking to fuse results (lancedb-docs-3, lancedb-docs-39, lancedb-docs-40, lancedb-docs-25, lancedb-docs-4), and FTS index creation via create_fts_index alongside vector search is shown as part of the hybrid workflow. Missing for 10: independent hands-on corroboration of fusion ranking quality/behavior beyond vendor docs, and detail on which fusion algorithms (e.g., RRF) are configurable.",
     "evidenceIds": [
-      "lancedb-docs-2",
       "lancedb-docs-3",
-      "lancedb-docs-4"
+      "lancedb-docs-39",
+      "lancedb-docs-40",
+      "lancedb-docs-25",
+      "lancedb-docs-4",
+      "lancedb-docs-2"
     ]
   },
   {
@@ -1711,11 +1740,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm vector index building, quantization for compression, and reindexing/optimize operations, implying tunable index parameters (e.g., index type, quantization) that trade memory/latency, but no explicit mention of HNSW-specific graph parameters (efConstruction, M) or documented recall/latency tradeoff guidance. missing for 10: explicit HNSW parameter docs (M, efConstruction, ef search), benchmark/tuning guidance showing recall-vs-latency tradeoffs, independent corroboration of tuning effectiveness.",
+    "rationale": "LanceDB docs confirm vector index building, quantization (PQ/RQ/SQ), naming/override options, exhaustive-scan override, and reindexing/optimize, which support tuning recall vs latency/memory tradeoffs. However, there's no explicit mention of HNSW-specific graph parameters (efConstruction, M, ef search) or documented guidance on tuning recall/latency/memory tradeoffs directly. missing for 10: explicit HNSW parameter documentation (ef, M, efConstruction), concrete recall/latency/memory tradeoff guidance, and independent benchmarking evidence.",
     "evidenceIds": [
       "lancedb-docs-9",
       "lancedb-docs-10",
-      "lancedb-docs-8"
+      "lancedb-docs-20",
+      "lancedb-docs-22",
+      "lancedb-docs-38",
+      "lancedb-docs-23"
     ]
   },
   {
@@ -1724,9 +1756,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "LanceDB's embedding API docs confirm a registry of embedding functions with multi-language SDK support, enabling the database to generate embeddings automatically at ingest and query time rather than requiring a separate pipeline. Missing for 10: detailed list of supported model providers/APIs, and independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "LanceDB documents a built-in embedding API with a function registry supporting multiple providers (OpenAI registered by default, VoyageAI, OpenCLIP for multimodal) plus custom embedding function definitions, letting embeddings be generated automatically at ingest and query time without a separate pipeline. missing for 10: independent/hands-on corroboration of the ingest+query embedding workflow and broader provider coverage details beyond the few named examples.",
     "evidenceIds": [
-      "lancedb-docs-13"
+      "lancedb-docs-13",
+      "lancedb-docs-24",
+      "lancedb-docs-29",
+      "lancedb-docs-30",
+      "lancedb-docs-31",
+      "lancedb-docs-32"
     ]
   },
   {
@@ -1735,19 +1772,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official Helm chart, Kubernetes operator, or any Kubernetes deployment guidance in the evidence pack; storage docs mention object stores but not orchestration/deployment tooling.",
-    "evidenceIds": [
-      "lancedb-docs-12"
-    ]
+    "rationale": "No evidence of an official Helm chart, Kubernetes operator, or any Kubernetes deployment tooling in the evidence pack; storage docs mention S3-compatible object stores but nothing about Kubernetes deployment mechanisms.",
+    "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "live-upserts-freshness",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows versioning, branching, and manual reindexing (optimize()) but contains no documentation of upsert/delete APIs or explicit freshness/consistency guarantees for search after writes. missing for 10: upsert/delete API docs, consistency/freshness guarantees, latency-to-search-visibility documentation.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs show delete() operations and manual/incremental reindexing via optimize() to update vector/FTS indexes after data changes (docs-8, docs-23, docs-33), suggesting some support for continuous data changes, but there is no explicit documentation of an upsert/merge operation or of freshness/consistency semantics (e.g., how quickly new/deleted rows appear in search before reindexing, staleness windows, or consistency guarantees). missing for 10: explicit upsert/merge_insert API docs, documented consistency/freshness guarantees for search after writes, benchmarks or hands-on confirmation of update latency.",
+    "evidenceIds": [
+      "lancedb-docs-33",
+      "lancedb-docs-8",
+      "lancedb-docs-23"
+    ]
   },
   {
     "productId": "lancedb",
@@ -1755,11 +1794,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs describe a LanceDB Enterprise offering with remote `db://` tables, API-key/OAuth authentication, and object-store-backed storage, implying a managed/cloud deployment mode, but there is no evidence of a programmatic provisioning API (e.g., creating/managing database instances via API or CLI) or a SaaS console for automated provisioning. Missing for 10: explicit provisioning API/CLI docs, cloud console or account creation flow, evidence of automated instance lifecycle management.",
+    "rationale": "Evidence shows a managed remote/enterprise offering (db:// remote tables, API-key/OAuth auth, S3-compatible storage) implying a cloud service, but there is no explicit documentation of programmatic provisioning (e.g., API/CLI/Terraform to spin up or manage database instances) and the OpenAPI probe returned 404s. Missing for 10: explicit provisioning API/CLI docs, infrastructure-as-code examples, independent confirmation of self-service cloud instance creation.",
     "evidenceIds": [
       "lancedb-docs-11",
+      "lancedb-docs-26",
       "lancedb-docs-12",
-      "lancedb-docs-16"
+      "lancedb-probe-2"
     ]
   },
   {
@@ -1768,8 +1808,9 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "LanceDB has dedicated metadata filtering docs and supports predicate pushdown, which is corroborated independently by a community comment praising the pushdown implementation for efficient filtering. This directly addresses filtering without recall/latency degradation via native pushdown rather than post-filtering. Missing for 10: quantitative benchmarks showing recall/latency impact of filtered vs unfiltered search, and more detailed docs on pre- vs post-filtering tradeoffs.",
+    "rationale": "Docs explicitly describe metadata filtering with pre-filtering applied before vector search so filters narrow the candidate set rather than post-filtering top-k results, preserving recall/latency (lancedb-docs-41, lancedb-docs-5). Community evidence corroborates predicate pushdown for filters, an independent confirmation of the performance-conscious filtering design (lancedb-comm-2). Missing for 10: quantitative benchmarks showing recall/latency impact at scale, and more detailed docs on filter+ANN index interaction edge cases.",
     "evidenceIds": [
+      "lancedb-docs-41",
       "lancedb-docs-5",
       "lancedb-comm-2"
     ]
@@ -1780,7 +1821,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers search, indexing, versioning/branching, storage, and enterprise auth/compliance, but contains no documentation of namespaces, partitioning, per-tenant collections, or documented tenancy limits/cost isolation guidance. Multi-tenancy is a fair axis for a vector database, so this is 'none' rather than 'na'.",
+    "rationale": "The evidence pack covers search, indexing, branching/versioning, storage, and enterprise auth/compliance, but contains no mention of namespaces, per-tenant collections, tenant isolation patterns, or documented scaling/tenant limits. Multi-tenancy cost/isolation guidance is absent entirely.",
     "evidenceIds": []
   },
   {
@@ -1795,13 +1836,15 @@
   {
     "productId": "lancedb",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack describes search, indexing, versioning, and storage-location flexibility (S3-compatible, NVMe, EBS) but contains no documentation about exporting data to open formats (e.g., Parquet, Arrow, CSV) or migrating away from LanceDB. The Apache-2.0 license shows the software is open-source but says nothing about data portability/export, and no probe or doc confirms an explicit open-format export path.",
+    "rationale": "LanceDB is Apache-2.0 licensed and its storage layer is disk-first, running on local NVMe/EBS/EFS or any S3-compatible object store, meaning data lives in open Lance-format files under user control rather than in a proprietary managed silo. However, there is no explicit documentation of an 'export' workflow (e.g., converting to Parquet/CSV, bulk data-export CLI, or migration guide) proving users can straightforwardly leave with all data intact. Missing for 10: explicit export/migration documentation, third-party corroboration of successful data extraction/portability.",
     "evidenceIds": [
+      "lancedb-github-license-1",
       "lancedb-docs-12",
-      "lancedb-github-license-1"
+      "lancedb-docs-27",
+      "lancedb-docs-42"
     ]
   },
   {
@@ -1810,7 +1853,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "GitHub confirms the lancedb/lancedb repository is licensed under Apache-2.0, an OSI-approved open-source license, allowing full source access and reading. missing for 10: no independent third-party audit or additional corroboration beyond the repo license file itself.",
+    "rationale": "GitHub confirms the lancedb/lancedb repository is licensed under Apache-2.0, a recognized open-source license, making the source freely readable and usable. Missing for 10: no independent third-party audit or mirror confirming license consistency across all sub-packages.",
     "evidenceIds": [
       "lancedb-github-license-1"
     ]
@@ -1821,10 +1864,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "LanceDB core is Apache-2.0 licensed and open source, confirmed by the GitHub LICENSE file, and its embedded/local architecture (disk-first storage on local NVMe, etc.) means it can be run entirely self-hosted without the Enterprise service. missing for 10: explicit self-hosting/deployment guide or docker instructions, and independent confirmation from users that self-hosted setups work well in production.",
+    "rationale": "LanceDB is open-source (Apache-2.0 licensed on GitHub) and its embedded/local architecture with pluggable disk-first storage (local NVMe, S3-compatible object stores) means the core product can be run and hosted entirely by the user without any hosted service dependency. Community evidence corroborates real-world self-hosted/embedded use (e.g., embedded in an Electron app). missing for 10: no dedicated self-hosting/deployment guide, no Docker/Kubernetes deployment docs, and no independent write-up specifically confirming a full self-hosted production deployment path (enterprise features like OAuth/SOC2 appear tied to a hosted Enterprise offering).",
     "evidenceIds": [
       "lancedb-github-license-1",
       "lancedb-docs-12",
+      "lancedb-docs-27",
       "lancedb-comm-1"
     ]
   },
@@ -1832,11 +1876,14 @@
     "productId": "lancedb",
     "storyId": "polyglot-sdk-breadth",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs reference general 'multi-language SDK support' for the embedding API (lancedb-docs-13) and community evidence confirms a JS/TS npm package (lancedb-comm-1), implying at least Python and TypeScript SDKs exist, but the evidence pack contains no explicit confirmation of official Go or Java SDKs. Missing for 10: explicit documentation of Go SDK, explicit documentation of Java SDK, and any first-party page listing all four languages together.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs and quickstart show strong first-party SDK support for Python and TypeScript/JS (e.g. table.search(...).toArray() in TS, Python examples throughout, Rust embedding API), and a community comment confirms an npm package for JS/TS. However, there is no evidence anywhere in the pack of official Go or Java SDKs. Missing for 10: Go SDK documentation/examples, Java SDK documentation/examples, and independent confirmation of parity across all four languages.",
     "evidenceIds": [
-      "lancedb-docs-13",
+      "lancedb-docs-19",
+      "lancedb-docs-45",
+      "lancedb-docs-33",
+      "lancedb-docs-24",
       "lancedb-comm-1"
     ]
   },
@@ -1846,9 +1893,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "LanceDB's storage layer runs on local NVMe/EBS/EFS or any S3-compatible object store, which implies users can choose where to host their bucket/region since they control the underlying storage target, but there is no explicit documentation addressing data residency or region selection as a feature. missing for 10: explicit region/residency selection docs, enterprise data-residency guarantees, and independent confirmation of regional deployment options.",
+    "rationale": "LanceDB's storage layer explicitly supports running on local NVMe/EBS/EFS or any S3-compatible object store, meaning self-hosted deployments let a customer choose where the underlying data physically lives, and Enterprise security docs mention GDPR compliance. However, there is no explicit LanceDB Cloud region-selection feature, no documented list of hosting regions, and no first-party statement on data residency guarantees. Missing for 10: explicit region-picker/region list for the managed/cloud offering, documented data residency policy, and independent confirmation of region controls in practice.",
     "evidenceIds": [
       "lancedb-docs-12",
+      "lancedb-docs-27",
       "lancedb-docs-16"
     ]
   },
@@ -1857,22 +1905,22 @@
     "storyId": "privacy-no-training",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "LanceDB is a vector database/storage infrastructure product, not an AI model provider or assistant that trains models on user inputs — the 'prevent my data from being used to train AI models' axis doesn't apply to a database's core function. Evidence only covers compliance certifications (SOC2/HIPAA/GDPR) and storage/search features, none touching AI model-training data usage policies.",
-    "evidenceIds": [
-      "lancedb-docs-16"
-    ]
+    "confidence": "high",
+    "rationale": "LanceDB is a vector database/storage layer, not an AI model provider or service that trains on user data; opting out of AI training is not an applicable axis for this product category.",
+    "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "LanceDB documents GDPR compliance for its Enterprise tier, which implies data-deletion/retention obligations are addressed at some level, and its versioning/snapshot system offers audit trails, but there is no explicit documentation of row/table deletion APIs, TTL policies, or retention configuration for AI-native users. missing for 10: explicit delete/purge API docs, data retention/TTL configuration, first-party or independent proof of deletion working as claimed.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "LanceDB documents explicit row-level deletion via predicates (table.delete(\"role = 'Traitor Knight'\")) and versioning/time-travel for audit trails, giving users some control over data lifecycle. However, there is no documented retention-policy mechanism (e.g., TTL, automatic expiry, GDPR-style right-to-erasure workflow across all versions/branches) beyond manual delete calls. missing for 10: documented retention/TTL policy features, evidence that deletion purges historical versions/branches (vs. just current snapshot), independent confirmation of deletion behavior.",
     "evidenceIds": [
-      "lancedb-docs-16",
-      "lancedb-docs-7"
+      "lancedb-docs-33",
+      "lancedb-docs-7",
+      "lancedb-docs-43",
+      "lancedb-docs-6"
     ]
   },
   {
@@ -1881,7 +1929,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, or an opt-out mechanism for LanceDB; the axis is applicable (self-hosted/open-source DB products commonly document telemetry policies) but no documentation confirms or denies it. missing for 10: any mention of telemetry collection, an opt-out flag/env var, or a privacy policy statement.",
+    "rationale": "No evidence pack item discusses telemetry, usage tracking, or an opt-out mechanism for LanceDB; the docs cover search, indexing, storage, and enterprise auth but nothing about telemetry collection or privacy controls.",
     "evidenceIds": []
   },
   {
@@ -1890,19 +1938,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No published benchmarks, latency numbers, recall metrics, or comparative performance studies appear anywhere in the evidence pack; docs cover features (indexing, quantization, filtering) but never quantify performance claims with measured data.",
+    "rationale": "No published benchmark numbers, latency/recall figures, or third-party performance studies appear anywhere in the evidence pack—only feature docs (indexing, quantization, search types) with no quantitative performance data or citations to benchmark suites like ANN-Benchmarks.",
     "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "quantization-compression",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "LanceDB explicitly documents quantization for compressing vector indexes and provides general indexing docs, showing the compression/memory-cost capability exists and is documented. However, the evidence pack contains no explicit discussion of the accuracy/recall trade-off (e.g., recall benchmarks, PQ bit-width vs. accuracy guidance) that the story specifically asks for. Missing for 10: documented recall/accuracy impact figures, guidance on choosing quantization levels vs accuracy loss, independent benchmarks corroborating the trade-off.",
+    "rationale": "LanceDB documents three quantization techniques (PQ, RaBitQ, SQ) explicitly for compressing vector indexes to save memory/storage, with dedicated docs on vector indexing and reindexing. However missing for 10: no documented accuracy/recall trade-off benchmarks or guidance quantifying the accuracy loss per technique, no independent/hands-on corroboration of the trade-off, and no worked example showing memory savings vs recall impact.",
     "evidenceIds": [
       "lancedb-docs-9",
-      "lancedb-docs-10"
+      "lancedb-docs-22",
+      "lancedb-docs-10",
+      "lancedb-docs-38"
     ]
   },
   {
@@ -1910,9 +1960,15 @@
     "storyId": "rag-framework-integrations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention LangChain, LlamaIndex, or any RAG/agent framework integration; the closest items are about AI coding agents building pipelines and agent-branch experiments, which are not the same as maintained framework integrations. Missing for 10: any mention of LangChain/LlamaIndex connectors, integration docs, or community confirmation of maintained framework support.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows embedding-provider integrations (OpenAI, VoyageAI, OpenCLIP), Hugging Face dataset access, and an 'AI coding agent' plugin, but contains no mention of LangChain, LlamaIndex, or any maintained first-class RAG/agent-framework connector. This axis clearly applies to a vector database aimed at ML engineers, so absent evidence it is 'none' rather than 'na'.",
+    "evidenceIds": [
+      "lancedb-docs-13",
+      "lancedb-docs-29",
+      "lancedb-docs-30",
+      "lancedb-docs-42",
+      "lancedb-docs-14"
+    ]
   },
   {
     "productId": "lancedb",
@@ -1920,31 +1976,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence describes multi-node/multi-zone replication or a documented consistency model; docs cover storage backends (object store, NVMe/EBS/EFS), versioning, and branching, but nothing about cross-node/zone replication or consistency guarantees for HA.",
+    "rationale": "No evidence in the pack describes multi-node/multi-zone replication or a documented consistency model; storage docs mention pluggable disk/object-store backends and enterprise auth/security, but nothing about replication topology, failover, or consistency guarantees. missing for 10: replication architecture across nodes/zones, consistency model documentation, HA failover behavior.",
     "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "reranking-integration",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "LanceDB has a dedicated reranking module/docs ('Use a reranker to improve search relevance') integrated with hybrid and vector search workflows, indicating first-party reranker support. Missing for 10: independent hands-on validation of reranker quality/list of supported models, and no detail on breadth of built-in vs third-party reranker integrations in the pack.",
+    "rationale": "LanceDB has a dedicated first-party reranking module (docs-4) integrated into hybrid search workflows (docs-3, docs-25, docs-39) that lets ml-engineers rerank BM25+vector hybrid results, confirming built-in reranker support beyond plain vector search (docs-1, docs-19). missing for 10: X, Y — no enumeration of specific supported reranker models (e.g., cross-encoder, Cohere) in the pack, and no independent/hands-on corroboration of reranking quality or usage beyond first-party docs.",
     "evidenceIds": [
       "lancedb-docs-4",
       "lancedb-docs-3",
-      "lancedb-docs-2"
+      "lancedb-docs-25",
+      "lancedb-docs-39",
+      "lancedb-docs-1"
     ]
   },
   {
     "productId": "lancedb",
     "storyId": "rich-filter-expressions",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm metadata filtering support and community corroborates predicate pushdown for filters, but there is no evidence detailing range queries, geo predicates, nested boolean logic, or array-membership operators. missing for 10: explicit documentation/examples of range filters, geospatial predicates, nested AND/OR/NOT boolean expressions, and array/IN membership queries.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "LanceDB documents SQL-style metadata filtering with pre-filtering/predicate pushdown and simple boolean/comparison expressions (e.g., `role = 'Traitor Knight'`), which implies support for ranges and basic boolean logic, and community confirms predicate pushdown works. However, the evidence never shows geo queries, explicit nested AND/OR boolean examples, or array-membership (IN) syntax. Missing for 10: explicit geo filter support, nested boolean logic examples, and array membership (IN) query examples.",
     "evidenceIds": [
       "lancedb-docs-5",
+      "lancedb-docs-41",
+      "lancedb-docs-33",
       "lancedb-comm-2"
     ]
   },
@@ -1953,22 +2013,25 @@
     "storyId": "serverless-usage-pricing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention pricing plans, usage-based billing, or per-unit costs for LanceDB Cloud/Enterprise; only technical docs on search, storage, and enterprise features are present.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack discusses pricing, billing models, usage-based costs, or per-unit cost transparency for LanceDB Cloud/Enterprise; all evidence covers technical features (search, indexing, storage, security) rather than pricing plans.",
     "evidenceIds": []
   },
   {
     "productId": "lancedb",
     "storyId": "vector-similarity-search",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "LanceDB's docs confirm core ANN vector search (top-k nearest neighbor), with vector indexing, quantization, and metadata filtering support, and community evidence corroborates filter pushdown functionality. Distance metric configurability is implied by the vector-index/quantization docs but not explicitly enumerated in the pack. Missing for 10: explicit documentation listing configurable distance metrics (e.g., cosine, L2, dot), and independent hands-on benchmarking of ANN recall/quality.",
+    "rationale": "LanceDB's docs explicitly document ANN vector search with top-k retrieval, configurable distance metrics (e.g., hamming for binary vectors, plus standard metrics implied by index config), exact/exhaustive flat scan option, multi-vector query support, and distance thresholding for near-duplicate detection. Quantization (PQ/RQ/SQ) and vector index build docs further confirm a mature ANN implementation, and community evidence corroborates real-world embeddable vector search use with predicate pushdown filtering. Missing for 10: no independent benchmark or hands-on validation of recall/accuracy across different distance metrics, and no explicit enumeration of all supported metrics (e.g., cosine, L2, dot) in one place.",
     "evidenceIds": [
       "lancedb-docs-1",
-      "lancedb-docs-9",
       "lancedb-docs-10",
-      "lancedb-docs-5",
+      "lancedb-docs-36",
+      "lancedb-docs-37",
+      "lancedb-docs-38",
+      "lancedb-docs-21",
+      "lancedb-docs-22",
       "lancedb-comm-2"
     ]
   },

@@ -5,12 +5,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Consensus has a verified live llms.txt (HTTP 200) plus an llms-full.txt agent-oriented doc detailing its API/MCP server, filters, and data schema, directly enabling agents to consume its docs. Missing for 10: broader per-page .md doc support (the .md probe returned 404), showing llms.txt coverage isn't uniformly extended site-wide.",
+    "rationale": "Consensus explicitly publishes an llms.txt and llms-full.txt (agent-oriented docs), confirmed live via HTTP 200 probe, describing its API/MCP server surface for agents. This directly satisfies pointing an agent at llms.txt for agentic consumption. Missing for 10: independent third-party confirmation that agents successfully consume these docs in practice beyond the vendor probe.",
     "evidenceIds": [
-      "consensus-probe-1",
       "consensus-docs-16",
-      "consensus-docs-18",
-      "consensus-probe-2"
+      "consensus-docs-29",
+      "consensus-docs-34",
+      "consensus-probe-1"
     ]
   },
   {
@@ -18,16 +18,18 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Consensus generates AI-driven insights directly in-product: synthesizing literature, extracting PICO/study design data, aggregating findings via the Consensus Meter, and providing citation-traceable answers, all embedded in search/library workflows rather than a separate tool. Missing for 10: independent/hands-on validation of insight quality and no user-reported examples beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Consensus generates AI-driven insights directly within the product: semantic search/synthesis, the Consensus Meter aggregating study verdicts, PICO extraction, study-design classification, literature review synthesis, and a research agent chaining citation crawling/DOI lookup, all with inline citations. Missing for 10: independent/hands-on third-party validation of insight quality and no user-facing UI screenshots/reviews confirming the experience beyond vendor docs.",
     "evidenceIds": [
-      "consensus-docs-10",
-      "consensus-docs-11",
       "consensus-docs-18",
       "consensus-docs-22",
       "consensus-docs-23",
       "consensus-docs-25",
-      "consensus-docs-24"
+      "consensus-docs-27",
+      "consensus-docs-24",
+      "consensus-docs-11",
+      "consensus-docs-10",
+      "consensus-docs-12"
     ]
   },
   {
@@ -35,23 +37,23 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Consensus offers research agent, API/MCP, search, and literature review capabilities, but no evidence shows scheduled or autonomous background automations (e.g., recurring searches triggered without user invocation). The 'research agent' and API features are invoked on-demand, not persistent background automations.",
+    "confidence": "high",
+    "rationale": "Consensus offers search, API/MCP access, and research agent chaining of retrieval tasks, but nothing in the evidence describes scheduled, autonomous background automations that run without user invocation.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus documents a built-in 'research agent' that autonomously chains citation crawling, DOI lookup, author search, and similar-papers retrieval on top of its search engine, plus Deep Search literature reviews and synthesis with citations — evidence of delegating multi-step research tasks to an in-product AI assistant. Missing for 10: no independent/hands-on validation of agentic task delegation, no detail on task scope/autonomy limits, and no explicit UI walkthrough of assigning a task to the assistant.",
+    "rationale": "Consensus offers a 'research agent' that chains citation crawling, DOI lookup, author search, etc., and features like Threads, Deep Search, and the Consensus Meter act as built-in AI assistance for research tasks within the product. However, this is framed as a research-search assistant rather than a general-purpose task-delegation assistant, and there's no evidence of a conversational agent that can perform arbitrary multi-step actions beyond literature search/synthesis. missing for 10: evidence of a general-purpose in-app assistant capable of broader task delegation (not just literature search), independent/hands-on corroboration of the research agent's autonomy.",
     "evidenceIds": [
       "consensus-docs-7",
       "consensus-docs-24",
-      "consensus-docs-8",
-      "consensus-docs-17",
-      "consensus-docs-11"
+      "consensus-docs-33",
+      "consensus-docs-31",
+      "consensus-docs-34"
     ]
   },
   {
@@ -60,10 +62,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Consensus exposes a REST API and MCP server that provide programmatic/headless access to its search and synthesis capabilities, which could be scripted into CI pipelines. However, there is no evidence of a CLI, official CI/CD integration examples, authentication/automation docs for unattended runs, or any hands-on confirmation of headless automation use. missing for 10: CI-specific documentation, CLI tool, examples of unattended/scripted automation, independent confirmation of headless use.",
+    "rationale": "Consensus exposes a REST API and MCP server that offer the same retrieval/synthesis surface as the web app, which enables scripted/automated invocation (e.g., in CI), and docs mention 'run automated searches with our API.' However, there's no explicit CI/headless usage documentation, no CLI, no auth/rate-limit or batch-job details, and no independent evidence of it running unattended in pipelines. Missing for 10: dedicated CI/headless setup docs, examples of automated pipeline integration, independent confirmation of unattended operation.",
     "evidenceIds": [
       "consensus-docs-16",
-      "consensus-docs-1",
+      "consensus-docs-29",
       "consensus-docs-15"
     ]
   },
@@ -73,20 +75,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Consensus exposes its own retrieval/synthesis as an MCP server (consensus-docs-16) — i.e., it is the server other agents connect to — but there is no evidence Consensus itself can act as an MCP client and plug in external MCP servers to use their tools. The story requires the reverse capability, which is unevidenced.",
-    "evidenceIds": [
-      "consensus-docs-16"
-    ]
+    "rationale": "Evidence only shows Consensus exposes its own MCP server (server-side, docs-16/29) so external agents can call Consensus's tools, not that Consensus itself can ingest/plug in external MCP servers to use their tools as a client. No documentation of an MCP-client or plugin-connector capability is present.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "Consensus is a research search/API platform, not itself an agent, so publishing an official MCP server is a fair axis and the evidence directly confirms one exists: \"a REST API and an MCP server expose the same retrieval and synthesis surface that powers the web app.\" This is first-party documentation of an official MCP server enabling agent connectivity to Consensus's synthesis/retrieval capabilities. Missing for 10: independent/hands-on confirmation the MCP server works, and setup/connection documentation details beyond the single mention.",
+    "confidence": "low",
+    "rationale": "Consensus is not itself an AI agent but a research service, so the MCP-server axis applies; docs explicitly state 'a REST API and an MCP server expose the same retrieval and synthesis surface that powers the web app,' indicating an official MCP server exists. However, there's no dedicated setup guide, connection instructions, or independent/hands-on confirmation of the MCP server working. missing for 10: dedicated MCP server documentation/setup guide, independent or hands-on verification of connecting an agent via it.",
     "evidenceIds": [
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
@@ -95,13 +96,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus's core interaction model is natural-language search/synthesis (an 'AI-native alternative to Google Scholar' that lets you ask questions and get cited answers), and its 'research agent' chains citation crawling, DOI lookup, and similar-paper search automatically on top of a query. This shows NL-driven operation and some agentic chaining, but there's no evidence of broader NL 'commands' for managing the product (e.g., library actions, exports, settings) beyond search/synthesis queries. Missing for 10: evidence of NL commands controlling non-search actions (library management, workflow automation beyond search), and independent/hands-on corroboration of the research-agent's command-following behavior.",
+    "rationale": "Consensus supports natural-language semantic search queries and conversational \"Threads\" for interacting with research, indicating NL commands drive core search/synthesis functionality. However, evidence is docs-only with no independent/hands-on confirmation of NL command breadth (e.g., complex multi-step actions via natural language beyond search). Missing for 10: independent verification of NL command coverage, examples of NL controlling library/API actions, hands-on user reports.",
     "evidenceIds": [
-      "consensus-docs-5",
+      "consensus-docs-26",
+      "consensus-docs-33",
       "consensus-docs-10",
-      "consensus-docs-24",
-      "consensus-docs-7",
-      "consensus-probe-1"
+      "consensus-docs-24"
     ]
   },
   {
@@ -109,8 +109,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a REST API and an MCP server, but no mention of an official CLI tool anywhere in the docs pack. Missing for 10: any reference to a CLI, command-line installer, or terminal-based interaction with Consensus.",
+    "confidence": "high",
+    "rationale": "Evidence shows a REST API and MCP server (consensus-docs-16, consensus-docs-29), but there is no mention of an official CLI tool anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -119,12 +119,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus documents a REST API (and even an MCP server) exposing its retrieval/synthesis capabilities, with a dedicated API page and llms-full.txt describing endpoints and features like automated searches. However, there's no evidence of detailed public API reference docs, auth/rate-limit specifics, or independent developer corroboration of usage. Missing for 10: detailed API reference/schema documentation, auth/versioning details, and third-party/hands-on confirmation of API usage.",
+    "rationale": "Consensus documents a REST API for retrieval/synthesis and an MCP server exposing the same surface, explicitly marketed as 'API and agent ready' (consensus-docs-16, -29, -15). However, there's no evidence of actual API reference docs (endpoints, auth, schemas) beyond marketing pages, and a docs.md probe returned 404, suggesting thin documentation depth. Missing for 10: detailed API reference/spec, authentication and rate-limit docs, independent developer corroboration of API usage.",
     "evidenceIds": [
-      "consensus-docs-1",
-      "consensus-docs-15",
       "consensus-docs-16",
-      "consensus-probe-1"
+      "consensus-docs-29",
+      "consensus-docs-15",
+      "consensus-probe-2"
     ]
   },
   {
@@ -132,23 +132,23 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Consensus offers a REST API and MCP server for retrieval/synthesis, but there is no mention of scoped or least-privilege API credential issuance, API key permission scoping, or agent-specific access controls. missing for 10: any documentation of API key scopes, permission levels, or least-privilege credential issuance for agents.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Consensus offers a REST API and MCP server for agents, but there is no mention of scoped or least-privilege API credentials, API key permission scoping, or role-based access controls for agent use.",
     "evidenceIds": [
-      "consensus-docs-1",
-      "consensus-docs-15",
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
     "productId": "consensus",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Consensus offers a REST API and mentions an MCP server exposing the same retrieval/synthesis surface, but evidence is limited to a single llms-full.txt line with no SDK documentation, language-specific client libraries, code samples, or independent developer corroboration. Missing for 10: official SDK packages (Python/JS/etc.), developer docs with code examples, authentication/rate-limit details, and third-party confirmation of SDK usage.",
+    "rationale": "Consensus documents a REST API and an MCP server that expose retrieval/synthesis capabilities for building integrations, but there is no evidence of official language-specific SDKs (e.g., Python/JS client libraries) — only a raw REST endpoint and MCP server are mentioned. missing for 10: dedicated SDK packages, SDK documentation/examples, versioned client libraries.",
     "evidenceIds": [
       "consensus-docs-16",
+      "consensus-docs-29",
       "consensus-docs-1",
       "consensus-docs-15"
     ]
@@ -158,8 +158,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of webhook support or event subscription; the API/MCP docs describe request-response retrieval and synthesis only, with no mention of webhooks or push-based event notifications.",
+    "confidence": "medium",
+    "rationale": "Evidence shows a REST API and MCP server for retrieval/synthesis, but nothing describes webhook subscriptions or event-driven push notifications for AI agents.",
     "evidenceIds": []
   },
   {
@@ -168,13 +168,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "The Consensus Meter explicitly classifies each relevant paper as supporting, refuting, or mixed/inconclusive for a given question and displays the distribution, directly surfacing agreement/disagreement across sources rather than a single unqualified answer. This is reinforced by study-design/PICO extraction and filters that let analysts see variation across study types. Missing for 10: independent/hands-on verification of the Meter's accuracy or reliability beyond vendor docs.",
+    "rationale": "The Consensus Meter explicitly classifies each relevant paper as supporting, refuting, or mixed/inconclusive and displays the distribution, directly surfacing agreement/disagreement across sources rather than a single unqualified answer, and citations trace each insight back to its source. Missing for 10: independent/hands-on corroboration beyond first-party docs, and no concrete example showing disagreement surfaced in a real query.",
     "evidenceIds": [
       "consensus-docs-18",
       "consensus-docs-22",
-      "consensus-docs-19",
-      "consensus-docs-25",
-      "consensus-docs-23"
+      "consensus-docs-34",
+      "consensus-docs-11",
+      "consensus-docs-25"
     ]
   },
   {
@@ -183,11 +183,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is evidence of an API and MCP server (consensus-docs-15, consensus-docs-16) but no mention of an interactive API reference, playground, or runnable examples for developers to explore. The probe for a docs markdown page returned 404, and no documentation site with interactive/try-it-out capabilities is cited.",
+    "rationale": "Evidence confirms Consensus offers a REST API and MCP server, but there is no mention of an interactive API reference (e.g., Swagger/OpenAPI playground) or runnable code examples anywhere in the docs pack.",
     "evidenceIds": [
+      "consensus-docs-1",
       "consensus-docs-15",
       "consensus-docs-16",
-      "consensus-probe-2"
+      "consensus-docs-29"
     ]
   },
   {
@@ -196,10 +197,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Consensus documents a REST API and MCP server (consensus-docs-15, consensus-docs-16) but no evidence shows a downloadable OpenAPI/Swagger spec or other machine-readable API schema; the llms.txt probes only show a text description, not an API spec file.",
+    "rationale": "Consensus documents a REST API and MCP server (consensus-docs-16, consensus-docs-29) and machine-readable llms.txt/llms-full.txt docs, but there is no mention or evidence of a downloadable OpenAPI/Swagger spec or equivalent formal machine-readable API schema for the REST API itself.",
     "evidenceIds": [
-      "consensus-docs-15",
       "consensus-docs-16",
+      "consensus-docs-29",
       "consensus-probe-1"
     ]
   },
@@ -209,7 +210,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research/literature-search product, not a system with production data or a sandbox/test-environment concept; no evidence pack item relates to sandbox testing or production-vs-test data separation. This axis is a category error for this product type.",
+    "rationale": "Consensus is a research/literature-search product, not a coding/dev-environment tool with production data or sandbox execution concerns; the sandbox-vs-production testing axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -218,11 +219,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Consensus has a REST API and MCP server, but there is no mention of API versioning scheme or any documented deprecation policy anywhere in the pack. Missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guidance.",
+    "rationale": "Evidence shows Consensus offers a REST API and MCP server, but there is no mention anywhere of API versioning scheme or a documented deprecation policy. Missing for 10: any versioning documentation, changelog, or deprecation/EOL policy for the API.",
     "evidenceIds": [
-      "consensus-docs-1",
       "consensus-docs-15",
-      "consensus-docs-16"
+      "consensus-docs-16",
+      "consensus-docs-29"
     ]
   },
   {
@@ -231,13 +232,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus supports large-scale operations like importing thousands of papers in one click, running automated searches via its API, and Deep Searches across many studies, which map to bulk-operation needs for AI-native users. However, there is no documented batch/bulk API endpoint, rate limits, or explicit multi-item automation examples (e.g., processing hundreds of papers programmatically in one call) — missing for 10: explicit bulk API endpoint documentation, batch processing limits/examples, and independent confirmation of large-scale automation performance.",
+    "rationale": "Consensus supports bulk import of \"thousands of papers in one click\" into its Library, automated/batch searches via its API, and Deep Search literature reviews spanning many studies at once — all consistent with bulk operations across many items. However, there's no explicit documentation of a dedicated bulk-processing endpoint (e.g., batch query submission, bulk tagging/export, or bulk annotation across a set of papers) beyond import and search-at-scale. Missing for 10: explicit bulk API operations spec (batch requests/results), evidence of bulk export/annotation actions, and independent confirmation of large-scale throughput limits.",
     "evidenceIds": [
       "consensus-docs-3",
       "consensus-docs-13",
       "consensus-docs-15",
       "consensus-docs-17",
-      "consensus-docs-16"
+      "consensus-docs-24",
+      "consensus-docs-9"
     ]
   },
   {
@@ -246,7 +248,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research search/synthesis tool for academic literature, not an automation/workflow platform; there is no rule-trigger-on-event mechanism described anywhere in the evidence, and this capability is a category error for its product type.",
+    "rationale": "Consensus is a research/literature-search engine; there is no rule-based automation or event-trigger system in the evidence — this axis is a category error for this type of product, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -255,7 +257,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scheduling, recurring jobs, or automated recurring workflows anywhere in the pack — the API and research agent features support on-demand search/synthesis, not persistent scheduled automation. Missing for 10: any mention of scheduling, cron-like triggers, recurring alerts, or persistent automated workflow execution.",
+    "rationale": "Consensus offers search, literature review, an API, and an MCP server, but there is no evidence of scheduling, recurring jobs, or persistent automated workflows being triggered on a schedule; 'automated searches' via API refers to on-demand calls, not recurring/scheduled execution.",
     "evidenceIds": []
   },
   {
@@ -264,7 +266,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a research search/synthesis engine, not an automation-builder product; there is no concept of 'automations' with versioning, review, or rollback in its evidence pack. This story applies to workflow/automation platforms, not a literature-search tool.",
+    "rationale": "Consensus is a research search/synthesis engine, not an automation/workflow builder; there is no concept of 'automations' to version, review, or roll back within the product.",
     "evidenceIds": []
   },
   {
@@ -273,12 +275,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus explicitly markets a 'Research Agent' that chains citation crawling, DOI lookup, author search, and similar-papers lookups on top of its search engine, plus 'Deep Searches' for more comprehensive multi-study literature reviews — evidence of autonomous multi-step investigation beyond single-pass Q&A. However, the depth of autonomy (how many steps, how it plans, error-correction) is thin, mostly marketing copy without a hands-on trace of an actual multi-step run. Missing for 10: independent/hands-on verification of the agent executing a multi-step investigation autonomously, detail on planning/iteration logic, and evidence of how it decides when to stop or go deeper.",
+    "rationale": "Consensus explicitly markets a 'Research Agent' that chains citation crawling, DOI lookup, author search, and similar-papers search on top of its search engine, plus 'Deep Search' for comprehensive multi-study literature reviews — going beyond a single-pass summary. However, all evidence is first-party marketing copy with no independent or hands-on demonstration of true autonomous multi-step reasoning, and the depth/steps involved in the 'agent' are not detailed beyond a list of chained functions. Missing for 10: independent/hands-on validation of autonomy, concrete example of a multi-step investigation trace, and detail on how the agent plans/iterates rather than just chaining fixed retrieval functions.",
     "evidenceIds": [
       "consensus-docs-7",
       "consensus-docs-24",
       "consensus-docs-17",
-      "consensus-docs-8"
+      "consensus-docs-31",
+      "consensus-docs-8",
+      "consensus-docs-28"
     ]
   },
   {
@@ -287,12 +291,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Consensus importing from Zotero/BibTeX/PDF/RIS into its Library, not exporting results out to documents, spreadsheets, or reference-manager formats; no mention of export functionality appears anywhere in the pack.",
+    "rationale": "Evidence documents import capabilities (Zotero, BibTeX, PDF, RIS) into the Consensus Library, but there is no evidence of exporting results to documents, spreadsheets, or reference-manager files — the pack only shows one-directional import, not export.",
     "evidenceIds": [
       "consensus-docs-14",
       "consensus-docs-21",
-      "consensus-docs-9",
-      "consensus-docs-20"
+      "consensus-docs-30"
     ]
   },
   {
@@ -301,8 +304,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack includes a pricing reference (consensus-docs-17) but it only mentions a feature name ('Deep Searches') without describing any free tier, trial, or free usage limits. No citation confirms that a researcher can meaningfully try Consensus for free.",
-    "evidenceIds": []
+    "rationale": "The evidence pack references a pricing page (consensus-docs-17) but gives no details about a free tier, trial length, or usage limits that a researcher could evaluate meaningfully. No documentation or hands-on report confirms a free/trial offering, so the axis applies but is unevidenced.",
+    "evidenceIds": [
+      "consensus-docs-17"
+    ]
   },
   {
     "productId": "consensus",
@@ -310,12 +315,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Consensus explicitly states every response includes citations tracing insights back to original sources, and provides study-level metadata (design classification, PICO extraction) enabling verification against underlying papers. missing for 10: independent/hands-on corroboration that citations are consistently accurate and complete across all response types, and detail on how paywalled/full-text sourced claims are cited.",
+    "rationale": "Consensus explicitly documents that every AI-generated response includes citations back to the original source paper, with per-paper metadata (study design, PICO extraction, journal, etc.) enabling verification. Missing for 10: independent/hands-on corroboration that citations are consistently accurate for every substantive claim rather than just a documented design goal.",
     "evidenceIds": [
       "consensus-docs-11",
       "consensus-docs-25",
       "consensus-docs-23",
-      "consensus-docs-4"
+      "consensus-docs-19"
     ]
   },
   {
@@ -324,12 +329,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Consensus offers deep searches, literature reviews, and a research agent, but nothing describes a long-running unattended job with a completion notification (email/push/webhook) to the analyst. Missing for 10: async job submission, background execution status, and a notification mechanism when results are ready.",
-    "evidenceIds": [
-      "consensus-docs-17",
-      "consensus-docs-24",
-      "consensus-docs-7"
-    ]
+    "rationale": "Evidence shows Deep Search/Literature Review features that run more comprehensive analyses ('Literature Reviews in Minutes', 'hours not weeks') but nothing describes an asynchronous, unattended long-running job with a completion notification (email/push/webhook) to the analyst.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
@@ -337,24 +338,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes standing searches, saved-search alerts, or notifications when new relevant papers appear; the pack covers search, library import, citation graphs, and API/MCP access but nothing about ongoing monitoring or alerting for new sources.",
+    "rationale": "No evidence pack item mentions saved searches, standing queries, or alerts that notify researchers of new matching papers over time; the product offers search, library import, citation graphs, and an API/MCP surface, but nothing describes recurring/automated monitoring for newly published sources.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus exposes an API and MCP server that cover core retrieval/synthesis functions (search, citations, Consensus Meter, filters, PICO extraction) matching much of the web UI, per docs-16/18/19/22/23/25. However, there's no evidence that UI-specific features like Library import/management, Citation Graph, or Deep Search literature reviews are fully exposed via API, so full UI-API parity is unconfirmed. missing for 10: evidence that Library/reference-manager, Citation Graph, and Deep Search/Lit Review UI features are all accessible via the API/MCP server, and independent confirmation of parity.",
+    "rationale": "Consensus explicitly markets a REST API (and MCP server) that 'expose the same retrieval and synthesis surface that powers the web app' (consensus-docs-16, consensus-docs-29), covering search, synthesis and automated discovery (consensus-docs-15). However, the docs don't confirm API parity for UI-specific features like Library import/reference management, Threads conversational mode, or Medical Mode, so full UI-API parity isn't demonstrated. Missing for 10: explicit API endpoints for library/reference-manager import, Threads-style conversational sessions, and independent confirmation of full feature parity beyond vendor claims.",
     "evidenceIds": [
       "consensus-docs-16",
-      "consensus-docs-18",
-      "consensus-docs-19",
-      "consensus-docs-22",
-      "consensus-docs-23",
-      "consensus-docs-25",
-      "consensus-docs-15"
+      "consensus-docs-29",
+      "consensus-docs-15",
+      "consensus-docs-24"
     ]
   },
   {
@@ -363,13 +361,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only documents importing papers into Consensus (Zotero, BibTeX, PDF, RIS) and API/MCP access to retrieval features, but there is no mention of any export functionality for a user's library, annotations, or synthesized data in open formats, nor any account-data export/portability mechanism for leaving the service.",
-    "evidenceIds": [
-      "consensus-docs-14",
-      "consensus-docs-21",
-      "consensus-docs-9",
-      "consensus-docs-13"
-    ]
+    "rationale": "Evidence covers importing papers (Zotero, BibTeX, PDF, RIS) and API/MCP access to Consensus's search corpus, but there is no mention of exporting a user's own library/data or account content in open formats for portability/exit.",
+    "evidenceIds": []
   },
   {
     "productId": "consensus",
@@ -377,7 +370,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a closed, proprietary SaaS research search engine; there is no indication its source code is open or licensed for inspection, and open-sourcing source code is not a plausible axis for this type of hosted product.",
+    "rationale": "Consensus is a closed SaaS research search product, not open-source software; there is no source code to license or read. This axis applies to open-source projects, not to a proprietary hosted service like this.",
     "evidenceIds": []
   },
   {
@@ -386,7 +379,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Consensus is a hosted SaaS research search/API platform with no evidence of any self-hostable core product or open-source release; self-hosting is not a plausible axis for this type of closed, proprietary cloud service.",
+    "rationale": "Consensus is a hosted SaaS research search engine backed by a proprietary corpus and ranking system, not an open-source or self-hostable product; self-hosting is a category error for this type of cloud service, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -395,11 +388,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus explicitly supports importing a personal corpus (PDF, BibTeX, RIS, Zotero) into a searchable AI-powered Library, and the Library is described as letting users 'search, find gaps, and put your collection to work' — a plausible fit for 'research over my own PDFs.' However, the evidence never confirms that full synthesis/screening/extraction (the literature-review and full-text analysis features) applies specifically to uploaded PDFs versus the pre-indexed 200M-paper corpus, and there's no hands-on confirmation of quality on arbitrary user PDFs. Missing for 10: explicit confirmation that synthesis/Q&A/full-text extraction works on user-uploaded PDFs (not just corpus papers), and independent/hands-on validation of this workflow.",
+    "rationale": "Consensus lets users import their own PDFs (and BibTex/RIS) into a Library and then search, find gaps, and 'put your collection to work' with AI-powered workspace features, which supports research over a user's own corpus. However, evidence doesn't clearly confirm deep synthesis/Q&A or full-text extraction specifically applied to arbitrary uploaded PDFs versus Consensus's own indexed papers. Missing for 10: explicit documentation of full-text analysis/synthesis pipeline running on user-uploaded PDFs, and independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
       "consensus-docs-3",
       "consensus-docs-13",
       "consensus-docs-14",
+      "consensus-docs-30",
       "consensus-docs-9",
       "consensus-docs-20"
     ]
@@ -409,8 +403,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance certifications for data location; the evidence focuses entirely on search, literature review, and API features. Missing for 10: any mention of data residency controls, region selection, or compliance documentation (SOC2/GDPR data location).",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or any data-location controls for Consensus; the axis applies to a data/AI platform but is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -419,7 +413,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data-training opt-out, privacy controls, or AI-model-training policies for user data; all evidence concerns search/research features.",
+    "rationale": "No evidence in the pack addresses data-training opt-out or privacy controls regarding AI model training; all citations focus on search, retrieval, and literature review features.",
     "evidenceIds": []
   },
   {
@@ -427,8 +421,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or user data management options; all evidence concerns search/research features. Missing for 10: any documentation on data retention settings, account/data deletion mechanisms, or privacy controls.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data handling settings for AI-native users; all evidence concerns search, citation, and literature-review features.",
     "evidenceIds": []
   },
   {
@@ -437,7 +431,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, opt-out settings, or privacy controls of any kind; the pack focuses entirely on research/search features and API capabilities.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, opt-out settings, or privacy controls for AI-native users; all evidence covers search/research features only.",
     "evidenceIds": []
   },
   {
@@ -446,13 +440,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Consensus is built specifically as an academic search engine over 200M+ peer-reviewed papers, with filters for study type, full-text analysis of paywalled papers, citation graphs, and study-design/PICO extraction—clearly distinct from general web search. Missing for 10: independent third-party corroboration of corpus quality/coverage beyond vendor claims.",
+    "rationale": "Consensus is explicitly built as a scholarly search engine over 200M+ academic papers, with full-text analysis including paywalled publisher content, citation tracing, and study-type/PICO metadata extraction — clearly scoped to peer-reviewed/primary literature rather than the open web. missing for 10: independent third-party benchmarking or hands-on corroboration of corpus quality beyond vendor claims.",
     "evidenceIds": [
+      "consensus-docs-5",
       "consensus-docs-10",
       "consensus-docs-4",
       "consensus-docs-19",
-      "consensus-docs-5",
       "consensus-docs-25",
+      "consensus-docs-11",
       "consensus-probe-1"
     ]
   },
@@ -461,21 +456,23 @@
     "storyId": "share-collaborate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes sharing sessions, reports, or collaborator access/build-on functionality; the pack focuses on search, library import, citation graphs, and API/MCP retrieval, none of which mention collaboration or sharing features.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions sharing sessions, reports, collaborators, team workspaces, or collaborative viewing/editing—only individual library import, search, and API/agent features are documented. missing for 10: any mention of sharing/collaboration features, team accounts, shared workspaces, or export-to-collaborator functionality.",
     "evidenceIds": []
   },
   {
     "productId": "consensus",
     "storyId": "steer-effort-scope",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Consensus offers some scope controls like filters (study type, year, discipline), Deep Searches for more comprehensive lit reviews, and a research agent that chains multiple retrieval steps, which give users some ability to set scope before a run. However, there is no evidence of adjusting depth/effort or steering a run while it executes (mid-run interaction), nor of configurable parameters like number of sources or iteration depth. missing for 10: mid-execution steering, explicit depth/effort controls, evidence of interactive adjustment during a run.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Consensus offers pre-run controls for depth and scope: a distinct 'Deep Search' mode for more comprehensive literature reviews, and filters to narrow by study type, year, journal, open-access status, and discipline. However, there is no evidence of adjusting effort or scope mid-execution (steering 'while it runs'), and no explicit 'effort' dial beyond choosing search vs. deep-search modes. Missing for 10: in-flight/mid-run steering controls, an explicit effort/compute slider, and independent confirmation of these controls' granularity.",
     "evidenceIds": [
       "consensus-docs-17",
       "consensus-docs-19",
-      "consensus-docs-24"
+      "consensus-docs-31",
+      "consensus-docs-23",
+      "consensus-docs-25"
     ]
   },
   {
@@ -484,14 +481,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Consensus's Literature Review/Deep Search features synthesize evidence with structured elements like PICO extraction, study design classification, and the Consensus Meter distribution, which resemble report components, but there is no explicit evidence of a generated document with defined sections, formatted tables, and a shareable summary export for stakeholders. Missing for 10: explicit report/export functionality (PDF/doc generation), a documented 'sections + tables + summary' report template, and any evidence of sharing/collaboration on such reports.",
+    "rationale": "Consensus supports literature review synthesis with citations, PICO extraction, study design classification, and 'Deep Searches' producing more comprehensive lit reviews, which implies structured output, but there is no explicit evidence of a formatted report with distinct sections, tables, and a shareable summary artifact for stakeholders. Missing for 10: explicit documentation of report formatting/sections/tables, export/share functionality, and any hands-on example of a generated report shared with stakeholders.",
     "evidenceIds": [
       "consensus-docs-8",
       "consensus-docs-12",
       "consensus-docs-17",
-      "consensus-docs-22",
       "consensus-docs-23",
-      "consensus-docs-25"
+      "consensus-docs-25",
+      "consensus-docs-28"
     ]
   },
   {
@@ -500,15 +497,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Consensus offers literature-review features (search, screen, extract, synthesize) with study-design/PICO extraction, filters by study type, and library import at scale, which support a systematic screening/extraction workflow. However, there is no evidence of consistent, auditable screening criteria (e.g., inclusion/exclusion rule configuration, PRISMA-style tracking, reviewer agreement) or exportable extraction tables across large batches — missing for 10: documented criteria-based screening controls, systematic review protocol support (e.g., PRISMA), and independent validation of consistency across large paper sets.",
+    "rationale": "Consensus documents search, screen, extract, and synthesize workflows with study-type filters, PICO extraction, and Deep Searches/Lit Reviews across many studies, which supports systematic screening/extraction at scale. However, all evidence is vendor-claimed docs with no independent or hands-on validation of consistency/rigor across large batches, and no evidence of exportable structured screening criteria or reproducible inter-study consistency checks. Missing for 10: independent verification of extraction consistency across many papers, hands-on evidence of systematic screening at scale, and detail on customizable screening criteria templates.",
     "evidenceIds": [
       "consensus-docs-8",
       "consensus-docs-12",
       "consensus-docs-19",
       "consensus-docs-23",
       "consensus-docs-25",
-      "consensus-docs-13",
-      "consensus-docs-17"
+      "consensus-docs-17",
+      "consensus-docs-3"
     ]
   },
   {
@@ -1117,41 +1114,44 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live and returns 200 with a structured index of agent-oriented documentation, directly satisfying the story; docs also provide markdown-friendly content structure. Missing for 10: no independent/third-party confirmation of agent consumption success, and the docs-md endpoint probe (probe-2) returned a 404, showing inconsistent markdown accessibility across pages.",
+    "rationale": "A probe confirms llms.txt is live at HTTP 200 with structured links to agent-oriented docs (Overview, Agents, etc.), and the docs site itself is organized in machine-readable .md format (e.g. docs.edisonscientific.com/*.md pages), making it directly consumable by an agent. Missing for 10: no explicit vendor statement promoting llms.txt as an agent-facing feature, and the .md docs-fetch probe for the cookbook path returned a 404 rather than confirming full doc coverage.",
     "evidenceIds": [
       "futurehouse-probe-1",
-      "futurehouse-probe-2",
-      "futurehouse-docs-1"
+      "futurehouse-docs-28",
+      "futurehouse-docs-37"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "FutureHouse's agents (Kosmos, Crow/Falcon, Owl/Precedent, Phoenix/Molecules) autonomously analyze data and literature to generate cited hypotheses, insights, and publication-ready figures directly within the platform, per multiple docs entries. missing for 10: independent/hands-on verification of insight quality, in-product UI screenshots showing insight delivery (only API/CLI workflow documented), and confirmation the cookbook page itself resolves (probe shows 404 on the cookbook doc).",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "FutureHouse's agents (Kosmos, Literature, Analysis, Precedent, Molecules) autonomously analyze data/literature and generate cited hypotheses, insights, and figures directly within the platform, per extensive first-party docs. Missing for 10: independent/hands-on corroboration beyond vendor docs, and concrete UI screenshots showing insight delivery inside the product interface.",
     "evidenceIds": [
       "futurehouse-docs-5",
       "futurehouse-docs-7",
       "futurehouse-docs-8",
-      "futurehouse-docs-9",
+      "futurehouse-docs-13",
       "futurehouse-docs-17",
-      "futurehouse-docs-23"
+      "futurehouse-docs-28",
+      "futurehouse-docs-38"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The client API lets users submit tasks that agents (e.g., Kosmos, Precedent) then execute autonomously without step-by-step supervision, and `run_tasks_until_done` implies asynchronous background execution of a single job. However, there is no evidence of a scheduling/trigger system, recurring jobs, or persistent 'set it and forget it' automation pipelines that a user configures once to run repeatedly in the background. Missing for 10: scheduling/cron-like triggers, recurring/multi-run automation setup, webhook or event-driven automation, dashboard for managing background jobs.",
+    "rationale": "The platform lets users submit tasks asynchronously via the client (create_task, run_tasks_until_done) and query results later, and its agents (Kosmos, Literature, etc.) autonomously execute multi-step research workflows without step-by-step supervision. However, there is no evidence of scheduled/recurring automations, triggers, or persistent background jobs beyond single async task submission-and-poll patterns. Missing for 10: scheduling/cron-like triggers, recurring automation setup, webhook/event-driven automation, and independent confirmation of long-running autonomous background execution beyond a single task lifecycle.",
     "evidenceIds": [
-      "futurehouse-docs-12",
+      "futurehouse-docs-27",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
       "futurehouse-docs-5",
       "futurehouse-docs-13",
-      "futurehouse-docs-9"
+      "futurehouse-docs-36"
     ]
   },
   {
@@ -1160,30 +1160,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "The platform's core interaction model is delegating scientific tasks (literature review, data analysis, hypothesis generation) to built-in autonomous agents like Kosmos, Precedent, and Molecules, with a documented client (`run_tasks_until_done`) showing explicit task delegation and autonomous execution with cited, auditable outputs. Missing for 10: independent/hands-on corroboration beyond vendor docs, and confirmation the in-app UI (not just the API client) supports the same delegation flow.",
+    "rationale": "FutureHouse's platform ships built-in AI agents (Kosmos, Literature, Analysis, Precedent, Molecules) that users delegate research tasks to via chat sessions or the client SDK, autonomously conducting literature review, code execution, and analysis. Missing for 10: independent/hands-on validation of assistant quality beyond vendor docs, and clearer UI-level (non-API) delegation flow.",
     "evidenceIds": [
-      "futurehouse-docs-4",
       "futurehouse-docs-5",
-      "futurehouse-docs-6",
       "futurehouse-docs-7",
-      "futurehouse-docs-9",
-      "futurehouse-docs-12",
-      "futurehouse-docs-13"
+      "futurehouse-docs-13",
+      "futurehouse-docs-28",
+      "futurehouse-docs-36",
+      "futurehouse-docs-4"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "There is a Python client (edison-client) with API key auth and a scriptable pattern (client.run_tasks_until_done(task_data)) that could plausibly be invoked headlessly/in CI, and paid plans mention higher rate limits suggesting programmatic use is supported. However, there is no explicit CI/automation documentation, no CLI, no webhook/async job examples, and an OpenAPI/swagger endpoint probe returned 404s, so headless-in-CI usage is only inferable rather than directly documented. Missing for 10: explicit CI/automation guide, CLI or headless-mode documentation, confirmed OpenAPI/REST spec for scripting outside the Python client.",
+    "rationale": "The edison-client Python package supports pip installation, API-key authentication, programmatic task submission (create_task/run_tasks_until_done), batch job submission with later retrieval, and file/artifact management — all scriptable without a UI, which is suitable for CI/automation pipelines. missing for 10: no explicit CI/CD example (e.g., GitHub Actions), no documented rate-limit/quota guidance for automated bulk runs, and no independent/hands-on confirmation of headless reliability at scale.",
     "evidenceIds": [
       "futurehouse-docs-1",
       "futurehouse-docs-2",
       "futurehouse-docs-4",
       "futurehouse-docs-12",
-      "futurehouse-probe-3"
+      "futurehouse-docs-27",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
+      "futurehouse-docs-34"
     ]
   },
   {
@@ -1192,7 +1194,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "FutureHouse Platform is a research-agent product with a Python client for running its own scientific tasks; no evidence describes plugging in external MCP servers or consuming third-party tools via MCP.",
+    "rationale": "No evidence that FutureHouse Platform (Edison/Kosmos agents) supports plugging in MCP servers or consuming external tool servers; documentation covers its own client SDK, task submission, and agent capabilities but never mentions MCP integration.",
     "evidenceIds": []
   },
   {
@@ -1201,25 +1203,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack shows a Python client library (edison-client) with API-key auth for programmatic task submission, but there is no mention of an MCP server, MCP endpoint, or MCP integration anywhere in the docs; the openapi/API probes also returned 404s, giving no sign of an MCP-compatible interface.",
-    "evidenceIds": [
-      "futurehouse-docs-1",
-      "futurehouse-docs-2",
-      "futurehouse-probe-3"
-    ]
+    "rationale": "FutureHouse only offers a Python client library (edison-client) and REST-like task API; there is no mention of an official MCP server or MCP integration anywhere in the docs or probes.",
+    "evidenceIds": []
   },
   {
     "productId": "futurehouse",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The client API lets users submit natural-language research queries (e.g. 'Which neglected diseases had a treatment developed by artificial intelligence?') that agents autonomously interpret and act on, showing NL is the core interface for tasking agents like Kosmos and Precedent. However, this is via a Python client library programmatic call, not a full conversational/chat command interface, and there's no evidence of NL commands controlling platform operations (e.g. managing tasks, settings) beyond query submission. Missing for 10: evidence of a conversational UI/chat surface, NL-driven control beyond initial query submission, and independent confirmation of this workflow.",
+    "rationale": "The platform is fundamentally driven by natural-language task queries (e.g., submitting a plain-English research question as the 'query' field) and supports long-lived natural-language chat sessions with agents like Kosmos, Literature, and Precedent, letting an AI-native user direct complex research workflows purely via NL commands. Missing for 10: independent/hands-on corroboration beyond vendor docs, and no evidence of a dedicated conversational UI beyond the client API/chat-session abstraction.",
     "evidenceIds": [
       "futurehouse-docs-4",
-      "futurehouse-docs-5",
       "futurehouse-docs-7",
-      "futurehouse-docs-12"
+      "futurehouse-docs-9",
+      "futurehouse-docs-36",
+      "futurehouse-docs-5"
     ]
   },
   {
@@ -1228,26 +1227,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an official Python client library (edison-client) installed via pip and used programmatically (task_data, client.run_tasks_until_done), but there is no mention of a command-line interface tool for interacting with the platform.",
+    "rationale": "The evidence only documents a Python client library (edison-client, installed via pip) used programmatically to submit tasks and call methods — there is no mention of a command-line interface or CLI commands for AI-native/agentic workflows. A research platform could plausibly ship a CLI, but none is evidenced here.",
     "evidenceIds": [
       "futurehouse-docs-1",
-      "futurehouse-docs-4",
-      "futurehouse-docs-12"
+      "futurehouse-docs-12",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Documented public API via the edison-client Python package with API key auth, token creation, and example task submission/execution flow (JobNames.LITERATURE, client.run_tasks_until_done) shows a working programmatic interface into the platform's agents. Missing for 10: no OpenAPI/swagger spec found (404s on all probes), no independent/hands-on corroboration beyond vendor docs, and no broader REST API reference beyond the client quickstart.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "FutureHouse provides a documented public API via the edison-client Python package with authentication, task submission (create_task, run_tasks_until_done), file management, and chat sessions, all covered in first-party docs across quickstart, tasks, methods, and readme pages. Missing for 10: no independent/hands-on corroboration and no discoverable OpenAPI/swagger spec (probe found only 404s).",
     "evidenceIds": [
       "futurehouse-docs-1",
       "futurehouse-docs-2",
-      "futurehouse-docs-3",
       "futurehouse-docs-4",
       "futurehouse-docs-12",
+      "futurehouse-docs-26",
+      "futurehouse-docs-27",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
+      "futurehouse-docs-34",
+      "futurehouse-docs-36",
       "futurehouse-probe-3"
     ]
   },
@@ -1257,11 +1262,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The docs only describe creating a single API token from the profile page with no mention of scoping, permissions, or least-privilege controls; there is no evidence of role-based or scoped credential issuance for agents. Missing for 10: any documentation of scoped/limited-permission tokens, token expiration, or per-agent access controls.",
+    "rationale": "The docs only describe obtaining a single API key/token from the profile page for full account access; there is no evidence of scoped permissions, role-based restrictions, or least-privilege token creation for agents.",
     "evidenceIds": [
       "futurehouse-docs-2",
       "futurehouse-docs-3",
-      "futurehouse-docs-11"
+      "futurehouse-docs-11",
+      "futurehouse-docs-25"
     ]
   },
   {
@@ -1270,13 +1276,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show an official Python client (edison-client), API key/token auth, and code examples for submitting tasks via SDK, indicating a genuine official SDK for programmatic/agentic use. Missing for 10: no OpenAPI spec found (404s), no independent/hands-on corroboration of SDK reliability, and no evidence of SDKs in other languages.",
+    "rationale": "FutureHouse ships an official Python client (edison-client) with documented install, auth, task submission, chat sessions, and file management APIs across a dedicated SDK docs section, indicating a real official SDK for building agentic workflows against Kosmos/Literature/Analysis/Precedent/Molecules agents. Missing for 10: independent/hands-on developer corroboration outside vendor docs, and a working OpenAPI/spec reference (probe shows 404s for OpenAPI endpoints).",
     "evidenceIds": [
       "futurehouse-docs-1",
       "futurehouse-docs-2",
-      "futurehouse-docs-3",
-      "futurehouse-docs-4",
       "futurehouse-docs-12",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
+      "futurehouse-docs-36",
       "futurehouse-probe-3"
     ]
   },
@@ -1286,9 +1293,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of webhook subscription capability anywhere in the docs or probes; the client is a request/poll style API (run_tasks_until_done) with no mention of event push or callbacks. OpenAPI probes returned 404s, offering no sign of webhook endpoints.",
+    "rationale": "No evidence of webhook subscription support; the client docs describe polling-style task submission and result retrieval (run_tasks_until_done, create_task) with no mention of webhooks or event push notifications, and OpenAPI probes return 404.",
     "evidenceIds": [
       "futurehouse-docs-12",
+      "futurehouse-docs-27",
+      "futurehouse-docs-33",
       "futurehouse-probe-3"
     ]
   },
@@ -1298,12 +1307,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs claim the platform can 'synthesize conflicting evidence across hundreds of papers' and produce cited, auditable reports tracing findings back to source passages, which implies some handling of disagreement between sources. However, there is no concrete description of a UI or output format that explicitly surfaces agreement/disagreement across sources (e.g., a side-by-side or consensus/dissent view) — it's only mentioned in passing marketing language. Missing for 10: a documented feature or example output showing explicit surfacing of conflicting source viewpoints, independent/hands-on corroboration of this behavior.",
+    "rationale": "Docs claim Literature/Kosmos agents can be tasked with 'a deep literature review synthesizing conflicting evidence across hundreds of papers' and that conclusions are 'fully auditable' back to source passages, which implies some handling of disagreement, but no evidence shows a concrete UI/report feature that explicitly surfaces where sources agree vs. disagree (e.g., comparison tables, conflict highlighting). Missing for 10: example output demonstrating agreement/disagreement presentation, independent/hands-on corroboration of this specific behavior.",
     "evidenceIds": [
-      "futurehouse-docs-7",
       "futurehouse-docs-19",
+      "futurehouse-docs-22",
       "futurehouse-docs-6",
-      "futurehouse-docs-16"
+      "futurehouse-docs-16",
+      "futurehouse-docs-29"
     ]
   },
   {
@@ -1312,11 +1322,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs show a static quickstart with code snippets for the Python client, but explicit probes for an OpenAPI/Swagger spec all returned 404, and there is no evidence of an interactive, runnable API reference/playground.",
+    "rationale": "Docs provide static code snippets (quickstart, tasks, methods) but there is no evidence of an interactive API reference (e.g., Swagger/OpenAPI explorer or in-browser runnable console); explicit probes for openapi.json/swagger.json all returned 404, indicating no such interactive spec exists.",
     "evidenceIds": [
       "futurehouse-probe-3",
       "futurehouse-docs-1",
-      "futurehouse-docs-4"
+      "futurehouse-docs-32"
     ]
   },
   {
@@ -1325,7 +1335,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack explicitly probed for an OpenAPI spec and found all candidate paths returning 404, with no documentation reference to a machine-readable API spec; only a Python client library is documented.",
+    "rationale": "The evidence pack shows only a Python client and REST-like task API docs, with no OpenAPI/Swagger spec published; a direct probe for OpenAPI/swagger endpoints returned 404 for all candidate paths.",
     "evidenceIds": [
       "futurehouse-probe-3"
     ]
@@ -1333,11 +1343,13 @@
   {
     "productId": "futurehouse",
     "storyId": "api-sandbox",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "FutureHouse is a research/agent API platform for scientific literature analysis, not a product with a production/sandbox data separation concept; no evidence pack content addresses sandbox vs production environments.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The docs mention an internal agent execution 'sandbox' (workspace/session isolation) but this refers to the agent's own code-execution environment, not a separate test/staging environment that lets a user validate integration without touching production data or real API usage/billing. No mention of sandbox API keys, staging endpoints, or a test mode.",
+    "evidenceIds": [
+      "futurehouse-docs-36"
+    ]
   },
   {
     "productId": "futurehouse",
@@ -1345,23 +1357,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of API versioning scheme or a documented deprecation policy anywhere in the docs; the OpenAPI probe returned 404s and docs only cover client quickstart usage.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the docs; OpenAPI spec probes all returned 404, and the client docs only cover install/auth/task submission with no mention of version numbers, changelogs, or deprecation timelines.",
     "evidenceIds": [
       "futurehouse-probe-3",
-      "futurehouse-docs-1",
-      "futurehouse-docs-12"
+      "futurehouse-docs-32",
+      "futurehouse-docs-33"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence shows a Python client for submitting single tasks (task_data with a query) via run_tasks_until_done, but there is no mention of batch/bulk submission, looping over multiple items, or any bulk API endpoint. missing for 10: evidence of bulk/batch task submission, multi-item processing API, or documented loop/parallel execution support.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "The Edison client explicitly supports submitting many jobs asynchronously and running multiple tasks at once ('Sometimes you may want to submit many jobs, while querying results at a later time. The platform API supports this' and 'Run multiple tasks and wait for them to complete'), plus bulk directory upload for data. Missing for 10: independent/hands-on confirmation of scale limits or throughput, and no explicit batch-result retrieval API details beyond task submission.",
     "evidenceIds": [
-      "futurehouse-docs-4",
-      "futurehouse-docs-12"
+      "futurehouse-docs-27",
+      "futurehouse-docs-33",
+      "futurehouse-docs-34",
+      "futurehouse-docs-32"
     ]
   },
   {
@@ -1370,7 +1384,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows only API-based task submission and agent capabilities (literature review, data analysis, chemistry design) run on-demand via client calls; there is no mention of event triggers, rule definitions, webhooks, or automation-on-event functionality.",
+    "rationale": "The evidence only documents a client SDK for submitting research tasks (Kosmos, Literature, Analysis, etc.) and querying results asynchronously; there is no mention of event-driven triggers, webhooks, schedules, or rule-based automation that fire actions on events.",
     "evidenceIds": []
   },
   {
@@ -1379,10 +1393,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence covers running one-off tasks via the client (task_data, run_tasks_until_done) but nowhere mentions scheduling, recurrence, cron-like triggers, or persistent workflow automation; missing for 10: any scheduling/recurring job API, cron syntax, trigger configuration, or workflow orchestration feature.",
+    "rationale": "The docs describe submitting one-off or batch tasks via the client API and checking results later (async job submission), but there is no mention of recurring schedules, cron-like triggers, or workflow automation that runs repeatedly without manual invocation.",
     "evidenceIds": [
-      "futurehouse-docs-4",
-      "futurehouse-docs-12"
+      "futurehouse-docs-27",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33"
     ]
   },
   {
@@ -1400,13 +1415,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe Kosmos as autonomously reading literature, writing/executing analysis code, generating hypotheses, and producing a comprehensive cited multi-step report, plus other agents (Precedent, Molecules) that perform multi-step autonomous investigation rather than single-pass summaries. Quickstart shows a real client workflow (run_tasks_until_done) confirming this is an actual product capability, not just marketing. missing for 10: independent/hands-on verification of multi-step autonomy beyond vendor docs, and one probe returned a 404 for the cookbook page raising minor doc-consistency concerns.",
+    "rationale": "Kosmos and related agents (Literature, Precedent) are documented as autonomously reading literature, writing/executing analysis code, forming and testing hypotheses, and producing comprehensive cited reports rather than a single-pass summary, with auditability of findings back to sources. Client docs show task submission/polling workflows (create_task, run_tasks_until_done) consistent with multi-step autonomous jobs. missing for 10: independent/hands-on verification of multi-step autonomy (all evidence is vendor docs), and no concrete example trace showing intermediate steps of an investigation.",
     "evidenceIds": [
       "futurehouse-docs-5",
       "futurehouse-docs-13",
+      "futurehouse-docs-28",
       "futurehouse-docs-6",
-      "futurehouse-docs-7",
+      "futurehouse-docs-29",
       "futurehouse-docs-9",
+      "futurehouse-docs-14",
       "futurehouse-docs-4",
       "futurehouse-docs-12"
     ]
@@ -1417,8 +1434,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack mentions exporting results to documents, spreadsheets, or reference-manager formats (e.g., DOCX, CSV, BibTeX/RIS); outputs are described only as 'cited reports' and 'publication-ready figures' via API/client without export format details.",
-    "evidenceIds": []
+    "rationale": "Evidence shows FutureHouse produces reports, figures, and artifacts (notebooks) but nowhere documents export to standard formats like docx, spreadsheets, or reference-manager files (e.g., BibTeX/EndNote); file-management docs mention uploading/checking artifacts, not exporting to these formats.",
+    "evidenceIds": [
+      "futurehouse-docs-35",
+      "futurehouse-docs-8",
+      "futurehouse-docs-31"
+    ]
   },
   {
     "productId": "futurehouse",
@@ -1426,13 +1447,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state Edison maintains a generous free tier for academics, with paid plans only needed for higher rate limits or additional features, and the quickstart shows a straightforward path to obtaining an API key and running tasks. Missing for 10: independent/hands-on confirmation of the free tier's actual limits or usability, and no evidence of pricing page details beyond vendor claims.",
+    "rationale": "Docs explicitly state a generous free tier for academics with paid plans for higher rate limits/features, plus a documented client quickstart showing free API key creation and task submission. Missing for 10: independent/hands-on confirmation of actual free-tier limits or researcher experiences validating the trial is usable in practice.",
     "evidenceIds": [
       "futurehouse-docs-20",
       "futurehouse-docs-15",
       "futurehouse-docs-1",
       "futurehouse-docs-2",
-      "futurehouse-docs-12"
+      "futurehouse-docs-3"
     ]
   },
   {
@@ -1441,28 +1462,30 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs claim cited, auditable outputs (e.g., 'produces a comprehensive cited report,' 'trace any finding back to the specific code or literature passage') and access to 175M+ papers with citation graph understanding, supporting the story's core intent. However, this is vendor-only documentation with no independent verification, no example output showing actual inline citations, and no detail on citation format/consistency across all agents (e.g., Molecules, Precedent). missing for 10: independent/hands-on verification of citation quality, concrete example of a cited report output, confirmation that ALL agent types (not just Kosmos/Crow) consistently provide citations for every claim.",
+    "rationale": "Vendor docs consistently claim outputs are 'fully auditable' and traceable to specific literature passages or code, with cited responses from Literature/Kosmos agents drawing on 175M+ papers. However, this is entirely vendor-asserted with no independent verification, no example of an actual citation format/output shown, and no hands-on confirmation that every substantive claim in generated reports is reliably cited. Missing for 10: independent/hands-on evidence of citation accuracy, a concrete sample output showing citation granularity, and confirmation this applies uniformly across all agents (e.g., Molecules, Precedent) rather than just Literature/Kosmos.",
     "evidenceIds": [
-      "futurehouse-docs-5",
       "futurehouse-docs-6",
-      "futurehouse-docs-7",
       "futurehouse-docs-16",
+      "futurehouse-docs-29",
+      "futurehouse-docs-7",
       "futurehouse-docs-17",
-      "futurehouse-docs-21"
+      "futurehouse-docs-37"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "long-horizon-runs",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "The client docs show `run_tasks_until_done` which submits a job and blocks until completion, implying asynchronous background job execution (JobNames.LITERATURE, Kosmos long-running analyses), but there is no documented notification mechanism (email, webhook, push) to alert the analyst when the job finishes unattended. missing for 10: evidence of a non-blocking/async job submission API, evidence of notification/webhook/email alerting on completion, independent confirmation of long-running unattended jobs.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs show async job submission and polling (create_task, run_tasks_until_done, submitting many jobs and querying results later) plus persistent chat sessions and checking artifacts once a task completes, supporting unattended long-running research jobs. However, there is no explicit evidence of a notification/webhook/email mechanism alerting the analyst when a job finishes — the workflow appears to require the client to poll or check back. Missing for 10: explicit push notification/webhook/email-on-completion feature, independent confirmation of long-running job reliability.",
     "evidenceIds": [
-      "futurehouse-docs-4",
-      "futurehouse-docs-12",
-      "futurehouse-docs-5",
-      "futurehouse-docs-13"
+      "futurehouse-docs-27",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
+      "futurehouse-docs-35",
+      "futurehouse-docs-36",
+      "futurehouse-docs-12"
     ]
   },
   {
@@ -1471,20 +1494,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence describes one-off literature search/review tasks and agent capabilities, but there is no mention of standing searches, saved alerts, or recurring notifications for new sources. Missing for 10: alert/subscription mechanism, scheduling/recurring search capability, notification delivery for new results.",
+    "rationale": "Evidence covers one-off literature search/review tasks, job submission via API, and chat sessions, but nothing describes standing/recurring searches, saved alerts, or notifications of new sources appearing over time. Missing for 10: any mention of scheduled/recurring queries, alerting mechanisms, or notification of newly published sources.",
     "evidenceIds": []
   },
   {
     "productId": "futurehouse",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs show an API client (edison-client) that can submit tasks like literature review jobs and retrieve results, suggesting core agent capabilities are accessible via API, not just UI. However, there is no evidence of full parity — no OpenAPI spec found (404s), no confirmation that all UI features (e.g., token management, dataset uploads, all specialized agents like Molecules/Precedent) are exposed via API. Missing for 10: OpenAPI/API reference documenting full endpoint coverage, explicit statement of API-UI feature parity, evidence that account/token management and all specialized agents are API-accessible, independent confirmation of completeness.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "The edison-client API supports submitting all named agent task types (Literature, Precedent, Analysis, Molecules, Kosmos), long-lived chat sessions with persistent sandboxes, file/directory uploads, and batch task management—mirroring the core UI-facing agent capabilities. However, no explicit vendor claim of full UI/API parity exists, and probes found no public OpenAPI spec, leaving some UI-only features (e.g., billing, profile management) unconfirmed via API. Missing for 10: explicit parity statement, discoverable OpenAPI/schema documentation, independent confirmation that all UI actions map to API endpoints.",
     "evidenceIds": [
-      "futurehouse-docs-1",
       "futurehouse-docs-4",
       "futurehouse-docs-12",
+      "futurehouse-docs-26",
+      "futurehouse-docs-32",
+      "futurehouse-docs-33",
+      "futurehouse-docs-34",
+      "futurehouse-docs-36",
       "futurehouse-probe-3"
     ]
   },
@@ -1494,8 +1521,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of any data export feature, open-format export, or account/data portability mechanism; the documentation covers agents, tasks, and API usage but nothing about exporting user data or leaving the platform with it.",
-    "evidenceIds": []
+    "rationale": "Evidence shows file-management features like uploading directories and viewing generated notebooks/artifacts, but there is no documentation of a comprehensive data export mechanism, open-format guarantees, or account/data deletion process that would let a user fully export all their data and leave the platform.",
+    "evidenceIds": [
+      "futurehouse-docs-34",
+      "futurehouse-docs-35"
+    ]
   },
   {
     "productId": "futurehouse",
@@ -1503,7 +1533,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack contains only client-library install/API docs and product feature descriptions; nothing indicates the platform's source code (the Edison platform itself, agents, backend) is published under an open license. The edison-client package install is mentioned but no license or open-source repo is referenced.",
+    "rationale": "Evidence covers only the client SDK usage and platform docs; there is no mention of an open-source license for the platform's source code, and probes show no repo/license discoverable. Absence of evidence for an applicable openness claim yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -1512,20 +1542,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "FutureHouse Platform is a hosted SaaS API/agent service (Edison/Kosmos) accessed via cloud client and API keys, not an open-source or self-hostable stack; no self-hosting deployment option is described or plausible for this product category.",
+    "rationale": "FutureHouse Platform (Edison) is a hosted SaaS research-agent platform accessed via API/client library, not open-source software distributed for self-hosting; no evidence of a self-hostable core product exists or is claimed. Self-hosting is a category error for this hosted-service product type.",
     "evidenceIds": []
   },
   {
     "productId": "futurehouse",
     "storyId": "own-corpus-upload",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The docs describe agents (Literature, Precedent, Kosmos) that search across 175M+ external papers/trials, and Kosmos can take 'one or more datasets' as input for analysis, but there is no evidence of a feature letting a researcher upload their own PDFs or a custom corpus for the agent to search/reason over. missing for 10: PDF/corpus upload mechanism, ingestion pipeline, any mention of user-supplied document collections.",
+    "rationale": "There is concrete evidence of file/data upload (upload a directory to the data storage service, docs-34) and of agents/tasks that analyze uploaded datasets (Kosmos taking 'one or more datasets', Analysis processing experimental data), plus chat sessions retaining workspace files across turns. However, evidence does not explicitly confirm uploading arbitrary PDFs/corpus as literature source material for the Literature/Kosmos agent to search over (its literature capability is framed around its own 175M+ paper index, not user-supplied PDFs). missing for 10: explicit documentation that user-uploaded PDFs/corpus are ingested and queried by the literature-review agent, and an independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
+      "futurehouse-docs-34",
+      "futurehouse-docs-35",
+      "futurehouse-docs-36",
       "futurehouse-docs-13",
-      "futurehouse-docs-17",
-      "futurehouse-docs-7"
+      "futurehouse-docs-28",
+      "futurehouse-docs-30"
     ]
   },
   {
@@ -1534,7 +1567,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls; documentation focuses only on API usage and agent capabilities. Missing for 10: any mention of regional data storage options, residency controls, or infrastructure location choices.",
+    "rationale": "No evidence in the documentation mentions data residency, region selection, or data storage location controls; the docs focus on API usage, agents, and task workflows without any privacy/residency configuration options.",
     "evidenceIds": []
   },
   {
@@ -1542,8 +1575,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions any data-training opt-out, privacy policy, or data usage controls for the FutureHouse Platform; all evidence is about product features, agents, and API usage, not privacy posture.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data usage for AI training, opt-out controls, or privacy posture regarding model training; the docs focus entirely on product features and API usage.",
     "evidenceIds": []
   },
   {
@@ -1552,7 +1585,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention, deletion controls, or privacy settings; the documentation focuses on API usage, agent capabilities, and pricing tiers.",
+    "rationale": "No evidence anywhere in the docs about data retention policies, deletion controls, or privacy settings for stored tasks, files, or chat sessions; file/chat storage is mentioned but no user-facing deletion/retention controls are documented.",
     "evidenceIds": []
   },
   {
@@ -1561,24 +1594,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or any opt-out/privacy controls for the FutureHouse Platform; documentation covers agents, API usage, and pricing only.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or any opt-out/privacy controls; the documentation focuses entirely on API usage, agents, and task workflows.",
     "evidenceIds": []
   },
   {
     "productId": "futurehouse",
     "storyId": "scholarly-sources",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs describe agents (Crow/Literature agent, Precedent, Kosmos) that explicitly search scholarly literature, trials, and patents (175M+ papers, trials, patents) with citation graph and journal quality understanding, producing cited reports traceable to literature passages — directly matching the story of searching scholarly/primary sources beyond the open web. Missing for 10: independent/hands-on verification of search quality and coverage claims, and confirmation the docs page (404 on probe) reflects current live product state.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "FutureHouse's Literature agent explicitly searches 175M+ papers, trials, and patents with citation-graph and journal-quality awareness, and can perform deep literature reviews synthesizing evidence across hundreds of papers with cited, auditable outputs—clearly scholarly/primary-source search rather than open-web search. Documentation across both the cookbook and edisonscientific.com sites corroborates this consistently. Missing for 10: independent (non-vendor) verification of search quality/coverage claims.",
     "evidenceIds": [
       "futurehouse-docs-17",
       "futurehouse-docs-21",
-      "futurehouse-docs-9",
-      "futurehouse-docs-14",
+      "futurehouse-docs-37",
+      "futurehouse-docs-19",
       "futurehouse-docs-6",
-      "futurehouse-docs-16",
-      "futurehouse-docs-19"
+      "futurehouse-docs-29"
     ]
   },
   {
@@ -1586,22 +1618,22 @@
     "storyId": "share-collaborate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers authentication, agent capabilities (Kosmos, Precedent, Molecules), and API usage, but no mention of sharing sessions, reports, or collaboration features for multiple users. Nothing describes exporting, sharing links, or team/collaborator access to results.",
+    "confidence": "medium",
+    "rationale": "Evidence covers running tasks/jobs, chat sessions, and file management via the client/API, but nothing describes sharing a session or report with collaborators for viewing or building on it—no mention of sharing links, permissions, team workspaces, or collaborative access.",
     "evidenceIds": []
   },
   {
     "productId": "futurehouse",
     "storyId": "steer-effort-scope",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows FutureHouse's agents (Kosmos, Precedent, etc.) run autonomously via a simple task_data object with only 'name' and 'query' fields, and there is no documented parameter, setting, or API for adjusting depth, effort, or scope before a run, nor any mechanism to steer or adjust a run while it is executing. Missing for 10: any documented depth/effort/scope parameters, any mid-run steering or adjustment API, any UI controls for run configuration.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Tasks are defined via natural-language queries and job types, and chat sessions let a researcher continue interacting with an agent across turns (implying some steering while it runs), but there is no documented parameter for depth, effort level, iteration budget, or scope before/during a run. Missing for 10: explicit depth/effort/scope controls (e.g., max steps, compute budget, verbosity level), and evidence of mid-run steering beyond conversational chat turns.",
     "evidenceIds": [
       "futurehouse-docs-4",
-      "futurehouse-docs-5",
-      "futurehouse-docs-12",
-      "futurehouse-docs-13"
+      "futurehouse-docs-36",
+      "futurehouse-docs-26",
+      "futurehouse-docs-27"
     ]
   },
   {
@@ -1610,29 +1642,32 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs claim Kosmos produces a 'comprehensive cited report' with auditable findings and Falcon/Crow-style agents produce cited responses, analyses, statistical results, and figures, suggesting structured, shareable output. However there's no explicit mention of report formatting with distinct sections, tables, or a stakeholder-shareable summary format (e.g., PDF/Word export), and one probe shows the main cookbook page is broken (404), weakening confidence in the documentation's completeness. Missing for 10: explicit description of report structure (sections/tables/summary), export/sharing format, and independent verification of report quality.",
+    "rationale": "Docs describe Kosmos and other agents producing 'comprehensive cited reports' with auditable findings, statistical analyses, figures, and diagram/figure pullouts, which supports structured, shareable report output. However there's no concrete evidence of explicit report sections/tables formatting or an export/share mechanism for stakeholders beyond the agent's own output. Missing for 10: explicit documentation of structured section/table formatting in reports, and a defined export/share workflow for stakeholders.",
     "evidenceIds": [
       "futurehouse-docs-5",
-      "futurehouse-docs-6",
-      "futurehouse-docs-8",
       "futurehouse-docs-13",
+      "futurehouse-docs-6",
       "futurehouse-docs-16",
-      "futurehouse-probe-2"
+      "futurehouse-docs-8",
+      "futurehouse-docs-30",
+      "futurehouse-docs-31",
+      "futurehouse-docs-28"
     ]
   },
   {
     "productId": "futurehouse",
     "storyId": "systematic-screening",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "The platform's literature agent can run deep reviews synthesizing evidence across hundreds of papers with citations, and the client API supports programmatic task submission, which could be scripted to canvass many papers. However, there is no documented feature for systematic screening/extraction with consistent, reusable criteria (e.g., PRISMA-style inclusion/exclusion criteria, structured field extraction across a corpus) — the docs describe ad hoc Q&A or narrative literature review tasks rather than a batch screening/extraction pipeline. missing for 10: explicit systematic-review/screening workflow support, structured extraction schema across papers, evidence of consistent-criteria application at scale.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "The Literature agent explicitly performs large-scale synthesis 'across hundreds of papers' with 175M+ paper access, and the client API supports submitting many jobs and querying results later (batch task submission, run_tasks_until_done), enabling a researcher to apply the same query/criteria across many papers programmatically. However, there is no documentation of a dedicated systematic-screening workflow (e.g., inclusion/exclusion criteria, structured extraction fields, PRISMA-style tracking) — the evidence shows general literature synthesis and batch job APIs, not a purpose-built screening/extraction pipeline. Missing for 10: explicit systematic-review/screening features (criteria-based inclusion/exclusion), structured field extraction across papers, and independent evidence of consistent-criteria application at scale.",
     "evidenceIds": [
-      "futurehouse-docs-7",
       "futurehouse-docs-19",
-      "futurehouse-docs-17",
-      "futurehouse-docs-4",
-      "futurehouse-docs-12"
+      "futurehouse-docs-22",
+      "futurehouse-docs-37",
+      "futurehouse-docs-27",
+      "futurehouse-docs-33",
+      "futurehouse-docs-17"
     ]
   },
   {
@@ -1641,7 +1676,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs mention a free tier for academics and that higher rate limits/features require paid plans, but there is no detailed pricing page, tier breakdown, specific usage limits, or cost figures provided. Missing for 10: concrete pricing tiers/costs, specific rate-limit numbers, and any usage-limit dashboard or calculator evidence.",
+    "rationale": "Docs mention a free tier for academics and that paid plans exist for higher rate limits/features, but there is no detailed pricing page, no specific limit numbers, or plan comparison table in the evidence. Missing for 10: concrete pricing tiers/costs, specific usage/rate-limit thresholds, and any comparison table or calculator for plan selection.",
     "evidenceIds": [
       "futurehouse-docs-15",
       "futurehouse-docs-20"
@@ -2138,7 +2173,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is a research-report generation product, not a developer/agent tool; there's no evidence of llms.txt or agent-oriented docs, and the probe explicitly found llms.txt returns 404, plus no OpenAPI/API docs found either.",
+    "rationale": "Probe evidence directly shows no llms.txt file exists (404) and no agent-oriented API docs (openapi.json all 404), and no other evidence mentions agent-oriented documentation formats.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2150,13 +2185,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Marlin autonomously analyzes data/topics and generates deep insights, causal maps, strategic options, and comparative hypothesis evaluation, delivered as reports/slides — directly matching AI-generated insights from data. Evidence is entirely first-party marketing/docs with testimonial quotes but no independent hands-on verification. missing for 10: independent third-party benchmark or review confirming insight quality, technical detail on data ingestion sources.",
+    "rationale": "Marlin is explicitly built to autonomously research a topic and generate AI-driven insights, structured strategic options, and hypothesis comparisons from data, delivered as detailed reports and slides — directly matching the story. Evidence is entirely vendor-sourced with strong first-party detail but lacks independent/hands-on corroboration of insight quality. Missing for 10: independent or third-party verification of insight accuracy and real-world usage outcomes.",
     "evidenceIds": [
       "sakana-marlin-docs-2",
       "sakana-marlin-docs-11",
-      "sakana-marlin-docs-13",
+      "sakana-marlin-docs-16",
       "sakana-marlin-docs-22",
-      "sakana-marlin-docs-7",
+      "sakana-marlin-docs-33",
       "sakana-marlin-docs-9"
     ]
   },
@@ -2166,13 +2201,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Marlin runs autonomously for up to ~8 hours after a brief setup exchange, executing research, hypothesis generation, and report/slide generation without further human input, which directly matches the 'background automation' story. Missing for 10: independent/hands-on verification of unattended runtime, scheduling/triggering options for recurring automations, and API/integration hooks (openapi probe returned 404s) to confirm it can be wired into broader automated workflows.",
+    "rationale": "Marlin runs autonomously for up to ~8 hours after a brief setup exchange, executing research end-to-end (hypothesis forming, web navigation, contradiction resolution, report/slide generation) without further human input, matching the 'background automation' story well.  However, this is a single research-task automation rather than a general-purpose 'set up automations' scheduler/trigger system, and there's no independent/hands-on corroboration beyond vendor docs. Missing for 10: evidence of recurring/scheduled automations (not just one-off runs), independent verification of the 8-hour autonomous claim, and details on triggering/monitoring multiple background jobs.",
     "evidenceIds": [
       "sakana-marlin-docs-9",
       "sakana-marlin-docs-10",
       "sakana-marlin-docs-16",
       "sakana-marlin-docs-25",
-      "sakana-marlin-docs-1"
+      "sakana-marlin-docs-27"
     ]
   },
   {
@@ -2181,7 +2216,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Marlin's entire value proposition is delegating a research task to an autonomous AI assistant that runs for hours, gathers information, resolves contradictions, and produces reports/slides with minimal further human input, directly matching the story. Evidence is extensive but entirely vendor-sourced with no independent hands-on confirmation. Missing for 10: independent/third-party verification of autonomous delegation claims, and detail on the assistant's task-delegation UI/controls beyond marketing copy.",
+    "rationale": "Marlin lets a user delegate an entire research/strategy task by setting a topic, after which it autonomously runs for hours, resolving contradictions, gathering data, and producing a full report and slides without further input, matching the story closely. Missing for 10: independent/hands-on corroboration beyond vendor site, and detail on interactive delegation UX beyond autonomous batch execution.",
     "evidenceIds": [
       "sakana-marlin-docs-1",
       "sakana-marlin-docs-9",
@@ -2211,7 +2246,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence that Sakana Marlin supports plugging in MCP servers or third-party tool integration; it is a closed autonomous research agent with no mention of MCP, extensibility, or tool plug-in architecture, and API/OpenAPI probes returned 404.",
+    "rationale": "No evidence that Sakana Marlin supports connecting to or plugging in MCP servers; all documentation describes it as a fully autonomous research/report-generation product with no mention of MCP integration, tool plugins, or extensibility APIs. Probes for API/openapi specs also returned 404s, reinforcing lack of an extensibility surface.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2232,15 +2267,15 @@
   {
     "productId": "sakana-marlin",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Marlin's core interaction model is natural-language: users give it a research topic and refine direction through a brief conversational exchange, after which it runs autonomously (docs-9, docs-10, docs-25, docs-27). This matches the AI-native 'operate via natural-language commands' story well, though evidence is entirely first-party marketing copy. Missing for 10: independent/hands-on verification of the NL command interface, and detail on the range/flexibility of commands beyond initial topic-setting.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Marlin accepts a natural-language research topic and a brief clarifying exchange to set direction before running autonomously, which supports natural-language operation for its specific research-agent use case. However, evidence is limited to marketing copy without independent hands-on confirmation or detail on breadth of natural-language command support (e.g., mid-task steering, varied command types beyond initial topic-setting). Missing for 10: independent/hands-on verification, documentation of NL command flexibility beyond initial topic input, evidence of NL-based control during/after the autonomous run.",
     "evidenceIds": [
-      "sakana-marlin-docs-9",
       "sakana-marlin-docs-10",
-      "sakana-marlin-docs-25",
-      "sakana-marlin-docs-27"
+      "sakana-marlin-docs-27",
+      "sakana-marlin-docs-32",
+      "sakana-marlin-docs-9"
     ]
   },
   {
@@ -2249,11 +2284,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any CLI tool; Sakana Marlin is presented as a web-based research product with card-based signup and credits, and probes for API/spec surfaces returned 404s. Missing for 10: any mention of a CLI, command-line install/usage, or terminal-based workflow.",
+    "rationale": "No evidence of any CLI tool being offered for Sakana Marlin; the product is presented as a web-based research service accessed via card sign-up, and probes for API/spec artifacts (llms.txt, openapi.json) both 404, indicating no developer/CLI surface.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
-      "sakana-marlin-probe-2",
-      "sakana-marlin-docs-24"
+      "sakana-marlin-probe-2"
     ]
   },
   {
@@ -2262,7 +2296,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented public API for driving Marlin programmatically; the product is presented as a credit-based, card-signup web research service, and probes for llms.txt and OpenAPI specs both returned 404s.",
+    "rationale": "No evidence of a documented public API; probes for llms.txt and OpenAPI/Swagger specs all returned 404, and all documentation describes a web UI/chat-based workflow with no mention of API access or SDK.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2283,7 +2317,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any official SDK, API, or developer library for Marlin; probes for openapi/llms.txt endpoints returned 404s, and all docs describe a consumer research product with credit-based pricing, not a programmatic interface.",
+    "rationale": "Sakana Marlin is a research-automation product with no evidence of any official SDK; probes for llms.txt and OpenAPI specs both returned 404, and no API/SDK documentation appears anywhere in the evidence pack.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2295,7 +2329,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of webhook support, event subscriptions, or any API/integration mechanism; probes for API/OpenAPI specs returned 404s, and no docs mention webhooks.",
+    "rationale": "No evidence of any webhook or event-subscription capability; probes for API/openapi specs returned 404, and docs only describe autonomous research report generation with no mention of webhooks or event notifications.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2320,7 +2354,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is an autonomous research/report-generation product, not an API/developer platform; an interactive API reference with runnable examples is not a relevant axis for this product type. Probes confirm no OpenAPI/API docs exist, reinforcing this is not an API-facing product.",
+    "rationale": "Sakana Marlin is an autonomous research/report-generation product, not a developer API/SDK platform; an interactive API reference is a category mismatch for this kind of product. Probe evidence confirms no OpenAPI/API docs exist, but the axis itself doesn't apply to this product type.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2332,7 +2366,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any machine-readable API spec; probes for OpenAPI/swagger endpoints and llms.txt all returned 404, and no docs mention an API at all.",
+    "rationale": "Sakana Marlin is a research automation product with no evidence of a public API or machine-readable API spec; probes explicitly show 404s for OpenAPI and llms.txt endpoints.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2344,7 +2378,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is an autonomous research/report-generation product; it has no concept of production data or a sandbox testing environment, so this axis does not apply to this product category.",
+    "rationale": "Sakana Marlin is an autonomous research/report-generation product, not a system with a data-write/production-data touching workflow — sandbox vs. production data testing is not a relevant axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -2353,7 +2387,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy; probes for openapi/llms.txt all returned 404s, and product is a consumer/business research SaaS tool with no API documentation mentioned.",
+    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy — probes for OpenAPI/llms.txt all returned 404, and Sakana Marlin is presented as a research product with no developer API surface mentioned.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2365,7 +2399,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is a single-topic autonomous research/report-generation agent, not a tool for processing many discrete items in bulk (e.g., batch data operations); the story's 'bulk operations across many items' axis is a category mismatch for this product's single-deep-dive research workflow.",
+    "rationale": "Sakana Marlin is a single-topic autonomous research/report-generation agent, not a tool for processing many discrete items in bulk (e.g., batch file/record operations). The 'bulk operations across many items' story is a category error for this product's single-deep-dive research workflow.",
     "evidenceIds": []
   },
   {
@@ -2374,7 +2408,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is an autonomous research/report-generation tool, not a platform for defining custom rules that trigger actions on events; this event-driven rule-automation axis is a category error for this product type.",
+    "rationale": "Sakana Marlin is an autonomous research/report-generation tool that takes a topic and produces a report; it has no user-facing rule/trigger system for event-based automation. This is a category mismatch rather than a missing feature — the axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -2383,13 +2417,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is a one-shot autonomous research/report generation tool; the evidence describes single research runs triggered by a topic input, with no mention of scheduling, recurrence, or workflow automation triggers. No API/OpenAPI/llms.txt found that could support scheduled invocation either.",
-    "evidenceIds": [
-      "sakana-marlin-docs-9",
-      "sakana-marlin-docs-10",
-      "sakana-marlin-probe-1",
-      "sakana-marlin-probe-2"
-    ]
+    "rationale": "Marlin is a single-run autonomous research agent (one topic → up to ~8hr run producing a report); there is no evidence of scheduling, recurrence, cron-like triggers, or recurring workflow automation.",
+    "evidenceIds": []
   },
   {
     "productId": "sakana-marlin",
@@ -2406,28 +2435,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs consistently describe autonomous, multi-hour, multi-step investigation cycles (hypothesis formation, web navigation, contradiction resolution, thousands of automated cycles) culminating in a full report rather than a single-pass summary. Missing for 10: independent/hands-on verification beyond vendor site and beta testimonials, and technical detail on the underlying agent architecture.",
+    "rationale": "Sakana Marlin's docs consistently describe autonomous, multi-step research: forming hypotheses, gathering information, resolving contradictions, running thousands of automated cycles over up to eight hours to produce a full report, without further human input after initial framing. Testimonials corroborate depth beyond single-pass summarization (review-paper level depth, primary-source grounding). Missing for 10: independent hands-on verification beyond vendor testimonials, and technical detail on how multi-step reasoning/investigation is architected.",
     "evidenceIds": [
       "sakana-marlin-docs-1",
       "sakana-marlin-docs-9",
-      "sakana-marlin-docs-10",
       "sakana-marlin-docs-16",
-      "sakana-marlin-docs-4",
-      "sakana-marlin-docs-22"
+      "sakana-marlin-docs-22",
+      "sakana-marlin-docs-18",
+      "sakana-marlin-docs-6"
     ]
   },
   {
     "productId": "sakana-marlin",
     "storyId": "export-reference-formats",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence shows Marlin auto-generates a report with appendices/references and presentation slides (PowerPoint/PPTX), which covers document and slide export, but there is no mention of spreadsheet export or reference-manager (e.g., BibTeX/EndNote/Zotero) file formats. missing for 10: spreadsheet export, reference-manager file formats (BibTeX/RIS/EndNote), independent verification of export formats.",
+    "rationale": "Marlin generates fully referenced reports and PowerPoint-style slides automatically (docs-3, docs-9, docs-20, docs-34), covering document and presentation output, but there is no evidence of spreadsheet export or reference-manager file formats (e.g., BibTeX, RIS, EndNote). missing for 10: spreadsheet export, reference-manager file format support, independent corroboration of export formats.",
     "evidenceIds": [
       "sakana-marlin-docs-3",
+      "sakana-marlin-docs-9",
       "sakana-marlin-docs-20",
-      "sakana-marlin-docs-26",
-      "sakana-marlin-docs-9"
+      "sakana-marlin-docs-34",
+      "sakana-marlin-docs-26"
     ]
   },
   {
@@ -2436,7 +2466,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Marlin is available only as a pay-per-use add-on to paid Pro/Team/Enterprise plans, requiring a credit card upfront ('Add your card. Start right away.') and consuming credits even if cancelled — there is no mention of a free tier or trial for researchers to try it meaningfully.",
+    "rationale": "Evidence shows Marlin is pay-per-use requiring a credit card, added on top of Pro/Team/Enterprise paid plans, with no mention of a free tier or trial; even canceling mid-run still consumes paid credits. Missing for 10: any free tier, trial credits, or no-cost evaluation path for researchers.",
     "evidenceIds": [
       "sakana-marlin-docs-8",
       "sakana-marlin-docs-23",
@@ -2449,14 +2479,14 @@
     "productId": "sakana-marlin",
     "storyId": "inline-citations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Marketing claims describe reports as 'fully referenced' with 'appendices and references' and testimonials praise reliance on primary rather than secondary sources, implying citation-backed output, but there is no evidence of inline citation mechanics, verifiability standards, or independent review confirming citation accuracy. missing for 10: sample report showing citation format/linking, independent verification of citation accuracy, documentation of citation methodology or standards.",
+    "rationale": "Vendor docs claim reports are 'fully referenced,' 'grounded strictly in primary sources,' and a testimonial praises the quantity/quality of citations and use of primary over secondary sources, implying per-claim citations exist. However, there is no example report, no documentation of citation format/methodology, and no independent verification that every substantive claim is traceably sourced. Missing for 10: sample report showing inline citations, documentation of citation/verification methodology, independent or hands-on confirmation that citations are accurate and traceable.",
     "evidenceIds": [
-      "sakana-marlin-docs-3",
       "sakana-marlin-docs-7",
       "sakana-marlin-docs-15",
-      "sakana-marlin-docs-20"
+      "sakana-marlin-docs-20",
+      "sakana-marlin-docs-34"
     ]
   },
   {
@@ -2465,14 +2495,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs clearly show Marlin runs autonomously for up to ~8 hours on a research topic, forming hypotheses and producing a full report without further human input (docs-1, docs-9, docs-10, docs-16, docs-25). However, there is no explicit evidence of a notification mechanism alerting the analyst when the job completes, nor details on how results are delivered/accessed asynchronously. Missing for 10: explicit notification/alert feature when job finishes, evidence of async job status/dashboard, independent confirmation of unattended completion reliability.",
+    "rationale": "Docs clearly claim autonomous, unattended multi-hour research jobs (up to ~8 hours) that deliver a completed report/slides, matching the core of the story, but there is no explicit mention of a notification mechanism (email/alert) when results are ready, and no independent/hands-on corroboration beyond vendor marketing copy. missing for 10: explicit notification/alerting feature confirmation, independent verification of unattended completion behavior.",
     "evidenceIds": [
       "sakana-marlin-docs-1",
       "sakana-marlin-docs-9",
-      "sakana-marlin-docs-10",
-      "sakana-marlin-docs-16",
       "sakana-marlin-docs-25",
-      "sakana-marlin-docs-5"
+      "sakana-marlin-docs-26",
+      "sakana-marlin-docs-10"
     ]
   },
   {
@@ -2481,7 +2510,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marlin is described as a one-shot autonomous deep-research/report-generation tool that runs for hours on a single topic and delivers a final report; there is no mention of standing searches, saved queries, recurring alerts, or notification of new sources appearing over time.",
+    "rationale": "Marlin is described as a one-shot autonomous research/report tool run per topic (up to ~8 hours, generating a report), not as a standing/persistent search or alerting system that continuously surfaces new sources over time. There is no mention of saved searches, recurring monitoring, or notification/alert mechanisms triggered by new relevant sources.",
     "evidenceIds": []
   },
   {
@@ -2490,12 +2519,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API for Marlin; probes for OpenAPI/llms.txt specs return 404s, and all documented usage is UI-based (card signup, credits, dashboard). Missing for 10: any API documentation, endpoints, or SDK enabling programmatic parity with the UI.",
+    "rationale": "No evidence of a public API at all — probes for llms.txt and OpenAPI specs both returned 404s, and all documentation describes only a web UI/chat workflow with credit-based billing, not programmatic access.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
-      "sakana-marlin-probe-2",
-      "sakana-marlin-docs-24",
-      "sakana-marlin-docs-28"
+      "sakana-marlin-probe-2"
     ]
   },
   {
@@ -2503,8 +2530,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of data export, open format support, or account portability features; documentation focuses on research generation and pricing only, and API/openapi probes returned 404s.",
+    "confidence": "medium",
+    "rationale": "No evidence of data export, open format support, or portability/exit options; reports are delivered as PowerPoint/PDF outputs but no mention of exporting underlying research data, and probes for llms.txt/openapi show no open API surface.",
     "evidenceIds": [
       "sakana-marlin-probe-1",
       "sakana-marlin-probe-2"
@@ -2516,7 +2543,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is a closed, pay-per-use SaaS research product with no evidence of open-source licensing or public source availability; open-source licensing is not a plausible axis for this commercial hosted service.",
+    "rationale": "Sakana Marlin is a closed commercial SaaS research-agent product (pay-per-use, credit-based), not an open-source project; there is no indication source code availability is even a relevant axis for this type of hosted service. No evidence discusses licensing or source availability at all.",
     "evidenceIds": []
   },
   {
@@ -2525,7 +2552,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sakana Marlin is offered purely as a hosted pay-per-use SaaS (credit card sign-up, monthly Pro/Team/Enterprise tiers, credits consumed) with no mention of self-hosting, on-prem deployment, source code, or downloadable model/service; API/OpenAPI and llms.txt probes also return 404s, further indicating no self-hostable interface.",
+    "rationale": "Sakana Marlin is offered strictly as a hosted pay-per-use/subscription SaaS (credits, card sign-up, Pro/Team/Enterprise tiers) with no mention of source availability, self-hosting instructions, or on-prem deployment; probes for open API/llms.txt also return 404s, and no self-hosting evidence exists.",
     "evidenceIds": [
       "sakana-marlin-docs-8",
       "sakana-marlin-docs-23",
@@ -2540,8 +2567,8 @@
     "storyId": "own-corpus-upload",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes Marlin autonomously researching the open web and generating strategy reports, but nothing indicates users can upload their own PDFs/corpus for the agent to research over. Missing for 10: any mention of document/corpus upload, ingestion of user-supplied files, or grounding research in user-provided sources rather than web search.",
+    "confidence": "high",
+    "rationale": "Sakana Marlin is described entirely as an autonomous web-research agent that gathers information from the web to produce strategy reports; there is no mention anywhere in the evidence of uploading custom PDFs, documents, or a private corpus for the agent to research over.",
     "evidenceIds": []
   },
   {
@@ -2550,7 +2577,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack discusses data residency, regional storage options, or any data location controls for Marlin.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, regional storage options, or compliance controls; the material is entirely product-marketing about research capabilities. Missing for 10: any mention of region selection, data residency policy, storage location controls, or compliance certifications.",
     "evidenceIds": []
   },
   {
@@ -2558,8 +2585,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data-training opt-out, privacy controls, or data usage policies for Sakana Marlin; all evidence concerns research/report generation features.",
+    "confidence": "high",
+    "rationale": "No evidence pack items mention data usage policies, training opt-out, privacy controls, or data handling terms for Sakana Marlin; the pack is entirely product feature/marketing content with no privacy-posture documentation.",
     "evidenceIds": []
   },
   {
@@ -2568,7 +2595,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention, deletion controls, or privacy settings for Marlin; all evidence is about research capabilities and pricing.",
+    "rationale": "No evidence anywhere in the pack addresses data retention, deletion policies, or user controls over stored data/history; the marketing pages focus entirely on research capabilities, pricing, and quality claims.",
     "evidenceIds": []
   },
   {
@@ -2577,7 +2604,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or any privacy/data-collection opt-out settings for Sakana Marlin; all evidence focuses on research capabilities and pricing.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, data collection settings, or opt-out controls; the documentation focuses solely on research features, pricing, and workflow.",
     "evidenceIds": []
   },
   {
@@ -2598,8 +2625,8 @@
     "storyId": "share-collaborate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions sharing sessions/reports with collaborators, permissions, links, or collaborative viewing/editing features; the evidence only covers autonomous research generation and pricing/plans (Team/Enterprise tiers mentioned only as billing tiers, not collaboration features).",
+    "confidence": "low",
+    "rationale": "No evidence of any sharing/collaboration feature—no mention of sharing sessions, reports, or collaborator access; docs focus on autonomous research generation, output formats, and pricing only.",
     "evidenceIds": []
   },
   {
@@ -2607,13 +2634,14 @@
     "storyId": "steer-effort-scope",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Marlin allows a brief pre-run exchange to 'sharpen the direction' before it runs fully autonomously for up to ~8 hours, which gives some upfront steering of scope/direction, and cancellation is possible mid-run. However there is no evidence of controls to adjust depth/effort levels (e.g., quick vs deep mode) or to steer scope while the run is executing beyond cancellation. missing for 10: mid-run steering/adjustment controls, explicit depth/effort tier selection, evidence of scope changes during execution beyond stop/cancel.",
+    "confidence": "medium",
+    "rationale": "Docs show a pre-run 'brief exchange' to set direction/topic (docs-10, docs-27, docs-32) and the ability to cancel a run in progress (docs-5), but there is no evidence of adjustable depth/effort/scope parameters or any mid-execution steering — once set, it 'works without further human input' (docs-1, docs-10). missing for 10: explicit controls for depth/effort/scope selection, ability to adjust or redirect the run while it executes (beyond outright cancellation), independent confirmation of steering capability.",
     "evidenceIds": [
       "sakana-marlin-docs-10",
       "sakana-marlin-docs-27",
-      "sakana-marlin-docs-9",
-      "sakana-marlin-docs-5"
+      "sakana-marlin-docs-32",
+      "sakana-marlin-docs-5",
+      "sakana-marlin-docs-1"
     ]
   },
   {
@@ -2622,13 +2650,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Vendor docs describe structured output with main body, appendices, references, tables/causal maps, executive summary slides, and PowerPoint deliverables, matching the story of a shareable structured report with sections/tables/summary. Missing for 10: independent hands-on verification of actual report formatting/quality and no sample report or third-party review confirming structure beyond vendor marketing claims.",
+    "rationale": "Vendor docs consistently describe Marlin producing structured reports with sections (main body, appendices, references), tables/strategic option structuring, and executive summary slides suitable for stakeholder sharing (docs-3, docs-9, docs-20, docs-26, docs-33). This directly matches the analyst story of shareable structured reports with summaries. Missing for 10: independent/hands-on verification of report structure quality, no example report shown, and no confirmation of exportable formats beyond slides/PDF.",
     "evidenceIds": [
       "sakana-marlin-docs-3",
       "sakana-marlin-docs-9",
-      "sakana-marlin-docs-11",
       "sakana-marlin-docs-20",
-      "sakana-marlin-docs-26"
+      "sakana-marlin-docs-26",
+      "sakana-marlin-docs-33",
+      "sakana-marlin-docs-31"
     ]
   },
   {
@@ -2646,12 +2675,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs mention that Marlin is pay-per-use on top of Pro/Team/Enterprise plans, that add-on credits cost ¥98 each, and that canceling mid-run still consumes credits, giving a researcher some sense of cost mechanics. However, there is no concrete base plan pricing table, no explicit usage caps (e.g., number of runs/credits per plan), and no worked cost examples for a typical 8-hour research run. missing for 10: full plan price list, explicit usage/credit limits per tier, cost estimation examples for typical runs.",
+    "rationale": "There's some pricing info (pay-per-use tier available to Pro/Team/Enterprise plans, add-on credit pricing at ¥98 or discounted ¥85/credit, credits consumed even if canceled), but no clear breakdown of plan tiers' costs, usage limits per plan, or how credits map to usage/research runs. missing for 10: detailed plan tier pricing table, explicit usage limits per plan, credit-to-usage conversion clarity, independent verification of pricing claims.",
     "evidenceIds": [
       "sakana-marlin-docs-8",
       "sakana-marlin-docs-23",
-      "sakana-marlin-docs-5",
-      "sakana-marlin-docs-28"
+      "sakana-marlin-docs-35",
+      "sakana-marlin-docs-5"
     ]
   },
   {

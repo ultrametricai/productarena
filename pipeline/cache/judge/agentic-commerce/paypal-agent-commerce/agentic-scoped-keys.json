@@ -1,13 +1,14 @@
 {
-  "hash": "02491f27622df9a34c7bc23390c2b62abdc6218407f765e623e8e494120296cc",
+  "hash": "4cc15d8d80e5fd05f9d4eb6121f0244697ad5b2f496a31cddc9c10b1ff5fbcd2",
   "verdict": {
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "There's no explicit 'issue a scoped API key/token for an agent' feature for the general Agent Toolkit or REST API surface, but agent-specific payment tokens are documented as scoped/least-privilege by design — the ACP delegated token is 'bound to your merchant ID and includes amount and time restrictions that you can configure,' and the MCP server enforces OAuth with PKCE and dynamic client registration rather than static keys. This shows some least-privilege credentialing pattern for agent checkout flows but not a general-purpose scoped-credential system for arbitrary agent API access. Missing for 10: documented scope/permission tiers (e.g., read-only vs write) for the Agent Toolkit or REST OAuth tokens, and any self-serve UI/API to mint restricted credentials per agent.",
+    "confidence": "medium",
+    "rationale": "PayPal's agent toolkit and MCP server run on standard OAuth 2 access tokens, and the live MCP endpoint requires Bearer auth with a documented OAuth resource-metadata flow exposing limited scopes (openid/email/profile), which is some evidence of token-based, non-full-account credentials for agents. However, there's no documentation of merchant-configurable, fine-grained/least-privilege scopes (e.g., read-only vs. specific-resource permissions) tailored to agent use cases — the scopes shown are generic identity scopes, not commerce-action scoping. missing for 10: documented ability to mint custom least-privilege scopes/permission sets per agent, granular API-permission configuration UI or docs, and independent confirmation that agents are restricted to minimal necessary operations rather than full account-level OAuth access.",
     "evidenceIds": [
-      "paypal-ac-supp-acp-chatgpt",
       "paypal-ac-probe-rt-1",
+      "paypal-ac-supp-rest-overview",
+      "paypal-ac-supp-agent-toolkit",
       "paypal-ac-supp-cart-reverse-api"
     ],
     "productId": "paypal-agent-commerce",

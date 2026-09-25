@@ -1,15 +1,17 @@
 {
-  "hash": "a2a2f3e78fbf2edc803ede1e6e57af61107836a22d0fad2e452b1e04fa325acb",
+  "hash": "59ffc925e6dacbfc34f1c344b5bd1ae746d54cf003deb29c3b12b4b75900b560",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Signifyd documents a Checkout (Pre-Auth) endpoint meant to be called before the payment gateway, implying synchronous scoring ahead of authorization, but the docs don't clearly state a guaranteed real-time SLA or describe the response as a synchronous ML risk score returned inline — the more detailed workflow (getDecision) appears to be a separate retrieval call rather than an inline synchronous score. missing for 10: explicit documentation of response latency/SLA guarantees, explicit statement that the Checkout call returns a synchronous ML score in the same response, and independent/hands-on confirmation of real-time behavior.",
+    "rationale": "Signifyd documents a Checkout (Pre-Auth) API that must be called before payment authorization, which fits the 'before auth completes' requirement, and this is a documented REST API [signifyd-docs-3][signifyd-docs-21][signifyd-docs-24]. However, the evidence shows the actual fraud/guarantee decision is retrieved asynchronously via webhook or by polling a separate Get Decision endpoint [signifyd-docs-26][signifyd-docs-27][signifyd-docs-4], not returned synchronously in the initial Checkout API response, which undercuts the 'synchronous, real-time score in the same call' framing. Missing for 10: explicit documentation of a synchronous response payload containing the ML risk score returned immediately in the Checkout API call, and confirmation that no polling/webhook wait is needed for pre-auth decisions.",
     "evidenceIds": [
       "signifyd-docs-3",
-      "signifyd-docs-18",
-      "signifyd-docs-4",
-      "signifyd-docs-1"
+      "signifyd-docs-21",
+      "signifyd-docs-24",
+      "signifyd-docs-26",
+      "signifyd-docs-27",
+      "signifyd-docs-4"
     ],
     "productId": "signifyd",
     "storyId": "realtime-scoring-api"
