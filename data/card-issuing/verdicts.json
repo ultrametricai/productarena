@@ -2071,8 +2071,8 @@
     "storyId": "agent-issued-cards",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Marqeta's documented Agentic AI MCP Server explicitly names AI agents as the use case, combining instant-issue virtual card issuance with customizable velocity limits, spending caps, and merchant restrictions — directly matching the story of scoped agent cards with merchant locks and amount caps. This is backed by dedicated first-party documentation (not just generic issuing docs) plus the underlying Core API primitives (authorization/velocity controls, card creation) that implement these locks. Missing for 10: independent/hands-on corroboration that an agent can actually complete this flow end-to-end, and explicit documentation of expiry-based scoping specifically for agent cards.",
+    "confidence": "medium",
+    "rationale": "Marqeta explicitly documents an 'Agentic AI MCP Server' by name for AI agents, including instant virtual card issuance and spend controls (velocity limits, spending caps, merchant restrictions) — directly matching the story's merchant-lock and amount-cap requirements, backed by broader Core API docs on velocity/authorization controls and card creation. Missing for 10: explicit documentation of card expiry as a settable control and independent/hands-on corroboration of an agent actually using a scoped card end-to-end.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-12",
@@ -2081,6 +2081,7 @@
       "marqeta-docs-5",
       "marqeta-docs-6",
       "marqeta-docs-21",
+      "marqeta-docs-26",
       "marqeta-probe-4"
     ]
   },
@@ -2121,7 +2122,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Marqeta's Core API, sandbox, controls, and an MCP server for external AI agents to query data, but nothing describing in-product AI-generated insights, analytics, or suggestions surfaced to the user within Marqeta's own interface/dashboard. The MCP server evidence is about agent connectivity to raw API data, not AI-generated insights delivered inside the product.",
+    "rationale": "Marqeta's evidence covers an MCP server letting external AI agents query/act on payment data, but there is no evidence of AI-generated insights or suggestions surfaced inside the Marqeta product itself (e.g., dashboards, analytics summaries, anomaly detection recommendations).",
     "evidenceIds": []
   },
   {
@@ -2130,14 +2131,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Marqeta exposes webhooks for event-driven notifications, JIT funding for autonomous approve/deny decisioning, and an MCP server letting AI agents query/act on Core API endpoints — building blocks that support background automation, but there's no dedicated workflow/scheduler feature; automation must be built by the user's own system consuming these APIs.  missing for 10: a first-party automation/orchestration or scheduling feature, evidence of agents running persistent unattended background jobs rather than reactive API calls.",
+    "rationale": "Marqeta provides infrastructure for background automation—webhooks for async event notifications, JIT funding for automated real-time funding decisions, and velocity/authorization controls that enforce spend rules autonomously—plus an MCP server letting AI agents create cards, query data, and set spend controls without manual intervention. However, this is transaction-processing automation rather than a general AI-native 'set up and forget' automation/workflow builder, and there's no evidence of scheduled or persistent autonomous agent runs beyond on-demand MCP queries. Missing for 10: a dedicated workflow/automation scheduler for persistent background AI tasks, and independent evidence of agents operating unattended over time.",
     "evidenceIds": [
       "marqeta-docs-4",
       "marqeta-docs-9",
       "marqeta-docs-20",
+      "marqeta-docs-5",
+      "marqeta-docs-26",
       "marqeta-docs-11",
       "marqeta-docs-23",
-      "marqeta-probe-4"
+      "marqeta-docs-13"
     ]
   },
   {
@@ -2146,7 +2149,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Marqeta exposes an MCP server so external AI agents can query its API, but there is no evidence of a built-in AI assistant inside Marqeta's own product/dashboard that a user could delegate tasks to.",
+    "rationale": "Marqeta's evidence shows an MCP server that lets external AI agents query its API and a sandbox/dev docs, but nothing indicates a built-in AI assistant inside a Marqeta product UI that a user can delegate tasks to; the MCP server is a developer integration point for third-party agents, not an embedded assistant experience.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-23",
@@ -2159,13 +2162,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta is fundamentally a REST API platform with a sandbox environment and simulation endpoints (marqeta-docs-2, marqeta-docs-10, marqeta-docs-19) that let developers programmatically create objects and simulate transactions without a UI, which supports headless/automated use including in CI pipelines. However, the evidence emphasizes interactive browser widgets (marqeta-docs-3) for exploration rather than CLI/SDK tooling explicitly designed for CI, and there's no documentation of CI-specific integration, test harnesses, or automation examples. Missing for 10: explicit CI/CD pipeline examples, dedicated CLI/SDK for automated test runs, and evidence of headless execution beyond raw API calls.",
+    "rationale": "Marqeta is API-first with a full Core API, sandbox environment, and simulation endpoints that let you create, test, and drive transactions entirely programmatically (docs-2, docs-10, docs-14, docs-19), which supports headless/automated use including in CI-like test pipelines. However there is no explicit documentation of CI integration, SDKs for test automation, or headless tooling beyond the sandbox API itself. Missing for 10: explicit CI/CD pipeline examples, official SDK/test-harness guidance for automated runs, and any mention of non-interactive auth/token flows suited for CI.",
     "evidenceIds": [
       "marqeta-docs-2",
       "marqeta-docs-10",
-      "marqeta-docs-19",
       "marqeta-docs-14",
-      "marqeta-docs-3"
+      "marqeta-docs-19",
+      "marqeta-docs-27"
     ]
   },
   {
@@ -2173,11 +2176,12 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Marqeta is a payments API platform, not an AI agent/assistant with a tool-use interface; it has no client-side capability to consume external MCP servers. Its only MCP-related evidence is the opposite direction — Marqeta publishes its own MCP server so external agents can call Marqeta's APIs — which does not make this client-role story applicable.",
+    "confidence": "high",
+    "rationale": "Marqeta is a payments API platform that ships its own MCP server for AI agents to consume its tools (docs-11, docs-23, probe-4) — the reverse relationship. There is no evidence Marqeta itself acts as an MCP client/host that plugs in external MCP servers to use their tools, and as a payments platform (not an agent or IDE), this client-side capability is not a fair axis for this product category.",
     "evidenceIds": [
       "marqeta-docs-11",
-      "marqeta-docs-23"
+      "marqeta-docs-23",
+      "marqeta-probe-4"
     ]
   },
   {
@@ -2185,8 +2189,8 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Marqeta documents an official MCP Server that lets external AI agents query Core API endpoints, issue virtual cards, and set spend controls via natural language, with a dedicated developer guide and probe confirmation of the page's existence. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice, and details on setup/auth scope beyond the docs.",
+    "confidence": "medium",
+    "rationale": "Marqeta documents an official MCP Server enabling AI agents to query Core API endpoints, issue virtual cards, and set spend controls via NLP, with a dedicated developer guide and probe confirmation of its existence. missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice, and details on setup/auth flow beyond the doc summary.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-12",
@@ -2216,12 +2220,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a card-issuing/payments API platform; no evidence of an official CLI tool for developers, and probes for common CLI/spec artifacts (llms.txt, docs.md, openapi.json) all returned 404. Documentation focuses on REST API, sandbox, MCP server, and widgets—not a CLI.",
-    "evidenceIds": [
-      "marqeta-probe-1",
-      "marqeta-probe-2",
-      "marqeta-probe-3"
-    ]
+    "rationale": "Marqeta is a card issuing/payments API platform; an official CLI would be a plausible developer-tooling axis, but no evidence pack item mentions a CLI—only REST API docs, sandbox, webhooks, and an MCP server for AI agents. No CLI tool is documented anywhere.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
@@ -2229,12 +2229,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta has extensive documented Core API (cards, transactions, controls, disputes, webhooks) with sandbox, interactive widgets, and simulation endpoints, all publicly documented — clearly a documented public API driving the product. Missing for 10: no discoverable OpenAPI/machine-readable spec (probe 404s) and no llms.txt/docs.md for AI-native consumption, though an MCP server exists for agentic access.",
+    "rationale": "Marqeta provides an extensive documented Core API (cards, transactions, controls, disputes, webhooks) with an interactive sandbox and widgets for testing endpoints directly, clearly enabling programmatic/AI-native use. Probes show no discoverable openapi.json/llms.txt at standard paths, but a full documented public API surface is otherwise well evidenced. Missing for 10: a discoverable machine-readable OpenAPI spec or llms.txt at standard endpoints, independent third-party corroboration of API usability.",
     "evidenceIds": [
       "marqeta-docs-1",
       "marqeta-docs-2",
       "marqeta-docs-3",
-      "marqeta-docs-7",
+      "marqeta-docs-5",
       "marqeta-docs-9",
       "marqeta-docs-14",
       "marqeta-probe-1",
@@ -2248,7 +2248,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Marqeta's MCP server is described as querying only a 'designated set' of Core API endpoints and pairs with spend/velocity/merchant controls that limit an agent-issued card's financial actions, which suggests some scoping of what an agent can do, but there is no documented mechanism for issuing distinct, least-privilege API keys/tokens or role-based credential scopes specifically for agents. Missing for 10: explicit API credential/token scoping or RBAC system, documentation of per-agent key issuance, and independent confirmation that MCP access is actually restricted in practice.",
+    "rationale": "Marqeta's MCP server description notes agents can query only a 'designated set' of Core API endpoints, implying some built-in scoping for agent access, and spend/velocity/merchant controls let admins constrain what a card (and by extension an agent-triggered transaction) can do. However, there is no documented mechanism for an AI-native user to actually issue or configure their own least-privilege API keys/credentials/scopes for an agent — the scoping evidence is about spend limits, not credential/permission scoping. Missing for 10: explicit API key/OAuth scope management for agents, documentation of configurable MCP server permission sets, and any user-facing UI/API for credential issuance with granular access control.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-13",
@@ -2262,11 +2262,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Marqeta's Core API, sandbox, webhooks, and MCP server extensively, but never mentions official client SDKs (e.g., language-specific libraries) for building against the platform. Probes for openapi/llms.txt also return 404s, showing no discoverable SDK or spec artifacts.",
+    "rationale": "Evidence covers Marqeta's REST Core API, sandbox, webhooks, and an MCP server for agentic AI, but no official SDKs (client libraries) are mentioned anywhere, and probes for openapi/llms.txt files return 404s. Missing for 10: any mention of official language SDKs (Python, Node, Java, etc.), SDK repos, or package registry links.",
     "evidenceIds": [
-      "marqeta-probe-3",
+      "marqeta-docs-2",
+      "marqeta-docs-3",
+      "marqeta-probe-1",
       "marqeta-probe-2",
-      "marqeta-probe-1"
+      "marqeta-probe-3"
     ]
   },
   {
@@ -2275,7 +2277,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta's Core API documents webhooks explicitly: notifications about API events sent as they occur to a customer-hosted endpoint, covering event subscription for platform activity. This is standard first-party documentation of the capability, though there's no independent/hands-on corroboration or detail on filtering/subscription management specifics. Missing for 10: independent verification of webhook reliability/setup, documentation on selecting specific event types to subscribe to.",
+    "rationale": "Marqeta's Core API documents webhooks as notifications about API events sent as they occur to an endpoint hosted in the developer's own environment, covering standard event subscription functionality. missing for 10: no independent/hands-on corroboration of webhook delivery reliability, and no documentation of filtering/subscribing to specific event types via API configuration.",
     "evidenceIds": [
       "marqeta-docs-9",
       "marqeta-docs-20"
@@ -2287,12 +2289,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim interactive widgets to explore/test the Core API in-browser plus a sandbox for hands-on experimentation, which directly matches the story. However, probes found no OpenAPI/swagger spec exposed, and there's no independent/hands-on corroboration of the widget experience beyond vendor claims. Missing for 10: independent verification of the interactive widget UX, a discoverable OpenAPI spec, and evidence of runnable code samples beyond simulation endpoints.",
+    "rationale": "Docs explicitly mention interactive widgets to explore/test the Core API directly from the browser and a sandbox environment for hands-on experimentation, plus a quick-start tutorial for simulating transactions — supporting the interactive/runnable-examples story. However, probes show no discoverable OpenAPI spec or llms.txt, and there's no independent corroboration of the interactive widgets' functionality. Missing for 10: independent/hands-on confirmation of the interactive widgets, a machine-readable OpenAPI spec, and AI-native discovery files (llms.txt/docs.md).",
     "evidenceIds": [
-      "marqeta-docs-2",
       "marqeta-docs-3",
-      "marqeta-docs-10",
+      "marqeta-docs-2",
       "marqeta-docs-14",
+      "marqeta-probe-1",
+      "marqeta-probe-2",
       "marqeta-probe-3"
     ]
   },
@@ -2301,8 +2304,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Direct probes for OpenAPI/Swagger spec files and llms.txt/docs.md all returned 404, and no evidence pack item links to a downloadable machine-readable API spec; docs mention interactive widgets but not a spec file.",
+    "confidence": "high",
+    "rationale": "Probes for OpenAPI/swagger spec files and llms.txt/docs.md all returned 404, and no documentation item points to a downloadable machine-readable API spec; the docs describe endpoints in prose/markdown form only.",
     "evidenceIds": [
       "marqeta-probe-1",
       "marqeta-probe-2",
@@ -2315,13 +2318,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Marqeta documents a dedicated sandbox environment for the Core API with interactive widgets, a quick-start tutorial for creating sandbox objects, and dedicated simulation endpoints for card transactions—clearly separate from production data. Missing for 10: independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Marqeta explicitly documents a sandbox environment separate from production that doesn't touch card networks, with tutorials to create test objects and simulate transactions without real-world impact, plus dedicated simulation endpoints for card transactions and interactive docs widgets for hands-on testing. Missing for 10: independent third-party corroboration of sandbox reliability/isolation beyond vendor docs.",
     "evidenceIds": [
       "marqeta-docs-2",
-      "marqeta-docs-3",
       "marqeta-docs-10",
       "marqeta-docs-14",
-      "marqeta-docs-19"
+      "marqeta-docs-19",
+      "marqeta-docs-27",
+      "marqeta-docs-3"
     ]
   },
   {
@@ -2330,7 +2334,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack has no mention of API versioning scheme or a documented deprecation policy anywhere in the docs; probes for openapi/llms.txt spec files also return 404, giving no indication of version management. missing for 10: versioning scheme documentation, explicit deprecation policy, changelog or sunset timeline for old API versions.",
+    "rationale": "No evidence pack item references API versioning or a deprecation policy anywhere in Marqeta's docs; probes for openapi/spec files all returned 404. Absence of evidence for this applicable capability (a payments API platform could reasonably document versioning/deprecation) yields 'none'.",
     "evidenceIds": [
       "marqeta-probe-1",
       "marqeta-probe-2",
@@ -2340,29 +2344,32 @@
   {
     "productId": "marqeta",
     "storyId": "auth-context-enrichment",
-    "verdict": "partial",
-    "quality": 3,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "low",
-    "rationale": "Marqeta's docs show authorization-related capabilities (merchant/MCC-based authorization controls, transaction retrieval by merchant, JIT funding decisioning) but never explicitly describe MCC codes, enhanced merchant data, wallet/entry-mode fields, or partial-approval/incremental-auth signals within the authorization payload. missing for 10: explicit MCC field documentation, enhanced merchant data fields, wallet/entry-mode indicators, partial-approval and incremental-auth signal documentation.",
+    "rationale": "Evidence shows general merchant-restriction and JIT funding decisioning (marqeta-docs-4, -6, -7, -21, -25) but nothing about MCC codes, enhanced merchant data, wallet/entry-mode details, partial-approval, or incremental-auth signals being present in the authorization payload. This is a fair axis for a card-issuing platform, but no evidence confirms decision-grade context of the specificity described.",
     "evidenceIds": [
       "marqeta-docs-4",
       "marqeta-docs-6",
       "marqeta-docs-7",
-      "marqeta-docs-21"
+      "marqeta-docs-21",
+      "marqeta-docs-25"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "auth-simulation-testing",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Marqeta's sandbox docs explicitly provide simulation endpoints for authorizations, reversals, and balance inquiries, with a quick-start tutorial to simulate transactions end-to-end, supporting the core of the auth-decisioning testing story. However, the evidence doesn't explicitly confirm simulation of clearings, refunds, or declines as distinct event types, and there's no independent/hands-on corroboration of full lifecycle coverage. missing for 10: explicit doc confirmation of clearing/refund/decline simulation endpoints, independent developer validation of sandbox fidelity.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Marqeta's sandbox explicitly provides /simulations/cardtransactions/* endpoints to simulate authorizations, reversals, clearings, and other network transaction events, and the quick-start tutorial walks developers through creating sandbox objects and simulating transactions before going live; velocity/authorization controls let developers test decline logic. missing for 10: explicit named simulation endpoints for refunds/declines as distinct event types (only 'authorizations, reversals, and balance inquiries' explicitly named) and independent/hands-on developer corroboration of the full lifecycle simulation working end-to-end.",
     "evidenceIds": [
       "marqeta-docs-10",
       "marqeta-docs-19",
       "marqeta-docs-14",
-      "marqeta-docs-2"
+      "marqeta-docs-27",
+      "marqeta-docs-5",
+      "marqeta-docs-21"
     ]
   },
   {
@@ -2371,8 +2378,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes only single-item operations (create a card, create a dispute, retrieve transactions) and simulation/webhook features, with no mention of batch/bulk endpoints, CSV import, or multi-item operations. Bulk operations are a reasonable expectation for a payments API platform, but no evidence supports this capability.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows only single-item CRUD operations (create one card, one user, one dispute) and no documented batch/bulk endpoints for creating, updating, or querying many items at once; even the MCP server description focuses on single-card issuance and querying rather than bulk operations.",
+    "evidenceIds": [
+      "marqeta-docs-1",
+      "marqeta-docs-24",
+      "marqeta-docs-12",
+      "marqeta-docs-13",
+      "marqeta-docs-7"
+    ]
   },
   {
     "productId": "marqeta",
@@ -2380,14 +2393,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta supports event-driven automation via webhooks that notify external systems of API events, and it offers configurable velocity/authorization controls that automatically enforce spend rules (limits, merchant restrictions) when transaction events occur, plus JIT funding logic where a system approves/denies based on custom business rules. However, this is not a general-purpose 'define your own trigger-action rules' engine — it's a fixed set of control types and webhook notifications, requiring the developer to build the actual action logic themselves. Missing for 10: a native no-code/if-this-then-that rule builder, evidence of arbitrary custom trigger-action workflows beyond spend controls, and independent confirmation of automation reliability.",
+    "rationale": "Marqeta documents rule-based automation for payment events: velocity controls and authorization controls automatically limit/approve spend based on merchant/time/amount conditions, and JIT funding lets a system auto-approve/deny funding requests in real time, with webhooks notifying on API events. This covers rule-triggered automation within the payments domain but is not a general-purpose event/rule engine (e.g., no arbitrary conditional workflows across resources) and there's no independent corroboration of these rules working reliably at scale.\n\nmissing for 10: general-purpose custom rule/workflow builder beyond spend controls, independent/hands-on evidence of rule automation working in production.",
     "evidenceIds": [
-      "marqeta-docs-4",
       "marqeta-docs-5",
-      "marqeta-docs-6",
+      "marqeta-docs-21",
+      "marqeta-docs-25",
       "marqeta-docs-9",
-      "marqeta-docs-20",
-      "marqeta-docs-21"
+      "marqeta-docs-26"
     ]
   },
   {
@@ -2396,7 +2408,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a card issuing/payments API platform, not a workflow/job orchestration tool; scheduling recurring jobs or workflows is outside its product category (webhooks are event-driven notifications, not job scheduling). This is a category error rather than a missing capability.",
+    "rationale": "Marqeta is a card-issuing/payments API platform; scheduling recurring jobs or workflows is not a capability category this product addresses—its evidence covers cards, controls, disputes, webhooks, and an MCP server for querying/creating cards, none of which is a job/workflow scheduler.",
     "evidenceIds": []
   },
   {
@@ -2412,26 +2424,30 @@
     "productId": "marqeta",
     "storyId": "balance-ledger-visibility",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Marqeta's docs show a Transactions API for retrieving authorization data (marqeta-docs-7) and real-time webhooks for API events (marqeta-docs-9, marqeta-docs-20), which support some real-time visibility into money movement, but there is no evidence of a dedicated balance API, a ledger that explicitly ties authorizations to clearing, or settlement reporting/reconciliation tooling. missing for 10: balance/account balance endpoint, explicit auth-to-clearing ledger linkage, settlement reporting or penny-level reconciliation documentation.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Marqeta's Core API exposes transaction retrieval by card/merchant/account, webhooks for real-time event notifications, and JIT funding decisioning, which supports live money-movement visibility, but there is no documented settlement reporting or reconciliation feature that ties authorizations to clearing 'to the penny.' missing for 10: explicit settlement/clearing reconciliation reports, ledger balance statements, penny-accurate reconciliation tooling or account-balance dashboards for finance leads.",
     "evidenceIds": [
       "marqeta-docs-7",
       "marqeta-docs-9",
-      "marqeta-docs-20"
+      "marqeta-docs-20",
+      "marqeta-docs-25",
+      "marqeta-docs-22"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "card-state-management",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence confirms card creation via Core API and sandbox simulation of transactions, plus velocity/authorization controls, but none of the citations explicitly document activate, pause/unpause, report lost/stolen, reissue-linked-to-original, or permanent close endpoints. Missing for 10: explicit docs on card state-transition endpoints (activate/suspend/unsuspend), lost/stolen reporting, reissue linkage, and card termination/closure.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Marqeta documents core card creation (marqeta-docs-1/24) and a dedicated `/cardtransitions` API to set the state of an existing card (marqeta-docs-29), which is the standard mechanism for activate/pause/unpause/close/report-lost-or-stolen state changes, all reachable via the Core API and testable in sandbox (marqeta-docs-2, marqeta-docs-14, marqeta-docs-27). However, the evidence pack never explicitly documents a reissue flow that links a replacement card token to the original, nor detailed enumeration of all lifecycle states (lost/stolen vs closed) supported by the transitions endpoint. Missing for 10: explicit reissue/replacement-linking documentation, enumerated lifecycle states (lost, stolen, closed) in the transitions API, and independent confirmation of the full state machine.",
     "evidenceIds": [
       "marqeta-docs-1",
-      "marqeta-docs-10",
-      "marqeta-docs-14"
+      "marqeta-docs-24",
+      "marqeta-docs-29",
+      "marqeta-docs-14",
+      "marqeta-docs-27"
     ]
   },
   {
@@ -2440,7 +2456,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers card issuance, velocity/authorization controls, disputes, webhooks, and simulations, but nothing documents KYC for consumers or KYB for businesses, associated data requirements, review states, or re-verification flows. Missing for 10: KYC/KYB data field requirements, identity verification review/approval states, re-verification triggers/flows, and any documentation of the underlying compliance process.",
+    "rationale": "The evidence pack covers card issuance, controls, disputes, webhooks, and simulations, but nowhere mentions KYC/KYB identity verification, documented data requirements, review states, or re-verification flows for cardholders or businesses.",
     "evidenceIds": []
   },
   {
@@ -2463,19 +2479,25 @@
   {
     "productId": "marqeta",
     "storyId": "credit-debit-prepaid-range",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack describes generic card creation, JIT funding, velocity/authorization controls, and virtual card issuance, but never mentions specific program types like debit, prepaid, commercial credit, or consumer credit rails — the axis is applicable to a card-issuing platform but no evidence documents support for these distinct program types.",
-    "evidenceIds": []
+    "rationale": "Evidence confirms flexible 'card products' and card-level configuration (create card product, card, JIT funding, virtual/instant-issue cards) that could underlie multiple program types, and mentions supplier/workforce payment use cases, but nowhere explicitly names debit, prepaid, commercial credit, or consumer credit as distinct supported program types. Missing for 10: explicit documentation of debit card programs, prepaid program specifics, commercial credit program support, and consumer credit program support with terms/underwriting details.",
+    "evidenceIds": [
+      "marqeta-docs-1",
+      "marqeta-docs-25",
+      "marqeta-docs-28",
+      "marqeta-docs-18",
+      "marqeta-docs-24"
+    ]
   },
   {
     "productId": "marqeta",
     "storyId": "digital-wallet-provisioning",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers card creation, velocity/authorization controls, disputes, webhooks, simulations, and an MCP server, but nowhere mentions Apple Pay/Google Pay push provisioning, digital wallet entitlements, in-wallet card art, or manual provisioning fallback.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention Apple Pay, Google Pay, push provisioning, wallet entitlements, in-app card art, or manual provisioning fallback — the docs cover card creation, controls, disputes, webhooks, and simulations but say nothing about digital wallet tokenization.",
     "evidenceIds": []
   },
   {
@@ -2498,26 +2520,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "JIT funding is clearly documented — the merchant's own system approves/denies funding requests per authorization (marqeta-docs-4) — but the evidence pack contains no explicit documentation of a prefunded-balance funding option or any comparison of cash-flow tradeoffs between the two models. Missing for 10: explicit prefunded balance funding docs, side-by-side cash-flow tradeoff guidance, finance-lead-oriented configuration guidance for choosing between models.",
+    "rationale": "Marqeta's docs clearly describe JIT funding, where the issuer's own system approves/funds each authorization in real time (marqeta-docs-4, marqeta-docs-25), fulfilling half the story. However, the evidence pack contains no explicit documentation of a prefunded-balance funding model or any side-by-side cash-flow tradeoff comparison between the two approaches. Missing for 10: explicit prefunded-balance funding documentation, and documented cash-flow tradeoff guidance comparing JIT vs prefunded.",
     "evidenceIds": [
-      "marqeta-docs-4"
+      "marqeta-docs-4",
+      "marqeta-docs-25"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "issuing-fraud-controls",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Marqeta docs show velocity/authorization spend controls and a Mastercard dispute-case API, plus transaction/webhook visibility that ops could use to react to suspicious activity, but there is no evidence of network fraud scores or Marqeta's own fraud models surfaced at authorization time, no dedicated suspicious-activity fraud alerts, and no documented card block/reissue workflow for compromised cards. missing for 10: fraud-score/model surfaced at auth, suspicious-activity fraud alerting, card block-and-reissue tooling.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Marqeta provides velocity/authorization controls, card-state transitions (to block a card) and a dispute-case API for Mastercard, which cover parts of the fraud/dispute lifecycle, but there is no documented network fraud score, ops-facing suspicious-activity alerting, or explicit reissue workflow. missing for 10: fraud score surfaced at authorization time, suspicious-activity alert tooling, explicit compromised-card reissue flow.",
     "evidenceIds": [
       "marqeta-docs-5",
       "marqeta-docs-6",
       "marqeta-docs-21",
+      "marqeta-docs-29",
       "marqeta-docs-8",
-      "marqeta-docs-22",
-      "marqeta-docs-9",
-      "marqeta-docs-7"
+      "marqeta-docs-22"
     ]
   },
   {
@@ -2526,12 +2548,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta's Core API authorization-controls docs explicitly describe merchant-based restriction at authorization time, including single-merchant locks and merchant-group (MCC-like) restrictions, corroborated by velocity controls and MCP server spend-control feature references. Missing for 10: explicit documentation of MCC allowlist/blocklist terminology (vs. general merchant grouping) and independent/hands-on confirmation of behavior in production.",
+    "rationale": "Marqeta's Authorization Controls API explicitly supports limiting spending to a single merchant or group of merchants (merchant/MCC restrictions) applied at authorization time, corroborated by the agentic AI MCP docs mentioning merchant restrictions as a spend control feature. missing for 10: explicit documentation of MCC allowlist vs blocklist distinction and independent/hands-on verification beyond vendor docs.",
     "evidenceIds": [
       "marqeta-docs-6",
       "marqeta-docs-21",
-      "marqeta-docs-13",
-      "marqeta-docs-5"
+      "marqeta-docs-13"
     ]
   },
   {
@@ -2539,8 +2560,8 @@
     "storyId": "network-tokenization-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of network tokenization, digital wallet token provisioning, token lookup, or token revocation independent of the PAN — coverage is limited to card creation, velocity/authorization controls, transactions, disputes, webhooks, and MCP server access. This is an applicable axis for a card issuing platform, but no documentation supports it.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers cards, velocity/authorization controls, transactions, disputes, webhooks, and simulations, but nowhere mentions network tokens, tokenization, wallet/merchant token association, or independent token revocation separate from the PAN. No API or docs reference token management as a distinct object from the card itself.",
     "evidenceIds": []
   },
   {
@@ -2549,7 +2570,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta is API-first: docs show broad Core API coverage (cards, users, controls, transactions, disputes, webhooks, simulations) suggesting most operations available programmatically, and dashboards reference features like 'PCI widgets' and 'dynamic spend controls' that map to documented API endpoints. However, there's no explicit mapping or claim confirming full UI-API parity, and openapi/spec discovery probes failed (404s), making it hard to verify completeness. Missing for 10: an explicit parity statement or comprehensive OpenAPI spec confirming every UI action has an API equivalent, and independent confirmation of no UI-only features.",
+    "rationale": "Marqeta's docs show a broad, API-first surface covering core functions (cards, transactions, disputes, velocity/authorization controls, JIT funding, webhooks, sandbox simulations) that mirror typical dashboard operations, suggesting the API is the primary interface. However, there is no explicit documentation confirming full UI/API parity or listing any UI-only features, and no OpenAPI spec or llms.txt was found (probes 404), leaving completeness unverified. missing for 10: explicit parity statement, published OpenAPI spec, evidence of dashboard-only features being absent from API.",
     "evidenceIds": [
       "marqeta-docs-1",
       "marqeta-docs-5",
@@ -2557,9 +2578,9 @@
       "marqeta-docs-7",
       "marqeta-docs-8",
       "marqeta-docs-9",
-      "marqeta-docs-15",
-      "marqeta-docs-16",
-      "marqeta-docs-17",
+      "marqeta-docs-25",
+      "marqeta-probe-1",
+      "marqeta-probe-2",
       "marqeta-probe-3"
     ]
   },
@@ -2592,7 +2613,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a cloud-based card issuing/payments platform delivered as a hosted API/service; self-hosting the core product is not a plausible or offered deployment model for this category of regulated fintech infrastructure.",
+    "rationale": "Marqeta is a cloud-based card issuing/payments platform (a regulated fintech SaaS); self-hosting the core product is a category error since it inherently relies on Marqeta's hosted infrastructure, card network connectivity, and compliance environment — not something offered or feasible as an on-prem deployable artifact.",
     "evidenceIds": []
   },
   {
@@ -2601,7 +2622,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack only contains a bare marketing bullet 'PCI widgets' with no accompanying documentation describing hosted-field/ephemeral-key reveal flows or explicit claims about staying out of SAQ D scope. This suggests the capability likely exists but the pack gives no developer-facing detail, API reference, or explicit PCI-scope language to substantiate the story. Missing for 10: developer guide/API docs for the PCI widget/reveal flow, explicit SAQ D / PCI scope-reduction claims, and any integration or security-review corroboration.",
+    "rationale": "The marketing page mentions 'PCI widgets' as a feature bullet, implying hosted components for PAN/CVV reveal, but no docs page in the evidence pack details ephemeral-key flows, iframe/widget integration mechanics, or explicit SAQ D scope-reduction claims. missing for 10: dedicated docs on hosted card widget/ephemeral-key reveal implementation, explicit PCI scope-reduction/SAQ D guidance, and independent confirmation of the flow.",
     "evidenceIds": [
       "marqeta-docs-17"
     ]
@@ -2612,10 +2633,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows generic card creation via the Core API (marqeta-docs-1) with no mention of physical card personalization, custom card art, bulk ordering, shipping methods, or tracking — the specific capabilities the story asks about are simply absent from the pack. Missing for 10: physical card fulfillment API docs, custom card art/design options, bulk order endpoints, shipping method selection, and tracking/status endpoints.",
-    "evidenceIds": [
-      "marqeta-docs-1"
-    ]
+    "rationale": "The evidence shows generic card creation, activation/state-transition APIs, and virtual-card issuance, but nothing about physical card personalization (custom art), bulk ordering, shipping methods, or tracking — the specific fulfillment capabilities the story asks about are unevidenced despite being a plausible axis for a card-issuing platform.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
@@ -2623,9 +2642,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card creation, controls, transactions, disputes, and webhooks, but contains no documentation of PIN set/reset endpoints or 3DS enrollment flows, despite this being a standard axis for a card-issuing API platform. Only a vague mention of 'PCI widgets' appears, with no detail tying it to PIN management or 3DS. missing for 10: PIN set/reset API endpoints, 3DS enrollment API documentation, any card-holder credential self-service flow evidence.",
+    "rationale": "The evidence pack covers card creation, card state transitions, velocity/authorization controls, disputes, webhooks, and simulations, but contains no documentation of PIN set/reset endpoints or 3DS enrollment flows anywhere in the Core API docs. 'PCI widgets' is mentioned only as a marketing bullet with no detail on PIN management. Missing for 10: PIN set/reset API endpoints, 3DS enrollment API, any support-ticket-free credential management documentation.",
     "evidenceIds": [
-      "marqeta-docs-17"
+      "marqeta-docs-17",
+      "marqeta-docs-29"
     ]
   },
   {
@@ -2633,8 +2653,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data localization controls for Marqeta's platform; the docs focus on card issuance, controls, disputes, and MCP integration with no reference to data-region selection.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data locality controls for Marqeta's platform; the docs focus on card issuance, controls, and API functionality only.",
     "evidenceIds": []
   },
   {
@@ -2652,7 +2672,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users; the docs cover card issuance, controls, MCP server usage, and API mechanics but nothing about data retention/deletion.",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management for AI agent usage; documentation covers cards, transactions, controls, and MCP server functionality but nothing about data retention/deletion.",
     "evidenceIds": []
   },
   {
@@ -2660,36 +2680,36 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Marqeta is a payments API platform; no evidence in the pack addresses telemetry/usage tracking opt-out settings for AI-native usage or any client-side tooling. Absence of evidence for this applicable capability yields none.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out settings for Marqeta's platform, APIs, or MCP server.",
     "evidenceIds": []
   },
   {
     "productId": "marqeta",
     "storyId": "program-launch-speed",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show Marqeta's Core API lets a founder create card products, users, cards, spend controls, and simulate transactions in a sandbox — evidence of program-management tooling (card issuance, velocity/authorization controls, disputes, webhooks) that abstracts away raw bank operations. However, the pack contains no explicit mention of BIN sponsorship, bank/network partnership handling, or a documented signup-to-first-live-card timeline, which is central to the 'don't become a bank' claim. Missing for 10: explicit BIN sponsor/bank partnership language, network membership details, and a documented time-to-launch metric.",
+    "rationale": "Marqeta's docs show extensive program-management tooling (card creation, velocity/authorization controls, JIT funding, disputes, sandbox simulations, webhooks) that lets a founder run a card program without building infrastructure themselves, implying the platform handles the underlying issuing complexity. However, the evidence never explicitly mentions BIN sponsorship or network membership arrangements, nor any documented signup-to-first-live-card timeline. missing for 10: explicit BIN sponsorship/bank-partner language, network membership details, and a documented time-to-launch metric.",
     "evidenceIds": [
       "marqeta-docs-1",
-      "marqeta-docs-2",
       "marqeta-docs-14",
-      "marqeta-docs-5",
-      "marqeta-docs-6",
-      "marqeta-docs-8",
-      "marqeta-docs-9"
+      "marqeta-docs-25",
+      "marqeta-docs-26",
+      "marqeta-docs-18",
+      "marqeta-docs-28"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "realtime-auth-decisioning",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta's JIT funding gateway documentation confirms the core capability: a developer-hosted endpoint receives funding/authorization requests and returns approve/decline decisions using custom business logic (marqeta-docs-4), and webhooks are described as real-time notifications sent to a developer-hosted endpoint (marqeta-docs-9, marqeta-docs-20). However, the evidence pack contains no documented time-budget/timeout window for the JIT funding response or explicit developer-configurable fallback behavior on timeout. Missing for 10: documented response time budget/SLA for the auth-stream endpoint, explicit timeout fallback configuration options, and independent confirmation of real-world latency handling.",
+    "rationale": "Marqeta's JIT Funding docs describe exactly the core loop: your system receives a funding request in real time and approves or denies it using your own business rules, which is the auth-decisioning webhook the story describes, and separate webhook docs confirm real-time event delivery to a developer-hosted endpoint. However, none of the evidence documents the network's response time budget or a configurable/documented timeout fallback behavior (e.g., default decline-on-timeout) that the developer can control. Missing for 10: documented time budget/SLA for responses, explicit timeout fallback behavior and configuration options, independent confirmation of latency handling in production.",
     "evidenceIds": [
       "marqeta-docs-4",
+      "marqeta-docs-25",
       "marqeta-docs-9",
       "marqeta-docs-20"
     ]
@@ -2711,15 +2731,16 @@
     "productId": "marqeta",
     "storyId": "single-use-scoped-cards",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta docs show virtual card issuance, merchant-restricted authorization controls, velocity/spending caps, and JIT funding where the issuer approves/denies exact amounts per transaction — together these let a developer construct a one-purchase, one-merchant, exact-amount card. However, there's no explicit 'single-use card' or auto-expire-after-one-transaction feature documented, requiring the developer to assemble these primitives themselves. Missing for 10: explicit single-use/one-time-card issuance endpoint, independent/hands-on confirmation of exact-amount enforcement in production.",
+    "rationale": "Marqeta docs show the building blocks for tightly scoped cards — instant virtual card issuance (docs-12/16), merchant-restriction authorization controls (docs-6/21), and velocity/amount spending caps (docs-5/26) — and cards can be transitioned to inactive/terminated via the card-transitions endpoint (docs-29), which together let a developer approximate a one-purchase, one-merchant, exact-amount card. However, there is no explicit first-party 'single-use card' or auto-expire-after-one-transaction feature documented; it must be assembled from separate controls rather than a native single-use mode. Missing for 10: an explicit single-use/auto-expiring card primitive, and independent/hands-on confirmation that combining these controls reliably enforces exactly one transaction.",
     "evidenceIds": [
-      "marqeta-docs-5",
+      "marqeta-docs-12",
       "marqeta-docs-6",
       "marqeta-docs-21",
-      "marqeta-docs-4",
-      "marqeta-docs-12",
+      "marqeta-docs-5",
+      "marqeta-docs-26",
+      "marqeta-docs-29",
       "marqeta-docs-13"
     ]
   },
@@ -2727,14 +2748,15 @@
     "productId": "marqeta",
     "storyId": "spend-limits-velocity",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Marqeta's velocity controls docs explicitly support amount and frequency limits per user, enforced platform-side ('the user cannot exceed any of the defined spending limits'), and authorization controls allow merchant-based restrictions, both platform-enforced rather than in customer code. Marketing and MCP docs reiterate 'spending caps' and 'velocity limits' as first-class platform features. Missing for 10: explicit documentation of distinct daily/monthly/all-time window granularity and per-cardholder vs per-card distinction, and independent/hands-on confirmation beyond vendor docs.",
+    "rationale": "Marqeta's velocity controls docs explicitly support amount and transaction-count limits over configurable time windows per user/card, enforced platform-side, plus authorization controls for merchant restrictions — all as platform features, not custom code. Missing for 10: independent/third-party corroboration of enforcement behavior beyond vendor docs.",
     "evidenceIds": [
       "marqeta-docs-5",
+      "marqeta-docs-26",
       "marqeta-docs-21",
-      "marqeta-docs-13",
-      "marqeta-docs-15"
+      "marqeta-docs-6",
+      "marqeta-docs-13"
     ]
   },
   {
@@ -2743,13 +2765,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm one-call card creation via API (marqeta-docs-1), a sandbox environment for testing (marqeta-docs-2, marqeta-docs-14), and instant-issue virtual cards ready for immediate use (marqeta-docs-12, marqeta-docs-16). However, there is no explicit evidence that PAN/CVV/expiry are all returned synchronously in the creation response, nor any documentation of a self-serve path from sandbox to live/production credentials without a sales engagement. missing for 10: explicit confirmation that PAN, CVV, and expiry are returned in the create-card API response, and evidence of self-service sandbox-to-production activation without a sales cycle.",
+    "rationale": "Docs confirm single-call card creation via /cards endpoint tied to user and card product, instant-issue virtual card language, and a sandbox environment with simulation endpoints for testing before going live. However, there is no explicit documentation confirming PAN/CVV/expiry are returned immediately in the create-card response, nor any description of a self-serve path from sandbox to live production without a sales/onboarding process. missing for 10: explicit API response showing PAN/CVV/expiry returned on card creation, evidence of self-serve production activation without sales engagement.",
     "evidenceIds": [
       "marqeta-docs-1",
-      "marqeta-docs-2",
       "marqeta-docs-12",
       "marqeta-docs-14",
-      "marqeta-docs-16"
+      "marqeta-docs-24",
+      "marqeta-docs-27"
     ]
   },
   {
