@@ -7,7 +7,7 @@ import {
 } from '@/lib/processes'
 import { stepRanking } from '@/lib/processRankings'
 import {
-  buildYearCandidates, unionTaskIds, VS_CHAIN_IDS,
+  buildEventExamples, buildYearCandidates, unionTaskIds, VS_CHAIN_IDS,
   type RouteMix, type VirtualTaskPayload, type VsChain, type YearTaskSource,
 } from '@/lib/virtualStartup'
 
@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: 'Virtual Startup Simulator — ProductArena',
   description:
-    'Pick the starting decisions — entity, team, funding, business model, first hire, compliance timing, enterprise motion — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the year-one operating rhythm the company then runs.',
+    'Pick the starting decisions — or a one-tap example company (software, hardware, biotech) or YC batch mode — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
 }
 
 // DAG route mix of one corpus process — the year view's per-row honesty payload.
@@ -86,6 +86,9 @@ export default function VirtualStartupPage() {
   }))
   const allChains: VsChain[] = loadChains().map(({ id, name, taskIds }) => ({ id, name, taskIds }))
   const yearCandidates = buildYearCandidates(allChains, yearSources)
+  // Event-driven examples for the rhythm views — real corpus processes that run when triggered
+  // (no months, no runs/yr), gated per decision combo client-side.
+  const eventExamples = buildEventExamples(yearSources)
 
   return (
     <div className="space-y-10">
@@ -111,7 +114,13 @@ export default function VirtualStartupPage() {
         </p>
       </section>
 
-      <VirtualStartup chains={chains} tasks={tasks} roles={vendorRoles(unionTasks)} yearCandidates={yearCandidates} />
+      <VirtualStartup
+        chains={chains}
+        tasks={tasks}
+        roles={vendorRoles(unionTasks)}
+        yearCandidates={yearCandidates}
+        eventExamples={eventExamples}
+      />
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
         <p>
