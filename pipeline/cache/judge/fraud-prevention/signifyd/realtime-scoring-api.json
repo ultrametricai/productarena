@@ -1,15 +1,16 @@
 {
-  "hash": "a2a2f3e78fbf2edc803ede1e6e57af61107836a22d0fad2e452b1e04fa325acb",
+  "hash": "552d4954bd96bbc065c8c4d0a7c042c7d0ef59f5363575ea09ee5e51dff61395",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Signifyd documents a Checkout (Pre-Auth) endpoint meant to be called before the payment gateway, implying synchronous scoring ahead of authorization, but the docs don't clearly state a guaranteed real-time SLA or describe the response as a synchronous ML risk score returned inline — the more detailed workflow (getDecision) appears to be a separate retrieval call rather than an inline synchronous score. missing for 10: explicit documentation of response latency/SLA guarantees, explicit statement that the Checkout call returns a synchronous ML score in the same response, and independent/hands-on confirmation of real-time behavior.",
+    "rationale": "Docs confirm a Pre-Auth Checkout API that must be called before the payment gateway, implying a real-time, synchronous call path with a documented REST API (signifyd-docs-3, signifyd-docs-18, signifyd-docs-21). However, the evidence never explicitly describes an ML risk score returned synchronously within the Checkout response — the dedicated GetDecision endpoint (signifyd-docs-4) and webhook notifications (signifyd-docs-7, signifyd-docs-8) suggest decisions may be delivered asynchronously rather than embedded in the immediate API response. missing for 10: explicit documentation of a synchronous score field in the Checkout response, and confirmation that authorization is blocked/gated on that synchronous score rather than a follow-up decision call/webhook.",
     "evidenceIds": [
       "signifyd-docs-3",
       "signifyd-docs-18",
+      "signifyd-docs-21",
       "signifyd-docs-4",
-      "signifyd-docs-1"
+      "signifyd-docs-8"
     ],
     "productId": "signifyd",
     "storyId": "realtime-scoring-api"
