@@ -1887,7 +1887,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains nothing about access certification campaigns, periodic access reviews, reviewer routing, or audit sign-off records — it covers SSO, SCIM provisioning, event hooks, MCP server, and Cross App Access, none of which address recertification workflows. Okta Identity Governance does offer access certifications in reality, but no evidence here documents it, so per the rules this must be judged 'none' rather than assumed from outside knowledge.",
+    "rationale": "Okta's evidence pack covers SSO, SCIM provisioning, event hooks, and an MCP server for admin API access, but nothing addresses access certification campaigns, periodic re-justification reviews, reviewer routing, or audit-ready sign-off records — this is the domain of Okta Identity Governance, which is not represented in the evidence.",
     "evidenceIds": []
   },
   {
@@ -1896,7 +1896,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation of adaptive/contextual access policies (network zones, device trust, location, or risk-based sign-on rules) for Okta — only SSO overview, SCIM provisioning, event hooks, and MCP server integration material, none of which describe conditional access policies driven by risk signals.",
+    "rationale": "The evidence pack contains no documentation of Okta's adaptive/contextual access policies (network zones, device trust, location, risk scoring) driving conditional per-app/group policies — it only covers SSO, SCIM provisioning, event hooks, MCP server, and unrelated community sentiment.",
     "evidenceIds": []
   },
   {
@@ -1904,14 +1904,15 @@
     "storyId": "agent-identity-controls",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Okta has dedicated first-party documentation and a dev playground specifically for securing AI agent access: Cross App Access (XAA) via OIDC for agent-to-app connections, an XAA developer playground demonstrating token exchange without exposing credentials, and an official MCP server exposing scoped Admin Management API access for agents. This directly addresses agent identity, cross-app access, and scoped credentials as first-class patterns. Missing for 10: explicit 'token vaulting' terminology/documentation and independent hands-on validation of these agent-specific flows beyond Okta's own blog posts.",
+    "confidence": "medium",
+    "rationale": "Okta has explicit, first-party documentation for AI agent identity patterns: Cross App Access (XAA) for secure agent-to-app OIDC connections without exposing credentials, a dedicated XAA dev playground, and an official MCP server exposing Okta admin management operations to agents/LLMs. This directly addresses scoped agent credentials and agent access patterns, though token vaulting specifics and independent hands-on validation of these newer (2025/2026) features are thin. Missing for 10: independent/community corroboration of XAA and MCP server in production use, and explicit documentation of a distinct 'token vaulting' mechanism as named in the story.",
     "evidenceIds": [
       "okta-docs-5",
       "okta-docs-6",
       "okta-docs-10",
       "okta-docs-7",
       "okta-docs-9",
+      "okta-gh-4",
       "okta-probe-4"
     ]
   },
@@ -1921,7 +1922,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes show no llms.txt (404), no docs-in-markdown endpoint, and no discoverable OpenAPI spec, so there's no evidence Okta exposes agent-oriented docs formats for an AI agent to consume directly; the MCP server is a separate integration mechanism, not an llms.txt/agent-docs artifact.",
+    "rationale": "Direct probes show Okta's developer docs have no llms.txt (404), no markdown-doc endpoints, and no discoverable OpenAPI spec, meaning there's no agent-oriented documentation format to point an agent at. The MCP server evidence concerns programmatic API access, not documentation content, so it doesn't satisfy this specific axis.",
     "evidenceIds": [
       "okta-probe-1",
       "okta-probe-2",
@@ -1934,27 +1935,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Okta exposes an MCP server so external AI agents can query/act on Okta admin data (e.g., failed logins, unused apps), and a Cross App Access playground for agent-to-app auth, but there is no evidence of Okta itself surfacing AI-generated insights, anomaly detection, or proactive suggestions natively inside its own product UI. This is agent-tooling for external consumption, not in-product AI insight generation.",
-    "evidenceIds": [
-      "okta-gh-1",
-      "okta-gh-2",
-      "okta-gh-3",
-      "okta-docs-9",
-      "okta-docs-7"
-    ]
+    "rationale": "Evidence shows Okta enables natural-language querying of identity data via an MCP server (e.g., listing unused apps, failed logins), but this is user-driven query capability, not AI-generated insights, anomaly detection, or proactive suggestions surfaced natively inside the product. No evidence of Okta itself generating insights or recommendations from its data.",
+    "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Okta's event hooks provide outbound, event-triggered automation running in the background (okta-docs-4), and the Okta MCP server lets an AI agent issue commands against Okta's admin APIs (okta-docs-9, okta-gh-1/2/3), but none of the evidence shows a mechanism for scheduling or continuously running autonomous agentic workflows without a triggering event or explicit invocation. Missing for 10: documentation of scheduled/persistent background agent execution, evidence of autonomous multi-step workflows (e.g., Okta Workflows) tied to AI agents, and independent confirmation of such automations running unattended.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Okta ships event hooks (outbound webhooks triggered by org events) and an MCP server that lets AI agents perform Okta operations via natural language, both of which support building automated, event-driven background processes; SCIM also automates user/group provisioning without human intervention. However, there's no evidence of a dedicated scheduling/workflow automation engine (e.g., Okta Workflows) or persistent autonomous agent execution loops in this pack. Missing for 10: evidence of a no-code/low-code automation builder, scheduled/recurring automation execution, and independent confirmation of agents running unattended over time.",
     "evidenceIds": [
       "okta-docs-4",
+      "okta-docs-17",
       "okta-docs-9",
+      "okta-gh-4",
       "okta-gh-1",
-      "okta-gh-2",
       "okta-gh-3"
     ]
   },
@@ -1964,29 +1960,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Okta's evidence shows an MCP server that lets external AI assistants (e.g., Claude) call into Okta's admin APIs, and a Cross App Access framework for agent-to-app auth — but there is no evidence of a built-in AI assistant embedded inside Okta's own console/product that a user can delegate tasks to directly.",
-    "evidenceIds": [
-      "okta-gh-1",
-      "okta-gh-2",
-      "okta-gh-3",
-      "okta-docs-9",
-      "okta-docs-7"
-    ]
+    "rationale": "Evidence shows Okta exposes an MCP server so external AI agents can manage Okta operations (okta-gh-1..4, okta-docs-7/9), but this is the reverse of the story — no built-in AI assistant embedded within Okta's own product surface for users to delegate tasks to is documented.",
+    "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Okta exposes REST/SCIM APIs and event hooks explicitly framed for automation ('manage and automate Okta for employees and partners'), which supports headless/CI-driven identity operations, and the Okta MCP server further enables programmatic/agentic control. However there is no explicit CI/CD documentation, service-account or API-token guidance for pipelines, or hands-on evidence of running these in a CI context. Missing for 10: dedicated CI/automation guides, service-account/token setup for pipelines, and independent confirmation of headless CI usage.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Okta exposes REST/SCIM APIs and event hooks that can be scripted programmatically, and the Integrator Free Plan explicitly advertises the ability to 'manage and automate Okta for employees and partners,' implying headless/API-driven use suitable for CI. However, there is no explicit CI/CD example, official CLI, or documented headless automation workflow (e.g., GitHub Actions integration) in the evidence pack. missing for 10: explicit CI/headless automation docs or examples, official CLI/SDK for scripted pipelines, independent corroboration of CI use.",
     "evidenceIds": [
       "okta-docs-11",
       "okta-docs-13",
       "okta-docs-3",
       "okta-docs-4",
-      "okta-docs-9",
-      "okta-probe-4"
+      "okta-docs-17"
     ]
   },
   {
@@ -1995,11 +1984,12 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Okta is an identity/access-management platform, not an AI agent or assistant that consumes tools; the evidence describes Okta shipping its own MCP *server* (exposing Okta APIs as tools for other agents), not Okta acting as an MCP client that plugs in and uses external MCP servers' tools. This client-side consumption story is a category mismatch for an IAM platform.",
+    "rationale": "Okta is an identity/SSO management platform, not an AI agent or assistant interface where a user would plug in external MCP servers for it to consume tools from. All AI-related evidence shows the opposite direction: Okta ships an MCP *server* exposing its own admin APIs as tools for AI agents to consume, which is a separate story from this client-side 'plug MCP servers in' axis.",
     "evidenceIds": [
       "okta-docs-7",
       "okta-docs-9",
-      "okta-gh-1"
+      "okta-gh-4",
+      "okta-probe-4"
     ]
   },
   {
@@ -2008,27 +1998,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Okta ships an official okta-mcp-server (GitHub repo + dedicated blog post) that exposes Okta's Admin Management APIs via MCP, enabling agents to perform actions like creating users, listing failed logins, and auditing unused apps. This is first-party, documented, and confirmed by a probe, though it's admin-API focused rather than a full agent-facing platform. Missing for 10: independent/hands-on third-party validation of the MCP server's real-world reliability and broader community corroboration beyond vendor docs.",
+    "rationale": "Okta ships an official open-source MCP server (okta/okta-mcp-server) that integrates with LLMs/AI agents to perform Okta admin operations via natural language, documented in a first-party blog post and confirmed by a probe. Missing for 10: independent hands-on third-party review of the MCP server's reliability, and clearer versioning/support status (GA vs experimental).",
     "evidenceIds": [
-      "okta-docs-9",
-      "okta-docs-7",
+      "okta-gh-4",
       "okta-gh-1",
       "okta-gh-2",
       "okta-gh-3",
+      "okta-docs-7",
+      "okta-docs-9",
       "okta-probe-4"
     ]
   },
   {
     "productId": "okta",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Okta ships an official MCP server that exposes its Admin Management APIs to AI agents, with documented natural-language examples like 'Create a new user and add them to the Engineering group' and 'Show me all failed login attempts from the last 24 hours', letting AI-native users drive Okta via NL commands through an MCP client. Missing for 10: independent/hands-on verification that these NL commands work reliably in practice, and no evidence of a native NL interface built directly into the Okta admin console itself.",
+    "rationale": "Okta's official MCP server enables natural-language operations like creating users, listing failed logins, or finding unused apps, evidenced by first-party blog docs and the okta-mcp-server GitHub repo with concrete NL command examples. However this is a separate add-on tool rather than native NL control built into the core admin console/product itself, and there's no independent/hands-on corroboration of reliability. Missing for 10: native in-product NL interface (not just an external MCP server), independent hands-on validation of the MCP server's command coverage and accuracy.",
     "evidenceIds": [
       "okta-gh-1",
       "okta-gh-2",
       "okta-gh-3",
+      "okta-gh-4",
       "okta-docs-7",
       "okta-docs-9",
       "okta-probe-4"
@@ -2039,25 +2031,27 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Okta has an MCP server and admin APIs, but there is no mention of an official CLI tool for AI-native workflows; Okta CLI is not evidenced here at all.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows Okta shipping an MCP server and various API/webhook integrations, but no official CLI tool is mentioned anywhere in the docs, GitHub, or blog citations. The axis applies to a platform like Okta, but absence of any CLI evidence means this is unsupported.",
     "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Okta documents substantial public REST APIs (SCIM CRUD API, Event Hooks, Admin Management APIs referenced by the MCP server) with clear developer docs, showing a genuine documented public API surface. However, probes show no discoverable machine-readable spec (llms.txt 404, docs-md 404, openapi.json/swagger.json all 404 across candidate paths), meaning AI-native/agentic consumption relies on human-oriented docs rather than a standard machine-consumable API description. missing for 10: llms.txt or OpenAPI/Swagger spec discoverable at conventional endpoints, independent confirmation of API completeness beyond vendor docs.",
+    "rationale": "Okta documents extensive public REST APIs (SCIM CRUD API, Event Hooks REST callbacks, Admin Management APIs) and provides a free Integrator plan to test/automate against them, plus an official MCP server (okta-mcp-server) exposing these APIs for natural-language/agentic driving. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec and an llms.txt were not found (probes return 404), reducing AI-native self-discovery of the API surface.",
     "evidenceIds": [
-      "okta-docs-2",
       "okta-docs-3",
       "okta-docs-4",
       "okta-docs-9",
+      "okta-docs-11",
+      "okta-docs-14",
+      "okta-gh-4",
       "okta-probe-1",
-      "okta-probe-2",
-      "okta-probe-3"
+      "okta-probe-3",
+      "okta-probe-4"
     ]
   },
   {
@@ -2094,9 +2088,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Okta's Event Hooks provide outbound webhook-style HTTPS REST calls triggered on specified org events, letting subscribers receive event data in near-real-time, and this is documented as a first-class concept in Okta's developer docs. Missing for 10: independent/hands-on corroboration of event hook reliability and no explicit mention of AI-agent-specific consumption of these webhooks beyond the general docs.",
+    "rationale": "Okta's Event Hooks feature is explicitly documented as outbound HTTPS webhook calls triggered when specified events occur in an org, directly matching the 'subscribe to events via webhooks' story, and is a well-established first-party capability separate from the AI-agent MCP tooling. missing for 10: independent/hands-on corroboration of event hook reliability and no mention of AI-specific webhook consumption patterns.",
     "evidenceIds": [
-      "okta-docs-4"
+      "okta-docs-4",
+      "okta-docs-17"
     ]
   },
   {
@@ -2105,11 +2100,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; probes show llms.txt and openapi.json endpoints 404, and docs items only describe concepts without runnable playgrounds tied to the API reference itself. The XAA dev playground concerns Cross App Access setup, not a runnable API reference.",
+    "rationale": "The evidence pack shows only conceptual docs, an XAA playground, and MCP server blogs, but no mention of an interactive API reference or runnable code examples; probes even show 404s for llms.txt, docs markdown, and OpenAPI spec endpoints, indicating no machine-consumable or interactive API console is exposed.",
     "evidenceIds": [
       "okta-probe-1",
       "okta-probe-2",
-      "okta-probe-3"
+      "okta-probe-3",
+      "okta-docs-6",
+      "okta-docs-12"
     ]
   },
   {
@@ -2118,7 +2115,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack includes explicit probes for llms.txt, docs-md, and openapi.json/swagger.json candidate paths, all returning 404s, and no other citation shows a downloadable OpenAPI or machine-readable API spec being offered.",
+    "rationale": "No evidence in the pack shows a downloadable OpenAPI/Swagger spec; explicit probes for llms.txt, docs-md, and common OpenAPI paths all returned 404, and no documentation item references a spec file. The axis is applicable (Okta is an API-driven identity platform), but the pack provides no confirmation of a machine-readable spec being published.",
     "evidenceIds": [
       "okta-probe-1",
       "okta-probe-2",
@@ -2131,13 +2128,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Okta offers an Integrator Free Plan explicitly for testing code/apps without touching production ('Test your code and apps... manage and automate Okta for employees and partners') and a dedicated XAA Dev Playground described as free, requiring no local setup or infrastructure to provision, letting developers explore Cross App Access end-to-end. These support sandbox-style testing separate from production, but neither is explicitly framed as a dedicated 'sandbox tenant' with guaranteed production-data isolation for general Okta admin/API testing (only XAA-specific). Missing for 10: explicit sandbox/tenant isolation documentation for general Okta APIs beyond XAA, independent/hands-on confirmation that test data never touches production.",
+    "rationale": "Okta offers a free Integrator/developer org signup explicitly for testing code and apps without touching production, plus a dedicated XAA dev playground with no local setup, which supports sandbox-style testing for agentic/AI workflows. However, evidence doesn't explicitly confirm data isolation guarantees or a full 'sandbox environment' concept distinct from a free trial org. Missing for 10: explicit documentation of a dedicated sandbox/staging environment separate from production tenants, and independent confirmation that test orgs fully isolate data from production use.",
     "evidenceIds": [
       "okta-docs-11",
       "okta-docs-13",
-      "okta-docs-5",
       "okta-docs-6",
-      "okta-docs-12"
+      "okta-docs-12",
+      "okta-docs-5"
     ]
   },
   {
@@ -2146,11 +2143,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of API versioning schemes or a documented deprecation policy for Okta's APIs; only rate limits, SSO/SCIM concepts, and MCP server details are covered, and probes for OpenAPI specs returned 404s.",
-    "evidenceIds": [
-      "okta-docs-14",
-      "okta-probe-3"
-    ]
+    "rationale": "No evidence pack items mention API versioning schemes or a documented deprecation policy for Okta's APIs; the pack covers SSO, SCIM, event hooks, MCP server, and community sentiment but nothing about version lifecycle or deprecation commitments.",
+    "evidenceIds": []
   },
   {
     "productId": "okta",
@@ -2174,12 +2168,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Okta's Event Hooks provide outbound webhook calls triggered by specified org events, enabling automated actions to be wired up when events occur, and the MCP server/agent examples show event-driven queries (e.g., failed logins) being actioned via AI agents. However, this is infrastructure for building rule-triggered automations rather than a native, user-facing 'if this event then this action' rules engine tailored for AI-native users. Missing for 10: a documented no-code/low-code rule builder for event-to-action automation, first-party examples of AI agents autonomously defining and executing such rules, and independent/hands-on confirmation of this workflow.",
+    "rationale": "Okta's Event Hooks provide outbound webhook calls triggered by specified org events, enabling automated actions in response to events, and this is documented as a first-party feature. However, the story frames this from an 'AI-native user' perspective defining rules — Okta's event hooks are developer/admin-configured webhooks rather than a natural-language or agent-driven rule-definition interface, and the MCP server evidence shows querying/management actions rather than event-triggered automation rules. missing for 10: evidence of AI-native/natural-language rule creation for event-triggered automation, independent corroboration of event hooks reliability, and any linkage between the MCP server and event-hook-based automation.",
     "evidenceIds": [
       "okta-docs-4",
-      "okta-gh-2",
-      "okta-docs-9",
-      "okta-docs-7"
+      "okta-docs-17",
+      "okta-gh-4",
+      "okta-docs-9"
     ]
   },
   {
@@ -2188,8 +2182,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Okta is an identity/access management platform; evidence covers SSO, SCIM, event hooks, MCP server, and Cross App Access, but nothing describes scheduling recurring jobs or workflows (no cron-like automation, scheduled tasks, or workflow scheduler capability). Event hooks are event-triggered, not scheduled/recurring.",
-    "evidenceIds": []
+    "rationale": "Okta is an identity/access management platform; there is no evidence of any scheduling engine, cron-like job runner, or recurring workflow automation feature. Event hooks are triggered by identity events, not time-based schedules, and the MCP server only exposes admin API operations invoked on demand, not recurring jobs.",
+    "evidenceIds": [
+      "okta-docs-4",
+      "okta-docs-17",
+      "okta-gh-4",
+      "okta-docs-9"
+    ]
   },
   {
     "productId": "okta",
@@ -2197,7 +2196,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any version control, review/audit trail, or rollback mechanism for automations (workflows, hooks, MCP-driven actions) in Okta's evidence pack; MCP server and event hooks docs describe execution/integration, not versioning or rollback capabilities.",
+    "rationale": "No evidence of any version control, review, or rollback mechanism for Okta automations (workflows, event hooks, SCIM integrations, or MCP-driven actions); the evidence covers SSO, SCIM, event hooks, and MCP server capabilities but nothing about versioning, audit review, or reverting automation changes.",
     "evidenceIds": []
   },
   {
@@ -2205,8 +2204,8 @@
     "storyId": "config-as-code",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions a Terraform provider, IaC tooling, or config-as-code for Okta apps/groups/policies; evidence covers SSO, SCIM, event hooks, and an MCP server, none of which address declarative/reviewable identity config management.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of a Terraform provider, IaC tool, or any equivalent for managing apps/groups/policies as code — it focuses on SSO, SCIM provisioning, event hooks, and an MCP server for conversational admin actions, none of which address reviewable/reproducible declarative config management.",
     "evidenceIds": []
   },
   {
@@ -2215,11 +2214,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only contains generic SSO overview statements and unrelated MCP/SCIM/event-hook docs; there is no documented walkthrough for configuring custom SAML, OIDC, or header-based (SWA) apps outside the catalog. Missing for 10: specific admin guides for adding custom SAML app integrations, custom OIDC app integrations, and header-based/SWA app configuration steps.",
-    "evidenceIds": [
-      "okta-docs-1",
-      "okta-docs-8"
-    ]
+    "rationale": "The evidence pack only contains generic SSO overview statements and unrelated SCIM/event-hook/MCP docs; nothing addresses configuring custom SAML, OIDC, or header-based (SWA) apps outside the app catalog, nor any documented walkthrough for that workflow.",
+    "evidenceIds": []
   },
   {
     "productId": "okta",
@@ -2227,7 +2223,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Okta's SSO, SCIM provisioning, event hooks, MCP server, and Cross App Access features, but contains no mention of device management, MDM integration, device enrollment, device policy enforcement, or remote lock/wipe capabilities tied to identity. This is a fair axis for an identity platform (device trust is a common IAM adjacency), but no documentation or third-party evidence shows Okta delivering or integrating this capability.",
+    "rationale": "The evidence pack covers SSO, SCIM provisioning, event hooks, and an MCP server for Okta admin API automation, but contains no mention of device management, MDM integration, device enrollment, policy enforcement, or remote lock/wipe tied to identity — the core elements of this story are entirely unaddressed.",
     "evidenceIds": []
   },
   {
@@ -2235,23 +2231,24 @@
     "storyId": "device-trust-policies",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains nothing about device posture checks (managed/encrypted/screen-locked state) or device-trust signals being evaluated in Okta's auth/sign-on policies; it only covers SSO, SCIM, event hooks, MCP server, and Cross App Access, none of which address device health gating.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of device posture checks, managed/encrypted/screen-locked device signals, or device trust integration in Okta's auth policies — only SSO, SCIM, event hooks, and MCP server content are documented. No evidence exists that Okta's policy engine evaluates device health before granting an app session.",
     "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "directory-users-api",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The pack shows Okta has a RESTful API for CRUD on users/groups via SCIM (okta-docs-3) and references rate limits (okta-docs-14) and event hooks (okta-docs-4), implying a broader REST API surface, but there is no direct evidence of pagination, filtering, or app-assignment endpoints, and probes for OpenAPI/spec discovery all 404 (okta-probe-1/2/3). Missing for 10: explicit docs/examples for pagination and filtering on Users/Groups APIs, app assignment endpoints, and a discoverable API reference or OpenAPI spec confirming auth flows.",
+    "rationale": "Evidence confirms Okta exposes RESTful APIs for user/group CRUD via SCIM and outbound REST event hooks, plus a documented rate-limits page implying API governance, but nothing in the pack directly documents the core Users/Groups/App-assignments Management API with pagination and filtering, and probes show no discoverable OpenAPI/Swagger spec. missing for 10: explicit Users/Groups/App-assignments REST API docs, documented pagination/filtering parameters, and a public OpenAPI spec.",
     "evidenceIds": [
+      "okta-docs-2",
       "okta-docs-3",
-      "okta-docs-14",
+      "okta-docs-16",
       "okta-docs-4",
-      "okta-probe-1",
-      "okta-probe-2",
+      "okta-docs-17",
+      "okta-docs-14",
       "okta-probe-3"
     ]
   },
@@ -2261,8 +2258,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack lacks any documentation of dynamic group membership rules or group-based application assignment features; SCIM, SSO, event hooks and MCP server docs don't address rule-based/dynamic grouping mechanics. Absence of evidence for this well-known but unaddressed capability yields 'none'.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no documentation of dynamic group membership rules or group-based application assignment; the closest reference (okta-gh-1) shows an MCP example of manually adding a single user to a group, which is exactly the one-by-one grant pattern the story says should be replaced. Missing for 10: docs on Okta group rules/dynamic group membership, docs on group-based app assignment workflows.",
+    "evidenceIds": [
+      "okta-gh-1"
+    ]
   },
   {
     "productId": "okta",
@@ -2270,11 +2269,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows generic SCIM protocol docs and building-a-SCIM-service guidance, plus event hooks, but nothing documenting HRIS-source-of-truth integration (e.g., Workday/BambooHR-driven provisioning) or automated joiner/mover/leaver flows into directory and app assignments. This is a well-known Okta capability area but is simply not evidenced here.",
+    "rationale": "The evidence only covers generic SCIM protocol concepts and building outbound SCIM integrations to apps, not HRIS-as-source-of-truth inbound provisioning or joiner/mover/leaver lifecycle automation (e.g. Okta Lifecycle Management, Workday/BambooHR connectors). No citation describes HR system driving directory/app-assignment changes automatically.",
     "evidenceIds": [
       "okta-docs-2",
       "okta-docs-3",
-      "okta-docs-4"
+      "okta-docs-16"
     ]
   },
   {
@@ -2283,9 +2282,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Okta's docs explicitly describe Event Hooks as outbound HTTPS REST calls fired when specified events occur in the org, enabling downstream systems to react in real time to user lifecycle/auth events — directly matching the story. missing for 10: no independent/hands-on developer corroboration of event hook reliability or latency, and no detail on the specific event catalog/lifecycle coverage.",
+    "rationale": "Okta's Event Hooks feature is well documented as outbound HTTPS REST calls fired when specified user lifecycle/auth events occur in the org, letting downstream systems react in real time — exactly matching the story. Missing for 10: no independent/hands-on corroboration of event hook reliability or latency, and no detail on event catalog breadth or retry/delivery guarantees.",
     "evidenceIds": [
-      "okta-docs-4"
+      "okta-docs-4",
+      "okta-docs-17"
     ]
   },
   {
@@ -2294,20 +2294,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no vendor-published incident postmortems, no reference to a live Okta trust/status page, and no disclosure-history documentation — only unrelated developer docs (SSO, SCIM, MCP server) and general community sentiment about past breaches (e.g. okta-comm-1, okta-comm-10, okta-comm-13) which reflects distrust but is not a citation of Okta's own postmortem or trust-page content.",
+    "rationale": "The evidence pack contains no vendor-published trust page, incident postmortem, or disclosure-history documentation from Okta; only community commentary (comm-2, comm-10, comm-13) referencing past breaches without any linked postmortem or trust-page content. Since the axis clearly applies to an identity vendor but no supporting evidence exists, this is 'none'.",
     "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "instant-deprovisioning",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Okta's docs confirm SCIM-based CRUD provisioning (create/update/deactivate) across connected apps and event hooks for triggering downstream actions, which supports automated deprovisioning, but no evidence in the pack explicitly confirms that deactivating a user immediately terminates active sessions or that this happens as a single unified action across all connected apps. missing for 10: explicit documentation of session/token revocation on deactivation, evidence of a single 'deactivate' action cascading in real time across all connected SCIM apps, and any hands-on/independent confirmation of this behavior.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "SCIM docs confirm Okta can push user CRUD (including deactivation) operations to connected apps via provisioning, and event hooks could trigger downstream deprovisioning workflows, supporting the general lifecycle-management capability. However, the evidence pack never explicitly documents that a single deactivate action immediately terminates active sessions and deprovisions all connected apps in one step. Missing for 10: explicit docs/screenshots of the 'deactivate user' action revoking sessions instantly, and confirmation that SCIM push is synchronous/immediate across all connected apps rather than eventual/webhook-driven.",
     "evidenceIds": [
       "okta-docs-3",
-      "okta-docs-2",
-      "okta-docs-4"
+      "okta-docs-16",
+      "okta-docs-4",
+      "okta-docs-17"
     ]
   },
   {
@@ -2316,7 +2317,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions Okta's LDAP Interconnect/cloud LDAP or RADIUS server agent capabilities for legacy VPN/Wi-Fi/on-prem system authentication; all provided docs focus on SSO, SCIM, event hooks, and MCP/agent integrations, none of which address legacy protocol support.",
+    "rationale": "The evidence pack contains no mention of LDAP or RADIUS support, LDAP interface, or cloud RADIUS server capabilities — all evidence covers SSO/SAML, SCIM, MCP server, and unrelated community sentiment. Since Okta as a directory/IdP product plausibly could offer such legacy-protocol bridges, this is an applicable axis with no supporting evidence, not a category mismatch.",
     "evidenceIds": []
   },
   {
@@ -2325,27 +2326,31 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows building blocks for lifecycle automation — SCIM provisioning for app-by-app account management and event hooks that fire outbound calls on org events — but nothing describes Okta's actual no-code workflow builder or explicit hire/role-change/departure triggers as a packaged capability. Event hooks require a custom HTTPS endpoint you build, not a no-code flow, so the 'no-code' claim in the story is unsupported by the pack. missing for 10: explicit no-code Workflows product docs, named hire/role-change/departure triggers, app-by-app choreography examples, independent corroboration of no-code usage.",
+    "rationale": "Okta's docs show event-driven mechanisms (event hooks that fire on org events) and SCIM-based app provisioning that could underlie lifecycle automation, but nothing in the evidence describes Okta's actual no-code Workflows builder or hire/role-change/departure-specific triggers and app-by-app orchestration UI that IT admins configure without code. missing for 10: mention of Okta Workflows no-code builder, explicit hire/role-change/departure triggers, drag-and-drop app-by-app choreography, and any hands-on/community corroboration of it working.",
     "evidenceIds": [
       "okta-docs-2",
       "okta-docs-3",
-      "okta-docs-4"
+      "okta-docs-4",
+      "okta-docs-16",
+      "okta-docs-17"
     ]
   },
   {
     "productId": "okta",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Okta exposes broad Admin Management and SCIM APIs plus an official MCP server that lets an AI agent create users, manage groups, and query app/login data (okta-docs-2/3/9, okta-gh-1/2/3), suggesting substantial UI-API parity for identity administration tasks. However, there is no explicit vendor claim of full UI/API parity, and probes show no discoverable OpenAPI spec or machine-readable docs (llms.txt/docs.md 404, no openapi.json), undermining confidence that every UI capability is exposed programmatically. Missing for 10: explicit parity documentation, a published OpenAPI/machine-readable schema, and independent confirmation that all admin console features have API equivalents.",
+    "rationale": "Okta documents extensive Admin Management APIs, SCIM provisioning, event hooks, and an official MCP server that lets AI agents perform many admin operations (create users, manage groups, query login events, list unused apps) via natural language wrapping the API — strong evidence of broad API coverage for management tasks. However there is no explicit claim or evidence of full UI/API parity, and openness-signal probes (llms.txt, docs-md, openapi spec) all returned 404s, suggesting the full API surface isn't easily discoverable or guaranteed complete. Missing for 10: an explicit parity statement or comprehensive OpenAPI spec confirming every UI action has an API equivalent, and independent verification of full coverage beyond MCP server examples.",
     "evidenceIds": [
       "okta-docs-2",
       "okta-docs-3",
+      "okta-docs-4",
       "okta-docs-9",
       "okta-gh-1",
       "okta-gh-2",
       "okta-gh-3",
+      "okta-gh-4",
       "okta-probe-1",
       "okta-probe-2",
       "okta-probe-3"
@@ -2356,8 +2361,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of any user-facing data export/portability feature or open-format bulk data export from Okta; SCIM and APIs are for provisioning/integration, not user self-service export-and-leave. Missing for 10: documented data export tool, open-format export (CSV/JSON) of tenant/user data, and any migration/exit assistance.",
+    "confidence": "medium",
+    "rationale": "There is no evidence of a bulk data-export feature in open/portable formats for user data, nor any documented data-portability or account-closure/export tooling. SCIM and APIs support provisioning/management but nothing addresses exporting all personal/org data for migration or 'leave with your data' scenarios.",
     "evidenceIds": []
   },
   {
@@ -2365,10 +2370,11 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Okta is a closed-source, proprietary identity platform; there is no evidence its core product source is available under an open license. The GitHub repo referenced is an MCP server integration tool, not the product source itself, and community comments even criticize the limited attention given to Okta's open-source packages.",
+    "confidence": "medium",
+    "rationale": "Okta's core identity platform is proprietary SaaS; only a peripheral integration (okta-mcp-server) is open source, which does not constitute access to the product's own source code under an open license. No evidence of Okta's core codebase being publicly licensed.",
     "evidenceIds": [
-      "okta-comm-9"
+      "okta-gh-4",
+      "okta-docs-11"
     ]
   },
   {
@@ -2387,8 +2393,8 @@
     "storyId": "passwordless-signin",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of passwordless sign-in, passkeys, authenticator apps, or platform biometrics for employees — only SSO, SCIM, event hooks, MCP server, and Cross App Access material, none of which addresses passwordless authentication flows.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation or mention of passwordless sign-in, passkeys, authenticator apps, or platform biometrics — all citations concern SSO, SCIM provisioning, event hooks, and MCP/agent integrations, none of which address passwordless authentication flows for employees.",
     "evidenceIds": []
   },
   {
@@ -2397,7 +2403,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation about FIDO2 security keys, passkeys, or MFA policy enforcement for Okta; it covers SSO, SCIM, MCP server, and community sentiment unrelated to authenticator types. Missing for 10: any mention of FIDO2/WebAuthn support, passkey enrollment, or policy rules requiring specific authenticator types per app.",
+    "rationale": "The evidence pack contains no documentation of FIDO2/WebAuthn security keys, passkeys, or MFA policy enforcement capabilities — it covers only SSO, SCIM, event hooks, MCP server, and community sentiment unrelated to authenticator types. No mention of MFA policy configuration or authenticator requirements at all.",
     "evidenceIds": []
   },
   {
@@ -2406,7 +2412,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic control over where Okta stores customer/AI data; the pack covers SSO, SCIM, MCP server, and general trust/security community sentiment instead.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data localization controls for Okta; all evidence concerns SSO, SCIM, MCP server, and unrelated community sentiment.",
     "evidenceIds": []
   },
   {
@@ -2415,7 +2421,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Okta is an identity/access management platform, not an AI model provider or data-processing service that trains AI models on user data; the axis of preventing data use for AI training is a category error for this product type.",
+    "rationale": "Okta is an identity/access management platform, not an AI model provider or data processor that trains models on user data; preventing AI training data use is not an applicable axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -2424,7 +2430,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers SSO, SCIM, event hooks, MCP server, and Cross App Access, but contains no mention of AI/data retention policies, deletion controls, or privacy-posture settings related to AI-native usage of Okta data. No documentation addresses how a user could control retention or deletion of data used in AI workflows. Missing for 10: any data retention policy documentation, deletion/export controls, AI-specific data handling terms.",
+    "rationale": "The evidence pack covers SSO, SCIM, event hooks, and MCP server integrations but contains no documentation about data retention policies, deletion controls, or privacy/data lifecycle management for AI-native usage. Rate limits and general community sentiment about security do not address retention/deletion capabilities.",
     "evidenceIds": []
   },
   {
@@ -2432,8 +2438,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Okta products or its AI/MCP tooling.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Okta or any AI-native tooling; the evidence covers SSO, SCIM, event hooks, MCP server, and community sentiment unrelated to telemetry controls.",
     "evidenceIds": []
   },
   {
@@ -2442,10 +2448,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Okta documents SCIM as a defined schema/RESTful API for CRUD provisioning of users and groups into downstream apps, and provides a developer guide for building SCIM integrations, directly supporting the core capability. However, evidence lacks detail on real-time push timing, entitlement-level provisioning (beyond users/groups), or independent hands-on confirmation of automatic downstream sync at the moment access is assigned. Missing for 10: entitlement-push evidence, real-time/automatic sync confirmation, independent/hands-on validation of SCIM behavior in production.",
+    "rationale": "Okta's docs confirm SCIM as a defined schema/RESTful API for CRUD on users and groups, with a dedicated guide series for building SCIM provisioning integrations, which directly supports auto-provisioning of users/groups into downstream apps on access assignment. However, evidence lacks detail on entitlement push specifically, real-time timing guarantees, or hands-on/independent confirmation that provisioning is instant and reliable in practice. missing for 10: entitlement-level provisioning detail, real-time/timing evidence, independent or hands-on verification of push behavior.",
     "evidenceIds": [
-      "okta-docs-2",
-      "okta-docs-3"
+      "okta-docs-3",
+      "okta-docs-16",
+      "okta-docs-2"
     ]
   },
   {
@@ -2453,31 +2460,33 @@
     "storyId": "sso-app-catalog",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes general SSO concept docs and SCIM/event-hook mechanics but contains no evidence about the size or breadth of Okta's app integration catalog, pre-built SAML/OIDC connectors, or claims about 'minutes not custom projects' setup speed. Community items focus on trust/security concerns, not catalog breadth. missing for 10: evidence of the Okta Integration Network (OIN) catalog size, examples of pre-built app integrations, or documentation of setup speed for common apps.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains only generic SSO concept docs, SCIM/event-hook guides, and MCP server material — nothing documents Okta's Integration Network (OIN) catalog size, breadth of pre-built SAML/OIDC app integrations, or setup speed claims. Community items are all about trust/security, not catalog coverage.",
     "evidenceIds": []
   },
   {
     "productId": "okta",
     "storyId": "system-log-streaming",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence shows Okta has event hooks that send outbound HTTPS calls when specified events occur, which is a form of real-time event streaming, but there is no mention of a structured System Log API, log export functionality, or native SIEM integrations (e.g., Splunk/Sumo Logic connectors) in this evidence pack. Missing for 10: explicit System Log API documentation, query/export capability, and named SIEM streaming integrations.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers SSO, SCIM provisioning, event hooks (webhook-style outbound calls), and an MCP server for admin API access, but contains no mention of Okta's System Log, a structured/queryable event log, or native SIEM streaming integrations. Event hooks are a different mechanism (custom HTTPS callbacks) and are not documented as a queryable log or SIEM connector.",
     "evidenceIds": [
-      "okta-docs-4"
+      "okta-docs-4",
+      "okta-docs-17"
     ]
   },
   {
     "productId": "okta",
     "storyId": "user-app-portal",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Okta's SSO docs describe authenticating once via an IdP to reach all connected apps (okta-docs-1, okta-docs-8), and a community comment confirms the existence of Okta's browser (Chrome) plugin used alongside the dashboard (okta-comm-12), supporting the launcher/browser-extension story. However, there is no first-party documentation in the pack specifically describing the End-User Dashboard UI, app assignment/tile experience, or browser extension features/setup — missing for 10: dedicated end-user dashboard docs, browser extension feature details, and independent hands-on validation of the single-portal experience beyond a passing mention.",
+    "rationale": "Okta's SSO docs confirm the core value prop of one login granting access to multiple assigned apps, and a community comment corroborates that Okta ships a Chrome browser extension in practice ('Chrome plugin is OKish'). However, the evidence pack lacks first-party documentation of the actual end-user dashboard/app-launcher UI itself (tile catalog, assignment-based visibility) — missing for 10: official docs describing the End-User Dashboard/My Applications page, browser extension feature documentation, and independent hands-on review of the launcher UX beyond one brief mention.",
     "evidenceIds": [
       "okta-docs-1",
       "okta-docs-8",
+      "okta-docs-15",
       "okta-comm-12"
     ]
   },
@@ -2487,7 +2496,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows automatic provisioning/deprovisioning based on role changes and compliance evidence collection, but there is no mention of scheduled access certification campaigns, reviewer routing of who-has-what, or audit sign-off records tied to periodic recertification — this is a distinct capability from real-time automated access updates.",
+    "rationale": "Evidence covers continuous automated provisioning/deprovisioning (docs-3, 18, 31) and general compliance evidence-collection/audit reporting (docs-13, 24), but there is no mention of periodic access certification campaigns, reviewer routing of 'who-has-what', or sign-off/attestation records — the specific governance workflow the story describes.",
     "evidenceIds": []
   },
   {
@@ -2511,12 +2520,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Rippling explicitly markets that 'your people and agents' live in one identity system with real-time access updates and full visibility into AI tool/OAuth usage (docs-2, docs-23), and it has a scoped Bearer-token API model (docs-22) plus a documented MCP server (probe-2). However there is no detailed documentation of concrete patterns like token vaulting, cross-app agent access flows, or dedicated agent credential lifecycle management—this is mostly marketing language rather than a technical pattern guide. Missing for 10: worked examples/docs on token vaulting, explicit agent-scoped credential issuance workflows, cross-app access control specifics for non-human identities, and independent corroboration.",
+    "rationale": "Rippling markets treating AI agents as identities alongside people (doc-23) and offers scoped Bearer API tokens whose access is the intersection of profile and token scopes (doc-22), which maps loosely to 'scoped agent credentials.' However, there is no concrete documented pattern for token vaulting, cross-app agent access flows, or agent-specific credential lifecycle management—just high-level marketing language and generic API auth docs. missing for 10: dedicated agent-identity documentation, token vaulting mechanism, cross-app access pattern specifics, independent/hands-on corroboration.",
     "evidenceIds": [
       "rippling-it-docs-23",
-      "rippling-it-docs-2",
       "rippling-it-docs-22",
-      "rippling-it-probe-2"
+      "rippling-it-docs-28"
     ]
   },
   {
@@ -2525,13 +2533,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "There is a confirmed live llms.txt at developer.rippling.com/llms.txt (HTTP 200, probe-1) with detailed agent-oriented API documentation content (docs-14 to -22, docs-28-29), directly satisfying the story of pointing an agent at llms.txt. Missing for 10: no independent third-party confirmation of agent usage/adoption beyond the probe itself.",
+    "rationale": "Rippling hosts a live llms.txt at developer.rippling.com with agent-oriented API documentation (auth, versioning, pagination, endpoints), confirmed by a direct probe returning HTTP 200 with structured content, plus a separate llms.txt at rippling.com root. missing for 10: independent third-party confirmation that agents actually consume and act on this file successfully in practice.",
     "evidenceIds": [
       "rippling-it-probe-1",
       "rippling-it-docs-14",
       "rippling-it-docs-15",
-      "rippling-it-docs-21",
-      "rippling-it-docs-29"
+      "rippling-it-docs-29",
+      "rippling-it-docs-37"
     ]
   },
   {
@@ -2540,44 +2548,44 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe 'Ask Rippling' AI surfacing answers on devices/threats/compliance and generating audit-ready reports, plus AI-driven automation like triggering retrieval flows and routing returned devices, indicating genuine AI-generated insights/suggestions from platform data. However, evidence is entirely vendor marketing copy with no hands-on/independent corroboration of accuracy, scope, or reliability of these insights. Missing for 10: independent/hands-on validation of the AI insight quality, broader examples beyond devices/inventory (e.g., identity/compliance insights in practice), and detail on how suggestions are presented/actioned.",
+    "rationale": "Rippling markets 'Ask Rippling AI anything across all your data' plus AI-driven surfacing of device/threat/compliance answers and automated remediations, indicating built-in AI-generated insights within the product. However, evidence is entirely first-party marketing copy with no independent/hands-on corroboration, and details on how insights are surfaced (UI, scope, accuracy) are thin. Missing for 10: independent verification of the 'Ask Rippling AI' feature in practice, concrete examples of generated insights/suggestions, and detail on coverage beyond device/compliance domains.",
     "evidenceIds": [
       "rippling-it-docs-24",
       "rippling-it-docs-25",
-      "rippling-it-docs-8",
-      "rippling-it-docs-26",
+      "rippling-it-docs-32",
       "rippling-it-docs-12"
     ]
   },
   {
     "productId": "rippling-it",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Rippling documents extensive background automation—automatic provisioning/deprovisioning, custom workflows for security threats and notifications, automated device lifecycle and retrieval, and AI-triggered actions that run without manual intervention (e.g., 'AI triggers the retrieval flow' and 'act on it before the employee files a ticket'). This supports autonomous background automations across IT/identity/device domains, though the story's 'set up automations' framing (a user-configurable automation builder) is only thinly evidenced beyond 'custom workflows' mentions. Missing for 10: a dedicated automation-builder/rules-engine UI documented in detail, and independent/hands-on evidence confirming these automations run unattended as claimed.",
+    "rationale": "Rippling documents extensive autonomous background automations—real-time provisioning/deprovisioning, custom workflows triggering on security/device events, AI-triggered offboarding retrieval flows, and agent-driven device lifecycle management—that run without manual intervention. Missing for 10: independent/hands-on verification of these automations working reliably in practice, and clearer detail on user-configurable automation builder UI versus fixed system behaviors.",
     "evidenceIds": [
       "rippling-it-docs-1",
       "rippling-it-docs-3",
       "rippling-it-docs-7",
       "rippling-it-docs-8",
-      "rippling-it-docs-18",
-      "rippling-it-docs-20",
-      "rippling-it-docs-25"
+      "rippling-it-docs-11",
+      "rippling-it-docs-25",
+      "rippling-it-docs-30",
+      "rippling-it-docs-34"
     ]
   },
   {
     "productId": "rippling-it",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs describe an embedded AI capability (\"Ask Rippling about any device, threat, or compliance gap\" and automatic resolution of IT requests) that lets users offload tasks to Rippling's AI rather than a human, supporting delegation to a built-in assistant. However, there's no named/dedicated 'AI assistant' product surface, no UI/workflow detail on how a user issues a task, and no independent/hands-on confirmation of the experience. Missing for 10: a documented assistant UI/chat interface, concrete task-delegation examples, and third-party corroboration.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "There's evidence of a built-in \"Ask Rippling AI\" assistant that can answer questions, surface answers, and automate remediations/reports (rippling-it-docs-24, rippling-it-docs-32, rippling-it-docs-12), which supports delegating tasks to an in-product AI assistant. However, evidence is thin marketing-style claims without depth on scope, task variety, or hands-on corroboration. Missing for 10: detailed documentation of assistant capabilities/limits, concrete examples of multi-step task delegation, independent/hands-on verification of the assistant actually completing delegated tasks.",
     "evidenceIds": [
-      "rippling-it-docs-12",
       "rippling-it-docs-24",
-      "rippling-it-docs-25",
-      "rippling-it-docs-27"
+      "rippling-it-docs-32",
+      "rippling-it-docs-12",
+      "rippling-it-docs-13"
     ]
   },
   {
@@ -2586,14 +2594,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Rippling exposes a versioned REST API with bearer-token auth, pagination, and search/filter capabilities (rippling-it-docs-14/15/16/17/21/22/28), which supports headless/programmatic automation of IT tasks outside the UI. However there is no explicit CLI, SDK, or CI/CD pipeline example, nor any documentation framing usage 'in CI' specifically. Missing for 10: dedicated CLI or CI integration guide, explicit CI/CD examples, and independent confirmation of headless automation workflows.",
+    "rationale": "Rippling exposes a REST API with bearer-token auth, versioning, pagination, and an SDK, which enables scripted/CI automation against Rippling's own IT platform (identity, devices, inventory). However, there's no evidence of a CLI or headless-execution mode for 'running the product' itself (e.g., no docs on CI pipeline integration, no examples of automated test/build runs) — the evidence is API-integration focused rather than headless product operation. Missing for 10: CLI or headless runtime mode, CI/CD pipeline integration examples, evidence of running Rippling workflows unattended within automation pipelines beyond API calls.",
     "evidenceIds": [
       "rippling-it-docs-14",
       "rippling-it-docs-15",
       "rippling-it-docs-16",
       "rippling-it-docs-17",
       "rippling-it-docs-21",
-      "rippling-it-docs-22"
+      "rippling-it-docs-22",
+      "rippling-it-docs-37",
+      "rippling-it-probe-1"
     ]
   },
   {
@@ -2602,7 +2612,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Rippling exposes an official MCP server (probe-2), meaning other agents can connect to Rippling's tools — this is the server role, not evidence that Rippling itself can plug in and consume external MCP servers' tools. No documentation describes Rippling acting as an MCP client to use third-party MCP tools.",
+    "rationale": "Evidence only shows Rippling exposing its own MCP server (probe-2) for others to consume its data/tools, not any capability for Rippling IT itself to plug in and consume external MCP servers to extend its AI features. Given Rippling's AI assistant ('Ask Rippling AI') and automation platform, this axis is a fair question, but no evidence supports the client-side capability described in the story.",
     "evidenceIds": []
   },
   {
@@ -2622,13 +2632,14 @@
     "productId": "rippling-it",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence shows 'Ask Rippling' natural-language querying for devices/threats/compliance (rippling-it-docs-24) and general AI-driven automation, but there's no clear documentation of broad natural-language command interface for operating core IT functions (provisioning, access, device management) conversationally. missing for 10: comprehensive documentation of NL command coverage across IT workflows, independent/hands-on verification of the 'Ask Rippling' feature, and examples of natural-language commands actually executing actions beyond surfacing answers.",
+    "rationale": "Rippling markets natural-language interaction (\"Ask Rippling about any device, threat, or compliance gap\", \"Ask Rippling AI anything across all your data\", \"Tell Rippling what you need and agents handle ordering, routing...\") suggesting employees/admins can issue plain-language requests that trigger automated IT actions. However, all evidence is first-party marketing copy with no product documentation of command syntax, scope, or limitations, and no independent/hands-on corroboration of the feature actually working as described. Missing for 10: detailed docs on the NL command interface, independent/hands-on verification, and clarity on which IT actions can be fully executed via natural language versus just Q&A.",
     "evidenceIds": [
-      "rippling-it-docs-24",
       "rippling-it-docs-12",
-      "rippling-it-docs-25"
+      "rippling-it-docs-24",
+      "rippling-it-docs-30",
+      "rippling-it-docs-32"
     ]
   },
   {
@@ -2636,8 +2647,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers a REST API, an MCP server, and llms.txt docs, but no mention of an official CLI tool for Rippling IT.",
+    "confidence": "medium",
+    "rationale": "Evidence shows a REST API, an SDK (@rippling/rippling-sdk), and an MCP server, but no mention of an official CLI tool for Rippling IT. missing for 10: any documentation or reference to a dedicated CLI, its installation, or command usage.",
     "evidenceIds": []
   },
   {
@@ -2646,7 +2657,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Rippling documents a public v2 REST API with bearer token/OAuth authentication, versioning headers, pagination, search/filter, and a getting-started call (List companies), confirmed live via probe at developer.rippling.com. missing for 10: independent third-party developer testimonials or SDKs demonstrating real-world usage beyond first-party docs.",
+    "rationale": "Rippling documents a public REST API (v2) with Bearer token and OAuth authentication, versioning headers, pagination, an SDK, and a getting-started call, plus an official MCP server — solid evidence of programmatic, agent-friendly access. Missing for 10: independent/hands-on developer corroboration beyond vendor docs, and more detail on rate limits/error handling.",
     "evidenceIds": [
       "rippling-it-docs-14",
       "rippling-it-docs-15",
@@ -2655,7 +2666,9 @@
       "rippling-it-docs-21",
       "rippling-it-docs-22",
       "rippling-it-docs-28",
-      "rippling-it-probe-1"
+      "rippling-it-docs-37",
+      "rippling-it-probe-1",
+      "rippling-it-probe-2"
     ]
   },
   {
@@ -2664,12 +2677,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Rippling's developer docs explicitly describe creating Bearer API tokens whose effective access is the intersection of the token owner's permission profile and the token's assigned scopes, enabling least-privilege API credentials, and marketing copy indicates agent identities are managed alongside human identities in the same access system. Missing for 10: explicit end-to-end documentation of issuing/scoping a token specifically for an AI agent identity, and independent/hands-on verification that scope enforcement works as described.",
+    "rationale": "Rippling's developer docs describe Bearer API tokens with explicit scopes, where effective access is the intersection of the token owner's permission profile and the token's scopes—i.e., a native least-privilege credential mechanism—plus OAuth 2.0 for partner/agent integrations and an official MCP server for agent access. missing for 10: no independent/hands-on corroboration of scope enforcement in practice, and no docs explicitly framing token issuance as 'for an AI agent' rather than general integrations.",
     "evidenceIds": [
-      "rippling-it-docs-22",
       "rippling-it-docs-14",
+      "rippling-it-docs-22",
       "rippling-it-docs-28",
-      "rippling-it-docs-23"
+      "rippling-it-docs-35",
+      "rippling-it-docs-36",
+      "rippling-it-probe-2"
     ]
   },
   {
@@ -2678,17 +2693,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Rippling provides a documented REST API (v2) with token-based auth, versioning, pagination, and OAuth for App Shop partners, plus an official MCP server, which supports AI-native/programmatic building against the platform. However there is no evidence of official language SDKs (e.g., Python/JS client libraries), only raw REST API + tokens, so 'SDK' claim is only partially met. Missing for 10: dedicated official SDK packages in specific languages, SDK versioning/release notes, independent developer corroboration of SDK usage.",
+    "rationale": "Rippling documents a REST API with token/OAuth auth and versioning, plus an official npm SDK package (@rippling/rippling-sdk) referenced in developer docs. However, evidence is thin on SDK breadth (only Node/npm mentioned, no multi-language SDKs), no code samples, and no independent/hands-on corroboration of SDK usability. Missing for 10: multi-language SDK coverage, code examples/tutorials, independent developer confirmation of SDK quality.",
     "evidenceIds": [
+      "rippling-it-docs-37",
       "rippling-it-docs-14",
       "rippling-it-docs-15",
-      "rippling-it-docs-16",
-      "rippling-it-docs-17",
-      "rippling-it-docs-21",
-      "rippling-it-docs-22",
       "rippling-it-docs-28",
-      "rippling-it-probe-1",
-      "rippling-it-probe-2"
+      "rippling-it-probe-1"
     ]
   },
   {
@@ -2696,8 +2707,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence describes REST API access with tokens, pagination, and versioning, plus an MCP server, but no mention of webhooks or event subscription mechanisms anywhere in the pack.",
+    "confidence": "low",
+    "rationale": "Evidence covers REST API auth, tokens, pagination, and even an MCP server, but nowhere mentions webhooks or event subscription mechanisms; no evidence of a webhook system for AI-native event-driven subscriptions.",
     "evidenceIds": []
   },
   {
@@ -2715,21 +2726,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents a v2 REST API, developer docs, llms.txt, and an MCP server, but nowhere mentions a downloadable OpenAPI spec or other machine-readable API schema file. missing for 10: any mention of an OpenAPI/Swagger file, schema export, or explicit machine-readable spec download link.",
-    "evidenceIds": [
-      "rippling-it-docs-14",
-      "rippling-it-docs-15",
-      "rippling-it-docs-16",
-      "rippling-it-probe-1"
-    ]
+    "rationale": "Evidence documents a REST API (v2) with bearer/OAuth auth, versioning headers, pagination, and an SDK, but nowhere mentions a downloadable OpenAPI/Swagger spec or other machine-readable API definition file — llms.txt is documentation, not an API spec.",
+    "evidenceIds": []
   },
   {
     "productId": "rippling-it",
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions a sandbox, test/staging environment, or any mechanism to test API/integrations without touching production data; the API docs reference only live endpoints (rest.ripplingapis.com) with versioning/pagination, not a sandbox mode.",
+    "confidence": "low",
+    "rationale": "No evidence of a sandbox environment or test mode separate from production data; API docs mention versioning and tokens but nothing about a sandbox/test environment.",
     "evidenceIds": []
   },
   {
@@ -2737,11 +2743,11 @@
     "storyId": "api-versioning-policy",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Rippling documents a dated, pinnable API version header (`Rippling-Api-Version`, YYYY-MM-DD) and a stable v2 REST API, showing real versioning support, but there is no documented deprecation policy, sunset timeline, or changelog referenced in the evidence pack. missing for 10: explicit deprecation policy/sunset schedule, versioned changelog, migration guidance between versions.",
+    "confidence": "low",
+    "rationale": "Rippling documents a dated API versioning mechanism (Rippling-Api-Version header pinned to YYYY-MM-DD) and SDK version checks, suggesting some version stability practice, but there is no documented deprecation policy, migration timelines, or sunset/EOL commitments for old API versions. Missing for 10: explicit deprecation policy documentation, versioning changelog, sunset timeline commitments, and independent confirmation of long-term version support.",
     "evidenceIds": [
       "rippling-it-docs-15",
-      "rippling-it-docs-16",
+      "rippling-it-docs-37",
       "rippling-it-docs-14"
     ]
   },
@@ -2751,13 +2757,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Rippling's API supports searching, filtering, and paginating large sets of records (docs-16,17) and its automation engine applies rules/policies across many users and devices at once (docs-3,6,18), which functions as a form of bulk operation, but there is no explicit documentation of a bulk create/update/delete API action or UI bulk-select feature. missing for 10: explicit bulk-write/batch endpoint documentation, UI evidence of multi-select bulk actions, independent confirmation of bulk operation scale/performance.",
+    "rationale": "Rippling's v2 REST API supports search/filter and pagination (limit/cursor) across list endpoints, and dynamic rules/custom workflows can apply provisioning or compliance actions across many users or devices at once, which enables bulk-style automation. However, there is no explicit documentation of a dedicated bulk-update/batch-operation endpoint or UI feature for acting on many items in a single call. missing for 10: explicit bulk/batch API endpoint documentation, evidence of batch write operations (not just list/filter), independent confirmation of bulk actions in practice.",
     "evidenceIds": [
       "rippling-it-docs-16",
       "rippling-it-docs-17",
-      "rippling-it-docs-3",
-      "rippling-it-docs-6",
-      "rippling-it-docs-18"
+      "rippling-it-docs-18",
+      "rippling-it-docs-34",
+      "rippling-it-docs-3"
     ]
   },
   {
@@ -2766,12 +2772,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Rippling documents extensive rule-based automation triggering on events—role changes, offboarding, security threats, device thresholds—via dynamic rules and custom workflows (docs-3, docs-7, docs-8, docs-11, docs-18, docs-27 'You define the rules, Rippling runs the rest'). This directly matches the story's ask for user-defined rules triggering automated actions on events.  Missing for 10: no evidence of a general-purpose, user-facing rule builder/editor UI or documentation showing arbitrary custom event-condition-action definitions beyond the pre-built automation categories, and no independent/hands-on verification of rule customization depth.",
+    "rationale": "Rippling documents rule-based automation triggering actions on events—dynamic access rules on role changes (docs-3, docs-18), custom security policy workflows notifying on threats (docs-6, docs-7), and event-triggered inventory automation like offboarding retrieval flows (docs-8). The tagline 'You define the rules, Rippling runs the rest' (docs-27) directly matches the story. Missing for 10: no hands-on/independent verification of custom rule authoring UI, no detail on the specific rule-definition syntax or conditions/actions granularity, and no third-party corroboration of reliability.",
     "evidenceIds": [
       "rippling-it-docs-3",
+      "rippling-it-docs-6",
       "rippling-it-docs-7",
       "rippling-it-docs-8",
-      "rippling-it-docs-11",
       "rippling-it-docs-18",
       "rippling-it-docs-27"
     ]
@@ -2780,13 +2786,13 @@
     "productId": "rippling-it",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Rippling IT documents event-triggered 'custom workflows' (e.g., security alerts, stock notifications, offboarding automations) that show workflow automation depth, but no evidence describes scheduling recurring/time-based jobs specifically. missing for 10: explicit cron/schedule-based job triggers, recurring workflow configuration UI or API, documentation of interval-based automation.",
+    "rationale": "Rippling IT documents event-triggered custom workflows (e.g., security threat notifications, stock alerts, automated offboarding retrieval) and general 'automate workflows across systems' claims, but no evidence describes a scheduler for recurring/cron-style jobs as opposed to reactive triggers. missing for 10: explicit recurring/scheduled job configuration, cron-like timing controls, documentation of workflow scheduling UI or API.",
     "evidenceIds": [
       "rippling-it-docs-7",
       "rippling-it-docs-11",
-      "rippling-it-docs-13",
+      "rippling-it-docs-34",
       "rippling-it-docs-8"
     ]
   },
@@ -2796,7 +2802,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of versioning, review, or rollback of automations/workflows in Rippling IT; the pack covers identity/device/inventory automation and API access but nothing about change history, approval flows, or reverting automation configurations.",
+    "rationale": "No evidence of version history, review workflows, or rollback capability for automations/workflows built in Rippling IT; evidence covers automation triggers and API access but nothing about versioning or reverting changes.",
     "evidenceIds": []
   },
   {
@@ -2804,8 +2810,8 @@
     "storyId": "config-as-code",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a Terraform provider or any infrastructure-as-code tool for managing apps, groups, or policies; only a REST API with Bearer tokens is documented, which is not equivalent to an official IaC provider for reviewable/reproducible identity config.",
+    "confidence": "high",
+    "rationale": "Evidence shows a REST API and Node SDK, but no official Terraform provider or equivalent IaC tool for managing apps, groups, and policies as code is mentioned anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -2825,14 +2831,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Rippling documents device lifecycle management, enrollment/zero-touch deployment, and identity-tied policy enforcement across macOS/Windows/iOS/iPadOS (rippling-it-docs-5,6,7,10,19), and shows access auto-updates when roles change or employees leave (rippling-it-docs-18). However, there is no explicit documentation of remote lock/wipe capability tied to identity, which is a core part of the story. missing for 10: explicit remote lock/wipe feature documentation, independent/hands-on corroboration of lock/wipe or full MDM lifecycle claims.",
+    "rationale": "Rippling ties device management directly to identity: zero-touch enrollment, lifecycle automation across macOS/Windows/iOS/iPadOS, custom security policies, and automatic access revocation on offboarding (rippling-it-docs-5,6,7,18,19,20,25). However, the evidence never explicitly documents a remote lock/wipe action—only device retrieval/shipping workflows and threat notifications are described, so the core 'remote lock/wipe' capability is inferred rather than confirmed. missing for 10: explicit remote lock/wipe feature documentation, independent/hands-on confirmation of lock or wipe execution tied to identity events.",
     "evidenceIds": [
       "rippling-it-docs-5",
       "rippling-it-docs-6",
       "rippling-it-docs-7",
-      "rippling-it-docs-10",
       "rippling-it-docs-18",
-      "rippling-it-docs-19"
+      "rippling-it-docs-19",
+      "rippling-it-docs-20",
+      "rippling-it-docs-25"
     ]
   },
   {
@@ -2841,11 +2848,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Rippling docs claim device-attribute-based security policies and automated threat workflows (docs-6, docs-7, docs-25), which could underlie posture-gated access, but no evidence explicitly ties device posture (managed/encrypted/screen-locked) checks into an auth policy gate before app session grant like a conditional-access flow. Missing for 10: explicit documentation of conditional access enforcement at login/SSO based on device posture, named checks (encryption, screen-lock status), and any hands-on/independent confirmation of this gating behavior.",
+    "rationale": "Docs show Rippling can build custom security policies based on device attributes (rippling-it-docs-6) and revoke access based on risk signals/company policy (rippling-it-docs-1, rippling-it-docs-31), implying some device-attribute-gated access control. However, there is no explicit documentation that managed/encrypted/screen-locked posture is specifically checked as a pre-condition in an auth policy before an app session is granted (no conditional-access flow described). Missing for 10: explicit encryption/screen-lock/managed checks tied to real-time auth-time gating, and any hands-on or independent confirmation of this specific enforcement flow.",
     "evidenceIds": [
       "rippling-it-docs-6",
-      "rippling-it-docs-7",
-      "rippling-it-docs-25"
+      "rippling-it-docs-1",
+      "rippling-it-docs-31",
+      "rippling-it-docs-7"
     ]
   },
   {
@@ -2871,12 +2879,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs claim dynamic rule-based access, group-based provisioning, and automatic updates on role change (rippling-it-docs-3, rippling-it-docs-18), which directly matches the story. However, evidence lacks specifics on how dynamic group membership rules are configured, granularity of rule conditions, or independent/hands-on confirmation that group-based app assignment fully replaces manual one-by-one grants. missing for 10: detailed documentation of rule/condition builder UI, examples of dynamic group definitions, independent verification of behavior at scale.",
+    "rationale": "Docs claim dynamic rules for group access and automatic provisioning/deprovisioning tied to role changes (rippling-it-docs-3, rippling-it-docs-18, rippling-it-docs-31), which supports rule-based group assignment replacing manual grants. However, there's no detailed evidence of actual dynamic group membership mechanics (e.g., attribute-based rule builder, group-based app assignment workflow specifics) or independent/hands-on confirmation. missing for 10: concrete documentation of dynamic group rule configuration UI/logic, evidence of group-based app assignment as distinct from individual role-based provisioning, independent corroboration of this working in practice.",
     "evidenceIds": [
       "rippling-it-docs-3",
       "rippling-it-docs-18",
-      "rippling-it-docs-1",
-      "rippling-it-docs-23"
+      "rippling-it-docs-31",
+      "rippling-it-docs-1"
     ]
   },
   {
@@ -2884,16 +2892,15 @@
     "storyId": "hris-source-of-truth",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Rippling's own docs describe HRIS as the unified source of truth for employee data, with automatic access/permission/group updates on role changes or offboarding, dynamic rules for provisioning/deprovisioning, and device/inventory lifecycle automation tied directly to hiring/offboarding flow — directly matching the joiner/mover/leaver-driven directory and app assignment story. Missing for 10: independent/hands-on corroboration beyond vendor docs, and more detail on exactly which HRIS fields trigger which downstream directory changes.",
+    "confidence": "medium",
+    "rationale": "Rippling's docs explicitly describe HRIS-driven identity as the source of truth, with automatic access/permission/group updates on role change or termination, and dynamic rule-based provisioning tied to role changes (docs-18, docs-3, docs-31, docs-29, docs-23). This directly matches the joiner/mover/leaver automation story. Missing for 10: independent/hands-on verification of actual JML sync behavior beyond vendor marketing claims, and detail on latency/edge cases in the sync process.",
     "evidenceIds": [
       "rippling-it-docs-18",
       "rippling-it-docs-3",
-      "rippling-it-docs-1",
+      "rippling-it-docs-31",
       "rippling-it-docs-29",
-      "rippling-it-docs-8",
-      "rippling-it-docs-9",
-      "rippling-it-docs-20"
+      "rippling-it-docs-23",
+      "rippling-it-docs-1"
     ]
   },
   {
@@ -2901,9 +2908,16 @@
     "storyId": "identity-event-hooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers REST API access, tokens, and automation workflows but never mentions webhooks or event subscriptions for user lifecycle/auth events; no push-based event mechanism is documented.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "Evidence shows Rippling's REST API (tokens, versioning, pagination) but no mention of webhooks, event hooks, or subscribable identity/lifecycle event streams for downstream systems to consume in real time. Automations described are internal (e.g., custom workflows, offboarding triggers) rather than developer-facing event subscriptions. missing for 10: webhook/event subscription API, documented event types (user created/deleted/auth events), delivery/retry mechanics, any developer-facing pub/sub or callback registration.",
+    "evidenceIds": [
+      "rippling-it-docs-14",
+      "rippling-it-docs-15",
+      "rippling-it-docs-16",
+      "rippling-it-docs-17",
+      "rippling-it-docs-21",
+      "rippling-it-docs-22"
+    ]
   },
   {
     "productId": "rippling-it",
@@ -2911,7 +2925,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of published security incident postmortems, a live trust/status page, or a disclosure history anywhere in the evidence pack; all items are product/API docs unrelated to vendor security transparency.",
+    "rationale": "The evidence pack contains only marketing/product docs and API documentation for Rippling IT; there is no mention of a published trust page, security incident postmortems, or disclosure history for the vendor.",
     "evidenceIds": []
   },
   {
@@ -2920,13 +2934,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs claim real-time deprovisioning tied to role changes/offboarding across connected apps via federated identity (LDAP/AD/OIDC/RADIUS/SCIM/SAML), and device retrieval is automated on offboarding, suggesting a unified offboarding action. However, there's no explicit mention of immediate session termination/kill as part of offboarding, and no independent/hands-on evidence confirming instant, comprehensive deprovisioning across all connected apps. Missing for 10: explicit session-kill guarantee, third-party verification of 'one-click offboarding' speed/completeness, and evidence of SCIM deprovisioning across arbitrary connected apps beyond marketing claims.",
+    "rationale": "Docs describe real-time automatic revocation of access and updates to permissions/groups when someone leaves, plus device retrieval flows triggered instantly on offboarding, which together support the 'one action' offboarding story. However, evidence doesn't explicitly confirm session-kill immediacy or a unified single-click offboarding action, nor independent/hands-on corroboration. Missing for 10: explicit session-termination confirmation, independent/hands-on verification of the offboarding flow, detail on which 'connected apps' are deprovisioned via SCIM in practice.",
     "evidenceIds": [
-      "rippling-it-docs-18",
-      "rippling-it-docs-4",
       "rippling-it-docs-1",
+      "rippling-it-docs-18",
       "rippling-it-docs-8",
-      "rippling-it-docs-23"
+      "rippling-it-docs-23",
+      "rippling-it-docs-31"
     ]
   },
   {
@@ -2935,7 +2949,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim federated identity support for LDAP and RADIUS alongside AD/OIDC/SCIM/SAML, directly matching the story's core claim. However, there's no detail on how cloud LDAP/RADIUS endpoints are configured, no mention of specific VPN/Wi-Fi integration use cases, and no independent/hands-on corroboration of these protocols working in practice. Missing for 10: configuration details for cloud LDAP/RADIUS endpoints, concrete VPN/Wi-Fi setup examples, independent verification of protocol functionality.",
+    "rationale": "Docs explicitly state Rippling's federated identity supports LDAP, AD, OIDC, and RADIUS alongside SAML/SCIM, directly matching the story's requirement (rippling-it-docs-4). However, there's no detail on configuration specifics, hands-on validation, or independent corroboration of these cloud LDAP/RADIUS endpoints actually serving VPNs/Wi-Fi in practice. Missing for 10: independent/hands-on verification, configuration depth, and specific VPN/Wi-Fi integration examples.",
     "evidenceIds": [
       "rippling-it-docs-4"
     ]
@@ -2945,16 +2959,16 @@
     "storyId": "lifecycle-workflows",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs directly describe identity-triggered no-code automation across the hire-to-departure lifecycle: automatic provisioning/deprovisioning on role change or offboarding, dynamic role-based access rules, device lifecycle automation tied to hiring/offboarding, and offboarding-triggered inventory retrieval flows. This spans app access, devices, and inventory choreography without requiring custom code. Missing for 10: independent/hands-on verification of end-to-end reliability across many apps and no detail on how granular no-code rule building actually is in the UI.",
+    "confidence": "medium",
+    "rationale": "Rippling's docs directly describe identity-event-triggered, no-code automation across hire/role-change/departure — auto-provisioning/deprovisioning access on role change or departure, dynamic group/permission updates, device lifecycle automation tied to hiring/offboarding (auto-ordering devices at hire, auto-retrieval flows at offboarding), and custom workflow triggers for security/compliance. This covers the app-by-app choreography described in the story across multiple product surfaces (IAM, device management, inventory). Missing for 10: independent/hands-on verification of these workflows in practice and more detail on the no-code workflow builder UI itself (docs describe outcomes/features but not the builder mechanics).",
     "evidenceIds": [
       "rippling-it-docs-1",
       "rippling-it-docs-3",
       "rippling-it-docs-18",
-      "rippling-it-docs-8",
       "rippling-it-docs-9",
-      "rippling-it-docs-5",
-      "rippling-it-docs-20"
+      "rippling-it-docs-8",
+      "rippling-it-docs-20",
+      "rippling-it-docs-31"
     ]
   },
   {
@@ -2963,14 +2977,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Rippling documents a real v2 REST API with tokens, versioning, pagination, and search/filter (rippling-it-docs-14,15,16,17,21), showing broad API access, but there is no evidence claiming or demonstrating full functional parity between the API and every UI-driven workflow (e.g., device lifecycle automations, compliance evidence collection, dynamic access rules). Missing for 10: explicit parity claims/documentation, coverage of admin/config workflows via API, and independent verification that all UI actions are API-exposed.",
+    "rationale": "Rippling exposes a documented v2 REST API with auth, versioning, pagination, and even an MCP server for AI-native access, but the evidence never confirms full parity between API and UI capabilities—no explicit statement or comparison showing every UI action (e.g., all admin workflows, custom policy builders, device lifecycle actions) is reachable via API. missing for 10: explicit API-UI parity claim or documentation, coverage confirmation for admin/config workflows beyond REST CRUD, independent verification of completeness.",
     "evidenceIds": [
       "rippling-it-docs-14",
       "rippling-it-docs-15",
       "rippling-it-docs-16",
       "rippling-it-docs-17",
       "rippling-it-docs-21",
-      "rippling-it-docs-28"
+      "rippling-it-docs-22",
+      "rippling-it-probe-2"
     ]
   },
   {
@@ -3003,7 +3018,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Rippling IT is a cloud SaaS platform for identity/device management; self-hosting the core product is not a plausible offering for this category and no evidence suggests otherwise.",
+    "rationale": "Rippling IT is a SaaS platform for identity/device management; self-hosting the core product is not a plausible offering for this category, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -3012,7 +3027,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions passwordless sign-in, passkeys, authenticator apps, or biometric login for employees — the docs focus on identity/access provisioning, device management, and API authentication for admins/developers, not employee end-user authentication flows.",
+    "rationale": "No evidence pack items mention passkeys, authenticator apps, platform biometrics, or any passwordless sign-in flow for employees; the pack covers identity provisioning, device management, and APIs, not authentication methods themselves.",
     "evidenceIds": []
   },
   {
@@ -3020,8 +3035,8 @@
     "storyId": "phishing-resistant-mfa",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions FIDO2 security keys, passkeys, or MFA policy enforcement of any kind — coverage is limited to provisioning, device management, and API access. missing for 10: any mention of MFA methods, FIDO2/passkey support, or policy requiring hardware-key MFA for sensitive apps.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions MFA, FIDO2 security keys, passkeys, or policy-based requirements for step-up authentication on sensitive apps; the docs cover provisioning, device management, and API access but never authentication factor policy.",
     "evidenceIds": []
   },
   {
@@ -3030,7 +3045,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data residency, region selection, or data storage location controls for Rippling IT; all evidence concerns identity, device management, inventory, and API access instead.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data controls; all evidence covers identity, device management, and API access. Missing for 10: any mention of data residency/region selection, compliance certifications tied to region, or documentation of where customer data is stored.",
     "evidenceIds": []
   },
   {
@@ -3039,7 +3054,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data opt-out or data-use controls for AI model training; the evidence covers identity, device management, inventory, and API access only. missing for 10: any privacy policy, opt-out mechanism, or documentation stating customer data is excluded from AI model training.",
+    "rationale": "No evidence in the pack addresses any AI-training opt-out or data-usage control policy for Rippling IT; nothing discusses whether customer data feeds AI model training or how to prevent it. missing for 10: explicit AI training opt-out policy, data usage terms for AI features, any privacy control toggle related to model training.",
     "evidenceIds": []
   },
   {
@@ -3048,7 +3063,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers identity/access management, device management, inventory, and API access, but contains no mention of data retention policies, deletion controls, or configurable data lifecycle settings for AI-native users. Missing for 10: any documentation on data retention schedules, deletion/purge controls, or data lifecycle policy configuration.",
+    "rationale": "The evidence pack covers identity, device management, inventory, and API access but contains no mention of AI data retention policies, data deletion controls, or configurable retention settings for AI-generated content or logs. Missing for 10: any documentation of retention windows, deletion controls, or data lifecycle policies specific to AI features/data.",
     "evidenceIds": []
   },
   {
@@ -3056,8 +3071,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for the product itself; all citations concern IT management, identity, devices, and API access rather than privacy/telemetry settings.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack addresses telemetry opt-out or usage-tracking controls for AI-native users; Rippling IT's evidence focuses on monitoring/visibility of the org (not user control over Rippling's own telemetry). Missing for 10: any documentation of a telemetry/usage-data opt-out setting, privacy controls for AI features, or user-facing toggle to disable tracking.",
     "evidenceIds": []
   },
   {
@@ -3066,12 +3081,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs claim automatic provisioning/deprovisioning of access, groups, and permissions on role change or offboarding, and support for SCIM among federated protocols, which directly matches the story; however evidence is entirely vendor-claimed marketing copy with no independent/hands-on confirmation of actual SCIM push mechanics (attribute/entitlement mapping, real-time sync latency, error handling). One doc even claims Rippling avoids traditional 'SCIM lag' entirely, which is inconsistent with a pure SCIM-push story but not a concrete contradiction of the capability itself. Missing for 10: independent/hands-on verification of SCIM provisioning behavior, detail on entitlement-level sync, and confirmation of real-time push timing beyond marketing claims.",
+    "rationale": "Rippling docs claim real-time provisioning/deprovisioning of access, groups, and entitlements tied to role changes and federated protocol support including custom SCIM apps, and even claim to eliminate 'SCIM lag' — suggesting push provisioning into downstream apps. However, none of the evidence details a concrete SCIM implementation (attribute mapping, supported SCIM endpoints, per-app provisioning connectors, or entitlement-level granularity) beyond marketing claims. missing for 10: explicit SCIM protocol documentation/spec compliance, list of supported downstream apps via SCIM, entitlement-level provisioning detail, independent/hands-on confirmation of real-time push behavior.",
     "evidenceIds": [
       "rippling-it-docs-3",
       "rippling-it-docs-4",
       "rippling-it-docs-18",
-      "rippling-it-docs-23"
+      "rippling-it-docs-23",
+      "rippling-it-docs-31"
     ]
   },
   {
@@ -3089,11 +3105,17 @@
   {
     "productId": "rippling-it",
     "storyId": "system-log-streaming",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a general REST API and event-based automation triggers (role change, offboarding), but there is no mention of a structured security/audit log, log query capability, or native SIEM streaming integration. Nothing describes exportable identity event logs or SIEM connectors.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Rippling offers a general REST API with search/filter and pagination and building custom dashboards/reports, suggesting some queryability of platform data, but there is no evidence of a dedicated identity/security event log, no mention of audit-log export, and no native SIEM streaming integration (e.g., Splunk, Datadog connectors). missing for 10: dedicated identity/audit event log schema, native SIEM streaming connector, documented export/webhook mechanism for security events, independent confirmation of SIEM integration.",
+    "evidenceIds": [
+      "rippling-it-docs-14",
+      "rippling-it-docs-16",
+      "rippling-it-docs-17",
+      "rippling-it-docs-33",
+      "rippling-it-docs-34"
+    ]
   },
   {
     "productId": "rippling-it",
@@ -3101,7 +3123,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Rippling's admin-side identity/access automation, provisioning, and device management, but contains no mention of an employee-facing launcher dashboard or browser extension for one-click access to assigned apps — the specific capability the story asks about.",
-    "evidenceIds": []
+    "rationale": "Evidence covers Rippling's identity/access management (SSO protocols, provisioning/deprovisioning, federated identity) but never mentions an employee-facing launcher dashboard or browser extension for single-click access to assigned apps. Missing for 10: any documentation of an app launcher UI, browser extension, or 'sign in once and reach everything' employee portal experience.",
+    "evidenceIds": [
+      "rippling-it-docs-4",
+      "rippling-it-docs-18",
+      "rippling-it-docs-31"
+    ]
   }
 ]
