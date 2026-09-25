@@ -6,31 +6,41 @@
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import searchAliases from '@/data/search-aliases.json'
-import { loadChains, loadProcesses } from '@/lib/processes'
+import { CADENCE_META, loadChains, loadProcesses, processSlug, taskCeiling } from '@/lib/processes'
 import type { SimStep } from '@/lib/processSim'
 import { buildPageEntries } from '@/lib/search-index'
 import {
   allChoiceCombos,
   ARTIFACT_TASK_IDS,
   buildJourneyArtifacts,
+  buildYearCandidates,
   comboKey,
+  CORPUS_ANNUAL_MONTHS,
   dayOf,
   DECISIONS,
   DEFAULT_CHOICES,
   journeyPhases,
   journeyStats,
   journeyTaskIds,
+  resolveYearMonths,
+  RUNS_PER_YEAR,
   synthCompany,
   unionTaskIds,
   VS_CHAIN_IDS,
-  type Choices,
+  YEAR_CHAIN_IDS,
+  yearRows,
+  yearStats,
+  type RouteMix,
   type VsChain,
+  type YearRow,
+  type YearTaskSource,
 } from '@/lib/virtualStartup'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
 const chains: VsChain[] = loadChains(DATA_DIR).map(({ id, name, taskIds }) => ({ id, name, taskIds }))
-const corpusIds = new Set(loadProcesses(DATA_DIR).map((t) => t.id))
+const corpusById = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
+const corpusIds = new Set(corpusById.keys())
 const combos = allChoiceCombos()
 
 describe('decision → journey mapping (against the live corpus)', () => {
@@ -39,9 +49,10 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })
 
-  it('covers all 16 decision combos', () => {
-    expect(combos.length).toBe(16)
-    expect(new Set(combos.map(comboKey)).size).toBe(16)
+  it('covers all 512 decision combos (nine binary toggles)', () => {
+    expect(combos.length).toBe(512)
+    expect(new Set(combos.map(comboKey)).size).toBe(512)
+    expect(DECISIONS.length).toBe(9)
   })
 
   it('every combo yields only real corpus tasks, each at most once', () => {
@@ -93,11 +104,68 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('phases run in founder-time order: name & brand first, launch day last', () => {
+  it('ordering: name-first leads with name-the-company, build-first leads with ship-v1', () => {
     for (const combo of combos) {
       const phases = journeyPhases(combo, chains)
-      expect(phases[0].chainId).toBe('name-the-company')
-      expect(phases[phases.length - 1].chainId).toBe('launch-on-product-hunt')
+      expect(phases[0].chainId).toBe(combo.ordering === 'build-first' ? 'ship-v1' : 'name-the-company')
+    }
+  })
+
+  it('the journey tail follows the toggles: enterprise closes, else deferred compliance, else launch day', () => {
+    for (const combo of combos) {
+      const phases = journeyPhases(combo, chains)
+      const last = phases[phases.length - 1].chainId
+      if (combo.enterprise === 'yes') expect(last).toBe('land-the-enterprise-deal')
+      else if (combo.compliance === 'later') expect(last).toBe('set-up-compliance')
+      else if (combo.ph === 'yes') expect(last).toBe('launch-on-product-hunt')
+    }
+  })
+
+  it('hire: the first-hire chain rides only on yes, placed after revenue turns on', () => {
+    const hireChain = chains.find((c) => c.id === 'first-hire')!
+    for (const combo of combos) {
+      const phases = journeyPhases(combo, chains)
+      const hire = phases.find((p) => p.chainId === 'first-hire')
+      if (combo.hire === 'yes') {
+        expect(hire?.taskIds).toEqual(hireChain.taskIds)
+        expect(phases.findIndex((p) => p.chainId === 'first-hire')).toBeGreaterThan(
+          phases.findIndex((p) => p.chainId === 'get-paid'),
+        )
+      } else {
+        expect(hire).toBeUndefined()
+        const ids = journeyTaskIds(combo, chains)
+        for (const tid of hireChain.taskIds) expect(ids.includes(tid)).toBe(false)
+      }
+    }
+  })
+
+  it('compliance: the set-up-compliance chain ALWAYS runs; the toggle only moves it', () => {
+    for (const combo of combos) {
+      const phases = journeyPhases(combo, chains)
+      const idx = (chainId: string) => phases.findIndex((p) => p.chainId === chainId)
+      const c = idx('set-up-compliance')
+      expect(c).toBeGreaterThanOrEqual(0)
+      if (combo.compliance === 'now') expect(c).toBeLessThan(idx('launch-website'))
+      else expect(c).toBeGreaterThan(idx('get-paid'))
+    }
+  })
+
+  it('enterprise: the land-the-enterprise-deal chain appears only on yes, as the final phase', () => {
+    const entChain = chains.find((c) => c.id === 'land-the-enterprise-deal')!
+    for (const combo of combos) {
+      const ids = journeyTaskIds(combo, chains)
+      for (const tid of entChain.taskIds) {
+        expect(ids.includes(tid), `${tid} for ${comboKey(combo)}`).toBe(combo.enterprise === 'yes')
+      }
+    }
+  })
+
+  it('directory launch: the launch-on-product-hunt chain appears only on yes', () => {
+    for (const combo of combos) {
+      const ids = journeyTaskIds(combo, chains)
+      // growth_010 (the PH submission) lives only in that chain among the journey chains.
+      expect(ids.includes('growth_010')).toBe(combo.ph === 'yes')
+      expect(journeyPhases(combo, chains).some((p) => p.chainId === 'launch-on-product-hunt')).toBe(combo.ph === 'yes')
     }
   })
 
@@ -218,6 +286,121 @@ describe('journey stats & elapsed time (corpus estimates only)', () => {
     expect(dayOf(0)).toBe(1)
     expect(dayOf(1439)).toBe(1)
     expect(dayOf(1440)).toBe(2)
+  })
+})
+
+describe('year one — the operating rhythm, derived from live corpus cadence', () => {
+  const routeMix = (taskId: string): RouteMix => {
+    const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
+    for (const n of corpusById.get(taskId)!.dag.nodes) {
+      mix[n.route] += 1
+      if (n.legalSignature) mix.legalSignature += 1
+    }
+    return mix
+  }
+  // The same corpus reshape app/virtual-startup/page.tsx performs.
+  const sources: YearTaskSource[] = [...corpusById.values()].map((t) => ({
+    taskId: t.id,
+    title: t.title,
+    slug: processSlug(t.title),
+    cadence: t.cadence,
+    cadenceLabel: CADENCE_META[t.cadence].label,
+    totalSteps: t.dag.nodes.length,
+    routes: routeMix(t.id),
+    ceilingPct: taskCeiling(t).pct,
+  }))
+  const candidates = buildYearCandidates(chains, sources)
+
+  it('always includes every month-end-close and tax-season task, with corpus-true runs/yr', () => {
+    for (const cid of YEAR_CHAIN_IDS) {
+      const chain = chains.find((c) => c.id === cid)
+      expect(chain, `chain ${cid} missing`).toBeDefined()
+      for (const tid of chain!.taskIds) {
+        const cand = candidates.find((c) => c.taskId === tid)
+        expect(cand, `candidate ${tid} missing`).toBeDefined()
+        expect(cand!.always).toBe(true)
+        expect(cand!.runsPerYear).toBe(RUNS_PER_YEAR[corpusById.get(tid)!.cadence])
+      }
+    }
+  })
+
+  it('every candidate is calendar-recurring with a corpus-true route mix and ceiling', () => {
+    expect(candidates.length).toBeGreaterThan(0)
+    for (const c of candidates) {
+      const t = corpusById.get(c.taskId)!
+      expect(RUNS_PER_YEAR[c.cadence], `${c.taskId} is not calendar-recurring`).not.toBeNull()
+      expect(c.cadence).toBe(t.cadence)
+      expect(c.totalSteps).toBe(t.dag.nodes.length)
+      expect(c.routes.agent + c.routes.form + c.routes.person).toBe(t.dag.nodes.length)
+      expect(c.ceilingPct).toBe(taskCeiling(t).pct)
+    }
+  })
+
+  it('rows gate on the journey: payroll with the hire, invoicing on the invoices fork, Type II/pen test with the enterprise motion', () => {
+    for (const combo of combos) {
+      const ids = journeyTaskIds(combo, chains)
+      const rows = yearRows(combo, ids, candidates)
+      const rowIds = new Set(rows.map((r) => r.taskId))
+      expect(rowIds.size).toBe(rows.length)
+      // The always-on operating spine.
+      expect(rowIds.has('fin_002')).toBe(true)
+      expect(rowIds.has('fin_003')).toBe(true)
+      expect(rowIds.has('tax_001')).toBe(true)
+      // The decision-gated recurring work.
+      expect(rowIds.has('hr_002')).toBe(combo.hire === 'yes')
+      expect(rowIds.has('sales_002')).toBe(combo.product === 'invoices')
+      expect(rowIds.has('comp_002')).toBe(combo.enterprise === 'yes')
+      expect(rowIds.has('comp_013')).toBe(combo.enterprise === 'yes')
+    }
+  })
+
+  it('calendar slots: monthlies fill all 12 months, quarterlies land on quarter ends — pure cadence math', () => {
+    const monthly = resolveYearMonths({ taskId: 'fin_002', cadence: 'monthly' }, DEFAULT_CHOICES)
+    expect(monthly).toEqual({ months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], monthSource: 'cadence', monthNote: null })
+    const quarterly = resolveYearMonths({ taskId: 'x', cadence: 'quarterly' }, DEFAULT_CHOICES)
+    expect(quarterly.months).toEqual([3, 6, 9, 12])
+    expect(quarterly.monthSource).toBe('cadence')
+  })
+
+  it('annuals: corpus-dated months only where the corpus carries them; the rest are seeded and labeled', () => {
+    expect(resolveYearMonths({ taskId: 'tax_003', cadence: 'annual' }, DEFAULT_CHOICES)).toEqual({
+      months: [1],
+      monthSource: 'corpus',
+      monthNote: CORPUS_ANNUAL_MONTHS.tax_003.note,
+    })
+    expect(resolveYearMonths({ taskId: 'tax_001', cadence: 'annual' }, DEFAULT_CHOICES).months).toEqual([3])
+    // An annual the corpus does NOT date (the 1120): seeded month inside the year, deterministic,
+    // and carrying the note the UI renders the SIMULATED chip from.
+    const seeded = resolveYearMonths({ taskId: 'tax_002', cadence: 'annual' }, DEFAULT_CHOICES)
+    expect(seeded.monthSource).toBe('seeded')
+    expect(seeded.months.length).toBe(1)
+    expect(seeded.months[0]).toBeGreaterThanOrEqual(1)
+    expect(seeded.months[0]).toBeLessThanOrEqual(12)
+    expect(seeded.monthNote).toContain('simulated')
+    expect(resolveYearMonths({ taskId: 'tax_002', cadence: 'annual' }, DEFAULT_CHOICES)).toEqual(seeded)
+  })
+
+  it('the corpus really carries the dated months (tax-season chain tagline)', () => {
+    const taxSeason = loadChains(DATA_DIR).find((c) => c.id === 'tax-season')!
+    expect(taxSeason.tagline).toContain('January')
+    expect(taxSeason.tagline).toContain('March 1')
+    for (const tid of Object.keys(CORPUS_ANNUAL_MONTHS)) {
+      expect(taxSeason.taskIds).toContain(tid)
+    }
+  })
+
+  it('yearStats totals runs and step-executions honestly', () => {
+    const row = (over: Partial<YearRow>): YearRow => ({
+      taskId: 't', title: 'T', slug: 't', cadence: 'monthly', cadenceLabel: 'Monthly',
+      totalSteps: 4, routes: { agent: 3, form: 1, person: 0, legalSignature: 0 }, ceilingPct: 75,
+      runsPerYear: 12, always: true, months: [1], monthSource: 'cadence', monthNote: null,
+      ...over,
+    })
+    const stats = yearStats([
+      row({}),
+      row({ taskId: 'a', cadence: 'annual', cadenceLabel: 'Annual', runsPerYear: 1, totalSteps: 3, routes: { agent: 1, form: 1, person: 1, legalSignature: 0 } }),
+    ])
+    expect(stats).toEqual({ rows: 2, totalRuns: 13, stepRuns: 51, agentStepRuns: 37 })
   })
 })
 
