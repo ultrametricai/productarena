@@ -5,20 +5,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains only developer/API documentation and product feature pages; there is no mention of customer support channels, live support availability, or support hours/SLAs for founders needing urgent help.",
+    "rationale": "No evidence in the pack mentions customer support channels, live chat, phone support, or support availability/hours; all evidence concerns API/developer documentation and product features, not support reliability.",
     "evidenceIds": []
   },
   {
     "productId": "airwallex",
     "storyId": "accounting-software-sync",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Airwallex provides APIs (Card Expenses API, Bills API) explicitly designed to let expenses/invoices be pulled and marked as synced into an ERP or accounting system, plus webhooks for real-time event notifications that could drive syncing. However, there's no evidence of a native, pre-built, named integration with common accounting platforms (e.g., QuickBooks, Xero, NetSuite) — the sync is only achievable via custom API/webhook development, not an out-of-the-box automatic sync. Missing for 10: named accounting-software connectors, evidence of automatic (not developer-built) sync workflows, and independent confirmation of accounting integration usage.",
+    "rationale": "Airwallex offers APIs for card expenses (mark as synced after ingesting into ERP/accounting system) and bills/accounts-payable management, plus webhooks for real-time event notifications, which together enable syncing transactions/expenses with accounting software. However, this is API-level plumbing rather than documented native/pre-built integrations with named accounting platforms (e.g., QuickBooks, Xero, NetSuite), and no evidence of automatic bi-directional sync out-of-the-box. Missing for 10: named accounting-software connectors/integrations, evidence of automatic (not just API-enabled) syncing, and independent confirmation of real-world accounting sync usage.",
     "evidenceIds": [
       "airwallex-docs-4",
       "airwallex-docs-5",
-      "airwallex-docs-9"
+      "airwallex-docs-9",
+      "airwallex-docs-30"
     ]
   },
   {
@@ -27,12 +28,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Airwallex hosts a working llms.txt (HTTP 200, confirmed by probe) plus per-page .md docs variants, and explicitly documents AI-agent-oriented tooling (developer connectors for Cursor/Claude Code/Codex, AgentOS) that point agents at its documentation and sandbox. This directly matches the story of pointing an agent at agent-oriented docs. Missing for 10: independent third-party confirmation that agents successfully consume these docs in practice beyond vendor documentation.",
+    "rationale": "Airwallex has a confirmed live llms.txt (HTTP 200) plus a dedicated developer connector explicitly designed to point AI coding agents (Cursor, Claude Code, Codex, etc.) at Airwallex documentation and sandbox, going beyond a bare llms.txt file. Missing for 10: independent third-party confirmation that agents successfully consume this in practice.",
     "evidenceIds": [
       "airwallex-probe-1",
       "airwallex-docs-12",
-      "airwallex-docs-13",
-      "airwallex-docs-1"
+      "airwallex-docs-13"
     ]
   },
   {
@@ -53,11 +53,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Airwallex's AgentOS toolkit explicitly lets AI agents act on a production account (reading balances, creating beneficiaries, issuing cards, building reports) and webhooks + APIs provide the building blocks for event-driven automation, but there's no evidence of a native scheduler/trigger system or a documented 'autonomous background automation' feature beyond agent-invoked API calls. missing for 10: evidence of built-in scheduling/triggers for unattended runs, independent/hands-on confirmation that AgentOS-driven automations actually run autonomously without a human-in-the-loop.",
+    "rationale": "Airwallex provides webhooks for event-driven automation, a full API/SDK/CLI stack, scoped API keys, and an explicit 'AgentOS' toolkit letting AI agents act autonomously on a production account (reading balances, issuing cards, creating beneficiaries), which supports background automation use cases. However there's no documented scheduler/cron-like trigger mechanism or explicit 'runs autonomously in background' workflow orchestration beyond webhook callbacks and agent-initiated actions. missing for 10: explicit scheduled/triggered automation workflows, independent/hands-on evidence of AgentOS running unattended in production.",
     "evidenceIds": [
       "airwallex-docs-13",
+      "airwallex-docs-28",
       "airwallex-docs-9",
-      "airwallex-docs-12",
+      "airwallex-docs-26",
+      "airwallex-docs-15",
       "airwallex-probe-3"
     ]
   },
@@ -66,12 +68,12 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Airwallex offers AgentOS, a toolkit that lets AI agents read balances, create beneficiaries, issue cards, and build cashflow reports on a user's account, which is functionally a delegation capability. However, this is a developer-facing toolkit/API rather than a built-in, ready-to-use assistant surfaced inside the Airwallex product UI for end users to converse with directly.  Missing for 10: evidence of an in-product chat/assistant interface for non-developer end users, and confirmation that AgentOS ships as an out-of-the-box assistant rather than requiring custom integration.",
+    "confidence": "low",
+    "rationale": "Airwallex ships AgentOS, a toolkit letting external AI agents act on a production account (reading balances, creating beneficiaries, issuing cards, building cashflow reports), which shows some agentic delegation capability, but this is a developer toolkit/API surface for building agents rather than a built-in assistant embedded in the Airwallex product UI that end-users can directly delegate tasks to. missing for 10: evidence of a native, in-app AI assistant/chat interface for end users, first-party proof of an assistant surfaced in the dashboard rather than only API/toolkit access for developers.",
     "evidenceIds": [
       "airwallex-docs-13",
-      "airwallex-probe-3",
-      "airwallex-docs-12"
+      "airwallex-docs-28",
+      "airwallex-probe-3"
     ]
   },
   {
@@ -79,14 +81,15 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Airwallex offers a CLI for command-line/scripted use, server-side SDKs with automatic retries/token refresh suitable for automation, webhooks for event-driven pipelines, and scoped API keys for secure headless auth — all core building blocks for CI/automation workflows. Missing for 10: explicit CI/CD pipeline examples or GitHub Actions integration, and independent hands-on confirmation of CLI use in automated/headless environments.",
+    "confidence": "high",
+    "rationale": "Airwallex offers a full REST API with server-side SDKs, an official CLI for scripting from the command line, scoped API keys, webhooks, and a sandbox environment—all of which support headless/CI automation of financial operations (transfers, batch transfers, card issuing, FX). This is reinforced by AgentOS and developer connectors explicitly built for programmatic/agentic use against production or sandbox accounts. Missing for 10: no explicit CI pipeline examples (e.g., GitHub Actions integration) or independent hands-on confirmation of CLI use in automated pipelines.",
     "evidenceIds": [
-      "airwallex-docs-11",
       "airwallex-docs-10",
-      "airwallex-docs-9",
-      "airwallex-docs-15",
+      "airwallex-docs-11",
       "airwallex-docs-14",
+      "airwallex-docs-15",
+      "airwallex-docs-9",
+      "airwallex-docs-13",
       "airwallex-probe-4"
     ]
   },
@@ -95,12 +98,9 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Airwallex is a financial infrastructure platform, not an agent or assistant surface that itself consumes external MCP servers; its AI-related offerings (developer connectors, AgentOS) expose Airwallex's own tools to external agents rather than letting Airwallex plug in and use third-party MCP servers' tools, so this client-side MCP axis doesn't apply to this product type.",
-    "evidenceIds": [
-      "airwallex-docs-12",
-      "airwallex-docs-13"
-    ]
+    "confidence": "high",
+    "rationale": "Airwallex is a financial infrastructure platform, not an AI agent/assistant runtime; its AI-related offerings (AgentOS, developer connectors) position Airwallex as the tool provider for external coding agents to call, not as a client that plugs in and consumes external MCP servers. This client-side MCP-consumption axis is a category error for this product type.",
+    "evidenceIds": []
   },
   {
     "productId": "airwallex",
@@ -108,11 +108,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Airwallex documents AgentOS, an official toolkit/MCP-style server for AI agents to act on production accounts (reading balances, issuing cards, etc.), plus a separate developer connector for coding agents to access docs/sandbox, and a probe confirms an official MCP server is documented at the AgentOS URL. Missing for 10: independent/hands-on corroboration of AgentOS functioning as a standards-compliant MCP server and details on setup/auth reliability.",
+    "rationale": "Airwallex documents AgentOS, a toolkit specifically for AI agents to act on production Airwallex accounts (reading balances, creating beneficiaries, issuing cards, etc.), and a probe confirms an official MCP server is documented at the AgentOS docs page, alongside a separate developer connector for coding agents. This is a financial platform (not itself an agent), so the axis applies and is met by first-party evidence. Missing for 10: independent/hands-on corroboration of the MCP server working in practice beyond vendor docs.",
     "evidenceIds": [
       "airwallex-docs-13",
-      "airwallex-docs-12",
-      "airwallex-probe-3"
+      "airwallex-docs-28",
+      "airwallex-probe-3",
+      "airwallex-docs-12"
     ]
   },
   {
@@ -121,11 +122,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Airwallex ships 'AgentOS', a toolkit letting AI agents act on production accounts (read balances, create beneficiaries, issue cards, build cashflow reports) plus developer connectors wiring Airwallex docs/sandbox into Cursor, Claude Code, Codex and similar NL-driven coding agents. This shows genuine agentic/NL-operable infrastructure, but it's a developer toolkit/connector rather than a turnkey natural-language interface for end users. Missing for 10: a first-party consumer-facing chat/NL command interface, independent hands-on validation of AgentOS commands succeeding, and detail on breadth of supported natural-language actions.",
+    "rationale": "Airwallex ships AgentOS, an explicit toolkit letting AI agents act on the account (reading balances, creating beneficiaries, issuing cards, building reports) plus developer connectors that plug AI coding agents into docs/sandbox, and a CLI for command-line operation — all pointing toward natural-language/agent-driven operation. However, evidence doesn't confirm a conversational/natural-language interface for end users themselves (vs. developers wiring up agents), and no independent/hands-on corroboration exists. Missing for 10: end-user natural-language interface evidence, independent hands-on validation of AgentOS in practice.",
     "evidenceIds": [
-      "airwallex-docs-12",
       "airwallex-docs-13",
-      "airwallex-probe-3"
+      "airwallex-docs-28",
+      "airwallex-docs-12",
+      "airwallex-docs-11",
+      "airwallex-probe-3",
+      "airwallex-probe-4"
     ]
   },
   {
@@ -133,12 +137,13 @@
     "storyId": "agentic-official-cli",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Airwallex documents an official CLI for working with an Airwallex account directly from the command line, confirmed by both docs and a probe. This is complemented by AI-specific tooling (developer connectors for coding agents, AgentOS) suggesting the CLI fits into an AI-native workflow. Missing for 10: independent/hands-on verification of the CLI's functionality and depth beyond first-party docs.",
+    "confidence": "medium",
+    "rationale": "Airwallex documents an official CLI for working with accounts from the command line, confirmed by both docs and a direct probe, and further complements it with AI-specific developer connectors and AgentOS tooling for agentic workflows. Missing for 10: independent/hands-on corroboration of CLI usage and more detail on CLI command coverage beyond the docs page.",
     "evidenceIds": [
       "airwallex-docs-11",
       "airwallex-probe-4",
-      "airwallex-docs-12"
+      "airwallex-docs-12",
+      "airwallex-docs-13"
     ]
   },
   {
@@ -147,16 +152,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Airwallex ships extensive, well-documented public REST APIs (issuing, transfers, batch transfers, FX, webhooks, banking-as-a-service, bills/expenses), plus SDKs, CLI, sandbox environment, scoped API keys, and OAuth-based partner connections, giving AI-native users comprehensive programmatic access. Missing for 10: independent third-party validation/hands-on testing beyond first-party docs.",
+    "rationale": "Airwallex publishes extensive public API documentation covering accounts, cards, payouts, FX, webhooks, and provides SDKs, CLI, scoped API keys, sandbox environment, and even AI-specific tooling (developer connectors, AgentOS, MCP server) explicitly for driving the platform programmatically/agentically. Missing for 10: independent third-party corroboration beyond vendor docs/probes.",
     "evidenceIds": [
-      "airwallex-docs-6",
-      "airwallex-docs-7",
-      "airwallex-docs-9",
+      "airwallex-docs-1",
       "airwallex-docs-10",
       "airwallex-docs-11",
-      "airwallex-docs-14",
+      "airwallex-docs-12",
+      "airwallex-docs-13",
       "airwallex-docs-15",
-      "airwallex-docs-22",
+      "airwallex-docs-14",
+      "airwallex-probe-3",
       "airwallex-probe-4"
     ]
   },
@@ -164,28 +169,29 @@
     "productId": "airwallex",
     "storyId": "agentic-scoped-keys",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex explicitly documents scoped API keys that grant only assigned Read/Write permissions on specific APIs instead of full account access, directly matching least-privilege credential issuance, and this is complemented by AgentOS, a toolkit designed for AI agents acting on the account, plus a sandbox for safe testing. Missing for 10: independent/hands-on corroboration that scoping controls work as documented in production agent use.",
+    "rationale": "Airwallex explicitly documents scoped API keys that grant only Read/Write permissions on specific APIs instead of full account access, with best-practice guidance and a management flow for creating them, plus AgentOS/OAuth-based Partner Connections tailored for agent access to production accounts. missing for 10: independent/hands-on verification of scoping granularity and confirmation that AgentOS itself defaults to least-privilege scopes rather than broad access.",
     "evidenceIds": [
       "airwallex-docs-15",
+      "airwallex-docs-29",
       "airwallex-docs-13",
-      "airwallex-docs-14"
+      "airwallex-docs-22"
     ]
   },
   {
     "productId": "airwallex",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Airwallex documents official server-side SDKs with strongly typed models, retries, error handling and token refresh, plus a CLI, webhooks, and AI-specific tooling (developer connectors and AgentOS) tailored for building AI-native integrations. Missing for 10: independent/hands-on developer corroboration of SDK quality and explicit list of supported languages/SDK repos.",
+    "rationale": "Airwallex documents official server-side SDKs (e.g. @airwallex/node-sdk, TypeScript-first, strongly typed, error handling, retries, token refresh) plus a CLI, webhooks, and scoped API keys, giving AI-native developers concrete building blocks. However the SDKs are explicitly labeled beta and evidence only names a Node.js SDK, with no clear multi-language SDK coverage or independent/hands-on validation. Missing for 10: broader language SDK coverage beyond Node.js, confirmation the SDKs are GA (not beta), and independent developer corroboration of SDK quality.",
     "evidenceIds": [
       "airwallex-docs-10",
+      "airwallex-docs-27",
       "airwallex-docs-11",
-      "airwallex-docs-12",
-      "airwallex-docs-13",
-      "airwallex-docs-9"
+      "airwallex-docs-9",
+      "airwallex-docs-15"
     ]
   },
   {
@@ -194,9 +200,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex has dedicated documentation for webhooks delivering real-time push notifications on account events, a core supported developer feature alongside SDKs, CLI, and API. Missing for 10: independent/hands-on corroboration of webhook reliability and no detail on event catalog breadth or signature-verification specifics beyond the overview.",
+    "rationale": "Airwallex has dedicated first-party webhook documentation describing real-time event push notifications via HTTP POST with JSON payloads, directly enabling event subscription. Missing for 10: independent/hands-on corroboration and detail on event type coverage/filtering options.",
     "evidenceIds": [
-      "airwallex-docs-9"
+      "airwallex-docs-9",
+      "airwallex-docs-26"
     ]
   },
   {
@@ -205,23 +212,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Airwallex offers card authorization controls, webhooks, and AgentOS for AI agents acting on the account, but no evidence describes AI-driven anomaly detection or automatic flagging of out-of-policy transactions for review. Missing for 10: any documentation of AI-based fraud/anomaly detection, automated policy-violation flagging, or a review workflow triggered by AI analysis.",
-    "evidenceIds": [
-      "airwallex-docs-3",
-      "airwallex-docs-9",
-      "airwallex-docs-13"
-    ]
+    "rationale": "Evidence shows card authorization controls, webhooks, and AgentOS for agent-driven actions, but nothing describes AI-based anomaly detection or automatic flagging of out-of-policy transactions for review; this capability is unevidenced despite being a plausible axis for a financial platform.",
+    "evidenceIds": []
   },
   {
     "productId": "airwallex",
     "storyId": "ai-bill-data-extraction",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Airwallex has a Bills API for creating/managing vendor invoices and an AgentOS toolkit for AI agents to act on account data (balances, beneficiaries, cashflow reports), but no evidence describes AI reading/parsing incoming bill documents (e.g., OCR/extraction) to auto-populate payment fields for review. Missing for 10: any documentation of automated bill-reading/data-extraction capability tied to AI, and any example of pre-filled payment review workflow.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Airwallex's Bills API lets you create/manage vendor invoices programmatically, and AgentOS is a toolkit for AI agents to act on the account (reading balances, creating beneficiaries, building cashflow reports), which could theoretically be composed into a bill-reading workflow. However, there is no direct documentation of an AI/OCR capability that reads incoming bill documents and auto-populates payment details for review. missing for 10: explicit OCR/document-extraction feature for bills, evidence of auto-population of payment fields from scanned/received invoices, and any hands-on demonstration of this AP workflow.",
     "evidenceIds": [
       "airwallex-docs-5",
-      "airwallex-docs-13"
+      "airwallex-docs-13",
+      "airwallex-docs-30"
     ]
   },
   {
@@ -229,13 +233,14 @@
     "storyId": "ai-books-close-automation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Airwallex provides financial data and reconciliation building blocks (Card Expenses API for ERP sync, Bills API for AP, webhooks) plus AgentOS, an AI-agent toolkit explicitly described as building cashflow reports and reading balances, which supports faster reconciliation/closing workflows. But it is not itself an accounting/bookkeeping platform with a defined 'close the books' automation, and it never names integrations with major accounting software (QuickBooks/Xero/NetSuite) to complete the loop. Missing for 10: an explicit month-end close automation feature, named accounting-software integrations, and evidence of AI agents autonomously performing reconciliation end-to-end.",
+    "confidence": "low",
+    "rationale": "Airwallex offers AgentOS and card/expense/bills APIs that could feed AI-driven reconciliation and expense-sync workflows, and webhooks/CLI enable automation, but there's no evidence of a purpose-built 'close the books faster' automation or direct accounting-integration/reconciliation AI feature. missing for 10: explicit month-end close automation, native accounting-system (QuickBooks/Xero/NetSuite) sync evidence, and independent proof of AI-driven reconciliation reducing close time.",
     "evidenceIds": [
       "airwallex-docs-4",
       "airwallex-docs-5",
       "airwallex-docs-13",
-      "airwallex-docs-9"
+      "airwallex-docs-30",
+      "airwallex-probe-3"
     ]
   },
   {
@@ -244,8 +249,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Bills API, expenses, transfers, and AI-agent toolkits, but nothing indicates AI parsing of vendor contracts to auto-populate procurement request forms — no contract parsing or procurement-form-generation capability is mentioned anywhere in the docs.",
-    "evidenceIds": []
+    "rationale": "Airwallex's evidence covers bills/accounts-payable, spend controls, card issuing, and AgentOS AI-agent toolkit, but nothing describes parsing vendor contracts or documents with AI to auto-populate procurement request forms — Bills API only manages invoices already entered, with no contract-parsing or form-generation capability documented.",
+    "evidenceIds": [
+      "airwallex-docs-5",
+      "airwallex-docs-30",
+      "airwallex-docs-13"
+    ]
   },
   {
     "productId": "airwallex",
@@ -253,8 +262,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of GL code assignment, chart-of-accounts mapping, or AI-driven accounting close automation across entities; APIs cover card expenses, bills, and transfers but nothing about GL coding or close acceleration. Missing for 10: any mention of GL code mapping, automated coding logic, multi-entity accounting sync, or AI-assisted close workflow.",
-    "evidenceIds": []
+    "rationale": "Airwallex provides card expenses and bills APIs for ERP/accounting sync, but there is no evidence of AI-driven GL code assignment across entities or any automated close-acceleration feature; AgentOS is described only as reading balances, creating beneficiaries, issuing cards, and building cashflow reports, not GL coding.",
+    "evidenceIds": [
+      "airwallex-docs-4",
+      "airwallex-docs-5",
+      "airwallex-docs-30",
+      "airwallex-docs-13"
+    ]
   },
   {
     "productId": "airwallex",
@@ -262,7 +276,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Airwallex is a financial infrastructure platform (cards, payouts, FX, banking-as-a-service) with no travel-booking or rate-monitoring functionality; travel price monitoring/rebooking is entirely outside its product category.",
+    "rationale": "Airwallex is a financial infrastructure/cards-spend platform, not a travel booking or price-monitoring service; monitoring travel rates and auto-rebooking is entirely outside its product category (wrong axis).",
     "evidenceIds": []
   },
   {
@@ -270,8 +284,8 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows extensive markdown docs, SDKs, CLI, and AI agent connectors, but nothing describes an interactive API reference with runnable/try-it examples (e.g., embedded console, live code execution). Missing for 10: any mention of an interactive/try-it API explorer, live request execution in docs, or sandbox-embedded runnable examples.",
+    "confidence": "low",
+    "rationale": "Evidence shows extensive markdown-based docs and llms.txt but no mention of an interactive API reference with runnable/try-it examples (e.g., embedded API explorer or code playground).",
     "evidenceIds": []
   },
   {
@@ -280,12 +294,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Airwallex publishes extensive human-readable API docs, SDKs, and llms.txt/markdown docs, but the evidence pack contains no mention of a downloadable OpenAPI/Swagger spec or other machine-readable API definition file. missing for 10: explicit OpenAPI/Swagger spec download link, machine-readable schema file, or documented spec endpoint.",
-    "evidenceIds": [
-      "airwallex-docs-10",
-      "airwallex-probe-1",
-      "airwallex-probe-2"
-    ]
+    "rationale": "Evidence shows extensive markdown-based documentation, an llms.txt for LLM consumption, SDKs, CLI, and AI agent connectors, but no citation confirms a downloadable OpenAPI/Swagger spec or equivalent machine-readable API schema.",
+    "evidenceIds": []
   },
   {
     "productId": "airwallex",
@@ -305,7 +315,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers extensive API/product documentation, SDKs, CLI, and AI agent tooling, but nowhere mentions API versioning scheme or a documented deprecation policy for breaking changes.",
+    "rationale": "The evidence pack covers API features, SDKs, CLI, webhooks, and AI agent tooling, but nowhere mentions API versioning schemes or a documented deprecation policy for those versions. No evidence of version headers, changelogs, or sunset timelines exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -314,7 +324,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any application status tracking, onboarding dashboard, or KYB review status feature for founders; evidence pack covers API/product capabilities (issuing, transfers, FX, developer tools) but nothing about checking account application/review status.",
+    "rationale": "No evidence in the pack addresses application/onboarding review status tracking; docs cover account creation, cards, payouts, FX, and developer tools but nothing about checking application review status.",
     "evidenceIds": []
   },
   {
@@ -323,7 +333,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers transfers, FX, webhooks, and multi-currency wallets, but there is no mention of automated auto top-up between accounts or low-balance alert features anywhere in the docs. Webhooks could theoretically be used to build custom alerts, but no native low-balance alert or auto top-up capability is documented. Missing for 10: auto top-up rules between accounts, low-balance threshold alerts, any treasury automation feature.",
+    "rationale": "Evidence covers multi-currency accounts, transfers, FX, webhooks, and card issuing, but there is no mention of automated inter-account top-ups or low-balance alerting/notification features anywhere in the docs pack.",
     "evidenceIds": []
   },
   {
@@ -332,10 +342,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The Card Expenses API only retrieves already-approved expenses and lets you mark them synced after ingestion into ERP/accounting systems; there is no evidence of automatic receipt capture (e.g. receipt scanning, OCR, or auto-coding) triggered at the moment of card use. No mention of receipt matching or AI-driven auto-coding of transactions. Missing for 10: receipt capture mechanism (photo/OCR ingestion), automatic categorization/coding logic, and any real-time trigger tied to card swipe.",
+    "rationale": "Airwallex's docs describe issuing cards and a Card Expenses API for retrieving approved expenses and marking them synced, but there is no evidence of automatic receipt capture (e.g., OCR, email/photo ingestion) or automatic coding to GL categories at the moment of card use — the story's core capability is unaddressed.",
     "evidenceIds": [
       "airwallex-docs-4",
-      "airwallex-docs-2"
+      "airwallex-docs-30"
     ]
   },
   {
@@ -343,10 +353,12 @@
     "storyId": "automatic-invoice-followup",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence only covers accounts-payable (Bills API for vendor invoices received) and payment/transfer infrastructure, with no mention of automated dunning, reminders, or chasing customers for overdue receivables. This axis is plausible for a finance platform but no supporting capability is documented.",
+    "confidence": "medium",
+    "rationale": "Airwallex's docs cover Bills API for accounts payable (paying vendor invoices), webhooks, transfers, and card expense management, but there is no evidence of an accounts-receivable/invoicing feature that automatically detects overdue customer invoices and sends automated reminder/chase communications. The axis is plausible for a business financial platform, but no capability for automated dunning or invoice chasing is documented.",
     "evidenceIds": [
-      "airwallex-docs-5"
+      "airwallex-docs-5",
+      "airwallex-docs-30",
+      "airwallex-docs-9"
     ]
   },
   {
@@ -355,13 +367,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex explicitly supports batch/bulk operations, notably Batch Transfers for creating multiple payouts to multiple beneficiaries across currencies/countries in one operation, plus APIs for cards, bills, and accounts that can be scripted for bulk use via SDKs/CLI/AgentOS. missing for 10: no explicit bulk endpoints for card issuance or connected-account creation, and no independent/hands-on benchmark of bulk throughput or limits.",
+    "rationale": "Airwallex explicitly supports bulk operations via its Batch Transfers API (create multiple transfers to multiple beneficiaries/countries/currencies at once for payroll/supplier runs), plus programmatic account creation at scale, card issuing at scale, and API/CLI/SDK access enabling automation of many items programmatically. missing for 10: no explicit documentation of bulk operations for other resource types (e.g., bulk card issuance or bulk expense retrieval) beyond transfers, and no independent/hands-on corroboration of batch limits or performance at scale.",
     "evidenceIds": [
       "airwallex-docs-7",
       "airwallex-docs-19",
-      "airwallex-docs-6",
-      "airwallex-docs-10",
-      "airwallex-docs-13"
+      "airwallex-docs-2",
+      "airwallex-docs-1",
+      "airwallex-docs-11",
+      "airwallex-docs-10"
     ]
   },
   {
@@ -369,11 +382,14 @@
     "storyId": "automation-rules-engine",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Airwallex offers webhooks for real-time event notifications and card authorization controls that let users specify rules for card usage, which together provide primitives for reactive automation, but there is no documented no-code/rules-engine feature that lets a user directly define 'if event X then action Y' automation without building custom integration logic. Missing for 10: an explicit rules/automation engine, examples of rule-triggered actions beyond card authorization, and evidence of end-to-end automated workflows tied to webhook events.",
+    "confidence": "medium",
+    "rationale": "Airwallex webhooks (docs-9, docs-26) push real-time event notifications, and authorization controls (docs-3) let you define card-usage rules, but there is no documented native rules/automation engine that lets a user declare 'on event X, automatically do Y' end-to-end — actions still require custom code consuming the webhook payload. AgentOS (docs-13, docs-28) lets an agent act on the account but is agent-driven, not a declarative rule trigger system.  missing for 10: a built-in workflow/rules engine binding events to automated actions, documentation of conditional logic beyond card authorization controls, evidence of no-code rule builder.",
     "evidenceIds": [
       "airwallex-docs-9",
-      "airwallex-docs-3"
+      "airwallex-docs-26",
+      "airwallex-docs-3",
+      "airwallex-docs-13",
+      "airwallex-docs-28"
     ]
   },
   {
@@ -382,7 +398,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Airwallex offers APIs, webhooks, batch transfers, and even an AgentOS toolkit for AI agents, but there is no evidence of scheduling, cron-like, or recurring job/workflow orchestration capability anywhere in the docs pack. Payments like transfers or batch transfers appear one-off/triggered, not recurring-scheduled.",
+    "rationale": "Airwallex provides APIs, webhooks, batch transfers, and an AI agent toolkit, but there is no evidence of a scheduling mechanism for recurring jobs or workflows (e.g., cron-like triggers, scheduled payments/transfers, or workflow automation with recurring execution).",
     "evidenceIds": []
   },
   {
@@ -391,7 +407,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Airwallex is a financial platform with APIs, CLI, and AI agent toolkit, but there is no evidence of any versioning, review, or rollback mechanism for automations/workflows built on the platform (e.g., no audit trail of automation changes, no diffing, no rollback of API-driven workflows). Nothing in the evidence pack addresses automation lifecycle management.",
+    "rationale": "No evidence of any versioning, review/audit trail, or rollback capability for automations, workflows, or AI agent actions—AgentOS and CLI docs describe execution and API scoping but nothing about version history or rollback of automations.",
     "evidenceIds": []
   },
   {
@@ -411,13 +427,13 @@
     "productId": "airwallex",
     "storyId": "bill-pay-approval-workflow",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Airwallex's Bills API supports creating and managing vendor invoices, and Transfers/Batch Transfers can pay vendors, but the evidence only shows bill creation/management via API with no documented approval-workflow feature (multi-step sign-off, approval routing/thresholds) tying bill upload to a payment gate. missing for 10: explicit approval workflow/routing configuration, UI for finance-lead to upload bills and route for approval, evidence of approval status blocking payment execution.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Airwallex has a Bills API to create and manage vendor invoices and an accounts-payable/spend module, but the evidence describes API-level bill creation and general 'control, automate, reconcile' spend management rather than a documented UI-based bill upload feature or explicit multi-step approval workflow before payment. Missing for 10: explicit approval-workflow/approver-chain documentation, bill upload (e.g. OCR/document capture) evidence, and independent/hands-on confirmation of the end-to-end flow.",
     "evidenceIds": [
       "airwallex-docs-5",
-      "airwallex-docs-6",
-      "airwallex-docs-7"
+      "airwallex-docs-30",
+      "airwallex-docs-6"
     ]
   },
   {
@@ -426,11 +442,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Airwallex offers card issuing with authorization/spend controls (docs-3, docs-20) that could be applied per department/program card, and marketing mentions 'Spend Controls' on corporate cards, but there is no explicit documentation of budget-level constructs (e.g., department/program budget objects) with automatic enforcement across multiple cards or spend categories. missing for 10: explicit budget-object API/UI, hierarchical department/program budget enforcement, alerts on budget overrun, independent verification of spend-limit enforcement in practice.",
+    "rationale": "Airwallex offers authorization controls to set rules on how/where issued cards can be used, and marketing mentions 'Spend Controls' for corporate cards, plus a broader Spend module for controlling company spend across expenses and payables. However, there's no explicit documentation of department/program-level budget allocation with automatic enforcement of spend limits (vs. per-card authorization rules) — missing for 10: explicit department/program budget-setting feature, documented automatic limit enforcement tied to org hierarchy, and independent/hands-on confirmation of this specific budgeting workflow.",
     "evidenceIds": [
       "airwallex-docs-3",
       "airwallex-docs-20",
-      "airwallex-docs-24"
+      "airwallex-docs-30",
+      "airwallex-docs-2"
     ]
   },
   {
@@ -439,12 +456,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex issuing docs explicitly cover multi-currency card issuance with authorization controls that let admins set rules on how/where cards can be used, plus marketing pages advertise spend controls for corporate cards. This directly supports per-card spend limits and granular employee-level controls. Missing for 10: no independent/hands-on corroboration of the granularity (e.g., per-employee limit UI walkthrough) beyond docs and marketing copy.",
+    "rationale": "Airwallex documents authorization controls to specify rules on how/where issued cards may be used, plus a dedicated Spend product with card expense tracking, and marketing materials explicitly tout 'Spend Controls' for corporate cards, together covering per-card limits and granular employee-level controls. Missing for 10: no independent/hands-on corroboration of the granularity (e.g., per-employee limit UI walkthrough) beyond docs and marketing copy.",
     "evidenceIds": [
       "airwallex-docs-3",
       "airwallex-docs-2",
       "airwallex-docs-20",
-      "airwallex-docs-24"
+      "airwallex-docs-30",
+      "airwallex-docs-4"
     ]
   },
   {
@@ -453,17 +471,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Airwallex documentation covers a consolidated set of financial capabilities founders would otherwise need separate tools for: multi-currency cards and spend controls (issuing, authorization controls), bill pay/accounts payable (Bills API, card expenses sync to ERP), banking (global accounts, multi-currency wallets, receiving funds in 60+ markets), and payouts/FX (transfers, batch transfers, transactional FX) all under one platform with unified APIs and a business account. Missing for 10: independent/third-party case studies or reviews confirming founders actually consolidated multiple vendors onto Airwallex, and clearer proof of a single unified dashboard experience across all these modules rather than separate API surfaces.",
+    "rationale": "Airwallex documents a single platform spanning global business accounts/banking, multi-currency card issuing with spend controls, bill pay/accounts payable, expense management, transfers/batch payouts, and FX conversion, matching the founder's consolidation story. missing for 10: independent/hands-on customer evidence confirming actual replacement of multiple point solutions, and pricing/feature-parity comparison versus specialized tools.",
     "evidenceIds": [
       "airwallex-docs-2",
-      "airwallex-docs-3",
       "airwallex-docs-4",
       "airwallex-docs-5",
       "airwallex-docs-6",
       "airwallex-docs-16",
-      "airwallex-docs-17",
+      "airwallex-docs-20",
       "airwallex-docs-21",
-      "airwallex-docs-24"
+      "airwallex-docs-30",
+      "airwallex-docs-31"
     ]
   },
   {
@@ -472,10 +490,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Airwallex exposes dedicated APIs directly relevant to accounting workflows — the Card Expenses API for retrieving/syncing approved expenses into ERP/accounting systems and the Bills API for creating/managing vendor invoices (accounts payable) — which developers can use to view and manage accounting-adjacent data. However, there is no evidence of a broader, dedicated 'accounting' API covering ledger entries, chart of accounts, or full reconciliation beyond these spend-management endpoints. Missing for 10: evidence of a comprehensive accounting/ledger API, general ledger sync details, or third-party accounting software integration confirmation beyond bills/expenses.",
+    "rationale": "Airwallex provides dedicated APIs directly relevant to accounting data — the Card Expenses API for retrieving/syncing approved expenses into ERP/accounting systems, and the Bills API for managing vendor invoices/accounts payable — plus a broader Spend module for reconciling global company spend. However, there is no evidence of a single unified 'accounting' API/object model (e.g., ledger entries, chart of accounts, journal entries) beyond expenses and bills. missing for 10: evidence of a general ledger/chart-of-accounts API, independent developer corroboration of the accounting APIs working end-to-end.",
     "evidenceIds": [
       "airwallex-docs-4",
-      "airwallex-docs-5"
+      "airwallex-docs-5",
+      "airwallex-docs-30"
     ]
   },
   {
@@ -483,8 +502,8 @@
     "storyId": "earn-yield-on-balances",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers multi-currency accounts, cards, payouts, FX, and developer tools, but contains no mention of interest-bearing accounts, yield products, or any mechanism to earn returns on idle cash balances within Airwallex. missing for 10: any yield/interest feature, APY details, or treasury-yield product documentation.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention yield, interest, or return on operating cash balances held in Airwallex accounts; coverage is limited to multi-currency holding, FX, cards, transfers, and developer tools. This is a fair axis for a business-account/treasury product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -493,13 +512,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Airwallex explicitly offers Banking-as-a-Service with programmatic creation of connected accounts with local bank details in 60+ markets, multi-currency wallets, and issuing capabilities that developers can embed for their own customers without needing their own banking license — Airwallex holds the regulatory licenses underneath. This directly matches the embedded banking story. Missing for 10: independent/hands-on case studies confirming real-world embedded deployments, and explicit clarification of licensing/liability allocation between Airwallex and the developer.",
+    "rationale": "Airwallex's Banking-as-a-Service and connected accounts APIs let developers programmatically create accounts (with local bank details in 60+ markets) and onboard customers/businesses/individuals for embedded banking capabilities, without the developer needing their own banking license. Missing for 10: explicit legal/regulatory framing of license coverage and independent third-party case studies confirming end-to-end embedded banking deployments.",
     "evidenceIds": [
+      "airwallex-docs-1",
       "airwallex-docs-16",
       "airwallex-docs-23",
-      "airwallex-docs-1",
       "airwallex-docs-17",
-      "airwallex-docs-18"
+      "airwallex-docs-25"
     ]
   },
   {
@@ -508,7 +527,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Airwallex's docs describe international Transfers, Batch Transfers, and FX conversion capabilities, but none of the evidence makes any claim about transfer speed or an under-a-minute arrival time for cross-border payments. Webhooks are 'instant' but that refers to event notifications, not fund delivery. missing for 10: any documentation or claim about transfer speed/SLA, evidence of near-instant settlement times, or corridor-specific speed guarantees.",
+    "rationale": "Evidence shows Airwallex Transfers, batch transfers, and FX conversion capabilities for international payouts, but nothing documents actual settlement speed (e.g., 'under a minute') for cross-border transfers — transfer times typically depend on rails/currency and are not addressed in the pack.",
     "evidenceIds": [
       "airwallex-docs-6",
       "airwallex-docs-7",
@@ -521,11 +540,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Marketing copy claims a business account can be opened \"in minutes\" and docs show broad self-serve API/product capabilities (accounts, cards, transfers, FX), suggesting fast technical onboarding, but there is no evidence of the full KYC/banking-license onboarding timeline, compliance review process, or a documented end-to-end 'week vs months' onboarding journey for founders switching from another bank. missing for 10: concrete onboarding timeline/process documentation, compliance/KYC turnaround evidence, independent founder testimonials confirming week-long full onboarding.",
+    "rationale": "Marketing copy claims a business account can be opened 'in minutes' and docs show APIs to programmatically create/onboard accounts, but there's no evidence detailing full end-to-end onboarding timeline (KYC/compliance verification, banking setup, migration from existing bank) that would substantiate a ~1 week full onboarding versus months elsewhere. missing for 10: independent/hands-on account of full onboarding timeline, evidence covering KYC/compliance approval speed, case studies of founders switching banks in ~1 week.",
     "evidenceIds": [
       "airwallex-docs-21",
-      "airwallex-docs-1",
-      "airwallex-docs-17"
+      "airwallex-docs-32",
+      "airwallex-docs-25",
+      "airwallex-docs-1"
     ]
   },
   {
@@ -534,7 +554,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of automatic sweep of deposits across partner banks for expanded FDIC coverage; Airwallex docs describe multi-currency wallets, global accounts, and transfers but nothing about deposit sweep programs or FDIC insurance maximization.",
+    "rationale": "No evidence anywhere in the pack mentions FDIC insurance, deposit sweep programs, or multi-bank sweep networks; Airwallex's docs focus on global accounts, transfers, FX, cards, and spend management rather than deposit-insurance sweep mechanics. This is a fair capability to expect from a business banking/fintech platform, so absence of evidence means 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -557,20 +577,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Airwallex documents card issuing and authorization controls (spend rules), but no evidence pack item mentions freezing/blocking a lost or stolen card or ordering a replacement card, which is the specific capability the story requires.",
-    "evidenceIds": []
+    "rationale": "Airwallex documents card issuing and general authorization controls (docs-2, docs-3, docs-24) but no evidence pack item mentions freezing/locking a lost card or ordering a replacement card, which is the specific finance-lead action requested. missing for 10: explicit freeze/lock card API or UI action, replacement card ordering workflow.",
+    "evidenceIds": [
+      "airwallex-docs-2",
+      "airwallex-docs-3",
+      "airwallex-docs-24"
+    ]
   },
   {
     "productId": "airwallex",
     "storyId": "gl-sync-erp",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence shows Card Expenses API and Bills API allow manual/API-based ingestion and marking as 'synced' into an ERP, plus webhooks for event notifications, but there is no documented native, bidirectional, real-time ERP sync (e.g., QuickBooks/Xero/NetSuite connector) that eliminates manual journal entries. missing for 10: named ERP integrations/connectors, evidence of automatic two-way sync of journal entries, and confirmation that reconciliation doesn't require manual matching.",
+    "rationale": "Airwallex exposes a Card Expenses API to retrieve approved expenses and mark them 'synced' after ingestion into an ERP, a Bills API for accounts-payable, and real-time webhooks for event notifications — these are building blocks a developer could use to construct an ERP sync. However, there is no evidence of a native, pre-built bidirectional integration with named ERP systems (e.g., NetSuit, SAP, Xero) or automatic two-way journal-entry reconciliation; it requires custom engineering rather than out-of-box sync. Missing for 10: named ERP connector/integration docs, evidence of pull-back sync from ERP to Airwallex, and confirmation of automated bidirectional journal entries eliminating manual work.",
     "evidenceIds": [
       "airwallex-docs-4",
       "airwallex-docs-5",
-      "airwallex-docs-9"
+      "airwallex-docs-9",
+      "airwallex-docs-30"
     ]
   },
   {
@@ -579,7 +604,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a high-yield savings sub-account or interest-bearing product, nor of automated transfer/sweep rules for building cash reserves; the docs cover multi-currency wallets, transfers, cards, and FX conversion but nothing about yield-bearing balances or automated cushion-building rules.",
+    "rationale": "The evidence pack covers multi-currency wallets, transfers, batch transfers, cards, and FX conversion, but nowhere mentions a high-yield savings sub-account, interest/yield feature, or automated rule-based transfer/sweep functionality for building a cash cushion. This is a plausible axis for a business financial platform, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -603,10 +628,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Airwallex's accounts payable (Bills API for vendor invoices), transfers, cards, and banking-as-a-service, but nothing addresses creating or sending outbound branded invoices to customers with embedded payment collection — Airwallex's invoicing evidence (Bills API) is for receiving/managing vendor bills, not issuing invoices to customers.",
-    "evidenceIds": [
-      "airwallex-docs-5"
-    ]
+    "rationale": "Evidence covers accounts payable (Bills API for vendor invoices), transfers, cards, and FX, but there is no mention of accounts receivable invoicing—no branded invoice creation/customization or payment collection links for customers. This is an accounts-payable-focused toolset, not an invoicing/payment-collection product for outgoing customer invoices.",
+    "evidenceIds": []
   },
   {
     "productId": "airwallex",
@@ -614,23 +637,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Airwallex's transactional FX docs explicitly describe getting 'a guaranteed rate with a validity period' as an alternative to the live market rate, directly matching the ability to lock a rate for a fixed window before completing a transfer. Missing for 10: independent/hands-on confirmation of the exact lock duration options and UI flow for finance-lead users beyond the docs description.",
+    "rationale": "Airwallex's Transactional FX docs explicitly state users can get 'a guaranteed rate with a validity period' as an alternative to market rate at point of conversion, directly matching the ability to lock a rate for a fixed window before completing a transfer, and it ties into interbank FX risk management for programmatic use. Missing for 10: independent/hands-on confirmation of the exact lock duration options and UI flow for finance-lead users outside API docs.",
     "evidenceIds": [
-      "airwallex-docs-8"
+      "airwallex-docs-8",
+      "airwallex-docs-31"
     ]
   },
   {
     "productId": "airwallex",
     "storyId": "multi-currency-account-creation",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex documents Global/Wallet accounts holding funds in 20 currencies with interbank rate conversion, plus multi-currency Visa cards usable in 140+ currencies, directly enabling a founder to hold and manage multi-currency balances from one account. Missing for 10: independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Airwallex docs explicitly describe holding funds in 20 currencies via a single Wallet/Global Accounts setup, multi-currency Visa cards usable in 140+ currencies, and FX conversion at interbank rates, all managed from one account. Missing for 10: independent/hands-on corroboration beyond vendor docs and specifics on per-currency balance limits or UI walkthrough.",
     "evidenceIds": [
       "airwallex-docs-16",
       "airwallex-docs-18",
       "airwallex-docs-24",
-      "airwallex-docs-8"
+      "airwallex-docs-31",
+      "airwallex-docs-17"
     ]
   },
   {
@@ -639,10 +664,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows multi-currency holding, conversion, cards, and transfers, but no mention of interest or yield being paid on held balances anywhere in the docs pack. Missing for 10: any mention of interest rates, yield programs, or interest-bearing accounts.",
+    "rationale": "Evidence covers multi-currency holding, conversion, cards, payouts, and FX rates, but nothing mentions interest or yield being earned on held balances — the closest is holding funds in 20 currencies at interbank conversion rates, which is not interest income.",
     "evidenceIds": [
       "airwallex-docs-16",
-      "airwallex-docs-18"
+      "airwallex-docs-31"
     ]
   },
   {
@@ -651,12 +676,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Airwallex documents Global Accounts / Banking-as-a-Service letting businesses hold and receive funds across many currencies and markets, which covers opening multiple account-like structures, but there is no documented feature for automatically allocating/splitting incoming deposits across sub-accounts. missing for 10: explicit sub-account creation workflow, auto-allocation/rules engine for incoming deposits, reconciliation across sub-accounts.",
+    "rationale": "Airwallex supports opening multiple Global Accounts/currency wallets and programmatically creating accounts for customers (docs-17, docs-18, docs-23, docs-25), which covers the 'multiple sub-accounts' part, but there is no evidence of a rules-based auto-allocation engine that splits or routes incoming deposits across those accounts automatically. missing for 10: explicit auto-allocation/rules feature for incoming deposits, documentation of allocation logic or triggers, finance-lead-specific tooling for split deposits.",
     "evidenceIds": [
-      "airwallex-docs-16",
       "airwallex-docs-17",
       "airwallex-docs-18",
-      "airwallex-docs-23"
+      "airwallex-docs-23",
+      "airwallex-docs-25"
     ]
   },
   {
@@ -665,9 +690,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Marketing page claims '2% Cashback, Spend Controls & No FX Fees' for corporate cards, indicating cashback exists on card spend, but there is no documentation describing how cashback is applied, whether it is automatic, or that no redemption steps are required. missing for 10: technical docs on cashback accrual/crediting mechanism, confirmation of no manual redemption, independent user corroboration.",
+    "rationale": "The marketing page claims '2% Cashback' on corporate cards with no FX fees, but there is no documentation of automatic redemption mechanics, how/when cashback is credited, or any API/dashboard evidence of a hands-off crediting process. missing for 10: docs on cashback accrual/redemption automation, evidence it requires no manual claim step, independent confirmation of the cashback program terms.",
     "evidenceIds": [
-      "airwallex-docs-20"
+      "airwallex-docs-20",
+      "airwallex-docs-24"
     ]
   },
   {
@@ -675,8 +701,8 @@
     "storyId": "one-click-payment-approval",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers transfers, batch transfers, card issuing, authorization controls, and API/SDK/developer tooling, but nothing documents role-based approval permissions or a one-click approve-and-send workflow for teammates. Missing for 10: any mention of approval workflows, permission roles/tiers for teammates, or a one-click approve-and-send payment feature.",
+    "confidence": "medium",
+    "rationale": "Evidence covers API-level access controls (scoped API keys), card authorization rules, transfers, and expense/bill management, but there is no mention of a UI feature for setting up approval workflows/permissions for teammates to approve and one-click send payments — no role-based approval chains or 'one-click approve and send' functionality is documented.",
     "evidenceIds": []
   },
   {
@@ -685,14 +711,16 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Airwallex exposes extensive API coverage (accounts, cards, transfers, FX, batch payouts, bills/expenses, webhooks, scoped keys, sandbox) plus CLI, SDKs, AI developer connectors, and AgentOS for agent-driven actions, indicating a strong API-first design mirroring most UI functions. However, there's no explicit evidence confirming full parity across every UI feature (e.g., account onboarding flows, dashboard-only settings, some card program management UI elements), so full equivalence isn't independently verified. Missing for 10: explicit parity statement or audit comparing API vs UI feature coverage, independent confirmation of no UI-only features.",
+    "rationale": "Airwallex exposes an extensive API/SDK surface covering accounts, cards, transfers, FX, expenses, bills, batch payments, webhooks, and scoped API keys, plus a CLI and AgentOS toolkit explicitly designed for AI agents to act on production accounts (reading balances, creating beneficiaries, issuing cards, cashflow reports), suggesting broad UI/API parity. However, the evidence doesn't explicitly confirm 1:1 parity for every UI action (e.g., account onboarding/KYC flows, dashboard-only settings) or provide independent confirmation that no UI feature lacks an API equivalent. Missing for 10: explicit statement or audit of full UI-API parity, independent verification of edge-case UI features not exposed via API.",
     "evidenceIds": [
-      "airwallex-docs-1",
       "airwallex-docs-6",
       "airwallex-docs-7",
+      "airwallex-docs-9",
       "airwallex-docs-11",
       "airwallex-docs-13",
       "airwallex-docs-15",
+      "airwallex-docs-22",
+      "airwallex-docs-27",
       "airwallex-probe-3",
       "airwallex-probe-4"
     ]
@@ -703,7 +731,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Airwallex is a financial platform; evidence shows APIs for retrieving transaction, card, and account data (e.g., card expenses, transfers) but no documented bulk data-export or account-portability feature allowing a user to export all their data in open formats and leave. No mention of GDPR-style data export, account closure data dump, or open-format full-data export.",
+    "rationale": "Airwallex is a financial platform with APIs for accounts, cards, transfers, etc., but there is no evidence of a bulk data export feature in open/portable formats enabling a user to fully export their account data and leave (e.g., no GDPR-style data export or account closure/export tool documented). APIs to read individual resources (transactions, expenses) exist but do not constitute a documented full-data-export capability.",
     "evidenceIds": []
   },
   {
@@ -712,7 +740,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Airwallex is a closed proprietary financial platform/API service, not an open-source project; the story about reading source code under an open license is a category error for this product type—there is no source code to license or read.",
+    "rationale": "Airwallex is a closed-source fintech SaaS platform; open-sourcing its source code under an open license is not a plausible axis for this kind of product, unlike an SDK's client code being open source. No evidence pack item suggests source code availability, and this is a category mismatch rather than a gap.",
     "evidenceIds": []
   },
   {
@@ -721,7 +749,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Airwallex is a regulated financial/payments SaaS platform; self-hosting the core product is a category error since it inherently requires Airwallex's licensed infrastructure and regulatory compliance, not something a customer could run themselves.",
+    "rationale": "Airwallex is a regulated financial infrastructure SaaS platform (payments, cards, banking-as-a-service); self-hosting the core product is not a coherent concept for this category of product, unlike self-hostable software tools.",
     "evidenceIds": []
   },
   {
@@ -742,13 +770,14 @@
     "productId": "airwallex",
     "storyId": "po-matched-invoice-automation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Airwallex's Bills API supports creating/managing vendor invoices and the Card Expenses API supports syncing to ERP/accounting systems, but there is no evidence of automatic purchase-order matching, invoice coding, or approval routing logic. AgentOS is mentioned as a toolkit for AI agents acting on the account (balances, beneficiaries, cashflow reports) but not specifically for PO-matching/invoice coding workflows. missing for 10: purchase-order matching logic, invoice coding/GL categorization, automated approval routing/workflow evidence.",
+    "rationale": "Airwallex's Bills API supports creating/managing vendor invoices and the Spend overview mentions automating and reconciling accounts payable, and AgentOS offers a toolkit for AI agents to act on the account, but there is no explicit documentation of purchase-order matching, GL coding, or approval-routing workflows. missing for 10: purchase-order matching logic, invoice coding to GL accounts, automated approval-routing workflow documentation.",
     "evidenceIds": [
       "airwallex-docs-5",
-      "airwallex-docs-4",
-      "airwallex-docs-13"
+      "airwallex-docs-30",
+      "airwallex-docs-13",
+      "airwallex-docs-28"
     ]
   },
   {
@@ -757,7 +786,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data residency, regional data storage options, or region selection controls for AI-native users; Airwallex's docs cover payments, cards, transfers, and AI agent tooling but not data residency configuration. Missing for 10: any mention of data region/residency settings, storage location choices, or compliance documentation addressing where data is stored.",
+    "rationale": "No evidence in the pack addresses data residency or regional data storage choice; the docs cover payments, cards, FX, SDKs, and AI agent tooling but never mention data-location controls. This is a fair question for a global fintech platform handling sensitive financial data, so absence of evidence means 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -775,7 +804,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Airwallex's evidence pack covers financial APIs, cards, transfers, SDKs, CLI, and AI agent tooling, but no documentation addresses data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users. Missing for 10: any data retention policy docs, data deletion/export controls, retention configuration APIs, privacy compliance documentation (e.g., GDPR data subject rights).",
+    "rationale": "Airwallex is a financial platform whose evidence covers payments, cards, APIs, and AI agent tooling, but no documentation addresses data retention policies, deletion controls, or user-configurable data lifecycle settings — an applicable but unaddressed axis for a fintech platform handling customer/business data. Missing for 10: any data retention policy docs, data deletion/export APIs, or privacy-control settings documentation.",
     "evidenceIds": []
   },
   {
@@ -783,8 +812,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out for AI tooling or SDKs; the documentation focuses on financial APIs, cards, transfers, and AI agent connectors with no privacy/telemetry controls mentioned. Missing for 10: any mention of telemetry collection, data usage tracking, or an opt-out mechanism.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or opt-out controls for AI agent tools like AgentOS or the CLI; the docs focus on financial APIs and developer tooling with no privacy-posture disclosures.",
     "evidenceIds": []
   },
   {
@@ -793,9 +822,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers card issuing, expense retrieval via API, and syncing to ERP/accounting systems, but nothing describes a receipt-capture mechanism (email forwarding or upload) or automatic matching to transactions. Missing for 10: any documentation of receipt email/upload ingestion, OCR/matching logic, or UI for receipt attachment.",
+    "rationale": "Evidence shows Card Expenses API for retrieving and syncing approved expenses into ERP/accounting systems, but there is no mention of receipt capture via email or upload, or automatic matching of receipts to transactions.",
     "evidenceIds": [
-      "airwallex-docs-4"
+      "airwallex-docs-4",
+      "airwallex-docs-30"
     ]
   },
   {
@@ -804,7 +834,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Airwallex's Global Accounts feature explicitly lets founders receive bank transfers via local payment methods (and SWIFT) with local account details across 60+ markets and hold/convert 20+ currencies, directly matching the story. missing for 10: independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Docs explicitly describe Global Accounts letting founders receive bank transfers via local payment methods and SWIFT, with local bank details in 60+ markets and multiple currencies, plus the ability to hold funds in 20 currencies — directly matching the story. Missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "airwallex-docs-17",
       "airwallex-docs-18",
@@ -818,21 +848,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows card authorization/spend controls exist as API-level rules (docs-3, docs-20) but nothing describes a self-service screen where a finance-lead can request a transaction limit increase; this is an API/developer-configured control, not a documented self-service UI workflow for limit-increase requests.",
+    "rationale": "Evidence shows card authorization controls (spend rules) and card issuing APIs, but there is no mention of a self-service screen or workflow specifically for a finance-lead to request/approve a transaction limit increase.",
     "evidenceIds": [
       "airwallex-docs-3",
+      "airwallex-docs-2",
       "airwallex-docs-20"
     ]
   },
   {
     "productId": "airwallex",
     "storyId": "role-based-permissions",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence shows API-key-level scoping (read/write permissions per resource) via scoped API keys, which is a form of granular permissioning, but there is no evidence of a user-facing role-based access control system covering team members, locations, or departments. missing for 10: dashboard user roles/permissions UI, location/department-based access controls, team member management documentation.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence covers scoped API keys (developer-level Read/Write permissions) and card authorization/spend controls, but nothing describes human user role management across team members, locations, or departments for a finance lead. Missing for 10: team member RBAC, location/department-based permission scoping, admin console role management documentation.",
     "evidenceIds": [
-      "airwallex-docs-15"
+      "airwallex-docs-15",
+      "airwallex-docs-29",
+      "airwallex-docs-3"
     ]
   },
   {
@@ -841,7 +874,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Airwallex's Transfers and Batch Transfers APIs explicitly support moving funds to suppliers/vendors across countries and currencies, including bulk supplier payments, with Bills API for vendor invoice management; this covers wire/international transfers and bulk vendor payouts. Missing for 10: explicit mention of US domestic ACH rails specifically (vs SWIFT/local transfers generically) and independent/hands-on verification of ACH support.",
+    "rationale": "Airwallex Transfers and Batch Transfers docs explicitly support moving funds to suppliers/vendors and bank accounts, including bulk supplier payments and reconciliation, plus Bills API for vendor invoices — covering domestic AP payment workflows. Missing for 10: explicit mention of ACH/wire as named payment rails (docs describe generic 'bank transfers' and 'local payment methods' without specifying ACH vs wire) and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "airwallex-docs-6",
       "airwallex-docs-7",
@@ -856,14 +889,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Airwallex Transfers and Batch Transfers support sending funds globally to suppliers, employees, and beneficiaries in multiple currencies, with Transactional FX offering either best market rate or guaranteed rate for transparency, plus no international transaction/FX fees on cards. Docs cover global accounts, batch payroll/supplier payments, and rate guarantees, giving a strong end-to-end story for a finance lead. missing for 10: independent/third-party corroboration of actual fee transparency in practice, and explicit fee-schedule documentation beyond marketing claims.",
+    "rationale": "Airwallex documents international Transfers and Batch Transfers to suppliers/employees/beneficiaries across countries and currencies, backed by interbank FX rates and transparent/guaranteed conversion rates, plus multi-currency global accounts and no-FX-fee cards — directly matching the finance-lead story of sending international payments in local currencies with transparent fees. Missing for 10: no independent/third-party fee-transparency audit or customer testimonial confirming real-world fee clarity beyond vendor docs.",
     "evidenceIds": [
       "airwallex-docs-6",
       "airwallex-docs-7",
       "airwallex-docs-8",
       "airwallex-docs-19",
-      "airwallex-docs-24",
-      "airwallex-docs-16"
+      "airwallex-docs-31",
+      "airwallex-docs-16",
+      "airwallex-docs-24"
     ]
   },
   {
@@ -872,7 +906,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers transfer creation, batch transfers, and FX conversion rates, but nothing in the pack mentions delivery time estimates, ETA fields, or expected arrival dates for ACH/wire transfers shown before confirmation. Missing for 10: any documentation of a delivery estimate/ETA field in the transfer creation API or UI, and any evidence of pre-confirmation timing disclosure.",
+    "rationale": "The evidence covers transfers, batch transfers, and FX conversion rate guarantees, but nowhere mentions delivery time estimates or ETAs for ACH/wire transfers being shown before confirmation. No documentation references transfer speed, cut-off times, or estimated arrival dates.",
     "evidenceIds": [
       "airwallex-docs-6",
       "airwallex-docs-7",
@@ -885,7 +919,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers APIs for transfers, cards, bills, and expenses, but there is no mention of a universal search bar or unified UI search feature spanning transactions, vendors, and cards that lets a finance-lead jump into initiating a payment. Missing for 10: any documentation of a search UI, cross-entity search functionality, or search-to-action workflow in the dashboard.",
+    "rationale": "Evidence covers APIs for transfers, cards, bills, expenses, and FX, but there is no mention of a universal search bar or unified search UI across transactions/vendors/cards that lets a finance lead jump into initiating a payment; the docs describe individual API endpoints and dashboard features, not a cross-entity search experience.",
     "evidenceIds": []
   },
   {
@@ -4865,7 +4899,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Relay's docs explicitly describe receipt capture, real-time categorization, and automatic syncing to accounting software (relay-docs-3), plus named integrations with QuickBooks Online and Xero for detailed transaction sync (relay-docs-19) and Plaid-based connections to apps like Expensify (relay-docs-20). Missing for 10: independent/hands-on verification of the accounting sync quality and no detail on reconciliation accuracy or setup friction reported by users.",
+    "rationale": "Relay documents automatic syncing of transactions/expenses into QuickBooks Online and Xero, plus receipt capture/categorization synced automatically, and Plaid connections to other money apps like Expensify — directly matching the finance-lead's story. Missing for 10: independent/hands-on verification of the accounting sync quality (community evidence covers banking UX/pricing but not the QBO/Xero integration itself), and detail on setup complexity or reconciliation accuracy.",
     "evidenceIds": [
       "relay-docs-3",
       "relay-docs-19",
@@ -4889,22 +4923,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions AI-generated insights, suggestions, forecasting, or any AI/ML-driven analysis within Relay; all listed features are manual banking, transfer, invoicing, and card-management tools. missing for 10: any mention of AI-powered insights, anomaly detection, spend suggestions, or predictive analytics, first-party or independent corroboration of such a feature.",
+    "rationale": "Relay is a business banking platform with automation rules and transfers, but no evidence anywhere in the pack of AI-generated insights, suggestions, or analysis derived from user data—no mention of AI/ML features, chatbots, or predictive recommendations.",
     "evidenceIds": []
   },
   {
     "productId": "relay",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Relay offers rule-based automations that run without manual intervention — auto-transfers on deposit, percentage/dollar-based multi-account splits, multi-step approval rules, and recurring invoices (relay-docs-1, relay-docs-6, relay-docs-15, relay-docs-17, relay-docs-18) — which qualifies as background automation. However this is traditional banking rule automation, not AI/agent-driven decisioning, and community evidence notes manual execution is still required for many external payments (relay-comm-1). Missing for 10: any AI/LLM-based autonomous decision-making, agent-triggered actions, or evidence of automations beyond simple scheduled/rule-based transfers.",
+    "rationale": "Relay offers rule-based background automations (auto-transfer rules, recurring invoices, auto-categorization/sync, approval workflows) that run without manual triggering, which satisfies the 'runs autonomously in background' part of the story, but there is no evidence of AI-driven decision-making or agent-like behavior — these are simple conditional rules, not AI-native automations. Community feedback also notes that some processes (e.g., external payments) still require manual execution despite the automated partitioning. Missing for 10: AI/LLM-driven automation logic, evidence of adaptive or context-aware agentic behavior, and confirmation that all background processes run without manual steps.",
     "evidenceIds": [
-      "relay-docs-1",
-      "relay-docs-6",
       "relay-docs-15",
       "relay-docs-17",
       "relay-docs-18",
+      "relay-docs-30",
       "relay-comm-1"
     ]
   },
@@ -4914,7 +4947,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform; no evidence suggests it offers or could plausibly ship a built-in AI assistant for task delegation—this is outside its core banking/finance-ops product category.",
+    "rationale": "Relay is a business banking platform, not an AI assistant/agent product; no evidence exists of a built-in AI assistant for delegating tasks, and this axis is a category error for a banking product.",
     "evidenceIds": []
   },
   {
@@ -4923,7 +4956,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer tool or agent; running it headlessly/in CI is a category mismatch with no evidence of any API/CLI/automation runtime for such use.",
+    "rationale": "Relay is a business banking platform, not a developer tool or agent framework; running headlessly/in CI is not a relevant capability for a banking product's category.",
     "evidenceIds": []
   },
   {
@@ -4932,7 +4965,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform; MCP tool-plugging is not a relevant axis for this product category, and no evidence suggests it exposes or consumes MCP servers.",
+    "rationale": "Relay is a business banking platform, not an AI agent or developer tool; there is no evidence of MCP server support or any AI tool-plugin ecosystem, and the concept is a category mismatch for this product type.",
     "evidenceIds": []
   },
   {
@@ -4963,7 +4996,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer tool or coding-related product; an official CLI for AI-native workflows is not a fair expectation for this product category.",
+    "rationale": "Relay is a business banking platform, not a developer tool or coding-related product; an official CLI for AI-native workflows is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -4972,17 +5005,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented public API for programmatic/agentic access; all evidence pertains to the banking product's manual UI features, integrations via Plaid/QuickBooks, and support docs, not an API for driving Relay programmatically. missing for 10: public API docs, authentication/reference, SDKs, or any mention of API endpoints.",
+    "rationale": "No evidence of a documented public API for Relay; all evidence relates to banking features, app/mobile usage, and support docs, with no mention of an API, SDK, or developer portal for programmatic/agentic access.",
     "evidenceIds": []
   },
   {
     "productId": "relay",
     "storyId": "agentic-scoped-keys",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer/agent tooling product; issuing scoped API credentials for AI agents is outside its category — this is a wrong-axis question, not a missing feature.",
-    "evidenceIds": []
+    "rationale": "Relay's evidence pack covers banking features (accounts, cards, invoices, bill pay, integrations via Plaid/QuickBooks) but contains no mention of an API, developer credentials, or any mechanism for issuing scoped/least-privilege access tokens for an AI agent. Role-based access mentioned (relay-docs-31) is for human team members/advisors, not programmatic agent credentials.",
+    "evidenceIds": [
+      "relay-docs-31"
+    ]
   },
   {
     "productId": "relay",
@@ -4999,7 +5034,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform; no evidence anywhere in the pack mentions webhooks, event subscriptions, or any API-based notification system for developers/agents. Missing for 10: any webhook documentation, event types, subscription/callback mechanism, or API reference.",
+    "rationale": "No evidence anywhere in the pack of webhooks, event subscriptions, or API-driven notifications; Relay is a business banking product with no documented agentic/event integration capability.",
     "evidenceIds": []
   },
   {
@@ -5008,7 +5043,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions AI-driven anomaly detection, fraud monitoring, or automated flagging of out-of-policy transactions; Relay's documented features are manual controls like spend limits, roles, and multi-step approval rules, not AI-based review triggers.",
+    "rationale": "No evidence of AI-driven anomaly detection or automated flagging of out-of-policy transactions for review; Relay's docs mention spend limits, roles, and multi-step approvals, but these are manual/rule-based controls, not AI-based monitoring.",
     "evidenceIds": []
   },
   {
@@ -5017,20 +5052,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows bill upload, delegation, and approval automation (relay-docs-4) but nothing about AI reading bill contents to extract payment details for review — no OCR/AI-parsing capability is documented anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "Relay's docs mention uploading bills, delegating tasks, and automating approvals (relay-docs-4, relay-docs-27), but there is no evidence of AI-based reading/extraction of bill data or auto-population of payment details for review — this appears to be manual bill entry and approval routing rather than AI-driven data capture.",
+    "evidenceIds": [
+      "relay-docs-4",
+      "relay-docs-27"
+    ]
   },
   {
     "productId": "relay",
     "storyId": "ai-books-close-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Relay offers rule-based automation (auto-transfers, categorization, sync to QuickBooks/Xero) but there is no evidence of AI-driven automation specifically aimed at closing the books faster—no mention of AI reconciliation, AI-assisted month-end close, or similar. missing for 10: any AI-specific book-closing automation, evidence of month-end close acceleration, AI-powered reconciliation or reporting features.",
+    "rationale": "Relay offers automation (auto-transfer rules, receipt capture/categorization, sync to QuickBooks/Xero) that speeds up bookkeeping tasks, but there's no evidence of AI-specific automations targeting the month-end 'close the books' workflow (e.g., automated reconciliation, AI-driven categorization, close checklists). missing for 10: explicit AI-driven closing/reconciliation features, month-end close workflow automation, evidence tying automation to faster book closing specifically.",
     "evidenceIds": [
       "relay-docs-3",
       "relay-docs-19",
-      "relay-docs-20"
+      "relay-docs-15",
+      "relay-docs-30"
     ]
   },
   {
@@ -5048,7 +5087,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform whose evidence shows expense categorization and syncing to QuickBooks/Xero, but no mention of AI-driven GL code assignment across entities or multi-entity close acceleration. Missing for 10: any AI-based GL coding feature, multi-entity support, or close-acceleration workflow.",
+    "rationale": "Relay is a business banking platform; evidence shows expense categorization and syncing transaction data to QuickBooks/Xero, but no mention of AI-driven GL code assignment across entities or automated close acceleration.",
     "evidenceIds": [
       "relay-docs-3",
       "relay-docs-19"
@@ -5060,7 +5099,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking/cards-spend platform, not a travel booking or price-monitoring service; monitoring and rebooking travel rates is entirely outside its product category.",
+    "rationale": "Relay is a business banking/cards platform; travel booking and price monitoring/rebooking is entirely outside its category — wrong axis, not a banking capability.",
     "evidenceIds": []
   },
   {
@@ -5069,7 +5108,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer platform or API product; an 'interactive API reference with runnable examples' is not a fair capability to expect from this kind of product. No evidence suggests Relay exposes a public API or developer docs of that nature.",
+    "rationale": "Relay is a business banking platform, not a developer/API product; an interactive API reference with runnable examples is a category error for this kind of product—no evidence suggests it exposes a public API for developer consumption.",
     "evidenceIds": []
   },
   {
@@ -5078,7 +5117,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an OpenAPI/Swagger spec or any machine-readable API documentation; evidence only covers banking features, support articles, and an llms.txt file (which is not an API spec).",
+    "rationale": "No evidence of any OpenAPI spec, API documentation, or developer API at all — Relay is a banking product with no mentioned API access for machine-readable spec download.",
     "evidenceIds": []
   },
   {
@@ -5087,7 +5126,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer/AI tool with a testable API or sandbox environment; no evidence pack items address sandbox/test environments for AI-native integration, and the concept of 'sandbox vs production data' is outside this product's category.",
+    "rationale": "Relay is a business banking platform, not an AI agent/developer tool; sandbox testing environments for AI-native workflows are not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -5096,7 +5135,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not a developer API/platform product; the evidence pack contains no mention of a public API at all, versioned or otherwise. Versioned APIs with deprecation policies is a software-platform axis that doesn't apply to a banking product's consumer-facing feature set.",
+    "rationale": "Relay is a business banking platform, not a developer API/agentic tool; the story about versioned APIs with a deprecation policy targets AI-native developer platforms, which is outside Relay's category.",
     "evidenceIds": []
   },
   {
@@ -5116,11 +5155,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay supports automated transfer rules between accounts by dollar amount or percentage (relay-docs-15) and cash-cushion/high-yield savings automation (relay-docs-6, relay-docs-24), corroborated by a community report of automatic money partitioning (relay-comm-1). However, there is no evidence of a specific 'low-balance alert' notification feature or threshold-triggered auto top-up logic. Missing for 10: explicit low-balance alert/notification capability, confirmation that transfers can be triggered by balance thresholds rather than just fixed schedules/percentages, independent verification of alerting reliability.",
+    "rationale": "Relay clearly supports automated cash movement between accounts (auto-transfer rules by dollar amount/percentage, cash-cushion automation into high-yield savings) confirmed by both docs and a community report that auto-partitioning works well in practice, but there is no evidence of low-balance alert functionality. missing for 10: explicit low-balance alert/notification feature, evidence of alert configuration or delivery.",
     "evidenceIds": [
-      "relay-docs-15",
       "relay-docs-6",
+      "relay-docs-15",
       "relay-docs-24",
+      "relay-docs-30",
       "relay-comm-1"
     ]
   },
@@ -5130,10 +5170,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Relay's own docs state it can 'Capture receipts, categorize expenses in real time, and sync everything to your accounting software automatically' (relay-docs-3), directly matching the story, but there's no detail on the actual capture mechanism (e.g., automatic prompt at time of swipe vs. manual photo upload) and no independent or hands-on corroboration of this specific feature working seamlessly. Missing for 10: independent/community validation of the receipt-capture flow, technical detail on how capture is triggered at point-of-sale, and any evidence it truly requires zero manual entry.",
+    "rationale": "Relay's docs mention capturing receipts and categorizing expenses in real time, syncing to accounting software, but there's no evidence of automatic capture tied to card-swipe events specifically, nor of AI-native/agentic receipt matching workflows. Missing for 10: evidence of automatic receipt capture triggered at point-of-sale/card-use moment, details on OCR/AI coding mechanism, and independent confirmation this works without manual entry.",
     "evidenceIds": [
       "relay-docs-3",
-      "relay-docs-2"
+      "relay-docs-19"
     ]
   },
   {
@@ -5141,8 +5181,8 @@
     "storyId": "automatic-invoice-followup",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Relay's own marketing states invoicing lets you 'request payments... and let Relay handle the follow-up' and supports recurring invoices, directly claiming automated dunning for overdue invoices. However there's no detail on how follow-up scheduling/reminders work, no support-doc walkthrough, and no independent/community corroboration that this feature works as described in practice. missing for 10: detailed documentation of follow-up cadence/rules, hands-on or community validation of automated chasing actually reducing manual work.",
+    "confidence": "medium",
+    "rationale": "Relay's docs explicitly state invoicing lets 'Relay handle the follow-up' and supports recurring invoices and payment collection, suggesting some automated dunning/reminder capability for overdue invoices. However, there is no detail on how follow-up is configured (reminder cadence, overdue triggers) and no independent/community corroboration of this specific feature working well. Missing for 10: documented overdue-reminder configuration/settings, evidence of effectiveness, and third-party confirmation.",
     "evidenceIds": [
       "relay-docs-5",
       "relay-docs-11",
@@ -5153,15 +5193,15 @@
     "productId": "relay",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Relay offers some bulk-style automation — auto-transferring funds across up to 20 accounts, issuing up to 50 cards, multi-step approval rules, and bulk vendor bill uploads — but these are manual UI-driven configurations rather than a programmatic/bulk-API interface an AI-native user could drive across many items at once. Missing for 10: evidence of an API or agent-facing bulk operation endpoint, batch transaction processing, or CSV/bulk import-export capability confirmed by independent testing.",
+    "rationale": "Relay documents several one-to-many actions — auto-transfer rules splitting funds across up to 20 accounts, issuing 50 cards at once to a team, and multi-step approval rules — which qualify as bulk operations within its banking workflows. However, there's no evidence of an API or programmatic interface an AI agent could use to trigger these bulk actions, nor documentation of bulk invoicing/payment batches beyond individual invoice creation. Missing for 10: API/developer docs for programmatic bulk actions, evidence of batch invoice/payment processing, and independent confirmation these bulk features work at scale.",
     "evidenceIds": [
-      "relay-docs-14",
       "relay-docs-15",
       "relay-docs-16",
       "relay-docs-17",
-      "relay-docs-4"
+      "relay-docs-25",
+      "relay-docs-14"
     ]
   },
   {
@@ -5170,26 +5210,28 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay supports rule-based automation for money movement — auto-transferring deposits across accounts, percentage/dollar-based automated transfers, and multi-step approval rules — which satisfies a narrow slice of 'define rules that trigger actions on events.' However, these are fixed banking-specific triggers (deposits, thresholds, approvals) rather than a general-purpose, AI-native event/action framework (no webhooks, API-triggered rules, or custom event definitions are evidenced). Missing for 10: evidence of programmable/custom event triggers via API or webhooks, broader condition-action rule builder beyond transfers/approvals, and any AI-agent-facing automation interface.",
+    "rationale": "Relay documents rule-based automation triggered by events — auto-transfer rules that move money on deposit or threshold events (relay-docs-6, relay-docs-15, relay-docs-30), plus multi-step approval rules (relay-docs-17) — which is a real form of 'define rules that trigger actions on events.' However this is narrowly scoped to cash-movement/approval workflows within banking, not a general-purpose event/action rule engine, and there's no evidence of user-defined arbitrary trigger-action logic (e.g., custom conditions, webhooks, or broader business events) an AI-native user could configure. Missing for 10: general-purpose custom trigger/action rule builder, evidence of AI-driven or user-scripted conditional logic beyond preset transfer/approval templates, and independent confirmation of rule flexibility.",
     "evidenceIds": [
       "relay-docs-6",
       "relay-docs-15",
-      "relay-docs-17",
-      "relay-docs-1"
+      "relay-docs-30",
+      "relay-docs-17"
     ]
   },
   {
     "productId": "relay",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay supports recurring financial automations like scheduled/percentage-based account transfers, recurring invoices, and automated approval rules, which count as recurring workflow scheduling within its banking domain. However there's no evidence of a general-purpose job/workflow scheduler, API/webhook triggers, or any AI-native automation surface for arbitrary tasks. Missing for 10: API-based scheduling, arbitrary workflow/job automation beyond money movement, AI-agent-facing scheduling interface.",
+    "rationale": "Relay supports recurring/automated financial workflows — auto-transfer rules moving cash by percentage/dollar amount, recurring invoices, and multi-step approval automation — which is genuine automation-depth for routine financial tasks. However there's no evidence of an API, webhook, or agent-facing mechanism for an AI-native user to programmatically schedule or orchestrate jobs; automation is confined to built-in banking rules configured via the app UI. Missing for 10: API/webhook access for AI agents to create/trigger recurring workflows, evidence of programmatic job scheduling, and independent confirmation these automation rules work reliably (community notes 'you still need to manually execute external payments').",
     "evidenceIds": [
       "relay-docs-15",
+      "relay-docs-30",
       "relay-docs-18",
+      "relay-docs-17",
       "relay-docs-4",
-      "relay-docs-17"
+      "relay-comm-1"
     ]
   },
   {
@@ -5198,7 +5240,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not an automation/workflow tool with version control, review, or rollback of automations — this axis is a category error for this product type.",
+    "rationale": "Relay is a business banking platform, not an automation/workflow tool with version control or rollback capabilities; the automations it offers (auto-transfer rules, approval rules) have no versioning, review, or rollback features described, and this axis is a category error for a banking product.",
     "evidenceIds": []
   },
   {
@@ -5207,7 +5249,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Relay's own support docs explicitly state that account/routing numbers can be viewed anytime under Accounts → Account Details, and a bank verification letter can be generated from the same screen, directly matching the story. Missing for 10: independent/hands-on community confirmation of this specific feature and detail on letter format/turnaround time.",
+    "rationale": "relay-docs-7 directly states finance-leads can view account/routing numbers and generate a bank verification letter anytime from Accounts → Account Details, matching the story precisely. Missing for 10: independent/hands-on corroboration of this specific feature beyond first-party docs.",
     "evidenceIds": [
       "relay-docs-7"
     ]
@@ -5217,11 +5259,13 @@
     "storyId": "bill-pay-approval-workflow",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Relay's docs directly support bill upload and vendor payment with approval workflows: relay-docs-4 explicitly states 'Upload bills, delegate tasks, automate approvals, and pay vendors the way they want to be paid,' and relay-docs-17 confirms 'Multi-step approval rules' as a product feature, matching the persona's need to route bills through approvals before paying vendors. Community evidence (relay-comm-1) corroborates that Relay handles money partitioning and payments, though notes manual execution steps for external payments. Missing for 10: independent hands-on review of the bill-approval workflow specifically (most community evidence focuses on account partitioning/cards rather than AP approval routing), and no detail on how many approval steps/roles are configurable.",
+    "confidence": "high",
+    "rationale": "Relay explicitly supports uploading bills, delegating tasks/roles, and automating multi-step approval workflows before paying vendors (relay-docs-4, relay-docs-17, relay-docs-27, relay-docs-28), backed by a dedicated support article on setting up payment approvals. Community feedback confirms real-world use of account partitioning and payments, though notes manual execution steps for some external payments. Missing for 10: independent hands-on review specifically validating the bill-upload-to-approval-to-payment flow end-to-end, and detail on approval routing logic/customization depth.",
     "evidenceIds": [
       "relay-docs-4",
       "relay-docs-17",
+      "relay-docs-28",
+      "relay-docs-27",
       "relay-comm-1"
     ]
   },
@@ -5231,28 +5275,30 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay lets admins issue cards with set spend limits, define roles, and separate funds into up to 20 checking accounts (useful as informal department/program buckets) with automated transfer rules, and 'multi-step approval rules' are mentioned on the pricing page. However there's no explicit 'budget' object with rolling caps per department/program beyond individual card limits, and community reviews note 'problems with prescribed limits,' suggesting enforcement isn't perfectly reliable. Missing for 10: a dedicated budget-creation feature (vs just card limits/accounts), documented department-level aggregate spend caps, and clear evidence enforcement is robust in practice.",
+    "rationale": "Relay lets admins issue cards with set spend limits, split cash across up to 20 accounts (which can map to departments/programs), and automate transfer rules, giving finance-leads some enforced controls (relay-docs-2, relay-docs-10, relay-docs-25, relay-docs-15). However there's no explicit 'budget' object with automatic hard-stop enforcement per department/program, and community feedback notes some users encountered 'problems with prescribed limits' (relay-comm-2). Missing for 10: dedicated department/program budget creation UI, documented automatic spend-limit enforcement beyond per-card limits, and independent verification that limits reliably hold without glitches.",
     "evidenceIds": [
       "relay-docs-2",
+      "relay-docs-10",
+      "relay-docs-25",
       "relay-docs-15",
-      "relay-docs-17",
-      "relay-comm-2",
-      "relay-comm-4"
+      "relay-comm-2"
     ]
   },
   {
     "productId": "relay",
     "storyId": "card-spend-limits-controls",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Relay's docs confirm card issuance with spend limits, role definitions, real-time transaction tracking, and multi-step approval rules (relay-docs-2, relay-docs-16, relay-docs-17), directly supporting granular per-card controls for employees. However, community reviews note occasional 'problems with prescribed limits' and permission glitches (relay-comm-2), and hard caps like a $7,000 daily card limit (relay-comm-4) suggest some inflexibility. Missing for 10: deeper documentation on category/merchant-level restrictions, audit trails for limit changes, and independent confirmation that granular controls work flawlessly at scale.",
+    "rationale": "Relay's docs confirm the ability to issue cards, set spend limits, define roles, and grant role-based access to team members (relay-docs-2, relay-docs-16, relay-docs-26, relay-docs-31), plus multi-step approval rules (relay-docs-17) and independent confirmation of concrete card limits (relay-comm-4). Community reviews note occasional friction with 'prescribed limits' (relay-comm-2), a minor caveat rather than a functional failure. Missing for 10: detailed first-party documentation on configuring granular per-employee/per-category controls beyond basic spend limits, and stronger independent hands-on validation of the limit-setting workflow.",
     "evidenceIds": [
       "relay-docs-2",
       "relay-docs-16",
+      "relay-docs-26",
+      "relay-docs-31",
       "relay-docs-17",
-      "relay-comm-2",
-      "relay-comm-4"
+      "relay-comm-4",
+      "relay-comm-2"
     ]
   },
   {
@@ -5261,15 +5307,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Relay documents an all-in-one platform combining multiple checking/savings accounts, cards with spend controls, bill pay with approvals, invoicing/receivables, receipt capture, and accounting sync (QuickBooks/Xero), directly replacing separate spend management, bill pay, and banking tools, and community reviews corroborate the multi-account and interest features in real use. missing for 10: independent case studies explicitly confirming founders consolidated away from other named point solutions, and more hands-on verification of bill pay/invoicing depth beyond docs and one HN mention.",
+    "rationale": "Relay documents banking (checking accounts, cards, wires/ACH), bill pay (upload bills, approvals, vendor payments), spend management (cards, limits, roles), invoicing/receivables, and accounting sync (QuickBooks/Xero) all in one platform, corroborated by community reviews confirming multi-account partitioning and usability. Missing for 10: independent case studies of founders actually consolidating from multiple prior tools, and community feedback notes manual execution still needed for external payments and some permission glitches.",
     "evidenceIds": [
       "relay-docs-1",
       "relay-docs-2",
-      "relay-docs-3",
       "relay-docs-4",
       "relay-docs-5",
-      "relay-docs-6",
       "relay-docs-19",
+      "relay-docs-25",
+      "relay-docs-27",
       "relay-comm-1",
       "relay-comm-2"
     ]
@@ -5280,11 +5326,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Relay syncing transaction data into QuickBooks/Xero and Plaid-based app connections, but there is no mention of a developer-facing API to view or manage accounting data programmatically. Missing for 10: any public API docs, endpoints, authentication, or SDK for accounting data access.",
-    "evidenceIds": [
-      "relay-docs-19",
-      "relay-docs-20"
-    ]
+    "rationale": "Relay is a business banking platform with syncing to QuickBooks/Xero (relay-docs-19) and Plaid integrations (relay-docs-20), but there is no evidence of a dedicated developer-facing API for viewing/managing accounting data — no API docs, endpoints, or SDK are mentioned anywhere in the evidence pack.",
+    "evidenceIds": []
   },
   {
     "productId": "relay",
@@ -5292,10 +5335,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Relay offers built-in high-yield savings accounts (up to 3.00% APY) that automatically pull idle operating cash into yield-bearing accounts within the same platform, and community evidence corroborates that tax/reserve balances earn extra interest without moving funds elsewhere. missing for 10: independent verification of actual APY competitiveness/consistency over time, and clearer detail on withdrawal friction or limits on savings-account access for operating cash.",
+    "rationale": "Relay offers built-in high-yield savings accounts (up to 3.00% APY) with automated rules to move idle operating cash into savings, all within the same Relay account/institution—no need to move funds elsewhere. Community evidence corroborates that Relay automatically partitions and earns interest on idle funds like tax reserves. missing for 10: independent verification of the actual APY rate over time, comparison to market rates, and details on FDIC insurance/sweep mechanics for the savings feature.",
     "evidenceIds": [
-      "relay-docs-6",
       "relay-docs-24",
+      "relay-docs-30",
       "relay-comm-1"
     ]
   },
@@ -5305,7 +5348,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a direct-to-business neobank/banking app for SMBs, not a Banking-as-a-Service or embedded-finance platform that developers can white-label into their own products; none of the evidence mentions an API, SDK, or licensing partnership for embedding accounts into third-party apps. This story targets BaaS providers, which is a different product category than Relay's offering.",
+    "rationale": "Relay is a direct-to-business banking app for small businesses, not a developer-facing embedded-finance/BaaS platform; nothing in the evidence describes APIs, licensing partnerships, or white-label account issuance for third-party developers to embed in their own products.",
     "evidenceIds": []
   },
   {
@@ -5314,7 +5357,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Relay wires (domestic and international) can send 'same-day' at best, and ACH takes 1-3 business days — nothing supports transfers arriving in under a minute. The axis applies since cross-border payments are a core banking feature, but no evidence of near-instant delivery exists.",
+    "rationale": "Relay's own docs state wires (domestic and international) 'can send same-day' and ACH takes 1-3 business days — no evidence anywhere of sub-minute international delivery, and same-day is the fastest speed ever mentioned.",
     "evidenceIds": [
       "relay-docs-9",
       "relay-docs-23",
@@ -5341,13 +5384,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Relay lets users open multiple checking accounts and automate internal transfers between them (Profit First style) and offers high-yield savings, but there is no mention of a multi-bank sweep network or expanded FDIC coverage across partner banks. missing for 10: any documentation of an FDIC sweep program, partner bank network, or expanded insurance coverage mechanism.",
-    "evidenceIds": [
-      "relay-docs-1",
-      "relay-docs-14",
-      "relay-docs-15",
-      "relay-docs-24"
-    ]
+    "rationale": "Evidence shows multiple checking accounts, auto-transfer rules between own accounts, and a high-yield savings account, but nothing describes deposits being swept across multiple partner banks to expand FDIC insurance coverage — a common fintech feature that is absent here.",
+    "evidenceIds": []
   },
   {
     "productId": "relay",
@@ -5355,10 +5393,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers Relay's domestic checking, cards, invoicing, and international wire transfers (with a $10 fee), but nowhere states or documents that its Visa debit/credit cards have no foreign transaction fees or how cash withdrawals abroad are priced. This is a fair question for a business card product, but no first-party or community evidence confirms fee-free foreign card spend/withdrawal.",
+    "rationale": "No evidence anywhere in the pack addresses foreign transaction fees on Relay's debit/credit cards, or fee-free cash withdrawals abroad; only international wire fees ($10) and ATM withdrawal limits ($1,000/card) are mentioned, which are unrelated to card FX fees. This is a fair question for a business card product but remains unevidenced.",
     "evidenceIds": [
       "relay-docs-2",
-      "relay-docs-23",
+      "relay-comm-4",
       "relay-comm-5"
     ]
   },
@@ -5368,11 +5406,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "relay-docs-8 directly documents freezing a card instantly in-app and ordering a replacement (5–7 business days), matching the story exactly, with community reviews (relay-comm-2) corroborating a functional, user-friendly card management experience. Missing for 10: independent hands-on confirmation specifically of the freeze/replace flow (vs general app usability).",
+    "rationale": "Docs explicitly state that opening Cards in the app lets you freeze it instantly and order a replacement, arriving in 5–7 business days, directly matching the story; card issuance and controls are further corroborated across multiple docs. Missing for 10: independent/hands-on confirmation of the freeze-and-replace flow (only vendor docs, no community testimonial specifically about this feature).",
     "evidenceIds": [
       "relay-docs-8",
       "relay-docs-2",
-      "relay-comm-2"
+      "relay-docs-26"
     ]
   },
   {
@@ -5394,10 +5432,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Relay explicitly offers high-yield savings accounts (up to 3.00% APY) plus automated rules to move idle cash from operating accounts into savings, directly matching the story, and community evidence corroborates automated partitioning with interest earned on set-aside funds. Missing for 10: independent verification of actual APY rates achieved and hands-on testing of the automation rule reliability specifically for savings sweeps.",
+    "rationale": "Relay explicitly offers high-yield savings accounts (up to 3.00% APY) with automated transfer rules that move idle/excess cash from operating accounts into savings, directly matching the finance-lead's cash cushion story, and community evidence corroborates automatic partitioning of funds with extra interest on allocated cash. Missing for 10: independent verification of actual APY delivery/reliability at scale and more detailed documentation of rule configuration options (percentage vs threshold triggers).",
     "evidenceIds": [
       "relay-docs-6",
       "relay-docs-24",
+      "relay-docs-30",
       "relay-docs-15",
       "relay-comm-1"
     ]
@@ -5408,24 +5447,25 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay supports issuing multiple virtual/physical Visa cards with spend limits and role-based controls (relay-docs-2, relay-docs-16), which enables purpose-scoped cards for things like a vendor or ad spend, but there's no evidence of instant creation flows, per-card vendor/merchant-locking, or category-specific restrictions tailored to 'ad spend' style use cases. missing for 10: evidence of instant/quick card issuance UX, vendor-lock or merchant-category restriction features, and independent confirmation of ease/speed of scoped card creation.",
+    "rationale": "Relay documents issuing virtual or physical Visa debit/credit cards with spend limits and role assignment (relay-docs-2, relay-docs-16, relay-docs-26), which supports scoping cards to team members or purposes, but there's no explicit documentation of instant creation, per-vendor/single-merchant locking, or purpose-tagged card categories like 'ad spend'. missing for 10: explicit instant-issuance workflow, vendor/merchant-lock restriction, and named use-case templates (e.g., ad-spend cards) with independent confirmation.",
     "evidenceIds": [
       "relay-docs-2",
       "relay-docs-16",
-      "relay-docs-10"
+      "relay-docs-26"
     ]
   },
   {
     "productId": "relay",
     "storyId": "invoice-creation-collection",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Relay's docs explicitly describe building and sending branded invoices with built-in payment collection ('no separate tool needed'), plus flexible payment options, automated follow-up, and recurring invoices as a feature tier. Missing for 10: independent/hands-on community corroboration of invoicing feature usage and details on branding customization depth.",
+    "rationale": "Relay's docs explicitly state built-in branded invoice creation with payment collection ('Build and send a branded invoice with built-in payment collection from Invoices — no separate tool needed', plus recurring invoices and payment options), matching the story closely. Missing for 10: independent/hands-on corroboration of invoice branding or payment collection experience, and detail on customization options for branding.",
     "evidenceIds": [
       "relay-docs-5",
       "relay-docs-11",
-      "relay-docs-18"
+      "relay-docs-18",
+      "relay-docs-27"
     ]
   },
   {
@@ -5434,7 +5474,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a US business banking platform focused on domestic accounts, cards, invoicing, and bill pay; there's no evidence of FX/multi-currency transfer functionality or rate-locking, and international transfers appear to be simple wire-style payments rather than currency exchange. FX rate-locking is not a feature category this product addresses.",
+    "rationale": "Relay is a US business banking platform (checking accounts, cards, bill pay, invoicing) with no evidence of FX/multi-currency services or rate-locking; international wires are mentioned only as a transfer method, not currency exchange. Locking an FX rate for a fixed window is outside the scope of what this domestic business-banking product offers, making it a category mismatch rather than an unmet capability.",
     "evidenceIds": []
   },
   {
@@ -5443,23 +5483,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Relay's evidence describes opening up to 20 checking accounts and receiving/sending international wires, but all of these appear to be USD sub-accounts for organizing cash, not accounts that hold balances in multiple currencies (e.g., EUR, GBP) simultaneously. No evidence pack item describes multi-currency balance holding or FX conversion features.",
+    "rationale": "Evidence shows Relay supports up to 20 USD checking accounts and can send/receive international wires, but there is no evidence of holding or managing balances denominated in multiple currencies (e.g., EUR, GBP) within one account — all documented accounts and balances are USD-based.",
     "evidenceIds": [
       "relay-docs-1",
       "relay-docs-14",
       "relay-docs-23",
-      "relay-comm-5"
+      "relay-docs-25"
     ]
   },
   {
     "productId": "relay",
     "storyId": "multi-currency-interest",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Relay's evidence shows only USD-based high-yield savings (up to 3.00% APY) and international wire transfers, but no support for holding balances in multiple currencies or earning interest on non-USD balances. Missing for 10: multi-currency account support, evidence of interest-bearing balances in currencies other than USD.",
+    "rationale": "Relay clearly offers interest-bearing savings accounts (up to 3.00% APY) and automated cash-sweep rules to earn yield on idle cash (relay-docs-6, relay-docs-24, relay-docs-30, relay-comm-1), but all evidence describes a single-currency (USD) banking product — there is no mention of holding or earning interest on balances in multiple currencies, only mentions of receiving/sending international wires (relay-docs-23) which is a transfer feature, not a multi-currency yield account. Missing for 10: any documentation of multi-currency account support, FX balance holding, or interest paid on non-USD balances.",
     "evidenceIds": [
+      "relay-docs-6",
       "relay-docs-24",
+      "relay-docs-30",
+      "relay-comm-1",
       "relay-docs-23"
     ]
   },
@@ -5467,15 +5510,17 @@
     "productId": "relay",
     "storyId": "multiple-checking-subaccounts",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Relay's docs clearly support opening up to 20 checking sub-accounts (including Profit-First style nicknaming) and automating transfers across them by dollar amount or percentage, and community evidence corroborates the auto-partitioning behavior in practice. missing for 10: independent verification of allocation reliability/edge cases (e.g., failed or delayed auto-transfers) and more detail on configuring percentage-based rules beyond marketing copy.",
+    "rationale": "Relay's docs and community reviews confirm up to 20 checking sub-accounts with nicknaming (Profit First style) and automated allocation of deposits via dollar-amount or percentage rules across accounts, plus community corroboration that auto-partitioning works well in practice. Missing for 10: independent third-party technical verification of allocation accuracy/edge cases beyond marketing copy and one HN mention.",
     "evidenceIds": [
       "relay-docs-1",
       "relay-docs-14",
       "relay-docs-15",
+      "relay-docs-25",
+      "relay-docs-29",
       "relay-comm-1",
-      "relay-probe-1"
+      "relay-comm-3"
     ]
   },
   {
@@ -5483,21 +5528,22 @@
     "storyId": "no-fee-card-cashback",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers card issuance, spend limits, savings APY, and expense tracking, but nothing in the pack mentions cashback rewards on card spend at all. missing for 10: any mention of cashback program, rewards rate, or automatic redemption on Relay cards.",
+    "confidence": "high",
+    "rationale": "Evidence covers card issuing, spend limits, savings APY, and auto-transfer rules for cash management, but nowhere mentions cashback rewards on card spend or automatic reward redemption. This is a distinct feature from savings interest or fee waivers described in the evidence.",
     "evidenceIds": []
   },
   {
     "productId": "relay",
     "storyId": "one-click-payment-approval",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Relay docs mention 'automate approvals' and 'define roles' for teammates, and pricing page lists 'Multi-step approval rules' as a feature, supporting configurable approval permissions for payments. However, there's no detailed documentation on the one-click approve/send UX for designated approvers, and community reviews note some users experienced 'issues with permissions,' suggesting occasional friction. Missing for 10: explicit description of one-click approve/send workflow, detailed permission granularity (e.g., approval thresholds per teammate), and hands-on confirmation the feature works smoothly.",
+    "rationale": "Relay documents multi-step approval rules, automated approvals, role-based banking access, and a dedicated support article on setting up payment approvals, which directly supports finance-lead-controlled approval permissions. However, none of the docs explicitly describe a 'one-click' approve-and-send flow, and community feedback notes some users experienced issues with permissions settings. Missing for 10: explicit one-click approval UX documentation, independent hands-on confirmation of smooth permission setup.",
     "evidenceIds": [
       "relay-docs-4",
       "relay-docs-17",
-      "relay-docs-2",
+      "relay-docs-28",
+      "relay-docs-31",
       "relay-comm-2"
     ]
   },
@@ -5527,7 +5573,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking/fintech product, not open-source software; open-licensed source code is not an applicable axis for this category.",
+    "rationale": "Relay is a business banking platform (closed financial SaaS), not open-source software; source code openness is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -5536,7 +5582,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a cloud business-banking SaaS platform, not open-source software or a deployable product; self-hosting is a category error for a regulated banking service with no evidence of any deployable core.",
+    "rationale": "Relay is a business banking SaaS platform, not software a user could self-host; self-hosting is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -5545,13 +5591,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly state issuing Visa debit or credit cards with defined roles and spend limits, real-time tracking (relay-docs-2), physical/virtual card issuance up to 50 cards (relay-docs-16), and card freeze/replacement management (relay-docs-8). Community evidence corroborates card limits and permissions in practice (relay-comm-4, relay-comm-2). Missing for 10: independent hands-on verification of role-based permission granularity and credit card specifics beyond marketing copy.",
+    "rationale": "Relay docs explicitly confirm issuing physical debit/credit Visa cards to team members with defined roles and spend limits (relay-docs-2, relay-docs-16, relay-docs-26, relay-docs-31), plus card management features like freezing/replacing cards (relay-docs-8) and role-based access. Community evidence corroborates card limits and general permission functionality, with minor mentions of permission glitches. Missing for 10: deeper independent hands-on verification of the role-definition granularity and any documented failures specific to physical card issuance.",
     "evidenceIds": [
       "relay-docs-2",
       "relay-docs-16",
+      "relay-docs-26",
+      "relay-docs-31",
       "relay-docs-8",
-      "relay-comm-4",
-      "relay-comm-2"
+      "relay-comm-2",
+      "relay-comm-4"
     ]
   },
   {
@@ -5559,11 +5607,12 @@
     "storyId": "po-matched-invoice-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Relay's evidence shows bill upload, approval routing, and vendor payment (relay-docs-4, relay-docs-17), but nothing about matching invoices to purchase orders or automated GL/expense coding tied to POs — a specific three-way-match AP capability that is absent from all docs and community sources.",
+    "confidence": "medium",
+    "rationale": "Relay's docs show bill upload, approvals, and vendor payment routing (relay-docs-4, relay-docs-17, relay-docs-27) but there is no mention of purchase-order matching, invoice coding to GL accounts, or three-way matching workflows anywhere in the evidence pack.",
     "evidenceIds": [
       "relay-docs-4",
-      "relay-docs-17"
+      "relay-docs-17",
+      "relay-docs-27"
     ]
   },
   {
@@ -5572,7 +5621,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not an AI/data-processing product; data residency/region choice is not an applicable axis for its category and no evidence pack item addresses AI-native data storage location controls.",
+    "rationale": "Relay is a business banking product, not an AI-native tool with data-residency configuration options; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -5581,7 +5630,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not an AI product with model-training data policies; this axis is a category error for this kind of product.",
+    "rationale": "Relay is a business banking platform; AI-model-training data usage/privacy controls are not a relevant axis for a banking product's evidence pack, which focuses entirely on financial banking features. This is a category error, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -5590,7 +5639,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not an AI system or data-processing tool; data retention/deletion controls for AI-native privacy posture is a category mismatch — this axis targets AI/data products, not banking services.",
+    "rationale": "Relay is a business banking platform, not an AI system that processes or retains user data/conversations in a way relevant to AI-native data retention/deletion controls; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -5599,7 +5648,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Relay is a business banking platform, not an AI tool/agent with telemetry settings relevant to AI-native usage; this axis is a category error for this product type.",
+    "rationale": "Relay is a business banking platform, not an AI tool or product with telemetry/usage-tracking opt-out relevant to AI-native workflows; this privacy-posture axis about AI telemetry does not apply to this category.",
     "evidenceIds": []
   },
   {
@@ -5619,11 +5668,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Relay is a US business banking platform offering USD checking accounts and the ability to receive international wires into those accounts (relay-docs-13, relay-docs-23), but there is no evidence of local account details (e.g., IBAN/sort code equivalents) issued in multiple currencies for receiving payments locally in each currency, which is what this story requires.",
+    "rationale": "Relay's evidence describes only USD checking accounts (up to 20) and the ability to activate receiving international wires into those USD accounts, but there is no evidence of local account details in multiple currencies (e.g., EUR/GBP local receiving accounts) as a multi-currency neobank would offer.",
     "evidenceIds": [
       "relay-docs-13",
       "relay-docs-23",
-      "relay-docs-9"
+      "relay-docs-1"
     ]
   },
   {
@@ -5645,9 +5694,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Relay documents role definition, card-level spend limits, and multi-step approval rules (relay-docs-2, relay-docs-17), which supports basic team permissioning, but there's no evidence of granular controls segmented by location or department, nor detailed role-based access management. A community review also notes 'issues with permissions' as a minor complaint (relay-comm-2), suggesting the feature isn't fully robust in practice. Missing for 10: department/location-level permission scoping, audit trail of permission changes, and independent confirmation that role granularity works reliably at scale.",
+    "rationale": "Relay documents role-based access, spend limits, card issuance to team members, and multi-step approval rules, which support permission control for finance leads, but there's no evidence of structuring permissions by location or department specifically, and a community review notes some users encountered 'issues with permissions.' missing for 10: explicit location/department-level permission granularity, deeper documentation on role hierarchy, and resolution of the reported permission glitches.",
     "evidenceIds": [
       "relay-docs-2",
+      "relay-docs-31",
       "relay-docs-17",
       "relay-comm-2"
     ]
@@ -5658,13 +5708,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Relay's docs explicitly describe paying vendors via ACH and wire, with delivery estimates (1-3 days ACH, same-day wires), bill upload/approval workflows, and limit management, and community evidence confirms these payments work in practice (with the caveat that execution is manual, not autonomous). Pricing tiers also confirm faster ACH is available on Pro plan. Missing for 10: independent hands-on verification of wire payment success/reliability at scale, more detail on wire fees/limits.",
+    "rationale": "Relay's docs and support pages explicitly describe sending domestic ACH and wire payments to vendors, with delivery timing (relay-docs-9), bill pay/vendor payment workflows (relay-docs-4, relay-docs-27), and community confirmation that transfers must be manually executed but function (relay-comm-1, relay-comm-3, relay-comm-5). missing for 10: independent hands-on verification of the full ACH/wire vendor payment flow beyond support docs, and more detail on wire fees/limits for domestic wires specifically.",
     "evidenceIds": [
       "relay-docs-4",
       "relay-docs-9",
-      "relay-docs-10",
+      "relay-docs-27",
       "relay-comm-1",
-      "relay-comm-3"
+      "relay-comm-3",
+      "relay-comm-5"
     ]
   },
   {
@@ -5673,7 +5724,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Relay supports sending and receiving international wires (docs-9, docs-23) with a clear $10 fee disclosed and waived on Pro plan (relay-comm-5), giving some fee transparency, but there is no evidence of actual local-currency disbursement, FX rate handling, or multi-currency accounts — wires appear to be standard bank wires, not localized payouts. Missing for 10: local currency payment execution, FX rate transparency, multi-currency support evidence, independent confirmation of international payment reliability.",
+    "rationale": "Relay supports sending international wires with delivery estimates and fees shown before confirming, and community reviews confirm a flat $10 fee that's waived on Pro plan — fee transparency is present. However, evidence only mentions 'international wires' and specifically documents *receiving* international wires, with no documentation of sending funds denominated in the recipient's local currency or FX-rate transparency, which the story requires. Missing for 10: evidence of local-currency payout/FX conversion capability, explicit multi-currency rate disclosure, and independent confirmation of send-side international wire mechanics beyond fee amount.",
     "evidenceIds": [
       "relay-docs-9",
       "relay-docs-23",
@@ -5697,7 +5748,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions a universal/global search bar that spans transactions, vendors, and cards, nor any workflow for jumping from search results into initiating a payment; the docs describe discrete screens (Accounts, Cards, Invoices, Limits) rather than a unified search experience. missing for 10: any mention of a search feature, cross-entity search UI, or search-to-payment flow.",
+    "rationale": "No evidence of a universal search bar spanning transactions, vendors, and cards, nor any workflow to jump from search into initiating a payment; docs cover cards, accounts, bill pay and invoices separately but no unified search feature is mentioned anywhere.",
     "evidenceIds": []
   },
   {
