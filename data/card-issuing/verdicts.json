@@ -2,15 +2,14 @@
   {
     "productId": "adyen-issuing",
     "storyId": "agent-issued-cards",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Adyen Issuing documents core building blocks (virtual card creation, transaction rules to approve/decline, real-time authorization webhooks) that could technically support scoped agent cards, but nowhere does the evidence name AI agents or an agent-specific use case, nor explicitly detail merchant-lock or expiry configuration on a paymentInstrument. missing for 10: vendor naming of AI-agent use case, explicit merchant-lock and amount-cap rule examples, explicit card expiry-setting documentation, independent corroboration of agent-issuing in practice.",
+    "rationale": "Adyen Issuing documents virtual card creation, transaction rules (which can enforce merchant/amount limits), and authorization controls, so the underlying capability for scoped cards exists — but nothing in the evidence pack mentions AI agents, agentic purchasing, or any agent-specific product framing by name. The story explicitly requires the vendor to document this as an agent use case, which is absent.",
     "evidenceIds": [
       "adyen-issuing-docs-15",
       "adyen-issuing-docs-23",
-      "adyen-issuing-docs-2",
-      "adyen-issuing-docs-21"
+      "adyen-issuing-docs-29"
     ]
   },
   {
@@ -19,15 +18,21 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Adyen Issuing's REST API is well documented for creating/updating cards, managing balance accounts, transaction rules, and viewing card payments/webhooks — covering most of the 'API' half of the story. However, there is no evidence of an MCP surface for agent access, and no explicit documentation of scoped/granular API credentials for restricting an agent's permissions. missing for 10: MCP server/tool surface, scoped API-key/permission model documentation, explicit transaction/balance read endpoints beyond Customer Area UI mentions.",
+    "rationale": "Adyen Issuing's REST API supports core card-program actions an agent would need: creating/updating cards (docs-15,29,11,16), activating/suspending/closing (docs-10,17-19,30), and adjusting spend controls via transaction rules (docs-3,23), plus transaction/webhook data (docs-25,28,35). However there is no evidence of an MCP surface, no explicit 'read balance/transaction' read endpoints, and no documentation of scoped API-key credentials tailored for autonomous agent use. missing for 10: MCP server/tool surface, explicit balance/transaction GET endpoints, scoped-credential/agent-auth documentation, independent confirmation of agent usage.",
     "evidenceIds": [
-      "adyen-issuing-docs-1",
-      "adyen-issuing-docs-10",
-      "adyen-issuing-docs-11",
-      "adyen-issuing-docs-14",
       "adyen-issuing-docs-15",
+      "adyen-issuing-docs-29",
+      "adyen-issuing-docs-11",
+      "adyen-issuing-docs-16",
+      "adyen-issuing-docs-10",
+      "adyen-issuing-docs-17",
+      "adyen-issuing-docs-18",
+      "adyen-issuing-docs-19",
+      "adyen-issuing-docs-3",
       "adyen-issuing-docs-23",
-      "adyen-issuing-docs-25"
+      "adyen-issuing-docs-25",
+      "adyen-issuing-docs-28",
+      "adyen-issuing-docs-35"
     ]
   },
   {
@@ -36,11 +41,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at https://docs.adyen.com/llms.txt with a proper description of Adyen's docs (including Issuing), and the docs site consistently supports .md variants of pages (many docs URLs end in .md), showing agent-oriented markdown access. Missing for 10: no dedicated llms.txt section specific to Issuing product, and openapi.json spec is not discoverable, so full machine-readable API description isn't confirmed.",
+    "rationale": "A probe confirms Adyen's docs site serves a working llms.txt (HTTP 200) describing available developer documentation including Issuing, which an agent could be pointed at directly. Missing for 10: no dedicated agent-oriented docs specific to Issuing beyond the general llms.txt, and openapi/machine-readable spec endpoints returned 404.",
     "evidenceIds": [
       "adyen-issuing-probe-1",
-      "adyen-issuing-docs-5",
-      "adyen-issuing-docs-6"
+      "adyen-issuing-probe-3"
     ]
   },
   {
@@ -49,7 +53,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any AI-generated insights, analytics, or suggestions surfaced from card issuing data; the documentation covers card creation, authorization, disputes, and webhooks only, with no mention of AI/ML-driven analytics features.",
+    "rationale": "The evidence pack covers card issuing, authorization rules, disputes, webhooks, and compliance features, but contains no mention of AI-generated insights, analytics suggestions, or any AI/ML-driven data analysis surfaced to users inside the product.",
     "evidenceIds": []
   },
   {
@@ -74,7 +78,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a card-issuing API/platform product, not an AI agent or assistant product; the evidence shows only card issuing, authorization, dispute, and webhook features with no mention of any built-in AI assistant. This axis is a category error for this type of financial infrastructure product.",
+    "rationale": "Adyen Issuing is a card-issuing payments API/platform, not an AI assistant or agentic product; there is no evidence of a built-in AI assistant, and the axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -99,7 +103,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a card-issuing/payments API platform, not an AI agent or assistant; plugging MCP servers into it so it can use their tools is a category mismatch — no evidence suggests it acts as an MCP client.",
+    "rationale": "Adyen Issuing is a card-issuing payments platform, not an AI agent or assistant; plugging MCP servers into it to extend its own tool-use is a category error for this product type. No evidence suggests it functions as an MCP client.",
     "evidenceIds": []
   },
   {
@@ -108,8 +112,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official MCP server for Adyen Issuing; documentation covers card issuing, authorization, disputes, and webhooks but nothing about MCP or agent connectivity. Since Adyen Issuing is a payments API/platform (not itself an AI agent), the axis applies but no evidence supports it.",
-    "evidenceIds": []
+    "rationale": "Adyen Issuing is a payment/card-issuing API product, not an agent, so the axis applies (an official MCP server is plausible for a platform with a public API ecosystem), but no evidence of any MCP server offering is present; probes for OpenAPI/MCP-related endpoints returned 404.",
+    "evidenceIds": [
+      "adyen-issuing-probe-2",
+      "adyen-issuing-probe-3"
+    ]
   },
   {
     "productId": "adyen-issuing",
@@ -126,7 +133,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official CLI tool anywhere in the pack; documentation only covers APIs, webhooks, and Customer Area UI workflows.",
+    "rationale": "No evidence of an official CLI for Adyen Issuing; documentation covers API resources, webhooks, and SDKs but no mention of a command-line tool, and probes for openapi/docs artifacts also failed to surface any CLI reference.",
     "evidenceIds": []
   },
   {
@@ -135,12 +142,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Adyen Issuing exposes a well-documented REST API (paymentInstruments, webhooks, transaction rules, relayed authorisation, disputes, 3DS) with extensive first-party docs, and an llms.txt file confirms machine-readable doc discovery for AI agents. missing for 10: a discoverable OpenAPI/swagger spec (probes for openapi.json/swagger.json all 404) and independent hands-on corroboration of API usage.",
+    "rationale": "Adyen Issuing is thoroughly documented as an API-driven product: creating paymentInstruments, managing card lifecycle, webhooks, transaction rules, and disputes are all done via REST-style API resources rather than UI-only flows, and docs.adyen.com/llms.txt confirms a machine-readable docs entry point. missing for 10: no discoverable OpenAPI/Swagger spec (probe returned 404s) and no independent/hands-on confirmation of API usability outside vendor docs.",
     "evidenceIds": [
       "adyen-issuing-docs-15",
       "adyen-issuing-docs-14",
+      "adyen-issuing-docs-11",
       "adyen-issuing-docs-25",
-      "adyen-issuing-docs-2",
+      "adyen-issuing-docs-23",
       "adyen-issuing-probe-1",
       "adyen-issuing-probe-3"
     ]
@@ -157,12 +165,16 @@
   {
     "productId": "adyen-issuing",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents the Issuing API's REST resources, webhooks, and a separate mobile Authentication SDK for 3D Secure, but contains no mention of official client SDKs for building against the Issuing API itself, and probes for OpenAPI specs all returned 404.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "The pack shows official iOS SDKs for specific cardholder-facing tasks (reveal card details, change PIN) and an Authentication SDK for OOB 3D Secure, plus an llms.txt endpoint suggesting AI-friendly docs, but there is no evidence of broader official SDKs (e.g., server-side language SDKs) for the core Issuing API, and probes show no OpenAPI spec discoverable. missing for 10: multi-language server SDK documentation, OpenAPI/spec-based SDK generation evidence, independent confirmation of SDK quality/coverage.",
     "evidenceIds": [
       "adyen-issuing-docs-27",
+      "adyen-issuing-docs-32",
+      "adyen-issuing-docs-33",
+      "adyen-issuing-docs-34",
+      "adyen-issuing-probe-1",
       "adyen-issuing-probe-3"
     ]
   },
@@ -172,14 +184,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Adyen Issuing documents a clear webhook subscription model, listing webhook types (Configuration, Payment method, Transfer, Dispute, Negative balance warning, Report) and detailed relayed-authorisation webhooks with response-time and fallback logic. This is standard event-driven integration usable by any automated/agentic system. Missing for 10: independent/hands-on corroboration of webhook reliability and no explicit mention of AI-agent-specific tooling around webhook consumption.",
+    "rationale": "Adyen Issuing has well-documented webhook subscription capability with multiple event types (Configuration, Payment method, Transfer, Dispute, Negative balance warning, Report, plus payment events and network token events) and clear real-time authorization webhooks with response requirements. missing for 10: no independent/hands-on corroboration of webhook subscription setup, and no explicit AI-agent-specific tooling around webhook consumption.",
     "evidenceIds": [
       "adyen-issuing-docs-25",
+      "adyen-issuing-docs-28",
+      "adyen-issuing-docs-35",
+      "adyen-issuing-docs-36",
       "adyen-issuing-docs-5",
-      "adyen-issuing-docs-6",
-      "adyen-issuing-docs-21",
-      "adyen-issuing-docs-22",
-      "adyen-issuing-docs-28"
+      "adyen-issuing-docs-6"
     ]
   },
   {
@@ -188,10 +200,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; OpenAPI probes for a machine-readable spec all returned 404, and docs entries only describe static documentation content.",
+    "rationale": "The evidence pack shows only static documentation pages and lists of features, with no mention of an interactive API reference or runnable/try-it examples; probes for an OpenAPI spec that would typically power such a reference all returned 404.",
     "evidenceIds": [
-      "adyen-issuing-probe-3",
-      "adyen-issuing-probe-2"
+      "adyen-issuing-probe-2",
+      "adyen-issuing-probe-3"
     ]
   },
   {
@@ -199,11 +211,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack includes explicit probes for OpenAPI/Swagger spec files at all common paths, all returning 404, and no first-party documentation page links to a downloadable machine-readable API spec for Issuing.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows only narrative docs pages and webhooks; explicit probes for OpenAPI/swagger endpoints at docs.adyen.com all returned 404, and no citation shows a downloadable OpenAPI/machine-readable spec for the Issuing API.",
     "evidenceIds": [
-      "adyen-issuing-probe-3",
-      "adyen-issuing-probe-2"
+      "adyen-issuing-probe-2",
+      "adyen-issuing-probe-3"
     ]
   },
   {
@@ -223,8 +235,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains only feature/functionality docs for Issuing (cards, authorisation, disputes, webhooks) but no mention of API versioning scheme or a documented deprecation policy; probes for OpenAPI specs even 404'd. Axis applies to any API-based product, but no supporting evidence exists here.",
-    "evidenceIds": []
+    "rationale": "No evidence pack item mentions API versioning scheme or a documented deprecation policy for Adyen Issuing APIs; probes for OpenAPI specs returned 404s and no versioning/deprecation docs are cited. missing for 10: explicit API version numbering docs, deprecation/sunset policy documentation, changelog or migration guide references.",
+    "evidenceIds": [
+      "adyen-issuing-probe-3"
+    ]
   },
   {
     "productId": "adyen-issuing",
@@ -232,11 +246,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence confirms real-time relayed authorization webhooks carry 'relevant transaction data, including transaction rules and validation checks' (docs-28), but nothing in the pack specifies merchant name, MCC, enhanced merchant data, wallet/entry-mode details, or partial-approval/incremental-auth signals being included in that payload. Without concrete evidence of these specific decision-grade fields, this applicable axis cannot be credited beyond absence of evidence.",
+    "rationale": "The evidence describes relayed authorization webhooks generically ('relevant transaction data, including transaction rules and validation checks') but never specifies decision-grade fields like merchant name, MCC, enhanced merchant data, wallet type, entry-mode, partial-approval, or incremental-auth signals. Without documentation of these specific payload fields, the story is unsupported.",
     "evidenceIds": [
       "adyen-issuing-docs-28",
       "adyen-issuing-docs-21",
-      "adyen-issuing-docs-5"
+      "adyen-issuing-docs-36"
     ]
   },
   {
@@ -261,7 +275,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers per-card operations (create, activate, suspend, close, update balance) and webhook/transaction-rule automation, but nothing describes batch/bulk endpoints or multi-item operations in a single call. This axis is plausible for an issuing API but no evidence supports it.",
+    "rationale": "The evidence pack covers per-card creation, management, authorization, and webhooks, but nothing describes bulk/batch operations (e.g., creating or updating many cards/instruments in one call, batch APIs, or bulk import tooling).",
     "evidenceIds": []
   },
   {
@@ -286,7 +300,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a card-issuing platform API, not a workflow/job scheduling or automation tool; scheduling recurring jobs is outside its product category.",
+    "rationale": "Adyen Issuing is a card issuing/payments API product; scheduling recurring jobs or workflows is not a relevant capability for this product category — it's a wrong-axis question.",
     "evidenceIds": []
   },
   {
@@ -295,7 +309,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a card-issuing payments API/platform, not an automation/workflow tool; versioning, review, and rollback of 'automations' is a category mismatch for this product's role (transaction rules and webhooks are payment logic, not automation workflows with version control).",
+    "rationale": "Adyen Issuing is a card-issuing payments API/platform, not an automation-building tool with versioned workflows; 'version, review, and roll back automations' is not a fair axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -304,13 +318,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show balance accounts (pooled or per-card), card payment viewing in Customer Area, and a 'Report' webhook type, giving basic visibility into funds and transactions, but there is no explicit documentation of a transaction ledger linking each authorization to its clearing/settlement or of penny-accurate settlement reconciliation reporting. missing for 10: explicit settlement report/reconciliation documentation, auth-to-clearing ledger linkage, penny-level reconciliation guarantees.",
+    "rationale": "Docs show balance accounts holding per-card or pooled funds, webhooks for payment/transfer events (funds added/deducted) and a generic Report webhook, plus Customer Area views of card payments — giving some real-time visibility into balances and transactions. However there is no explicit documentation of a unified transaction ledger tying each authorization to its clearing/settlement, nor of penny-accurate settlement reconciliation reporting. Missing for 10: dedicated ledger/settlement reconciliation reports, explicit authorization-to-clearing matching documentation, and any reconciliation accuracy guarantees or third-party validation.",
     "evidenceIds": [
       "adyen-issuing-docs-4",
-      "adyen-issuing-docs-13",
       "adyen-issuing-docs-14",
       "adyen-issuing-docs-20",
-      "adyen-issuing-docs-25"
+      "adyen-issuing-docs-25",
+      "adyen-issuing-docs-35"
     ]
   },
   {
@@ -319,14 +333,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm API-driven activation, suspension (pause), and permanent closing of cards via the paymentInstrument resource (docs-10,17,18,19), and unpausing is implied by re-activation. However, there is no evidence of an explicit 'report lost or stolen' status/endpoint or a 'reissue with replacement linked to original card' workflow. Missing for 10: explicit lost/stolen reporting API, reissue-with-linkage API, and any independent/hands-on confirmation beyond first-party docs.",
+    "rationale": "Docs confirm API-driven activate, suspend (pause), and permanently close card lifecycle states (docs-10,17,18,19,30), and disputes/fraud reporting API exists (docs-7,24). However there's no explicit documentation of an 'unpause' resume action, a distinct lost/stolen status flow, or a reissue-with-replacement-linked-to-original workflow. Missing for 10: explicit unpause/resume endpoint, lost-or-stolen card status API, and reissue/replacement-card linkage to original card.",
     "evidenceIds": [
       "adyen-issuing-docs-10",
-      "adyen-issuing-docs-11",
-      "adyen-issuing-docs-16",
       "adyen-issuing-docs-17",
       "adyen-issuing-docs-18",
-      "adyen-issuing-docs-19"
+      "adyen-issuing-docs-19",
+      "adyen-issuing-docs-30",
+      "adyen-issuing-docs-7",
+      "adyen-issuing-docs-24"
     ]
   },
   {
@@ -334,45 +349,52 @@
     "storyId": "cardholder-kyc",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers card issuance, authorization, transaction rules, disputes, and 3DS, but contains no mention of KYC/KYB verification flows, documented data requirements, review states, or re-verification processes for cardholders or businesses within Issuing itself. This is a fair question for an issuing platform (identity verification is standard for card programs), but no supporting evidence exists.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers card issuance mechanics (authorization, transaction rules, disputes, 3D Secure, webhooks) but contains no documentation of KYC for consumers or KYB for businesses, no data requirement specs, review states, or re-verification workflows — the closest mention ('verification checks' in docs-12) refers to testing error scenarios for authorization/creation, not identity verification. Since identity verification is a fair and expected axis for a card-issuing platform (accountholder onboarding), but no evidence documents it, this is 'none' rather than 'na'.",
+    "evidenceIds": [
+      "adyen-issuing-docs-12",
+      "adyen-issuing-docs-14",
+      "adyen-issuing-docs-29"
+    ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "clearing-settlement-events",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Adyen documents webhook types including Transfer and Dispute events (covering clearings/refunds/reversals and chargebacks) alongside real-time authorization webhooks, suggesting a webhook-driven post-auth flow. However, there's no evidence detailing stable transaction identifiers linking auth to clearing/refund events or explicit reconciliation guidance for ledger integrity. Missing for 10: documented payload schema showing stable transaction/reference IDs across auth→clearing→refund→chargeback, example webhook payloads, and independent developer corroboration of ledger consistency.",
+    "confidence": "medium",
+    "rationale": "Adyen Issuing documents dedicated webhook types for Dispute (chargebacks), Payment events (funds added/deducted, i.e. clearing-like activity), Transfer, and Network token events, giving developers programmatic post-auth signals beyond the initial authorization webhook. However, the pack never uses the terms clearing/reversal/refund explicitly for card transactions, nor does it document a stable transaction identifier that ties auth-to-settlement events together for ledger reconciliation. missing for 10: explicit clearing/reversal webhook documentation, explicit refund-on-card-transaction webhook, and confirmation of a stable cross-event transaction ID for ledger matching.",
     "evidenceIds": [
       "adyen-issuing-docs-25",
-      "adyen-issuing-docs-24",
-      "adyen-issuing-docs-28"
+      "adyen-issuing-docs-35",
+      "adyen-issuing-docs-36",
+      "adyen-issuing-docs-24"
     ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "credit-debit-prepaid-range",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Docs show Adyen Issuing can create Visa/Mastercard virtual and physical cards backed by a balance account, with flexible pooled or per-card funding (a debit/prepaid-style model), but there is no explicit mention of commercial credit or consumer credit card programs, credit lines, or interest/repayment mechanics anywhere in the evidence pack. missing for 10: explicit support for commercial credit programs, consumer credit programs, credit limits/lines, or revolving credit functionality.",
+    "rationale": "Docs show flexible card issuance (virtual/physical, Visa/Mastercard) and balance-account models (pooled or per-card funding), which implies some prepaid/debit-style flexibility, but there is no explicit mention of credit-line issuance, commercial card programs, or distinct consumer vs. commercial credit product support. Missing for 10: explicit documentation of debit, prepaid, commercial credit, and consumer credit program types with credit-line/repayment mechanics.",
     "evidenceIds": [
       "adyen-issuing-docs-1",
       "adyen-issuing-docs-4",
       "adyen-issuing-docs-14",
-      "adyen-issuing-docs-15"
+      "adyen-issuing-docs-29"
     ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "digital-wallet-provisioning",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers card issuing, authorization, disputes, 3DS, and webhooks, but contains no mention of Apple Pay/Google Pay push provisioning, wallet entitlements process, in-wallet card art, or manual provisioning fallback.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Adyen documents webhooks that fire when cardholders add Adyen-issued cards to Apple Pay/Google Pay and the card data is tokenized, confirming basic wallet tokenization support, but there is no documentation of a push-provisioning API/SDK, the entitlements/certification process, in-wallet card art customization, or manual provisioning as a fallback. missing for 10: push provisioning API/SDK docs, entitlements process documentation, in-wallet card art specs, manual provisioning fallback flow.",
+    "evidenceIds": [
+      "adyen-issuing-docs-36"
+    ]
   },
   {
     "productId": "adyen-issuing",
@@ -380,7 +402,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Adyen documents a Raise Disputes API for filing disputes and a Dispute webhook for status updates, covering initiation and some tracking, but evidence submission is only via manual zip upload through the Customer Area (explicitly a pilot feature, not a programmatic API), and there is no mention of network reason codes or provisional credit handling. missing for 10: programmatic evidence submission API, network reason code taxonomy, provisional credit handling, end-to-end resolution status detail.",
+    "rationale": "Adyen exposes a Raise Disputes API for cardholder-initiated disputes and a Dispute webhook type for status tracking, but evidence submission is described as a manual pilot feature (zip upload via Customer Area) rather than a full programmatic evidence-submission flow, and there is no mention of network reason codes or provisional credit handling. missing for 10: network reason code mapping/taxonomy, API-based evidence submission (beyond pilot zip upload), provisional credit issuance/reversal handling, end-to-end resolution status detail in webhooks.",
     "evidenceIds": [
       "adyen-issuing-docs-7",
       "adyen-issuing-docs-8",
@@ -394,14 +416,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs describe balance-account funding pools (single pool or per-card balances) and relayed authorisation letting the issuer's own system approve/decline each authorization in real time — the mechanics of both prefunded and JIT-style funding are present. However, there is no explicit documentation framing this as a finance-lead decision with cash-flow tradeoffs, no dedicated 'prefunded vs JIT' comparison page, and no discussion of liquidity/cash-flow implications. Missing for 10: explicit prefunded-vs-JIT funding model comparison, cash-flow/liquidity tradeoff guidance, finance-lead-oriented documentation.",
+    "rationale": "Adyen documents real-time relayed authorization where the issuer's own system approves/declines each authorization (docs-2, docs-5, docs-21, docs-28), which functions as JIT funding, and separately mentions balance accounts that can pool funds or be per-card (docs-4), implying a prefunded option. However, there is no explicit documentation contrasting 'prefunded' vs 'just-in-time' as named funding models or discussing their cash-flow tradeoffs for a finance lead. missing for 10: explicit prefunded-vs-JIT terminology, cash-flow tradeoff documentation, guidance on choosing between the two models.",
     "evidenceIds": [
-      "adyen-issuing-docs-4",
       "adyen-issuing-docs-2",
+      "adyen-issuing-docs-4",
+      "adyen-issuing-docs-5",
       "adyen-issuing-docs-21",
-      "adyen-issuing-docs-28",
-      "adyen-issuing-docs-14",
-      "adyen-issuing-docs-25"
+      "adyen-issuing-docs-22",
+      "adyen-issuing-docs-28"
     ]
   },
   {
@@ -428,22 +450,24 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Adyen Issuing docs mention 'transaction rules' that automatically approve or decline authorizations based on business requirements, and relayed authorization webhooks that let you apply custom real-time logic at authorization time — both are plausible mechanisms for MCC and merchant-based spend controls. However, no evidence explicitly confirms MCC allowlist/blocklist configuration or single-merchant lock functionality. missing for 10: explicit documentation of MCC allowlist/blocklist rule types, explicit single-merchant lock capability, and any hands-on confirmation these specific restrictions work at authorization time.",
+    "rationale": "Adyen documents a general 'transaction rules' engine that can auto-approve/decline authorizations, and a relayed-authorization webhook that lets ops apply custom real-time decision logic (including presumably MCC or merchant data available in the transaction) — but the evidence never explicitly names MCC allowlist/blocklist fields or single-merchant lock as configurable rule types. Missing for 10: explicit documentation of MCC-based allow/block rule fields, single-merchant lock configuration, and any UI/API example showing these specific spend-control types being applied at authorization time.",
     "evidenceIds": [
       "adyen-issuing-docs-3",
       "adyen-issuing-docs-23",
-      "adyen-issuing-docs-21",
+      "adyen-issuing-docs-2",
       "adyen-issuing-docs-28"
     ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "network-tokenization-visibility",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers card creation, authorization, transaction rules, disputes, and 3D Secure enrollment, but contains no mention of network tokens, token-level visibility, wallet/merchant token holder attribution, or independent token revocation separate from the PAN.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs confirm network tokens exist and that Adyen sends webhooks for token lifecycle events when cards are added to wallets like Apple Pay/Google Pay (docs-36), implying some visibility into token creation/removal per wallet. However there is no evidence of an API to list/query existing tokens, identify which merchant holds them, or revoke a token independently of the underlying PAN. missing for 10: token listing/query API, merchant/wallet-holder attribution details, explicit token revocation endpoint separate from card suspension.",
+    "evidenceIds": [
+      "adyen-issuing-docs-36"
+    ]
   },
   {
     "productId": "adyen-issuing",
@@ -451,7 +475,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Most card lifecycle actions (create, activate, suspend, close, update balance account, transaction rules, disputes) are exposed via API per docs, but several operations are documented as Customer Area-only: configuring relayed authorisation webhooks (docs-6), viewing card payments (docs-13, docs-20), and uploading dispute evidence zips (docs-8, pilot). No OpenAPI spec was found to confirm full parity (probe-3). missing for 10: API equivalents for relayed-authorisation webhook configuration, payment viewing, and dispute evidence upload; independent confirmation of full API/UI parity.",
+    "rationale": "Docs show most Issuing operations are API-first (create/manage cards, transaction rules, relayed authorization, disputes, webhooks), but several capabilities are explicitly Customer Area-only: configuring relayed authorization webhooks (docs-6), uploading dispute evidence as a zip (docs-8, pilot), and viewing card payments (docs-13/20). This means not everything doable in the UI is exposed via API. missing for 10: API-equivalent for relayed-auth webhook configuration, API-based dispute file upload, API-based payment viewing/reporting parity, and any independent/third-party corroboration beyond first-party docs.",
     "evidenceIds": [
       "adyen-issuing-docs-6",
       "adyen-issuing-docs-8",
@@ -459,8 +483,7 @@
       "adyen-issuing-docs-20",
       "adyen-issuing-docs-15",
       "adyen-issuing-docs-23",
-      "adyen-issuing-docs-24",
-      "adyen-issuing-probe-3"
+      "adyen-issuing-docs-28"
     ]
   },
   {
@@ -468,8 +491,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of any data export/portability feature or open-format data export capability; evidence pack covers card issuing, authorization, disputes, and webhooks only, with no mention of exporting account/transaction data for user-controlled portability or offboarding.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers card issuing, authorization, webhooks, and dispute APIs, but contains no mention of bulk data export, data portability, or open-format export/exit tooling for account holder or transaction data. Absence of evidence for this applicable axis yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -478,7 +501,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a closed commercial payments API/service, not open-source software; source-code availability under an open license is a category error for this type of product.",
+    "rationale": "Adyen Issuing is a proprietary closed-source payments/card-issuing SaaS platform, not open-source software; source-code availability under an open license is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -487,44 +510,47 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a regulated card-issuing SaaS platform tied to banking/card network infrastructure; self-hosting the core product is not a plausible axis for this category.",
+    "rationale": "Adyen Issuing is a regulated, licensed card-issuing platform requiring bank licenses and centralized card network relationships; self-hosting is a category error for this type of financial infrastructure product, not a feature gap.",
     "evidenceIds": []
   },
   {
     "productId": "adyen-issuing",
     "storyId": "pci-scope-management",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card creation, authorization webhooks, transaction rules, disputes, and 3D Secure, but contains no mention of PAN/CVV reveal flows, hosted components, ephemeral-key reveal, or PCI SAQ D scope reduction. This is a fair axis for a card-issuing platform, but nothing in the provided docs addresses it.",
-    "evidenceIds": []
+    "rationale": "Adyen's iOS SDK docs explicitly let cardholders view PAN, CVC, and expiration date client-side (a reveal-card-details SDK), which is the hosted/ephemeral-key pattern typically used to avoid PCI scope, but the evidence never explicitly states this keeps the developer out of SAQ D or explains the underlying ephemeral-key/tokenization mechanism, nor shows parity for web/Android platforms. Missing for 10: explicit PCI-scope/SAQ D reduction language, documentation of the ephemeral-key security model, and equivalent hosted reveal flows for web/Android.",
+    "evidenceIds": [
+      "adyen-issuing-docs-33"
+    ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "physical-card-fulfillment",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs confirm physical cards can be created via the paymentInstrument API (docs-15) alongside virtual ones, but there is no evidence of custom card art/design options, bulk ordering, shipping method selection, or tracking capabilities tied to a manufacturer relationship abstraction. missing for 10: card art/design customization, bulk order workflow, shipping method selection, tracking integration, manufacturer relationship abstraction.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Docs confirm physical (and virtual) card issuance via the paymentInstruments API with customizable card art (Mastercard/Visa), removing the need for a direct manufacturer relationship. However, the evidence pack has no mention of bulk ordering, shipping method selection, or shipment tracking for physical cards. Missing for 10: bulk order API/workflow, shipping method configuration, tracking/status endpoints, evidence of shipping carrier integration.",
     "evidenceIds": [
+      "adyen-issuing-docs-1",
       "adyen-issuing-docs-15",
-      "adyen-issuing-docs-1"
+      "adyen-issuing-docs-29"
     ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "pin-3ds-management",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Adyen Issuing docs confirm 3DS enrollment via API (OTP and out-of-band authentication) and card lifecycle management (activate/suspend/close, balance account updates) through the API, avoiding support tickets. However, there is no explicit documentation of PIN set/reset API flows in the evidence pack. missing for 10: PIN set/reset API endpoint documentation, confirmation that PIN management is self-service via API rather than Customer Area/support.",
+    "rationale": "Docs show cardholder PIN change via SDK (docs-34) and 3DS enrollment options (OTP and OOB) configurable via API/SDK (docs-9, docs-26, docs-27, docs-32), all avoiding support tickets. However there's no explicit 'PIN reset' flow (only 'change PIN') and no documentation tying 3DS enrollment to region-specific mandates. missing for 10: explicit PIN reset (not just change) flow, region-conditional 3DS enrollment logic/documentation, independent corroboration of these flows working end-to-end.",
     "evidenceIds": [
+      "adyen-issuing-docs-34",
       "adyen-issuing-docs-9",
       "adyen-issuing-docs-26",
       "adyen-issuing-docs-27",
-      "adyen-issuing-docs-10",
-      "adyen-issuing-docs-11",
-      "adyen-issuing-docs-16"
+      "adyen-issuing-docs-32",
+      "adyen-issuing-docs-31"
     ]
   },
   {
@@ -532,9 +558,11 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers card issuing, authorization, disputes, and webhooks, but contains no mention of data residency, regional data storage options, or data location controls for AI-native users.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Adyen Issuing docs mention EU, UK, and US banking licenses for compliance but provide no evidence of a user-selectable data residency/region-storage control, which is a fair question for a financial data platform handling cardholder data.",
+    "evidenceIds": [
+      "adyen-issuing-docs-38"
+    ]
   },
   {
     "productId": "adyen-issuing",
@@ -542,7 +570,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Adyen Issuing is a card issuing/payments platform, not an AI model or AI product with training-data policies; opting out of AI training data usage is not a relevant axis for this product category.",
+    "rationale": "Adyen Issuing is a card-issuing/payments API product, not an AI model or AI-assistant product; controlling whether user data trains AI models is a category error for this axis.",
     "evidenceIds": []
   },
   {
@@ -551,7 +579,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers card issuing, authorization, disputes, and 3D Secure features but contains no mention of data retention policies, data deletion controls, or privacy/GDPR-related data lifecycle management for AI-native or any users.",
+    "rationale": "Evidence pack covers card issuing, authorization, disputes, webhooks, and 3DS, but contains no mention of data retention policies, data deletion controls, or privacy/GDPR data-lifecycle management for an AI-native user to configure.",
     "evidenceIds": []
   },
   {
@@ -567,13 +595,16 @@
     "productId": "adyen-issuing",
     "storyId": "program-launch-speed",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs show Adyen issues Visa/Mastercard cards and manages authorization, transaction rules, and card lifecycle, implying Adyen handles network membership so founders don't need their own bank charter — but there is no explicit statement about BIN sponsorship, no discussion of becoming/not becoming a bank, and no documented timeline from signup to first live card. missing for 10: explicit BIN sponsorship/network membership language, articulation that founders avoid bank licensing, and a documented signup-to-live-card timeline.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm Adyen provides the banking-license/BIN-sponsorship layer, Visa/Mastercard card issuing, and program-management tooling (transaction rules, disputes, webhooks, card lifecycle) so a founder need not become a bank (adyen-issuing-docs-38, adyen-issuing-docs-1, adyen-issuing-docs-23, adyen-issuing-docs-25). However, there is no documented signup-to-first-live-card timeline or onboarding SLA anywhere in the pack. Missing for 10: a concrete documented time-from-signup-to-first-live-card metric, explicit description of network membership process, and any third-party corroboration of launch speed.",
     "evidenceIds": [
+      "adyen-issuing-docs-38",
       "adyen-issuing-docs-1",
-      "adyen-issuing-docs-10",
-      "adyen-issuing-docs-14"
+      "adyen-issuing-docs-23",
+      "adyen-issuing-docs-25",
+      "adyen-issuing-docs-29",
+      "adyen-issuing-docs-37"
     ]
   },
   {
@@ -582,24 +613,27 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Adyen documents relayed authorisation webhooks with a strict 2000ms response budget, explicit approve/decline API, and a documented, configurable fallback (default approval or default refusal) if the timeout is missed, matching all elements of the story. Missing for 10: independent/hands-on corroboration of real-world latency compliance beyond first-party docs.",
+    "rationale": "Adyen Issuing's relayed authorisation webhook lets developer-controlled servers approve/decline each authorization in real time, with a documented 2000ms time budget and configurable fallback logic (default approval or default refusal) if the response window is missed, plus transaction rules as an additional automated layer. Missing for 10: independent/hands-on confirmation of real-world latency behavior beyond first-party docs.",
     "evidenceIds": [
       "adyen-issuing-docs-2",
       "adyen-issuing-docs-5",
       "adyen-issuing-docs-21",
       "adyen-issuing-docs-22",
-      "adyen-issuing-docs-28"
+      "adyen-issuing-docs-28",
+      "adyen-issuing-docs-23"
     ]
   },
   {
     "productId": "adyen-issuing",
     "storyId": "reconciliation-reporting",
     "verdict": "partial",
-    "quality": 2,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Docs mention a 'Report' webhook type as one of the subscribable webhooks, hinting at some reporting feed, but there is no detail on settlement files, interchange/fee/network-adjustment breakdowns, or any dedicated reconciliation report API. missing for 10: documentation of settlement/report file formats, explicit interchange and fee reporting fields, and evidence of automated finance-stack ingestion.",
+    "rationale": "The evidence pack only shows a generic 'Report' webhook subscription type and payment/transfer event webhooks, without documenting settlement files or report APIs that itemize interchange, fees, and network adjustments in finance-stack-consumable formats. Missing for 10: dedicated settlement/report API or file documentation, explicit interchange/fee/network-adjustment line-item schema, and independent confirmation that finance teams can ingest these automatically.",
     "evidenceIds": [
-      "adyen-issuing-docs-25"
+      "adyen-issuing-docs-25",
+      "adyen-issuing-docs-35",
+      "adyen-issuing-docs-37"
     ]
   },
   {
@@ -635,13 +669,14 @@
     "productId": "adyen-issuing",
     "storyId": "virtual-card-creation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Docs confirm cards are created via a single API call (create a paymentInstrument, virtual or physical) and card can be activated/suspended via API, but there's no evidence that PAN/CVV/expiry are returned programmatically at issuance, nor any mention of a self-serve sandbox-to-live path without a sales/onboarding process. missing for 10: explicit PAN/CVV/expiry retrieval in the create response, evidence of self-serve go-live without sales cycle.",
+    "rationale": "Docs confirm card issuance is API-driven (create a paymentInstrument specifying virtual or physical) and that cardholders can later reveal PAN/CVC/expiry via SDK, but there is no evidence the creation call itself returns PAN/CVV/expiry immediately, nor any mention of a self-serve sandbox-to-live path without a sales/commercial onboarding process (which Adyen's licensing language even implies is needed). missing for 10: explicit API response showing PAN/CVV/expiry returned at issuance, and evidence of self-serve sandbox-to-production activation without a sales cycle.",
     "evidenceIds": [
       "adyen-issuing-docs-15",
-      "adyen-issuing-docs-10",
-      "adyen-issuing-docs-17"
+      "adyen-issuing-docs-29",
+      "adyen-issuing-docs-33",
+      "adyen-issuing-docs-38"
     ]
   },
   {
@@ -1355,14 +1390,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lithic explicitly documents an agentic issuing use case by name: create a virtual card, assign it to an account, configure Authorization Rules to lock merchant category/MCC and set transaction/velocity limits, then test agent transactions against those rules (lithic-docs-11, lithic-docs-17, lithic-docs-13), and markets 'autonomous issuing, payments, and controls for AI-powered workflows' (lithic-docs-12). Card creation (lithic-docs-9) and rule engine at card/account/program level (lithic-docs-3) support the scoped-card mechanics. Missing for 10: explicit first-party documentation calling out per-card expiry as part of the agent-scoping use case, and independent/hands-on validation that an agent-issued card actually stays within policy in production.",
+    "rationale": "Lithic explicitly documents agentic use cases: its blog walks through creating a virtual card for an agent, configuring Authorization Rules for merchant category/transaction limits/velocity, and testing against those rules, and its agentic-commerce solutions page markets 'secure and autonomous issuing, payments, and controls for AI-powered workflows.' Card creation supports virtual cards, spend limits, and MCC/country/currency-based Authorization Rules at the card level, and expiry is a standard card attribute. missing for 10: a single named end-to-end example combining merchant lock + amount cap + expiry specifically framed as 'issuing a card to an agent' in one document, and independent/hands-on corroboration beyond vendor docs/blog.",
     "evidenceIds": [
       "lithic-docs-11",
       "lithic-docs-12",
-      "lithic-docs-17",
+      "lithic-docs-3",
       "lithic-docs-13",
       "lithic-docs-9",
-      "lithic-docs-3"
+      "lithic-docs-17"
     ]
   },
   {
@@ -1389,7 +1424,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live and served at docs.lithic.com/llms.txt (HTTP 200), and Lithic also publishes agent-oriented MCP docs describing how AI assistants/editors can search docs and execute API calls (lithic-docs-1, lithic-docs-14, lithic-probe-3). This directly satisfies pointing an agent at llms.txt or agent-oriented docs. Missing for 10: no independent/hands-on confirmation that an agent successfully consumes llms.txt content productively, and no detail on llms.txt content depth beyond the header snippet.",
+    "rationale": "A probe confirms Lithic serves a live llms.txt file at docs.lithic.com/llms.txt (HTTP 200) with structured content, and docs pages also expose markdown-native versions (e.g., mcp.md) explicitly designed for AI agents/editors to consume alongside an MCP server. This directly supports pointing an agent at agent-oriented docs. Missing for 10: independent/community confirmation that agents actually use llms.txt successfully in practice.",
     "evidenceIds": [
       "lithic-probe-1",
       "lithic-docs-14",
@@ -1403,8 +1438,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Lithic's evidence covers an MCP server for querying API docs and executing API calls (developer-assistant tooling), plus marketing copy about 'insights to action' for agentic commerce, but there is no documented feature where Lithic itself surfaces AI-generated insights or suggestions from a user's own transaction/spend data inside the product.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Lithic's MCP server lets external AI assistants query docs and make API calls, and marketing copy mentions 'insights to action' for agentic commerce, but there is no evidence of an actual in-product feature that generates AI-driven insights or suggestions from a user's own transaction/spend data (e.g., dashboards, anomaly detection commentary, spend analytics summaries).",
+    "evidenceIds": [
+      "lithic-docs-12",
+      "lithic-docs-14",
+      "lithic-probe-3"
+    ]
   },
   {
     "productId": "lithic",
@@ -1412,18 +1451,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Lithic provides infrastructure for autonomous background decisioning — Authorization Stream Access (real-time HTTP-based approval decisions), the Auth Rules v2 engine (program/account/card-level rules, shadow mode, backtesting) and Events/webhooks for automated event delivery — and explicitly markets 'autonomous issuing, payments, and controls for AI-powered workflows' for agentic commerce. However, this is developer-built automation via API/webhooks rather than a turnkey 'set up an automation and it runs' experience within an AI assistant; the MCP integration is presented as an in-editor coding aid, not itself the mechanism for persistent background automation. Missing for 10: evidence of a no-code/AI-assistant-driven automation builder, scheduling/triggers UI, or hands-on proof that autonomous rules run unattended without developer-managed infrastructure.",
+    "rationale": "Lithic provides infrastructure that supports background autonomous decisioning — Authorization Stream Access lets a customer's endpoint make real-time approval decisions on every transaction, Auth Rules run continuously (including shadow-mode/backtesting) without human intervention, and Lithic explicitly markets 'autonomous issuing, payments, and controls for AI-powered workflows' plus an MCP server for AI coding agents. However, these are building blocks for customers to wire up their own automation logic rather than a built-in scheduler/agent-runner within Lithic itself, and the MCP server is framed as an in-editor coding assistant rather than a background autonomous agent. Missing for 10: a first-party autonomous-agent/automation orchestration feature (vs. APIs customers must wrap themselves), and independent/hands-on evidence of an AI agent actually running unattended in production using these hooks.",
     "evidenceIds": [
-      "lithic-docs-2",
       "lithic-docs-16",
-      "lithic-docs-3",
-      "lithic-docs-4",
+      "lithic-docs-2",
       "lithic-docs-17",
       "lithic-docs-18",
-      "lithic-docs-24",
-      "lithic-docs-6",
-      "lithic-docs-20",
-      "lithic-docs-12"
+      "lithic-docs-12",
+      "lithic-docs-14",
+      "lithic-probe-3"
     ]
   },
   {
@@ -1444,13 +1480,15 @@
     "storyId": "agentic-headless",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Lithic is a REST API platform with a sandbox that mirrors production and lets you simulate transactions, cards, and webhooks end-to-end (lithic-docs-5, lithic-docs-15, lithic-docs-19), which is inherently scriptable/headless and suitable for automated test pipelines. However, there is no explicit documentation of a CLI, GitHub Actions/CI recipe, or headless automation workflow — the CI-suitability is inferred from the API-first sandbox design rather than directly evidenced. Missing for 10: explicit CI/automation documentation, a CLI or SDK example for headless pipelines, and independent confirmation of running Lithic sandbox flows in CI.",
+    "confidence": "low",
+    "rationale": "Lithic is a REST API platform, so its core functionality (card issuance, transactions, webhooks, sandbox simulation) is inherently callable headlessly/programmatically, and the sandbox environment explicitly supports simulating transactions and webhooks end-to-end which could be scripted into CI pipelines. However, there is no explicit documentation of a CLI, CI/CD integration guide, or automation-testing workflow — the AI-native tooling shown (MCP server) is framed for interactive editor use (Cursor, Claude Code) rather than headless CI runs. Missing for 10: explicit CI/CD or automated test-pipeline documentation, a CLI/headless mode, and evidence of the MCP server or sandbox being run non-interactively in automation.",
     "evidenceIds": [
       "lithic-docs-5",
       "lithic-docs-15",
       "lithic-docs-19",
-      "lithic-docs-9"
+      "lithic-docs-6",
+      "lithic-docs-14",
+      "lithic-probe-3"
     ]
   },
   {
@@ -1459,12 +1497,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lithic is a card-issuing/payments API platform, not an agent or orchestration tool that itself consumes MCP servers' tools; the evidence instead shows the reverse direction — Lithic ships an MCP server so AI editors (Cursor, Claude Code) can call Lithic's own API tools (lithic-docs-1, lithic-docs-14, lithic-probe-3). There is no plausible product surface for Lithic to 'plug in' external MCP servers and use their tools, making this a category error rather than a missing feature.",
-    "evidenceIds": [
-      "lithic-docs-1",
-      "lithic-docs-14",
-      "lithic-probe-3"
-    ]
+    "rationale": "Lithic is a card-issuing/payments API platform, not an AI agent or assistant that itself hosts a runtime capable of plugging in external MCP servers to use their tools. The evidence instead shows the reverse relationship — Lithic ships its own MCP server that agents like Cursor/Claude Code connect to — which belongs to the separate 'MCP server' story, not this client-side story.",
+    "evidenceIds": []
   },
   {
     "productId": "lithic",
@@ -1472,7 +1506,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Lithic documents an official MCP server that connects AI assistants (Cursor, Claude Code, Copilot) enabling doc search, schema inspection, code generation, and live API calls, including agentic payment workflows like creating cards, setting auth rules, and running test transactions. Missing for 10: independent/hands-on third-party confirmation that the MCP server works as documented beyond vendor blog/docs.",
+    "rationale": "Lithic documents an official MCP server that connects AI editors/agents (Cursor, Claude Code, Copilot) to search docs, inspect schemas, generate code, and execute live API requests, with a dedicated blog post showing an agentic workflow (create card, configure rules, run test transactions). Missing for 10: independent/hands-on third-party verification of the MCP server's reliability beyond vendor docs.",
     "evidenceIds": [
       "lithic-docs-1",
       "lithic-docs-14",
@@ -1509,14 +1543,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lithic exposes a comprehensive documented public API (cards, disputes, auth rules, events, ASA, versioning headers) with a reference/docs site and llms.txt, and this is corroborated by a probe hit confirming live documentation. missing for 10: a discoverable public OpenAPI/swagger spec (candidate paths 404) and independent third-party developer corroboration beyond vendor docs.",
+    "rationale": "Lithic publishes extensive first-party API reference docs (cards, disputes, events, auth rules, ASA, versioning, KYC) and an official MCP server letting AI agents search docs, inspect schemas, and execute live API calls directly from editors, directly matching the AI-native 'documented public API' story. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec (probe found 404s at standard paths) and independent/hands-on third-party corroboration beyond vendor docs.",
     "evidenceIds": [
+      "lithic-docs-1",
+      "lithic-docs-14",
       "lithic-docs-9",
-      "lithic-docs-16",
       "lithic-docs-6",
       "lithic-docs-7",
-      "lithic-docs-3",
-      "lithic-probe-1",
+      "lithic-probe-3",
       "lithic-probe-2"
     ]
   },
@@ -1526,14 +1560,13 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Lithic supports issuing virtual cards with fine-grained authorization rules (MCC, country, velocity, spend limits) scoped to program/account/card level, and its own blog demonstrates creating a card for an AI agent with rules restricting its spend (lithic-docs-11, lithic-docs-3, lithic-docs-13, lithic-docs-17, lithic-docs-12). This effectively delivers 'scoped credentials for an agent' via cards+rules rather than classic API-key permission scoping. Missing for 10: no documentation of least-privilege API key/token scoping for the Lithic API itself (e.g., role-based API keys), and no independent/hands-on verification beyond vendor materials.",
+    "rationale": "Lithic documents issuing virtual cards scoped with spend limits and Authorization Rules (MCC, country, velocity, program/account/card level) and explicitly ties this to agentic workflows via its MCP server blog post and agentic-commerce solutions page, effectively letting an AI agent operate with a least-privilege payment credential. However, this is scoping at the card/authorization level, not a documented mechanism for scoping the underlying API key/credential itself (e.g., restricted API tokens or OAuth-style scopes for agent API access). Missing for 10: explicit API-key/credential scoping documentation (not just card controls), independent/hands-on verification of agent-specific credential issuance.",
     "evidenceIds": [
       "lithic-docs-11",
+      "lithic-docs-12",
       "lithic-docs-3",
       "lithic-docs-13",
-      "lithic-docs-17",
-      "lithic-docs-12",
-      "lithic-docs-9"
+      "lithic-docs-17"
     ]
   },
   {
@@ -1541,8 +1574,8 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack details Lithic's API docs, MCP server for AI editors, and llms.txt discoverability, but contains no mention of official client SDKs (e.g., Python, Node, Java) for developers to build against. Missing for 10: any documentation or reference to official language SDKs, their coverage, or maintenance status.",
+    "confidence": "low",
+    "rationale": "The evidence pack documents Lithic's REST API, webhooks, auth rules, and an MCP server for AI editors, but nowhere mentions official client SDKs (e.g., Python/Node/Go libraries) that AI-native developers could build against. Missing for 10: any mention of official SDKs, their languages, versioning, or maintenance status.",
     "evidenceIds": []
   },
   {
@@ -1551,10 +1584,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lithic's Events API lets users register/manage webhook URLs, replay messages, control subscription secrets, and search past events, covering event subscription and management via webhooks; this is well documented across multiple sources. missing for 10: independent hands-on developer confirmation of webhook reliability/setup outside official docs.",
+    "rationale": "Lithic's Events API lets users register/manage webhook URLs, replay messages, control subscription secrets, and search past events, with a sandbox to test webhooks end-to-end, directly enabling subscription to events via webhooks. Missing for 10: no explicit code sample of an AI agent programmatically subscribing via the MCP/AI integration, and no independent/hands-on third-party corroboration beyond vendor docs.",
     "evidenceIds": [
       "lithic-docs-6",
       "lithic-docs-20",
+      "lithic-docs-27",
       "lithic-docs-23",
       "lithic-docs-15"
     ]
@@ -1578,10 +1612,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Lithic publishes a downloadable OpenAPI/Swagger spec; direct probes to common spec URLs (openapi.json, swagger.json, etc.) all returned 404, and no docs page mentions exporting or downloading a machine-readable spec.",
+    "confidence": "medium",
+    "rationale": "No documentation offers a downloadable OpenAPI/Swagger spec; a direct probe for common OpenAPI paths (openapi.json, swagger.json, etc.) returned 404s, and the only machine-readable doc found (llms.txt) is a plain-text doc index, not an API spec.",
     "evidenceIds": [
-      "lithic-probe-2"
+      "lithic-probe-2",
+      "lithic-probe-1"
     ]
   },
   {
@@ -1590,12 +1625,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lithic explicitly documents a sandbox environment that mirrors production for running cards, transactions, and webhooks end-to-end, with dedicated endpoints to simulate merchant/acquirer transaction events, and the MCP blog post shows an AI agent creating test cards, configuring rules, and running transactions against a sandbox account. This directly matches the ai-native story of testing safely without touching production data. Missing for 10: independent/hands-on confirmation from a third party of sandbox fidelity and no explicit mention of sandbox API key isolation guarantees.",
+    "rationale": "Lithic explicitly documents a sandbox environment that mirrors production for running cards, transactions, and webhooks end-to-end, with dedicated endpoints to simulate acquirer-originated transactions, and the MCP/blog materials describe an AI agent creating test cards, configuring rules, and running transactions against them in this sandbox. This directly matches the story of AI-native testing without touching production data.  missing for 10: independent/hands-on confirmation beyond vendor docs, and explicit statement that sandbox data is fully isolated from production billing/data stores.",
     "evidenceIds": [
-      "lithic-docs-5",
       "lithic-docs-15",
+      "lithic-docs-5",
       "lithic-docs-19",
-      "lithic-docs-11"
+      "lithic-docs-11",
+      "lithic-docs-14"
     ]
   },
   {
@@ -1604,25 +1640,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Lithic documents API versioning via the `api-version` header (lithic-docs-7/21) and provides a migration guide showing backward-compatible transition from legacy webhooks to the Events API with shared schemas/HMAC headers (lithic-docs-23), evidencing a real but narrow deprecation/migration practice. However, there's no general, product-wide documented deprecation policy (e.g., sunset timelines, changelog, versioning cadence) beyond this one example. Missing for 10: a comprehensive deprecation policy document, explicit version sunset dates, and broader changelog/versioning governance beyond the single webhook migration example.",
+    "rationale": "Lithic documents dated API versioning via the `api-version` header, letting integrators control when changes reach them (lithic-docs-7, lithic-docs-21, lithic-docs-28), and migration guidance exists for at least one API transition preserving schema/headers for smooth transition (lithic-docs-23, lithic-docs-31). However, there's no explicit documented deprecation policy (timelines, sunset notice periods, versioning changelog) beyond the header mechanism. Missing for 10: explicit deprecation policy/timeline documentation, versioned changelog, sunset notice commitments, independent corroboration of version stability.",
     "evidenceIds": [
       "lithic-docs-7",
       "lithic-docs-21",
-      "lithic-docs-23"
+      "lithic-docs-28",
+      "lithic-docs-23",
+      "lithic-docs-31"
     ]
   },
   {
     "productId": "lithic",
     "storyId": "auth-context-enrichment",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs confirm ASA delivers transaction metadata over HTTP during authorization (lithic-docs-2, lithic-docs-16), and Auth Rules can act on MCC, country, currency, risk score, and even span multiple event streams including digital wallet/tokenization (lithic-docs-17, lithic-docs-24). However, there's no explicit evidence of enhanced merchant data, entry-mode granularity, partial-approval signals, or incremental-auth support in the authorization payload. Missing for 10: explicit documentation of merchant name/enhanced merchant data fields, entry-mode details, partial-approval flags, and incremental-auth signaling in the auth event schema.",
+    "rationale": "Lithic's docs confirm authorization decisioning infrastructure (ASA delivers transaction metadata via HTTP, Auth Rules can key off MCC/country/currency/risk score, and a dedicated event stream exists for 'digital wallet and merchant tokenization') showing MCC and wallet-related context flow into decisions, but the pack never documents merchant name enrichment, enhanced merchant data fields, entry-mode details, partial-approval, or incremental-auth signals specifically. missing for 10: explicit merchant name/enhanced merchant data fields, entry-mode detail schema, partial-approval signal documentation, incremental-auth signal documentation.",
     "evidenceIds": [
       "lithic-docs-2",
       "lithic-docs-16",
       "lithic-docs-17",
-      "lithic-docs-24"
+      "lithic-docs-24",
+      "lithic-docs-26"
     ]
   },
   {
@@ -1645,25 +1684,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of batch/bulk endpoints (e.g., issuing multiple cards, bulk account holder creation, or batch transaction queries) — only single-resource creation (postcards) and search/replay of individual events is documented. The axis applies to a card-issuing API platform, but nothing in the pack shows a bulk-operation capability for AI agents.",
+    "rationale": "The evidence pack covers single-resource actions (create one card, one authorization rule, single webhook management) and doesn't mention any bulk/batch endpoints, batch card issuance, or multi-item operations that an AI agent could invoke in one call.",
     "evidenceIds": []
   },
   {
     "productId": "lithic",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Lithic's Authorization Rules engine lets users define rules on attributes like MCC, country, currency, and risk score at program/account/card level that automatically trigger approve/decline actions on transaction events, with shadow mode and backtesting to validate before going live, and Auth Stream Access/Events/webhooks provide event-driven automation hooks. missing for 10: no independent/hands-on corroboration of rule-triggered actions beyond vendor docs, and no evidence of arbitrary custom actions beyond approve/decline/spend-limit style decisions.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Lithic's Authorization Rules v2 engine lets users define rules based on MCC, country, currency, risk score, and other attributes at program/account/card level, with shadow mode and backtesting, and these rules trigger automatically on live authorization events across card, 3DS, tokenization, and ACH streams; ASA extends this to fully custom HTTP-based approval decisions per event. missing for 10: independent/hands-on corroboration beyond first-party docs, and explicit examples of AI-agent-authored rule definitions rather than manual configuration.",
     "evidenceIds": [
       "lithic-docs-3",
       "lithic-docs-4",
+      "lithic-docs-16",
       "lithic-docs-17",
       "lithic-docs-18",
       "lithic-docs-24",
-      "lithic-docs-16",
-      "lithic-docs-6",
-      "lithic-docs-20"
+      "lithic-docs-26"
     ]
   },
   {
@@ -1672,7 +1710,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lithic is a card issuing/payments API platform, not a workflow/job-scheduling or automation orchestration product; scheduling recurring jobs/workflows is outside its product category (wrong axis) rather than a missing feature.",
+    "rationale": "Lithic is a card issuing/payments API platform, not a workflow/job scheduling or automation orchestration tool; recurring jobs/workflow scheduling is outside its product category, making this a wrong-axis question rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -1692,22 +1730,30 @@
   {
     "productId": "lithic",
     "storyId": "balance-ledger-visibility",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence covers authorization rules, ASA, webhooks/events, and simulated transactions, but there is no mention of account/card balance reporting, a ledger that ties authorizations to clearing, or settlement reconciliation — the core asks of this story are unaddressed.",
-    "evidenceIds": []
+    "rationale": "Lithic's Events/webhooks API and Authorization Stream Access provide visibility into authorization and transaction events, which partially supports a ledger tying authorizations to outcomes, but there is no evidence of dedicated balance endpoints or settlement reporting that reconciles to the penny. missing for 10: explicit balance/account balance API documentation, settlement/clearing reconciliation reports, penny-level reconciliation guarantees.",
+    "evidenceIds": [
+      "lithic-docs-6",
+      "lithic-docs-20",
+      "lithic-docs-16",
+      "lithic-docs-23",
+      "lithic-docs-31"
+    ]
   },
   {
     "productId": "lithic",
     "storyId": "card-state-management",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence confirms card creation via API (virtual/physical) but contains no documentation of activate, pause/unpause, report lost/stolen, reissue-with-link, or permanent-close endpoints. Missing for 10: pause/unpause endpoint docs, lost/stolen reporting endpoint, reissue-with-original-link mechanism, permanent closure endpoint, and any state-transition lifecycle documentation.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence only documents card creation (POST /cards) and general card controls like spend limits and authorization rules; there is no documentation shown for activating, pausing/unpausing, reporting lost/stolen, reissuing a replacement linked to an original, or permanently closing a card via the API. Missing for 10: card state-transition endpoints (pause/unpause), lost/stolen reporting endpoint, reissue-with-linkage endpoint, permanent closure endpoint.",
     "evidenceIds": [
       "lithic-docs-9",
-      "lithic-docs-25"
+      "lithic-docs-25",
+      "lithic-docs-30",
+      "lithic-docs-13"
     ]
   },
   {
@@ -1716,10 +1762,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs confirm a KYC process for consumer account holders with bypass/exempt options (KYC_BYO, KYC_EXEMPT), implying data requirements exist, but there is no explicit documentation of KYB for business account holders, review states, or re-verification flows. missing for 10: explicit KYB documentation for business entities, documented review/decision states (pending/approved/rejected), re-verification/periodic refresh flow details.",
+    "rationale": "Docs confirm a built-in KYC process for individual account holders exists, with KYC_BYO (bypass for pre-approved partners) and KYC_EXEMPT (reduced PII) pathways, implying core identity-verification logic is baked into issuance [lithic-docs-8, lithic-docs-22, lithic-docs-29]. However there is no evidence of KYB flows for business accounts, no documented data-requirement schemas, review/pending states, or re-verification triggers — missing for 10: KYB documentation for businesses, explicit data requirement lists, review-state lifecycle, and re-verification/refresh flows.",
     "evidenceIds": [
       "lithic-docs-8",
-      "lithic-docs-22"
+      "lithic-docs-22",
+      "lithic-docs-29"
     ]
   },
   {
@@ -1727,13 +1774,15 @@
     "storyId": "clearing-settlement-events",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Lithic's Events API supports webhook registration, replay, and searching past events (lithic-docs-6/20/23), and its Disputes API automates chargeback network filing (lithic-docs-10), suggesting post-auth lifecycle events are programmatically accessible. However, no evidence explicitly confirms that clearings, refunds, reversals, and chargebacks are delivered as distinct webhook event types with stable transaction identifiers guaranteeing ledger consistency. Missing for 10: explicit event-type documentation for clearings/refunds/reversals, confirmation of stable transaction ID linkage across event types, and independent/hands-on verification that ledger drift is avoided.",
+    "confidence": "low",
+    "rationale": "Lithic's Events API supports webhook registration, replay, and searchable event history, and its Disputes API explicitly handles chargeback network filing and representment — covering part of the post-auth lifecycle. However, the evidence never explicitly names clearings, refunds, or reversals as distinct webhook event types, nor confirms a stable transaction identifier guarantee across these events to prevent ledger drift. Missing for 10: explicit documentation of clearing/refund/reversal webhook event types, confirmation of consistent transaction IDs across auth-to-settlement lifecycle, and independent developer corroboration of ledger reconciliation accuracy.",
     "evidenceIds": [
       "lithic-docs-6",
       "lithic-docs-20",
+      "lithic-docs-27",
       "lithic-docs-10",
-      "lithic-docs-23"
+      "lithic-docs-23",
+      "lithic-docs-31"
     ]
   },
   {
@@ -1742,13 +1791,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card creation (virtual/physical), KYC options, authorization rules, and webhooks, but never states which program types (debit, prepaid, commercial credit, consumer credit) Lithic actually supports — there's no mention of credit line/program types at all, only account-holder KYC flows and physical/virtual card issuance mechanics.",
-    "evidenceIds": [
-      "lithic-docs-9",
-      "lithic-docs-25",
-      "lithic-docs-8",
-      "lithic-docs-22"
-    ]
+    "rationale": "The evidence pack details card creation, authorization rules, KYC, disputes, and events APIs, but never specifies which program types (debit, prepaid, commercial credit, consumer credit) are supported — no mention of 'credit line', 'credit program', or distinct prepaid/debit/credit product types. The axis clearly applies to a card-issuing platform, but no evidence confirms multi-program-type support.",
+    "evidenceIds": []
   },
   {
     "productId": "lithic",
@@ -1756,7 +1800,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack mentions Apple Pay, Google Pay, push provisioning, entitlements, in-wallet card art, or manual provisioning; only card creation, authorization rules, disputes, webhooks, and MCP docs are covered.",
+    "rationale": "No evidence pack items mention Apple Pay/Google Pay push provisioning, wallet entitlements, in-wallet card art, or manual provisioning fallback; only card creation, auth rules, webhooks, and disputes are documented.",
     "evidenceIds": []
   },
   {
@@ -1789,13 +1833,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Lithic provides real auth-time fraud tooling: Authorization Rules v2 can use a 'risk score' attribute (docs-17), ASA lets ops run custom fraud models to approve/decline transactions in real time (docs-2, docs-16), and Events/webhooks (docs-6, docs-20) could surface anomalous activity. Card creation endpoints imply cards can be reissued (docs-9), but the pack has no explicit card block/freeze API, no documented 'suspicious-activity alert' feature, and no mention of network-provided fraud scores (only a generic 'risk score' rule attribute). missing for 10: explicit card block/lock endpoint, dedicated suspicious-activity alerting feature, and confirmation of network (Visa/Mastercard) fraud scores rather than a generic custom risk-score field.",
+    "rationale": "Lithic's Authorization Rules v2 let ops apply logic based on 'risk score' among other signals at auth time (docs-17/26), and ASA provides a custom real-time decisioning hook using transaction metadata (docs-2/16), which covers part of the fraud-scoring-at-auth story. However, there is no evidence of dedicated suspicious-activity alerting, network fraud-score surfacing beyond a generic 'risk score' attribute, or explicit card block/reissue tooling for compromised cards — only generic card creation (docs-9) and spend-limit velocity controls (docs-13) are documented. Missing for 10: explicit suspicious-activity alert mechanism, documented card block/reissue workflow, and clarity on network (Visa/Mastercard) fraud score integration versus Lithic's own risk score field.",
     "evidenceIds": [
       "lithic-docs-2",
       "lithic-docs-16",
       "lithic-docs-17",
-      "lithic-docs-6",
-      "lithic-docs-20",
+      "lithic-docs-26",
+      "lithic-docs-13",
       "lithic-docs-9"
     ]
   },
@@ -1805,13 +1849,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs confirm Authorization Rules v2 support MCC-based allow/block logic ('rules based on high-signal attributes like MCC') applied at program, account, or card level (card-level = single-merchant/single-card lock), enforced at authorization time via the ASA/auth stream. The blog post also demonstrates configuring merchant-category rules and testing them against live authorization transactions. Missing for 10: explicit documentation of a true 'single-merchant lock' feature (as opposed to card-level MCC rules) and independent third-party confirmation of MCC allow/blocklist behavior in production.",
+    "rationale": "Lithic's Authorization Rules v2 explicitly support MCC-based allow/blocklists ('rules based on high-signal attributes like MCC') applied at program/account/card level, matching single-merchant lock via card-level rules, and rules run at authorization time via the ASA/auth stream integration. The MCP-server blog post also demonstrates configuring authorization rules controlling merchant categories in a live test flow. missing for 10: explicit documentation of a 'single merchant lock' feature by name and independent third-party confirmation beyond vendor docs.",
     "evidenceIds": [
       "lithic-docs-3",
       "lithic-docs-17",
-      "lithic-docs-16",
+      "lithic-docs-26",
       "lithic-docs-11",
-      "lithic-docs-24"
+      "lithic-docs-16"
     ]
   },
   {
@@ -1819,8 +1863,8 @@
     "storyId": "network-tokenization-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence pack shows no capability for viewing, managing, or revoking network tokens independently of the PAN; the only tokenization mention (lithic-docs-24) refers to it merely as an authorization decisioning event stream, not token lifecycle management.",
+    "confidence": "medium",
+    "rationale": "Evidence only mentions tokenization as one of several event streams for Auth Rules decisioning (lithic-docs-24), but there is no documentation of an API to list network tokens per card, identify the wallet/merchant holding each token, or revoke a token independently of the underlying PAN. This is a reasonable axis for a card-issuing platform, but no supporting evidence exists.",
     "evidenceIds": [
       "lithic-docs-24"
     ]
@@ -1831,16 +1875,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Lithic's docs show an extensive, API-first surface covering card creation, authorization rules, KYC, disputes, webhooks/events, and sandbox simulation, implying the API is the primary interface and dashboard is a thin layer over it, plus an MCP server lets AI agents run live API calls. However, no evidence explicitly confirms 1:1 feature parity between the dashboard UI and the API, or lists any UI-only settings/actions that lack API equivalents. Missing for 10: an explicit parity statement or audit showing no UI-exclusive features, and independent confirmation (e.g., from users) that all dashboard actions map to API endpoints.",
+    "rationale": "Lithic's docs show broad API coverage across core product functions—card creation, authorization rules, disputes, KYC, webhooks/events, sandbox simulation, and versioning—consistent with an API-first platform where the dashboard is a thin layer over these same endpoints. However, there is no explicit statement or audit confirming full UI/API parity (e.g., no explicit note that every dashboard action has an API equivalent), and no OpenAPI spec was found to verify endpoint completeness (probe shows 404s for openapi.json variants). Missing for 10: explicit UI-to-API parity claim/documentation, a discoverable OpenAPI spec confirming full endpoint coverage, and independent/community confirmation that no UI-only features exist.",
     "evidenceIds": [
       "lithic-docs-9",
       "lithic-docs-3",
-      "lithic-docs-4",
-      "lithic-docs-6",
       "lithic-docs-10",
+      "lithic-docs-8",
+      "lithic-docs-6",
       "lithic-docs-5",
-      "lithic-docs-14",
-      "lithic-probe-3"
+      "lithic-docs-7",
+      "lithic-probe-2"
     ]
   },
   {
@@ -1848,13 +1892,9 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Lithic's docs describe API/webhook access to transactional data (Events API, webhooks) but there is no evidence of a bulk data-export feature, open-format data dump, or documented data-portability/exit process for customers wanting to leave with their data.",
-    "evidenceIds": [
-      "lithic-docs-6",
-      "lithic-docs-20",
-      "lithic-docs-23"
-    ]
+    "confidence": "low",
+    "rationale": "Lithic is a card-issuing/payments API platform; there is no evidence of a bulk data export feature in open/portable formats or an account-closure/data-portability workflow, though the Events API allows searching events via API. Absence of evidence for this applicable capability yields 'none'.",
+    "evidenceIds": []
   },
   {
     "productId": "lithic",
@@ -1862,7 +1902,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lithic is a closed proprietary card-issuing/payments API platform, not an open-source project; source code availability under an open license is not a category it fits (fintech infrastructure SaaS, not a codebase product). No evidence suggests otherwise.",
+    "rationale": "Lithic is a closed-source fintech/payments API platform; there is no evidence it is open source or that its source code is published under any license. Source-availability is not a plausible axis for a proprietary API/SaaS payments product of this type.",
     "evidenceIds": []
   },
   {
@@ -1871,7 +1911,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lithic is a cloud-based card issuing/payments API platform, not open-source infrastructure meant to be self-hosted; the evidence pack only covers API, MCP, webhooks, and rules features with no self-hosting option. Self-hosting a regulated payments processing service is a category error for this type of product.",
+    "rationale": "Lithic is a card issuing/payments API SaaS platform, not infrastructure software distributed for self-hosting; self-hosting is a category error for this kind of hosted financial-services product.",
     "evidenceIds": []
   },
   {
@@ -1880,7 +1920,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence pack contains no mention of hosted card-details components, PAN/CVV reveal flows, ephemeral keys, or SAQ D scope reduction anywhere in the docs list.",
+    "rationale": "No evidence pack items mention PAN/CVV reveal, hosted card components, ephemeral key reveal flows, or any PCI SAQ D scope-reduction mechanism; card creation docs only cover virtual/physical card issuance without reference to secure display of sensitive card data.",
     "evidenceIds": []
   },
   {
@@ -1889,10 +1929,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs confirm the card creation API supports physical cards with shipping_address and product_id parameters, implying some card art/product selection and shipping capability, but there is no evidence of bulk ordering, shipping method selection, tracking, or details on card manufacturer abstraction. missing for 10: bulk order endpoints, shipping method options, tracking/status evidence, custom card art upload/design process, confirmation that Lithic fully manages manufacturer relationship without ops involvement.",
+    "rationale": "Docs confirm the card creation endpoint supports physical cards with shipping_address and product_id parameters, indicating some ability to order physical cards via API without a direct manufacturer relationship, but there's no evidence of custom card art design, bulk ordering workflows, choice of shipping methods, or tracking. Missing for 10: custom card art/design upload, bulk order endpoints, shipping method selection, and tracking/status APIs.",
     "evidenceIds": [
       "lithic-docs-9",
-      "lithic-docs-25"
+      "lithic-docs-25",
+      "lithic-docs-30"
     ]
   },
   {
@@ -1900,8 +1941,8 @@
     "storyId": "pin-3ds-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions PIN management (set/reset) or 3DS enrollment flows via the API; coverage is limited to card creation, auth rules, disputes, KYC, and events, none of which address these specific cardholder credential flows.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention PIN set/reset endpoints or 3DS enrollment/cardholder authentication management via API; evidence covers card creation, auth rules, disputes, events, KYC, and MCP tooling but nothing about PIN or 3DS enrollment flows.",
     "evidenceIds": []
   },
   {
@@ -1909,8 +1950,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data controls for Lithic; the evidence covers card issuing, authorization rules, webhooks, and MCP integration but nothing about where customer data is stored or a choice of region.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency or regional storage choice for Lithic; nothing about region selection, data center locations, or residency controls appears in the docs excerpts.",
     "evidenceIds": []
   },
   {
@@ -1919,7 +1960,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lithic is a card issuing/payments API platform; there is no evidence of AI model training on customer data or data-usage opt-out controls, and this privacy axis about AI training data is a category mismatch for a payments infrastructure product.",
+    "rationale": "Lithic is a card-issuing/payments API platform, not an AI model provider or data-processing service where an AI-training opt-out setting would be a fair axis; no evidence pack content relates to AI model training on customer data.",
     "evidenceIds": []
   },
   {
@@ -1927,8 +1968,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Lithic is a card-issuing/payments API; the evidence pack covers auth rules, webhooks, KYC, disputes, and MCP integration, but contains no mention of data retention policies, data deletion controls, or privacy/data lifecycle management features that an AI-native user could control.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data retention policies, data deletion controls, or privacy/compliance settings for AI-native usage; all evidence focuses on card issuing, authorization rules, webhooks, and API versioning. This is an applicable axis for a financial API platform handling PII/transaction data, but no documentation of retention/deletion controls is present.",
     "evidenceIds": []
   },
   {
@@ -1946,12 +1987,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs show Lithic handles card issuing mechanics (KYC bypass/exemption, card creation, auth rules, disputes handling networking filing) which implies program-management abstraction, but there is no explicit mention of BIN sponsorship or network membership being handled by Lithic, and no documented timeline from signup to first live card. missing for 10: explicit BIN sponsorship/network membership language, a documented signup-to-live-card timeframe, and independent corroboration of onboarding speed.",
+    "rationale": "Lithic's docs cover program mechanics (KYC bypass/exempt paths, card issuance, authorization rules, spend limits, sandbox) implying it handles compliance/program management so founders needn't become a bank, and community commentary notes issuing-as-a-service lowers the cost of building neobanks. However, there is no explicit mention of BIN sponsorship or network membership being provided by Lithic, and no documented time-from-signup-to-first-live-card metric anywhere in the pack. missing for 10: explicit BIN sponsorship/network membership claims, a documented signup-to-live-card timeline, and independent confirmation of program-management turnkey experience.",
     "evidenceIds": [
       "lithic-docs-8",
       "lithic-docs-22",
+      "lithic-docs-29",
       "lithic-docs-9",
-      "lithic-docs-10",
+      "lithic-docs-13",
       "lithic-comm-2"
     ]
   },
@@ -1961,7 +2003,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Lithic's Authorization Stream Access (ASA) is documented as an HTTP endpoint that receives auth requests and must respond with an approval/decline decision, matching the core of this story, and Auth Rules/shadow mode add further decisioning control. However, the evidence never documents the specific network time budget or a configurable timeout fallback behavior (e.g., default approve/decline if the endpoint doesn't respond in time), which is a key part of the story. Missing for 10: documented timeout/response-time budget, explicit fallback decision configuration, and independent/hands-on confirmation of real-time latency behavior.",
+    "rationale": "Lithic's ASA (Authorization Stream Access) is well documented as an HTTP endpoint that receives POST requests during live authorization and must respond with an approval/decline decision, and Auth Rules/shadow mode let developers control decision logic and level (program/account/card) [lithic-docs-2, lithic-docs-16, lithic-docs-17, lithic-docs-24]. However the evidence pack never documents the network's specific time budget or a configurable timeout/fallback behavior developers control if their endpoint doesn't respond in time. Missing for 10: explicit documentation of the ASA response time window and a configurable fallback decision (approve/decline-by-default) mechanism.",
     "evidenceIds": [
       "lithic-docs-2",
       "lithic-docs-16",
@@ -1974,8 +2016,8 @@
     "storyId": "reconciliation-reporting",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Lithic's card-issuing platform plausibly could offer settlement/reconciliation reporting (interchange, fees, network adjustments) as this is a common need for finance teams using issuing platforms, but no evidence in the pack mentions settlement files, interchange fee reports, or reconciliation APIs — only auth rules, disputes, webhooks/events, and card creation are documented.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Lithic's authorization rules, webhooks/Events API, disputes, and MCP tooling, but contains no mention of settlement files, interchange/fee reporting, or network adjustment reconciliation artifacts that a finance stack could consume. This is a plausible axis for a card-issuing platform, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -1984,13 +2026,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Lithic clearly supports card issuing with card-level authorization rules (MCC, country, currency, risk score) and program/account/card-level spend limits, which together allow merchant-locking and velocity/amount controls [lithic-docs-3, lithic-docs-9, lithic-docs-13, lithic-docs-17]. However, the evidence never explicitly documents a 'single-use' card type or per-transaction exact-amount enforcement (one card = one purchase, auto-expire after use) — missing for 10: explicit single-use/one-time card mechanism, documentation of exact-amount (not just limit) authorization matching, and independent/hands-on confirmation that a leaked single-use number is rejected after first use.",
+    "rationale": "Lithic's docs show strong spend-control primitives — card-level Authorization Rules keyed on MCC/country/velocity (lithic-docs-3, lithic-docs-17, lithic-docs-26) and card/account Spend Limits (lithic-docs-13) plus card creation endpoints (lithic-docs-9, lithic-docs-25) — which together let a developer lock a card to a merchant category and cap spend. However, the evidence never explicitly documents a 'single-use' card type, exact-amount authorization matching, or automatic card closure after one transaction. Missing for 10: explicit single-use/one-time card type documentation, exact-amount (not just limit) enforcement, and merchant-specific (vs. MCC-category) locking evidence.",
     "evidenceIds": [
       "lithic-docs-3",
-      "lithic-docs-9",
       "lithic-docs-13",
       "lithic-docs-17",
-      "lithic-docs-24"
+      "lithic-docs-26",
+      "lithic-docs-9",
+      "lithic-docs-25"
     ]
   },
   {
@@ -1999,13 +2042,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lithic docs explicitly describe Card and Account Spend Limits for spend velocity control (lithic-docs-13), plus Authorization Rules v2 enforceable at program/account/card level using MCC, country, currency, risk score (lithic-docs-3, lithic-docs-17), with velocity and transaction-limit rule examples confirmed in the MCP server blog (lithic-docs-11), all enforced server-side without customer infrastructure. Missing for 10: explicit documentation of separate daily/monthly/all-time window configuration options and per-cardholder (vs per-card/account) granularity distinctions, and independent hands-on verification beyond vendor docs.",
+    "rationale": "Lithic offers native Spend Limits per card/account for velocity control (daily/monthly/all-time caps) plus a separate Authorization Rules engine enforcing MCC/velocity/transaction-count rules at program, account, or card level, all evaluated platform-side during authorization rather than in customer code. Missing for 10: explicit documentation confirming per-cardholder (vs per-account/card) scoping and independent/hands-on confirmation of exact window options (daily/monthly/all-time) beyond the docs' summary language.",
     "evidenceIds": [
       "lithic-docs-13",
       "lithic-docs-3",
       "lithic-docs-17",
-      "lithic-docs-11",
-      "lithic-docs-24"
+      "lithic-docs-26",
+      "lithic-docs-11"
     ]
   },
   {
@@ -2014,49 +2057,51 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm a single API call creates a virtual or physical card (lithic-docs-9/25) and that a full sandbox mirrors production for cards/transactions/webhooks (lithic-docs-15, lithic-docs-5/19), supporting the sandbox-to-production workflow. However, the pack never explicitly states that PAN, CVV, and expiry are returned synchronously in the create-card response, nor does it document a self-serve signup path avoiding a sales cycle. missing for 10: explicit confirmation that PAN/CVV/expiry are returned in the same API call, and evidence of self-serve account creation without a sales process.",
+    "rationale": "Docs confirm a single API call to create a virtual card (POST /cards) and a sandbox environment that mirrors production for testing cards/transactions/webhooks, supporting the core create-card-in-sandbox flow. However, there is no explicit documentation confirming that PAN, CVV, and expiry are returned synchronously in the creation response, nor evidence describing a self-serve path from sandbox to live production without a sales/onboarding process. Missing for 10: explicit PAN/CVV/expiry-in-response confirmation, evidence of self-serve production activation without sales cycle.",
     "evidenceIds": [
       "lithic-docs-9",
       "lithic-docs-25",
-      "lithic-docs-15",
       "lithic-docs-5",
-      "lithic-docs-19",
-      "lithic-docs-11"
+      "lithic-docs-15",
+      "lithic-docs-19"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "agent-issued-cards",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Marqeta's documented Agentic AI MCP Server explicitly names AI agents as the use case, combining instant-issue virtual card issuance with customizable velocity limits, spending caps, and merchant restrictions — directly matching the story of scoped agent cards with merchant locks and amount caps. This is backed by dedicated first-party documentation (not just generic issuing docs) plus the underlying Core API primitives (authorization/velocity controls, card creation) that implement these locks. Missing for 10: independent/hands-on corroboration that an agent can actually complete this flow end-to-end, and explicit documentation of expiry-based scoping specifically for agent cards.",
+    "rationale": "Marqeta explicitly documents an Agentic AI / MCP Server offering that names AI agents by name: instant virtual card issuance, spend controls (velocity limits, spending caps, merchant restrictions) and transaction intelligence for agents, backed by the underlying Core API primitives for cards, velocity controls, and merchant authorization controls that provide expiry/amount/merchant scoping. missing for 10: no independent/hands-on third-party validation of an agent actually using a scoped card end-to-end, and no explicit mention of card expiry configuration in the agentic guide itself.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-12",
       "marqeta-docs-13",
       "marqeta-docs-23",
+      "marqeta-docs-38",
       "marqeta-docs-5",
       "marqeta-docs-6",
-      "marqeta-docs-21",
-      "marqeta-probe-4"
+      "marqeta-docs-21"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "agent-manages-program",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Marqeta documents a first-party MCP Server explicitly for AI agents, supporting querying Core API data, virtual card issuance, and spend controls (velocity limits, spending caps, merchant restrictions), backed by matching Core API docs for cards, transactions, and authorization/velocity controls. Missing for 10: explicit documentation of scoped/limited-permission credentials for the MCP surface itself and independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Marqeta ships an official MCP server that lets AI agents query transaction/balance data, issue virtual cards, and set spend controls (velocity, merchant, cap) via natural language, backed by the same Core API endpoints for cards, users, transactions, and authorization/velocity controls (marqeta-docs-11,12,13,23,38,7,29,30,5,6). Missing for 10: explicit documentation of scoped/least-privilege credentials or per-agent API-key scoping for the MCP server, and independent/hands-on confirmation that write operations (card creation/update) are exposed through the MCP surface itself rather than just the Core API.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-12",
       "marqeta-docs-13",
       "marqeta-docs-23",
+      "marqeta-docs-38",
+      "marqeta-docs-7",
+      "marqeta-docs-29",
+      "marqeta-docs-30",
       "marqeta-docs-5",
       "marqeta-docs-6",
-      "marqeta-docs-7",
       "marqeta-probe-4"
     ]
   },
@@ -2076,11 +2121,16 @@
   {
     "productId": "marqeta",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Marqeta's Core API, sandbox, controls, and an MCP server for external AI agents to query data, but nothing describing in-product AI-generated insights, analytics, or suggestions surfaced to the user within Marqeta's own interface/dashboard. The MCP server evidence is about agent connectivity to raw API data, not AI-generated insights delivered inside the product.",
-    "evidenceIds": []
+    "rationale": "Marqeta's MCP server lets external AI agents query and analyze payment activity via natural language ('Transaction intelligence: Query, analyze, and monitor payment activity through natural language interactions'), which enables AI-generated insights from Marqeta data, but this is delivered through a developer-facing agent integration rather than a native in-product AI assistant or dashboard. Missing for 10: evidence of a built-in UI-level AI insights/suggestions feature, concrete examples of generated insights, and independent/hands-on corroboration of the MCP-driven analysis working end-to-end.",
+    "evidenceIds": [
+      "marqeta-docs-23",
+      "marqeta-docs-38",
+      "marqeta-docs-11",
+      "marqeta-probe-4"
+    ]
   },
   {
     "productId": "marqeta",
@@ -2088,14 +2138,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Marqeta exposes webhooks for event-driven notifications, JIT funding for autonomous approve/deny decisioning, and an MCP server letting AI agents query/act on Core API endpoints — building blocks that support background automation, but there's no dedicated workflow/scheduler feature; automation must be built by the user's own system consuming these APIs.  missing for 10: a first-party automation/orchestration or scheduling feature, evidence of agents running persistent unattended background jobs rather than reactive API calls.",
+    "rationale": "Marqeta's webhooks provide event-driven, background notifications and its gateway JIT funding lets a developer's system autonomously approve/deny funding requests, and the MCP server lets AI agents query data and take actions (issue cards, set spend controls) via natural language — together these enable background/autonomous workflows built on top of the platform. However there's no evidence of a built-in scheduler, workflow/automation builder, or persistent autonomous agent runtime — it's infrastructure (APIs/webhooks/MCP) that a developer must wire up themselves. Missing for 10: native automation/orchestration engine, evidence of agents running unattended over time, and independent confirmation of autonomous background operation.",
     "evidenceIds": [
-      "marqeta-docs-4",
       "marqeta-docs-9",
       "marqeta-docs-20",
+      "marqeta-docs-4",
+      "marqeta-docs-25",
       "marqeta-docs-11",
       "marqeta-docs-23",
-      "marqeta-probe-4"
+      "marqeta-docs-38"
     ]
   },
   {
@@ -2104,7 +2155,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Marqeta exposes an MCP server so external AI agents can query its API, but there is no evidence of a built-in AI assistant inside Marqeta's own product/dashboard that a user could delegate tasks to.",
+    "rationale": "Marqeta's evidence shows an MCP server that lets external AI agents query its API and a sandbox/dev docs, but nothing indicates a built-in AI assistant inside a Marqeta product UI that a user can delegate tasks to; the MCP server is a developer integration point for third-party agents, not an embedded assistant experience.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-23",
@@ -2115,15 +2166,16 @@
     "productId": "marqeta",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Marqeta is fundamentally a REST API platform with a sandbox environment and simulation endpoints (marqeta-docs-2, marqeta-docs-10, marqeta-docs-19) that let developers programmatically create objects and simulate transactions without a UI, which supports headless/automated use including in CI pipelines. However, the evidence emphasizes interactive browser widgets (marqeta-docs-3) for exploration rather than CLI/SDK tooling explicitly designed for CI, and there's no documentation of CI-specific integration, test harnesses, or automation examples. Missing for 10: explicit CI/CD pipeline examples, dedicated CLI/SDK for automated test runs, and evidence of headless execution beyond raw API calls.",
+    "rationale": "Marqeta's Core API is inherently headless (REST endpoints for cards, users, transactions, disputes) and provides a sandbox with simulation endpoints for automated testing (marqeta-docs-10, marqeta-docs-14, marqeta-docs-19, marqeta-docs-35), which supports scripted/CI-style workflows. However, there is no explicit documentation of CI/CD integration, SDKs, or automation tooling for running scripted test suites in pipelines. Missing for 10: explicit CI/CD pipeline guides, official SDK/CLI for automated test runs, and any mention of headless orchestration beyond the general sandbox/simulation API.",
     "evidenceIds": [
       "marqeta-docs-2",
       "marqeta-docs-10",
-      "marqeta-docs-19",
       "marqeta-docs-14",
-      "marqeta-docs-3"
+      "marqeta-docs-19",
+      "marqeta-docs-27",
+      "marqeta-docs-35"
     ]
   },
   {
@@ -2131,11 +2183,12 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Marqeta is a payments API platform, not an AI agent/assistant with a tool-use interface; it has no client-side capability to consume external MCP servers. Its only MCP-related evidence is the opposite direction — Marqeta publishes its own MCP server so external agents can call Marqeta's APIs — which does not make this client-role story applicable.",
+    "confidence": "high",
+    "rationale": "Marqeta is a payments/card-issuing platform that exposes its own MCP server so external AI agents can call its Core API tools; there is no evidence (nor plausibility) that Marqeta itself acts as an agent/client consuming other parties' MCP servers. This story concerns the reverse role, which is a category mismatch for this product type.",
     "evidenceIds": [
       "marqeta-docs-11",
-      "marqeta-docs-23"
+      "marqeta-docs-23",
+      "marqeta-probe-4"
     ]
   },
   {
@@ -2143,13 +2196,14 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Marqeta documents an official MCP Server that lets external AI agents query Core API endpoints, issue virtual cards, and set spend controls via natural language, with a dedicated developer guide and probe confirmation of the page's existence. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice, and details on setup/auth scope beyond the docs.",
+    "confidence": "medium",
+    "rationale": "Marqeta is a payments platform (not itself an agent), and it documents an official Marqeta MCP Server enabling AI agents to query Core API endpoints, issue virtual cards, set spend controls, and analyze transactions via NLP. This directly satisfies the story with first-party documentation. Missing for 10: independent/hands-on corroboration of the MCP server working in practice and details on setup/auth reliability.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-12",
       "marqeta-docs-13",
       "marqeta-docs-23",
+      "marqeta-docs-38",
       "marqeta-probe-4"
     ]
   },
@@ -2159,10 +2213,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta documents an official MCP Server explicitly enabling AI agents to interact with its payment platform using natural language, covering card issuance and spend controls (marqeta-docs-11, 23, 12, 13), corroborated by a probe confirming the docs page exists. However, evidence is limited to vendor documentation with no independent/hands-on verification of NLP command execution quality or breadth beyond a few endpoints. Missing for 10: independent corroboration of natural-language command execution, evidence of full API coverage via NLP rather than a 'designated set' of endpoints, and hands-on user reports.",
+    "rationale": "Marqeta's MCP Server explicitly enables AI agents to interact with the platform using natural language (card issuance, spend controls, transaction intelligence queries), but this is scoped to a designated set of read/query and limited write endpoints rather than full natural-language operation of the entire API surface, and there's no independent/hands-on corroboration. Missing for 10: evidence of full-platform NL coverage beyond the documented subset, independent user validation, and confirmation of NL support outside the MCP server context.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-23",
+      "marqeta-docs-38",
       "marqeta-docs-12",
       "marqeta-docs-13",
       "marqeta-probe-4"
@@ -2174,12 +2229,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a card-issuing/payments API platform; no evidence of an official CLI tool for developers, and probes for common CLI/spec artifacts (llms.txt, docs.md, openapi.json) all returned 404. Documentation focuses on REST API, sandbox, MCP server, and widgets—not a CLI.",
-    "evidenceIds": [
-      "marqeta-probe-1",
-      "marqeta-probe-2",
-      "marqeta-probe-3"
-    ]
+    "rationale": "No evidence of an official CLI tool for Marqeta; documentation covers REST API, sandbox, MCP server, and dashboard widgets but no command-line interface is mentioned anywhere in the evidence pack.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
@@ -2187,14 +2238,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta has extensive documented Core API (cards, transactions, controls, disputes, webhooks) with sandbox, interactive widgets, and simulation endpoints, all publicly documented — clearly a documented public API driving the product. Missing for 10: no discoverable OpenAPI/machine-readable spec (probe 404s) and no llms.txt/docs.md for AI-native consumption, though an MCP server exists for agentic access.",
+    "rationale": "Marqeta exposes an extensively documented Core API (cards, users, controls, transactions, disputes, webhooks) with an interactive sandbox and browser-testable widgets, enabling programmatic/agentic drive of the product; it even ships an official MCP server for AI agents to query and act on API endpoints. Missing for 10: publicly discoverable machine-readable spec files (openapi.json, llms.txt) which probes show return 404, so automated agent discovery of the API schema is not directly confirmed.",
     "evidenceIds": [
       "marqeta-docs-1",
       "marqeta-docs-2",
       "marqeta-docs-3",
-      "marqeta-docs-7",
-      "marqeta-docs-9",
       "marqeta-docs-14",
+      "marqeta-docs-11",
+      "marqeta-docs-23",
       "marqeta-probe-1",
       "marqeta-probe-2",
       "marqeta-probe-3"
@@ -2204,13 +2255,13 @@
     "productId": "marqeta",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Marqeta's MCP server is described as querying only a 'designated set' of Core API endpoints and pairs with spend/velocity/merchant controls that limit an agent-issued card's financial actions, which suggests some scoping of what an agent can do, but there is no documented mechanism for issuing distinct, least-privilege API keys/tokens or role-based credential scopes specifically for agents. Missing for 10: explicit API credential/token scoping or RBAC system, documentation of per-agent key issuance, and independent confirmation that MCP access is actually restricted in practice.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Marqeta's MCP server explicitly restricts AI agents to 'a designated set of Marqeta's Core API endpoints' and offers 'customizable velocity limits, spending caps, and merchant restrictions' for agent-driven card usage, which reflects a least-privilege stance for agent access [marqeta-docs-11, marqeta-docs-13, marqeta-docs-38]. However, there is no documented general mechanism for developers to mint scoped/limited API keys or credentials (e.g., granular OAuth-like scopes, per-agent key issuance/revocation) for the broader Core API — the scoping shown is limited to the MCP tool surface and card spend controls. Missing for 10: explicit API credential/key scoping model, documentation of least-privilege API key issuance for arbitrary agents, and independent corroboration of this restriction in practice.",
     "evidenceIds": [
       "marqeta-docs-11",
       "marqeta-docs-13",
-      "marqeta-docs-23",
+      "marqeta-docs-38",
       "marqeta-probe-4"
     ]
   },
@@ -2220,11 +2271,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Marqeta's Core API, sandbox, webhooks, and MCP server extensively, but never mentions official client SDKs (e.g., language-specific libraries) for building against the platform. Probes for openapi/llms.txt also return 404s, showing no discoverable SDK or spec artifacts.",
+    "rationale": "The evidence pack documents Marqeta's REST Core API, sandbox, webhooks, and an MCP server for AI agents, but contains no mention of official client SDKs (e.g., Python, Java, Node libraries) for building integrations; probes for machine-readable API specs (openapi.json, llms.txt) also return 404s, further suggesting no discoverable SDK tooling.",
     "evidenceIds": [
-      "marqeta-probe-3",
+      "marqeta-docs-2",
+      "marqeta-docs-11",
+      "marqeta-probe-1",
       "marqeta-probe-2",
-      "marqeta-probe-1"
+      "marqeta-probe-3"
     ]
   },
   {
@@ -2233,7 +2286,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta's Core API documents webhooks explicitly: notifications about API events sent as they occur to a customer-hosted endpoint, covering event subscription for platform activity. This is standard first-party documentation of the capability, though there's no independent/hands-on corroboration or detail on filtering/subscription management specifics. Missing for 10: independent verification of webhook reliability/setup, documentation on selecting specific event types to subscribe to.",
+    "rationale": "Marqeta's documented webhooks feature clearly supports event-driven subscriptions, sending notifications to a customer-hosted endpoint as API events occur (e.g., transactions, disputes). Missing for 10: independent/hands-on corroboration of webhook reliability and no evidence of granular event-type filtering options in the provided docs.",
     "evidenceIds": [
       "marqeta-docs-9",
       "marqeta-docs-20"
@@ -2242,15 +2295,15 @@
   {
     "productId": "marqeta",
     "storyId": "api-interactive-docs",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim interactive widgets to explore/test the Core API in-browser plus a sandbox for hands-on experimentation, which directly matches the story. However, probes found no OpenAPI/swagger spec exposed, and there's no independent/hands-on corroboration of the widget experience beyond vendor claims. Missing for 10: independent verification of the interactive widget UX, a discoverable OpenAPI spec, and evidence of runnable code samples beyond simulation endpoints.",
+    "rationale": "Docs explicitly mention interactive widgets to explore/test the Core API in-browser, plus a sandbox environment for running real requests and simulating transactions, matching the story's core elements. Missing for 10: no independent/third-party corroboration and OpenAPI/spec endpoints returned 404, so machine-readable spec discovery is unverified.",
     "evidenceIds": [
       "marqeta-docs-2",
       "marqeta-docs-3",
-      "marqeta-docs-10",
       "marqeta-docs-14",
+      "marqeta-docs-35",
       "marqeta-probe-3"
     ]
   },
@@ -2260,7 +2313,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Direct probes for OpenAPI/Swagger spec files and llms.txt/docs.md all returned 404, and no evidence pack item links to a downloadable machine-readable API spec; docs mention interactive widgets but not a spec file.",
+    "rationale": "Probes explicitly show no discoverable OpenAPI/spec file (openapi.json, swagger.json, llms.txt, docs.md all 404), and no evidence pack item references a downloadable machine-readable API spec despite extensive Core API docs.",
     "evidenceIds": [
       "marqeta-probe-1",
       "marqeta-probe-2",
@@ -2273,13 +2326,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Marqeta documents a dedicated sandbox environment for the Core API with interactive widgets, a quick-start tutorial for creating sandbox objects, and dedicated simulation endpoints for card transactions—clearly separate from production data. Missing for 10: independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Marqeta provides a well-documented sandbox environment isolated from production, explicitly stating cards created there cannot conduct real-world transactions since it doesn't communicate with card networks, and offers simulation endpoints for card transactions, plus a quick-start tutorial for testing full workflows in sandbox. This applies equally to AI-native usage via the MCP server, which lets agents interact with the same sandbox-testable API. Missing for 10: independent/hands-on third-party confirmation of sandbox fidelity or AI-agent-specific sandbox testing walkthrough.",
     "evidenceIds": [
       "marqeta-docs-2",
-      "marqeta-docs-3",
       "marqeta-docs-10",
       "marqeta-docs-14",
-      "marqeta-docs-19"
+      "marqeta-docs-19",
+      "marqeta-docs-27",
+      "marqeta-docs-35",
+      "marqeta-docs-37",
+      "marqeta-docs-11"
     ]
   },
   {
@@ -2288,7 +2344,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack has no mention of API versioning scheme or a documented deprecation policy anywhere in the docs; probes for openapi/llms.txt spec files also return 404, giving no indication of version management. missing for 10: versioning scheme documentation, explicit deprecation policy, changelog or sunset timeline for old API versions.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the docs pack; probes for openapi/spec files return 404s, and no mention of version headers, sunset dates, or deprecation notices. Missing for 10: versioning scheme documentation, deprecation policy/notice pages, changelog/migration guides.",
     "evidenceIds": [
       "marqeta-probe-1",
       "marqeta-probe-2",
@@ -2298,29 +2354,25 @@
   {
     "productId": "marqeta",
     "storyId": "auth-context-enrichment",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Marqeta's docs show authorization-related capabilities (merchant/MCC-based authorization controls, transaction retrieval by merchant, JIT funding decisioning) but never explicitly describe MCC codes, enhanced merchant data, wallet/entry-mode fields, or partial-approval/incremental-auth signals within the authorization payload. missing for 10: explicit MCC field documentation, enhanced merchant data fields, wallet/entry-mode indicators, partial-approval and incremental-auth signal documentation.",
-    "evidenceIds": [
-      "marqeta-docs-4",
-      "marqeta-docs-6",
-      "marqeta-docs-7",
-      "marqeta-docs-21"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows general transaction, authorization-control, velocity-control, JIT-funding, and dispute endpoints, but nothing documents specific authorization-event fields like MCC, enhanced merchant data, wallet/entry-mode, or partial-approval/incremental-auth signals. Since decision-grade authorization context is a core, expected capability for a card-issuing platform, the axis clearly applies, but no evidence supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
     "storyId": "auth-simulation-testing",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Marqeta's sandbox docs explicitly provide simulation endpoints for authorizations, reversals, and balance inquiries, with a quick-start tutorial to simulate transactions end-to-end, supporting the core of the auth-decisioning testing story. However, the evidence doesn't explicitly confirm simulation of clearings, refunds, or declines as distinct event types, and there's no independent/hands-on corroboration of full lifecycle coverage. missing for 10: explicit doc confirmation of clearing/refund/decline simulation endpoints, independent developer validation of sandbox fidelity.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe simulation endpoints for card network transaction events (authorizations, reversals, balance inquiries) in a sandbox that never touches a real network, plus a quick-start tutorial walking through creating card products/users/cards and simulating transactions before real swipes. Refunds/clearings/declines are implied via 'each endpoint is its own event type' but not individually enumerated in evidence. Missing for 10: explicit mention of clearing/refund/decline simulation endpoints by name, and independent/hands-on developer confirmation of full lifecycle coverage.",
     "evidenceIds": [
       "marqeta-docs-10",
       "marqeta-docs-19",
+      "marqeta-docs-27",
       "marqeta-docs-14",
-      "marqeta-docs-2"
+      "marqeta-docs-35"
     ]
   },
   {
@@ -2329,23 +2381,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes only single-item operations (create a card, create a dispute, retrieve transactions) and simulation/webhook features, with no mention of batch/bulk endpoints, CSV import, or multi-item operations. Bulk operations are a reasonable expectation for a payments API platform, but no evidence supports this capability.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows only single-item API operations (create one card, one user, one dispute, one velocity control) with no mention of batch/bulk endpoints, bulk import, or multi-item processing capabilities. Bulk operations are a reasonable expectation for an API-driven card issuing platform, but no documentation or MCP server capability references batch processing.",
+    "evidenceIds": [
+      "marqeta-docs-1",
+      "marqeta-docs-8",
+      "marqeta-docs-24",
+      "marqeta-docs-31",
+      "marqeta-docs-11"
+    ]
   },
   {
     "productId": "marqeta",
     "storyId": "automation-rules-engine",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Marqeta supports event-driven automation via webhooks that notify external systems of API events, and it offers configurable velocity/authorization controls that automatically enforce spend rules (limits, merchant restrictions) when transaction events occur, plus JIT funding logic where a system approves/denies based on custom business rules. However, this is not a general-purpose 'define your own trigger-action rules' engine — it's a fixed set of control types and webhook notifications, requiring the developer to build the actual action logic themselves. Missing for 10: a native no-code/if-this-then-that rule builder, evidence of arbitrary custom trigger-action workflows beyond spend controls, and independent confirmation of automation reliability.",
+    "rationale": "Marqeta supports defining rules that automatically trigger on events: velocity controls and authorization controls enforce spend limits/merchant restrictions in real time, webhooks fire notifications on API events, and JIT funding lets your system apply custom business rules to auto-approve/deny funding requests at transaction time. This is genuine event-driven automation baked into the Core API, not just documentation of a manual workflow. Missing for 10: no evidence of a flexible/no-code rule-authoring engine beyond fixed control types (velocity, merchant, spend cap), and no independent hands-on verification of rule reliability at scale.",
     "evidenceIds": [
-      "marqeta-docs-4",
       "marqeta-docs-5",
       "marqeta-docs-6",
       "marqeta-docs-9",
       "marqeta-docs-20",
-      "marqeta-docs-21"
+      "marqeta-docs-25",
+      "marqeta-docs-26",
+      "marqeta-docs-34"
     ]
   },
   {
@@ -2354,7 +2413,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a card issuing/payments API platform, not a workflow/job orchestration tool; scheduling recurring jobs or workflows is outside its product category (webhooks are event-driven notifications, not job scheduling). This is a category error rather than a missing capability.",
+    "rationale": "Marqeta is a card issuing/payments API platform; scheduling recurring jobs or workflows is not a payments-domain capability and is outside its product category (webhooks are event-driven, not scheduled jobs).",
     "evidenceIds": []
   },
   {
@@ -2372,10 +2431,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Marqeta's docs show a Transactions API for retrieving authorization data (marqeta-docs-7) and real-time webhooks for API events (marqeta-docs-9, marqeta-docs-20), which support some real-time visibility into money movement, but there is no evidence of a dedicated balance API, a ledger that explicitly ties authorizations to clearing, or settlement reporting/reconciliation tooling. missing for 10: balance/account balance endpoint, explicit auth-to-clearing ledger linkage, settlement reporting or penny-level reconciliation documentation.",
+    "rationale": "Marqeta's Core API exposes transactions, cards, users, and JIT funding endpoints that could underpin balance and ledger data, but the evidence pack has no mention of settlement reporting, clearing reconciliation, or penny-accurate ledger reconciliation features that a finance lead would need. missing for 10: settlement reporting/reconciliation docs, authorization-to-clearing ledger tie-out, real-time balance dashboard for finance stakeholders, and any reconciliation-to-the-penny guarantee.",
     "evidenceIds": [
       "marqeta-docs-7",
-      "marqeta-docs-9",
+      "marqeta-docs-25",
+      "marqeta-docs-31",
       "marqeta-docs-20"
     ]
   },
@@ -2383,13 +2443,15 @@
     "productId": "marqeta",
     "storyId": "card-state-management",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence confirms card creation via Core API and sandbox simulation of transactions, plus velocity/authorization controls, but none of the citations explicitly document activate, pause/unpause, report lost/stolen, reissue-linked-to-original, or permanent close endpoints. Missing for 10: explicit docs on card state-transition endpoints (activate/suspend/unsuspend), lost/stolen reporting, reissue linkage, and card termination/closure.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Marqeta's Core API supports card creation and generic state transitions via `/cardtransitions` to activate, suspend, and terminate cards, which covers activate/pause/close conceptually. However the evidence pack never documents explicit lost/stolen reporting states or a reissue-with-replacement-linked-to-original workflow, so full lifecycle coverage as described is unconfirmed.\nmissing for 10: explicit lost/stolen status transition, documented reissue/replacement linkage to original card token, and independent confirmation of these specific state values.",
     "evidenceIds": [
       "marqeta-docs-1",
-      "marqeta-docs-10",
-      "marqeta-docs-14"
+      "marqeta-docs-24",
+      "marqeta-docs-29",
+      "marqeta-docs-30",
+      "marqeta-docs-33"
     ]
   },
   {
@@ -2397,9 +2459,12 @@
     "storyId": "cardholder-kyc",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers card issuance, velocity/authorization controls, disputes, webhooks, and simulations, but nothing documents KYC for consumers or KYB for businesses, associated data requirements, review states, or re-verification flows. Missing for 10: KYC/KYB data field requirements, identity verification review/approval states, re-verification triggers/flows, and any documentation of the underlying compliance process.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Marqeta's Users and Businesses resources exist as account-holder objects, but nothing documents KYC/KYB verification workflows, identity data requirements, review states, or re-verification flows built into issuance.",
+    "evidenceIds": [
+      "marqeta-docs-31",
+      "marqeta-docs-32"
+    ]
   },
   {
     "productId": "marqeta",
@@ -2421,11 +2486,19 @@
   {
     "productId": "marqeta",
     "storyId": "credit-debit-prepaid-range",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack describes generic card creation, JIT funding, velocity/authorization controls, and virtual card issuance, but never mentions specific program types like debit, prepaid, commercial credit, or consumer credit rails — the axis is applicable to a card-issuing platform but no evidence documents support for these distinct program types.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Evidence strongly covers prepaid/debit-style program building blocks — card products, users, businesses (for commercial/parent-child account structures), JIT funding, velocity/authorization controls — supporting multi-purpose card programs, but no doc explicitly mentions commercial credit or consumer credit card programs. missing for 10: explicit documentation of credit card program support (commercial credit, consumer credit), credit-specific APIs (e.g., billing, interest, statements) or case studies confirming credit issuance.",
+    "evidenceIds": [
+      "marqeta-docs-33",
+      "marqeta-docs-31",
+      "marqeta-docs-32",
+      "marqeta-docs-25",
+      "marqeta-docs-5",
+      "marqeta-docs-6",
+      "marqeta-docs-18"
+    ]
   },
   {
     "productId": "marqeta",
@@ -2433,7 +2506,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers card creation, velocity/authorization controls, disputes, webhooks, simulations, and an MCP server, but nowhere mentions Apple Pay/Google Pay push provisioning, digital wallet entitlements, in-wallet card art, or manual provisioning fallback.",
+    "rationale": "The evidence pack covers card creation, funding, controls, disputes, webhooks, sandbox, and MCP server docs, but contains no mention of Apple Pay/Google Pay push provisioning, entitlements process, in-wallet card art, or manual provisioning fallback.",
     "evidenceIds": []
   },
   {
@@ -2442,7 +2515,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Marqeta documents a dedicated disputes API for the Mastercard network (`/cases` endpoint) supporting case creation with type-specific details, and a general webhooks system for API event notifications. However, the evidence does not explicitly confirm network reason code handling, evidence submission workflows, provisional credit mechanics, or dispute-specific status webhooks through resolution. Missing for 10: explicit reason-code taxonomy support, evidence/document submission endpoints, provisional credit issuance details, and confirmation that webhooks fire on dispute status transitions.",
+    "rationale": "Marqeta documents a dedicated disputes API for the Mastercard network (`/cases` endpoint) to create dispute cases with type-specific details, and a generic webhooks system for API event notifications that could include dispute status changes. However, the pack lacks explicit documentation of network reason codes, evidence-submission endpoints, or provisional credit handling, and no example specifically ties webhook events to dispute resolution lifecycle. missing for 10: reason code taxonomy documentation, evidence/attachment submission endpoints, provisional credit workflow details, dispute-specific webhook event types.",
     "evidenceIds": [
       "marqeta-docs-8",
       "marqeta-docs-22",
@@ -2454,27 +2527,34 @@
     "productId": "marqeta",
     "storyId": "funding-model-flexibility",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "JIT funding is clearly documented — the merchant's own system approves/denies funding requests per authorization (marqeta-docs-4) — but the evidence pack contains no explicit documentation of a prefunded-balance funding option or any comparison of cash-flow tradeoffs between the two models. Missing for 10: explicit prefunded balance funding docs, side-by-side cash-flow tradeoff guidance, finance-lead-oriented configuration guidance for choosing between models.",
+    "rationale": "Marqeta's docs clearly describe JIT (gateway) funding, where the client's system approves/funds each authorization via funding requests and business rules (marqeta-docs-4, 25, 36), satisfying that half of the story. However, there is no evidence pack content explicitly describing a prefunded-balance funding model or any documentation contrasting cash-flow tradeoffs between prefunded vs JIT approaches. Missing for 10: explicit prefunded-balance funding documentation, and any comparative cash-flow guidance/tradeoff discussion between the two models.",
     "evidenceIds": [
-      "marqeta-docs-4"
+      "marqeta-docs-4",
+      "marqeta-docs-25",
+      "marqeta-docs-36"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "issuing-fraud-controls",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Marqeta docs show velocity/authorization spend controls and a Mastercard dispute-case API, plus transaction/webhook visibility that ops could use to react to suspicious activity, but there is no evidence of network fraud scores or Marqeta's own fraud models surfaced at authorization time, no dedicated suspicious-activity fraud alerts, and no documented card block/reissue workflow for compromised cards. missing for 10: fraud-score/model surfaced at auth, suspicious-activity fraud alerting, card block-and-reissue tooling.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Marqeta provides tooling for card state transitions to block/suspend cards (docs-29,30), velocity and merchant-based authorization controls to limit spend patterns (docs-5,6,21,26,34), transaction retrieval and webhooks for real-time event monitoring (docs-7,9,20), and a Mastercard disputes API for compromised-card resolution (docs-8,22). However, there is no evidence of network fraud scores or Marqeta's own fraud-detection models surfaced at authorization time, nor explicit 'suspicious activity alert' tooling distinct from generic webhooks. missing for 10: fraud score/model surfaced at auth, dedicated suspicious-activity alerting, explicit reissue-card workflow.",
     "evidenceIds": [
+      "marqeta-docs-29",
+      "marqeta-docs-30",
       "marqeta-docs-5",
       "marqeta-docs-6",
       "marqeta-docs-21",
+      "marqeta-docs-26",
+      "marqeta-docs-34",
       "marqeta-docs-8",
       "marqeta-docs-22",
       "marqeta-docs-9",
+      "marqeta-docs-20",
       "marqeta-docs-7"
     ]
   },
@@ -2484,12 +2564,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Marqeta's Core API authorization-controls docs explicitly describe merchant-based restriction at authorization time, including single-merchant locks and merchant-group (MCC-like) restrictions, corroborated by velocity controls and MCP server spend-control feature references. Missing for 10: explicit documentation of MCC allowlist/blocklist terminology (vs. general merchant grouping) and independent/hands-on confirmation of behavior in production.",
+    "rationale": "Marqeta's authorization-controls API explicitly supports limiting spend to a single merchant or a group of merchants (MCC-style), applied at authorization time, and this is reinforced by the MCP/spend-controls summary mentioning merchant restrictions. missing for 10: explicit documentation of allowlist vs blocklist semantics and independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "marqeta-docs-6",
       "marqeta-docs-21",
-      "marqeta-docs-13",
-      "marqeta-docs-5"
+      "marqeta-docs-34",
+      "marqeta-docs-13"
     ]
   },
   {
@@ -2497,8 +2577,8 @@
     "storyId": "network-tokenization-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of network tokenization, digital wallet token provisioning, token lookup, or token revocation independent of the PAN — coverage is limited to card creation, velocity/authorization controls, transactions, disputes, webhooks, and MCP server access. This is an applicable axis for a card issuing platform, but no documentation supports it.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers cards, card products, users, velocity/authorization controls, disputes, webhooks, and JIT funding, but contains no mention of network tokens, tokenization, wallet provisioning (Apple Pay/Google Pay), or any API for viewing/managing/revoking tokens independently of the PAN.",
     "evidenceIds": []
   },
   {
@@ -2507,7 +2587,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta is API-first: docs show broad Core API coverage (cards, users, controls, transactions, disputes, webhooks, simulations) suggesting most operations available programmatically, and dashboards reference features like 'PCI widgets' and 'dynamic spend controls' that map to documented API endpoints. However, there's no explicit mapping or claim confirming full UI-API parity, and openapi/spec discovery probes failed (404s), making it hard to verify completeness. Missing for 10: an explicit parity statement or comprehensive OpenAPI spec confirming every UI action has an API equivalent, and independent confirmation of no UI-only features.",
+    "rationale": "Marqeta's Core API documentation shows extensive, granular coverage of nearly all platform capabilities (cards, users, businesses, card products, velocity/authorization controls, transactions, disputes, webhooks, JIT funding, card state transitions, sandbox simulations), consistent with an API-first product where the API is the primary interface rather than a UI-first tool. However, the evidence never explicitly states that every function available in Marqeta's dashboard/UI is also exposed via API, nor is there independent corroboration or a feature-parity statement. Missing for 10: explicit UI-vs-API parity documentation, independent/hands-on confirmation that no UI-only features exist.",
     "evidenceIds": [
       "marqeta-docs-1",
       "marqeta-docs-5",
@@ -2515,10 +2595,11 @@
       "marqeta-docs-7",
       "marqeta-docs-8",
       "marqeta-docs-9",
-      "marqeta-docs-15",
-      "marqeta-docs-16",
-      "marqeta-docs-17",
-      "marqeta-probe-3"
+      "marqeta-docs-25",
+      "marqeta-docs-29",
+      "marqeta-docs-31",
+      "marqeta-docs-32",
+      "marqeta-docs-33"
     ]
   },
   {
@@ -2527,7 +2608,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Marqeta exposes API endpoints for retrieving transactions, cards, and disputes, but there is no evidence of a bulk/full account data export feature in open formats, and probes for llms.txt/openapi discovery all return 404s, showing no dedicated data-portability mechanism.",
+    "rationale": "Marqeta's docs describe APIs for retrieving transactions, users, and cards, but there is no evidence of a bulk data-export feature, open-format export tooling, or migration/portability guidance for customers wanting to leave the platform. Probes also show no discoverable openapi.json, llms.txt, or docs.md, undermining any claim of open, exportable machine-readable specs.",
     "evidenceIds": [
       "marqeta-docs-7",
       "marqeta-probe-1",
@@ -2541,7 +2622,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a closed commercial card-issuing platform/API service, not open-source software; source code availability under an open license is not a relevant axis for this kind of product.",
+    "rationale": "Marqeta is a closed commercial payments platform/API service, not open-source software; source availability under an open license is not a relevant axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -2550,7 +2631,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a cloud-based card issuing/payments platform delivered as a hosted API/service; self-hosting the core product is not a plausible or offered deployment model for this category of regulated fintech infrastructure.",
+    "rationale": "Marqeta is a card-issuing/payments SaaS platform tied to card networks and regulated financial infrastructure; self-hosting the core product is a category error for this kind of managed payments processor, not an applicable openness axis.",
     "evidenceIds": []
   },
   {
@@ -2559,7 +2640,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack only contains a bare marketing bullet 'PCI widgets' with no accompanying documentation describing hosted-field/ephemeral-key reveal flows or explicit claims about staying out of SAQ D scope. This suggests the capability likely exists but the pack gives no developer-facing detail, API reference, or explicit PCI-scope language to substantiate the story. Missing for 10: developer guide/API docs for the PCI widget/reveal flow, explicit SAQ D / PCI scope-reduction claims, and any integration or security-review corroboration.",
+    "rationale": "The evidence includes only a single marketing bullet, 'PCI widgets,' with no supporting documentation describing a hosted PAN/CVV reveal component, ephemeral-key flow, or explicit claims about keeping developers out of SAQ D scope. Missing for 10: detailed docs on the hosted widget/iframe implementation, ephemeral-key reveal mechanism, and explicit PCI DSS scope-reduction/SAQ D language.",
     "evidenceIds": [
       "marqeta-docs-17"
     ]
@@ -2570,29 +2651,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows generic card creation via the Core API (marqeta-docs-1) with no mention of physical card personalization, custom card art, bulk ordering, shipping methods, or tracking — the specific capabilities the story asks about are simply absent from the pack. Missing for 10: physical card fulfillment API docs, custom card art/design options, bulk order endpoints, shipping method selection, and tracking/status endpoints.",
-    "evidenceIds": [
-      "marqeta-docs-1"
-    ]
+    "rationale": "The evidence pack covers virtual card issuance, card creation via API, card products, and card state transitions, but contains no mention of physical card manufacturing, custom card art, bulk physical card ordering, shipping methods, or tracking — the specific capabilities this story asks about. Without evidence of a physical card fulfillment/manufacturer-abstraction workflow, this applicable axis cannot be credited.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
     "storyId": "pin-3ds-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers card creation, controls, transactions, disputes, and webhooks, but contains no documentation of PIN set/reset endpoints or 3DS enrollment flows, despite this being a standard axis for a card-issuing API platform. Only a vague mention of 'PCI widgets' appears, with no detail tying it to PIN management or 3DS. missing for 10: PIN set/reset API endpoints, 3DS enrollment API documentation, any card-holder credential self-service flow evidence.",
-    "evidenceIds": [
-      "marqeta-docs-17"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack of PIN set/reset endpoints or 3DS enrollment APIs; documentation covers card creation, controls, transactions, disputes, and webhooks but never mentions PIN management or 3DS/strong customer authentication flows.",
+    "evidenceIds": []
   },
   {
     "productId": "marqeta",
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data localization controls for Marqeta's platform; the docs focus on card issuance, controls, disputes, and MCP integration with no reference to data-region selection.",
+    "confidence": "high",
+    "rationale": "No evidence pack items mention data residency, regional storage options, or data location controls for Marqeta's platform; all evidence covers card issuance, controls, disputes, and MCP agent features unrelated to data residency.",
     "evidenceIds": []
   },
   {
@@ -2601,7 +2678,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Marqeta is a payment card issuing/processing API platform, not a consumer-facing AI model or AI product that trains on user data; AI-training data opt-out is not a relevant axis for this category of product.",
+    "rationale": "Marqeta is a payment card issuing/processing platform, not an AI model or AI product that trains on user data; the axis of preventing data use for AI model training is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2609,8 +2686,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users; the docs cover card issuance, controls, MCP server usage, and API mechanics but nothing about data retention/deletion.",
+    "confidence": "high",
+    "rationale": "Marqeta is a card issuing/payments platform, and this axis (data retention/deletion controls for AI-native users) is a fair privacy-posture question for any platform handling user data, but no evidence pack item discusses data retention policies, deletion mechanisms, or data lifecycle controls.",
     "evidenceIds": []
   },
   {
@@ -2618,25 +2695,24 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Marqeta is a payments API platform; no evidence in the pack addresses telemetry/usage tracking opt-out settings for AI-native usage or any client-side tooling. Absence of evidence for this applicable capability yields none.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack about telemetry, usage tracking, analytics collection, or opt-out settings for AI-native users interacting with Marqeta's platform or MCP server.",
     "evidenceIds": []
   },
   {
     "productId": "marqeta",
     "storyId": "program-launch-speed",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show Marqeta's Core API lets a founder create card products, users, cards, spend controls, and simulate transactions in a sandbox — evidence of program-management tooling (card issuance, velocity/authorization controls, disputes, webhooks) that abstracts away raw bank operations. However, the pack contains no explicit mention of BIN sponsorship, bank/network partnership handling, or a documented signup-to-first-live-card timeline, which is central to the 'don't become a bank' claim. Missing for 10: explicit BIN sponsor/bank partnership language, network membership details, and a documented time-to-launch metric.",
+    "rationale": "Marqeta's docs show a full self-serve program-management API (card products, users, card creation, velocity/authorization controls, disputes, JIT funding, sandbox) that let a founder build a card program without deep banking infrastructure, per marqeta-docs-1/14/24/33/26/21/25. However, the pack contains no explicit documentation of BIN sponsorship or card-network membership being handled by Marqeta, nor any stated signup-to-first-live-card timeline. missing for 10: explicit BIN sponsorship/issuing-bank partnership details, network membership handling, documented time-to-launch metric.",
     "evidenceIds": [
-      "marqeta-docs-1",
-      "marqeta-docs-2",
       "marqeta-docs-14",
-      "marqeta-docs-5",
-      "marqeta-docs-6",
-      "marqeta-docs-8",
-      "marqeta-docs-9"
+      "marqeta-docs-24",
+      "marqeta-docs-33",
+      "marqeta-docs-26",
+      "marqeta-docs-25",
+      "marqeta-docs-37"
     ]
   },
   {
@@ -2645,9 +2721,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Marqeta's JIT funding gateway documentation confirms the core capability: a developer-hosted endpoint receives funding/authorization requests and returns approve/decline decisions using custom business logic (marqeta-docs-4), and webhooks are described as real-time notifications sent to a developer-hosted endpoint (marqeta-docs-9, marqeta-docs-20). However, the evidence pack contains no documented time-budget/timeout window for the JIT funding response or explicit developer-configurable fallback behavior on timeout. Missing for 10: documented response time budget/SLA for the auth-stream endpoint, explicit timeout fallback configuration options, and independent confirmation of real-world latency handling.",
+    "rationale": "Marqeta's JIT Funding docs confirm a real-time endpoint pattern where the developer's system receives funding requests and approves/denies them using custom business rules, which matches the core auth-decisioning story. However, the evidence pack contains no documentation of the specific time budget (SLA) for the response or any developer-configurable timeout/fallback behavior — missing for 10: documented response time window, explicit timeout fallback configuration, and confirmation that webhooks (vs. JIT funding) are the mechanism used for auth-stream decisioning.",
     "evidenceIds": [
       "marqeta-docs-4",
+      "marqeta-docs-25",
+      "marqeta-docs-36",
       "marqeta-docs-9",
       "marqeta-docs-20"
     ]
@@ -2669,30 +2747,34 @@
     "productId": "marqeta",
     "storyId": "single-use-scoped-cards",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Marqeta docs show virtual card issuance, merchant-restricted authorization controls, velocity/spending caps, and JIT funding where the issuer approves/denies exact amounts per transaction — together these let a developer construct a one-purchase, one-merchant, exact-amount card. However, there's no explicit 'single-use card' or auto-expire-after-one-transaction feature documented, requiring the developer to assemble these primitives themselves. Missing for 10: explicit single-use/one-time-card issuance endpoint, independent/hands-on confirmation of exact-amount enforcement in production.",
+    "rationale": "Marqeta provides the building blocks for tightly scoped cards: virtual card issuance, velocity controls to cap transaction count/amount, authorization controls to restrict to a single merchant, and JIT funding that lets your system approve/deny each authorization for an exact amount, plus card-transitions to disable a card after use. However, there's no explicit 'single-use card' primitive or first-class one-time-token feature documented — developers must compose velocity+merchant controls+JIT funding themselves. Missing for 10: a native single-use/one-time card object or flag, and independent/hands-on confirmation that this combination reliably renders a leaked card number worthless after one use.",
     "evidenceIds": [
       "marqeta-docs-5",
       "marqeta-docs-6",
       "marqeta-docs-21",
-      "marqeta-docs-4",
-      "marqeta-docs-12",
-      "marqeta-docs-13"
+      "marqeta-docs-25",
+      "marqeta-docs-29",
+      "marqeta-docs-30",
+      "marqeta-docs-12"
     ]
   },
   {
     "productId": "marqeta",
     "storyId": "spend-limits-velocity",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Marqeta's velocity controls docs explicitly support amount and frequency limits per user, enforced platform-side ('the user cannot exceed any of the defined spending limits'), and authorization controls allow merchant-based restrictions, both platform-enforced rather than in customer code. Marketing and MCP docs reiterate 'spending caps' and 'velocity limits' as first-class platform features. Missing for 10: explicit documentation of distinct daily/monthly/all-time window granularity and per-cardholder vs per-card distinction, and independent/hands-on confirmation beyond vendor docs.",
+    "rationale": "Marqeta's velocity controls explicitly enforce spend amount and transaction-count limits over configurable time windows per user, platform-enforced (not app code), and authorization controls further restrict by merchant, complementing per-cardholder caps; this is corroborated by both core docs and the marketing spend-controls summary. Missing for 10: explicit documentation naming daily/monthly/all-time as distinct preset windows and independent (non-Marqeta) confirmation of enforcement behavior.",
     "evidenceIds": [
       "marqeta-docs-5",
+      "marqeta-docs-26",
+      "marqeta-docs-6",
       "marqeta-docs-21",
-      "marqeta-docs-13",
-      "marqeta-docs-15"
+      "marqeta-docs-34",
+      "marqeta-docs-15",
+      "marqeta-docs-13"
     ]
   },
   {
@@ -2701,13 +2783,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm one-call card creation via API (marqeta-docs-1), a sandbox environment for testing (marqeta-docs-2, marqeta-docs-14), and instant-issue virtual cards ready for immediate use (marqeta-docs-12, marqeta-docs-16). However, there is no explicit evidence that PAN/CVV/expiry are all returned synchronously in the creation response, nor any documentation of a self-serve path from sandbox to live/production credentials without a sales engagement. missing for 10: explicit confirmation that PAN, CVV, and expiry are returned in the create-card API response, and evidence of self-service sandbox-to-production activation without a sales cycle.",
+    "rationale": "Docs confirm a single-call card creation endpoint, instant-issue virtual cards, and a self-serve public sandbox with interactive API widgets (marqeta-docs-1, marqeta-docs-12, marqeta-docs-37, marqeta-docs-3), supporting quick sandbox-to-live card flows. However, the pack never explicitly confirms the create-card response returns PAN/CVV/expiry directly (PCI widgets suggest secure display rather than raw API exposure) nor documents a self-serve path to production without a sales process. Missing for 10: explicit API response schema showing PAN/CVV/expiry fields, and evidence of self-serve production onboarding without a sales cycle.",
     "evidenceIds": [
       "marqeta-docs-1",
-      "marqeta-docs-2",
       "marqeta-docs-12",
-      "marqeta-docs-14",
-      "marqeta-docs-16"
+      "marqeta-docs-37",
+      "marqeta-docs-3",
+      "marqeta-docs-17",
+      "marqeta-docs-27"
     ]
   },
   {

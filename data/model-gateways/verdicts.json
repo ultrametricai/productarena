@@ -648,26 +648,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway supports per-consumer/agent authentication (AI Auth Strategy, AI Vault for keys) plus AI Rate Limiting Advanced and model cost calculation/tracking that matches provider billing, which together let an operator scope an agent's key and cap its request rate and see accrued spend. However, evidence shows cost *calculation and observability* (docs-9, docs-10, docs-18) rather than an explicit hard budget cap/kill-switch that automatically cuts off an agent once a spend threshold is reached, so the 'cannot run away on spend' guarantee is only partially evidenced. Missing for 10: explicit documented budget-threshold enforcement/auto-cutoff tied to a specific agent key, and a worked example of issuing a scoped key to an autonomous agent with combined rate+spend limits.",
+    "rationale": "Kong AI Gateway documents per-consumer authentication (AI Auth Strategy attached to AI Agent entities), an AI Rate Limiting Advanced plugin for enforcing request/token limits, and accurate per-request cost calculation explicitly tied to 'budget enforcement, per-consumer spend limits, and chargeback' — covering the core building blocks for giving an agent its own key with spend/rate guardrails. However, docs describe budget enforcement only as a downstream capability enabled by cost data rather than showing a concrete dollar-budget-cap configuration workflow, and there's no independent/hands-on confirmation that an agent can be hard-capped from overspending. Missing for 10: a concrete documented budget-cap (not just rate-limit) configuration example, and independent verification of runaway-spend prevention in practice.",
     "evidenceIds": [
       "kong-ai-gateway-docs-12",
       "kong-ai-gateway-docs-18",
-      "kong-ai-gateway-docs-22",
-      "kong-ai-gateway-docs-23",
-      "kong-ai-gateway-docs-9"
+      "kong-ai-gateway-docs-33",
+      "kong-ai-gateway-docs-39",
+      "kong-ai-gateway-docs-43"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "agent-switches-models-policy",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway documents load balancing across multiple LLM models (covering availability-based routing) and per-request cost calculation, which together imply some policy-driven model selection, but there is no explicit documentation of switching models based on capability or triggering mid-task, dynamic policy switches tied to cost or availability thresholds. Missing for 10: explicit cost/capability-based routing policy documentation, mid-task dynamic model switching evidence, and independent/hands-on corroboration of this routing-resilience behavior.",
+    "rationale": "Kong AI Gateway documents dynamic, metric-based request routing across model providers and load balancing across multiple LLM models, plus per-request cost calculation, which together support policy-driven mid-task model switching by cost/availability. However, there's no explicit documentation of capability-based routing rules, dynamic model selection mid-conversation, or agent-driven switching logic — the evidence covers load balancing/failover-style routing more than fine-grained policy-based mid-task switching. Missing for 10: explicit capability-based routing policy config, documented mid-task/dynamic model switching by an agent, and independent/hands-on confirmation of routing behavior under real workloads.",
     "evidenceIds": [
       "kong-ai-gateway-docs-17",
+      "kong-ai-gateway-docs-31",
       "kong-ai-gateway-docs-18",
-      "kong-ai-gateway-docs-24"
+      "kong-ai-gateway-docs-33",
+      "kong-ai-gateway-docs-1"
     ]
   },
   {
@@ -676,11 +678,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms developer.konghq.com/llms.txt returns HTTP 200 with a valid llms.txt manifest listing Kong's docs (including AI Gateway), and individual doc pages are also served as .md files (e.g. ai-providers.md, a2a.md), making the docs directly agent-consumable. missing for 10: no explicit vendor statement instructing agents to use llms.txt, and the generic /.md probe for the ai-gateway index returned 404, showing coverage is per-page rather than fully uniform.",
+    "rationale": "A live probe confirms developer.konghq.com/llms.txt returns HTTP 200 with a proper llms.txt index describing the docs corpus, and individual docs pages are consistently available in .md format (e.g. ai-providers.md, mcp.md), which is exactly the agent-oriented docs pattern this story asks for. missing for 10: no explicit first-party documentation page announcing/describing the llms.txt feature itself (only the probe confirms it), and no independent/community corroboration of agents actually consuming it.",
     "evidenceIds": [
       "kong-ai-gateway-probe-1",
       "kong-ai-gateway-docs-1",
-      "kong-ai-gateway-probe-2"
+      "kong-ai-gateway-docs-19"
     ]
   },
   {
@@ -689,11 +691,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway provides usage analytics, logs, and cost/latency metrics (docs-3, docs-9, docs-10), but these are raw operational metrics/dashboards, not AI-generated insights or suggestions derived from the user's own data. No evidence shows the product itself using AI to analyze a customer's traffic/data and proactively surface recommendations or insights.",
+    "rationale": "Kong AI Gateway provides observability data (token usage, cost, latency, logs) but there is no evidence of an AI-generated insights or suggestion engine that analyzes a user's own data and proactively surfaces recommendations inside the product — it only exposes raw metrics/logs for external tools (Konnect, OTel) to consume.",
     "evidenceIds": [
       "kong-ai-gateway-docs-3",
       "kong-ai-gateway-docs-9",
-      "kong-ai-gateway-docs-10"
+      "kong-ai-gateway-docs-10",
+      "kong-ai-gateway-docs-34"
     ]
   },
   {
@@ -701,8 +704,8 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Kong AI Gateway is a proxy/control-plane for governing LLM, MCP, and A2A traffic (rate limiting, observability, auth, routing) — it does not itself host or execute autonomous background automations/agents; that is a different product category (agent orchestration/runtime platforms).",
+    "confidence": "medium",
+    "rationale": "Kong AI Gateway is an infrastructure proxy/gateway for routing, governing and observing AI/LLM/MCP/A2A traffic — it is not an automation or agent-orchestration platform that itself runs autonomous background jobs for end users. The evidence only shows it mediates and governs traffic between existing agents/tools, not that it lets a user configure standalone background automations, so this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -711,7 +714,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kong AI Gateway is an infrastructure/proxy layer for routing, governing, and observing AI/LLM/agent traffic — it is not itself a product with a built-in assistant a user delegates tasks to; that axis doesn't apply to a gateway product category.",
+    "rationale": "Kong AI Gateway is an infrastructure/gateway product for proxying, governing, and observing AI/LLM/agent traffic — it is not itself an assistant that a user delegates tasks to; it manages traffic between clients and AI models/agents rather than acting as one. This axis is a category error for a gateway/proxy product.",
     "evidenceIds": []
   },
   {
@@ -720,24 +723,24 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway exposes a CLI (kongctl) and Konnect APIs (list-ai-gateways, config conversion) plus a quickstart script, implying it can be driven headlessly and scripted rather than only via UI. However there is no explicit CI or CD pipeline example, declarative config-as-code workflow, or GitOps documentation demonstrating automated headless operation in CI. Missing for 10: explicit CI or CD pipeline documentation, dedicated headless-mode guide, independent CI usage report.",
+    "rationale": "Kong AI Gateway itself runs as a headless proxy/data-plane service, and its kongctl CLI explicitly supports 'declarative configuration for managing resources as code, and imperative commands for one-off operations and inspection,' which is well-suited to CI/automation workflows. However, the evidence pack lacks explicit CI pipeline examples, headless install/bootstrap guides, or automation-specific documentation. Missing for 10: explicit CI/CD pipeline examples or guides, headless setup/automation docs, evidence of non-interactive scripted deployment beyond the quickstart script.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-14",
-      "kong-ai-gateway-docs-25",
-      "kong-ai-gateway-docs-2",
-      "kong-ai-gateway-probe-4"
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-probe-4",
+      "kong-ai-gateway-docs-2"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "agentic-mcp-client",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway documents an 'AI MCP Proxy' capability that explicitly can front upstream MCP servers (in addition to converting REST APIs into MCP tools), meaning it can plug in external MCP servers so the traffic/tools flow through the gateway. However, the evidence is a single brief concept mention with no detailed configuration walkthrough, no example of registering a specific upstream MCP server, and no independent/hands-on corroboration. Missing for 10: a full docs page on connecting/registering upstream MCP servers, concrete config examples, and third-party verification.",
+    "rationale": "Kong AI Gateway ships an explicit 'AI MCP Proxy' entity/plugin that fronts upstream MCP servers, converting them into gateway-routed MCP traffic so consumers can use their tools, and documentation describes managing 'remote MCP traffic' with auth, routing, and observability. Missing for 10: independent/hands-on validation beyond first-party docs, and concrete examples of an agent actually invoking a fronted MCP server's tools end-to-end.",
     "evidenceIds": [
       "kong-ai-gateway-docs-13",
-      "kong-ai-gateway-docs-19",
+      "kong-ai-gateway-docs-36",
+      "kong-ai-gateway-docs-45",
       "kong-ai-gateway-docs-15"
     ]
   },
@@ -747,12 +750,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway ships an official 'AI MCP Server' entity and 'AI MCP Proxy' that converts REST APIs into MCP tools or fronts upstream MCP servers, letting agents connect via a first-party MCP interface, plus governance of MCP traffic (auth, OTel metrics, rate limiting) alongside it. Missing for 10: independent/hands-on verification of an agent successfully connecting through the MCP server and no example configuration walkthrough shown in the pack.",
+    "rationale": "Kong AI Gateway documents a dedicated 'AI MCP Server' entity and 'AI MCP Proxy' plugin that let you turn any API into an official MCP server or front upstream MCP servers, with enterprise-grade auth, security, and observability for MCP traffic that agents connect through (docs-13, docs-19, docs-36, docs-45). This is first-party documented as a first-class capability, not a workaround. Missing for 10: independent/hands-on corroboration beyond vendor docs and no live probe confirming the entity in a running deployment.",
     "evidenceIds": [
       "kong-ai-gateway-docs-13",
       "kong-ai-gateway-docs-19",
-      "kong-ai-gateway-docs-15",
-      "kong-ai-gateway-docs-26"
+      "kong-ai-gateway-docs-36",
+      "kong-ai-gateway-docs-45",
+      "kong-ai-gateway-docs-15"
     ]
   },
   {
@@ -761,10 +765,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway's documentation covers proxying LLM/CLI/A2A/MCP traffic, observability, and cost tracking, but there is no evidence that the gateway itself can be configured or operated via natural-language commands (its control plane relies on kongctl CLI and declarative config, not NL commands).",
+    "rationale": "Evidence shows Kong AI Gateway is configured via declarative/imperative CLI (kongctl), APIs, and admin config, not natural-language commands; the CLI docs explicitly describe declarative/imperative modes, not NL control. No evidence shows an interface where an AI-native user issues plain-English commands to operate the gateway itself (proxying other AI CLIs' traffic is a different capability).",
     "evidenceIds": [
-      "kong-ai-gateway-probe-4",
-      "kong-ai-gateway-docs-25"
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-docs-5",
+      "kong-ai-gateway-docs-21",
+      "kong-ai-gateway-probe-4"
     ]
   },
   {
@@ -773,8 +779,9 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong ships an official CLI, kongctl, documented at a dedicated docs URL and explicitly used for AI Gateway tasks (e.g., the 'kongctl AI Gateway conversion extension' for migrating configurations). This confirms a real, first-party CLI exists for AI Gateway workflows. Missing for 10: deeper documentation of kongctl's full command surface for AI-native tasks (agents, MCP, A2A) and independent/hands-on corroboration beyond the docs probe.",
+    "rationale": "Kong ships an official CLI (kongctl) with both declarative and imperative modes, and it's used for AI Gateway configuration migration/management (docs-41, docs-25), confirmed by a live docs probe (probe-4). missing for 10: independent/hands-on validation of kongctl's AI-specific commands and deeper documentation of its full command surface beyond migration and config management.",
     "evidenceIds": [
+      "kong-ai-gateway-docs-41",
       "kong-ai-gateway-docs-25",
       "kong-ai-gateway-probe-4"
     ]
@@ -783,26 +790,30 @@
     "productId": "kong-ai-gateway",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong documents a Konnect API for managing AI Gateway resources (e.g., list-ai-gateways endpoint) and a dedicated kongctl CLI, showing programmatic control exists and is documented. However, probes for a discoverable OpenAPI/swagger spec at standard locations all returned 404, so the breadth/openness of the API surface is not independently confirmed. Missing for 10: a publicly discoverable OpenAPI/swagger spec, broader endpoint coverage beyond the single example, and independent/hands-on confirmation of API usage.",
+    "rationale": "Kong documents a public Konnect API for AI Gateway (e.g., 'list-ai-gateways' endpoint) and a first-party CLI (kongctl) that supports both declarative and imperative operation, giving AI-native users programmatic and CLI-based control. However, probes found no discoverable OpenAPI/swagger spec at standard paths, so the API's completeness and machine-readability for agentic consumption is unclear. Missing for 10: a full OpenAPI/swagger spec discoverable via standard endpoints, and broader API reference coverage beyond the single listed endpoint.",
     "evidenceIds": [
       "kong-ai-gateway-docs-14",
+      "kong-ai-gateway-docs-41",
       "kong-ai-gateway-probe-4",
-      "kong-ai-gateway-probe-3"
+      "kong-ai-gateway-probe-3",
+      "kong-ai-gateway-probe-1"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway provides building blocks relevant to credential control for agents — AI Auth Strategy entities can authenticate via enterprise IdPs (Okta/Azure AD/OIDC) 'without managing keys manually,' and AI Vault lets model providers, auth strategies, agents, and MCP servers reference secrets from external backends instead of storing literal keys, plus Azure Managed Identity support for scoped cloud authentication. However, none of this evidence explicitly describes issuing scoped/least-privilege credentials per agent (e.g., fine-grained permission scopes, per-agent token minting) — it's centralized secret referencing and IdP auth rather than a dedicated least-privilege credential-issuance mechanism. missing for 10: explicit documentation of scoped/least-privilege credential issuance per agent, granular permission/scope controls tied to individual agent identities, and independent/hands-on verification of this behavior.",
+    "rationale": "Kong AI Gateway's AI Auth Strategy entities let you declare inbound authentication mechanisms and attach them to specific AI Models, AI Agents, or MCP Servers, and AI Vault lets provider/agent credentials be referenced from external secret backends rather than stored as literal values, which supports per-agent scoped credential issuance. However, evidence does not detail fine-grained permission/scope models (e.g., specific action-level least-privilege policies) beyond entity-level attachment. Missing for 10: explicit fine-grained scope/permission definitions per credential, independent/hands-on validation of least-privilege enforcement.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-22",
+      "kong-ai-gateway-docs-39",
+      "kong-ai-gateway-docs-7",
       "kong-ai-gateway-docs-23",
-      "kong-ai-gateway-docs-4"
+      "kong-ai-gateway-docs-22",
+      "kong-ai-gateway-docs-30"
     ]
   },
   {
@@ -811,11 +822,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of official SDKs for building against Kong AI Gateway (only a CLI 'kongctl' and REST API references), and probes explicitly show no OpenAPI/SDK artifacts (404s for openapi.json, swagger.json, etc.). While an API gateway could plausibly offer official client SDKs, none are documented here.",
+    "rationale": "The evidence pack documents a management REST API (list-ai-gateways) and a CLI tool (kongctl) with declarative/imperative modes, but nowhere mentions official client SDKs (e.g., Python, Node, Go libraries) for building against Kong AI Gateway programmatically. This axis is applicable since API/gateway platforms commonly ship official SDKs, but no such evidence exists here.",
     "evidenceIds": [
-      "kong-ai-gateway-probe-3",
-      "kong-ai-gateway-probe-4",
-      "kong-ai-gateway-docs-14"
+      "kong-ai-gateway-docs-14",
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-probe-4"
     ]
   },
   {
@@ -833,7 +844,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Kong publishes API reference content (e.g., list-ai-gateways endpoint docs) but there is no indication of an interactive reference with runnable/try-it-out examples; probes for OpenAPI/swagger specs on the docs site all returned 404, suggesting no such interactive tooling is exposed.",
+    "rationale": "Evidence shows a Konnect API reference page (list-ai-gateways) and CLI/docs, but no interactive API explorer with runnable examples is documented; probes for openapi.json/swagger.json all return 404, indicating no interactive reference surface was found.",
     "evidenceIds": [
       "kong-ai-gateway-docs-14",
       "kong-ai-gateway-probe-3"
@@ -845,10 +856,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence includes API reference pages (e.g. Konnect AI Gateway API docs) but no downloadable OpenAPI/Swagger spec file is evidenced; a direct probe for standard OpenAPI/swagger.json locations returned 404 at all candidate paths, indicating no machine-readable spec is exposed there.",
+    "rationale": "While Kong publishes API reference pages (e.g., docs-14 for the Konnect AI Gateway API), there is no evidence of a downloadable OpenAPI/Swagger spec file — direct probes for openapi.json, swagger.json, and similar paths all returned 404 (kong-ai-gateway-probe-3), and no docs page links to a machine-readable spec download.",
     "evidenceIds": [
-      "kong-ai-gateway-probe-3",
-      "kong-ai-gateway-docs-14"
+      "kong-ai-gateway-docs-14",
+      "kong-ai-gateway-probe-3"
     ]
   },
   {
@@ -857,59 +868,61 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only shows a quickstart script for spinning up a demo instance and general AI Gateway features (proxying, observability, policies) but no dedicated sandbox/staging environment or test-mode capability that isolates from production data. No mention of environment separation, mock upstreams, or a documented sandbox mode.",
+    "rationale": "The evidence pack covers AI Gateway's proxying, observability, governance, and MCP/A2A features but never describes a distinct sandbox/staging environment or test mode that isolates from production data. The quickstart demo instance (docs-2) is about local trial setup, not a sandboxed testing workflow against real integrations. No mention of environments, staging workspaces, or synthetic-data testing exists in the pack.",
     "evidenceIds": []
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows an API reference exists (e.g., 'v1' Konnect AI Gateway API) but there is no documentation of a versioning scheme or deprecation policy for the AI Gateway APIs, and OpenAPI spec probes returned 404s.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows versioned API artifacts (e.g., a v1 Konnect AI Gateway API reference, and an 'AI Gateway v2 concepts' migration guide for teams moving from 3.x to 2.x control planes), implying some API versioning and migration support, but there is no explicit documented deprecation policy, sunset timelines, or version-support guarantees cited. missing for 10: explicit deprecation policy document, version support/sunset timelines, changelog or breaking-change notification process.",
     "evidenceIds": [
       "kong-ai-gateway-docs-14",
-      "kong-ai-gateway-probe-3"
+      "kong-ai-gateway-docs-25",
+      "kong-ai-gateway-docs-40"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "automatic-fallbacks",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway documents load balancing across multiple LLM models/providers, which implies routing resilience, but the evidence never explicitly describes an automatic fallback mechanism triggered by provider failure (e.g., retry-on-error, circuit breaking, or failover behavior). Missing for 10: explicit fallback-on-failure documentation, failure detection/health-check mechanism, and any hands-on confirmation that fallback actually occurs when a provider errors out.",
+    "rationale": "Kong AI Gateway docs explicitly describe load balancing across multiple LLM models and dynamic request routing optimized based on metrics, which supports fallback-style resilience between models/providers. Missing for 10: explicit named 'failover on error' mechanism/config example, and independent/hands-on confirmation of automatic fallback behavior on provider failure.",
     "evidenceIds": [
       "kong-ai-gateway-docs-17",
+      "kong-ai-gateway-docs-31",
       "kong-ai-gateway-docs-1"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers proxying, observability, security, and MCP/A2A support but never describes any bulk or batch operation capability (e.g., batch creating/updating routes, plugins, or AI entities across many items at once). The kongctl CLI and Konnect API are mentioned but only for single-entity or config migration tasks, not bulk item processing.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "kongctl supports declarative configuration for managing resources as code, which implies bulk creation/update of gateway entities, and the Konnect API can list AI Gateways in bulk, but there is no documented batch/bulk request API for processing many AI traffic items at once. missing for 10: explicit bulk operation endpoints or CLI commands for batch processing, evidence of bulk actions on AI Gateway entities beyond declarative config, independent confirmation of bulk workflows.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-14",
-      "kong-ai-gateway-docs-25",
-      "kong-ai-gateway-probe-4"
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-docs-14"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway supports policy-based automatic actions triggered by request/response events—e.g., Prompt Guards and content-safety policies acting on chat/completion requests, AI Rate Limiting Advanced enforcing limits automatically, AWS Guardrails validating requests/responses before forwarding, and semantic caching/routing acting on similarity triggers—which functions as rule-based automation on traffic events. However, this is scoped to gateway traffic policies rather than a general-purpose event/trigger automation framework for arbitrary conditions and actions. Missing for 10: evidence of a generic conditional rule engine (if-this-then-that style), user-defined custom triggers beyond built-in policies, and any workflow/orchestration automation beyond request-level policy enforcement.",
+    "rationale": "Kong AI Gateway offers built-in policies (Prompt Guard, content-safety/DLP, rate limiting, guardrails) that automatically act when certain request conditions occur, which is a narrow form of rule-triggered automation, but there's no evidence of a general user-defined rules/event engine (custom triggers + custom actions) as implied by the story. Missing for 10: a generic event-condition-action rule builder, evidence of arbitrary custom triggers/actions beyond fixed policy types, and any user-hands-on confirmation of custom automation workflows.",
     "evidenceIds": [
       "kong-ai-gateway-docs-8",
-      "kong-ai-gateway-docs-12",
       "kong-ai-gateway-docs-20",
-      "kong-ai-gateway-docs-24",
-      "kong-ai-gateway-docs-28"
+      "kong-ai-gateway-docs-28",
+      "kong-ai-gateway-docs-44",
+      "kong-ai-gateway-docs-43",
+      "kong-ai-gateway-docs-46"
     ]
   },
   {
@@ -918,17 +931,18 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kong AI Gateway is an API/traffic gateway product for proxying, governing, and observing AI/LLM/A2A/MCP traffic; it is not a workflow/job scheduling or automation-orchestration product. Scheduling recurring jobs or workflows is outside its category — no evidence pack item relates to cron-like scheduling or workflow orchestration, confirming this is a wrong-axis question rather than a missing feature.",
+    "rationale": "Kong AI Gateway is an API gateway/proxy for AI traffic (routing, auth, observability, caching), not a workflow orchestration or job-scheduling product; scheduling recurring jobs is outside its category and not something buyers would expect it to ship.",
     "evidenceIds": []
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers AI Gateway's traffic proxying, observability, security, and provider-agnostic API features, but contains no mention of versioning, reviewing, or rolling back gateway configurations or 'automations' (e.g., no changelog, approval workflow, or rollback mechanism is documented). The only tangential item is a config migration extension (kongctl conversion tool), which addresses format conversion, not version control or rollback. missing for 10: version history/changelog for AI Gateway configs, review/approval workflow for changes, rollback mechanism for policies or entities.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kong AI Gateway is primarily a traffic-governance/proxy layer, not a workflow/automation builder, but it does expose declarative config-as-code and imperative commands via kongctl that could support versioning and reapplying (rollback) of gateway/automation entity configurations (AI Agents, A2A routes, MCP servers). There is no evidence of a review/approval workflow, diffing, or dedicated rollback feature for 'automations' themselves. Missing for 10: explicit versioning/history UI, review/approval workflow, and a documented rollback mechanism for agent automations rather than just config-as-code.",
     "evidenceIds": [
+      "kong-ai-gateway-docs-41",
       "kong-ai-gateway-docs-25"
     ]
   },
@@ -938,41 +952,46 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway provides cost calculation, tracking across teams, and rate limiting plugins (AI Rate Limiting Advanced) which can enforce request/token limits per consumer, but evidence shows rate limiting and cost tracking as separate capabilities rather than a unified hard 'budget/spend limit' enforcement tied directly to cost thresholds per key/team/user. missing for 10: explicit documentation of setting a dollar-based spend cap or budget that auto-blocks requests once exceeded, per-key/team/user budget configuration UI or API, and independent confirmation of budget enforcement in production.",
+    "rationale": "Kong AI Gateway computes an accurate per-request cost figure and explicitly states this cost figure is meant to support 'budget enforcement, per-consumer spend limits, and chargeback' (docs-33, docs-18), and it has an AI Rate Limiting Advanced plugin that can apply limits per consumer/key (docs-12/43). However, the evidence never documents a concrete enforcement mechanism that hard-caps spend by dollar amount per key/team/user (rate limiting appears request/token-count based, not dollar-budget based), so it reads as an underlying capability/building block rather than a demonstrated hard-budget feature. missing for 10: explicit documentation of a spend-limit/budget policy entity, proof that limits can be set in currency terms per key/team/user, and enforcement behavior (e.g., blocking requests once a dollar budget is exhausted).",
     "evidenceIds": [
-      "kong-ai-gateway-docs-12",
+      "kong-ai-gateway-docs-33",
       "kong-ai-gateway-docs-18",
-      "kong-ai-gateway-docs-21",
-      "kong-ai-gateway-docs-9"
+      "kong-ai-gateway-docs-12",
+      "kong-ai-gateway-docs-43",
+      "kong-ai-gateway-docs-10"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "byok",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs show AI Model Providers are configured with credentials, and an AI Vault entity lets AI Model Providers reference externally-stored secrets (AWS Secrets Manager, HashiCorp Vault, env vars) rather than storing keys as literal values, and Azure-specific managed identity auth is also supported — implying developers can supply and manage their own provider keys/secrets. However, no explicit doc snippet shows the exact 'paste your own API key per provider' config example or per-request key override behavior. Missing for 10: an explicit example of configuring a provider with a literal/bring-your-own API key, and confirmation of per-consumer or per-request key overrides.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs confirm developers configure AI Model Provider entities with their own provider credentials, with centralized credential management, and can store keys via env vars, literal values, or an AI Vault backend (AWS Secrets Manager, HashiCorp Vault) rather than Kong-managed keys; provider-specific setup (e.g., Anthropic) is documented. missing for 10: independent/hands-on confirmation of BYO-key setup working end-to-end, and no explicit mention of per-user/per-tenant key overrides at request time.",
     "evidenceIds": [
       "kong-ai-gateway-docs-1",
-      "kong-ai-gateway-docs-4",
+      "kong-ai-gateway-docs-30",
       "kong-ai-gateway-docs-22",
-      "kong-ai-gateway-docs-23"
+      "kong-ai-gateway-docs-38",
+      "kong-ai-gateway-docs-47",
+      "kong-ai-gateway-docs-4"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "cost-tracking",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway computes exact per-request LLM costs matching provider billing, logs cost metrics with token/model details, exports cost-related OTel metrics, and documentation explicitly states cost tracking 'across teams'; since all providers route through the same gateway, aggregation across providers is plausible. However, evidence never shows a consolidated dashboard or breakdown specifically by model, API key, or individual user — only 'teams' is explicitly named as a tracked dimension. Missing for 10: explicit per-user and per-API-key cost attribution/dashboard, and a documented single-pane cross-provider spend view (vs. raw logs/metrics that would need external aggregation).",
+    "rationale": "Kong AI Gateway calculates per-request LLM cost matching actual provider billing (docs-18) and explicitly ties this to 'per-consumer spend limits, budget enforcement, and chargeback' (docs-33), while also stating it can 'track costs across teams' (docs-5/21). Logs and OTel metrics capture token usage, model details, and cost metrics (docs-10, docs-9) and can be aggregated centrally via Konnect or any OTel tool (docs-34), giving a single place to view spend across providers/models/consumers. Missing for 10: explicit documentation of a unified per-key/per-user cost dashboard UI and independent/hands-on confirmation of the aggregated cost view working as described.",
     "evidenceIds": [
       "kong-ai-gateway-docs-18",
+      "kong-ai-gateway-docs-33",
+      "kong-ai-gateway-docs-5",
+      "kong-ai-gateway-docs-21",
       "kong-ai-gateway-docs-10",
       "kong-ai-gateway-docs-9",
-      "kong-ai-gateway-docs-21",
-      "kong-ai-gateway-docs-26"
+      "kong-ai-gateway-docs-34"
     ]
   },
   {
@@ -981,12 +1000,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Kong documents latency-related tooling (usage analytics and OTel metrics that track LLM request latency and upstream processing time, semantic caching, load balancing across models) which implies attention to performance, but there is no explicit claim or benchmark quantifying the gateway's own added latency overhead as 'minimal'. missing for 10: quantified latency-overhead benchmarks, independent performance tests, explicit vendor claim of low proxy overhead.",
+    "rationale": "Kong AI Gateway provides latency-tracking metrics, semantic caching, load balancing, and streaming support (docs-3, docs-9, docs-11, docs-16, docs-17, docs-24), and its hybrid architecture keeps the control plane out of the data path (docs-50), all of which are consistent with a low-overhead design. However, there is no explicit benchmark, latency-overhead figure, or independent performance test showing the gateway itself adds minimal latency—only that it measures/logs latency after the fact. Missing for 10: quantitative overhead benchmarks, third-party performance testing, and explicit vendor claims of 'low added latency' vs raw provider calls.",
     "evidenceIds": [
+      "kong-ai-gateway-docs-3",
       "kong-ai-gateway-docs-9",
       "kong-ai-gateway-docs-11",
+      "kong-ai-gateway-docs-16",
       "kong-ai-gateway-docs-17",
-      "kong-ai-gateway-docs-3"
+      "kong-ai-gateway-docs-24",
+      "kong-ai-gateway-docs-50"
     ]
   },
   {
@@ -995,10 +1017,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway explicitly documents load-balancing across multiple LLM models/providers (docs-17), and it also tracks and calculates per-request LLM costs (docs-18) and latency metrics (docs-9), which are the raw signals needed for cost- or latency-aware routing. However, the evidence pack never confirms the specific load-balancing algorithms (e.g., weighted, latency-based, cost-based) are selectable options, so it's unclear whether these criteria can actually be used as balancing strategies. Missing for 10: explicit documentation of weight-based, latency-based, and cost-based load-balancing algorithms/configuration options, and independent confirmation these modes work as described.",
+    "rationale": "Kong AI Gateway explicitly documents load balancing across multiple LLM models/providers with dynamic routing optimized on various metrics, plus cost calculation and latency tracking per request, which together give the building blocks for weight/latency/cost-based routing. However, the docs don't explicitly confirm weighted-by-cost or weighted-by-latency algorithms as first-class configurable balancing strategies (only 'various metrics' is vaguely referenced), and no independent/hands-on evidence corroborates this in production. Missing for 10: explicit documentation of concrete weight/latency/cost-based load-balancing algorithms and configuration examples, and independent verification of this behavior in practice.",
     "evidenceIds": [
       "kong-ai-gateway-docs-17",
+      "kong-ai-gateway-docs-31",
       "kong-ai-gateway-docs-18",
+      "kong-ai-gateway-docs-35",
       "kong-ai-gateway-docs-9"
     ]
   },
@@ -1008,12 +1032,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Kong AI Gateway supports multi-provider routing and calculates per-request costs, but there is no documented catalog/endpoint for browsing or querying available models with pricing and context-window metadata — the closest evidence (model-cost-management, list-ai-gateways API) covers cost calculation per request and listing gateway instances, not a model metadata catalog.",
-    "evidenceIds": [
-      "kong-ai-gateway-docs-18",
-      "kong-ai-gateway-docs-14",
-      "kong-ai-gateway-docs-1"
-    ]
+    "rationale": "Kong AI Gateway documents multi-provider proxying, cost calculation per request, and usage analytics, but there is no evidence of a browsable/queryable catalog listing available models with pricing and context-window metadata upfront — cost figures are computed post-request, not exposed as catalog metadata.",
+    "evidenceIds": []
   },
   {
     "productId": "kong-ai-gateway",
@@ -1021,38 +1041,41 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway is documented as a provider-agnostic API layer that proxies LLM requests (chat/completions endpoints) with streaming support, which implies OpenAI-style compatibility, but no evidence explicitly confirms that existing OpenAI SDK code works unmodified by only swapping base URL and API key. missing for 10: explicit doc/example showing an OpenAI SDK client redirected via base_url with no code changes, and confirmation that request/response schemas exactly mirror OpenAI's format.",
+    "rationale": "Kong AI Gateway exposes a provider-agnostic proxy API and centralizes credentials so client code is 'shielded from AI Provider API specifics,' which aligns with pointing existing OpenAI-style calls at a new base URL/key. However, the docs show that using it requires first creating AI Model Provider/Model entities (e.g., for Anthropic) rather than a pure client-side base-URL/key swap, and no evidence explicitly confirms an OpenAI-compatible endpoint spec matching official OpenAI SDK behavior. Missing for 10: explicit OpenAI-compatible endpoint documentation, confirmation that zero server-side config beyond base URL/key change is needed, independent developer corroboration of drop-in compatibility.",
     "evidenceIds": [
       "kong-ai-gateway-docs-1",
-      "kong-ai-gateway-docs-16",
-      "kong-ai-gateway-docs-27"
+      "kong-ai-gateway-docs-29",
+      "kong-ai-gateway-docs-30",
+      "kong-ai-gateway-docs-47"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong exposes AI Gateway configuration via the Konnect API (e.g. list-ai-gateways endpoint) and the kongctl CLI, and docs explicitly note that 'the same capabilities' configurable via plugins can be set on Services/Routes rather than only the UI, implying strong API-driven configuration. However there is no explicit statement of full UI/API parity, and probes for a discoverable OpenAPI spec returned 404s, leaving completeness unverified. Missing for 10: an explicit parity statement or comprehensive OpenAPI spec confirming every UI action (e.g. dashboards, analytics views) is also API-accessible, and independent confirmation of no UI-only features.",
+    "rationale": "Kong provides a Konnect API (e.g., list-ai-gateways) and a kongctl CLI supporting both declarative-as-code and imperative one-off commands, implying broad control-plane parity with the UI, and AI Gateway entities (Models, Providers, Vaults, Auth Strategies) are documented as configurable this way. However, there's no explicit documentation stating full UI/API feature parity, and probes for a public OpenAPI spec all returned 404s, so completeness of API coverage can't be confirmed. Missing for 10: an explicit parity statement or complete OpenAPI/API reference showing every UI action has an API/CLI equivalent, and independent confirmation of full CRUD coverage for all entities.",
     "evidenceIds": [
       "kong-ai-gateway-docs-14",
-      "kong-ai-gateway-docs-27",
-      "kong-ai-gateway-probe-4",
-      "kong-ai-gateway-probe-3"
+      "kong-ai-gateway-docs-25",
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-probe-3",
+      "kong-ai-gateway-probe-4"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Kong AI Gateway/Konnect is a SaaS-hosted control plane with configuration, logs, and analytics data, so data portability/export-and-leave is a fair axis to ask, but the evidence pack contains no mention of a bulk data export feature, open-format export of configs/logs/analytics, or a documented migration-out path in open standards. Evidence only covers observability (metrics, logs) and a CLI conversion extension for migrating configs between versions, not exporting all user data to leave the platform.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kong AI Gateway supports declarative configuration-as-code via kongctl (open YAML/JSON format) and can export operational data (metrics, logs) via OpenTelemetry and audit logs, which gives some data portability, but there is no explicit 'export all my data and leave' capability, bulk data export/deletion tool, or account-level data portability guarantee documented. Missing for 10: an explicit full-data export/account-deletion feature, documentation of exporting all configuration+analytics+logs as a bundle, and any independent confirmation that migration away from Kong is frictionless.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-25",
-      "kong-ai-gateway-docs-9",
-      "kong-ai-gateway-docs-10"
+      "kong-ai-gateway-docs-41",
+      "kong-ai-gateway-docs-26",
+      "kong-ai-gateway-docs-49",
+      "kong-ai-gateway-docs-34"
     ]
   },
   {
@@ -1060,8 +1083,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Kong AI Gateway is a commercial/enterprise product built on Kong Gateway; the evidence pack contains only product documentation, API references, and probes for docs/CLI—no mention of source code availability or an open-source license for AI Gateway itself. Kong Gateway OSS is a separate product; nothing here confirms AI Gateway's source is published under an open license.",
+    "confidence": "high",
+    "rationale": "Kong AI Gateway is a commercial gateway product (part of Kong Gateway/Konnect); no evidence in the pack indicates its source code is available under an open license, and Kong Gateway Enterprise/AI Gateway components are proprietary offerings layered on top. Absence of evidence for this applicable axis yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -1069,10 +1092,11 @@
     "storyId": "openness-self-host",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs reference configuring AI Gateway capabilities 'on-prem' via plugins on Services and Routes, and a quickstart script to spin up a demo instance, implying self-hosted deployment is possible. However, there's no detailed self-hosting guide, licensing/open-source clarification, or infrastructure requirements documented in the evidence pack. Missing for 10: explicit self-hosting/installation documentation, open-source license details, infrastructure/deployment guides beyond a demo quickstart.",
+    "confidence": "medium",
+    "rationale": "Docs reference on-prem/self-hosted configuration ('configure-on-prem.md'), a hybrid architecture where the control plane stays out of the data path, and a quickstart script to spin up a demo instance, implying self-hosting is supported. However, there's no explicit statement of open-source licensing, no detailed self-host installation/deployment guide, and no independent corroboration of a fully self-hosted core product experience. Missing for 10: explicit open-source/self-host licensing terms, step-by-step self-hosted deployment docs, and third-party confirmation of running the core product without Konnect dependency.",
     "evidenceIds": [
       "kong-ai-gateway-docs-27",
+      "kong-ai-gateway-docs-50",
       "kong-ai-gateway-docs-2"
     ]
   },
@@ -1094,7 +1118,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway is an enterprise routing/governance layer for LLM traffic, so control over how provider data is used is a fair question, but the evidence pack contains no mention of training-data opt-out, zero-retention guarantees, or contractual terms preventing model providers from using proxied data for training — only general DLP/PII redaction and content-safety features are documented, which don't address this specific claim.",
+    "rationale": "While AI Gateway documents DLP, prompt guards, and data governance policies for LLM traffic, none of the evidence addresses preventing prompt/response data from being used by upstream providers to train models (e.g., opt-out headers, provider training-consent controls). This is a plausible axis for an AI traffic governance product, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -1103,20 +1127,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Kong AI Gateway logs request/response payloads, token usage, and costs (docs-10), and offers DLP/PII removal (docs-20) and semantic caching (docs-11), but none of the evidence describes configurable data retention periods or deletion/purge controls for logs, caches, or audit trails. Missing for 10: explicit retention policy settings, log/cache deletion or expiry controls, data subject deletion workflow.",
-    "evidenceIds": [
-      "kong-ai-gateway-docs-10",
-      "kong-ai-gateway-docs-20",
-      "kong-ai-gateway-docs-11"
-    ]
+    "rationale": "Evidence covers logging, audit logs, DLP/PII removal, and secret vaulting, but there is no documentation of configurable data retention periods or deletion controls for stored logs/prompts/responses — the core of this story.",
+    "evidenceIds": []
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention any telemetry opt-out, privacy settings, or usage-tracking controls for Kong AI Gateway itself; all evidence concerns the product's own traffic logging/analytics features rather than user opt-out of vendor telemetry.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers AI Gateway's observability of LLM/A2A/MCP traffic (logging, metrics, cost tracking) but contains nothing about the product's own telemetry/usage-reporting to Kong nor any opt-out mechanism for that. Since self-hosted infra products commonly do ship telemetry opt-out settings, the axis is applicable but simply unevidenced here.",
     "evidenceIds": []
   },
   {
@@ -1125,13 +1145,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kong exposes a Konnect API for listing/managing AI Gateways (list-ai-gateways) and entity-based configuration (AI Auth Strategy, AI Vault) that implies programmatic provisioning of gateways and credentials, plus a kongctl CLI for gateway configuration/migration. However, there is no explicit documentation of an API or CLI for creating/managing spend budgets or quotas, and no end-to-end example of provisioning gateway+keys+budget via API. Missing for 10: explicit budget/quota provisioning API, a full API reference for creating AI Auth Strategies/keys programmatically, and independent confirmation of the admin API's completeness for this workflow.",
+    "rationale": "Kong provides Konnect admin APIs to list/manage AI Gateways (docs-14) and a kongctl CLI supporting declarative-as-code and imperative commands (docs-41), plus AI Auth Strategy and AI Vault entities for key/credential management (docs-22, docs-23, docs-38, docs-39) and cost/budget-related metrics (docs-18, docs-33). However, there is no explicit documentation of a full programmatic API for provisioning budgets/spend limits (only rate-limiting plugins and cost tracking are shown, not a budget-creation API endpoint), and the OpenAPI spec probe returned 404s, so the admin API surface for full gateway/key/budget provisioning isn't independently confirmed. missing for 10: a documented API/CLI endpoint specifically for creating or setting budgets/spend caps, a discoverable OpenAPI spec confirming the full admin API surface, and independent/hands-on confirmation of end-to-end programmatic provisioning.",
     "evidenceIds": [
       "kong-ai-gateway-docs-14",
+      "kong-ai-gateway-docs-41",
       "kong-ai-gateway-docs-22",
       "kong-ai-gateway-docs-23",
-      "kong-ai-gateway-docs-25",
-      "kong-ai-gateway-docs-18"
+      "kong-ai-gateway-docs-18",
+      "kong-ai-gateway-docs-33",
+      "kong-ai-gateway-probe-3",
+      "kong-ai-gateway-probe-4"
     ]
   },
   {
@@ -1140,11 +1163,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway documents load balancing across multiple LLM models/providers and a dedicated 'AI Rate Limiting Advanced' plugin for enforcing rate limits, which together support spreading traffic and throttling. However, there is no explicit documentation of spreading traffic across multiple API keys for the same provider or of request queuing behavior when limits are hit. Missing for 10: explicit key-rotation/multi-key load balancing, request queuing mechanics, and any hands-on/independent verification of these features working together.",
+    "rationale": "Kong AI Gateway provides load balancing across multiple LLM models/providers (docs-17, docs-31) and AI Rate Limiting Advanced plugin (docs-12, docs-43) which supports throttling requests, directly addressing spreading traffic and rate-limit smoothing. However, evidence doesn't explicitly confirm multi-key rotation per provider or request queuing behavior (vs. hard rejection) under rate limits. Missing for 10: explicit documentation of API-key rotation/spreading across multiple keys for the same provider, and confirmation of queuing (vs. simple throttling/rejection) semantics.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-17",
       "kong-ai-gateway-docs-12",
-      "kong-ai-gateway-docs-18"
+      "kong-ai-gateway-docs-17",
+      "kong-ai-gateway-docs-31",
+      "kong-ai-gateway-docs-43"
     ]
   },
   {
@@ -1152,14 +1176,15 @@
     "storyId": "request-logging",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Kong AI Gateway docs explicitly describe audit logs capturing request/response payloads, token usage, model details, latency, and cost metrics, plus usage analytics dashboards and OTel metrics for latency, tokens, and cost. missing for 10: independent/hands-on corroboration of the logging UI in practice and detail on log retention/query interface.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly state AI Gateway logs capture request/response payloads, token usage, model details, latency, and cost metrics (audit log reference), plus OTLP metrics track latency, token consumption, and cost, and usage analytics dashboards show requests/tokens/errors/latency. This directly matches the platform-engineer story of inspecting logged requests/responses with latency, tokens, and cost. Missing for 10: independent/hands-on verification of the actual log UI/output and no third-party corroboration beyond vendor docs.",
     "evidenceIds": [
-      "kong-ai-gateway-docs-3",
-      "kong-ai-gateway-docs-9",
       "kong-ai-gateway-docs-10",
-      "kong-ai-gateway-docs-18",
-      "kong-ai-gateway-docs-26"
+      "kong-ai-gateway-docs-9",
+      "kong-ai-gateway-docs-3",
+      "kong-ai-gateway-docs-35",
+      "kong-ai-gateway-docs-49",
+      "kong-ai-gateway-docs-18"
     ]
   },
   {
@@ -1167,11 +1192,13 @@
     "storyId": "response-caching",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Kong ships a dedicated AI Semantic Cache plugin explicitly designed to cache LLM responses at the gateway, and separate docs confirm gateway-level semantic caching to reduce redundant calls and improve latency/cost. This is first-party documentation with a named product feature, though no independent benchmark or hands-on cost/latency measurement is provided. Missing for 10: independent/hands-on validation of actual cost/latency savings, and exact-match (non-semantic) cache configuration details.",
+    "confidence": "medium",
+    "rationale": "Kong ships a dedicated AI Semantic Cache plugin that caches LLM responses using semantic similarity to reduce repeated-request cost and latency, directly matching the story, and this is reinforced by references to semantic similarity powering 'intelligent caching.' Missing for 10: independent/hands-on benchmarks validating actual latency/cost savings, and deeper docs on cache invalidation/config specifics.",
     "evidenceIds": [
       "kong-ai-gateway-docs-11",
-      "kong-ai-gateway-docs-24"
+      "kong-ai-gateway-docs-42",
+      "kong-ai-gateway-docs-24",
+      "kong-ai-gateway-docs-37"
     ]
   },
   {
@@ -1192,9 +1219,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway has a dedicated streaming.md doc confirming token-by-token streaming from models is supported and rendered in real time, layered on top of its provider-agnostic API supporting multiple LLM providers. Missing for 10: independent/hands-on confirmation of streaming behavior across every provider and any details on streaming with proxy-added policies (e.g., guardrails) applied mid-stream.",
+    "rationale": "Kong AI Gateway has a dedicated streaming.md doc explicitly describing token-by-token streaming of chat responses so clients can render in real time, tied to the AI Model entity that works across providers via the provider-agnostic API. missing for 10: independent/hands-on confirmation of streaming behavior and explicit multi-provider streaming compatibility matrix.",
     "evidenceIds": [
       "kong-ai-gateway-docs-16",
+      "kong-ai-gateway-docs-32",
       "kong-ai-gateway-docs-1"
     ]
   },
@@ -1204,7 +1232,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers provider-agnostic proxying, streaming, load balancing, cost tracking, and safety policies, but no document mentions structured/JSON-schema output enforcement or normalization across providers. This is a fair capability to expect from an AI gateway, but no evidence supports it.",
+    "rationale": "The evidence pack covers provider-agnostic proxying, streaming, cost tracking, guardrails, MCP, and A2A traffic, but nowhere mentions structured/JSON-schema output normalization or function-calling schema support across providers. This is a plausible capability for an LLM gateway, but no documentation confirms it.",
     "evidenceIds": []
   },
   {
@@ -1213,12 +1241,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway documents a provider-agnostic API for LLM traffic and an AI MCP Proxy/Server that converts REST APIs into MCP tools, suggesting a consistent tool-calling interface across providers and models. However, there is no explicit documentation showing normalization of function/tool-call schemas (e.g., translating OpenAI-style function calls to Anthropic tool-use format) for the same request across different providers. Missing for 10: explicit cross-provider function-call schema translation examples, hands-on/independent verification of consistent tool-call behavior across providers.",
+    "rationale": "Kong AI Gateway's provider-agnostic API and AI Model Provider abstraction (docs-1, docs-29, docs-30) let developers call different LLM providers through a consistent request/response schema, and its AI MCP Proxy/AI MCP Server entities (docs-13, docs-19, docs-45) standardize tool/function invocation across providers. However, the evidence never explicitly documents a unified function-calling/tool-call schema (e.g., mapping OpenAI-style function calls to Anthropic/Bedrock equivalents) with concrete request examples. Missing for 10: explicit documentation of cross-provider function/tool-call schema normalization, hands-on example showing identical tool-call payloads working against multiple providers.",
     "evidenceIds": [
       "kong-ai-gateway-docs-1",
+      "kong-ai-gateway-docs-29",
+      "kong-ai-gateway-docs-30",
       "kong-ai-gateway-docs-13",
       "kong-ai-gateway-docs-19",
-      "kong-ai-gateway-docs-15"
+      "kong-ai-gateway-docs-45"
     ]
   },
   {
@@ -1227,10 +1257,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kong AI Gateway documents exporting OpenTelemetry (OTLP) metrics for generative AI, MCP, and A2A traffic via an OpenTelemetry AI Policy, plus detailed audit logs capturing request/response payloads, token usage, latency, and cost — enabling integration with a developer's own observability stack. Missing for 10: explicit trace export (spans/tracing) documentation and independent/hands-on confirmation of exporting to third-party backends like Datadog or Grafana.",
+    "rationale": "Kong AI Gateway documents OpenTelemetry (OTLP) metrics export via an OpenTelemetry AI Policy for LLM/MCP/A2A traffic, standardized log formats for analytics aggregation, and explicit guidance that logs and metrics can be gathered and analyzed via Konnect or any OpenTelemetry tool, plus local error log file access. missing for 10: independent/hands-on confirmation of trace export (spans, not just metrics/logs) and third-party validation of integration with external observability stacks (e.g., Datadog/Grafana) beyond first-party docs.",
     "evidenceIds": [
       "kong-ai-gateway-docs-26",
+      "kong-ai-gateway-docs-34",
       "kong-ai-gateway-docs-9",
+      "kong-ai-gateway-docs-49",
+      "kong-ai-gateway-docs-48",
       "kong-ai-gateway-docs-10"
     ]
   },
@@ -1240,25 +1273,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kong AI Gateway explicitly provides a provider-agnostic API to route to many LLM providers, with load balancing and unified logging/observability across providers, matching the core unified-API story. Missing for 10: independent/hands-on developer corroboration of consistent request/response schema across providers, and no explicit list of exact supported providers in evidence.",
+    "rationale": "Kong AI Gateway explicitly provides a provider-agnostic API across model providers, shielding client apps from provider-specific API differences, centralizing credentials, and supporting multiple named providers (Anthropic, Azure, etc.) with load balancing and dynamic routing. missing for 10: independent/hands-on developer corroboration beyond vendor docs, and a concrete list of all supported providers in one place.",
     "evidenceIds": [
       "kong-ai-gateway-docs-1",
+      "kong-ai-gateway-docs-29",
+      "kong-ai-gateway-docs-30",
+      "kong-ai-gateway-docs-31",
       "kong-ai-gateway-docs-17",
-      "kong-ai-gateway-docs-9",
-      "kong-ai-gateway-docs-18"
+      "kong-ai-gateway-docs-47"
     ]
   },
   {
     "productId": "kong-ai-gateway",
     "storyId": "virtual-keys",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kong AI Gateway's AI Vault lets provider keys be stored in external secret backends and referenced by AI Model Providers/Agents instead of literal values, and AI Auth Strategy lets client apps authenticate via an IdP or Kong-managed auth without handling provider keys directly — both point toward the platform-engineer being able to shield raw provider keys from consumers. However, the evidence never explicitly describes a workflow for minting distinct gateway-managed keys per team/app, rotating them, or a consumer/key-auth flow tied to AI traffic. Missing for 10: explicit documentation of issuing/rotating per-team or per-app gateway-managed API keys, and any admin UI/API walkthrough for that key-minting process.",
+    "rationale": "Kong AI Gateway supports centralized AI provider credential management via AI Vault (referencing secrets in AWS Secrets Manager, Vault, etc. instead of literal values) and AI Auth Strategy entities that let platform engineers declare inbound authentication (including IdP-based) for AI Models/Agents/MCP servers without exposing raw provider keys. This covers keeping upstream provider keys hidden and centralizing credential storage/auth, which aligns with the story's core intent. Missing for 10: explicit documentation of an API/workflow to 'mint' distinct gateway-issued keys per team/app (e.g., consumer-level key issuance analogous to Kong Gateway API-key consumers) and independent/hands-on corroboration of this key-minting workflow specifically for AI Gateway.",
     "evidenceIds": [
       "kong-ai-gateway-docs-22",
+      "kong-ai-gateway-docs-38",
       "kong-ai-gateway-docs-23",
-      "kong-ai-gateway-docs-7"
+      "kong-ai-gateway-docs-39",
+      "kong-ai-gateway-docs-30"
     ]
   },
   {
