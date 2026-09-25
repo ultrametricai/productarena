@@ -6838,23 +6838,27 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Riveter's search_agent and enrichment 'agent loop' imply an AI process that runs until it produces an answer, which suggests some adaptive stopping behavior, but the docs never explicitly describe a mechanism that halts crawling/searching once sufficient information is gathered (e.g., confidence thresholds, early-exit logic). missing for 10: explicit documentation of adaptive stopping criteria, evidence of efficiency/cost savings from early termination, and independent confirmation of this behavior.",
+    "rationale": "Riveter's search_agent and enrichment features run an 'agent loop' that gathers web data to answer a query, implying some adaptive research behavior, but no documentation explicitly describes a stopping heuristic or criteria for halting once sufficient information is gathered. Missing for 10: explicit description of adaptive stopping logic, benchmarks/examples showing efficient early termination, and independent verification of crawl behavior.",
     "evidenceIds": [
       "riveter-docs-5",
-      "riveter-docs-1"
+      "riveter-docs-1",
+      "riveter-docs-15"
     ]
   },
   {
     "productId": "riveter",
     "storyId": "agentic-agent-docs",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "high",
-    "rationale": "Riveter has agent-oriented documentation and an MCP interface explicitly designed for AI assistants (Claude, ChatGPT, Cursor) to connect to and use its docs/API, but a direct probe shows no llms.txt file exists (404), so the specific 'point an agent at llms.txt' capability is unsupported even though broader agent-facing docs exist. missing for 10: an actual llms.txt file, evidence of agents successfully consuming a machine-readable docs manifest.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Riveter's docs.riveterhq.com/openapi.yaml is repeatedly cited as a live machine-readable spec (docs-26 through docs-31), which serves as agent-parsable documentation, but the dedicated llms.txt endpoint that this story explicitly names returns a 404 per direct probe, and there is no evidence of a curated agent-oriented docs page beyond the raw OpenAPI file. missing for 10: a working llms.txt file, any first-party statement that the OpenAPI/docs are meant for direct agent consumption, and independent confirmation an agent can successfully ingest it.",
     "evidenceIds": [
-      "riveter-docs-9",
-      "riveter-docs-20",
-      "riveter-probe-1"
+      "riveter-docs-26",
+      "riveter-docs-27",
+      "riveter-docs-28",
+      "riveter-docs-30",
+      "riveter-probe-1",
+      "riveter-probe-2"
     ]
   },
   {
@@ -6863,7 +6867,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Riveter's core enrichment feature uses AI agents to research, scrape, and fill data columns with AI-generated insights, and search_agent provides direct AI-researched answers from data queries, directly matching the story. missing for 10: independent/hands-on corroboration of insight quality, and no dedicated 'insights dashboard' or proactive suggestion surfacing beyond enrichment/search outputs.",
+    "rationale": "Riveter's core enrichment feature uses AI agents to research, scrape, and search the web to generate new data/insights for each row, and search_agent/quick_search provide on-demand AI-researched answers — directly matching 'AI-generated insights inside the product.' Missing for 10: independent/hands-on evidence validating insight quality and no third-party corroboration beyond first-party docs.",
     "evidenceIds": [
       "riveter-docs-1",
       "riveter-docs-2",
@@ -6878,13 +6882,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe scheduling any project to monitor for changes and refresh data as often as every minute, plus async run completion via webhooks, which together enable background automations without manual triggering. missing for 10: independent/hands-on corroboration of scheduling behavior, details on schedule configuration options (e.g., cron-like controls), and evidence of more complex autonomous multi-step workflows beyond monitoring/enrichment.",
+    "rationale": "Riveter supports scheduling projects to monitor for changes and keep data fresh (background automation without user intervention), plus webhooks to notify on completion rather than requiring polling, which together enable autonomous background operation. missing for 10: no evidence of schedule configuration granularity/reliability, no independent/hands-on confirmation of scheduled runs actually executing unattended over time.",
     "evidenceIds": [
       "riveter-docs-13",
       "riveter-docs-17",
       "riveter-docs-23",
       "riveter-docs-6",
-      "riveter-docs-24"
+      "riveter-docs-27"
     ]
   },
   {
@@ -6925,11 +6929,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows Riveter exposing itself as an MCP server for external AI assistants (Claude, ChatGPT, Cursor) to connect to and use Riveter's own tools (riveter-docs-9, riveter-docs-20) — this is the reverse direction of the story. There is no evidence that Riveter itself can consume or plug in third-party MCP servers to gain their tools within its own enrichment/agent loops.",
+    "rationale": "Evidence shows Riveter exposes itself as an MCP server that other AI assistants (Claude, ChatGPT, Cursor) can connect to for using Riveter's tools — the reverse direction of this story. There is no evidence that Riveter itself can consume external MCP servers to expand its own enrichment agent's toolset.",
     "evidenceIds": [
       "riveter-docs-9",
       "riveter-docs-20",
-      "riveter-docs-10"
+      "riveter-docs-28"
     ]
   },
   {
@@ -6938,11 +6942,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Riveter is a data-enrichment/web-scraping service (not itself an agent), so an official MCP server for AI assistants is a fair axis. Docs explicitly describe connecting via a hosted MCP endpoint (https://mcp.riveterhq.com/mcp as a custom connector) as well as a local Node.js MCP server option, explicitly supporting Claude, ChatGPT, Cursor, or any MCP-compatible assistant. Missing for 10: independent/hands-on confirmation beyond vendor docs, and no detail on tool/resource schema exposed via the server.",
+    "rationale": "Riveter documents an official hosted MCP server (https://mcp.riveterhq.com/mcp, added as a custom connector) plus a local Node.js MCP option, explicitly supporting Claude, ChatGPT, Cursor, or any MCP-compatible assistant. Missing for 10: independent/hands-on confirmation that the MCP server works as documented (all evidence is first-party docs).",
     "evidenceIds": [
       "riveter-docs-9",
       "riveter-docs-10",
-      "riveter-docs-20"
+      "riveter-docs-20",
+      "riveter-docs-28"
     ]
   },
   {
@@ -6951,12 +6956,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Riveter lets users build enrichments from natural-language prompts (riveter-docs-2, riveter-docs-12) and exposes itself via MCP so it can be driven by natural language through Claude, ChatGPT, Cursor, or any MCP-compatible assistant (riveter-docs-9, riveter-docs-20), directly matching the ai-native/agenticness story. Missing for 10: independent/hands-on corroboration beyond docs, and evidence that all product actions (not just enrichment creation) are controllable via NL rather than structured API calls.",
+    "rationale": "Riveter lets users build enrichments from natural-language prompts (e.g. \"Research each company\") rather than only structured specs, and it exposes an MCP server/connector so it can be operated directly from Claude, ChatGPT, Cursor or any MCP-compatible AI assistant, effectively giving natural-language command access. missing for 10: independent/hands-on confirmation of NL command usage beyond vendor docs, and no worked example of a full conversational session issuing varied natural-language commands.",
     "evidenceIds": [
       "riveter-docs-2",
-      "riveter-docs-9",
       "riveter-docs-12",
-      "riveter-docs-20"
+      "riveter-docs-9",
+      "riveter-docs-20",
+      "riveter-docs-5"
     ]
   },
   {
@@ -6965,27 +6971,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows SDKs (Go client), an MCP server/connector, and a local MCP runner for Node.js, but no mention of an official CLI tool for interacting with Riveter directly from a terminal.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Riveter offers a Go SDK, MCP connectors (local and remote), and a REST API, but no mention anywhere of an official command-line interface tool for interacting with Riveter.",
+    "evidenceIds": [
+      "riveter-docs-9",
+      "riveter-docs-10",
+      "riveter-docs-20",
+      "riveter-docs-29"
+    ]
   },
   {
     "productId": "riveter",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Riveter exposes a documented REST API (endpoints like /enrich, /runs/{id}, /datasets, webhook_url, dry_run, max_credits) plus official SDKs (Go client shown) with auth, retries, pagination and polling — clearly a documented, programmatic interface an AI-native user could drive directly. Missing for 10: a machine-readable spec (OpenAPI/swagger and llms.txt both returned 404 in probes) and independent third-party confirmation of the API's completeness/stability.",
+    "rationale": "Riveter publishes a documented REST API (endpoints like /enrich, /runs/{id}, /datasets, scrape, quick_search, search_agent, webhook_url, dry_run, max_credits), an OpenAPI spec, and an official Go SDK, making it clearly drivable programmatically by AI-native users. Missing for 10: independent/hands-on corroboration beyond vendor docs, and the probe couldn't verify a machine-readable openapi.json/llms.txt (only openapi.yaml is referenced).",
     "evidenceIds": [
-      "riveter-docs-6",
+      "riveter-docs-26",
+      "riveter-docs-25",
+      "riveter-docs-29",
+      "riveter-docs-30",
+      "riveter-docs-31",
       "riveter-docs-7",
       "riveter-docs-8",
-      "riveter-docs-11",
-      "riveter-docs-19",
-      "riveter-docs-21",
-      "riveter-docs-22",
-      "riveter-docs-25",
-      "riveter-probe-1",
-      "riveter-probe-2"
+      "riveter-docs-6"
     ]
   },
   {
@@ -6994,33 +7003,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence Riveter offers scoped or least-privilege API key/credential issuance for agents; docs only mention a single API key for auth, with no mention of scopes, permissions, or credential minting.",
+    "rationale": "No evidence Riveter offers scoped or least-privilege API credentials/tokens for agents — API key usage is mentioned only generically (single API key for auth), with no mention of scopes, roles, or restricted permission sets.",
     "evidenceIds": []
   },
   {
     "productId": "riveter",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Riveter documents an official Go SDK (github.com/riveterhq/riveter-go) with typed client methods for Enrich and Runs.List, plus SDK handling of auth, retries, long-polling, and pagination, indicating a maintained official SDK ecosystem for AI-native/agentic workflows. missing for 10: no evidence of multi-language SDK coverage (e.g., Python/JS) or independent third-party corroboration beyond the vendor's own repo/docs.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Riveter has an official Go SDK (riveterhq/riveter-go) with typed clients handling auth, retries, long-polling, and pagination, plus documented usage examples for Enrich and Runs.List. However, missing for 10: independent/third-party corroboration of SDK quality, evidence of SDKs in other languages beyond Go, and a public OpenAPI spec (probes show 404s for openapi.json and llms.txt).",
     "evidenceIds": [
       "riveter-docs-11",
       "riveter-docs-12",
       "riveter-docs-19",
       "riveter-docs-21",
-      "riveter-docs-22"
+      "riveter-docs-22",
+      "riveter-docs-29",
+      "riveter-docs-30"
     ]
   },
   {
     "productId": "riveter",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Riveter supports webhooks by passing a webhook_url when starting a run, with Riveter POSTing results back on run.completed, run.stopped, and run.finished events — a real event-notification mechanism for agentic workflows. However this is scoped to a single run's lifecycle rather than a general subscription model (no persistent webhook registration/management endpoint, no broader event catalog, no signature/security details). Missing for 10: a dedicated webhook subscription/management API, documentation of additional event types beyond run lifecycle, and payload signing/verification details.",
+    "rationale": "Riveter documents webhook_url support that POSTs run.completed/run.stopped/run.finished events on run completion, explicitly recommending webhooks over polling. missing for 10: no independent/hands-on corroboration, no detail on retry/delivery guarantees or signature verification for webhook payloads.",
     "evidenceIds": [
-      "riveter-docs-6"
+      "riveter-docs-6",
+      "riveter-docs-27"
     ]
   },
   {
@@ -7029,13 +7041,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs and SDK examples show enrichments built from natural-language prompts (e.g. \"Research each company\" with attributes CEO/Employee Count) that Riveter fills using AI agents interpreting pages, explicitly replacing selector-based scraping. This directly matches the story of extracting structured data via natural language rather than selectors. Missing for 10: independent/hands-on verification of extraction accuracy and no third-party benchmarking of output quality beyond vendor docs.",
+    "rationale": "Riveter's core product lets developers build enrichments/scrapes from a natural-language prompt (e.g., 'Research each company' with attributes) rather than writing CSS/XPath selectors, and its AI agents interpret pages 'the way a person would' so no selector maintenance is needed. This is documented across docs, blog, and SDK examples. Missing for 10: independent/hands-on validation of extraction accuracy and no concrete benchmark comparing selector-free extraction quality vs traditional scrapers.",
     "evidenceIds": [
       "riveter-docs-1",
       "riveter-docs-2",
       "riveter-docs-12",
       "riveter-docs-15",
-      "riveter-docs-18"
+      "riveter-docs-3"
     ]
   },
   {
@@ -7043,23 +7055,26 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an interactive API reference (no OpenAPI/Swagger spec, no live 'try it' console); probes confirm openapi.json and llms.txt both return 404, and docs only show static code snippets in SDK repos.",
+    "confidence": "medium",
+    "rationale": "Evidence shows only static documentation pages and code snippets (Go SDK examples), plus references to openapi.yaml, but no evidence of an interactive API explorer or in-browser runnable examples; probes for openapi.json and llms.txt endpoints returned 404, suggesting no interactive reference is exposed.",
     "evidenceIds": [
       "riveter-probe-1",
-      "riveter-probe-2"
+      "riveter-probe-2",
+      "riveter-docs-26"
     ]
   },
   {
     "productId": "riveter",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Riveter has REST API docs and SDKs but explicit probes for OpenAPI/swagger spec files and llms.txt all returned 404, and no documentation mentions a downloadable machine-readable spec.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Riveter's documentation explicitly serves an OpenAPI spec at https://docs.riveterhq.com/openapi.yaml, with multiple docs entries directly quoting content from that file (riveter-docs-26,27,28,30), indicating a machine-readable spec is downloadable. The probe only tested .json variants (which 404'd) and never checked the .yaml path, so no contradiction exists. Missing for 10: independent third-party confirmation that the .yaml file is reachable/valid, and no evidence of versioning or spec completeness.",
     "evidenceIds": [
-      "riveter-probe-1",
-      "riveter-probe-2"
+      "riveter-docs-26",
+      "riveter-docs-27",
+      "riveter-docs-28",
+      "riveter-docs-30"
     ]
   },
   {
@@ -7080,10 +7095,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The docs list legacy→current endpoint mappings (e.g., /run_new_enrichment → /enrich), showing some backward-compatibility handling, but there is no explicit documented deprecation policy, versioning scheme, or timeline for sunsetting old endpoints, and no OpenAPI spec is discoverable. missing for 10: explicit deprecation policy/timeline documentation, API version numbering scheme, discoverable OpenAPI/spec confirming version support.",
+    "rationale": "The docs show a legacy→current endpoint mapping table (e.g. /run_new_enrichment → /enrich), implying some API evolution and backward-compatible aliasing, but there is no explicit version numbering scheme (no /v1/, /v2/ paths) and no documented deprecation timeline or sunset policy. missing for 10: explicit API versioning scheme, published deprecation/sunset timelines, changelog or migration guide beyond a bare mapping table.",
     "evidenceIds": [
-      "riveter-docs-25",
-      "riveter-probe-2"
+      "riveter-docs-25"
     ]
   },
   {
@@ -7101,7 +7115,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Riveter offers cost controls like dry_run cost estimates and a max_credits ceiling that refuses requests exceeding a cap, but there is no evidence of automatic selection among multiple configurations to find the cheapest one that still succeeds — it only estimates/caps, it doesn't optimize or choose configurations for cost.",
+    "rationale": "Riveter offers cost-control features like dry_run cost estimates and max_credits caps that block overspend, but there is no evidence of the API automatically selecting or trying cheaper configurations that still succeed — it only estimates/refuses, it doesn't optimize.",
     "evidenceIds": [
       "riveter-docs-7",
       "riveter-docs-8"
@@ -7112,9 +7126,13 @@
     "storyId": "auto-retry-proxy-chain",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers retries only for HTTP 429s and transient GET failures at the API/SDK level; there is no mention of proxy rotation, proxy chains, or anti-bot-specific retry/failover logic.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence describes generic SDK retries for 429s and transient GET failures, and AI-based page interpretation, but nowhere mentions proxy rotation or chaining through multiple proxies to evade anti-bot blocks. Since Riveter is a web scraping/enrichment product, proxy-chain retry is a fair axis, but no evidence supports this specific capability.",
+    "evidenceIds": [
+      "riveter-docs-11",
+      "riveter-docs-15",
+      "riveter-docs-19"
+    ]
   },
   {
     "productId": "riveter",
@@ -7122,12 +7140,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Riveter's core enrichment model processes many rows of input data at once, generating rows from a spec and filling AI-derived columns in bulk (docs-1, docs-2), with concrete bulk examples like finding every dental practice in a city and enumerating all dentists in one request (docs-16), and SDK/pagination support for listing runs (docs-22). missing for 10: independent/hands-on verification of scale limits and no explicit documentation of per-run item count ceilings or performance benchmarks.",
+    "rationale": "Riveter's core enrichment operation processes rows of input data in bulk (up to 10,000 rows per request), applying AI/web tools across every row, with dataset builders, scheduling for refresh, and SDK pagination/polling to manage large-scale runs. Missing for 10: independent/hands-on verification of bulk performance at scale, and clearer documentation of batch limits beyond the stated row cap.",
     "evidenceIds": [
       "riveter-docs-1",
       "riveter-docs-2",
+      "riveter-docs-31",
       "riveter-docs-16",
-      "riveter-docs-22"
+      "riveter-docs-13",
+      "riveter-docs-11"
     ]
   },
   {
@@ -7162,23 +7182,24 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows runs, scheduling, dry-run estimates, and legacy endpoint mappings, but nothing about versioning automations, reviewing prior versions, or rolling back to an earlier configuration.",
+    "confidence": "high",
+    "rationale": "Riveter's evidence covers running, scheduling, and monitoring data enrichment automations, but there is no mention of versioning automations, reviewing change history, or rolling back to a prior version/state — capabilities central to this story.",
     "evidenceIds": []
   },
   {
     "productId": "riveter",
     "storyId": "batch-scrape-async",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Riveter's core enrichment/scrape API lets users submit URL-based runs that execute asynchronously (webhook notifications, wait_for_result polling, SDK-managed retries for 429s), and marketing copy shows bulk-discovery examples like pulling every dentist from every practice in a city in a single request, implying large-scale async scraping. However there is no explicit documentation of throughput limits, guarantees, or hands-on evidence for 'thousands of URLs' scale specifically. Missing for 10: explicit large-scale (thousands of URLs) benchmarks or case studies, and independent/hands-on verification of reliability at that scale.",
+    "rationale": "Riveter supports scraping/enrichment at scale via async runs with up to 10,000 rows per request, webhook callbacks instead of polling, retries/pagination handled by SDKs, and dedicated 'scrape' and 'quick_search' tools for URL-to-text extraction — all pointing to asynchronous batch processing suited for large URL lists. Missing for 10: no independent/hands-on benchmarks of actual throughput at 'thousands of URLs', no explicit documentation of concurrency limits or rate-limit ceilings for very large batches, and openapi/llms.txt probes 404 so some architectural details are unverifiable.",
     "evidenceIds": [
       "riveter-docs-3",
       "riveter-docs-6",
       "riveter-docs-11",
-      "riveter-docs-16",
-      "riveter-docs-19"
+      "riveter-docs-27",
+      "riveter-docs-31",
+      "riveter-docs-16"
     ]
   },
   {
@@ -7196,7 +7217,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Riveter's docs describe enrichment, scraping, search, and dataset-building features, but nothing addresses blocking images/CSS resources or bandwidth-saving options for scraping requests. This is a plausible feature for a web-scraping API, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -7205,7 +7226,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers credit caps (dry_run, max_credits) but nothing about concurrency/request-rate limits per pricing tier or the cost to raise such caps — no mention of session/concurrency limits or upgrade pricing.",
+    "rationale": "No evidence of pricing tiers, concurrency/session caps, or costs to raise such caps; only credit-based cost controls (dry_run, max_credits) are documented, which is unrelated to concurrency limits.",
     "evidenceIds": []
   },
   {
@@ -7214,13 +7235,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Riveter's enrichment model processes many rows per run (bulk scraping/searching across rows) and includes SDK-level retries, polling, and pagination that support running large jobs reliably, but there is no explicit documentation of concurrency limits, parallel session counts, or throughput guarantees for running many simultaneous scraping sessions. missing for 10: explicit concurrency/session limits, scaling architecture details, benchmarks on parallel throughput.",
+    "rationale": "Riveter supports scale-oriented features like batch enrichment of up to 10,000 rows per request, async runs with webhooks, scheduling/monitoring, and SDK-level retry/pagination handling, which implicitly support running many jobs at scale. However, there is no explicit documentation of concurrency limits, parallel session management, or throughput guarantees for running many scraping sessions simultaneously. Missing for 10: explicit concurrency/rate-limit documentation, evidence of parallel session orchestration, and independent benchmarks of concurrent scrape throughput.",
     "evidenceIds": [
-      "riveter-docs-1",
-      "riveter-docs-2",
-      "riveter-docs-16",
-      "riveter-docs-11",
-      "riveter-docs-19"
+      "riveter-docs-31",
+      "riveter-docs-6",
+      "riveter-docs-13",
+      "riveter-docs-19",
+      "riveter-docs-11"
     ]
   },
   {
@@ -7229,13 +7250,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Riveter explicitly supports scheduling any project to monitor for changes and keep data fresh, with refresh intervals as frequent as every minute, and webhook_url delivers run.completed/run.finished notifications so a data-engineer is alerted as changes are detected. This directly matches the story of monitoring pages for price/listing updates and being notified.\n\nmissing for 10: independent/hands-on corroboration of the monitoring+webhook pipeline working end-to-end, and explicit change-diffing/alerting semantics (vs. just run-completion notification).",
+    "rationale": "Docs explicitly describe scheduling projects to monitor for changes (price/listing updates) with refresh as often as every minute, plus webhook notifications on run completion, directly matching the story. Missing for 10: independent/hands-on verification of scheduling reliability at scale and no detail on notification content/format beyond generic webhook payload.",
     "evidenceIds": [
       "riveter-docs-13",
-      "riveter-docs-23",
       "riveter-docs-17",
+      "riveter-docs-23",
+      "riveter-docs-24",
       "riveter-docs-6",
-      "riveter-docs-24"
+      "riveter-docs-27"
     ]
   },
   {
@@ -7253,7 +7275,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions robots.txt compliance or configurable rate-limiting for crawling; retries mentioned are for API 429s from Riveter's own service, not target-site rate limits.",
+    "rationale": "No evidence in the pack mentions robots.txt compliance or configurable rate-limiting for the crawler; retries are mentioned only for API 429 handling on the client SDK side, not for target-site crawl rate limiting or robots.txt respect.",
     "evidenceIds": []
   },
   {
@@ -7261,9 +7283,12 @@
     "storyId": "credit-overage-billing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence shows credit estimation and hard caps (dry_run, max_credits with 422 credit_cap_exceeded) for individual API requests, but there is no mention of monthly plan quotas, overage billing, or what happens when a subscription's monthly credit/request allotment is exceeded. missing for 10: any documentation of plan-level monthly quota behavior, overage charge policy, or hard cutoff at plan tier level.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence describes per-request controls (dry_run credit estimates, max_credits as a per-call ceiling with 422 credit_cap_exceeded) but never addresses plan-level monthly credit/request quotas or whether exceeding them triggers overage billing versus a hard cutoff.",
+    "evidenceIds": [
+      "riveter-docs-7",
+      "riveter-docs-8"
+    ]
   },
   {
     "productId": "riveter",
@@ -7271,25 +7296,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Riveter's documented extraction model relies on AI agents that interpret pages semantically (docs-15) rather than developer-specified CSS/XPath selector rules; no evidence pack item describes any selector-based extraction API or field-mapping syntax.",
+    "rationale": "Riveter's docs describe scraping and enrichment via AI agents that 'interpret pages the way a person would' rather than through configurable CSS or XPath selector rules, and no evidence anywhere in the pack mentions selector-based extraction as a feature.",
     "evidenceIds": [
       "riveter-docs-15",
-      "riveter-docs-3"
+      "riveter-docs-3",
+      "riveter-docs-26"
     ]
   },
   {
     "productId": "riveter",
     "storyId": "custom-actor-development",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Riveter's evidence describes a managed enrichment/scrape API (prompt or spec-driven enrichments, scrape, quick_search, search_agent) plus SDKs and MCP connectors for calling those pre-built tools — there's no evidence developers can write and deploy their own custom scraping scripts/functions on Riveter's infrastructure. This is a fair question for a scraping platform, but the evidence pack shows configuration of built-in tools rather than custom code deployment.",
+    "rationale": "Riveter lets developers configure custom data-extraction workflows (enrichments, scrapes, quick_search) via prompts or structured specs and run them via API/SDK without managing servers (riveter-docs-1,2,3,11,26), which covers the 'no infrastructure' half of the story. However, there is no evidence of a true custom-script/code deployment model (e.g., writing and uploading arbitrary scraping logic that Riveter executes as a serverless function) — the platform is config/prompt driven rather than script-authoring, and OpenAPI/llms.txt probes even 404 (riveter-probe-1, riveter-probe-2). Missing for 10: evidence of writing/uploading custom code (not just prompts/specs), a documented script execution/sandbox environment, and independent confirmation of this deployment model.",
     "evidenceIds": [
       "riveter-docs-1",
       "riveter-docs-2",
       "riveter-docs-3",
       "riveter-docs-11",
-      "riveter-docs-19"
+      "riveter-docs-26",
+      "riveter-probe-1",
+      "riveter-probe-2"
     ]
   },
   {
@@ -7298,7 +7326,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any export functionality, data-portability format, or job-configuration export/import mechanism; docs cover enrichment, scraping, SDKs, and webhooks but nothing about migrating data or configs to another provider.",
+    "rationale": "No evidence of any data export/portability feature, standard file format export (CSV/JSON dump), or job-configuration export mechanism for migrating to another provider; docs only describe API results retrieval, webhooks, and SDK usage, not portable export for provider migration.",
     "evidenceIds": []
   },
   {
@@ -7307,12 +7335,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Riveter supports webhook alerts on run.completed/run.stopped/run.finished events and lets clients query run status (Runs.List with Status filter) for basic job monitoring, plus dry_run/max_credits guard against runaway costs. However there's no evidence of dedicated data-quality validation, error-rate metrics, or a monitoring dashboard beyond raw run status. Missing for 10: data quality validation tooling, performance/quality dashboards, granular failure diagnostics beyond webhook events.",
+    "rationale": "Riveter provides run-level monitoring via webhooks (run.completed, run.stopped, run.finished) and a Runs.List/status endpoint for tracking job outcomes, plus dry_run and max_credits guardrails that validate requests before execution. However there is no evidence of data-quality validation (schema checks, anomaly detection, row-level QA) or performance metrics/dashboards, only credit estimation and completion/failure events. missing for 10: dedicated data-quality validation tooling, job performance metrics/dashboards, independent corroboration of alerting reliability.",
     "evidenceIds": [
       "riveter-docs-6",
       "riveter-docs-7",
       "riveter-docs-8",
-      "riveter-docs-22"
+      "riveter-docs-22",
+      "riveter-docs-27"
     ]
   },
   {
@@ -7339,10 +7368,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows SDKs handle retries on 429s, implying rate limiting exists, but no documented numeric rate limit (requests per second/minute) is provided anywhere in the docs or probes.",
+    "rationale": "The docs mention handling 429 retries (implying rate limiting exists) but never document actual numeric thresholds (requests per second/minute) that a data-engineer could use to plan around throttling.",
     "evidenceIds": [
       "riveter-docs-11",
-      "riveter-docs-19"
+      "riveter-docs-19",
+      "riveter-docs-30"
     ]
   },
   {
@@ -7351,7 +7381,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The docs describe dry_run cost estimation and max_credits caps that prevent overage, but nothing states whether a failed, blocked, or empty-result run still consumes credits. Missing for 10: explicit policy on billing for failed/empty/blocked runs, any refund or non-charge guarantee for zero-result enrichments.",
+    "rationale": "Docs describe credit estimation (dry_run) and refusal above a max_credits ceiling, but no evidence addresses whether failed, blocked, or empty-result runs still consume/charge credits after execution.",
     "evidenceIds": [
       "riveter-docs-7",
       "riveter-docs-8"
@@ -7363,11 +7393,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Riveter's docs describe single-URL 'scrape' and 'quick_search' calls, but the marketing example of finding every dental practice in a city and pulling data from each one in a single request shows it can aggregate content across multiple pages/sources in one enrichment run, which approximates whole-site crawling. There is no explicit sitemap-style 'crawl entire website' feature or evidence of full-domain page enumeration. missing for 10: explicit full-site/sitemap crawl feature, evidence of automatically discovering and traversing all pages of a single domain, independent confirmation of multi-page crawl behavior.",
+    "rationale": "Riveter's docs show scraping a single URL to text (docs-3), plus an agent-based enrichment that can chain multi-page lookups in one request (e.g., 'find every dental practice in a city, then pull every dentist from each one, in a single request' — docs-16) and extract from 'complicated websites' (docs-26). This supports multi-page, agent-driven data gathering but never describes a dedicated 'crawl the whole site' or sitemap-traversal endpoint that guarantees full-site coverage. Missing for 10: an explicit full-site crawl/sitemap feature, guarantees of covering every page, and independent evidence of successful whole-site crawls.",
     "evidenceIds": [
       "riveter-docs-3",
       "riveter-docs-16",
-      "riveter-docs-18"
+      "riveter-docs-18",
+      "riveter-docs-26"
     ]
   },
   {
@@ -7385,10 +7416,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Riveter's docs mention it 'reads PDFs and images' as part of a workflow and combines results with web data (riveter-docs-18), implying some visual-content interpretation, but there is no explicit description of generating textual captions for images embedded in a scraped page specifically to feed a text-only model. missing for 10: explicit caption-generation feature, example output showing image-to-text captions, confirmation that scraped pages' embedded images are captioned automatically.",
+    "rationale": "Riveter's docs mention it 'reads PDFs and images' as part of enrichment workflows, implying some image-content extraction, but there is no explicit mention of generating captions/descriptions of images for downstream text-only model reasoning. missing for 10: explicit image captioning feature, description of caption output format, evidence of independent verification.",
     "evidenceIds": [
-      "riveter-docs-18",
-      "riveter-docs-3"
+      "riveter-docs-18"
     ]
   },
   {
@@ -7427,24 +7457,32 @@
   {
     "productId": "riveter",
     "storyId": "large-table-chunked-extraction",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Riveter's documentation covers enrichment, scraping, search, scheduling and webhooks, but nothing in the evidence discusses handling large tables, chunking strategies, or processing-limit management for big datasets — the closest is pagination for API results, which is unrelated to extraction chunking. Missing for 10: any mention of large-table handling, row/batch chunking logic, size-limit thresholds, or performance benchmarks on big data.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Riveter documents a hard cap of up to 10,000 rows per /enrich request and SDKs that handle pagination, retries, and long-polling, implying some built-in batching support for large inputs, but there is no explicit mention of an 'intelligent chunking' strategy that automatically splits oversized tables to fit processing limits. missing for 10: explicit documentation of automatic table-splitting/chunking logic beyond the row cap, and evidence of handling tables larger than 10,000 rows across multiple linked runs.",
+    "evidenceIds": [
+      "riveter-docs-31",
+      "riveter-docs-11",
+      "riveter-docs-19",
+      "riveter-docs-30"
+    ]
   },
   {
     "productId": "riveter",
     "storyId": "latency-completeness-tradeoff",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Riveter explicitly exposes multiple latency/completeness tradeoffs: quick_search returns fast synchronous structured snippets, search_agent runs a fuller AI research loop for one question, and full enrichments can be tracked via wait_for_result long-polling or async webhook callbacks — giving a developer direct control over when and how complete the returned content is. missing for 10: no independent/hands-on benchmarks or third-party confirmation of actual latency differences between these modes.",
+    "rationale": "Riveter offers multiple mechanisms that let a developer choose speed vs depth: quick_search returns synchronous snippet results immediately, while search_agent/enrichment runs a slower AI-research loop for more complete answers; SDKs support wait_for_result long-polling, polling, or webhook_url callbacks to control exactly when results are delivered, plus dry_run for cost/latency estimation before committing. However, there's no explicit documentation framing this as a deliberate 'latency vs completeness' dial, no partial/streaming result option, and no benchmarks showing the tradeoff quantitatively. missing for 10: explicit latency/completeness tradeoff framing, streaming/partial content delivery option, quantitative benchmarks comparing quick_search vs search_agent completeness.",
     "evidenceIds": [
       "riveter-docs-4",
       "riveter-docs-5",
       "riveter-docs-6",
-      "riveter-docs-11"
+      "riveter-docs-7",
+      "riveter-docs-11",
+      "riveter-docs-27",
+      "riveter-docs-30"
     ]
   },
   {
@@ -7491,11 +7529,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Riveter is a hosted extraction/enrichment API with cloud AI agents; no evidence anywhere mentions configuring a local or self-hosted LLM as the backend—only a local MCP server option for connecting clients, which still requires an API key and Riveter's cloud backend to run enrichments.",
-    "evidenceIds": [
-      "riveter-docs-10",
-      "riveter-docs-20"
-    ]
+    "rationale": "Riveter is a cloud API/service for enrichment, scraping, and search with no evidence of any option to configure or swap in a local/self-hosted LLM as the extraction backend; all docs describe Riveter's own hosted AI agents.",
+    "evidenceIds": []
   },
   {
     "productId": "riveter",
@@ -7503,9 +7538,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs state a scrape 'turns a URL into easily parseable text,' implying cleaned output rather than raw HTML, but there's no explicit mention of markdown formatting or output schema. Missing for 10: explicit confirmation that scrape output is markdown-formatted, example output showing markdown structure, independent verification of output cleanliness.",
+    "rationale": "Riveter's scrape feature claims to turn a URL into 'easily parseable text,' which suggests clean output rather than raw HTML, but the docs never explicitly say markdown format or show a sample output structure. missing for 10: explicit confirmation that scrape output is markdown, example output snippet, independent/hands-on verification of format.",
     "evidenceIds": [
-      "riveter-docs-3"
+      "riveter-docs-3",
+      "riveter-docs-26"
     ]
   },
   {
@@ -7522,9 +7558,11 @@
     "storyId": "multi-format-choice",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Riveter's evidence covers data enrichment, scraping, search, and run management, but nothing describes selectable output formats like markdown, HTML, text, or frontmatter for returned results.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Riveter's docs describe enrichment, scraping, and search outputs, but scraping is only described as turning a URL into \"easily parseable text\" (riveter-docs-3) with no mention of selectable output formats like markdown, HTML, text, or frontmatter. No evidence supports a format-selection feature.",
+    "evidenceIds": [
+      "riveter-docs-3"
+    ]
   },
   {
     "productId": "riveter",
@@ -7532,7 +7570,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any prebuilt n8n or Zapier connector; docs mention webhooks, SDKs, and MCP integration for AI assistants, but nothing about no-code automation platform connectors.",
+    "rationale": "Evidence shows webhooks, an API, SDKs, and MCP connectors, but there is no mention of any prebuilt n8n/Zapier connector or no-code automation platform integration.",
     "evidenceIds": []
   },
   {
@@ -7553,19 +7591,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show the API/SDKs cover the core building blocks (enrichments, scrapes, quick_search, search_agent, dry_run, webhooks, run listing) that mirror the marketing site's feature set, suggesting broad API/UI parity. However there's no explicit confirmation that UI-only features like scheduling/monitoring for changes are exposed as API endpoints, and no discoverable OpenAPI/llms.txt spec was found (404s), leaving some parity unverified. missing for 10: explicit API endpoint for scheduling/monitoring, published OpenAPI spec confirming full endpoint coverage, independent verification of UI-API feature parity.",
+    "rationale": "Docs show broad API coverage of Riveter's core UI features—enrich, build datasets, scrape, quick_search, search_agent, webhooks, dry_run/cost estimation, and SDK access (riveter-docs-1,3,4,5,6,26,29)—suggesting most day-to-day UI actions can be done programmatically. However, features like project scheduling/monitoring for freshness (riveter-docs-13,23) and explicit dataset compilation flows aren't clearly tied to documented API endpoints, and the OpenAPI spec itself is unreachable (riveter-probe-2), so full UI/API parity isn't confirmed. missing for 10: explicit API support for scheduling/monitoring workflows, a public OpenAPI spec confirming full endpoint coverage, and any direct statement of 1:1 UI/API parity.",
     "evidenceIds": [
       "riveter-docs-1",
-      "riveter-docs-2",
       "riveter-docs-3",
       "riveter-docs-4",
       "riveter-docs-5",
       "riveter-docs-6",
-      "riveter-docs-7",
-      "riveter-docs-8",
       "riveter-docs-13",
       "riveter-docs-23",
-      "riveter-probe-1",
+      "riveter-docs-26",
+      "riveter-docs-29",
       "riveter-probe-2"
     ]
   },
@@ -7574,20 +7610,17 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of any data export feature or open-format export capability; the API returns run results via JSON but there's no documented bulk export, data portability, or 'leave with your data' mechanism. Probes for llms.txt and OpenAPI spec both 404, and no docs item mentions export/download of underlying datasets.",
-    "evidenceIds": [
-      "riveter-probe-1",
-      "riveter-probe-2"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence describes Riveter's enrichment, scraping, and search API/SDK features but contains no mention of bulk data export, open-format guarantees, or a 'no lock-in / take your data with you' capability. Even though results are presumably JSON via the API, there's no explicit documentation of an export mechanism or open-format commitment for a user wanting to leave the platform.",
+    "evidenceIds": []
   },
   {
     "productId": "riveter",
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only SDK client repos (riveter-go) and docs, with no mention of an open-source license for the core Riveter product/service; probes for llms.txt and OpenAPI spec both 404. No evidence of open licensing for the actual product source.",
+    "confidence": "high",
+    "rationale": "There is no evidence Riveter's source code is published under an open license; the product is a closed SaaS API with SDKs (e.g., riveter-go), but the SDK being on GitHub doesn't establish the core product's source is open-licensed. No license file, repo, or OSS statement is cited.",
     "evidenceIds": []
   },
   {
@@ -7595,11 +7628,12 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Riveter is presented as a hosted API/SaaS product (with local MCP server option only for connecting AI clients, not for self-hosting the core enrichment engine); no evidence of open-source code, self-hosting instructions, or a downloadable core product exists in the pack.",
+    "confidence": "high",
+    "rationale": "Riveter is presented throughout as a hosted cloud API/SaaS (enrichment, scraping, search endpoints, webhooks, MCP remote connector at mcp.riveterhq.com); the only 'runs on your machine' component is a local MCP proxy for connecting to the remote API, not the core enrichment engine itself. No evidence of an open-source repo, self-hosted deployment option, or on-prem installer for the core product.",
     "evidenceIds": [
-      "riveter-docs-9",
-      "riveter-docs-10"
+      "riveter-docs-10",
+      "riveter-docs-20",
+      "riveter-docs-26"
     ]
   },
   {
@@ -7607,8 +7641,8 @@
     "storyId": "pass-session-cookies",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Riveter supports passing custom session cookies or authentication headers for scraping authenticated pages; docs describe scraping, search, and enrichment but nothing about custom cookie/auth injection for target pages.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions passing custom session cookies, headers, or authentication credentials for scraping authenticated pages; scrape/search features are described generically without such a parameter.",
     "evidenceIds": []
   },
   {
@@ -7628,7 +7662,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes per-URL-pattern crawl configuration within a single batch job; docs cover enrichment, scraping, search, and scheduling but not rule-based routing of different configs by URL pattern.",
+    "rationale": "No evidence describes per-URL-pattern crawl configuration rules within a single batch job; the pack covers enrichments, scrapes, and searches generically but nothing about mixed configurations targeting different URL patterns in one run.",
     "evidenceIds": []
   },
   {
@@ -7646,7 +7680,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of PII detection, redaction, or filtering capabilities during scraping or enrichment; the docs describe scraping, enrichment, and search features but never mention privacy/PII handling.",
+    "rationale": "No evidence anywhere in the pack of PII detection, redaction, or filtering capability; Riveter's documented features cover scraping, enrichment, search, and datasets but nothing about privacy/PII handling.",
     "evidenceIds": []
   },
   {
@@ -7673,7 +7707,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence Riveter offers or supports premium residential/datacenter proxy usage or proxy configuration for bypassing anti-bot measures; docs mention AI-agent-based scraping resilience but nothing about proxy networks.",
+    "rationale": "The evidence pack covers scraping, enrichment, and AI-agent-based page interpretation, but there is no mention of residential/datacenter proxy support, proxy rotation, or explicit anti-bot bypass infrastructure — missing for 10: any mention of proxy types, proxy pools, IP rotation, or geo-targeting proxies.",
     "evidenceIds": []
   },
   {
@@ -7682,7 +7716,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of data residency/region selection, storage location controls, or compliance certifications; Riveter's docs cover enrichment, scraping, MCP connectors, and SDKs but never mention where data is stored.",
+    "rationale": "No evidence anywhere in the pack mentions data region/residency selection, geographic storage options, or compliance-related storage controls; Riveter's docs focus on enrichment, scraping, and search functionality only.",
     "evidenceIds": []
   },
   {
@@ -7700,7 +7734,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or data export/privacy settings for Riveter; the docs focus on enrichment features, SDKs, and API mechanics.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or data lifecycle management for user data processed by Riveter's enrichment/scraping pipeline.",
     "evidenceIds": []
   },
   {
@@ -7709,7 +7743,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or any opt-out/privacy settings for Riveter's product usage.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism; the axis is applicable since a data/API service could document such controls, but none are evidenced.",
     "evidenceIds": []
   },
   {
@@ -7718,7 +7752,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the evidence pack; only product/API documentation is present.",
+    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -7727,7 +7761,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Riveter's evidence is about a data enrichment/scraping API and SDKs, not project starter templates for developers to bootstrap an app; no evidence pack item mentions ready-made project templates or scaffolding.",
     "evidenceIds": []
   },
   {
@@ -7736,7 +7770,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a reasoning-effort or verbosity control (low/medium/high) for agent tasks; controls documented are credit caps, dry_run estimates, and scheduling, not reasoning depth.",
+    "rationale": "No evidence of a configurable reasoning-effort parameter (low/medium/high) for agent tasks; Riveter's docs cover credit caps, dry runs, and webhooks but nothing about tuning agent reasoning depth.",
     "evidenceIds": []
   },
   {
@@ -7753,8 +7787,8 @@
     "storyId": "resume-crashed-crawl",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of checkpointing or resuming a crashed crawl/run from saved state; docs mention run status, webhooks, and stop/complete events but nothing about resuming from failure.",
+    "confidence": "medium",
+    "rationale": "No evidence of checkpointing or resumable crawl/run state; docs cover retries, webhooks, and polling for run completion but nothing about resuming a crashed run from a saved checkpoint.",
     "evidenceIds": []
   },
   {
@@ -7815,18 +7849,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Riveter's docs describe row/column enrichment outputs, scrapes, and search results, but nothing in the evidence pack addresses a semantic-chunking option or output mode designed for retrieval-pipeline ingestion.",
-    "evidenceIds": []
+    "rationale": "Riveter's docs describe structured enrichment outputs (rows/columns), scrapes returning 'parseable text', and search results with urls/snippets, but nowhere mention semantic chunking, configurable chunk sizes, or output formats explicitly designed for retrieval-pipeline ingestion. This is a plausible feature for a scraping/data tool, but no evidence shows it exists.",
+    "evidenceIds": [
+      "riveter-docs-3",
+      "riveter-docs-4",
+      "riveter-docs-18"
+    ]
   },
   {
     "productId": "riveter",
     "storyId": "single-call-html-extraction",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Riveter's scrape endpoint is documented to turn a URL into 'easily parseable text,' not raw HTML — there is no evidence of an option to retrieve unprocessed raw HTML via a single API call.",
+    "rationale": "Riveter's `scrape` endpoint is a single API call that takes a URL, matching the core mechanic of the story, but the docs explicitly describe it as returning 'easily parseable text', not raw HTML — the opposite of what the story asks for. Missing for 10: confirmation of a raw-HTML output mode or option, independent/hands-on verification of output format.",
     "evidenceIds": [
-      "riveter-docs-3"
+      "riveter-docs-3",
+      "riveter-docs-26"
     ]
   },
   {
@@ -7856,18 +7895,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Riveter's enrichment/API model returns structured rows with attributes (docs-1, docs-2, docs-12/21), quick_search returns structured JSON with urls/titles/snippets (docs-4), and results are retrievable via /runs/{id}/result or webhook POST of full results (docs-6, docs-25), all consumed via typed SDKs (docs-11/19/22). Missing for 10: an explicit JSON schema/example of a raw 'scrape' response (docs-3 only says 'parseable text') and no accessible OpenAPI spec to confirm exact JSON shape (probe-1, probe-2).",
+    "rationale": "Riveter's API returns structured JSON via /enrich, /runs/{id}/result, quick_search (structured results with urls/titles/snippets), and scrape (parseable text), with SDKs and OpenAPI schema documenting these outputs; a scrape call explicitly turns a URL into structured/parseable output as part of a JSON-based API. missing for 10: no explicit example of the full JSON schema/response body shown, no independent hands-on verification of output structure.",
     "evidenceIds": [
-      "riveter-docs-1",
-      "riveter-docs-2",
       "riveter-docs-3",
       "riveter-docs-4",
-      "riveter-docs-6",
-      "riveter-docs-11",
-      "riveter-docs-19",
-      "riveter-docs-22",
-      "riveter-docs-25",
-      "riveter-probe-2"
+      "riveter-docs-26",
+      "riveter-docs-31",
+      "riveter-docs-22"
     ]
   },
   {
@@ -7876,7 +7910,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions team sharing, organizations, workspaces, or role-based permissions; the product is described purely around scraping/enrichment APIs and SDKs.",
+    "rationale": "No evidence of team/organization features, sharing scrapers with teammates, or role-based permissions anywhere in the docs; the pack only covers enrichment, scraping, SDKs, and MCP connectors.",
     "evidenceIds": []
   },
   {
@@ -7894,7 +7928,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Riveter's evidence covers scraping, searching, and enrichment workflows, but nothing describes a dedicated 'discover all URLs on a site without crawling' capability (e.g., sitemap parsing or link enumeration). The closest items describe iterative crawling patterns (finding practices then dentists) rather than instant full-site URL discovery.",
+    "rationale": "Riveter's docs describe scraping, searching, and enrichment workflows, but there is no mention of a sitemap/URL-discovery feature that lists all URLs on a site without crawling it — the closest capabilities (scrape, quick_search, multi-page extraction like 'every dental practice in a city') all involve fetching or searching, not instant URL enumeration.",
     "evidenceIds": []
   },
   {
