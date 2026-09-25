@@ -21,7 +21,7 @@
 //   - fake identifiers are constructed to be impossible-real: EIN "00-0000000" (no real EIN
 //     starts 00), domains on the RFC 2606-reserved .example TLD, all-zero file/routing numbers.
 
-import type { SimStep } from './processSim'
+import type { Cadence, SimStep } from './processSim'
 
 // ---------------------------------------------------------------------------
 // Decisions
@@ -31,12 +31,23 @@ export type EntityChoice = 'c-corp' | 'llc'
 export type FundingChoice = 'bootstrap' | 'seed'
 export type ProductChoice = 'subscriptions' | 'invoices'
 export type TeamChoice = 'solo' | 'cofounders'
+// Founder iteration 2026-09-25 — five more corpus-real branches:
+export type OrderingChoice = 'name-first' | 'build-first'
+export type HireChoice = 'yes' | 'no'
+export type ComplianceChoice = 'now' | 'later'
+export type EnterpriseChoice = 'yes' | 'no'
+export type PhLaunchChoice = 'yes' | 'no'
 
 export interface Choices {
   entity: EntityChoice
   funding: FundingChoice
   product: ProductChoice
   team: TeamChoice
+  ordering: OrderingChoice
+  hire: HireChoice
+  compliance: ComplianceChoice
+  enterprise: EnterpriseChoice
+  ph: PhLaunchChoice
 }
 
 export const DEFAULT_CHOICES: Choices = {
@@ -44,6 +55,11 @@ export const DEFAULT_CHOICES: Choices = {
   funding: 'seed',
   product: 'subscriptions',
   team: 'cofounders',
+  ordering: 'name-first',
+  hire: 'yes',
+  compliance: 'now',
+  enterprise: 'no',
+  ph: 'yes',
 }
 
 export interface DecisionOption {
@@ -61,11 +77,18 @@ export interface DecisionDef {
 
 // The decision tree, derived from what the corpus actually contains (no marketplace/other
 // entity processes exist, so no such options are offered):
-//   entity  — form_001 "Incorporate C-Corp" vs form_011 "Set up an LLC"
-//   team    — startup_002 "Founder agreement & equity split" included only with cofounders
-//   funding — the raise-a-seed-round chain (fund_005, fund_001, qs_052) included only on raise
-//   product — the get-paid chain forked: growth_001 "Set up subscription billing" (SaaS) vs
-//             sales_002 "Send an invoice" (invoice-billed services)
+//   entity     — form_001 "Incorporate C-Corp" vs form_011 "Set up an LLC"
+//   team       — startup_002 "Founder agreement & equity split" included only with cofounders
+//   funding    — the raise-a-seed-round chain (fund_005, fund_001, qs_052) included only on raise
+//   product    — the get-paid chain forked: growth_001 "Set up subscription billing" (SaaS) vs
+//                sales_002 "Send an invoice" (invoice-billed services)
+//   ordering   — name-first (classic) vs build-first: the ship-v1 chain runs before naming —
+//                pure reordering of committed chains, nothing added or dropped
+//   hire       — the first-hire chain (hr_001, legal_003, opp_007, hr_002) included on yes
+//   compliance — the set-up-compliance chain ALWAYS runs; the choice is placement: early
+//                (right after formation/raise) vs deferred (after launch)
+//   enterprise — the land-the-enterprise-deal chain appended as the final phase on yes
+//   ph         — the launch-on-product-hunt chain included on yes
 export const DECISIONS: DecisionDef[] = [
   {
     id: 'entity',
@@ -99,10 +122,50 @@ export const DECISIONS: DecisionDef[] = [
       { value: 'invoices', label: 'Invoice-billed services', detail: 'turns on revenue via "Send an invoice" (sales_002)' },
     ],
   },
+  {
+    id: 'ordering',
+    title: 'What comes first',
+    options: [
+      { value: 'name-first', label: 'Name first', detail: 'the classic order — the name-the-company playbook leads, ship-v1 follows the raise' },
+      { value: 'build-first', label: 'Build first', detail: 'the ship-v1 playbook runs before the company even has a name — same processes, reordered' },
+    ],
+  },
+  {
+    id: 'hire',
+    title: 'First hire',
+    options: [
+      { value: 'yes', label: 'Make the first hire', detail: 'adds the first-hire playbook (offer hr_001, IP assignment, provisioning, payroll hr_002)' },
+      { value: 'no', label: 'Stay founders-only', detail: 'no hire yet — the first-hire playbook is skipped' },
+    ],
+  },
+  {
+    id: 'compliance',
+    title: 'Compliance posture',
+    options: [
+      { value: 'now', label: 'Compliance early', detail: 'the set-up-compliance playbook (SOC 2-lite) runs right after formation' },
+      { value: 'later', label: 'Compliance later', detail: 'the same set-up-compliance playbook, deferred to after launch' },
+    ],
+  },
+  {
+    id: 'enterprise',
+    title: 'Enterprise motion',
+    options: [
+      { value: 'no', label: 'Not yet', detail: 'no enterprise deal — the land-the-enterprise-deal playbook is skipped' },
+      { value: 'yes', label: 'Chase the enterprise deal', detail: 'appends the land-the-enterprise-deal playbook (Type II, pen test, status page, NDA, the close)' },
+    ],
+  },
+  {
+    id: 'ph',
+    title: 'Directory launch',
+    options: [
+      { value: 'yes', label: 'Launch on Product Hunt', detail: 'includes the launch-on-product-hunt playbook (email capture, assets, submission)' },
+      { value: 'no', label: 'Quiet launch', detail: 'no directory launch — the launch-on-product-hunt playbook is skipped' },
+    ],
+  },
 ]
 
 export function comboKey(c: Choices): string {
-  return `${c.entity}|${c.funding}|${c.product}|${c.team}`
+  return `${c.entity}|${c.funding}|${c.product}|${c.team}|${c.ordering}|${c.hire}|${c.compliance}|${c.enterprise}|${c.ph}`
 }
 
 export function allChoiceCombos(): Choices[] {
@@ -111,7 +174,12 @@ export function allChoiceCombos(): Choices[] {
     for (const funding of ['bootstrap', 'seed'] as const)
       for (const product of ['subscriptions', 'invoices'] as const)
         for (const team of ['solo', 'cofounders'] as const)
-          combos.push({ entity, funding, product, team })
+          for (const ordering of ['name-first', 'build-first'] as const)
+            for (const hire of ['yes', 'no'] as const)
+              for (const compliance of ['now', 'later'] as const)
+                for (const enterprise of ['yes', 'no'] as const)
+                  for (const ph of ['yes', 'no'] as const)
+                    combos.push({ entity, funding, product, team, ordering, hire, compliance, enterprise, ph })
   return combos
 }
 
@@ -125,10 +193,13 @@ export const VS_CHAIN_IDS = [
   'name-the-company',
   'company-launch',
   'raise-a-seed-round',
+  'set-up-compliance',
   'ship-v1',
   'launch-website',
   'get-paid',
+  'first-hire',
   'launch-on-product-hunt',
+  'land-the-enterprise-deal',
 ] as const
 
 export interface VsChain {
@@ -165,6 +236,26 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
     phases.push({ id, title, chainId, chainName: chain.name, taskIds, note: note ?? null })
   }
 
+  const buildPhase = () =>
+    push(
+      'build',
+      'Build & ship v1',
+      'ship-v1',
+      undefined,
+      choices.ordering === 'build-first' ? 'build-first — the prototype ships before the company has a name' : null,
+    )
+  const compliancePhase = () =>
+    push(
+      'compliance',
+      'Stand up compliance',
+      'set-up-compliance',
+      undefined,
+      choices.compliance === 'now'
+        ? 'compliance early — the SOC 2-lite posture stands before the product ships'
+        : 'compliance deferred — the same playbook, after launch',
+    )
+
+  if (choices.ordering === 'build-first') buildPhase()
   push('name', 'Name & brand', 'name-the-company')
   push(
     'form',
@@ -183,7 +274,8 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
   if (choices.funding === 'seed') {
     push('raise', 'Raise the seed', 'raise-a-seed-round')
   }
-  push('build', 'Build & ship v1', 'ship-v1')
+  if (choices.compliance === 'now') compliancePhase()
+  if (choices.ordering === 'name-first') buildPhase()
   push('website', 'Launch the website', 'launch-website')
   push(
     'revenue',
@@ -199,7 +291,11 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
       ? 'SaaS — subscription billing (growth_001); the invoice path (sales_002) is skipped'
       : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped',
   )
-  push('launch', 'Launch day', 'launch-on-product-hunt')
+  if (choices.hire === 'yes') push('hire', 'First hire', 'first-hire')
+  if (choices.ph === 'yes') push('launch', 'Launch day', 'launch-on-product-hunt')
+  if (choices.compliance === 'later') compliancePhase()
+  // Always last: the enterprise close leans on the compliance playbook's posture either way.
+  if (choices.enterprise === 'yes') push('enterprise', 'Enterprise motion', 'land-the-enterprise-deal')
 
   // Dedupe across phases — first occurrence wins.
   const seen = new Set<string>()
@@ -377,6 +473,30 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
   fin_002: () => [{ label: 'First close', value: 'month 1 reconciled · payout matched' }],
   growth_003: ({ co }) => [{ label: 'Email list', value: `1 subscriber — founder@${co.slug}.example` }],
   growth_010: ({ co }) => [{ label: 'Launch day', value: `"${co.name}" queued on the directories · assets uploaded` }],
+  // First-hire playbook (2026-09-25 toggle wave).
+  hr_001: () => [{ label: 'Offer', value: 'offer #001 signed — Engineer 1 joins' }],
+  legal_003: () => [{ label: 'IP assignment', value: 'PIIA signed · 1 employee, all founders on file' }],
+  opp_007: ({ co }) => [{ label: 'Workspace user', value: `engineer1@${co.slug}.example provisioned` }],
+  hr_002: ({ rng }) => [{
+    label: 'Payroll run',
+    value: `run #1 — $${pick(rng, ['8,000.00', '10,000.00', '12,500.00'])} gross · 1 employee`,
+  }],
+  // Set-up-compliance playbook.
+  ops_005: () => [{ label: 'Password vault', value: 'team vault created · 2 shared items' }],
+  scale_007: () => [{ label: 'SSO', value: 'SSO enforced · MFA on for every seat' }],
+  ops_013: () => [{ label: 'Device management', value: '1 laptop enrolled · disk encryption verified' }],
+  comp_010: ({ co }) => [{ label: 'Privacy policy', value: `https://${co.slug}.example/privacy live · DPA template ready` }],
+  comp_001: () => [{ label: 'SOC 2 Type I', value: 'observation window opened · 0 failing controls' }],
+  // Land-the-enterprise-deal playbook.
+  comp_002: () => [{ label: 'SOC 2 Type II', value: 'report issued — observation window closed' }],
+  comp_013: () => [{ label: 'Pen test', value: 'report delivered · 0 critical findings' }],
+  prod_011: ({ co }) => [{ label: 'Status page', value: `status.${co.slug}.example live · SLA 99.9%` }],
+  legal_001: () => [{ label: 'NDA', value: 'mutual NDA NDA-0001 sent for signature' }],
+  comp_014: () => [{ label: 'Security questionnaire', value: '300 rows answered from the policy base' }],
+  legal_004: ({ rng, co }) => [{
+    label: 'Enterprise contract',
+    value: `order form executed — $${pick(rng, ['12,000', '24,000', '48,000'])}/yr · ${co.name} MSA v1`,
+  }],
 }
 
 // The task ids that produce artifacts — exported so tests can enforce that every generator key
@@ -439,4 +559,166 @@ export function journeyStats(steps: SimStep[]): JourneyStats {
 // 1-based simulation day for a cumulative elapsed-minutes reading (corpus estimates summed).
 export function dayOf(cumulativeMinutes: number): number {
   return Math.floor(cumulativeMinutes / (60 * 24)) + 1
+}
+
+// ---------------------------------------------------------------------------
+// Year one — the operating rhythm ("cron jobs") the virtual company now runs
+// ---------------------------------------------------------------------------
+// Founder iteration 2026-09-25: after the launch journey, show the RECURRING processes the
+// company owns for the year, derived from the corpus cadence axis (data/processes.json
+// `cadence`, the same field /processes/operating-rhythm slices by). The row set is mechanical:
+//   - the month-end-close and tax-season chains (committed corpus playbooks any operating
+//     company runs) are ALWAYS in;
+//   - plus every journey task whose cadence recurs on the calendar (payroll hr_002 with the
+//     hire, monthly invoicing sales_002 on the invoices fork, the annual SOC 2 Type II /
+//     pen test with the enterprise motion…).
+// Calendar honesty: monthly/quarterly slots are pure cadence math; an annual process gets a
+// real month ONLY where the corpus carries it (CORPUS_ANNUAL_MONTHS below); every other annual
+// row gets a decision-combo-seeded month that renders with the SIMULATED chip — no invented
+// deadlines presented as fact.
+
+export const YEAR_CHAIN_IDS = ['month-end-close', 'tax-season'] as const
+
+// Runs per year for each calendar cadence; null = not calendar-recurring (once / event-driven
+// work never shows in the year view — a trigger is not a cron job).
+export const RUNS_PER_YEAR: Record<Cadence, number | null> = {
+  daily: 365,
+  weekly: 52,
+  monthly: 12,
+  quarterly: 4,
+  annual: 1,
+  'event-driven': null,
+  once: null,
+}
+
+// Annual processes whose calendar month the CORPUS itself carries — the tax-season chain's
+// tagline: "1099s out in January, Delaware franchise tax by March 1, …". Only these render as
+// real calendar slots; lib/__tests__/virtualStartup.test.ts asserts the tagline still names
+// them so this mapping can't silently drift from the data.
+export const CORPUS_ANNUAL_MONTHS: Record<string, { month: number; note: string }> = {
+  tax_003: { month: 1, note: 'January — 1099s go out (tax-season playbook)' },
+  tax_001: { month: 3, note: 'by March 1 (tax-season playbook)' },
+}
+
+export const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const
+
+export interface RouteMix {
+  agent: number
+  form: number
+  person: number
+  legalSignature: number
+}
+
+// One corpus task reshaped for the year view — built server-side (title/slug/cadence label from
+// lib/processes.ts CADENCE_META, route mix + ceiling from the DAG) so this module stays pure.
+export interface YearTaskSource {
+  taskId: string
+  title: string
+  slug: string
+  cadence: Cadence
+  cadenceLabel: string
+  totalSteps: number
+  routes: RouteMix
+  ceilingPct: number
+}
+
+export interface YearCandidate extends YearTaskSource {
+  runsPerYear: number
+  // From a YEAR_CHAIN_IDS chain — in every company's year regardless of decisions. Non-always
+  // candidates appear only when the selected journey includes their task.
+  always: boolean
+}
+
+const YEAR_CADENCE_ORDER: readonly Cadence[] = ['daily', 'weekly', 'monthly', 'quarterly', 'annual']
+
+// All year-view candidates, decision-independent (pure — callers pass the WHOLE corpus mapped
+// to YearTaskSource plus the full chain list): the always chains' recurring tasks plus every
+// calendar-recurring task any decision combo can reach. Sorted tightest loop first, mirroring
+// /processes/operating-rhythm's CADENCE_ORDER convention.
+export function buildYearCandidates(chains: VsChain[], tasks: YearTaskSource[]): YearCandidate[] {
+  const byId = new Map(tasks.map((t) => [t.taskId, t]))
+  const alwaysIds = new Set(YEAR_CHAIN_IDS.flatMap((id) => chainOrThrow(chains, id).taskIds))
+  const candidateIds: string[] = []
+  const seen = new Set<string>()
+  for (const id of [...alwaysIds, ...unionTaskIds(chains)]) {
+    if (!seen.has(id)) {
+      seen.add(id)
+      candidateIds.push(id)
+    }
+  }
+  const out: YearCandidate[] = []
+  for (const taskId of candidateIds) {
+    const t = byId.get(taskId)
+    if (!t) throw new Error(`year view references unknown task "${taskId}"`)
+    const runsPerYear = RUNS_PER_YEAR[t.cadence]
+    if (runsPerYear === null) continue
+    out.push({ ...t, runsPerYear, always: alwaysIds.has(taskId) })
+  }
+  return out.sort(
+    (a, b) =>
+      YEAR_CADENCE_ORDER.indexOf(a.cadence) - YEAR_CADENCE_ORDER.indexOf(b.cadence)
+      || a.title.localeCompare(b.title),
+  )
+}
+
+export type MonthSource = 'cadence' | 'corpus' | 'seeded'
+
+export interface YearRow extends YearCandidate {
+  // 1-based months (1 = Jan) this process runs in.
+  months: number[]
+  monthSource: MonthSource
+  monthNote: string | null
+}
+
+// Calendar slots for one candidate. Monthly-and-tighter cadences cover every month and
+// quarterlies land on quarter ends (pure cadence math); annuals get the corpus month where the
+// corpus carries one, else a seeded month that the UI must label SIMULATED.
+export function resolveYearMonths(
+  candidate: Pick<YearCandidate, 'taskId' | 'cadence'>,
+  choices: Choices,
+): { months: number[]; monthSource: MonthSource; monthNote: string | null } {
+  const { cadence, taskId } = candidate
+  if (cadence === 'daily' || cadence === 'weekly' || cadence === 'monthly') {
+    return { months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], monthSource: 'cadence', monthNote: null }
+  }
+  if (cadence === 'quarterly') {
+    return { months: [3, 6, 9, 12], monthSource: 'cadence', monthNote: null }
+  }
+  const corpus = CORPUS_ANNUAL_MONTHS[taskId]
+  if (corpus) return { months: [corpus.month], monthSource: 'corpus', monthNote: corpus.note }
+  const rng = mulberry32(hashSeed(`vs:month:${comboKey(choices)}:${taskId}`))
+  return {
+    months: [1 + Math.floor(rng() * 12)],
+    monthSource: 'seeded',
+    monthNote: 'annual — scheduled month is simulated (the corpus dates this annually, not to a month)',
+  }
+}
+
+// The virtual company's year: always-on chain rows plus the journey-gated recurring rows, each
+// with its calendar slots. Deterministic from the decision combo, like every artifact.
+export function yearRows(choices: Choices, journeyIds: string[], candidates: YearCandidate[]): YearRow[] {
+  const inJourney = new Set(journeyIds)
+  return candidates
+    .filter((c) => c.always || inJourney.has(c.taskId))
+    .map((c) => ({ ...c, ...resolveYearMonths(c, choices) }))
+}
+
+export interface YearStats {
+  rows: number
+  // Σ runs/year across every rhythm row — "N recurring runs".
+  totalRuns: number
+  // Σ runs × steps — how many step-executions the year actually contains…
+  stepRuns: number
+  // …and how many of those an agent can run today (runs × the row's agent-routed steps).
+  agentStepRuns: number
+}
+
+export function yearStats(rows: YearRow[]): YearStats {
+  const s: YearStats = { rows: rows.length, totalRuns: 0, stepRuns: 0, agentStepRuns: 0 }
+  for (const r of rows) {
+    s.totalRuns += r.runsPerYear
+    s.stepRuns += r.runsPerYear * r.totalSteps
+    s.agentStepRuns += r.runsPerYear * r.routes.agent
+  }
+  return s
 }

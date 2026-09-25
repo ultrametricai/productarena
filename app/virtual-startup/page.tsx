@@ -1,9 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import VirtualStartup from '@/components/VirtualStartup'
-import { buildSimSteps, loadChains, loadProcesses, processSlug, vendorRoles } from '@/lib/processes'
+import {
+  buildSimSteps, CADENCE_META, loadChains, loadProcesses, processSlug, taskCeiling, vendorRoles,
+  type ProcessTask,
+} from '@/lib/processes'
 import { stepRanking } from '@/lib/processRankings'
-import { unionTaskIds, VS_CHAIN_IDS, type VirtualTaskPayload, type VsChain } from '@/lib/virtualStartup'
+import {
+  buildYearCandidates, unionTaskIds, VS_CHAIN_IDS,
+  type RouteMix, type VirtualTaskPayload, type VsChain, type YearTaskSource,
+} from '@/lib/virtualStartup'
 
 // Virtual Startup (founder ask 2026-09-23): a synthetic company run through the REAL process
 // corpus. This page is fully static: it precomputes, at build time, the payload for every task
@@ -16,7 +22,17 @@ import { unionTaskIds, VS_CHAIN_IDS, type VirtualTaskPayload, type VsChain } fro
 export const metadata: Metadata = {
   title: 'Virtual Startup — ProductArena',
   description:
-    'Pick the starting decisions — entity, team, funding, business model — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, and clearly-labeled synthetic artifacts showing what each step produces.',
+    'Pick the starting decisions — entity, team, funding, business model, first hire, compliance timing, enterprise motion — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the year-one operating rhythm the company then runs.',
+}
+
+// DAG route mix of one corpus process — the year view's per-row honesty payload.
+function routeMix(task: ProcessTask): RouteMix {
+  const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
+  for (const n of task.dag.nodes) {
+    mix[n.route] += 1
+    if (n.legalSignature) mix.legalSignature += 1
+  }
+  return mix
 }
 
 export default function VirtualStartupPage() {
@@ -54,6 +70,23 @@ export default function VirtualStartupPage() {
     }
   }
 
+  // Year-one operating rhythm candidates: the whole corpus reshaped (cadence labels from the
+  // same CADENCE_META /processes/operating-rhythm uses), selected/gated by lib/virtualStartup's
+  // buildYearCandidates — the month-end-close + tax-season chains always, journey-gated
+  // recurring processes otherwise.
+  const yearSources: YearTaskSource[] = loadProcesses().map((t) => ({
+    taskId: t.id,
+    title: t.title,
+    slug: processSlug(t.title),
+    cadence: t.cadence,
+    cadenceLabel: CADENCE_META[t.cadence].label,
+    totalSteps: t.dag.nodes.length,
+    routes: routeMix(t),
+    ceilingPct: taskCeiling(t).pct,
+  }))
+  const allChains: VsChain[] = loadChains().map(({ id, name, taskIds }) => ({ id, name, taskIds }))
+  const yearCandidates = buildYearCandidates(allChains, yearSources)
+
   return (
     <div className="space-y-10">
       <section className="mx-auto max-w-3xl text-center">
@@ -67,7 +100,8 @@ export default function VirtualStartupPage() {
           A simulated company starts its journey. Pick the starting decisions and watch what
           actually has to happen, in time order — every step is a real corpus process routed
           agent / manual form / human (legal signatures flagged), vendors come from the judged
-          rankings, and time estimates are the corpus&apos;s own.
+          rankings, and time estimates are the corpus&apos;s own. When the launch lands, the
+          year-one operating rhythm shows the recurring runs the company owns from then on.
         </p>
         <p className="mx-auto mt-2 max-w-2xl text-xs text-zinc-500">
           The company itself is synthetic: every generated artifact — the name, the EIN, the first
@@ -77,7 +111,7 @@ export default function VirtualStartupPage() {
         </p>
       </section>
 
-      <VirtualStartup chains={chains} tasks={tasks} roles={vendorRoles(unionTasks)} />
+      <VirtualStartup chains={chains} tasks={tasks} roles={vendorRoles(unionTasks)} yearCandidates={yearCandidates} />
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
         <p>

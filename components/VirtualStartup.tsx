@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import CeilingBar from '@/components/CeilingBar'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import { formatMinutes, type SimStep, type VendorRole } from '@/lib/processSim'
 import {
@@ -12,21 +13,28 @@ import {
   DEFAULT_CHOICES,
   journeyPhases,
   journeyStats,
+  MONTH_LABELS,
   synthCompany,
+  yearRows,
+  yearStats,
   type Choices,
   type SyntheticArtifact,
   type TopVendorPick,
   type VirtualTaskPayload,
   type VsChain,
+  type YearCandidate,
+  type YearRow,
 } from '@/lib/virtualStartup'
 
 // The Virtual Startup timeline (see lib/virtualStartup.ts for the honesty contract): the reader
 // picks the starting decisions, then a synthetic company replays the REAL selected processes in
 // time order — each step with its real route, its top JUDGED vendor where a ranking exists, and
 // corpus time estimates — while clearly-labeled SIMULATED artifacts show what each step produces.
-// Everything is precomputed/deterministic; the ~cadenced reveal is presentation only (the same
-// pattern as components/ProcessSimulator.tsx, which is also reused below for the full dry-run
-// transcript over the selected journey).
+// When the launch journey completes, a year-one operating-rhythm calendar shows the recurring
+// runs ("cron jobs") the company now owns, derived from the corpus cadence axis. Everything is
+// precomputed/deterministic; the ~cadenced reveal is presentation only (the same pattern as
+// components/ProcessSimulator.tsx, which is also reused below for the full dry-run transcript
+// over the selected journey).
 
 const CADENCE_MS = 240
 
@@ -54,10 +62,63 @@ function routeBadge(step: SimStep): { text: string; cls: string } {
   return { text: 'human / computer use', cls: 'border-sky-400/40 text-sky-300' }
 }
 
+// One rhythm row of the year-one calendar: the process, its cadence, the 12-month strip, and
+// its route mix / agent ceiling. Seeded (non-corpus) calendar slots carry the SIMULATED chip.
+function YearRhythmRow({ row }: { row: YearRow }) {
+  const active = new Set(row.months)
+  return (
+    <tr data-testid="vs-year-row" data-month-source={row.monthSource} className="align-top">
+      <td className="max-w-[260px] py-2 pr-3">
+        <Link href={`/processes/${row.slug}`} className="text-[13px] font-medium text-zinc-300 hover:text-emerald-300">
+          {row.title}
+        </Link>
+        {row.monthNote && (
+          <p className="mt-0.5 flex flex-wrap items-center gap-1 text-[10px] text-zinc-500">
+            {row.monthSource === 'seeded' && <SimChip />}
+            {row.monthNote}
+          </p>
+        )}
+      </td>
+      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">{row.cadenceLabel}</td>
+      <td className="py-2 pr-3">
+        <span className="flex gap-1">
+          {MONTH_LABELS.map((label, i) => {
+            const on = active.has(i + 1)
+            return (
+              <span
+                key={label}
+                title={`${label}${on ? ` — ${row.title} runs` : ''}`}
+                className={`h-2 w-2 rounded-full ${
+                  on ? (row.monthSource === 'seeded' ? 'bg-fuchsia-400/80' : 'bg-emerald-400/80') : 'bg-zinc-800'
+                }`}
+              />
+            )
+          })}
+        </span>
+      </td>
+      <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
+        ×{row.runsPerYear}
+      </td>
+      <td
+        className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500"
+        title={row.routes.legalSignature > 0 ? `${row.routes.legalSignature} legally-human signature step(s)` : undefined}
+      >
+        <span className="text-emerald-300/90">{row.routes.agent} agent</span>
+        {row.routes.form > 0 && <> · <span className="text-amber-300/90">{row.routes.form} form</span></>}
+        {row.routes.person > 0 && <> · <span className="text-sky-300/90">{row.routes.person} human</span></>}
+      </td>
+      <td className="py-2">
+        <CeilingBar pct={row.ceilingPct} />
+      </td>
+    </tr>
+  )
+}
+
 export default function VirtualStartup({
   chains,
   tasks,
   roles,
+  yearCandidates,
 }: {
   chains: VsChain[]
   // Precomputed payload for every task any decision combo can reach, keyed by corpus task id.
@@ -65,6 +126,9 @@ export default function VirtualStartup({
   // Union vendor roles (lib/processes.ts vendorRoles over the union tasks) — filtered per
   // journey below before handing to the reused ProcessSimulator.
   roles: VendorRole[]
+  // Every possible year-view rhythm row (lib/virtualStartup.ts buildYearCandidates, built
+  // server-side from the corpus cadence data) — gated per journey client-side.
+  yearCandidates: YearCandidate[]
 }) {
   const [choices, setChoices] = useState<Choices>(DEFAULT_CHOICES)
   const [revealed, setRevealed] = useState(0)
@@ -119,6 +183,13 @@ export default function VirtualStartup({
     return roles.filter((r) => arenas.has(r.arenaId))
   }, [roles, steps])
 
+  // Year one — deterministic from the same decision combo (seeded months for annuals the
+  // corpus doesn't date; those render with the SIMULATED chip).
+  const year = useMemo(() => {
+    const rhythm = yearRows(choices, phases.flatMap((p) => p.taskIds), yearCandidates)
+    return { rhythm, stats: yearStats(rhythm) }
+  }, [choices, phases, yearCandidates])
+
   const done = revealed >= rows.length
 
   function stop() {
@@ -152,9 +223,9 @@ export default function VirtualStartup({
         <h2 className="font-display text-lg font-semibold tracking-tight">Starting decisions</h2>
         <p className="mt-1 text-sm text-zinc-400">
           Each choice selects which real processes and playbooks make up the journey — nothing is
-          invented, options only swap or skip corpus processes.
+          invented, options only swap, reorder, or skip corpus processes.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {DECISIONS.map((d) => (
             <fieldset key={d.id}>
               <legend className="text-[10px] uppercase tracking-widest text-zinc-500">{d.title}</legend>
@@ -195,28 +266,33 @@ export default function VirtualStartup({
             — same choices, same company: everything synthetic is deterministic from the decisions above.
           </span>
         </div>
+      </section>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+      {/* The run CTA — big, unmistakable, before any timeline content (founder 2026-09-25:
+          "make the run button clearer and put it at the top"). Sticky on mobile so Run/Restart
+          stays reachable while scrolling the long timeline; static from sm up. */}
+      <div className="sticky top-2 z-30 -mx-2 rounded-2xl border border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-0">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <button
             type="button"
             onClick={start}
             disabled={running}
-            className="rounded-full border border-emerald-400/50 px-4 py-1.5 text-sm text-emerald-300 transition hover:border-emerald-400 hover:bg-emerald-400/10 disabled:opacity-50"
+            className="rounded-full bg-emerald-500 px-8 py-3 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
           >
-            {running ? 'Running…' : done ? 'Run again' : 'Run the simulation'}
-          </button>
-          <button
-            type="button"
-            onClick={() => { stop(); setRevealed(rows.length) }}
-            className="rounded-full border border-zinc-700 px-4 py-1.5 text-sm text-zinc-300 transition hover:border-zinc-500"
-          >
-            Show the whole timeline
+            {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
           </button>
           <span className="text-xs text-zinc-500">
             {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
           </span>
+          <button
+            type="button"
+            onClick={() => { stop(); setRevealed(rows.length) }}
+            className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition hover:text-zinc-300"
+          >
+            skip the animation — show the whole timeline
+          </button>
         </div>
-      </section>
+      </div>
 
       {/* Timeline */}
       {revealed > 0 && (
@@ -317,6 +393,57 @@ export default function VirtualStartup({
               </p>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Year one — the operating rhythm the company now runs, once the launch journey lands. */}
+      {done && (
+        <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="font-display text-lg font-semibold tracking-tight">Year one — the operating rhythm</h2>
+            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
+              the recurring runs (&ldquo;cron jobs&rdquo;) the company now owns
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-zinc-400">
+            Derived from each process&apos;s corpus cadence — the same axis as the{' '}
+            <Link href="/processes/operating-rhythm" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+              operating rhythm
+            </Link>
+            . Monthly and quarterly slots are cadence math; the tax dates are the corpus&apos;s own; fuchsia
+            slots are seeded demo scheduling, tagged simulated.
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
+                  <th scope="col" className="py-2 pr-3 font-normal">Process</th>
+                  <th scope="col" className="py-2 pr-3 font-normal">Cadence</th>
+                  <th scope="col" className="py-2 pr-3 font-normal">
+                    <span className="flex gap-1" aria-label="January through December">
+                      {MONTH_LABELS.map((m) => (
+                        <span key={m} title={m} className="w-2 text-center normal-case">{m[0]}</span>
+                      ))}
+                    </span>
+                  </th>
+                  <th scope="col" className="py-2 pr-3 text-right font-normal"><span title="Runs per year">Runs/yr</span></th>
+                  <th scope="col" className="py-2 pr-3 font-normal">Route mix</th>
+                  <th scope="col" className="py-2 font-normal">Agent ceiling</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800/70">
+                {year.rhythm.map((row) => (
+                  <YearRhythmRow key={row.taskId} row={row} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p data-testid="vs-year-summary" className="mt-4 border-t border-zinc-800 pt-3 text-sm text-zinc-300">
+            Your virtual company&apos;s year: <span className="font-mono tabular-nums">{year.stats.totalRuns}</span> recurring
+            runs · <span className="font-mono tabular-nums">{year.stats.stepRuns}</span> step-executions,{' '}
+            <span className="font-mono tabular-nums text-emerald-300">{year.stats.agentStepRuns}</span> of them
+            agent-runnable ({year.stats.stepRuns > 0 ? Math.round((year.stats.agentStepRuns / year.stats.stepRuns) * 100) : 0}%).
+          </p>
         </section>
       )}
 
