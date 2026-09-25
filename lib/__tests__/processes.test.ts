@@ -8,6 +8,7 @@ import {
   VENDOR_ARENA, VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
+import { stepRanking } from '@/lib/processRankings'
 import { verdictGaps } from '@/lib/humanSteps'
 import { showComputerUseChips } from '@/lib/humanStepsUi'
 import { buildSimRun, LEGAL_SIGNATURE_WHY } from '@/lib/processSim'
@@ -566,6 +567,73 @@ describe('chains', () => {
       }
       expect(chainTasks(chain, DATA_DIR).map((t) => t.id)).toEqual(chain.taskIds)
     }
+  })
+})
+
+// The agentic showcases (founder 2026-09-25: "cool playbooks that leverage the actually-agentic
+// vendors") were chosen BY THE DATA, and these tests recompute the selection claims from the
+// committed corpus + verdicts so the taglines can never drift from the numbers:
+//   agent-run-back-office — the recurring money loop; claims the highest agent ceiling of any
+//     committed playbook (90% at composition time), with most agent steps reachable via a top
+//     judged vendor holding a full/partial verdict on a canonical agent surface
+//     (agentic-mcp-server / agentic-official-cli).
+//   mcp-native-stack — claims that at nearly every rankable step the top judged vendor ships an
+//     official MCP server (32 of 34 rankable steps at composition time).
+describe('agentic showcase chains (founder 2026-09-25) — tagline claims recompute from committed data', () => {
+  const chains = loadChains(DATA_DIR)
+  const chainNodes = (id: string) => {
+    const chain = chains.find((c) => c.id === id)
+    expect(chain, `showcase chain ${id} missing`).toBeDefined()
+    return chainTasks(chain!, DATA_DIR).flatMap((t) => t.dag.nodes.map((n) => ({ taskId: t.id, node: n })))
+  }
+  const chainCeilingPct = (id: string) => computeCeiling(chainNodes(id).map((s) => s.node)).pct
+
+  // The top judged vendor for one step (the same stepRanking the pages render), with its
+  // canonical agent-surface verdicts — full/partial on the MCP-server / official-CLI stories.
+  const topSurfaces = (taskId: string, dagNode: DagNode): { ranked: boolean; surfaces: string[] } => {
+    const r = stepRanking(taskId, dagNode, DATA_DIR)
+    if (!r) return { ranked: false, surfaces: [] }
+    const data = loadCategory(r.arenaId, DATA_DIR)
+    const top = r.vendors[0]
+    const surfaces = (['agentic-mcp-server', 'agentic-official-cli'] as const).filter((sid) => {
+      const v = data.verdicts.find((x) => x.productId === top.productId && x.storyId === sid)
+      return v !== undefined && (v.verdict === 'full' || v.verdict === 'partial')
+    })
+    return { ranked: true, surfaces }
+  }
+
+  it('agent-run-back-office has the highest agent ceiling of every RECURRING playbook', () => {
+    const backOffice = chainCeilingPct('agent-run-back-office')
+    expect(backOffice).toBeGreaterThanOrEqual(88) // the tagline's "roughly nine steps in ten"
+    // The showcase is "highest-ceiling recurring ops" — its every process is monthly.
+    const tasks = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
+    const chain = chains.find((c) => c.id === 'agent-run-back-office')!
+    for (const tid of chain.taskIds) expect(tasks.get(tid)!.cadence).toBe('monthly')
+    // No other playbook made of recurring processes (nothing 'once' — the setup chains like
+    // launch-website honestly ceiling higher, but they run one time) outranks it.
+    for (const c of chains) {
+      if (c.taskIds.some((tid) => tasks.get(tid)!.cadence === 'once')) continue
+      expect(chainCeilingPct(c.id), `${c.id} outranks the back-office showcase`).toBeLessThanOrEqual(backOffice)
+    }
+  })
+
+  it('agent-run-back-office: most steps run TODAY via a top judged vendor with a real agent surface', () => {
+    const steps = chainNodes('agent-run-back-office')
+    const agentic = steps.filter(
+      ({ taskId, node: n }) => n.route === 'agent' && topSurfaces(taskId, n).surfaces.length > 0,
+    )
+    // 26 of 31 steps (84%) at composition time — the tagline's "most reachable today over
+    // judged MCP servers and CLIs".
+    expect(agentic.length / steps.length).toBeGreaterThanOrEqual(0.75)
+  })
+
+  it('mcp-native-stack: at nearly every rankable step the top judged vendor ships an official MCP server', () => {
+    const ranked = chainNodes('mcp-native-stack')
+      .map(({ taskId, node: n }) => topSurfaces(taskId, n))
+      .filter((s) => s.ranked)
+    const mcp = ranked.filter((s) => s.surfaces.includes('agentic-mcp-server'))
+    expect(ranked.length).toBeGreaterThanOrEqual(20) // the claim rests on a broad judged base
+    expect(mcp.length / ranked.length).toBeGreaterThanOrEqual(0.85) // 32/34 (94%) at composition time
   })
 })
 
