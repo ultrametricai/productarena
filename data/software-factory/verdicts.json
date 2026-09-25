@@ -7624,7 +7624,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes show no llms.txt (404), no docs.md machine-readable variant (404), and no OpenAPI spec (404), meaning there is no agent-oriented docs endpoint to point an agent at; the only docs are standard human-facing HTML pages.",
+    "rationale": "Direct probes show llms.txt and machine-readable docs endpoints return 404, and no evidence mentions an agent-oriented docs format or llms.txt file being offered anywhere in the docs; YYLO Skills are for operating the CLI, not agent-consumable documentation.",
     "evidenceIds": [
       "yylo-probe-1",
       "yylo-probe-2",
@@ -7634,14 +7634,14 @@
   {
     "productId": "yylo",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "YYLO is an orchestration/CLI tool for running coding agents, workflows, and task ledgers; it launches subagents to perform tasks but nothing in the evidence describes it generating analytic insights or suggestions from a user's own data. Merge/validation explicitly avoids invoking models (yylo-gh-6), and no docs mention dashboards, analytics, or AI-generated insight surfacing.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "YYLO can invoke an agent to summarize a repository (`yy pi --no-session 'Summarize this repository'`) and compare agent attempts with benchmark evidence, which are thin forms of AI-generated insight from the user's data. However there is no dedicated insights/suggestions surface, dashboard, or proactive recommendation feature — the product is primarily a task/workflow orchestrator for coding agents rather than an analytics or insight-generation layer. Missing for 10: a documented insights/suggestions UI or report feature, evidence of proactive AI-driven recommendations (not just on-demand summarization), and independent corroboration of this capability being used in practice.",
     "evidenceIds": [
-      "yylo-gh-6",
-      "yylo-docs-1",
-      "yylo-docs-11"
+      "yylo-docs-18",
+      "yylo-docs-28",
+      "yylo-gh-3"
     ]
   },
   {
@@ -7665,30 +7665,31 @@
     "productId": "yylo",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO's CLI lets a user delegate a task to an AI agent via `--subagent claude` and manage it through kanban/ledger workflows, so task delegation to an AI is documented, but the AI capability is an external subagent (e.g., Claude) invoked by the orchestrator rather than an assistant built into YYLO itself. missing for 10: evidence of an assistant embedded in the product (not requiring an external model/agent), and any first-party assistant UI/API rather than orchestration of third-party agents.",
+    "rationale": "YYLO's core CLI workflow does let users delegate tasks to an AI agent via `--subagent claude` and `yy pi` prompts (yylo-docs-1, yylo-docs-18, yylo-docs-29), but the 'assistant' is an external agent (e.g. Claude) invoked through the CLI, not a first-party built-in assistant native to YYLO itself. Missing for 10: evidence of a proprietary/native YYLO assistant (vs. orchestrating third-party subagents), and any UI/chat surface for direct assistant interaction.",
     "evidenceIds": [
       "yylo-docs-1",
-      "yylo-gh-3",
-      "yylo-docs-11"
+      "yylo-docs-18",
+      "yylo-docs-29",
+      "yylo-gh-3"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "YYLO is a CLI orchestrator with scriptable commands (init, task start, ledger, loop, parallel-runner, run-until-completion) that produce structured watch receipts with exit codes and JSON state, and it's installable via npm as a public package with documented bins (yylo, yy, ypl) suitable for CI invocation. missing for 10: no explicit CI pipeline example (e.g., GitHub Actions config), no independent hands-on report of running it headlessly in CI, and llms.txt/openapi probes returned 404 suggesting thinner machine-readable integration docs.",
+    "rationale": "YYLO is a CLI orchestrator with explicit non-interactive invocation (e.g. `yy pi --no-session`), scriptable commands (`yy loop`, run-until-completion, parallel-runner with bounded concurrency and structured evidence), and receipt-backed exit codes suitable for CI (`doctor workspace` nonzero on actionable problems, watch receipts with exit_code/state). Missing for 10: no explicit CI pipeline example (GitHub Actions/GitLab config) or independent hands-on report confirming CI usage.",
     "evidenceIds": [
-      "yylo-docs-1",
+      "yylo-docs-18",
       "yylo-docs-3",
-      "yylo-docs-6",
       "yylo-docs-9",
+      "yylo-docs-6",
+      "yylo-gh-1",
       "yylo-gh-2",
-      "yylo-gh-3",
-      "yylo-probe-rt-1"
+      "yylo-gh-3"
     ]
   },
   {
@@ -7696,8 +7697,8 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "YYLO's docs describe orchestrating coding agents, ledgers, workflows, and an 'open-standard path' for skills, but no evidence anywhere mentions MCP servers or a mechanism to plug in MCP tools for the agents it orchestrates.",
+    "confidence": "low",
+    "rationale": "YYLO is a CLI orchestrator for coding agents with its own 'Skills' concept, but there is no mention of MCP (Model Context Protocol) servers or plugging in external tool servers anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -7705,22 +7706,27 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "YYLO is a CLI orchestrator for coding agents/workflows, and as such platform-type product it could plausibly ship an official MCP server for other agents to connect to, but no evidence pack item mentions MCP at all (only 'open-standard' skills installation, ledger, workflow-runner, etc.). No official MCP server documentation, endpoint, or announcement exists in the evidence.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "YYLO is a CLI/orchestration platform for coding agents, so an official MCP server is a fair, applicable axis, but no evidence pack item mentions MCP at all—docs reference 'open-standard' skill installs, ledger, benchmarking, and CLI subcommands, none tied to MCP. Probes for llms.txt/openapi also 404, showing no discoverable API/server surface.",
+    "evidenceIds": [
+      "yylo-docs-5",
+      "yylo-probe-1",
+      "yylo-probe-3"
+    ]
   },
   {
     "productId": "yylo",
     "storyId": "agentic-nl-commands",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO's interface is a structured CLI (yylo/yy commands with explicit flags like --task, --subagent) rather than a natural-language command interface; the --task string is passed through to a subagent, not parsed as an operator instruction to YYLO itself. No evidence shows a chat-like or NL command surface for driving YYLO's own operations (init, start, finish, ledger, merge, etc.).",
+    "rationale": "YYLO lets users pass natural-language task descriptions (e.g. `yy init --task \"...\"` or `yy pi 'Summarize this repository...'`) that get executed by coding-agent subagents, but the CLI itself is operated via structured subcommands (init, loop, ledger, merge) rather than a free-form conversational interface. Missing for 10: evidence of a true NL command parser/chat-style control plane, and independent confirmation that arbitrary natural-language instructions (beyond the --task/pi prompt fields) can drive the tool's own operations.",
     "evidenceIds": [
       "yylo-docs-1",
-      "yylo-docs-2",
-      "yylo-gh-3",
-      "yylo-gh-4"
+      "yylo-docs-18",
+      "yylo-docs-3",
+      "yylo-docs-11",
+      "yylo-gh-3"
     ]
   },
   {
@@ -7728,34 +7734,31 @@
     "storyId": "agentic-official-cli",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "YYLO ships an official CLI (@yylo/cli) with documented commands (init, ledger, loop, doctor, task start, merge land) and is verifiably published on npm plus MIT-licensed on GitHub, matching an AI-native agentic workflow tool. missing for 10: independent third-party usage reports/reviews beyond vendor docs and registry probes, and some llms.txt/docs-md/openapi endpoints 404 suggesting incomplete machine-readable doc surface.",
+    "confidence": "medium",
+    "rationale": "YYLO ships an official CLI (@yylo/cli) documented with install/init commands, subcommands (ledger, loop, merge, task start), and GitHub repo describing it as a command-line orchestrator for coding agents. Missing for 10: independent/hands-on corroboration beyond vendor docs and GitHub, and llms.txt/docs-md probes returning 404 slightly weaken discoverability claims.",
     "evidenceIds": [
       "yylo-docs-1",
-      "yylo-docs-2",
-      "yylo-docs-11",
+      "yylo-docs-14",
       "yylo-gh-3",
-      "yylo-gh-4",
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2"
+      "yylo-gh-2",
+      "yylo-probe-4"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "YYLO exposes a well-documented CLI (`yylo`, `yy`, `ypl`) with structured JSON output, a ledger/task API, YAML workflow contracts, and templating for chaining steps, which an AI-native user could script against — supported by first-party docs and a live public npm package. However, there is no true public HTTP/OpenAPI-style API: explicit probes for llms.txt, docs.md, and OpenAPI specs all returned 404, meaning the only 'API' is the CLI surface, not a documented network API a remote agent could call directly. Missing for 10: an OpenAPI/REST API spec, an llms.txt or machine-readable API manifest, and evidence of remote/programmatic (non-CLI) invocation.",
+    "rationale": "YYLO ships an extensively documented CLI (`yy init`, `yy ledger`, `yy pi`, `yy loop`, workflow/benchmark commands) that lets an AI-native user drive the product programmatically, which functions as its public interface. However, explicit probes found no REST/OpenAPI spec and no llms.txt AI-friendly docs endpoint, so there is no formal machine-readable public API beyond the CLI surface. Missing for 10: OpenAPI/REST API spec, llms.txt or other AI-consumption doc format, independent corroboration of API stability/versioning.",
     "evidenceIds": [
       "yylo-docs-1",
-      "yylo-docs-3",
-      "yylo-docs-4",
       "yylo-docs-11",
+      "yylo-docs-18",
+      "yylo-gh-3",
       "yylo-probe-1",
       "yylo-probe-2",
-      "yylo-probe-3",
-      "yylo-probe-rt-1"
+      "yylo-probe-3"
     ]
   },
   {
@@ -7773,13 +7776,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO ships an official CLI (@yylo/cli) and open MIT-licensed repo, but there is no evidence of an SDK (client library/API) to build against — OpenAPI/spec probes and llms.txt/docs-md endpoints all return 404, and no SDK docs are mentioned anywhere in the pack.",
+    "rationale": "YYLO's evidence describes a CLI (@yylo/cli), scripts, and Skills for orchestrating coding agents, but no official SDK/library for programmatic integration is mentioned, and probes for API/OpenAPI specs and machine-readable docs all return 404s, indicating no SDK surface exists.",
     "evidenceIds": [
       "yylo-probe-1",
       "yylo-probe-2",
       "yylo-probe-3",
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2"
+      "yylo-docs-1",
+      "yylo-gh-3"
     ]
   },
   {
@@ -7788,7 +7791,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook subscription mechanism; YYLO documents Slack/GitHub integrations pulling into kanban but nothing about outbound event webhooks, and API/openapi probes returned 404s.",
+    "rationale": "No evidence of webhook subscription functionality; YYLO's integrations feature (yylo-docs-10) pulls from Slack/GitHub into kanban but there is no documented webhook subscription mechanism, and API probes for openapi/webhooks all return 404 (yylo-probe-3).",
     "evidenceIds": [
       "yylo-docs-10",
       "yylo-probe-3"
@@ -7799,11 +7802,12 @@
     "storyId": "ai-automated-test-generation-on-change",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence explicitly states that tests and semantic reviews are 'explicit project checks outside merge' and that YYLO's merge step 'launches no models, chooses no reviewers, schedules no suites, and maintains no validation cache' (yylo-gh-6). While `yy loop` can repeat arbitrary shell commands, there is no evidence of an agent autonomously generating tests or validating its own changes before proposing them.",
+    "confidence": "high",
+    "rationale": "Evidence explicitly states YYLO's merge step 'launches no models, chooses no reviewers, schedules no suites, and maintains no validation cache' and that tests/semantic reviews are 'explicit project checks outside merge' (yylo-gh-6). There is no documentation of the agent autonomously generating or running tests to validate its own changes before proposing them; validation is left to external, explicit project tooling.",
     "evidenceIds": [
       "yylo-gh-6",
-      "yylo-docs-3"
+      "yylo-gh-5",
+      "yylo-docs-14"
     ]
   },
   {
@@ -7812,9 +7816,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows YYLO lets users manually specify a subagent/model (e.g. `--subagent claude`) but nothing describes automatic routing of a task prompt to the 'most suitable' underlying model based on task characteristics. missing for 10: any evidence of automatic model-selection logic, routing criteria, or multi-model comparison/selection mechanism.",
+    "rationale": "YYLO lets users manually select or bind a specific subagent/model (e.g., `--subagent claude`, 'model selectors ... bound before execution'), but there is no evidence of automatic routing of a task prompt to the most suitable model based on task characteristics—selection appears explicit/user-driven, not automated.",
     "evidenceIds": [
-      "yylo-docs-1"
+      "yylo-docs-1",
+      "yylo-docs-24",
+      "yylo-docs-29"
     ]
   },
   {
@@ -7847,26 +7853,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Explicit probes for llms.txt, docs-md, and OpenAPI/swagger endpoints all returned 404, and no evidence shows any downloadable machine-readable API spec; YYLO is a CLI orchestrator without a documented API surface to spec.",
+    "rationale": "YYLO is a CLI orchestrator without a public API; probes for OpenAPI/swagger endpoints and llms.txt all returned 404, and no docs mention a machine-readable API spec.",
     "evidenceIds": [
+      "yylo-probe-3",
       "yylo-probe-1",
-      "yylo-probe-2",
-      "yylo-probe-3"
+      "yylo-probe-2"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "api-sandbox",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "YYLO's task worktrees isolate work from the protected target SHA, preflight checks are documented as read-only, and merges compose changes into a private detached candidate rather than touching the live branch directly, while the benchmark tool explicitly runs 'isolated attempts' with 'recover safely' semantics—together these describe a sandboxed testing flow that avoids touching the protected/production state. Missing for 10: explicit 'production data' terminology or a dedicated staging/prod environment concept, and independent (non-vendor) confirmation that isolation holds up in practice.",
+    "rationale": "YYLO documents isolated task worktrees, protected target SHAs, and benchmark execution in private fresh repositories separate from shared task worktrees, which functions as a sandbox for agent work without touching the protected/production branch (yylo-gh-4, yylo-docs-25, yylo-docs-13/23, yylo-docs-16). However this is git/repo-level isolation rather than a broader 'production data' sandbox (e.g., staging DB, live services), and there is no independent/hands-on verification of the isolation guarantees. missing for 10: evidence of non-git production-data isolation (e.g., databases/services), independent third-party confirmation that isolation holds in practice.",
     "evidenceIds": [
-      "yylo-docs-2",
-      "yylo-gh-4",
-      "yylo-gh-1",
-      "yylo-gh-5",
-      "yylo-docs-13"
+      "yylo-docs-25",
+      "yylo-docs-13",
+      "yylo-docs-23",
+      "yylo-docs-16",
+      "yylo-gh-4"
     ]
   },
   {
@@ -7875,12 +7881,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any versioned API contract or documented deprecation policy; the product is a CLI orchestrator with a version like 0.2.1rc6, but no API versioning scheme or deprecation guarantees are mentioned, and openapi/llms.txt probes returned 404.",
+    "rationale": "YYLO's CLI/skills docs mention independently versioned Skills but no evidence of a versioned public API with a documented deprecation policy; OpenAPI probes returned 404 and no changelog/versioning policy is cited.",
     "evidenceIds": [
       "yylo-probe-3",
-      "yylo-probe-1",
-      "yylo-probe-2",
-      "yylo-docs-12"
+      "yylo-docs-26"
     ]
   },
   {
@@ -7889,12 +7893,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes YYLO's task lifecycle (init, start, preflight read-only, finish queuing a candidate, merge land) but nothing indicates the agent produces an implementation plan that a developer reviews and approves before any code is written — preflight/checks occur on already-produced work, not a pre-code plan gate.",
+    "rationale": "YYLO's docs describe task lifecycle (start hydrates worktree, preflight read-only check, finish queues candidate) and ledger/task creation, but nowhere describe an agent-generated implementation plan that a developer reviews and explicitly approves before code changes begin — preflight appears to be a validation/check step after work has already occurred, not a pre-execution plan gate.",
     "evidenceIds": [
       "yylo-docs-2",
       "yylo-gh-4",
-      "yylo-gh-5",
-      "yylo-gh-6"
+      "yylo-docs-11"
     ]
   },
   {
@@ -7903,12 +7906,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "YYLO documents a task/contract concept (YAML contracts, ledger tasks) and isolates agent work in dedicated branches/worktrees with a read-only preflight before any commit is queued (yylo-docs-2, yylo-docs-4, yylo-gh-4), which implies some spec-first gating. However there is no documented human approval/sign-off step where an engineering-lead explicitly reviews and approves scope/contract before the agent is permitted to start modifying the repo—task start appears automatic once invoked. Missing for 10: explicit lead-approval gate/workflow, evidence of a review UI or command requiring human sign-off, and confirmation that agent modification is blocked pending that approval.",
+    "rationale": "YYLO supports defining a task's intent/contract (init --task, YAML contract export) and has a read-only preflight stage before an agent's changes are committed, plus protected-SHA worktree isolation before merge — but there is no documented explicit approval/sign-off step where an engineering-lead reviews and approves scope before the agent is permitted to touch the repo. missing for 10: an explicit approval/gate command or workflow state requiring lead sign-off, role-based approval permissions, and evidence of a real review UI/step rather than just read-only preflight.",
     "evidenceIds": [
+      "yylo-docs-1",
       "yylo-docs-2",
       "yylo-docs-4",
+      "yylo-gh-1",
       "yylo-gh-4",
-      "yylo-gh-5"
+      "yylo-docs-11"
     ]
   },
   {
@@ -7931,12 +7936,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence describes YYLO's orchestration architecture (task worktrees, ledger, merge protections) but nothing addresses a configurable auto-approve/no-confirmation mode for agent actions; in fact merge land explicitly requires checks and human-oversight-style gating rather than blanket auto-approval. Missing for 10: any documented auto-approve flag/setting, evidence of confirmation prompts being bypassable, or explicit human-oversight configuration options.",
-    "evidenceIds": [
-      "yylo-gh-4",
-      "yylo-gh-5",
-      "yylo-gh-6"
-    ]
+    "rationale": "The evidence emphasizes explicit, receipt-backed workflows (validation, merge, and Git delivery kept explicit) but nowhere describes a configuration flag or mode to auto-approve agent actions without confirmation; the design seems oriented toward explicit checks rather than bypassing them.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
@@ -7944,10 +7945,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO's diagnostic tool (`doctor workspace`) explicitly never fetches or changes the workspace, and merge/tests are described as explicit checks with no automated remediation; there is no documented feature that automatically fixes failing agent-readiness criteria.",
+    "rationale": "YYLO's closest related feature, `doctor workspace`, explicitly diagnoses topology/readiness problems but is documented to 'never fetch or change the workspace,' i.e. it flags issues without auto-fixing them; no other evidence describes automated remediation of failing agent-readiness criteria.",
     "evidenceIds": [
       "yylo-gh-1",
-      "yylo-gh-6"
+      "yylo-gh-3"
     ]
   },
   {
@@ -7956,12 +7957,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO's docs describe task branches, worktrees, and an internal 'merge land' step that composes a candidate directly, explicitly stating merge 'launches no models, chooses no reviewers'—there is no mention anywhere of opening a GitHub pull request on task completion, only importing issues into kanban and returning responses to source threads. No CLI flag, workflow step, or integration doc references PR creation.",
+    "rationale": "YYLO's docs describe an internal 'merge land' flow that composes a candidate into a protected branch using Git ref protection, explicitly stating merge 'launches no models, chooses no reviewers' — there is no mention of opening a GitHub pull request upon task completion. GitHub integration mentioned (yylo-docs-10) only covers pulling issues into kanban and posting responses back, not PR creation.",
     "evidenceIds": [
       "yylo-gh-5",
       "yylo-gh-6",
-      "yylo-docs-10",
-      "yylo-docs-2"
+      "yylo-docs-10"
     ]
   },
   {
@@ -7970,41 +7970,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO's own docs describe it as a CLI orchestrator for coding-agent tasks, workflows, and receipt-backed merges — not a PR-review tool. Evidence explicitly states 'Tests and semantic reviews are explicit project checks outside merge. Merge launches no models, chooses no reviewers' (yylo-gh-6), meaning there is no automated AI-generated inline PR review capability in the product.",
+    "rationale": "YYLO explicitly states that tests and semantic reviews are handled outside its merge process and that 'Merge launches no models, chooses no reviewers'—meaning it does not perform automated AI PR reviews or generate inline comments itself; no evidence anywhere in the pack shows an automatic PR-review or inline-comment feature.",
     "evidenceIds": [
-      "yylo-gh-6",
-      "yylo-gh-5",
-      "yylo-gh-3"
+      "yylo-gh-6"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "automatic-environment-setup",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs and GitHub README describe `task start`/`yy init` hydrating a dedicated worktree from a protected base SHA and completing 'configured dependency hydration' before reporting WORKING, which covers automated environment setup and dependency install; the CLI is confirmed live on npm and the repo public. Missing for 10: explicit description of cloning an arbitrary remote repo (vs. hydrating a pre-defined workspace), and independent/hands-on confirmation that dependency install works end-to-end.",
+    "rationale": "YYLO's `task start` documents freezing the target SHA, creating a dedicated branch/worktree, and completing configured dependency hydration automatically before reporting WORKING, which covers automated worktree setup and dependency install. However, evidence never shows the agent 'cloning the repo' from scratch (it operates on an existing checkout) or fully configuring an arbitrary environment beyond hydration steps, and there's no independent/hands-on confirmation beyond first-party docs. Missing for 10: evidence of fresh repo cloning from a remote source, broader environment configuration beyond dependency hydration, and independent verification of this flow working end-to-end.",
     "evidenceIds": [
       "yylo-gh-4",
-      "yylo-docs-1",
       "yylo-docs-2",
-      "yylo-probe-rt-1",
-      "yylo-gh-2"
+      "yylo-docs-14"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "automation-bulk-operations",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "YYLO's parallel-runner explicitly supports 'bounded concurrent fan-out for independent kanban tasks, data items, or complete commands—with structured evidence for every item,' and run-until-completion repeats iterations until all kanban work is done, directly enabling bulk operations across many items with automated evidence capture. This is corroborated by a live public CLI (npm registry, MIT-licensed source), though there's no independent hands-on report of large-scale fan-out in practice. Missing for 10: independent/third-party validation of bulk-scale runs and concrete concurrency limits or throughput numbers.",
+    "rationale": "YYLO documents a parallel-runner script for bounded concurrent fan-out across many independent kanban tasks/data items/commands with structured evidence, plus run-until-completion loops that repeat until all kanban work clears, showing genuine bulk-operation support. However this is a first-party docs claim without independent/hands-on corroboration or concrete scale numbers. Missing for 10: independent verification of the fan-out at scale, and more detail on failure handling across bulk items.",
     "evidenceIds": [
       "yylo-docs-6",
-      "yylo-docs-9",
       "yylo-docs-7",
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2"
+      "yylo-docs-9",
+      "yylo-docs-29"
     ]
   },
   {
@@ -8039,14 +8034,16 @@
     "productId": "yylo",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "YYLO ledger provides task versioning-like constructs (immutable task source, worktree branching, candidate composition, expected-old ref protection for merges) and workflow YAML contracts can be saved/reused, giving some review/rollback semantics via git-based merge protections. However there is no explicit 'automation version history', diff/review UI, or a documented rollback command for automations themselves beyond git branch/worktree mechanics. missing for 10: dedicated automation versioning/history view, explicit rollback command for a run/automation (not just git ref protection), review workflow UI, and independent/hands-on confirmation of these rollback flows.",
+    "rationale": "YYLO's Ledger provides Git-native task records with status/history tracking (yylo-docs-19, yylo-docs-11), and merge/task flows use protected SHAs, worktrees, and expected-old ref protection which supports rollback-safe delivery (yylo-gh-4, yylo-gh-5). Skills are independently versioned (yylo-docs-26), and workflows can be saved as reusable YAML contracts (yylo-docs-4). However there is no explicit 'review' UI/diff for automations, no dedicated rollback command for a completed automation run, and no versioned history browsing/diffing of workflow definitions themselves. missing for 10: explicit automation-version diffing/review UI, a documented rollback command for completed runs, version history for workflow YAML changes over time.",
     "evidenceIds": [
+      "yylo-docs-19",
+      "yylo-docs-11",
       "yylo-gh-4",
       "yylo-gh-5",
       "yylo-docs-4",
-      "yylo-docs-12"
+      "yylo-docs-26"
     ]
   },
   {
@@ -8055,24 +8052,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO orchestrates coding agents through task worktrees, kanban-driven work items, and iteration loops (run-until-completion, subagent tasking) that could be pointed at a bug-fix task, and it supports ingesting GitHub issues into kanban as a trigger. However there is no evidence of autonomous bug diagnosis (root-causing, log/trace analysis) as a distinct capability — the docs describe generic task/workflow orchestration and merge/validation boundaries rather than an end-to-end 'diagnose then fix' agent behavior. missing for 10: explicit diagnosis/root-cause capability, an end-to-end bug-fix case study or hands-on validation, evidence the agent itself (vs. the orchestrator) performs debugging reasoning.",
+    "rationale": "YYLO can ingest a reported bug (e.g., a GitHub issue) into its kanban ledger, spin up a coding-agent subagent to work an isolated task worktree, and iterate ('run-until-completion') until kanban work is done, which supports an agent-driven fix loop. However, docs explicitly state tests/semantic review are 'explicit project checks outside merge' and merge 'launches no models, chooses no reviewers' — so the diagnose-and-verify-fix loop is not autonomous end-to-end; a human or separate check step is required. Missing for 10: evidence of the agent performing bug diagnosis/root-cause reasoning, automated verification that the fix resolves the reported issue, and an end-to-end autonomous close-the-loop example.",
     "evidenceIds": [
-      "yylo-docs-1",
-      "yylo-docs-9",
       "yylo-docs-10",
-      "yylo-gh-3",
-      "yylo-gh-4"
+      "yylo-docs-9",
+      "yylo-gh-4",
+      "yylo-gh-6",
+      "yylo-docs-1"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "bring-your-own-model",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows a `--subagent claude` CLI flag implying some agent selection, but there is no documentation of configuring API keys, choosing alternate LLM providers, or any pricing/billing control for engineering leads. Missing for 10: explicit BYO-API-key setup, multi-provider/model configuration docs, and any pricing-limits guidance.",
+    "rationale": "YYLO's CLI exposes a `--subagent` flag (e.g. `--subagent claude`) and a benchmark 'model selectors' concept, implying some ability to choose which agent/model runs a task, but there is no documentation describing how to configure custom API keys, add non-default providers, or point at a self-hosted/local LLM. Missing for 10: explicit API-key/config docs, list of supported providers, and evidence of bringing arbitrary or self-hosted models rather than just selecting among built-in subagents.",
     "evidenceIds": [
-      "yylo-docs-1"
+      "yylo-docs-1",
+      "yylo-docs-24",
+      "yylo-docs-29"
     ]
   },
   {
@@ -8081,8 +8080,11 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for coding agents and repo workflows, not a chat/messaging interface where users tag agents in threads; its integrations (yylo-docs-10) pull Slack/GitHub items into a kanban board rather than supporting in-thread @-mention delegation. This is a category mismatch, not a missing feature.",
-    "evidenceIds": []
+    "rationale": "YYLO is a CLI-based orchestrator for coding agents and Ledger/task management, not a chat-thread or messaging product; there is no chat thread UI to '@mention' or tag agents in. It integrates with Slack/GitHub issue threads for bringing tasks into kanban, but this is issue/thread import, not tagging an agent conversationally to delegate work — a category mismatch for this axis.",
+    "evidenceIds": [
+      "yylo-docs-10",
+      "yylo-gh-3"
+    ]
   },
   {
     "productId": "yylo",
@@ -8090,11 +8092,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for coding agents/workflows with kanban, ledger, and merge tooling, but nothing in the evidence pack mentions CI workflow failure detection, diagnosis, or auto-generating a fix PR from a failing CI run. Merge/land explicitly excludes running tests or validation ('Tests and semantic reviews are explicit project checks outside merge'), which is the opposite of an integrated CI-fix loop.",
+    "rationale": "YYLO is a CLI orchestrator for agent tasks, workflows, and Git delivery with explicit merge/validation boundaries, but nothing in the evidence mentions CI workflow monitoring, failure diagnosis, or auto-generating a fix PR from a failed CI run; merge/checks are explicitly kept outside YYLO's scope.",
     "evidenceIds": [
       "yylo-gh-6",
-      "yylo-gh-5",
-      "yylo-gh-3"
+      "yylo-gh-3",
+      "yylo-docs-14"
     ]
   },
   {
@@ -8103,7 +8105,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers task orchestration, kanban ledgers, merge protections, and workflow runners, but nowhere describes a context/conventions file that agents read to generate more relevant plans or code. No mention of AGENTS.md, project instructions, or codebase-convention configuration exists in the docs or GitHub items provided.",
+    "rationale": "YYLO's docs describe a Ledger 'wiki' for Markdown knowledge and generic task/context flows, but there is no evidence of a dedicated codebase-conventions context file (e.g., an AGENTS.md-style file) that agents read to steer plans and code generation.",
     "evidenceIds": []
   },
   {
@@ -8112,12 +8114,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "YYLO documents a 'bounded concurrent fan-out' parallel-runner for independent kanban tasks with structured evidence per item, plus run-until-completion looping, which supports running multiple agent tasks concurrently. However, evidence lacks details on concurrency limits, scaling numbers, resource isolation at scale, or independent/hands-on validation of throughput gains. missing for 10: concrete concurrency limits/benchmarks, independent third-party validation of parallel scaling, evidence of large-scale (10s-100s of tasks) usage in production.",
+    "rationale": "Docs describe a 'Bounded concurrent fan-out for independent kanban tasks' via the parallel-runner script and 'Delegate bounded work across agents and models,' directly supporting running many agent tasks concurrently. However, evidence lacks concrete throughput numbers, concurrency limits, real-world scale examples, or independent corroboration beyond first-party docs. missing for 10: independent/hands-on validation of concurrency scale, concrete numeric limits/performance data, real-world case study of throughput gains.",
     "evidenceIds": [
       "yylo-docs-6",
-      "yylo-docs-9",
-      "yylo-docs-7",
-      "yylo-gh-3"
+      "yylo-docs-29",
+      "yylo-docs-8",
+      "yylo-docs-9"
     ]
   },
   {
@@ -8126,12 +8128,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows YYLO operates on local git worktrees/branches and has an internal 'merge land' step, and can pull GitHub issues into its kanban, but there is no evidence of connecting a GitHub repository as a remote and having the agent open pull requests against it — the merge feature explicitly stays local/internal with no GitHub PR API integration mentioned.",
+    "rationale": "YYLO's evidence shows local git worktree/branch management and a git-native merge flow, plus one-way ingestion of GitHub issues into its kanban (yylo-docs-10), but nowhere is there evidence of connecting a GitHub repository account/OAuth or the agent opening a pull request against it — 'merge land' operates on local branches, not GitHub PRs (yylo-gh-5).",
     "evidenceIds": [
-      "yylo-gh-4",
+      "yylo-docs-10",
       "yylo-gh-5",
-      "yylo-gh-6",
-      "yylo-docs-10"
+      "yylo-gh-4"
     ]
   },
   {
@@ -8140,12 +8141,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a self-hosted, open-source CLI orchestrator with no evidence of a hosted plan/pricing model or subscription tiers; concepts like 'plan-based daily task and concurrency limits' apply to SaaS pricing tiers, not to a locally-run open-source tool where users control their own concurrency via config (e.g., parallel-runner). This story's axis (plan/subscription-based usage limits) does not fit this product's category.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-docs-6",
-      "yylo-probe-rt-2"
-    ]
+    "rationale": "YYLO is an open-source CLI orchestrator for coding agents with no evidence of a pricing/plan model, subscription tiers, or hosted service quotas—there's no plan-based pricing construct to have daily task or concurrency limits tied to. Concurrency is mentioned only as a technical feature (bounded fan-out), not as a plan-tier limit an engineering-lead manages against a subscription. This is a category error: the pricing-limits axis doesn't apply to a locally-installed CLI tool without a plan/billing system.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
@@ -8153,24 +8150,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a single-user CLI orchestrator for coding agents run locally; it has no organization/user-management, multi-tenant, or delegated-access model referenced anywhere in the evidence. Creating sessions 'on behalf of other users in an org' is a category mismatch for a local CLI tool rather than a missing feature.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-docs-1"
-    ]
+    "rationale": "YYLO is a single-user CLI orchestrator for coding agents run locally; there is no evidence of any organization/user-management model, multi-tenant accounts, or the concept of one user creating sessions on behalf of another. This is a category error for a local CLI tool rather than a missing feature.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
     "storyId": "describe-feature-in-plain-language",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO's CLI lets a developer pass a plain-language task string (e.g. `yylo init --task \"Describe one verifiable outcome\"` or `yy ledger create \"Validate recovery\"`) which is then hydrated into a dedicated branch/worktree and handed to a subagent (yylo-docs-1, yylo-docs-2, yylo-gh-4, yylo-docs-11). This covers the 'turned into a scoped implementation task' half of the story, but there's no evidence of NLP-based scoping/decomposition logic — the description appears passed through largely as-is rather than analyzed/refined into a structured spec. Missing for 10: evidence of automatic task decomposition or requirement extraction from free-text input, and independent/hands-on confirmation that vague feature/bug descriptions produce well-scoped tasks.",
+    "rationale": "YYLO's CLI takes a plain-language `--task` description and turns it into a scoped, tracked unit of work (task worktree, ledger record, WORKING state) via `yylo init`/`task start`, which matches the intent-to-spec pattern. However, there's no evidence of NLP/parsing that decomposes a vague feature/bug description into a structured spec with acceptance criteria — the docs assume the developer already writes a 'verifiable outcome' string, and the task creation is closer to task tracking than intent-to-spec transformation. missing for 10: evidence of automatic requirement extraction/clarification, generated acceptance criteria or scoped subtasks from a raw natural-language description, and independent/hands-on validation of this specific flow.",
     "evidenceIds": [
       "yylo-docs-1",
-      "yylo-docs-2",
       "yylo-gh-4",
-      "yylo-docs-11"
+      "yylo-docs-11",
+      "yylo-docs-19"
     ]
   },
   {
@@ -8179,12 +8173,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO's evidence describes a CLI orchestrator for coding agents (task/worktree/merge/ledger workflows) aimed at developers and project operators, with no mention of ingesting mockups/designs or enabling a non-technical PM to go from a design to working code without engineering involvement.",
+    "rationale": "YYLO's evidence describes a CLI-based agent orchestrator built for developers and project operators (npm install, `yy init --task`, git worktrees, merge/validation flows) with no mention of mockup/design ingestion, visual-to-code translation, or any PM-facing no-code interface; usage requires CLI commands and Git literacy, the opposite of an engineering-handoff-free workflow for non-technical PMs.",
     "evidenceIds": [
       "yylo-gh-3",
       "yylo-docs-1",
-      "yylo-gh-4",
-      "yylo-gh-5"
+      "yylo-docs-14",
+      "yylo-docs-16"
     ]
   },
   {
@@ -8193,7 +8187,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs describe worktrees, candidate branches, and a 'merge land' step, but nowhere is there evidence of a diff-review UI or an explicit developer approval gate before a pull request is opened; in fact merge is described as launching 'no models, no reviewers' and reviews are called 'explicit project checks outside merge', with no PR-creation flow documented at all.",
+    "rationale": "YYLO's docs describe task worktrees, read-only preflight checks, and a 'merge land' step that composes a candidate with Git ref protection, but nowhere is there evidence of a diff-review UI or an explicit human approval gate that converts an agent's work into a pull request — merge appears to be a direct Git operation, not a PR workflow. No evidence of PR creation, diff presentation, or approve/reject actions tied to it.",
     "evidenceIds": [
       "yylo-gh-4",
       "yylo-gh-5",
@@ -8207,11 +8201,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO documents an end-to-end task loop (yylo init --task ... --subagent claude, worktree creation, commit-and-queue candidate flow) showing an agent can implement a described feature autonomously, but the evidence explicitly states 'tests and semantic reviews are explicit project checks outside merge' — meaning YYLO's own agent loop does not itself guarantee test-writing as part of implementation, only that separate check scripts exist for validation. missing for 10: explicit evidence the invoked subagent writes/adds tests as part of a task, and any example showing test-authoring within the init/finish workflow.",
+    "rationale": "YYLO orchestrates coding agents (e.g., Claude) to work a task end-to-end via `yylo init --task ... --subagent claude`, with worktree isolation and committed candidates (yylo-docs-1, yylo-docs-2, yylo-gh-4), supporting autonomous feature implementation. However, the docs explicitly state tests and semantic reviews are 'explicit project checks outside merge' and that merge 'launches no models, schedules no suites' (yylo-gh-6), meaning test-writing is not an integrated part of the agent's delivery flow but a separate manual/CI step. Missing for 10: explicit evidence the agent itself authors/executes tests as part of the task loop, and independent/hands-on confirmation of successful end-to-end feature+test delivery.",
     "evidenceIds": [
       "yylo-docs-1",
       "yylo-docs-2",
-      "yylo-gh-3",
       "yylo-gh-4",
       "yylo-gh-6"
     ]
@@ -8222,24 +8215,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO's evidence pack shows only an open-source CLI orchestrator (MIT-licensed, npm package) with no mention of enterprise licensing tiers, SSO integration, or commercial support offerings; there is no pricing/plans page or enterprise sales material in evidence. missing for 10: enterprise/SSO licensing tier, commercial support plans, organization-wide deployment documentation.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2"
-    ]
+    "rationale": "YYLO is an open-source CLI orchestrator for coding agents; there is no mention anywhere in the evidence of enterprise licensing, SSO, or commercial support offerings.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
     "storyId": "feedback-to-task-conversion",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "YYLO can ingest external feedback (Slack messages, GitHub issues) directly into its kanban/ledger as structured tasks (yylo-docs-10), and a dedicated `feedback-yylo` CLI binary is confirmed live on npm (yylo-probe-rt-1), suggesting a feedback-to-task pathway exists. However, there is no documented mechanism for generating a 'proposed scope' alongside the task — no scope estimation, sizing, or planning artifact is described anywhere in the docs or GitHub evidence. Missing for 10: explicit scope-proposal output tied to feedback conversion, documentation of what the feedback-yylo binary actually produces, and any PM-facing evidence of structured scoping fields.",
+    "rationale": "YYLO's integrations feature can pull Slack messages or GitHub issues into a kanban/ledger task (yylo-docs-10) and its ledger CLI creates structured tasks with status/tags (yylo-docs-11), which loosely maps to turning feedback into structured tasks. However, there is no evidence of any 'proposed scope' generation, effort estimation, or PM-oriented scoping workflow—tasks are just status/tag records, not spec proposals. Missing for 10: explicit feedback-to-task conversion workflow for PMs, scope/estimate generation, and any UI/output showing a 'proposed scope' artifact.",
     "evidenceIds": [
       "yylo-docs-10",
-      "yylo-probe-rt-1",
-      "yylo-docs-11"
+      "yylo-docs-11",
+      "yylo-docs-19"
     ]
   },
   {
@@ -8248,14 +8237,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "YYLO is a CLI-first orchestrator with commands (init, task start, ledger, loop, workflow-runner, parallel-runner) that are inherently scriptable and non-interactive, and its runtime bins (yylo, yy, ypl) are published on npm confirming CLI availability. However, there's no explicit CI/CD documentation, no exit-code/error-handling guarantance for pipeline use beyond doctor workspace, and no CI examples (GitHub Actions, GitLab CI, etc.) or headless/no-TTY confirmation. missing for 10: explicit CI/CD pipeline examples or docs, confirmed non-interactive/headless mode guarantees, exit-code contract documentation for scripting, independent hands-on CI usage reports.",
+    "rationale": "YYLO's CLI supports scripted/headless usage (yy pi --no-session, yy loop for shell commands, parallel-runner for bounded concurrent fan-out, run-until-completion for looping) and CI-friendly non-interactive commands with structured watch receipts (state COMPLETED, exit_code) that scripts can parse. However, there is no explicit CI/CD pipeline integration doc (e.g. GitHub Actions example), no mention of exit-code contracts across all commands, and no evidence of headless auth/credential handling in CI. missing for 10: explicit CI/CD pipeline examples (e.g. GitHub Actions/GitLab CI config), documented non-interactive auth flow for CI runners, and independent corroboration of pipeline usage.",
     "evidenceIds": [
-      "yylo-docs-1",
       "yylo-docs-3",
       "yylo-docs-6",
-      "yylo-gh-1",
-      "yylo-gh-3",
-      "yylo-probe-rt-1"
+      "yylo-docs-9",
+      "yylo-docs-18",
+      "yylo-gh-2"
     ]
   },
   {
@@ -8264,11 +8252,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO's docs describe git-worktree/branch isolation for tasks and merge safety, but none of the evidence mentions a sandboxed execution environment (container/VM) for running agent code or installing dependencies safely. Worktree isolation protects git state, not runtime/process isolation.",
+    "rationale": "YYLO's docs describe git-level isolation (dedicated branches/worktrees, 'private fresh repositories' for benchmark attempts) rather than an actual execution sandbox for running code or installing dependencies safely; there is no mention of containerization, VM isolation, network restriction, or dependency-install safety guarantees. This is workspace/version-control isolation, not a security sandbox for code execution.",
     "evidenceIds": [
       "yylo-gh-4",
-      "yylo-docs-2",
-      "yylo-gh-3"
+      "yylo-docs-16",
+      "yylo-docs-25",
+      "yylo-docs-13"
     ]
   },
   {
@@ -8277,7 +8266,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The integrations doc only mentions bringing Slack messages or GitHub issues into kanban (yylo-docs-10); there is no mention of Jira, Linear, ClickUp, or Monday.com anywhere in the evidence pack. Missing for 10: any documented connector or API integration for Jira, Linear, ClickUp, or Monday.com.",
+    "rationale": "YYLO has its own Git-native Ledger for tasks and only documents integrations with Slack and GitHub issues (yylo-docs-10); there is no mention of Jira, Linear, ClickUp, or Monday.com anywhere in the evidence pack.",
     "evidenceIds": [
       "yylo-docs-10"
     ]
@@ -8301,18 +8290,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a local CLI orchestrator that runs on a developer's own machine/repo (npm-installed, git worktrees, local kanban/ledger) rather than a managed cloud service; there is no evidence of a hosted runtime, cloud dashboard, or backend YYLO operates on the user's behalf. This story asks about offloading backend infra to a vendor-run cloud, which is a different product category than a CLI tool.",
-    "evidenceIds": []
+    "rationale": "YYLO is a CLI orchestrator that runs locally against your own Git repositories and worktrees, not a managed cloud service; all evidence describes local installation, workspace/task management, and CLI usage with no hosted execution backend. This axis (managed cloud offering to avoid operating backend infrastructure) is a category error for a local dev-tool CLI.",
+    "evidenceIds": [
+      "yylo-gh-3",
+      "yylo-docs-14",
+      "yylo-docs-15",
+      "yylo-docs-16"
+    ]
   },
   {
     "productId": "yylo",
     "storyId": "manual-model-override",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "The CLI init command shows a --subagent flag (e.g. 'claude') letting a user specify which model/agent to use instead of relying on defaults, implying manual model selection is possible; however there is no documentation of an explicit 'automatic model selection' mode being overridden, no list of supported models, and no engineering-lead-oriented control/settings UI shown. missing for 10: explicit documentation of an automatic/default model-selection mode, a full list of selectable models, and confirmation that this override is persistent/configurable at a project or team level.",
+    "confidence": "medium",
+    "rationale": "CLI flags like `--subagent claude` (yylo-docs-1) and benchmark 'model selectors' (yylo-docs-24) show a user can explicitly pick a model/agent, and yylo-docs-29 mentions delegating work 'across agents and models,' implying manual choice is possible. However, there is no documentation describing a default automatic-selection mode that this overrides, nor any UI/toggle for switching between auto and manual modes. Missing for 10: explicit description of an automatic model-selection default, a documented switch/toggle mechanism, and independent confirmation that manual overrides actually take effect at runtime.",
     "evidenceIds": [
-      "yylo-docs-1"
+      "yylo-docs-1",
+      "yylo-docs-24",
+      "yylo-docs-29"
     ]
   },
   {
@@ -8320,13 +8316,11 @@
     "storyId": "mid-task-takeover",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "YYLO offers terminal-based session continuation (`yy continue SESSION_ID`) that lets a developer pick back up captured agent work rather than reconstructing it from scrollback, and task start/finish flows expose worktree/branch state that could be inspected or redirected from the CLI. However, there is no evidence of any editor integration or browser UI for taking over tasks — YYLO is documented purely as a CLI/orchestrator tool. Missing for 10: editor plugin/extension support, browser-based task takeover UI, and explicit interactive 'redirect mid-task' semantics beyond resuming a session.",
+    "confidence": "low",
+    "rationale": "YYLO supports session continuation via `yy continue SESSION_ID` and captured sessions rather than reconstructing from tmux scrollback, which implies some ability to resume/redirect an in-progress task from the terminal, but there is no evidence of editor or browser-based takeover, no interactive mid-task steering UI, and no mention of pausing/redirecting a running agent versus just resuming a completed/paused session. missing for 10: editor integration, browser integration, live mid-task redirection/interruption controls, evidence of an actual takeover workflow beyond session resumption.",
     "evidenceIds": [
       "yylo-docs-7",
-      "yylo-gh-4",
-      "yylo-gh-3",
-      "yylo-docs-2"
+      "yylo-gh-2"
     ]
   },
   {
@@ -8335,13 +8329,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is documented purely as a CLI/terminal orchestrator (yylo/yy commands, ledger, worktrees, merge gating) with no mention of any mobile app, phone notification, or remote-approval interface for product managers. The axis is plausible for an agent-orchestration tool but no evidence supports it.",
+    "rationale": "YYLO is a CLI-based agent orchestrator with no evidence of any mobile app, phone notification, or remote approval interface; all workflows described (task start, merge land, ledger, benchmark) are CLI/Git-native and terminal-bound. There is no mention of phone-based or async human-approval UX for in-flight agent decisions. Missing for 10: any mobile/phone interface, push-notification or approval-request mechanism, remote decision-approval workflow.",
     "evidenceIds": [
       "yylo-gh-3",
-      "yylo-docs-1",
-      "yylo-docs-11",
-      "yylo-gh-4",
-      "yylo-gh-5"
+      "yylo-docs-14",
+      "yylo-docs-1"
     ]
   },
   {
@@ -8349,12 +8341,13 @@
     "storyId": "one-click-repo-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "YYLO is documented as a CLI orchestrator requiring `npm install -g @yylo/cli` plus explicit `yylo init`/`task start` workflows that freeze SHAs, create worktrees, and hydrate dependencies — this is CLI-based setup, not a one-click repo-access grant. No evidence describes a GitHub App-style one-click install or OAuth flow for repo access. Missing for 10: any one-click install/authorization mechanism, evidence of simplified non-CLI onboarding, or a hosted install button.",
+    "confidence": "high",
+    "rationale": "YYLO's onboarding is a multi-step CLI process (npm install, `yylo init`, `task start` freezing SHAs and creating worktrees, ledger setup) rather than a one-click repository-access grant; no evidence of an OAuth/GitHub-App style one-click install flow exists in the pack.",
     "evidenceIds": [
       "yylo-docs-1",
       "yylo-gh-4",
-      "yylo-probe-rt-1"
+      "yylo-docs-14",
+      "yylo-docs-16"
     ]
   },
   {
@@ -8363,51 +8356,51 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO is a CLI/command-line orchestrator (yy/yylo commands) with no evidence of any graphical UI to compare against; the story presumes a UI+API product with parity concerns, which doesn't fit a CLI-first tool where the CLI itself is the sole interface.",
+    "rationale": "YYLO is presented entirely as a CLI/command-line orchestrator (yy commands, scripts, ledger) with no evidence of any separate graphical UI to compare parity against; the API-vs-UI openness axis is a category mismatch for this CLI-native tool.",
     "evidenceIds": [
       "yylo-gh-3",
       "yylo-docs-1",
-      "yylo-probe-rt-1"
+      "yylo-probe-3"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Workflow contracts can be saved as YAML (yylo-docs-4) and the CLI/ledger source is fully open-source under MIT (yylo-probe-rt-2), suggesting no vendor lock-in, but there is no documented single 'export all data' command covering ledger records, task history, sessions, and artifacts in open formats. Missing for 10: an explicit data-export command/feature, documentation of export formats for ledger/kanban/session data, and confirmation that all state (not just workflow YAML) is portable.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "YYLO's Ledger stores task intent, wiki, workflow and artifact data natively in Git-backed records (Markdown, YAML, JSON-like Records) rather than a proprietary database, and workflows can be saved as plain YAML, meaning users are never locked into a closed format and can walk away with their repo intact (yylo-docs-19, yylo-docs-20, yylo-docs-4, yylo-docs-15). However there is no explicit 'export all data' command or documented full-data-portability guarantee, and probes show no llms.txt/OpenAPI/machine-readable export surface (yylo-probe-1, yylo-probe-2, yylo-probe-3). Missing for 10: an explicit bulk-export/migration command, documentation of what artifact payloads look like outside Git, and independent confirmation of lock-in-free exit.",
     "evidenceIds": [
+      "yylo-docs-19",
+      "yylo-docs-20",
       "yylo-docs-4",
-      "yylo-docs-12",
-      "yylo-probe-rt-2",
-      "yylo-gh-3"
+      "yylo-docs-15",
+      "yylo-docs-22",
+      "yylo-probe-1",
+      "yylo-probe-2",
+      "yylo-probe-3"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "openness-open-license",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "The GitHub repo is public and licensed under MIT, confirmed by a runtime probe reading the LICENSE file directly, and the repo (yylo-dev/yylo) is documented as the CLI orchestrator's source. missing for 10: no independent third-party audit or community commentary confirming completeness of the published source beyond the license file check.",
-    "evidenceIds": [
-      "yylo-probe-rt-2",
-      "yylo-gh-3"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows a GitHub repository exists (yylo-dev/yylo) but nothing in the pack states or links to any license terms (e.g., MIT/Apache) confirming the source is available under an open license.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
     "storyId": "openness-self-host",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO is an open-source, MIT-licensed CLI orchestrator (installable via npm, source on GitHub) that runs locally against a user's own repo/agents, so self-hosting the core product is inherently satisfied — confirmed by the public npm registry listing and the MIT LICENSE in the public repo. missing for 10: no dedicated self-hosting/deployment guide (e.g. server install, Docker, or persistent-service setup instructions) and no independent third-party report of someone self-hosting it in production.",
+    "rationale": "YYLO is a CLI orchestrator distributed via npm and open-sourced on GitHub (yylo-gh-3), implying it runs locally/self-hosted rather than as a SaaS, and the CLI/init/task flow can be run entirely on a user's own machine. However there is no explicit documentation describing self-hosting a 'core product' server, deployment instructions, Docker/self-host guides, or licensing terms confirming full self-hostability of any backend/service component. Missing for 10: explicit self-hosting/deployment docs, confirmation of no mandatory hosted backend, license clarity for self-hosting, and independent corroboration of running fully offline/self-hosted.",
     "evidenceIds": [
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2",
       "yylo-gh-3",
-      "yylo-docs-1"
+      "yylo-docs-1",
+      "yylo-docs-14"
     ]
   },
   {
@@ -8416,11 +8409,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator that runs locally on the user's own machine/repo, coordinating coding agents and git workflows—it does not store user data in a hosted service where region/residency would be a choice. Data residency is a category error for a local CLI tool rather than an unmet capability.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-docs-1"
-    ]
+    "rationale": "YYLO is a local CLI orchestrator that operates on the user's own Git repository/filesystem rather than a hosted SaaS storing user data in provider-managed regions, so data residency/region selection is a category error for this tool.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
@@ -8428,7 +8418,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for coding agents and repo workflows, not a data-processing/AI training service; the axis of preventing data from being used for AI model training does not apply to this kind of product, and nothing in the evidence pack even implies YYLO handles user data for model training purposes.",
+    "rationale": "YYLO is a CLI orchestrator for coding agents and Git workflows, not a service that trains AI models on user data or offers data-usage/training opt-out controls; this privacy-posture axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -8437,8 +8427,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO's evidence covers task orchestration, worktrees, ledgers, and merges, but nothing addresses data retention policies, storage duration, or user-controlled deletion of tasks/sessions/records. No docs mention exporting, purging, or deleting stored data or session logs.",
-    "evidenceIds": []
+    "rationale": "YYLO's docs describe Git-native Ledger records, workflows, and artifacts but never document any retention policy, data-expiry mechanism, or explicit deletion/purge command for tasks, sessions, or records; the only nearby mention is about copying legacy knowledge 'without deleting original files,' which is not a deletion control.",
+    "evidenceIds": [
+      "yylo-docs-19",
+      "yylo-docs-22",
+      "yylo-docs-21"
+    ]
   },
   {
     "productId": "yylo",
@@ -8446,7 +8440,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for YYLO; the docs and GitHub description focus entirely on task orchestration features.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out setting for YYLO; the docs focus on CLI workflows, task orchestration, and ledger features without any privacy/telemetry disclosure.",
     "evidenceIds": []
   },
   {
@@ -8455,19 +8449,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for coding agents and task/workflow management, not a documentation-generation or docs-querying product; the evidence covers task ledgers, merge, workflows, and CI-like receipts, with nothing about generating or querying repository documentation.",
+    "rationale": "YYLO is a CLI orchestrator for coding agents, workflows, and Git delivery, not a documentation-generation/query product; there is no concept in the evidence of generating or querying docs for arbitrary repos (only a summarize command and internal wiki storage, which are unrelated axes). This story targets a different product category (repo doc-QA tools), so it does not apply here.",
     "evidenceIds": []
   },
   {
     "productId": "yylo",
     "storyId": "repo-readiness-report",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "YYLO ships a `doctor workspace` check that flags actionable topology problems without mutating the repo, and its GitHub description references 'release-readiness boundaries,' which gesture at repo-readiness diagnostics, but there is no documented dedicated report scoring or evaluating overall repository readiness for autonomous agents. missing for 10: a named readiness-report command/output, criteria for 'agent readiness' beyond topology checks, and any sample report artifact.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "YYLO offers task orchestration, ledger tracking, doctor workspace checks, and benchmarking, but there is no evidence of a dedicated 'readiness report' feature that scores or evaluates overall repository readiness for autonomous agents (e.g., an agent-readiness scorecard). `doctor workspace` checks topology issues but is not framed as an agent-readiness assessment tool.",
     "evidenceIds": [
       "yylo-gh-1",
-      "yylo-gh-3"
+      "yylo-gh-3",
+      "yylo-docs-13",
+      "yylo-docs-23"
     ]
   },
   {
@@ -8476,24 +8472,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for coding-agent task workflows, kanban tasks, and merge/candidate management, not a security-scanning or SCA/dependency-alert tool; there is no concept of security alerts to validate. This is a category mismatch rather than an unmet capability.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-gh-6"
-    ]
+    "rationale": "YYLO is a CLI orchestrator for coding-agent tasks, workflows, and Git delivery, not a security scanning/alerting tool; there is no mention of vulnerability/security-alert detection, validation, or auto-remediation. This story belongs to security-scanning products, not a general agent/workflow orchestrator.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
     "storyId": "self-hosted-agent-deployment",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "YYLO is an open-source, MIT-licensed CLI (npm package + public GitHub repo) that runs locally as an orchestrator, implying it can be run on a developer's own machine, in containers, or VMs since it's just a Node CLI operating on a local git worktree. However, there is no explicit documentation of container/VM deployment, Docker images, self-hosting guides, or infrastructure requirements for running at scale. missing for 10: explicit self-hosting/deployment docs (Docker/container images, VM setup guides), infrastructure/scaling guidance, and confirmation of statelessness or multi-instance operation for parallel agent infrastructure.",
+    "confidence": "low",
+    "rationale": "YYLO is an installable CLI (npm) that runs local git worktrees, ledger, and orchestration, implying it runs on infrastructure the user controls (local machine), but the evidence pack never mentions containers, Docker, VM deployment, or any self-hosted server/service architecture beyond a local CLI tool. missing for 10: explicit container/Docker deployment docs, VM/server hosting instructions, and confirmation of a persistent self-hosted service rather than just a local CLI.",
     "evidenceIds": [
+      "yylo-docs-1",
       "yylo-gh-3",
-      "yylo-probe-rt-1",
-      "yylo-probe-rt-2",
-      "yylo-gh-2"
+      "yylo-docs-16",
+      "yylo-docs-14"
     ]
   },
   {
@@ -8515,21 +8508,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "YYLO emits watch receipts with a COMPLETED state/exit_code after a run finishes, and its Slack/GitHub integrations can return completed responses to the originating thread, giving developers a way to learn a task finished. However there's no evidence of a proactive notification for when an agent 'needs input' mid-task, nor any push/alert channel beyond polling receipts or the source-thread reply. Missing for 10: explicit 'needs input' alerting, a dedicated notification/webhook system, and independent confirmation the integration loop works end-to-end.",
+    "rationale": "YYLO surfaces completion via a 'watch receipt' with state COMPLETED (yylo-gh-2) and can return completed responses to their originating Slack/GitHub thread (yylo-docs-10), which functions as a notification-on-completion mechanism. However, there is no documented alerting when an agent is blocked or needs input—only ledger status fields like 'blockers' (yylo-docs-19) that a developer would have to poll rather than receive a push notification for. Missing for 10: explicit 'needs input' notification/alerting, push notification channels beyond thread replies, and independent/hands-on confirmation that notifications actually fire in practice.",
     "evidenceIds": [
       "yylo-gh-2",
       "yylo-docs-10",
-      "yylo-gh-6"
+      "yylo-docs-19"
     ]
   },
   {
     "productId": "yylo",
     "storyId": "tiered-autonomy-levels",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows preflight/read-only checks, merge protections, and validation boundaries, but there is no mention of configurable tiered autonomy levels or a settings mechanism letting an engineering-lead define graduated confirmation thresholds for agent actions. missing for 10: explicit autonomy-level configuration, tiered permission settings, evidence of user-controlled confirmation thresholds.",
-    "evidenceIds": []
+    "rationale": "YYLO's docs show built-in checkpoints—preflight is read-only, finish only queues a candidate, and merge/land requires explicit separate validation with no auto-launched models or reviewers—implying staged human gates rather than an agent freely acting. It also offers Simple vs Advanced modes with different levels of managed merging/isolation. However there is no explicit 'autonomy level' setting an engineering-lead can configure (e.g., auto-approve thresholds, confirmation-required actions per tier); the boundaries are fixed workflow stages, not adjustable autonomy tiers. Missing for 10: an explicit configurable autonomy-level/permission setting, documentation of per-action confirmation thresholds, and evidence of lead-controlled policy enforcement.",
+    "evidenceIds": [
+      "yylo-docs-2",
+      "yylo-gh-6",
+      "yylo-docs-15",
+      "yylo-docs-16",
+      "yylo-gh-4"
+    ]
   },
   {
     "productId": "yylo",
@@ -8537,12 +8536,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "YYLO is documented as a CLI orchestrator with kanban tasks, workflow/parallel runners, and Slack/GitHub-issue integrations, but nothing in the evidence describes triggering it from a CI/CD pipeline or having it react to a failing build/test. Since it's a scriptable CLI, this axis plausibly applies, but there is no documented CI hook, GitHub Actions example, or build-failure-triggered workflow.",
-    "evidenceIds": [
-      "yylo-gh-3",
-      "yylo-docs-9",
-      "yylo-docs-10"
-    ]
+    "rationale": "YYLO is a CLI orchestrator that could in principle be invoked in a CI job, but the evidence pack contains no mention of CI/CD pipeline integration, triggering on build/test failure, or any GitHub Actions/CI runner examples — only local task/loop/workflow commands and Slack/GitHub-issue kanban integrations, which are not CI/CD triggers.",
+    "evidenceIds": []
   },
   {
     "productId": "yylo",
@@ -8550,7 +8545,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "YYLO is a CLI orchestrator for text-based task/workflow management around coding agents; there is no evidence of image/screenshot attachment, mockup annotation, or any visual-input handling in its task creation or ledger features. Attaching marked-up visual mockups to drive implementation is a UI/multimodal-input capability outside this CLI orchestration product's category.",
+    "rationale": "YYLO is a CLI orchestrator for text-based coding-agent tasks, kanban, workflows, and Git-native delivery; nothing in the evidence relates to visual/image-based task input like screenshots or mockups. This is a category mismatch, not a missing feature.",
     "evidenceIds": []
   }
 ]
