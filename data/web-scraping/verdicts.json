@@ -3411,10 +3411,12 @@
     "storyId": "agentic-agent-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe of the docs site found no llms.txt (404), and there is no evidence of any agent-oriented docs format for AI agents to consume; the evidence pack shows only standard human-readable documentation and CLI/MCP references that don't satisfy this story.",
+    "confidence": "medium",
+    "rationale": "The probe explicitly found no llms.txt file (404) and no discoverable OpenAPI/agent-oriented docs endpoint. While Crawl4AI offers a 'skill package' for AI coding assistants and MCP integration, there's no evidence of an actual llms.txt or agent-readable docs file that an agent could point to.",
     "evidenceIds": [
-      "crawl4ai-probe-1"
+      "crawl4ai-probe-1",
+      "crawl4ai-probe-2",
+      "crawl4ai-docs-9"
     ]
   },
   {
@@ -3423,11 +3425,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Crawl4AI offers LLM-driven structured extraction and adaptive crawling that determines when 'sufficient information' has been gathered, which could generate insight-like structured data from crawled content, but there is no evidence of a dashboard or interface that generates proactive 'insights and suggestions' about a user's own data corpus in the way the story implies. missing for 10: evidence of an insights/suggestions UI or report generation feature, evidence of proactive recommendations rather than raw extraction, independent confirmation of this use case.",
+    "rationale": "Crawl4AI supports LLM-driven extraction and query-style commands (e.g. 'crwl ... -q \"Extract all product prices\"') plus adaptive crawling that uses information-foraging algorithms to decide when enough data has been gathered to answer a query, which is a limited form of in-product AI reasoning over scraped data. However, this is extraction/query-answering, not a built-in insights or suggestions feature (dashboards, summaries, recommendations) — the product mainly hands clean markdown/JSON to external LLMs rather than generating its own insights. Missing for 10: a dedicated insights/summary UI or proactive suggestion mechanism, evidence of the product itself surfacing analysis rather than just extracted data, and independent corroboration of this specific capability.",
     "evidenceIds": [
-      "crawl4ai-gh-1",
+      "crawl4ai-docs-3",
+      "crawl4ai-gh-29",
+      "crawl4ai-gh-15",
       "crawl4ai-docs-2",
-      "crawl4ai-docs-3"
+      "crawl4ai-gh-1"
     ]
   },
   {
@@ -3436,23 +3440,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Crawl4AI provides Docker/FastAPI deployment, resume checkpoints, and community mentions of bridging to automation tools like n8n and MCP servers, suggesting it can be embedded into autonomous background pipelines, but there is no first-party evidence of a native scheduler, trigger system, or persistent autonomous agent loop within Crawl4AI itself. missing for 10: native scheduling/trigger mechanism, documented autonomous background-run feature, first-party (non-community) evidence of persistent unattended operation, integration guide owned by Crawl4AI rather than third-party community sites.",
+    "rationale": "Crawl4AI supports long-running/resumable crawls (resume_state, on_state_change callbacks), deep crawling, and a Docker/FastAPI server plus MCP integration, which could underpin background automation, but there is no evidence of a scheduler, trigger system, or persistent autonomous job runner that operates without manual invocation. missing for 10: no documented scheduling/cron or event-triggered automation, no evidence of a standalone background agent loop, no independent confirmation of unattended multi-step autonomous runs.",
     "evidenceIds": [
-      "crawl4ai-gh-5",
       "crawl4ai-gh-8",
-      "crawl4ai-comm-5",
-      "crawl4ai-comm-6",
+      "crawl4ai-gh-30",
+      "crawl4ai-gh-5",
+      "crawl4ai-gh-27",
       "crawl4ai-docs-3"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "Crawl4AI is a web-crawling/scraping library that offers LLM-based extraction and an MCP server for external AI tools (Claude, Cursor) to connect to it, but this is the reverse of the story: it does not embed a built-in assistant inside itself that a user delegates tasks to. This axis is a category mismatch for this type of product.",
+    "evidenceIds": [
+      "crawl4ai-gh-1",
+      "crawl4ai-gh-27",
+      "crawl4ai-probe-3"
+    ]
   },
   {
     "productId": "crawl4ai",
@@ -3460,13 +3468,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Crawl4AI ships a CLI (crwl), a Python async API usable in scripts, and a Dockerized FastAPI server setup explicitly for deployment/automation, all consistent with headless CI use; community evidence confirms production/Docker/n8n integrations. Missing for 10: no explicit CI pipeline example (e.g., GitHub Actions) or headless-mode flag documentation in the pack.",
+    "rationale": "Crawl4AI ships an async Python API and a CLI (crwl) usable in scripts/CI, plus a Dockerized FastAPI server for headless deployment, all suited to automation pipelines. Community evidence corroborates real-world CI/production usage including Docker/n8n integration. Missing for 10: no direct CI pipeline example (e.g., GitHub Actions config) or explicit headless-mode flag documentation.",
     "evidenceIds": [
       "crawl4ai-docs-1",
       "crawl4ai-gh-2",
       "crawl4ai-gh-5",
-      "crawl4ai-probe-4",
-      "crawl4ai-comm-6"
+      "crawl4ai-gh-6",
+      "crawl4ai-comm-6",
+      "crawl4ai-probe-4"
     ]
   },
   {
@@ -3474,9 +3483,10 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crawl4AI is a web-crawling library/service, not an agent that consumes external tools; the evidence shows it exposes an official MCP *server* (crawl4ai-probe-3) so that agents like Cursor/Claude can plug into it, which is the reverse relationship from the story's 'plug MCP servers into this product' framing. There is no evidence of Crawl4AI acting as an MCP client consuming other servers' tools, and this role doesn't fit its product category.",
+    "confidence": "medium",
+    "rationale": "Crawl4AI is a web-crawling/extraction library that exposes itself as an MCP server so other AI agents (e.g. Claude Code, Cursor) can call its crawling tools — this is the server-provider role, not a client that consumes external MCP servers' tools. There is no evidence Crawl4AI itself ingests or plugs in third-party MCP servers to extend its own capabilities, so this axis (being an MCP client) does not apply to this kind of tool.",
     "evidenceIds": [
+      "crawl4ai-gh-27",
       "crawl4ai-probe-3",
       "crawl4ai-comm-5",
       "crawl4ai-comm-6"
@@ -3486,10 +3496,11 @@
     "productId": "crawl4ai",
     "storyId": "agentic-mcp-server",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Official docs explicitly document an MCP (Model Context Protocol) server for self-hosting, confirming Crawl4AI ships a first-party MCP integration point for agents. However, community evidence notes developers commonly struggle with configuring MCP servers for tools like Cursor, indicating real-world friction rather than a seamless plug-and-play experience. Missing for 10: detailed first-party MCP server docs/spec excerpt, independent hands-on confirmation of successful agent connection, and evidence the setup struggles are resolved.",
+    "rationale": "Crawl4AI ships an official MCP server (documented in self-hosting docs) enabling direct connection to AI tools like Claude Code and Cursor, corroborated by community discussion of MCP setups for Cursor/Claude/n8n. However, evidence is thin — mostly single-line feature mentions and no detailed API/tool schema, and community notes new developers 'struggle' with production MCP configurations. Missing for 10: in-depth first-party MCP server documentation (tool list, auth, examples) and hands-on confirmation of smooth setup.",
     "evidenceIds": [
+      "crawl4ai-gh-27",
       "crawl4ai-probe-3",
       "crawl4ai-comm-5",
       "crawl4ai-comm-6"
@@ -3499,14 +3510,14 @@
     "productId": "crawl4ai",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Crawl4AI supports LLM-based extraction where users can specify extraction goals in natural language, and its adaptive crawling engine stops based on a natural-language 'query' describing what information is needed. However, the core interface (CLI, Python API) is still command/flag-based, not a general natural-language command layer for controlling the crawler itself. missing for 10: evidence of a chat-style or NL command interface for the tool's core operations, independent confirmation of how well NL-driven extraction/query works in practice.",
+    "rationale": "The CLI supports natural-language extraction queries (`crwl ... -q \"Extract all product prices\"`) and adaptive crawling that stops based on a natural-language query goal, plus MCP integration letting AI assistants like Claude Code drive it conversationally. However, most other operations (config, deep-crawl flags, session/browser settings) still require explicit parameters/code rather than full NL control. Missing for 10: broader NL command coverage across configuration/session management, independent hands-on evidence of NL-driven workflows beyond the -q flag.",
     "evidenceIds": [
-      "crawl4ai-gh-1",
+      "crawl4ai-gh-29",
       "crawl4ai-docs-3",
-      "crawl4ai-gh-2",
-      "crawl4ai-docs-2"
+      "crawl4ai-gh-27",
+      "crawl4ai-probe-3"
     ]
   },
   {
@@ -3515,26 +3526,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "There is a documented official CLI (`crwl`) with deep-crawl and other flags shown in GitHub examples, plus a dedicated docs page confirming it as an official feature. missing for 10: independent/hands-on third-party verification of the CLI's usage and a fuller list of supported CLI commands/flags beyond the single example.",
+    "rationale": "Crawl4AI ships an official `crwl` CLI with documented usage patterns (deep-crawl, output formats, natural-language query flags) and a dedicated docs page, confirmed by both GitHub examples and a docs probe. missing for 10: independent hands-on review specifically praising/critiquing the CLI itself (community commentary focuses on MCP/production setup rather than CLI experience).",
     "evidenceIds": [
       "crawl4ai-gh-2",
+      "crawl4ai-gh-28",
+      "crawl4ai-gh-29",
       "crawl4ai-probe-4"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Crawl4AI ships a documented Python async API (AsyncWebCrawler.arun), a CLI, and a Dockerized FastAPI server plus an official MCP endpoint, giving AI agents multiple programmatic ways to drive it. However, probes show no discoverable OpenAPI spec or llms.txt for the hosted API, meaning the REST/API surface isn't formally machine-documented in a standard way. Missing for 10: a published OpenAPI/swagger schema, llms.txt, and independent confirmation of API stability/versioning.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Crawl4AI ships a well-documented async Python API (arun/AsyncWebCrawler), a documented CLI (crwl), a Dockerized FastAPI server with an interactive playground, and an official MCP integration for AI tool connectivity — all confirmed by first-party docs and GitHub. This gives AI-native users multiple concrete, documented ways to programmatically drive the tool. Missing for 10: a formal OpenAPI/REST spec (probe found 404s on openapi.json/swagger.json paths) and an llms.txt reference, so full API discoverability for machine consumption is incomplete.",
     "evidenceIds": [
       "crawl4ai-docs-1",
+      "crawl4ai-docs-8",
       "crawl4ai-gh-2",
       "crawl4ai-gh-5",
+      "crawl4ai-gh-26",
+      "crawl4ai-gh-27",
       "crawl4ai-probe-3",
       "crawl4ai-probe-4",
-      "crawl4ai-probe-1",
       "crawl4ai-probe-2"
     ]
   },
@@ -3543,27 +3558,27 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI is an open-source library/self-hosted tool that explicitly avoids API keys ('No forced API keys'), and there is no evidence of any credential issuance system, scoped tokens, or least-privilege access controls for agents; auth-related evidence only covers browser profile cookies/session state, not API credential scoping.",
+    "confidence": "high",
+    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents; the docs explicitly state 'no forced API keys' and there's no auth/permission-scoping system described in any evidence item.",
     "evidenceIds": [
-      "crawl4ai-docs-4",
-      "crawl4ai-gh-3"
+      "crawl4ai-docs-4"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Crawl4AI ships a first-party Python SDK (AsyncWebCrawler API, extraction strategies, CLI) that is well documented and used directly by developers per docs and GitHub. missing for 10: no official SDKs beyond Python (e.g., JS/TS), no OpenAPI spec (404s found), and no independent benchmarking of SDK stability/versioning.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Crawl4AI ships a well-documented official Python async SDK (AsyncWebCrawler, arun()) with extensive first-party docs covering extraction, markdown generation, and browser control, plus an official CLI and MCP integration for AI tools. Community confirms real usage though notes it requires assembling production-grade policy/rate-limiting on top. Missing for 10: independent third-party SDK benchmarking/reviews beyond community forum comments, and no OpenAPI/other-language SDK evidence.",
     "evidenceIds": [
       "crawl4ai-docs-1",
+      "crawl4ai-docs-8",
       "crawl4ai-docs-2",
-      "crawl4ai-gh-1",
       "crawl4ai-gh-2",
+      "crawl4ai-gh-27",
       "crawl4ai-probe-4",
-      "crawl4ai-probe-2"
+      "crawl4ai-comm-4"
     ]
   },
   {
@@ -3571,33 +3586,36 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of webhook subscription or event-push capability anywhere in the docs, GitHub features, or community discussion; the product is a crawling library/service with Docker/FastAPI/MCP interfaces but nothing about webhooks.",
+    "confidence": "high",
+    "rationale": "No evidence of webhook subscription/event-notification capability anywhere in docs, GitHub features, or community discussion; Crawl4AI is a crawling/extraction library with MCP and Docker/FastAPI server support but nothing about publishing events via webhooks.",
     "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "ai-natural-language-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crawl4AI documents LLM-based extraction as an alternative to CSS/XPath selectors, letting developers describe desired structured data rather than write selectors, and this is corroborated by GitHub feature docs (LLM-Driven Extraction, LLMTableExtraction). However, the evidence doesn't show natural-language instruction schemas in detail (e.g., prompt examples), nor independent hands-on validation of extraction quality/accuracy. missing for 10: concrete example of natural-language extraction prompt/schema, independent quality benchmarks or hands-on confirmation of NL-instruction extraction accuracy.",
+    "rationale": "Crawl4AI supports LLM-based structured extraction and even a CLI query mode (`crwl ... -q \"Extract all product prices\"`) that lets users specify extraction goals in natural language rather than writing CSS/XPath selectors, backed by cosine-similarity/semantic chunk retrieval for query-driven extraction. missing for 10: independent hands-on evidence of extraction accuracy/quality for natural-language-specified schemas, and detailed docs on how NL instructions map to structured JSON output (schema inference reliability).",
     "evidenceIds": [
-      "crawl4ai-docs-2",
       "crawl4ai-gh-1",
-      "crawl4ai-gh-7"
+      "crawl4ai-gh-29",
+      "crawl4ai-gh-14",
+      "crawl4ai-gh-15",
+      "crawl4ai-docs-2"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Docs show static code snippets (e.g., crawl4ai-docs-1) but there is no evidence of an interactive API reference (like Swagger/OpenAPI UI) or runnable in-browser examples; probes explicitly confirm openapi.json/swagger.json and llms.txt endpoints return 404, indicating no such interactive reference exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "GitHub notes an 'interactive playground to test and generate request code' (crawl4ai-gh-26) and docs show runnable code snippets (crawl4ai-docs-1/8), suggesting some interactive example capability, but there is no evidence of a full interactive API reference (e.g., Swagger/OpenAPI UI) — probes explicitly show openapi.json/swagger.json 404s (crawl4ai-probe-2). Missing for 10: dedicated interactive API reference page, OpenAPI/Swagger-based docs, independent confirmation of the playground's scope and runnable examples beyond a single claim.",
     "evidenceIds": [
+      "crawl4ai-gh-26",
       "crawl4ai-docs-1",
-      "crawl4ai-probe-1",
+      "crawl4ai-docs-8",
       "crawl4ai-probe-2"
     ]
   },
@@ -3606,12 +3624,13 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI ships a Dockerized FastAPI server (crawl4ai-gh-5), so a machine-readable OpenAPI spec would be a plausible artifact, but direct probes for openapi.json/swagger.json/llms.txt all returned 404 with no alternative spec location documented.",
+    "confidence": "high",
+    "rationale": "Crawl4AI ships a FastAPI-based Docker server with an interactive playground, which would typically auto-expose an OpenAPI spec, but a direct probe found all standard OpenAPI/swagger endpoints (openapi.json, swagger.json, etc.) return 404, and llms.txt also 404s. No evidence of a downloadable machine-readable API spec exists in the pack.",
     "evidenceIds": [
+      "crawl4ai-gh-5",
+      "crawl4ai-gh-26",
       "crawl4ai-probe-2",
-      "crawl4ai-probe-1",
-      "crawl4ai-gh-5"
+      "crawl4ai-probe-1"
     ]
   },
   {
@@ -3629,7 +3648,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of versioned APIs or a documented deprecation policy; probes show no OpenAPI spec, no llms.txt, and no mention of versioning/deprecation practices anywhere in docs or community discussion.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; probes for openapi/llms.txt returned 404s and no changelog/versioning policy is mentioned anywhere in the docs or GitHub evidence.",
     "evidenceIds": [
       "crawl4ai-probe-1",
       "crawl4ai-probe-2"
@@ -3641,11 +3660,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Crawl4AI offers persistent browser profiles with saved authentication/cookies and 'undetected browser' support to evade bot detection, plus proxy/retry chains, which partially help with login walls and basic anti-bot evasion. However, there is no evidence of automatic CAPTCHA-solving, and community feedback explicitly calls out login/session handling and bot mitigation as things the user must configure and own themselves rather than fully automatic agent behavior. missing for 10: CAPTCHA-solving capability, evidence of fully hands-off login/session bootstrap, independent confirmation that undetected-browser mode reliably bypasses modern bot walls without manual setup.",
+    "rationale": "Crawl4AI offers anti-detection browser features (undetected browser, managed browser, stealth mode) and session/profile persistence to reuse saved login states across crawls, which helps avoid bot detection and re-authenticate without repeating login each time. However there is no evidence of actual CAPTCHA-solving capability, and persistent auth profiles require an initial manual login to capture cookies/session state, so it doesn't fully eliminate manual intervention. Community commentary explicitly flags 'bot mitigation, login/session handling' as unsolved production concerns users must own themselves. Missing for 10: CAPTCHA-solving/bypass evidence, fully automatic login flow without prior manual session capture, independent proof of form-wall bypass.",
     "evidenceIds": [
       "crawl4ai-gh-3",
       "crawl4ai-gh-9",
-      "crawl4ai-gh-4",
+      "crawl4ai-gh-16",
+      "crawl4ai-gh-18",
+      "crawl4ai-docs-6",
       "crawl4ai-comm-3"
     ]
   },
@@ -3661,13 +3682,15 @@
   {
     "productId": "crawl4ai",
     "storyId": "auto-retry-proxy-chain",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "GitHub feature list explicitly documents 'Automatic retry with proxy chain and fallback fetch function' plus undetected browser support for bot detection bypass, directly matching the story. However, this is a single line-item mention with no detailed docs, configuration examples, or independent/hands-on validation showing it working against real anti-bot systems. Missing for 10: dedicated documentation/tutorial on configuring proxy chains, code examples showing retry-on-block logic, and independent confirmation it succeeds against modern anti-bot defenses.",
+    "rationale": "GitHub evidence explicitly lists 'Automatic retry with proxy chain and fallback fetch function' alongside dedicated proxy support with authentication and undetected-browser/bot-detection bypass features, directly matching the story. Missing for 10: independent hands-on confirmation of the retry-chain behavior in practice, and detailed docs/config examples showing how to configure the proxy chain and anti-bot trigger conditions.",
     "evidenceIds": [
       "crawl4ai-gh-4",
-      "crawl4ai-gh-9"
+      "crawl4ai-gh-19",
+      "crawl4ai-gh-9",
+      "crawl4ai-docs-6"
     ]
   },
   {
@@ -3676,26 +3699,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Crawl4AI supports batch/bulk crawling via deep-crawl BFS with max-pages, multi-URL configuration with per-pattern strategies, checkpoint/resume for large jobs, and dockerized/API deployment for scaling bulk crawls. Missing for 10: independent benchmarks of large-scale bulk runs and clearer documentation of concurrency/throughput limits at scale.",
+    "rationale": "Crawl4AI natively supports bulk operations across many URLs: multi-URL configuration with per-pattern strategies, deep-crawl BFS with max-pages, parallel/high-performance crawling, and crash recovery/resume for long-running batch crawls. This is corroborated by CLI examples and GitHub docs, though independent hands-on benchmarking of large-scale batch runs is thin. Missing for 10: independent third-party verification of bulk/batch performance at scale, and clearer first-party docs quantifying batch throughput limits.",
     "evidenceIds": [
-      "crawl4ai-gh-2",
       "crawl4ai-gh-10",
+      "crawl4ai-gh-2",
+      "crawl4ai-gh-30",
       "crawl4ai-gh-8",
-      "crawl4ai-gh-5",
-      "crawl4ai-docs-3"
+      "crawl4ai-docs-7",
+      "crawl4ai-gh-31"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "automation-rules-engine",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI is a crawling/extraction library with adaptive crawling, retries, and checkpointing, but there is no evidence of a rules/trigger engine that lets users define conditional event-based automations (e.g., 'if X happens, do Y'). Community notes even highlight that users must build their own automation/policy layer via external tools like n8n rather than Crawl4AI natively supporting this.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Crawl4AI exposes some event-driven hooks and callbacks (e.g. 'on_state_change' callbacks for crash recovery, and general 'Hooks' for browser control) that let users react to specific crawl events, but there is no documented rules/automation engine for defining arbitrary trigger-action rules. Missing for 10: a general-purpose rules/trigger system, documentation of custom event definitions beyond crawl-state callbacks, and independent confirmation of rule-based automation use.",
     "evidenceIds": [
-      "crawl4ai-comm-5",
-      "crawl4ai-comm-6",
-      "crawl4ai-docs-3"
+      "crawl4ai-gh-30",
+      "crawl4ai-docs-6",
+      "crawl4ai-gh-8"
     ]
   },
   {
@@ -3704,11 +3728,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crawl4AI provides crawling, extraction, checkpointing, and Docker/API deployment, but no evidence of built-in scheduling or recurring job/workflow orchestration; community notes mention bridging to external tools like n8n for automation, implying no native scheduler exists.",
+    "rationale": "Crawl4AI provides crawling, extraction, session/state resumption, and Docker/MCP deployment, but there is no evidence of built-in scheduling or recurring job/workflow orchestration (e.g., cron-like triggers, job queues). Community notes even highlight that users must bridge to external automation tools like n8n for such workflows, indicating this is not a native capability.",
     "evidenceIds": [
       "crawl4ai-comm-5",
       "crawl4ai-comm-6",
-      "crawl4ai-gh-8"
+      "crawl4ai-gh-8",
+      "crawl4ai-gh-30"
     ]
   },
   {
@@ -3717,22 +3742,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crawl4AI is a web-crawling/extraction library, not an automation/workflow builder with versioned pipelines; version control, review, and rollback of automations is a category error for this product type. No evidence pack item addresses versioning or rollback of crawl configurations/workflows.",
+    "rationale": "Crawl4AI is a web-crawling/extraction library, not a workflow/automation-builder product with versioned pipelines or rollback semantics; versioning/review/rollback of 'automations' is a category mismatch for this tool's role rather than a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "batch-scrape-async",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crawl4AI supports async crawling (AsyncWebCrawler/arun), multi-URL batch configuration with per-pattern strategies, deep-crawl CLI options, retry/proxy fallback, and resume-from-checkpoint for long jobs, all pointing toward large-scale async scraping. However, there's no explicit documentation of a dedicated 'arun_many' or thousands-of-URLs batch API, concurrency/throughput benchmarks, or first-party evidence of tested scale at 'thousands of URLs'; community comments note buyers must build their own policy/quality/rate-limiting layer for production scale. Missing for 10: documented high-concurrency batch API (e.g., arun_many) with concurrency controls, published benchmarks/case studies at thousands-of-URL scale, and independent confirmation of reliability at that scale.",
+    "rationale": "Crawl4AI documents async crawling (arun/AsyncWebCrawler), explicit 'High Performance: Parallel crawling', multi-URL configuration for batch jobs, deep-crawl crash recovery via resume_state/on_state_change for long-running crawls, and a Dockerized FastAPI deployment suited to scale. Community feedback also notes it's a solid foundation but users must 'own the policy layer' (rate limiting, bot mitigation) for production-scale runs, indicating some operational gaps at true thousands-of-URL scale. Missing for 10: explicit batch/async API docs (e.g., arun_many) with concurrency controls, published benchmarks handling thousands of URLs, and independent hands-on confirmation of reliability at that scale.",
     "evidenceIds": [
       "crawl4ai-docs-1",
+      "crawl4ai-docs-7",
       "crawl4ai-gh-10",
-      "crawl4ai-gh-4",
-      "crawl4ai-gh-8",
-      "crawl4ai-gh-2",
+      "crawl4ai-gh-30",
+      "crawl4ai-gh-5",
       "crawl4ai-comm-2",
       "crawl4ai-comm-3"
     ]
@@ -3743,7 +3768,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions ad-blocking or resource-blocking features to speed up crawling; while Crawl4AI has various performance and crawling features, none reference blocking ads specifically.",
+    "rationale": "No evidence pack item mentions ad-blocking or resource-blocking features to speed up crawling; while general performance and browser control features exist, none specifically address blocking ads/resources.",
     "evidenceIds": []
   },
   {
@@ -3752,7 +3777,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions blocking images/CSS resources or any bandwidth-saving resource-filtering feature; none of the docs, GitHub, or community citations reference this capability.",
+    "rationale": "No evidence pack item mentions blocking images/CSS resources, exclude_resource_types, or similar bandwidth-saving configuration options for Crawl4AI; the closest items relate to browser control, proxies, and session management but not resource-type blocking.",
     "evidenceIds": []
   },
   {
@@ -3761,7 +3786,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crawl4AI is an open-source, self-hosted library/Docker deployment with no vendor-imposed pricing tiers or session caps (crawl4ai-docs-4 emphasizes no forced API keys or paywalls); concurrency is governed by the user's own infrastructure, not a purchasable tier, so the pricing-limits axis doesn't apply to this product category.",
+    "rationale": "Crawl4AI is an open-source, self-hosted crawling library/tool with no paid pricing tiers or usage caps (explicitly 'no paywalls'); pricing-tier concurrency limits are not applicable to this product's model.",
     "evidenceIds": [
       "crawl4ai-docs-4"
     ]
@@ -3770,16 +3795,16 @@
     "productId": "crawl4ai",
     "storyId": "concurrent-sessions-at-scale",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crawl4AI supports batch/multi-URL crawling, deep crawl with max-pages, checkpoint resume, Docker/FastAPI deployment with a monitoring dashboard showing browser pool visibility, and retry/proxy chains—together implying support for concurrent, at-scale scraping. However, there's no explicit documentation of concurrency limits, session pooling configuration, or benchmarks proving many-simultaneous-session throughput, and community commentary notes users must build their own rate-limiting/production policy layer. Missing for 10: explicit concurrency/session-pool configuration docs, load/scale benchmarks, and independent verification of large-scale concurrent runs.",
+    "rationale": "Crawl4AI explicitly documents 'High Performance: Parallel crawling' and ships a Dockerized FastAPI server with a real-time monitoring dashboard exposing 'browser pool visibility', plus multi-URL batch configs, automatic retries/proxy chains, and resume_state/on_state_change for crash recovery on long-running crawls — all directly supporting concurrent, at-scale scraping sessions. However, community feedback (comm-2, comm-3) notes that production-grade concurrency at scale still requires the user to build the 'policy layer' (rate limiting, bot mitigation, session handling), indicating some scaling groundwork isn't fully turnkey. Missing for 10: independent benchmarks or hands-on verification of concurrency limits/throughput at scale, and first-party guidance on safely running many simultaneous sessions.",
     "evidenceIds": [
-      "crawl4ai-gh-2",
-      "crawl4ai-gh-4",
+      "crawl4ai-docs-7",
       "crawl4ai-gh-5",
       "crawl4ai-gh-6",
-      "crawl4ai-gh-8",
+      "crawl4ai-gh-4",
       "crawl4ai-gh-10",
+      "crawl4ai-gh-30",
       "crawl4ai-comm-2",
       "crawl4ai-comm-3"
     ]
@@ -3789,8 +3814,8 @@
     "storyId": "content-change-monitoring",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI is a crawling/extraction library with deep-crawl, retry, and dashboard monitoring features, but nothing in the evidence describes scheduled re-crawling, diff/change-detection, or alerting/notification mechanisms for tracking content changes like price or listing updates over time.",
+    "confidence": "high",
+    "rationale": "Crawl4AI provides crawling, extraction, and session/deep-crawl features but no evidence of any change-detection, diffing, scheduling, or notification/alerting mechanism for monitoring pages over time; this is a plausible axis for a scraping tool but nothing in the evidence pack supports it.",
     "evidenceIds": []
   },
   {
@@ -3799,7 +3824,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Crawl4AI is a browser-based crawler and viewport control (headless=True/False, viewport_width/height config) is a real feature category, but no evidence pack item mentions viewport, browser window size, or rendering dimensions configuration.",
+    "rationale": "No evidence pack item mentions viewport width/height configuration or browser window size controls; only general browser control features (proxies, stealth, sessions, JS execution) are documented, without specifics on viewport dimensions.",
     "evidenceIds": []
   },
   {
@@ -3808,7 +3833,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or feature evidence shows Crawl4AI automatically respects robots.txt or enforces target-site rate limits; the only relevant community evidence explicitly notes that 'robots/ToS, rate limiting' are things the operator must own themselves, i.e., not built-in automation.",
+    "rationale": "No documentation or feature list mentions robots.txt compliance or automatic rate-limiting; the crawler's feature set (proxies, retries, session management, deep-crawl) says nothing about honoring crawl-delay or site politeness policies. Community commentary explicitly flags this gap, noting users must 'own the policy layer' for robots/ToS and rate limiting themselves.",
     "evidenceIds": [
       "crawl4ai-comm-2",
       "crawl4ai-comm-3"
@@ -3820,7 +3845,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crawl4AI is an open-source, self-hosted crawling library/tool with no paywalls or paid plans (crawl4ai-docs-4), so there is no metered plan with credits, quotas, or overage billing for this question to apply to.",
+    "rationale": "Crawl4AI is a free, open-source, self-hosted crawling library with no forced API keys or paywalls (crawl4ai-docs-4); there is no metered plan, credit system, or quota to exceed, so pricing-overage behavior is a category error for this product.",
     "evidenceIds": [
       "crawl4ai-docs-4"
     ]
@@ -3828,12 +3853,13 @@
   {
     "productId": "crawl4ai",
     "storyId": "css-xpath-extraction",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs explicitly mention structured extraction supporting CSS and XPath selectors alongside LLM-based extraction, confirming the capability exists. However, evidence lacks concrete code examples, schema syntax details, or independent hands-on confirmation of CSS/XPath extraction specifically (most community and GitHub evidence focuses on LLM extraction, crawling, and deployment features instead). Missing for 10: detailed CSS/XPath schema examples, independent verification of selector-based extraction working in practice, documentation depth comparable to LLM extraction features.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs and GitHub explicitly describe CSS/XPath-based structured extraction with defined schemas for pulling repeated fields into JSON, in addition to LLM-based extraction. Missing for 10: no independent hands-on validation of CSS/XPath selector accuracy or edge cases beyond vendor claims.",
     "evidenceIds": [
-      "crawl4ai-docs-2"
+      "crawl4ai-docs-2",
+      "crawl4ai-gh-14"
     ]
   },
   {
@@ -3841,13 +3867,12 @@
     "storyId": "custom-actor-development",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI is an open-source library/framework requiring self-hosting via Docker or local Python install; there is no evidence of a managed serverless platform for deploying custom scraping scripts without infrastructure management. Evidence instead shows users must set up Docker containers, browser pools, and monitoring dashboards themselves.",
+    "confidence": "high",
+    "rationale": "Crawl4AI ships as an open-source library/CLI with a Dockerized FastAPI server meant for self-hosting, not a managed serverless platform; there is no evidence of a hosted/serverless execution environment where developers deploy scripts without managing infrastructure. Community discussion even highlights users needing to handle Docker setups themselves for production (crawl4ai-comm-6), confirming infrastructure management is on the developer.",
     "evidenceIds": [
       "crawl4ai-gh-5",
-      "crawl4ai-gh-6",
-      "crawl4ai-comm-3",
-      "crawl4ai-comm-5"
+      "crawl4ai-comm-6",
+      "crawl4ai-comm-3"
     ]
   },
   {
@@ -3856,25 +3881,24 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Crawl4AI outputs scraped data in portable formats like Markdown and structured JSON/CSS-XPath extraction, and being open-source with no forced API keys supports a no-lock-in narrative, but there is no documented feature for exporting or migrating job configurations, crawl profiles, or schemas to another provider. missing for 10: explicit config/job export or import tooling, documented migration path to another scraping provider, independent confirmation of format portability.",
+    "rationale": "Crawl4AI outputs data in open, portable formats (markdown, JSON) and is open-source with no forced API keys, which inherently avoids proprietary lock-in on scraped data (crawl4ai-docs-4, crawl4ai-docs-5). However, there is no evidence of an explicit feature to export job/crawl configurations in a standardized portable format for migrating to another provider — crawl configs are just Python code/CLI args, not a documented export/import mechanism. Missing for 10: documented config export/import tooling, explicit migration guidance, evidence of standardized schema/config portability beyond raw code.",
     "evidenceIds": [
-      "crawl4ai-docs-1",
-      "crawl4ai-docs-2",
-      "crawl4ai-docs-4"
+      "crawl4ai-docs-4",
+      "crawl4ai-docs-5",
+      "crawl4ai-gh-2"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "data-quality-monitoring-alerts",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "medium",
-    "rationale": "There is a documented real-time monitoring dashboard with live system metrics and browser pool visibility, which covers basic job performance monitoring, and automatic retry with proxy/fallback chains aids reliability. However, there is no evidence of data quality validation features or an alerting/notification system for failures, and community feedback explicitly notes users must 'own the policy layer + quality gates' themselves. Missing for 10: data quality validation tooling, failure alerting/notification integration, and independent confirmation of the monitoring dashboard's depth.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "There's a Real-time Monitoring Dashboard with live system metrics and browser pool visibility, plus crash-recovery/resume_state features for long-running crawls, which gives some job performance visibility. However there's no evidence of data quality validation checks or alerting/notification mechanisms (email, Slack, webhooks) for failures. missing for 10: data quality validation tooling, alerting/notification system on failure, documented dashboards for quality metrics beyond system resource stats.",
     "evidenceIds": [
       "crawl4ai-gh-6",
-      "crawl4ai-gh-4",
-      "crawl4ai-comm-2",
-      "crawl4ai-comm-3"
+      "crawl4ai-gh-30",
+      "crawl4ai-gh-8"
     ]
   },
   {
@@ -3882,11 +3906,12 @@
     "storyId": "deep-crawl-bfs-with-limit",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "CLI evidence explicitly shows `--deep-crawl bfs --max-pages 10`, directly matching the requested breadth-first strategy with configurable page limit, and the official CLI docs corroborate this exists as a documented feature. Missing for 10: no independent hands-on report validating large-scale BFS crawl behavior/performance at scale, and no Python API example (only CLI) confirming programmatic configurability.",
+    "confidence": "high",
+    "rationale": "Direct evidence shows CLI support for BFS deep crawl with configurable max pages (`crwl ... --deep-crawl bfs --max-pages 10`), plus supporting infrastructure like crash recovery/resume_state for long-running crawls. missing for 10: no Python-API code example showing BFSDeepCrawlStrategy configuration, no independent benchmark of crawl scale/reliability at high page counts.",
     "evidenceIds": [
       "crawl4ai-gh-2",
-      "crawl4ai-probe-4"
+      "crawl4ai-gh-30",
+      "crawl4ai-gh-8"
     ]
   },
   {
@@ -3925,14 +3950,14 @@
     "storyId": "full-site-crawl",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Crawl4AI supports deep/BFS crawling with a max-pages parameter via CLI (--deep-crawl bfs --max-pages 10), plus adaptive crawling that decides when enough pages have been gathered, and resume_state for continuing large crawls — directly enabling whole-site crawling in one request/command. Community feedback confirms it's used for scraping at scale, though notes production concerns like rate limiting and bot mitigation as caveats. Missing for 10: independent benchmark of full-site crawl completeness/performance and clearer documentation of concurrency limits at scale.",
+    "confidence": "high",
+    "rationale": "Crawl4AI documents deep crawling (BFS) with --deep-crawl and --max-pages flags, crash recovery via resume_state/on_state_change for long-running crawls, and adaptive crawling that determines when enough info is gathered, all with a single CLI/API call. missing for 10: independent hands-on verification of full-site crawl completeness/reliability at scale, and clearer first-party docs example showing full multi-page crawl output (not just single-URL arun call).",
     "evidenceIds": [
       "crawl4ai-gh-2",
+      "crawl4ai-gh-30",
       "crawl4ai-docs-3",
       "crawl4ai-gh-8",
-      "crawl4ai-comm-2",
-      "crawl4ai-comm-3"
+      "crawl4ai-gh-31"
     ]
   },
   {
@@ -3940,10 +3965,12 @@
     "storyId": "geo-targeted-proxy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence mentions proxy chain retry/fallback for reliability but nothing about selecting or requesting a proxy from a specific country/geolocation. Missing for 10: documentation of country-specific proxy selection, geolocation targeting API/config, and any example of requesting geo-located content.",
+    "confidence": "medium",
+    "rationale": "Crawl4AI documents generic proxy support (authentication, proxy chains, retry/fallback) but no evidence of selecting proxies by specific country or geolocation targeting.",
     "evidenceIds": [
-      "crawl4ai-gh-4"
+      "crawl4ai-gh-19",
+      "crawl4ai-gh-4",
+      "crawl4ai-docs-6"
     ]
   },
   {
@@ -3951,8 +3978,8 @@
     "storyId": "image-captioning-for-text-llm",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions image captioning or alt-text generation for images; the extraction features described (LLM-based structured extraction, table extraction) are unrelated to describing visual content for a text-only model. Missing for 10: any mention of image-to-text captioning, vision-model integration, or alt-text generation feature.",
+    "confidence": "high",
+    "rationale": "No evidence of automatic image captioning or vision-to-text description generation for text-only models; extraction features cover structured data, markdown, and screenshots but not image captioning.",
     "evidenceIds": []
   },
   {
@@ -3960,45 +3987,54 @@
     "storyId": "interactive-browser-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Crawl4AI offers CDP-based 'Remote Browser Control' and a 'Managed Browser' feature, but these are for programmatic, large-scale crawling automation — not a vendor-hosted sandbox for manual, interactive browsing sessions. It is a self-hosted open-source library/Docker service, not a managed cloud browsing environment.",
+    "evidenceIds": [
+      "crawl4ai-gh-16",
+      "crawl4ai-gh-17",
+      "crawl4ai-gh-5"
+    ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "js-rendering-spa",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Crawl4AI is built on a real browser (AsyncWebCrawler with undetected browser support, browser profiles, etc.), which implies it can render JS-heavy SPAs and return rendered HTML/markdown, but the evidence pack never explicitly documents JS execution/wait-for-selector behavior or confirms fully-rendered HTML output for SPAs. Missing for 10: explicit documentation of JS rendering/execution settings (e.g., wait_for, js_code, page load strategies), and independent/hands-on confirmation that dynamic SPA content is captured correctly.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Crawl4AI is built on a real browser (Chromium/Firefox/WebKit) and explicitly supports executing JS, waiting for dynamic content, full-page scrolling for infinite-scroll pages, and returning fully rendered HTML/markdown output, backed by both official docs and GitHub feature list. Community feedback corroborates it as a working scraping library for LLM pipelines. Missing for 10: independent hands-on benchmark specifically verifying JS-heavy SPA rendering accuracy beyond vendor/GitHub claims.",
     "evidenceIds": [
+      "crawl4ai-gh-21",
+      "crawl4ai-gh-25",
+      "crawl4ai-docs-6",
       "crawl4ai-docs-1",
-      "crawl4ai-gh-9",
-      "crawl4ai-gh-3",
-      "crawl4ai-gh-5"
+      "crawl4ai-comm-4"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "json-schema-extraction",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs mention structured extraction via CSS/XPath/LLM-based extraction and LLM-driven extraction supporting schema-like structured output, implying JSON-schema-guided extraction, but no evidence pack item explicitly shows passing a JSON schema and receiving matching structured JSON output. missing for 10: explicit documented JSON schema parameter/example, sample output matching schema, independent verification of schema conformance.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crawl4AI supports schema-based structured extraction (CSS/XPath/LLM) and explicitly documents 'Schema Definition' for extracting structured JSON from repetitive patterns, with LLM-driven extraction supporting arbitrary schemas. However, no evidence shows JSON-schema-conforming output validated against a passed-in JSON Schema spec (like OpenAI function calling) rather than crawl4ai's own extraction schema format. Missing for 10: explicit example of passing a standard JSON Schema and receiving validated matching output, independent/hands-on confirmation of schema fidelity.",
     "evidenceIds": [
       "crawl4ai-docs-2",
-      "crawl4ai-gh-1"
+      "crawl4ai-gh-1",
+      "crawl4ai-gh-14"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "large-table-chunked-extraction",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub docs explicitly cite 'LLMTableExtraction: Revolutionary table extraction with intelligent chunking for massive tables,' directly matching the story of extracting data from very large tables via chunking. However, missing for 10: independent hands-on validation of chunking behavior on real large tables, and detailed documentation on configuring chunk size/limits or performance benchmarks.",
+    "rationale": "GitHub docs explicitly list 'LLMTableExtraction: Revolutionary table extraction with intelligent chunking for massive tables,' directly matching the story, and this is complemented by broader chunk-based extraction/high-performance claims and general structured extraction features. Missing for 10: independent/hands-on validation of the table chunking feature's limits and performance benchmarks on very large tables.",
     "evidenceIds": [
-      "crawl4ai-gh-7"
+      "crawl4ai-gh-7",
+      "crawl4ai-docs-7",
+      "crawl4ai-docs-2",
+      "crawl4ai-gh-15"
     ]
   },
   {
@@ -4007,11 +4043,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Crawl4AI offers explicit levers to trade latency for completeness: adaptive crawling that stops once 'sufficient information' is gathered, deep-crawl with max-pages limits, and resume_state checkpointing to control scope of a crawl before returning results. However, evidence is first-party docs/GitHub only, with no independent benchmarks or hands-on confirmation of how well the adaptive stopping heuristic tunes latency-vs-completeness in practice. Missing for 10: independent verification of adaptive-crawl accuracy/latency tradeoffs, and explicit developer-facing controls (e.g., a 'depth' or 'confidence threshold' parameter) documented with examples.",
+    "rationale": "Crawl4AI offers adaptive crawling that stops once enough information is gathered (foraging algorithm), deep-crawl with max-pages/BFS controls, and resume_state/checkpointing for long-running crawls — all of which let a developer trade off latency vs. completeness by controlling when/how much content is returned. However, there's no explicit streaming/early-return API or documented latency-vs-completeness benchmarks showing the tradeoff quantitatively. Missing for 10: explicit streaming or partial-result return mode, documented latency/completeness benchmarks, independent hands-on verification of the adaptive stopping behavior's accuracy.",
     "evidenceIds": [
       "crawl4ai-docs-3",
       "crawl4ai-gh-2",
-      "crawl4ai-gh-8"
+      "crawl4ai-gh-8",
+      "crawl4ai-gh-30"
     ]
   },
   {
@@ -4028,26 +4065,32 @@
   {
     "productId": "crawl4ai",
     "storyId": "llm-driven-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs and GitHub confirm LLM-based structured extraction supporting arbitrary LLMs (open-source and proprietary), which enables schema-free, LLM-decided field extraction rather than fixed CSS/XPath selectors. However, evidence is thin on how the LLM decides fields (e.g., whether a schema/prompt is still required or if it's fully autonomous field discovery), and there's no hands-on example or independent validation of the LLM extraction path's accuracy. missing for 10: concrete example/walkthrough of LLM freely deciding fields without any schema, independent quality benchmarks on this specific extraction mode.",
+    "rationale": "Crawl4AI explicitly supports LLM-driven structured extraction without pre-written CSS/XPath selectors, letting an LLM infer schema/fields directly, plus a CLI query mode (`-q \"Extract all product prices\"`) that demonstrates natural-language field extraction. Missing for 10: independent hands-on benchmarking of extraction accuracy/field-selection quality, and detailed docs on how schema-free LLM field inference is configured versus schema-based extraction.",
     "evidenceIds": [
       "crawl4ai-docs-2",
-      "crawl4ai-gh-1"
+      "crawl4ai-gh-1",
+      "crawl4ai-gh-29",
+      "crawl4ai-gh-14"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "llm-ready-text-instead-of-raw-html",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Core value proposition is documented directly: result.markdown provides clean LLM-ready markdown output from arun(), avoiding manual HTML parsing, plus structured/LLM-based extraction options and community confirmation it 'solves many LLM-scraping headaches.' Missing for 10: independent benchmarking of markdown output quality across diverse sites, and more detail on how blocking/anti-bot handling integrates seamlessly with the output pipeline.",
+    "rationale": "Crawl4AI's core value proposition is directly delivering clean, LLM-ready markdown (result.markdown) instead of raw HTML, with dedicated features like Fit Markdown (noise-filtering heuristics), BM25-based content filtering, and citation/reference extraction specifically for AI-friendly processing. It also handles the rendering/blocking pain points itself (JS execution, stealth/undetected browser modes, proxy rotation, retries) so the user never has to deal with them, and community feedback corroborates it 'solves many LLM-scraping headaches.' Missing for 10: no independent benchmark of markdown quality vs. raw HTML extraction, and some production concerns (rate limiting, bot mitigation robustness) are noted as caveats by users.",
     "evidenceIds": [
       "crawl4ai-docs-1",
-      "crawl4ai-docs-2",
-      "crawl4ai-gh-1",
+      "crawl4ai-docs-5",
+      "crawl4ai-gh-11",
+      "crawl4ai-gh-12",
+      "crawl4ai-gh-13",
+      "crawl4ai-gh-21",
+      "crawl4ai-gh-9",
       "crawl4ai-comm-4"
     ]
   },
@@ -4068,11 +4111,16 @@
     "productId": "crawl4ai",
     "storyId": "markdown-output",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "First-party docs show result.markdown as the direct output from crawler.arun(), and community sentiment corroborates it as a core value proposition for LLM-scraping. Missing for 10: independent hands-on verification of markdown quality/cleanliness and details on markdown customization options (e.g., filters).",
+    "rationale": "First-party docs and CLI examples confirm result.markdown output and CLI -o markdown flag, plus dedicated Fit Markdown/BM25 filtering to strip noise for AI-friendly clean markdown, corroborated by community praise for solving LLM-scraping headaches. missing for 10: independent hands-on comparison of markdown output quality vs raw HTML.",
     "evidenceIds": [
       "crawl4ai-docs-1",
+      "crawl4ai-docs-5",
+      "crawl4ai-docs-8",
+      "crawl4ai-gh-28",
+      "crawl4ai-gh-11",
+      "crawl4ai-gh-13",
       "crawl4ai-comm-4"
     ]
   },
@@ -4089,12 +4137,15 @@
     "productId": "crawl4ai",
     "storyId": "multi-format-choice",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms markdown output (result.markdown) and structured/CSS/XPath/LLM extraction, but the pack contains no explicit mention of selectable HTML, text, or frontmatter output formats. Missing for 10: documented options for raw/cleaned HTML output, plain text output, and frontmatter format selection.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Evidence confirms markdown output (result.markdown, CLI -o markdown) and structured JSON/schema extraction, but there is no explicit mention of selectable HTML, raw text, or frontmatter output formats. Missing for 10: documented HTML output option, plain-text output option, frontmatter format support.",
     "evidenceIds": [
       "crawl4ai-docs-1",
-      "crawl4ai-docs-2"
+      "crawl4ai-docs-5",
+      "crawl4ai-gh-28",
+      "crawl4ai-gh-14",
+      "crawl4ai-gh-11"
     ]
   },
   {
@@ -4103,11 +4154,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a prebuilt n8n/Zapier connector; the only related evidence is community commentary noting developers struggle to bridge Crawl4AI with n8n and a third-party community doc hub with Docker setup guides, not an official connector from Crawl4AI itself.",
+    "rationale": "There is no evidence of an official prebuilt n8n or Zapier connector; only a community-run documentation hub with Docker setup guides for bridging Crawl4AI to n8n, and community comments note that connecting to automation tools like n8n is a common struggle for new developers, not a shipped feature.",
     "evidenceIds": [
       "crawl4ai-comm-5",
-      "crawl4ai-comm-6",
-      "crawl4ai-gh-5"
+      "crawl4ai-comm-6"
     ]
   },
   {
@@ -4116,11 +4166,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crawl4AI ships its own AsyncWebCrawler API (built on Playwright internally) rather than exposing compatibility layers for Playwright, Puppeteer, Selenium, or Scrapy code; none of the evidence mentions using these other libraries to build scrapers within Crawl4AI.",
-    "evidenceIds": [
-      "crawl4ai-docs-1",
-      "crawl4ai-gh-2"
-    ]
+    "rationale": "The evidence pack describes Crawl4AI's own browser automation, extraction, and CLI features but never mentions integration with or support for building scrapers via Playwright, Puppeteer, Selenium, or Scrapy as external libraries a developer could plug into Crawl4AI's workflow.",
+    "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
@@ -4128,28 +4175,29 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Crawl4AI is API/library-first (Python API, CLI, Docker/FastAPI server) and the only 'UI' surface mentioned is a monitoring dashboard for the Docker deployment, so most functionality is inherently API-native; however probes found no OpenAPI spec (404s) to confirm full parity/documentation of the API surface, and there's no explicit claim that dashboard-only features (e.g., live monitoring) are also exposed via API. missing for 10: explicit API/OpenAPI documentation confirming parity, evidence that dashboard-specific features (metrics, browser pool visibility) are also API-accessible.",
+    "rationale": "Crawl4AI is fundamentally API/CLI-first (arun, crwl CLI, Docker+FastAPI server) and includes an interactive playground that 'test[s] and generate[s] request code', suggesting UI actions map to API calls, plus a monitoring dashboard for browser-pool visibility. However, there is no discoverable OpenAPI/swagger spec (probe shows 404s), so it's unclear whether all UI-exposed capabilities (e.g., dashboard metrics) are fully API-accessible with parity guarantees. Missing for 10: published OpenAPI/API reference confirming full UI-feature coverage, explicit documentation stating UI and API have identical capability sets, and independent confirmation that dashboard-only features (metrics, browser pool visibility) are also API-retrievable.",
     "evidenceIds": [
-      "crawl4ai-docs-1",
-      "crawl4ai-gh-2",
-      "crawl4ai-gh-5",
+      "crawl4ai-gh-26",
       "crawl4ai-gh-6",
+      "crawl4ai-gh-5",
       "crawl4ai-probe-2",
-      "crawl4ai-probe-4"
+      "crawl4ai-docs-1"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "openness-full-export",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Crawl4AI is fully open-source and self-hosted, and its core output is markdown/JSON (open, non-proprietary formats) with no forced API keys or paywalls, meaning there is no vendor silo to 'leave' in the first place. Structured extraction (CSS/XPath/LLM) further lets users get data out in standard formats.  Missing for 10: no explicit bulk 'export all my data' feature, no documented data-portability/migration tooling, and no independent hands-on confirmation of full data portability beyond architecture inference.",
+    "rationale": "Crawl4AI outputs data in open, portable formats (Markdown, JSON via schemas) and is fully open-source with no forced API keys or paywalls, letting users take their extracted data and self-host freely. However, this is about export of crawler output, not a full 'export all your data and leave' migration story with account/data portability tooling. missing for 10: no evidence of a formal data-export/account-portability feature, no llms.txt or OpenAPI spec confirming open interoperable schemas (probes show 404s), and no explicit migration/backup tooling beyond markdown/JSON output.",
     "evidenceIds": [
       "crawl4ai-docs-1",
-      "crawl4ai-docs-2",
       "crawl4ai-docs-4",
-      "crawl4ai-gh-1"
+      "crawl4ai-docs-5",
+      "crawl4ai-gh-14",
+      "crawl4ai-probe-1",
+      "crawl4ai-probe-2"
     ]
   },
   {
@@ -4185,9 +4233,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "GitHub docs mention a Browser Profiler that creates and manages persistent profiles with saved authentication states and cookies, indicating support for passing session/auth state into crawls. However, there's no explicit first-party documentation snippet showing how to directly inject custom session cookies into the arun() API call, and no independent hands-on confirmation of this specific workflow. Missing for 10: direct API-level example of passing cookies, independent verification of authenticated-page fetching working reliably.",
+    "rationale": "Crawl4AI supports session/cookie reuse via Browser Profiler (persistent auth states/cookies) and general 'session re-use' in Advanced Browser Control, which enables fetching authenticated pages. However, community feedback explicitly flags login/session handling as a 'boring production bit' developers must own themselves, and there's no explicit doc example passing custom cookies programmatically via arun(). Missing for 10: a concrete first-party example of passing custom session cookies into arun(), independent hands-on confirmation of authenticated fetch working reliably.",
     "evidenceIds": [
-      "crawl4ai-gh-3"
+      "crawl4ai-gh-3",
+      "crawl4ai-docs-6",
+      "crawl4ai-gh-18",
+      "crawl4ai-comm-3"
     ]
   },
   {
@@ -4196,7 +4247,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions extraction of PDF, Word, Excel, or PowerPoint file content; all documented capabilities relate to web page crawling, structured/LLM extraction from HTML, and table extraction, not office document formats.",
+    "rationale": "Crawl4AI is a web crawling/scraping library focused on HTML content extraction to markdown/JSON; the evidence pack contains no mention of PDF, Word, Excel, or PowerPoint file parsing capabilities. Only 'file://' local file crawling is mentioned (crawl4ai-gh-23), but this refers to raw HTML files, not office document formats.",
     "evidenceIds": []
   },
   {
@@ -4205,20 +4256,24 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "GitHub docs explicitly advertise 'Multi-URL Configuration: Different strategies for different URL patterns in one batch,' directly matching the story. However, this is only a single-line feature mention with no first-party documentation example, API detail, or independent hands-on confirmation. missing for 10: detailed docs/tutorial showing per-pattern config syntax, independent/community validation of this specific feature in practice.",
+    "rationale": "GitHub docs explicitly advertise 'Multi-URL Configuration: Different strategies for different URL patterns in one batch,' directly matching the story, with additional support from schema/config-based extraction features. Missing for 10: a hands-on code example or independent corroboration showing this multi-config batch usage in practice.",
     "evidenceIds": [
-      "crawl4ai-gh-10"
+      "crawl4ai-gh-10",
+      "crawl4ai-docs-6",
+      "crawl4ai-docs-7"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "persistent-authenticated-session",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub docs explicitly describe a 'Browser Profiler' feature for creating and managing persistent profiles with saved authentication states, cookies, and settings, directly matching the story. Missing for 10: no independent/hands-on corroboration of profile reuse across multiple requests, and no first-party code sample demonstrating loading a saved profile in arun/AsyncWebCrawler calls.",
+    "rationale": "GitHub docs explicitly describe a 'Browser Profiler' for creating and managing persistent profiles with saved authentication states and cookies, plus 'Session Management' for preserving and reusing browser states across multi-step crawling, and 'Advanced Browser Control' mentions session re-use. Missing for 10: independent hands-on corroboration of profile reuse working reliably across sessions, and more detailed first-party doc excerpts showing the actual API/config for loading a saved profile.",
     "evidenceIds": [
-      "crawl4ai-gh-3"
+      "crawl4ai-gh-3",
+      "crawl4ai-gh-18",
+      "crawl4ai-docs-6"
     ]
   },
   {
@@ -4226,22 +4281,27 @@
     "storyId": "pii-filtering-on-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of built-in PII detection or filtering; extraction features focus on structured/LLM-based data extraction, not privacy compliance. Community commentary explicitly flags PII handling as something the user must own ('not accidentally hoovering up PII' as a 'boring production bit'), reinforcing that this is not a shipped capability.",
+    "confidence": "medium",
+    "rationale": "No evidence of any built-in PII detection or filtering capability; extraction features focus on structured/CSS/XPath/LLM extraction and content filtering (BM25, cosine similarity) but none target PII redaction. A community comment even explicitly flags 'not accidentally hoovering up PII' as a production concern users must own themselves, reinforcing the absence of this feature.",
     "evidenceIds": [
-      "crawl4ai-comm-3"
+      "crawl4ai-comm-3",
+      "crawl4ai-gh-11",
+      "crawl4ai-gh-13",
+      "crawl4ai-docs-2"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "post-render-behind-login",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "The Browser Profiler feature (crawl4ai-gh-3) supports persistent authentication states and cookies, which can help reach content behind a login wall, but there is no direct evidence of interactive session APIs for clicking or filling forms mid-crawl. Community commentary (crawl4ai-comm-3) even flags login/session handling as one of the 'boring production bits' users must handle themselves, suggesting it's not a polished, first-class capability. missing for 10: explicit documentation of click/fill/form-interaction APIs, session-persistence across multiple interactive steps, and independent confirmation of successful login-wall traversal.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crawl4AI supports persistent browser profiles with saved authentication/cookies, session management for multi-step crawling, and hook-based JS execution/browser control that could be used to click links or fill forms across a login flow. However, there is no explicit documented example of a login-wall click/fill workflow — missing for 10: a documented form-fill/click walkthrough, evidence of handling multi-page authenticated flows end-to-end, and independent confirmation it works against real login walls.",
     "evidenceIds": [
       "crawl4ai-gh-3",
-      "crawl4ai-comm-3"
+      "crawl4ai-gh-18",
+      "crawl4ai-docs-6",
+      "crawl4ai-gh-21"
     ]
   },
   {
@@ -4250,19 +4310,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a marketplace or gallery of ready-made scrapers/templates that a developer could run out of the box; the evidence only covers building crawlers via code/CLI configuration yourself, not a pre-built scraper marketplace.",
+    "rationale": "Crawl4AI is a library/framework for building crawlers with CLI, docker, MCP integration, but there's no evidence of a marketplace of pre-built, ready-made scrapers a developer can just pull and run instead of writing their own crawl logic.",
     "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "premium-residential-proxies",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Crawl4AI supports proxy chains with automatic retry/fallback and undetected browser mode to bypass bot detection, but there is no evidence of built-in support for premium residential/datacenter proxy providers or proxy rotation services—users must bring and configure their own proxies. missing for 10: no documented integration with residential/datacenter proxy providers, no proxy rotation/pool management features, no independent evidence of successful bypass on hard-to-scrape sites using proxies.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crawl4AI documents generic proxy support with authentication, proxy chain retries, and 'stealth modes' plus undetected-browser support for bypassing bot detection, which lets developers plug in their own residential/datacenter proxies. However, there is no evidence of a built-in proxy marketplace, rotation pool, or specific integration with premium proxy providers—developers must bring and manage their own proxy credentials. Missing for 10: documented integration with named premium proxy providers, automatic proxy rotation/pool management, and independent evidence of successful bypass using residential/datacenter proxies specifically.",
     "evidenceIds": [
+      "crawl4ai-gh-19",
       "crawl4ai-gh-4",
-      "crawl4ai-gh-9"
+      "crawl4ai-docs-6",
+      "crawl4ai-gh-9",
+      "crawl4ai-gh-16"
     ]
   },
   {
@@ -4271,7 +4334,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Crawl4AI is open-source and self-hosted (Dockerized Setup), which implicitly lets users control where data is processed/stored by choosing their own deployment infrastructure, but there is no explicit documentation, configuration option, or claim about region/data-residency selection. missing for 10: explicit data residency/region configuration options, documentation addressing compliance/residency requirements, any mention of storage location control beyond generic self-hosting.",
+    "rationale": "Crawl4AI is open-source and self-hostable (Dockerized deployment), which implicitly lets a user choose the physical location/region where their crawl data resides, since there is no vendor-hosted SaaS storing data by default. However, there is no explicit documentation, feature, or setting for data residency/region selection — the evidence never discusses this as a deliberate product capability. Missing for 10: explicit region/residency configuration options, documented data-storage location controls, and any statement addressing compliance/residency requirements.",
     "evidenceIds": [
       "crawl4ai-gh-5",
       "crawl4ai-docs-4"
@@ -4294,8 +4357,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes explicit data retention/deletion controls (e.g., cache TTLs, purge commands, GDPR-style export/delete APIs); the only related item is a vague self-hosted/open-source claim about accessing your own data, which does not address retention or deletion policy.",
+    "confidence": "medium",
+    "rationale": "Crawl4AI stores crawled data, browser profiles, session states, and cache locally, so retention/deletion controls are a fair question for this kind of tool, but the evidence pack shows no explicit feature, API, or documentation for configuring data retention periods or deleting stored crawl/session data — only a general 'you own your data since it's open source' claim (crawl4ai-docs-4), which is not a retention/deletion control.",
     "evidenceIds": [
       "crawl4ai-docs-4"
     ]
@@ -4306,7 +4369,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Crawl4AI is an open-source, self-hosted library (no forced API keys/paywalls), which suggests limited built-in telemetry, but no evidence pack item mentions a telemetry system, opt-out flag, or privacy/usage-tracking policy at all.",
+    "rationale": "Crawl4AI is an open-source, self-hosted library (mentioned as 'Open Source: No forced API keys, no paywalls') which implies no phone-home telemetry, but the evidence pack contains no explicit statement about a telemetry/usage-tracking feature or an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -4315,7 +4378,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crawl4AI is an open-source self-hosted crawling library/tool, not a hosted SaaS with an uptime/SLA obligation; a public status page with incident postmortems is not a fair expectation for this product category.",
+    "rationale": "Crawl4AI is an open-source library/self-hosted tool, not a hosted SaaS service; there is no vendor-run infrastructure whose uptime would warrant a public status page or incident postmortems, so this axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -4323,58 +4386,60 @@
     "storyId": "ready-made-templates",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence shows basic usage snippets, CLI/Docker deployment instructions, and a third-party community docs hub with one-click setups, but no official library of ready-made project templates or starter kits is documented by the vendor.",
-    "evidenceIds": [
-      "crawl4ai-docs-1",
-      "crawl4ai-gh-5",
-      "crawl4ai-comm-6"
-    ]
+    "confidence": "medium",
+    "rationale": "There is a community-built docs hub with Docker one-click setups and guides, but no evidence of official ready-made project templates/starter kits from Crawl4AI itself for quick-start development.",
+    "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "reasoning-effort-control",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI has adaptive crawling that stops when 'enough' info is gathered, but there is no evidence of a configurable reasoning-effort dial (low/medium/high) for agent tasks.",
+    "confidence": "high",
+    "rationale": "Crawl4AI has adaptive crawling that stops when 'enough' info is gathered, but there is no evidence of a configurable reasoning-effort or budget setting (low/medium/high) for an agent's task; no such parameter appears in docs, CLI, or GitHub feature list.",
     "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "research-agent-preset",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crawl4AI supports markdown/structured output and LLM-based structured extraction, and its 'adaptive crawling' feature explicitly determines when 'sufficient information has been gathered to answer your query,' which aligns with a research-agent workflow. However, there is no evidence of an actual named preset/config specifically tuned for research agents nor of output formatted with citations/sources for verifiability. Missing for 10: a documented 'research agent' preset profile, explicit citation/source-tracking in output, and independent confirmation that adaptive crawling output is citable.",
+    "rationale": "Crawl4AI offers strong building blocks for research-agent use: adaptive crawling that stops once enough info is gathered, a 'Fit Markdown' filter and BM25 for relevance, schema-based structured JSON extraction, and an explicit 'Citations and References' feature that numbers links into a clean citation list, plus clean markdown output tuned for RAG/LLM ingestion. However, there is no evidence of a single named 'research agent' preset bundling these into one turnkey config — a user must assemble adaptive crawling + fit markdown + citation extraction manually via CLI/API options. Missing for 10: a documented one-flag research-agent preset, and independent/hands-on confirmation that the citation output is reliably structured and agent-consumable.",
     "evidenceIds": [
-      "crawl4ai-docs-2",
       "crawl4ai-docs-3",
-      "crawl4ai-gh-1",
-      "crawl4ai-docs-1"
+      "crawl4ai-gh-12",
+      "crawl4ai-gh-11",
+      "crawl4ai-gh-13",
+      "crawl4ai-gh-14",
+      "crawl4ai-docs-5"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "resume-crashed-crawl",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub evidence confirms a resume_state parameter to continue a deep crawl from a saved checkpoint, directly matching the story. However, there's no documentation detail on how checkpoints are saved automatically during a crash, how frequently state is persisted, or independent hands-on confirmation of this working in practice. missing for 10: first-party docs walkthrough of checkpoint save/resume workflow, independent/community verification of crash-recovery behavior.",
+    "rationale": "GitHub docs explicitly describe a `resume_state` parameter and `on_state_change` callbacks specifically for deep crawl crash recovery on long-running crawls, directly matching the checkpoint-resume story. Missing for 10: no independent/hands-on corroboration of resuming a real crashed crawl, and no first-party doc page (only GitHub feature listing) detailing usage specifics.",
     "evidenceIds": [
-      "crawl4ai-gh-8"
+      "crawl4ai-gh-8",
+      "crawl4ai-gh-30"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "rotating-proxy-pool",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "There is evidence of proxy chain retry/fallback logic (automatic retry with proxy chain and fallback fetch function) and undetected browser support for bot detection bypass, indicating some proxy-rotation and anti-bot capability exists. However, no documentation details how to configure a pool of rotating proxy IPs, proxy list management, or rotation strategy specifics. missing for 10: explicit proxy pool configuration docs, rotation strategy details, independent confirmation of proxy rotation working in practice.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crawl4AI documents proxy support with authentication and 'automatic retry with proxy chain and fallback fetch function,' plus general 'stealth modes' for bot avoidance, indicating built-in support for routing through proxies. However, there's no explicit documentation of a rotating pool/proxy pool management feature (e.g., automatic IP rotation across a list) — only single proxy connection and retry-on-fail chains are evidenced. Missing for 10: explicit rotating-proxy-pool configuration API, independent hands-on confirmation that rotation avoids blocks in practice.",
     "evidenceIds": [
+      "crawl4ai-gh-19",
       "crawl4ai-gh-4",
-      "crawl4ai-gh-9"
+      "crawl4ai-docs-6",
+      "crawl4ai-gh-9",
+      "crawl4ai-gh-16"
     ]
   },
   {
@@ -4383,30 +4448,34 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of built-in scheduling functionality (cron-like triggers or job scheduler) — Crawl4AI is a crawling/extraction library and CLI/Docker deployment, with community notes suggesting users must bridge to external automation tools like n8n for production workflows including scheduling. Missing for 10: any native scheduler, cron integration, or documented recurring-job API.",
-    "evidenceIds": [
-      "crawl4ai-comm-5",
-      "crawl4ai-comm-6",
-      "crawl4ai-gh-5"
-    ]
+    "rationale": "No evidence of built-in job scheduling (cron-like triggers, scheduled runs) anywhere in the docs or GitHub features; the library focuses on crawling, extraction, and session/browser control, not job orchestration. A developer would need to pair it with external schedulers (cron, Airflow, n8n) which is not documented as a first-party capability.",
+    "evidenceIds": []
   },
   {
     "productId": "crawl4ai",
     "storyId": "screenshot-capture",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions screenshot capture, full-page or selector-based screenshots, or any image output capability of Crawl4AI.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crawl4AI's GitHub docs explicitly mention screenshot capture during crawling and full-page scanning via scrolling, supporting whole-page capture. However, there's no specific evidence of selecting/cropping a specific area or selector-based screenshot capability, only full-page/debugging screenshots. Missing for 10: documented API/parameter for selector-scoped or region-specific screenshot capture, independent hands-on confirmation of screenshot quality/output format.",
+    "evidenceIds": [
+      "crawl4ai-gh-22",
+      "crawl4ai-gh-25"
+    ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "scripted-page-interactions",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack describes many Crawl4AI features (extraction, deep-crawl, browser profiles, proxy retry, docker/MCP/CLI) but never mentions scripting page interactions such as clicking, filling inputs, or scrolling before extraction. This is a fair capability to expect from a browser-based crawler, but no evidence in the pack documents it.",
-    "evidenceIds": []
+    "rationale": "Crawl4AI supports dynamic content via JS execution, session reuse, full-page scanning/scrolling for infinite scroll, and 'Hooks' for advanced browser control, which cover scripted interactions like scrolling and waiting for async content. However, explicit documentation of scripting discrete actions like clicking specific elements or filling form inputs (vs. general JS execution) is not directly evidenced beyond generic 'execute JS' claims. Missing for 10: concrete first-party code examples showing click/fill input actions specifically, independent hands-on confirmation of interaction scripting working as described.",
+    "evidenceIds": [
+      "crawl4ai-gh-21",
+      "crawl4ai-gh-25",
+      "crawl4ai-gh-18",
+      "crawl4ai-docs-6"
+    ]
   },
   {
     "productId": "crawl4ai",
@@ -4414,7 +4483,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Crawl4AI is explicitly open source with no forced API keys/paywalls, distributed via GitHub, and supports Dockerized self-hosting with a FastAPI server, plus community-documented self-hosting guides (Docker, n8n, MCP for Cursor/Claude) corroborating real-world self-hosted deployments. missing for 10: independent benchmark/uptime evidence of large-scale self-hosted production use.",
+    "rationale": "Crawl4AI is explicitly open-source (no forced API keys/paywalls) and ships a Dockerized FastAPI server setup for self-hosted deployment, plus community evidence of Docker/self-hosting guides and comparisons vs proprietary hosted tools like Firecrawl. missing for 10: independent hands-on benchmark of self-hosted deployment reliability at scale.",
     "evidenceIds": [
       "crawl4ai-docs-4",
       "crawl4ai-gh-5",
@@ -4425,14 +4494,16 @@
   {
     "productId": "crawl4ai",
     "storyId": "semantic-chunked-output",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence only shows 'intelligent chunking' applied specifically to massive table extraction (LLMTableExtraction), not a general semantic chunking mode for arbitrary page content feeding a RAG pipeline. Structured/LLM extraction exists but nothing documents configurable chunk sizes, overlap, or semantic-boundary chunking of markdown output. Missing for 10: documented general-purpose content chunking strategy (e.g. semantic/topic-based chunking of markdown), configurable chunk size/overlap, and independent confirmation it integrates cleanly into retrieval pipelines.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Crawl4AI documents cosine-similarity based semantic chunking, BM25 filtering, and 'Fit Markdown' heuristics specifically for extracting relevant chunks for RAG pipelines, plus chunk-based extraction as a stated feature and markdown output framed explicitly for RAG ingestion. Missing for 10: independent/hands-on verification that chunk boundaries are semantically coherent in practice, and detailed docs on configuring chunk size/overlap for retrieval pipelines.",
     "evidenceIds": [
-      "crawl4ai-gh-7",
-      "crawl4ai-docs-2",
-      "crawl4ai-docs-1"
+      "crawl4ai-gh-11",
+      "crawl4ai-gh-13",
+      "crawl4ai-gh-15",
+      "crawl4ai-docs-5",
+      "crawl4ai-docs-7"
     ]
   },
   {
@@ -4441,11 +4512,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "The docs show a single async call (crawler.arun(url=...)) returning a result object, and result.html/cleaned_html is a documented attribute of Crawl4AI's result, though the sample shown emphasizes result.markdown rather than raw HTML explicitly. This confirms single-call scraping works, but the evidence pack doesn't explicitly show raw HTML retrieval or an OpenAPI-documented single-endpoint HTTP API (openapi probes 404). missing for 10: explicit example of raw HTML field usage, independent confirmation of HTML fidelity/extraction quality.",
+    "rationale": "Crawl4AI clearly supports a single async API call (`crawler.arun(url=...)`) to fetch a page, and this pattern is showcased as the core usage example. However, the evidence only shows the default output as `result.markdown`, not raw HTML explicitly; raw-HTML handling is only referenced as an input mode (`raw:` prefix) rather than as a guaranteed output field. Missing for 10: explicit documentation/example showing `result.html` or equivalent raw HTML output, and independent confirmation that raw HTML retrieval works as expected.",
     "evidenceIds": [
       "crawl4ai-docs-1",
-      "crawl4ai-gh-5",
-      "crawl4ai-probe-2"
+      "crawl4ai-docs-8",
+      "crawl4ai-gh-23"
     ]
   },
   {
@@ -4460,27 +4531,30 @@
   {
     "productId": "crawl4ai",
     "storyId": "sticky-session-proxy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence mentions proxy chains for retry/fallback and undetected browser support, but there is no mention of a session identifier mechanism to route multiple requests through the same proxy IP for persistent identity. Missing for 10: sticky-session/proxy-session-ID feature documentation, any example binding a session to a specific proxy IP, and independent confirmation of this capability.",
+    "rationale": "Crawl4AI advertises both 'Proxy Support: Seamlessly connect to proxies with authentication' and 'Session Management: Preserve browser states and reuse them for multi-step crawling,' implying developers could combine session reuse with a fixed proxy to maintain identity, plus an automatic proxy-chain retry mechanism. However, no evidence explicitly documents a session_id parameter being tied to a specific proxy IP for consistent identity across requests. Missing for 10: explicit documentation or example showing a session identifier bound to a single proxy across multiple requests, and any independent/hands-on confirmation this works as intended.",
     "evidenceIds": [
+      "crawl4ai-gh-18",
+      "crawl4ai-gh-19",
       "crawl4ai-gh-4",
-      "crawl4ai-gh-9"
+      "crawl4ai-docs-6"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "structured-json-output",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs confirm structured extraction via CSS/XPath/LLM strategies producing structured data (JSON-like) and LLM-driven structured data extraction, plus table extraction into structured form, supporting the core capability. However, the evidence never explicitly shows a JSON output example or schema, and there's no first-party confirmation of a dedicated JSON output mode/field beyond the markdown example shown. missing for 10: an explicit documented JSON output example/schema, independent hands-on confirmation of JSON structure quality.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Crawl4AI supports schema-based structured JSON extraction (CSS/XPath/LLM), documented as a core feature with CLI examples showing output formats (e.g., -o markdown implies structured output options), plus dedicated JSON schema definition for repetitive patterns. missing for 10: an explicit code sample showing result.extracted_content as JSON output, and independent hands-on confirmation of JSON output quality.",
     "evidenceIds": [
       "crawl4ai-docs-2",
       "crawl4ai-gh-1",
-      "crawl4ai-gh-7",
-      "crawl4ai-docs-1"
+      "crawl4ai-gh-14",
+      "crawl4ai-gh-28",
+      "crawl4ai-gh-29"
     ]
   },
   {
@@ -4495,39 +4569,37 @@
   {
     "productId": "crawl4ai",
     "storyId": "undetected-browser-mode",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub feature list explicitly claims 'Undetected Browser Support: Bypass sophisticated bot detection systems,' directly matching the story, and this is corroborated by related anti-detection features like persistent browser profiles and proxy chain retries. However, there is no independent/hands-on evidence confirming its effectiveness, and community commentary notes bot mitigation is still something users must handle themselves ('own the policy layer', 'boring production bits: ... bot mitigation'), suggesting real-world limitations. Missing for 10: independent verification of undetected-mode effectiveness, technical documentation on how it works, and resolution of community caveats about needing to handle bot mitigation manually.",
+    "rationale": "GitHub docs explicitly claim 'Undetected Browser Support: Bypass sophisticated bot detection systems,' backed by related features like Managed Browser (user-owned browsers avoiding bot detection), stealth modes, and session re-use, giving concrete first-party evidence of the capability. Missing for 10: independent hands-on validation that the undetected mode actually defeats specific real-world anti-bot systems (e.g., Cloudflare, PerimeterX) and detail on how it's configured.",
     "evidenceIds": [
       "crawl4ai-gh-9",
-      "crawl4ai-gh-3",
-      "crawl4ai-gh-4",
-      "crawl4ai-comm-3"
+      "crawl4ai-gh-16",
+      "crawl4ai-docs-6"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "url-discovery-map",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows deep-crawl (BFS) and adaptive crawling features that limit or stop crawling, but these still involve fetching and parsing pages rather than instantly enumerating a site's URL list (e.g., via sitemap parsing) without crawling. No probe or doc confirms a dedicated 'discover URLs only' mode. Missing for 10: sitemap.xml/URL-discovery feature, evidence of URL enumeration without page fetches, independent confirmation of instant discovery.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "GitHub changelog mentions a `prefetch=True` mode delivering '5-10x faster URL discovery,' directly matching the ask for fast link discovery without full crawling, and deep-crawl BFS with `--max-pages` also allows bounded discovery rather than full crawl. However, this is a single terse changelog line with no dedicated documentation, code example, or independent confirmation of how comprehensive or 'instant' the discovery actually is. Missing for 10: dedicated docs/tutorial on URL-discovery-only mode, example output showing full site URL list, independent/community validation of speed and completeness claims.",
     "evidenceIds": [
-      "crawl4ai-gh-2",
-      "crawl4ai-docs-3"
+      "crawl4ai-gh-31",
+      "crawl4ai-gh-2"
     ]
   },
   {
     "productId": "crawl4ai",
     "storyId": "wait-for-selector",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions a wait_for/selector-based config option or any mechanism to delay page return until a specific CSS/XPath selector appears; the docs snippets shown only cover basic arun usage, extraction, and CLI/MCP features. missing for 10: documentation or example of a wait_for_selector or similar parameter, confirmation it blocks return until element renders, any community/hands-on validation of this feature.",
+    "rationale": "GitHub feature list mentions 'Dynamic Crawling: Execute JS and wait for async or sync for dynamic content extraction' (crawl4ai-gh-21), implying some wait-based rendering control, but the evidence never explicitly confirms a parameter for waiting on a specific CSS/XPath selector before returning results. missing for 10: explicit documentation of a wait_for/selector parameter, example code showing selector-based waiting, and independent confirmation it works as described.",
     "evidenceIds": [
-      "crawl4ai-docs-1",
-      "crawl4ai-docs-2"
+      "crawl4ai-gh-21"
     ]
   },
   {
@@ -4535,12 +4607,13 @@
     "storyId": "web-search-with-content",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crawl4AI's evidence describes crawling/scraping given URLs, deep-crawl (BFS) from a seed URL, and structured/LLM extraction, but no evidence of a web-search capability that returns full content for search-engine results in one call. Since comparable scraping tools do offer this, the axis applies but no supporting evidence exists here.",
+    "confidence": "high",
+    "rationale": "Crawl4AI's evidence shows extensive URL crawling, deep-crawl, and extraction capabilities, but nothing indicates a built-in 'search the web' function (e.g., querying a search engine and returning full content for each result) — all examples take explicit URLs as input rather than a search query returning multiple result pages.",
     "evidenceIds": [
       "crawl4ai-docs-1",
       "crawl4ai-gh-2",
-      "crawl4ai-docs-3"
+      "crawl4ai-gh-28",
+      "crawl4ai-gh-29"
     ]
   },
   {
