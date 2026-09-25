@@ -99,4 +99,18 @@ export const probes: LocalProbe[] = [
       expect: /HTTP 404/,
       timeoutMs: 30_000,
     },
+    {
+      // Honest negative from the 2026-09-24 depth spike: Firstbase has no developer-docs
+      // surface at all — docs.firstbase.io does not resolve (NXDOMAIN; developers. and api.
+      // subdomains are equally absent). Complements the llms.txt 404 above: not just no
+      // machine docs index, no docs host, period.
+      probeId: 'docs-domain-absent',
+      productId: 'firstbase',
+      storyIds: ['agentic-agent-docs', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sS --max-time 20 https://docs.firstbase.io/ 2>&1 | head -1'],
+      displayCommand: 'curl -sS https://docs.firstbase.io/  # NXDOMAIN — no docs host exists',
+      expect: /Could not resolve host: docs\.firstbase\.io/,
+      timeoutMs: 30_000,
+    },
 ]
