@@ -1606,28 +1606,31 @@
   {
     "productId": "kit",
     "storyId": "agent-audits-program",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Kit's API/MCP lets an agent manage subscribers, segments/tags, and broadcasts (kit-docs-2, kit-docs-20, kit-docs-23), and the official Kit MCP explicitly allows an AI client to 'read and write to a creator's Kit account' (kit-docs-20), covering audiences and campaign creation. However, there is no evidence of an endpoint or MCP capability for pulling automation status or campaign performance/reporting metrics, and no OpenAPI spec is discoverable (kit-probe-2), leaving the 'live automations' and 'campaign results' reporting pieces unevidenced. Missing for 10: documented automation-status/reporting endpoints, evidence of campaign analytics retrieval via API/MCP, independent confirmation of MCP read capabilities in practice.",
+    "rationale": "Kit MCP explicitly exposes subscribers, sequences, broadcasts, tags, and segments to AI clients, and the API supports broadcast stats (opens, clicks, unsubscribes), link click performance, custom fields, and account data — enabling an agent to pull audiences, automations, and campaign results and report on performance. missing for 10: independent/hands-on verification of an agent actually performing this end-to-end report, and explicit API/MCP coverage of live automation workflow details beyond tags/segments.",
     "evidenceIds": [
-      "kit-docs-2",
+      "kit-docs-29",
       "kit-docs-20",
-      "kit-docs-23",
-      "kit-docs-19",
-      "kit-probe-2"
+      "kit-docs-36",
+      "kit-docs-37",
+      "kit-docs-38",
+      "kit-docs-41",
+      "kit-docs-5",
+      "kit-probe-3"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agent-builds-segment",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Kit exposes audience tagging & segmentation as a feature and its API/broadcast endpoints can target existing segment or tag ids, plus an MCP server lets an AI client read/write to a Kit account via natural-language prompts becoming real account actions. However, there is no direct evidence of an API or MCP capability that creates or defines a *new* segment from a plain-language audience description — only pre-existing segment targeting is documented. Missing for 10: explicit segment-creation endpoint/tool, an example of natural-language-to-segment translation, and independent confirmation this specific workflow works.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Kit's MCP/API expose segments as an entity (kit-docs-29) and broadcasts can target by segment id (kit-docs-2), and the MCP overview shows NL prompts turning into real account actions like drafting broadcasts (kit-docs-5), suggesting a programmatic path exists for an agent to work with audience segmentation. However, there is no documented endpoint or example specifically showing an agent creating/defining a new segment from a plain-language audience description. Missing for 10: a documented 'create segment' API/MCP action, and a concrete NL-to-segment example analogous to the broadcast example.",
     "evidenceIds": [
+      "kit-docs-29",
       "kit-docs-2",
-      "kit-docs-25",
       "kit-docs-5",
       "kit-docs-20"
     ]
@@ -1638,13 +1641,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kit's API/MCP lets an agent create a broadcast targeted at a segment and either draft or schedule it (kit-docs-1, kit-docs-2, kit-docs-5, kit-docs-20), and drafts inherently sit unsent until a human acts. However, there is no explicit documented 'approval queue' or review-before-send workflow distinct from a generic draft/schedule state. Missing for 10: an explicit human-approval gate or review step separate from the plain draft/schedule state, and independent confirmation the MCP agent flow actually respects this human-in-the-loop pattern.",
+    "rationale": "Kit's API and MCP support drafting/scheduling broadcasts to a segment (kit-docs-1, kit-docs-2, kit-docs-5) and the Kit MCP lets an AI client read/write to an account (kit-docs-20, kit-docs-29), which covers agent-drafted campaigns targeted at segments. However, there is no explicit documentation of a human-approval gate or 'queued for review' workflow distinct from direct scheduling/sending — the evidence shows draft-or-schedule but not an approval-before-send mechanism. missing for 10: explicit approval/review workflow documentation, evidence of a pending-approval state distinct from scheduled/sent, and independent confirmation of this human-in-the-loop pattern.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-2",
       "kit-docs-5",
       "kit-docs-20",
-      "kit-docs-4"
+      "kit-docs-29"
     ]
   },
   {
@@ -1653,11 +1656,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Kit hosts a live llms.txt (confirmed via probe, HTTP 200) listing MCP overview and docs pages, plus explicit agent-oriented MCP docs describing querying live docs instead of cached/hallucinated API surfaces (kit-docs-4, kit-docs-19). This directly matches the story of pointing an agent at llms.txt/agent-oriented docs. Missing for 10: independent third-party confirmation of an agent successfully using llms.txt in practice.",
+    "rationale": "Kit hosts a live llms.txt at developers.kit.com/llms.txt (confirmed via probe returning HTTP 200 with structured doc links) and explicitly documents an MCP server that queries live docs so agents avoid cached/hallucinated API surfaces. This directly matches pointing an agent at agent-oriented docs. Missing for 10: independent/hands-on third-party confirmation that agents successfully consume the llms.txt or MCP docs in practice.",
     "evidenceIds": [
       "kit-probe-1",
       "kit-docs-4",
       "kit-docs-19",
+      "kit-docs-28",
       "kit-probe-3"
     ]
   },
@@ -1667,11 +1671,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Kit offers subscriber engagement scoring and an MCP integration that lets an agent draft actions like broadcasts from natural-language prompts, which touches on data-driven suggestions, but there is no documented feature that surfaces AI-generated insights or recommendations from a user's own data (e.g., analytics summaries, content suggestions). Missing for 10: dedicated AI insight/analytics generation feature, evidence of proactive suggestions surfaced in-app, independent corroboration of engagement scoring being AI-driven.",
+    "rationale": "Kit exposes account data (subscribers, engagement, broadcasts stats) via its MCP server, letting connected AI agents generate natural-language suggestions like drafting a broadcast from segment data, and it ships 'subscriber engagement scoring' as a data feature. However there's no evidence of native, in-product AI-generated insights/dashboards — the AI capability requires an external MCP client rather than being built into the Kit UI itself. Missing for 10: in-app AI insight/suggestion UI, evidence of automated analysis or recommendations surfaced natively in the product, independent user reports of this in action.",
     "evidenceIds": [
-      "kit-docs-9",
-      "kit-docs-4",
       "kit-docs-5",
+      "kit-docs-9",
+      "kit-docs-29",
+      "kit-docs-36",
       "kit-probe-3"
     ]
   },
@@ -1681,55 +1686,58 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kit ships core 'Visual Automations' plus RSS campaigns and webhooks that react to events without manual polling, and its MCP server explicitly lets an AI agent 'read and write to a creator's Kit account on their behalf,' enabling an AI-native user to configure these automations via natural language. However, the evidence never details how automation triggers/conditions are set or shows an agent actually building a persistent background workflow end-to-end. Missing for 10: concrete documentation of automation trigger/condition setup via API/MCP, and independent/hands-on confirmation of an agent successfully creating a running autonomous automation.",
+    "rationale": "Kit ships 'Unlimited Visual Automations' as a core product feature and exposes a remote Kit MCP server that lets AI clients read/write a creator's account (subscribers, sequences, broadcasts, tags, segments) via natural-language prompts, which implies AI-driven setup of automated flows. However, there's no explicit documentation showing the MCP or API can create/trigger Visual Automations themselves (only broadcasts/subscribers/tags are called out), nor evidence of autonomous background execution triggered by AI without a user request. Missing for 10: explicit MCP/API coverage of the Visual Automations builder itself, and evidence of unattended/scheduled autonomous runs initiated by an agent.",
     "evidenceIds": [
       "kit-docs-6",
-      "kit-docs-13",
-      "kit-docs-21",
       "kit-docs-20",
+      "kit-docs-29",
       "kit-docs-5",
-      "kit-probe-3"
+      "kit-docs-15"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Kit doesn't document a native, in-app chat assistant, but it does let external AI clients act on a user's account via its official Kit MCP server ('Let an AI client read and write to a creator's Kit account on their behalf' and natural-language prompts becoming real account actions). This satisfies the spirit of delegating tasks to an AI, though it's an MCP integration rather than a built-in assistant UI. Missing for 10: evidence of a first-party embedded chat/assistant interface inside the Kit product itself, and independent/hands-on confirmation of the MCP-driven task delegation working in practice.",
+    "rationale": "Kit's evidence only shows an external MCP server that lets outside AI clients (e.g., Claude) act on a Kit account and a docs-MCP for coding agents — there is no evidence of a built-in assistant embedded within Kit's own product UI. missing for 10: any built-in/native AI assistant feature inside the Kit dashboard, evidence of in-app task delegation without third-party MCP clients.",
     "evidenceIds": [
-      "kit-docs-4",
-      "kit-docs-5",
       "kit-docs-20",
-      "kit-probe-3"
+      "kit-docs-29",
+      "kit-docs-4",
+      "kit-docs-5"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kit exposes a REST API, webhooks, and bulk/async processing endpoints that let external scripts or CI jobs create subscribers, trigger broadcasts, and react to events without using the UI, which supports headless automation. However there is no evidence of a CLI, SDK, or documented CI/pipeline integration pattern, nor any mention of running Kit itself in a build/test pipeline. missing for 10: dedicated CLI or automation-focused SDK, explicit CI/pipeline usage guide, evidence of non-interactive auth flows suited for CI (e.g. service tokens beyond OAuth for App Store apps).",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kit exposes a full REST API with API-key and OAuth auth, bulk/async endpoints with callback URLs, and webhooks for event-driven automation, all of which are usable non-interactively in scripts or CI pipelines. However, there is no explicit CI/headless-execution documentation, no CLI, and no first-party example of running Kit workflows inside a CI system. Missing for 10: explicit CI/automation examples or a CLI/headless mode, dedicated CI integration guides, independent confirmation of automated pipeline use.",
     "evidenceIds": [
-      "kit-docs-21",
       "kit-docs-23",
-      "kit-docs-22",
-      "kit-docs-3"
+      "kit-docs-30",
+      "kit-docs-35",
+      "kit-docs-21",
+      "kit-docs-40",
+      "kit-docs-27"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agentic-mcp-client",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Kit is a creator/email-marketing SaaS platform, not an AI agent or assistant; the evidence entirely concerns Kit publishing its own MCP servers so external AI agents can consume Kit's tools (the reverse direction), not Kit itself acting as an MCP client that plugs in and uses external MCP servers' tools. This client-side capability is a category mismatch for a SaaS platform of this kind.",
+    "confidence": "medium",
+    "rationale": "Kit's MCP evidence describes Kit acting as an MCP *server* (exposing its own account/tools to external AI clients) and a docs MCP for coding agents — not Kit itself consuming/plugging in external MCP servers to use their tools. No evidence shows Kit has any agent feature that connects outward to third-party MCP servers.",
     "evidenceIds": [
       "kit-docs-4",
       "kit-docs-19",
       "kit-docs-20",
+      "kit-docs-28",
+      "kit-docs-29",
       "kit-probe-3"
     ]
   },
@@ -1739,11 +1747,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kit publishes an official MCP server (\"Kit MCP\") that lets AI clients read and write to a creator's Kit account, plus a separate docs MCP for live API reference, confirmed both in docs and via live probe of the docs site. Missing for 10: independent/hands-on corroboration beyond first-party docs and a direct probe of the MCP endpoint itself (only the docs URL was probed).",
+    "rationale": "Kit documents two official MCP servers: the Kit Developer Docs MCP for live API reference access and the remote Kit MCP that exposes a creator's account (subscribers, sequences, broadcasts, tags, segments) to MCP-compatible AI clients, letting agents read/write on the user's behalf. Missing for 10: independent hands-on corroboration of the MCP server working in practice beyond first-party docs.",
     "evidenceIds": [
       "kit-docs-4",
       "kit-docs-19",
       "kit-docs-20",
+      "kit-docs-28",
+      "kit-docs-29",
       "kit-probe-3"
     ]
   },
@@ -1752,13 +1762,12 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Kit documents an official MCP server that lets AI agents execute natural-language prompts like 'draft a broadcast to my new subscribers from this week' as real account actions, backed by read/write access to a creator's Kit account and a live docs MCP to avoid hallucinated API surfaces. missing for 10: independent/hands-on corroboration beyond vendor docs, and no detail on the breadth of natural-language commands supported beyond the broadcast example.",
+    "confidence": "medium",
+    "rationale": "Kit MCP explicitly enables natural-language prompts (e.g., 'draft a broadcast to my new subscribers from this week') to translate into real account actions via an MCP server exposing subscribers, broadcasts, tags, etc. This directly demonstrates AI-native natural-language operation. Missing for 10: independent/hands-on verification of the natural-language flow beyond vendor docs, and broader coverage of all account actions via NL.",
     "evidenceIds": [
-      "kit-docs-4",
       "kit-docs-5",
-      "kit-docs-19",
       "kit-docs-20",
+      "kit-docs-29",
       "kit-probe-3"
     ]
   },
@@ -1768,52 +1777,63 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kit's developer docs mention API, webhooks, OAuth, and MCP servers, but no evidence of an official CLI tool is present anywhere in the evidence pack, despite this being a plausible offering for a developer platform.",
+    "rationale": "Evidence covers Kit's API, OAuth, webhooks, and MCP servers extensively, but no official CLI tool is mentioned anywhere in the docs, pricing, or site content. A developer platform like Kit could plausibly ship a CLI, so the axis applies, but there is no evidence one exists.",
     "evidenceIds": []
   },
   {
     "productId": "kit",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Kit publishes a documented public REST API with clear reference docs (broadcasts, subscribers, bulk/async processing, OAuth 2.0 authentication) plus webhooks for event-driven integration, explicitly aimed at third-party developers building on the platform. This directly satisfies driving the product programmatically. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec (probe found 404s across candidate paths), and independent third-party corroboration beyond vendor docs.",
+    "rationale": "Kit publishes a comprehensive documented public API (v4) with OAuth 2.0/API key auth, pagination, bulk/async processing, webhooks with signature verification, and detailed endpoint references (broadcasts, stats, custom fields, accounts), explicitly aimed at third-party developers building apps for the Kit App Store. This exceeds basic API access, satisfying the ai-native/agenticness axis fully. Missing for 10: no discoverable OpenAPI/Swagger spec file (404s on standard paths), so machine-readable schema discovery is less automatable despite the llms.txt and MCP docs partially compensating.",
     "evidenceIds": [
-      "kit-docs-3",
       "kit-docs-18",
-      "kit-docs-21",
+      "kit-docs-27",
+      "kit-docs-30",
       "kit-docs-22",
       "kit-docs-23",
+      "kit-docs-34",
+      "kit-docs-21",
       "kit-docs-24",
+      "kit-probe-1",
       "kit-probe-2"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Kit documents OAuth 2.0 authentication for apps and an MCP integration that lets an AI client read/write a creator's account, but there is no evidence of scoped or least-privilege credential issuance (e.g., granular permission scopes, read-only vs write tokens) specifically for agent use. missing for 10: documented OAuth scopes/permission granularity, agent-specific credential limiting, any mention of least-privilege tokens.",
+    "rationale": "Kit documents OAuth 2.0 (with PKCE, refresh tokens, and revocation) and API keys as two credential mechanisms, and the Kit MCP server explicitly lets an agent 'read and write to a creator's Kit account on their behalf,' implying credential-based agent access. However, there is no explicit documentation of scope selection/granularity (e.g., read-only vs write, per-resource permissions) for OAuth apps or API keys, so least-privilege scoping for an agent isn't concretely evidenced. Missing for 10: explicit scope/permission list for OAuth apps, ability to restrict API keys or MCP tokens to specific resources/actions, and independent confirmation of least-privilege enforcement.",
     "evidenceIds": [
-      "kit-docs-20",
-      "kit-docs-22",
-      "kit-probe-3"
+      "kit-docs-30",
+      "kit-docs-31",
+      "kit-docs-32",
+      "kit-docs-33",
+      "kit-docs-29",
+      "kit-docs-20"
     ]
   },
   {
     "productId": "kit",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kit provides a documented REST API, OAuth, webhooks, and even MCP servers for agent access, which supports 'building against' the platform, but none of the evidence names an official client SDK (e.g., Python/JS libraries) and a probe for an OpenAPI spec (which typically backs SDK generation) returned only 404s. missing for 10: explicit official SDK/client library documentation, OpenAPI spec availability, independent confirmation of SDK usage.",
+    "rationale": "Kit provides a well-documented REST API with OAuth flows, webhooks, bulk/async processing, pagination, and an llms.txt for AI-agent consumption, plus official MCP servers (docs MCP and account-action MCP) that let AI agents build against Kit programmatically. However, there is no evidence of official language-specific SDK client libraries (e.g., Python/JS packages) — only raw API reference and MCP tooling. missing for 10: dedicated first-party SDK libraries in specific languages, independent developer corroboration of SDK usage.",
     "evidenceIds": [
       "kit-docs-3",
       "kit-docs-18",
-      "kit-docs-22",
-      "kit-docs-23",
-      "kit-probe-2"
+      "kit-docs-19",
+      "kit-docs-20",
+      "kit-docs-29",
+      "kit-docs-30",
+      "kit-docs-31",
+      "kit-docs-32",
+      "kit-probe-1",
+      "kit-probe-3"
     ]
   },
   {
@@ -1822,10 +1842,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kit's developer docs explicitly document webhooks that let integrations react to account activity in real time instead of polling, with signature verification for security, directly delivering event subscription via webhooks for programmatic/AI-native use. Missing for 10: no evidence of specific webhook event catalog or subscription management API endpoints, and no independent hands-on confirmation of webhook reliability.",
+    "rationale": "Kit has documented webhook support with event-driven delivery ('react to activity the moment it happens, instead of polling'), signature verification, and retry/backoff logic, clearly fulfilling event subscription needs for programmatic/AI-native integrations. missing for 10: no explicit event-type catalog listing all subscribable events, and no independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "kit-docs-21",
-      "kit-docs-24"
+      "kit-docs-24",
+      "kit-docs-40"
     ]
   },
   {
@@ -1833,12 +1854,11 @@
     "storyId": "ai-content-drafting",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only shows A/B testing subject lines (kit-docs-7/26) and an MCP integration that lets an external AI agent draft broadcasts via natural language (kit-docs-5, kit-docs-20) — this is a third-party AI client acting on the account, not a built-in AI assistant inside Kit's own composer. No evidence of a native, in-app AI copywriting/subject-line generator.",
+    "confidence": "high",
+    "rationale": "Evidence shows Kit's API/MCP for broadcasts, A/B testing, and automation, but nothing indicates a built-in AI composer feature that drafts or refines subject lines/email copy from a brief inside the email editor itself. The MCP-driven 'draft a broadcast' example is external agent tooling, not an in-composer AI writing assistant.",
     "evidenceIds": [
       "kit-docs-5",
       "kit-docs-7",
-      "kit-docs-20",
       "kit-docs-26"
     ]
   },
@@ -1848,11 +1868,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Kit has an API reference (docs pages listing endpoints like create-a-broadcast) but nothing indicates the reference is interactive or that examples can be run in-browser; the openapi probe found no spec files (404s), suggesting no Swagger/try-it tooling. missing for 10: evidence of runnable/try-it code examples, evidence of interactive API console or OpenAPI-driven explorer.",
+    "rationale": "Evidence shows extensive static API reference documentation (endpoints, auth, pagination, etc.) but no mention of an interactive console or runnable/try-it examples; a probe for OpenAPI/Swagger specs (which typically power interactive API explorers) returned 404 on all candidate paths, indicating no such interactive reference is exposed.",
     "evidenceIds": [
-      "kit-docs-1",
+      "kit-probe-2",
       "kit-docs-3",
-      "kit-probe-2"
+      "kit-docs-27"
     ]
   },
   {
@@ -1861,7 +1881,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger specs at common paths returned 404s, and the docs pack contains no link to a downloadable machine-readable API spec; only an llms.txt and MCP docs are present, which are not equivalent to an OpenAPI spec.",
+    "rationale": "An active probe checked all standard OpenAPI spec locations (openapi.json, swagger.json, etc.) and found only 404s, and no evidence pack item shows a downloadable OpenAPI/Swagger spec or equivalent structured schema. The markdown docs and llms.txt index are documentation aids, not a machine-readable API specification.",
     "evidenceIds": [
       "kit-probe-2",
       "kit-probe-1"
@@ -1873,47 +1893,51 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox/test environment or staging account separate from production data; Kit's docs cover live API, MCP, webhooks, and pricing but nothing about sandbox testing.",
+    "rationale": "No evidence of a sandbox environment, test mode, or staging account separate from production data; Kit's API/MCP docs describe live account access (read/write to a creator's real account) with no mention of sandboxing.",
     "evidenceIds": []
   },
   {
     "productId": "kit",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows an API reference and MCP docs but no mention of API versioning scheme or a documented deprecation policy; the OpenAPI spec probe even returned 404s, suggesting limited machine-readable API contract that would typically accompany versioning docs.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows Kit has a 'V4 API' (implying versioning exists) and detailed auth/pagination/webhook docs, but there is no documented deprecation policy, version lifecycle, or sunset timeline anywhere in the evidence pack. missing for 10: explicit API versioning scheme docs, deprecation/sunset policy, migration guides between versions, changelog for breaking changes.",
     "evidenceIds": [
-      "kit-docs-3",
-      "kit-docs-18",
-      "kit-probe-2"
+      "kit-docs-30",
+      "kit-docs-27"
     ]
   },
   {
     "productId": "kit",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Kit explicitly documents bulk processing support for common use cases like creating subscribers via OAuth, plus broadcast sends to segments/tags and webhook-driven automation, giving a real bulk-operations foundation. However, bulk support is explicitly limited to 'some common use cases' rather than general-purpose bulk operations across arbitrary items, and there's no evidence of bulk update/delete or bulk tagging APIs. missing for 10: broader bulk endpoint coverage beyond subscriber creation, independent/hands-on confirmation of bulk operation limits and performance.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Kit's API explicitly documents bulk processing (bulk subscriber creation, bulk custom field updates for many subscribers in one request) with async callback handling for large batches, plus cursor-based pagination and broadcasts targeting segments/tags at scale, all accessible via the official MCP server for AI agents to trigger. missing for 10: no independent/hands-on verification of bulk throughput limits or real-world reliability at scale.",
     "evidenceIds": [
       "kit-docs-23",
+      "kit-docs-35",
+      "kit-docs-39",
+      "kit-docs-34",
       "kit-docs-1",
       "kit-docs-2",
-      "kit-docs-21"
+      "kit-docs-29",
+      "kit-docs-20"
     ]
   },
   {
     "productId": "kit",
     "storyId": "automation-rules-engine",
-    "verdict": "full",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Kit ships 'Unlimited Visual Automations' as a core paid feature and webhooks that 'react to activity in a Kit account the moment it happens,' confirming trigger-based automation exists. However, evidence lacks detail on the actual rule-builder mechanics (trigger types, conditions, chained actions) or hands-on/independent confirmation of how automations behave. Missing for 10: detailed docs on automation rule structure/trigger-action logic, independent/hands-on verification of automation reliability.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Kit's pricing page lists 'Unlimited Visual Automations' and its webhooks docs show event-driven reactions (webhooks fire the moment activity happens, with signed delivery and retry logic), indicating some automatic rule/trigger-action capability exists. However, there is no detailed documentation of how rules/conditions are defined within the automation builder, nor any AI-native mechanism for an agent to author or manage these automation rules itself. Missing for 10: documentation of the rule/trigger-action builder's conditions and logic, and evidence that AI agents (via MCP or API) can create/modify automation rules rather than just call broadcast/webhook endpoints.",
     "evidenceIds": [
       "kit-docs-6",
-      "kit-docs-15",
-      "kit-docs-21"
+      "kit-docs-21",
+      "kit-docs-24",
+      "kit-docs-40"
     ]
   },
   {
@@ -1921,14 +1945,14 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Kit's platform includes recurring-style features like RSS campaigns, Visual Automations, and one-time scheduled broadcast sends, and its MCP lets an AI agent read/write actions in a Kit account, but there is no evidence of an AI-native interface for defining or managing genuinely recurring/cron-like scheduled jobs or workflows via API or MCP. missing for 10: explicit API/MCP support for creating or managing recurring scheduled workflows, documentation showing automations can be set up or modified programmatically by an AI agent, independent confirmation of recurring job scheduling.",
+    "confidence": "medium",
+    "rationale": "Kit supports scheduling one-off broadcasts (kit-docs-1) and offers 'Unlimited Visual Automations' and RSS campaigns which inherently recur (kit-docs-6, kit-docs-13), and its MCP server can read/write to a creator's account (kit-docs-20, kit-docs-29), implying an AI agent could trigger these. However, there's no direct evidence that visual automations or recurring workflows are exposed via the API/MCP for AI-native creation or scheduling of recurring jobs—only single-broadcast scheduling is documented. Missing for 10: explicit API/MCP endpoints for creating or managing recurring automations/workflows, documentation of cron-like scheduling for AI agents.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-6",
       "kit-docs-13",
       "kit-docs-20",
-      "kit-docs-5"
+      "kit-docs-29"
     ]
   },
   {
@@ -1937,17 +1961,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kit's evidence covers visual automations, API/MCP access, and webhooks, but nothing describes version history, review workflows, or rollback of automations — no changelog, diff, or restore capability is documented anywhere in the pack.",
+    "rationale": "Kit's evidence covers automations (visual automations, broadcasts, API/MCP access) but no mention of version control, review workflows, or rollback capabilities for automations. No changelog, revision history, or undo features are documented anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
     "productId": "kit",
     "storyId": "campaign-performance-reporting",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "No evidence in the pack of any reporting/analytics feature covering opens, clicks, unsubscribes, or conversions per campaign or automation step — pricing and docs pages list automation, A/B testing, and API/webhook capabilities but never mention analytics dashboards or metrics reporting.",
-    "evidenceIds": []
+    "rationale": "Kit's API documents per-broadcast stats (opens, clicks, unsubscribes, rates) and per-link click performance, but there's no evidence of conversion tracking or of analytics broken down per automation/sequence step over time. missing for 10: conversion metrics, automation-step-level engagement stats, and time-series/trend reporting across campaigns.",
+    "evidenceIds": [
+      "kit-docs-36",
+      "kit-docs-37"
+    ]
   },
   {
     "productId": "kit",
@@ -1955,12 +1982,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kit's public API documents creating and scheduling broadcasts with targeting by segment/tag, and OAuth-based authentication supports full programmatic access without dashboard use. Missing for 10: no independent/hands-on developer confirmation of end-to-end scheduling success, and no discoverable OpenAPI spec (404s on standard paths) to verify completeness.",
+    "rationale": "Kit's documented public API includes a create-a-broadcast endpoint that supports drafting or scheduling a send to all/subset of subscribers via segment or tag targeting, with OAuth/API key auth, pagination, and stats endpoints, all fully documented — enabling a developer to build and schedule campaigns without the dashboard. Missing for 10: no publicly discoverable OpenAPI/swagger spec (probe returned 404s) and no independent/hands-on third-party confirmation of the full create-and-schedule flow.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-2",
       "kit-docs-18",
-      "kit-docs-22",
+      "kit-docs-30",
+      "kit-docs-34",
+      "kit-docs-36",
       "kit-probe-2"
     ]
   },
@@ -1968,37 +1997,42 @@
     "productId": "kit",
     "storyId": "contacts-crud-api",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kit's API docs confirm a general API for building on the platform and bulk processing support for creating subscribers via OAuth, plus audience tagging/segmentation as a product feature, but there is no explicit documentation of update or suppress/unsubscribe endpoints, nor of custom property/field creation via the API. Missing for 10: explicit update-contact and suppress-contact API endpoints, custom field/property API documentation, and evidence of production-scale throughput guarantees beyond generic 'bulk processing for some common use cases'.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Kit's API clearly supports creating/updating subscribers with custom field values at scale (bulk update of custom field values, bulk subscriber creation with async callback, cursor pagination, OAuth/API key auth), covering most of the story. Missing for 10: explicit documented endpoint/evidence for 'suppressing' (unsubscribing) contacts and independent hands-on confirmation of bulk suppression at production scale.",
     "evidenceIds": [
-      "kit-docs-18",
       "kit-docs-23",
-      "kit-docs-25",
-      "kit-docs-22"
+      "kit-docs-35",
+      "kit-docs-38",
+      "kit-docs-39",
+      "kit-docs-34",
+      "kit-docs-30"
     ]
   },
   {
     "productId": "kit",
     "storyId": "create-send-campaign",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm core loop: drafting/scheduling broadcasts, targeting by segment or tag ids, and audience tagging/segmentation support pricing tier claims. Missing for 10: no hands-on/independent walkthrough of the compose-audience-send UI flow, and no explicit documentation of a full campaign editor or send confirmation beyond the API reference.",
+    "rationale": "Kit's API/docs confirm core broadcast creation with draft-or-schedule sending and audience targeting by segment or tag, plus unlimited email broadcasts and audience segmentation on pricing tiers, covering the compose/audience/send-or-schedule loop. Missing for 10: no independent hands-on report or UI walkthrough of the actual composer experience, only API-level docs.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-2",
-      "kit-docs-25"
+      "kit-docs-25",
+      "kit-docs-43"
     ]
   },
   {
     "productId": "kit",
     "storyId": "custom-sending-domain",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses domain authentication (SPF/DKIM/DMARC) or DNS setup/verification for sending domains; all evidence covers broadcasts, API/MCP, webhooks, and pricing features unrelated to domain authentication.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence is a single API field showing Kit tracks sending-address 'verification and DMARC status,' implying some domain authentication capability exists, but there is no documentation of guided SPF/DKIM/DMARC DNS setup steps, verification UI, or troubleshooting guidance. missing for 10: guided DNS setup walkthrough, SPF/DKIM record instructions, DMARC alignment guidance, verification workflow docs, independent/hands-on confirmation.",
+    "evidenceIds": [
+      "kit-docs-41"
+    ]
   },
   {
     "productId": "kit",
@@ -2006,17 +2040,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions bounce rates, spam complaints, blocklist monitoring, or deliverability guidance features; the docs focus on broadcasts, API/MCP integrations, and pricing tiers unrelated to deliverability metrics.",
-    "evidenceIds": []
+    "rationale": "The broadcast stats endpoint reports recipients, opens, clicks, unsubscribes, and rates, but there is no evidence of bounce, complaint, or blocklist signal reporting, nor any actionable deliverability guidance features. As an email sending platform, this axis clearly applies, but the evidence pack shows no support for it.",
+    "evidenceIds": [
+      "kit-docs-36",
+      "kit-docs-41"
+    ]
   },
   {
     "productId": "kit",
     "storyId": "email-template-editor",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers broadcasts API, MCP, webhooks, and pricing feature bullets (A/B testing, segmentation, landing pages) but contains no mention of a visual drag-and-drop email editor, reusable design templates, or personalization token rendering/testing across email clients — the specific marketer-facing design capabilities in the story are absent.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 2,
+    "confidence": "low",
+    "rationale": "Evidence only hints that Kit has an 'editor' for emails (brand color palette usable in Kit's editors) but provides no documentation of a drag-and-drop visual editor, reusable email templates, personalization/merge tokens, or cross-email-client rendering testing. missing for 10: visual/drag-drop editor documentation, reusable template library, personalization token support, cross-client rendering guarantees.",
+    "evidenceIds": [
+      "kit-docs-42",
+      "kit-docs-43"
+    ]
   },
   {
     "productId": "kit",
@@ -2024,13 +2064,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Kit's API supports creating/sending broadcasts, webhooks, tagging/segmentation, and OAuth/bulk processing, but no documented endpoint returns per-subscriber engagement history (what was sent, opened, clicked) via the API. No docs reference subscriber-level open/click tracking retrieval, so this applicable developer-data-access axis is unmet.",
+    "rationale": "Kit's API exposes broadcast-level engagement stats (opens, clicks, unsubscribes) aggregated across recipients (kit-docs-36, kit-docs-37) and per-link click counts, but there is no documented endpoint returning a per-contact history of what was sent to that specific subscriber and whether they opened/clicked it. The evidence pack shows no subscriber-level activity/timeline endpoint, so the specific 'per-person engagement history for any contact' capability is unevidenced.",
     "evidenceIds": [
-      "kit-docs-1",
-      "kit-docs-2",
-      "kit-docs-21",
-      "kit-docs-23",
-      "kit-probe-2"
+      "kit-docs-36",
+      "kit-docs-37"
     ]
   },
   {
@@ -2039,13 +2076,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Kit has visual automations, tagging/segmentation, an API for building on the platform, and webhooks for Kit-to-app notifications, but nothing documents a developer-facing custom event API that lets an external app fire a named event to trigger a per-subscriber automation. Webhooks here only flow outward from Kit, not inward as custom triggers, so this specific capability is unevidenced.",
+    "rationale": "The evidence pack shows Kit's API supports subscribers, tags, custom fields, broadcasts, and webhooks (Kit→developer direction), but nowhere documents a custom-event API endpoint that developers can fire to trigger a person-specific automation. Tagging/custom-field updates are the closest analogs but are not described as event-triggered automations.",
     "evidenceIds": [
-      "kit-docs-3",
-      "kit-docs-18",
-      "kit-docs-21",
-      "kit-docs-6",
-      "kit-docs-25"
+      "kit-docs-25",
+      "kit-docs-38",
+      "kit-docs-39",
+      "kit-docs-21"
     ]
   },
   {
@@ -2053,10 +2089,11 @@
     "storyId": "flow-state-inspection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence only confirms Kit has 'Unlimited Visual Automations' as a pricing feature but contains no documentation of subscriber-level visibility into automation steps, or the ability to pull/re-enter individual subscribers without disrupting the automation flow.",
+    "confidence": "low",
+    "rationale": "Kit's docs mention 'Unlimited Visual Automations' and sequences/tags being exposed via MCP, but there is no evidence of a UI or API capability to view an individual subscriber's exact position within an automation, or to pull them out and re-enter them without disrupting the flow.",
     "evidenceIds": [
-      "kit-docs-6"
+      "kit-docs-6",
+      "kit-docs-29"
     ]
   },
   {
@@ -2065,57 +2102,61 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack of a self-serve export feature covering contacts, custom fields, tags, engagement history, or suppression list in an open format (e.g., CSV). Only bulk *creation* of subscribers via API and generic 'free migrations' language are mentioned, neither of which documents an audience export capability.",
+    "rationale": "The evidence shows Kit's API can list subscribers, custom fields, and tags with pagination, but there is no documentation of a self-serve export feature (CSV/JSON download) covering contacts, tags, engagement history, and suppression list together — only piecemeal API endpoints requiring developer work, and no GDPR/data-portability or 'export my data' UI mention.",
     "evidenceIds": [
-      "kit-docs-23",
-      "kit-docs-17"
+      "kit-docs-38",
+      "kit-docs-39",
+      "kit-docs-34",
+      "kit-docs-30"
     ]
   },
   {
     "productId": "kit",
     "storyId": "guided-platform-migration",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The only relevant evidence is a single marketing line mentioning 'Free migrations' on the pricing page, with no documentation of guided list import, tag/custom-field preservation, or unsubscribe-state handling. missing for 10: any docs on import tooling, evidence tags/custom fields are preserved, evidence unsubscribe status is preserved, guided/step-by-step migration flow.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kit advertises 'Free migrations' and has APIs for bulk-creating subscribers and bulk-updating custom field values, which could underlie a migration process, but there is no documented guided import wizard or explicit confirmation that tags, custom fields, and unsubscribe state are all preserved during migration. Missing for 10: dedicated migration/import tool documentation, explicit handling of unsubscribe status on import, and independent confirmation of tag/custom-field fidelity during migration.",
     "evidenceIds": [
-      "kit-docs-17"
+      "kit-docs-17",
+      "kit-docs-38",
+      "kit-docs-39",
+      "kit-docs-23"
     ]
   },
   {
     "productId": "kit",
     "storyId": "metrics-via-api",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows a general Kit API (broadcasts, webhooks, OAuth, bulk endpoints) but no documented endpoints for campaign/flow performance metrics (opens, clicks, conversions, automation stats) that a developer could pull into a warehouse or dashboard.",
+    "rationale": "Kit's API exposes broadcast-level performance metrics (opens, clicks, unsubscribes, link click rates) via documented, paginated, authenticated endpoints (kit-docs-36, kit-docs-37, kit-docs-34, kit-docs-30), which supports pulling campaign metrics into an external system. However there is no documented endpoint for 'flow' (sequence/automation) performance metrics, and no mention of warehouse/BI export tooling or examples of dashboard integration. Missing for 10: automation/flow-specific performance/stats endpoints, evidence of warehouse/dashboard integration patterns or partner tooling, independent confirmation of metric completeness.",
     "evidenceIds": [
-      "kit-docs-1",
-      "kit-docs-18",
-      "kit-docs-21",
-      "kit-docs-23",
-      "kit-probe-2"
+      "kit-docs-36",
+      "kit-docs-37",
+      "kit-docs-34",
+      "kit-docs-30",
+      "kit-docs-23"
     ]
   },
   {
     "productId": "kit",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kit's API reference documents core actions like creating/sending broadcasts, subscriber management, bulk processing, and webhooks, and the platform is explicitly positioned as a build-on-top developer platform (kit-docs-1,2,3,18,21,23). However, many major UI-only features advertised on the pricing/marketing pages—landing pages/forms, digital products/subscriptions, surveys, A/B testing, collaborative editing, engagement scoring—have no documented API endpoints, and no OpenAPI spec is publicly discoverable (kit-probe-2), so full UI/API parity isn't evidenced. Missing for 10: API/documentation coverage confirming landing pages, forms, digital product sales, surveys, A/B testing, and collaborative editing are all API-accessible, plus a public machine-readable spec proving completeness.",
+    "rationale": "Kit exposes a substantial V4 API and MCP server covering broadcasts, subscribers, tags/segments, custom fields, webhooks, OAuth and bulk operations, and even lets AI agents perform natural-language account actions (kit-docs-1,5,20,29,36-39). However, many UI-advertised features—Visual Automations, landing pages/forms builder, A/B testing, collaborative editing, digital product sales—have no documented API endpoints, and no OpenAPI spec could be found (kit-probe-2), suggesting incomplete API parity with the UI. Missing for 10: API endpoints/docs for automations builder, landing page/form design, digital commerce, and A/B testing; a discoverable OpenAPI/machine-readable full surface.",
     "evidenceIds": [
       "kit-docs-1",
-      "kit-docs-2",
-      "kit-docs-3",
-      "kit-docs-18",
-      "kit-docs-21",
-      "kit-docs-23",
+      "kit-docs-5",
+      "kit-docs-20",
+      "kit-docs-29",
+      "kit-docs-38",
+      "kit-docs-39",
       "kit-docs-6",
       "kit-docs-7",
-      "kit-docs-8",
-      "kit-docs-10",
       "kit-docs-11",
+      "kit-docs-12",
       "kit-probe-2"
     ]
   },
@@ -2125,11 +2166,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows API access, webhooks, and 'free migrations' but no explicit capability for users to export all their data (subscribers, broadcasts, tags, etc.) in open/standard formats like CSV/JSON for full account portability. 'Free migrations' (kit-docs-17) implies inbound data assistance, not user-initiated bulk export for leaving the platform.",
+    "rationale": "The evidence pack shows only API access to send/manage account data (subscribers, broadcasts, webhooks) via bulk endpoints, but there is no mention of a dedicated data-export feature, open-format export (CSV/JSON dump), or documented way to fully export and leave the platform. 'Free migrations' (kit-docs-17) refers to importing into Kit, not exporting out.",
     "evidenceIds": [
       "kit-docs-17",
-      "kit-docs-18",
-      "kit-docs-23"
+      "kit-docs-23",
+      "kit-docs-27"
     ]
   },
   {
@@ -2138,7 +2179,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kit is a closed SaaS email-marketing platform, not an open-source project; no source code repository or license is offered or applicable to this product category.",
+    "rationale": "Kit is a SaaS email-marketing/creator platform, not open-source software; the story asks about reading source code under an open license, which is a category error for this product type — no evidence pack item suggests Kit publishes its source at all.",
     "evidenceIds": []
   },
   {
@@ -2147,7 +2188,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kit is a hosted SaaS email marketing/creator platform with no evidence of any self-hostable/open-source distribution; self-hosting is not a fair question for this category of product.",
+    "rationale": "Kit is a hosted SaaS email/newsletter platform with no evidence of any self-hostable version; self-hosting is not a plausible axis for this category of product.",
     "evidenceIds": []
   },
   {
@@ -2156,10 +2197,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kit documents a webhooks system that reacts to account activity and signs every payload with a secret for verification, giving developers a documented, signed webhook mechanism (kit-docs-21, kit-docs-24). However, the evidence pack never enumerates the specific event types (sends, opens, clicks, bounces, unsubscribes) that can be subscribed to, so full coverage of the story's event list is unconfirmed. Missing for 10: explicit documentation listing engagement/delivery event types (opens, clicks, bounces, unsubscribes, sends) as subscribable webhook topics, and independent confirmation of payload format.",
+    "rationale": "Kit documents a webhook system with signed payloads (HMAC secret verification) and retry/backoff behavior, confirming webhooks are a supported integration mechanism, and separately exposes engagement stats like opens/clicks/unsubscribes via API. However the evidence never lists the specific catalog of webhook event types (send, open, click, bounce, unsubscribe) that can be subscribed to. Missing for 10: an explicit enumerated list of supported webhook event topics, and independent/hands-on confirmation that engagement events (opens/clicks/bounces) actually fire as webhooks rather than just being queryable stats.",
     "evidenceIds": [
       "kit-docs-21",
-      "kit-docs-24"
+      "kit-docs-24",
+      "kit-docs-40",
+      "kit-docs-36"
     ]
   },
   {
@@ -2167,8 +2210,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack of Kit offering data residency/region selection or any data storage location controls for AI-native or other users.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data region/residency options, storage location controls, or compliance certifications addressing data locality for Kit's email marketing platform.",
     "evidenceIds": []
   },
   {
@@ -2177,7 +2220,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Kit is an email-marketing/creator platform; no evidence in the pack discusses AI training data usage, opt-out controls, or any privacy policy addressing AI model training on user/subscriber data.",
+    "rationale": "Kit is an email marketing/creator platform; no evidence in the pack addresses AI training data usage, opt-out policies, or data privacy commitments related to model training.",
     "evidenceIds": []
   },
   {
@@ -2185,8 +2228,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or subscriber/account data deletion mechanisms for AI-native users; the evidence covers broadcasts, MCP, API auth, and pricing features but nothing about retention/deletion controls.",
+    "confidence": "low",
+    "rationale": "No evidence of data retention controls, deletion policies, or subscriber data export/erasure tools in the pack; OAuth revocation exists but that covers app access, not data retention/deletion. Missing for 10: documented data retention policy, subscriber data deletion/export API or UI, GDPR/CCPA compliance controls.",
     "evidenceIds": []
   },
   {
@@ -2203,9 +2246,13 @@
     "storyId": "revenue-attribution",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers broadcasts, API/MCP integrations, pricing tiers, and general marketing features, but nothing addresses revenue/signup attribution to specific emails or automation flows—no mention of conversion tracking, revenue-per-email reporting, or attribution dashboards.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Kit's documented analytics only cover broadcast delivery/engagement stats (opens, clicks, unsubscribe rates) and per-link click performance, not revenue or signup attribution to specific emails/flows. No evidence of conversion tracking, revenue reporting tied to campaigns, or signup-source attribution beyond tags/segments. missing for 10: revenue attribution reporting, signup-to-campaign attribution, e-commerce/conversion tracking tied to broadcasts or automations.",
+    "evidenceIds": [
+      "kit-docs-36",
+      "kit-docs-37",
+      "kit-docs-11"
+    ]
   },
   {
     "productId": "kit",
@@ -2213,10 +2260,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Kit has API keys and OAuth 2.0 for third-party apps (kit-docs-22, kit-docs-23) but nothing about scoped permissions, read-only tokens, or restricting write actions like sending broadcasts. No documentation of granular/role-based API credential minting exists in the pack.",
+    "rationale": "Kit documents OAuth 2.0 and API keys as its two auth mechanisms (kit-docs-30) plus OAuth flows like PKCE and token revocation, but nowhere is there evidence of scoped or read-only permission levels for API keys or OAuth apps that would let an ops user restrict an agent/contractor to read-only analytics access. Missing for 10: documented scopes/permissions system, read-only key option, or role-based credential restriction.",
     "evidenceIds": [
+      "kit-docs-30",
       "kit-docs-22",
-      "kit-docs-23"
+      "kit-docs-31",
+      "kit-docs-32",
+      "kit-docs-33"
     ]
   },
   {
@@ -2225,37 +2275,39 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Kit's docs confirm tagging/segmentation exists and broadcasts can target by segment or tag ids, but there is no evidence of segment builders using profile attributes or behavioral events, nor confirmation that segments update live as data changes. missing for 10: documentation of segment builder UI/logic, behavioral-event-based segmentation, and live/dynamic segment updating.",
+    "rationale": "Kit's docs confirm audience segmentation via tags and segment ids (kit-docs-2, kit-docs-25) and custom fields for profile attributes (kit-docs-38, kit-docs-39), supporting building segments from profile data. However, there is no evidence of segmentation based on behavioral events (opens, clicks, purchases) or explicit confirmation that segments dynamically update live as data changes. missing for 10: behavioral-event-based segment criteria, explicit documentation of live/dynamic segment recalculation as subscriber data changes.",
     "evidenceIds": [
+      "kit-docs-2",
       "kit-docs-25",
-      "kit-docs-2"
+      "kit-docs-38",
+      "kit-docs-39"
     ]
   },
   {
     "productId": "kit",
     "storyId": "segments-via-api",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs confirm segments and tags exist as addressable objects (used via ids to target broadcasts) and mention bulk subscriber creation and audience tagging/segmentation as a feature, implying some programmatic tag/segment handling, but no evidence pack item shows explicit create/update endpoints for segments/tags/lists or an endpoint to read back the exact subscriber membership of a segment or tag. missing for 10: explicit API reference for creating/updating segments or tags, an endpoint to list/read subscribers belonging to a given segment/tag/list, and any independent confirmation of this working end-to-end.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Kit's docs confirm segments/tags exist as an audience feature and can be targeted for broadcasts (kit-docs-2, kit-docs-25), plus bulk operations for subscriber custom fields and subscriber creation (kit-docs-23, kit-docs-39), implying an API surface for managing audience data. However, there is no direct evidence of endpoints to create/update tags or segments themselves, or to list exactly which subscribers belong to a given segment/tag. missing for 10: explicit tag/segment create-update endpoints, an endpoint returning subscriber membership for a segment/tag/list.",
     "evidenceIds": [
       "kit-docs-2",
+      "kit-docs-25",
       "kit-docs-23",
-      "kit-docs-25"
+      "kit-docs-39"
     ]
   },
   {
     "productId": "kit",
     "storyId": "stack-integrations",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kit documents a general integrations/App Store ecosystem, OAuth2 for third-party apps, and webhooks for real-time sync (kit-docs-15, kit-docs-22, kit-docs-21), which supports building connections to external stacks, but there is no evidence of maintained first-party integrations specifically for Stripe, Shopify, Segment, or a product database. missing for 10: named first-party connectors for Stripe/Shopify, a CDP like Segment, or database sync, and any case study/documentation confirming these specific integrations are maintained by Kit itself.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Kit documents a general App Store and API/OAuth/webhooks framework for third-party developers to build integrations, but no evidence names maintained first-party integrations with Stripe, Shopify, a CDP like Segment, or a product database — missing for 10: named first-party Stripe/Shopify/Segment connectors, evidence of maintained (not third-party) integration status.",
     "evidenceIds": [
       "kit-docs-15",
-      "kit-docs-21",
-      "kit-docs-22",
-      "kit-docs-18"
+      "kit-docs-18",
+      "kit-docs-27"
     ]
   },
   {
@@ -2264,7 +2316,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses automatic suppression of unsubscribes, bounces, or spam complaints across send types; nothing documents CAN-SPAM/GDPR compliance handling.",
+    "rationale": "Evidence pack shows broadcast sending, API/webhook docs, and pricing features, but nowhere documents automatic suppression of unsubscribes, bounces, or spam complaints across send types, nor CAN-SPAM/GDPR compliance handling.",
     "evidenceIds": []
   },
   {
@@ -2272,21 +2324,25 @@
     "storyId": "templates-as-code",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Kit supports managing email templates as code (HTML/MJML files) or version-controlled template management; evidence only covers broadcasts, API/webhooks, MCP integration, and pricing features, none of which describe template-as-code workflows.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers broadcasts, subscribers, custom fields, webhooks, OAuth, and MCP integration, but nowhere documents an HTML/MJML template API, template versioning, or variable-substitution template management that could be tracked in version control — a plausible capability for an ESP but unevidenced here.",
+    "evidenceIds": [
+      "kit-docs-1",
+      "kit-docs-38",
+      "kit-docs-27"
+    ]
   },
   {
     "productId": "kit",
     "storyId": "transactional-send-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Kit's API is centered on broadcasts to subscriber segments/tags and creator marketing tools; nothing in the evidence pack shows a transactional/one-to-one email sending endpoint (e.g. no per-recipient receipts, magic links, or notification API mentioned). All documented sending is broadcast/campaign-based, so this capability is not evidenced.",
+    "confidence": "high",
+    "rationale": "Kit's API and docs only cover broadcast-style marketing sends to segments/tags (kit-docs-1, kit-docs-2, kit-docs-43) with no endpoint or documentation for one-to-one transactional email such as receipts or magic links; the product is positioned as a creator marketing/newsletter platform, not a transactional email sender.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-2",
-      "kit-docs-18"
+      "kit-docs-43"
     ]
   },
   {
@@ -2294,13 +2350,12 @@
     "storyId": "transactional-separation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Kit's documented product surface (broadcasts, sequences, automations, tagging/segmentation) is entirely marketing-email focused; there is no evidence of a distinct transactional-sending capability, separate template/suppression system, or dedicated sending reputation for receipts/transactional mail that bypasses marketing unsubscribe rules.",
+    "confidence": "medium",
+    "rationale": "Kit's documented sending capability is broadcast/marketing email to subscriber segments and tags (kit-docs-1, kit-docs-2, kit-docs-43), with no mention of a separate transactional-sending pathway, dedicated templates, or reputation isolation that would let a receipt bypass marketing suppression/unsubscribe rules. The axis is fair to ask of any email-sending platform, but no evidence shows Kit offers transactional email at all.",
     "evidenceIds": [
       "kit-docs-1",
       "kit-docs-2",
-      "kit-docs-25",
-      "kit-docs-6"
+      "kit-docs-43"
     ]
   },
   {
