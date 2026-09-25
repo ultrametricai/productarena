@@ -6,6 +6,7 @@ import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import StepCanonicalVendor from '@/components/StepCanonicalVendor'
 import StepYourPick from '@/components/StepYourPick'
+import StepAfkChip from '@/components/StepAfkChip'
 import StepApiCalls from '@/components/StepApiCalls'
 import StepPromptBox from '@/components/StepPromptBox'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
@@ -328,6 +329,7 @@ function NodeBlock({
   checkStep,
   mineHref,
   lensKey,
+  manifestUrl,
 }: {
   node: DagNode
   index: number
@@ -339,6 +341,9 @@ function NodeBlock({
   // Process-lens page key (lib/processLens.ts): taskId on /processes/[slug], the chain id on
   // /processes/chains/[chain] so one clicked vendor flows across every section.
   lensKey?: string
+  // Absolute URL of this page's manifest (process or chain) — feeds the staff-gated per-step
+  // AFK computer-use trigger (components/StepAfkChip.tsx) on actionUrl steps.
+  manifestUrl?: string
 }) {
   const style = node.legalSignature ? SIGNATURE_STYLE : ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
@@ -383,6 +388,27 @@ function NodeBlock({
   // don't start with just one supplier"). Vendor-locked steps (IRS, Delaware portal…) have no
   // market and keep the full-strength chip.
   const hasMarket = ranking !== null || extras.length > 0 || options.length > 0
+
+  // The step's action row, AI path first, manual path last (founder 2026-09-25): the "Do it
+  // with AI" prompt affordances (components/StepPromptBox.tsx), then the staff-gated per-step
+  // AFK computer-use trigger, then the canonical external "do it yourself" page a human uses
+  // (data-level actionUrl, verified live before it ships — e.g. the IRS EIN application or
+  // Delaware's filing portal; deliberately distinct from the vendor chips, which link to our
+  // judged product pages).
+  const afkChip = node.actionUrl && manifestUrl && (
+    <StepAfkChip manifestUrl={manifestUrl} nodeId={node.id} />
+  )
+  const doItYourself = node.actionUrl && (
+    <a
+      href={node.actionUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`Do this step yourself at ${node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} (external site)`}
+      className="inline-flex items-center gap-1 rounded-md border border-zinc-700/80 px-1.5 py-0.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+    >
+      do it yourself: {node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} ↗
+    </a>
+  )
 
   return (
     <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
@@ -431,22 +457,29 @@ function NodeBlock({
             {node.riskLevel} risk
           </span>
         )}
-        {/* The canonical external page a human uses to do this step themselves (data-level
-            actionUrl, verified live before it ships) — e.g. the IRS EIN application or
-            Delaware's filing portal. Deliberately distinct from the vendor chips, which link
-            to our judged product pages. */}
-        {node.actionUrl && (
-          <a
-            href={node.actionUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={`Do this step yourself at ${node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} (external site)`}
-            className="inline-flex items-center gap-1 rounded-md border border-zinc-700/80 px-1.5 py-0.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-          >
-            do it yourself: {node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} ↗
-          </a>
-        )}
       </div>
+
+      {/* The primary action row — [Do it with AI: copy / Claude / ChatGPT] → [⚡ run with AFK
+          (staff)] → [do it yourself ↗]. Steps without a generated prompt keep the manual
+          affordances in a plain row; steps with neither render nothing extra. */}
+      {stepPrompt ? (
+        <StepPromptBox
+          prompt={stepPrompt.prompt}
+          vendors={promptVendors}
+          lensKey={lensKey}
+          legalSignature={node.legalSignature}
+        >
+          {afkChip}
+          {doItYourself}
+        </StepPromptBox>
+      ) : (
+        node.actionUrl && (
+          <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+            {afkChip}
+            {doItYourself}
+          </div>
+        )
+      )}
 
       {(ranking !== null || extras.length > 0) && (
         <StepRankingRow ranking={ranking} extras={extras} node={node} lensKey={lensKey} checkStep={checkStep} />
@@ -519,8 +552,6 @@ function NodeBlock({
         </p>
       )}
 
-      {stepPrompt && <StepPromptBox prompt={stepPrompt.prompt} vendors={promptVendors} lensKey={lensKey} />}
-
       {vendorCalls.length > 0 ? (
         <StepApiCalls
           canonical={calls}
@@ -590,6 +621,7 @@ function Flow({
   checkSteps,
   mineHref,
   lensKey,
+  manifestUrl,
 }: {
   nodes: DagNode[]
   edges?: DagEdge[]
@@ -597,6 +629,7 @@ function Flow({
   checkSteps?: Record<string, ProcessCheckStep>
   mineHref?: string
   lensKey?: string
+  manifestUrl?: string
 }) {
   const layers = layerNodes(nodes, edges)
   // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
@@ -622,6 +655,7 @@ function Flow({
                 checkStep={checkSteps?.[layer[0].id]}
                 mineHref={mineHref}
                 lensKey={lensKey}
+                manifestUrl={manifestUrl}
               />
             ) : (
               <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
@@ -638,6 +672,7 @@ function Flow({
                       checkStep={checkSteps?.[n.id]}
                       mineHref={mineHref}
                       lensKey={lensKey}
+                      manifestUrl={manifestUrl}
                     />
                   ))}
                 </div>
@@ -688,6 +723,7 @@ export default function ProcessDag({
   checkSteps,
   mineHref,
   lensKey,
+  manifestUrl,
 }: {
   nodes?: DagNode[]
   edges?: DagEdge[]
@@ -699,6 +735,10 @@ export default function ProcessDag({
   // chain id on a chain page — so a vendor clicked in one section applies to every later step
   // whose arena matches.
   lensKey?: string
+  // ONE manifest URL for the WHOLE diagram (lib/processManifest.ts): the process manifest on
+  // /processes/[slug], the chain manifest on /processes/chains/[chain] — the artifact the
+  // per-step AFK trigger hands off, scoped by &node=<nodeId>.
+  manifestUrl?: string
 }) {
   if (sections && sections.length > 0) {
     return (
@@ -715,6 +755,7 @@ export default function ProcessDag({
               checkSteps={s.checkSteps}
               mineHref={s.mineHref}
               lensKey={lensKey}
+              manifestUrl={manifestUrl}
             />
           </Fragment>
         ))}
@@ -730,6 +771,7 @@ export default function ProcessDag({
         checkSteps={checkSteps}
         mineHref={mineHref}
         lensKey={lensKey}
+        manifestUrl={manifestUrl}
       />
     </div>
   )
