@@ -4622,18 +4622,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes crawling, scraping, and AI agent search/reasoning controls (e.g., firecrawl-gh-1, firecrawl-gh-2), but nothing documents adaptive crawling that automatically halts once sufficient information has been gathered to answer a specific query — crawls appear to run to full site discovery or fixed limits rather than stopping based on information sufficiency.",
-    "evidenceIds": []
+    "rationale": "Firecrawl's docs describe exhaustive crawling (crawl entire site, discover all URLs) and an agent with adjustable 'reasoning effort' (firecrawl-gh-2, firecrawl-gh-3, firecrawl-gh-4), but there is no evidence of adaptive crawling that automatically halts once sufficient information to answer a query has been gathered — crawls appear to run to completion or a set limit rather than dynamically stopping on relevance/sufficiency.",
+    "evidenceIds": [
+      "firecrawl-gh-1",
+      "firecrawl-gh-2",
+      "firecrawl-gh-3",
+      "firecrawl-gh-4"
+    ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "A direct probe confirms Firecrawl publishes a working llms.txt at docs.firecrawl.dev/llms.txt with structured agent-readable documentation links, letting an AI agent be pointed directly at it to navigate Firecrawl's docs. Missing for 10: explicit first-party announcement/documentation describing llms.txt support as a deliberate feature, and independent community confirmation of agents successfully using it.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "A live probe confirms Firecrawl publishes a structured llms.txt at docs.firecrawl.dev/llms.txt (HTTP 200) that indexes its full v2/v1 documentation, giving agents a direct, machine-readable entry point to the product's docs, and the docs site also exposes per-page .md variants (e.g., mcp-server.md, webhooks/overview.md) confirming an agent-oriented docs architecture. Missing for 10: independent/community confirmation that agents actually consume this llms.txt successfully in practice, and no explicit vendor statement framing llms.txt as an agent-onboarding feature.",
     "evidenceIds": [
-      "firecrawl-probe-1"
+      "firecrawl-probe-1",
+      "firecrawl-docs-10",
+      "firecrawl-docs-11",
+      "firecrawl-docs-17"
     ]
   },
   {
@@ -4649,40 +4657,44 @@
     "productId": "firecrawl",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Firecrawl supports webhooks for async event delivery and crawling jobs that run without blocking, which enables background/autonomous data-retrieval workflows, and its MCP server/CLI let agents trigger these jobs programmatically. However there's no evidence of a scheduling/trigger system (e.g., cron-like recurring jobs) or persistent autonomous 'automation' orchestration beyond one-off crawl/extract jobs with webhook callbacks. Missing for 10: scheduled/recurring job support, autonomous multi-step automation orchestration, independent confirmation of long-running background automation reliability.",
+    "rationale": "Firecrawl supports asynchronous background jobs (batch scrape, crawl, extract) with webhook notifications instead of polling, and docs reference a 'monitor check' concept implying recurring background automation, which fits the 'autonomous background automation' story. However, there's no first-party documentation of a scheduling/cron interface, retry/failure handling for long-running monitors, or independent hands-on confirmation that these monitor jobs reliably run unattended. Missing for 10: explicit scheduling/cron configuration docs, dashboard/management UI for automations, independent corroboration of monitor reliability.",
     "evidenceIds": [
       "firecrawl-docs-7",
-      "firecrawl-gh-5",
-      "firecrawl-docs-5",
-      "firecrawl-probe-3"
+      "firecrawl-docs-11",
+      "firecrawl-docs-12",
+      "firecrawl-docs-13",
+      "firecrawl-gh-5"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Firecrawl exposes an 'AI agent' mode where a user describes what they need and the agent searches/navigates/retrieves without URLs, with configurable reasoning effort (firecrawl-gh-1, firecrawl-gh-2) — a limited form of task delegation to an embedded AI. However, this is a narrow scraping/search agent, not a general-purpose in-product assistant, and there's no evidence of a broader conversational assistant UI for delegating arbitrary tasks. Missing for 10: evidence of a general-purpose conversational assistant interface, examples of delegated multi-step tasks beyond search/navigate, and independent confirmation of this agent's real-world reliability.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Firecrawl advertises a built-in 'AI agent' that can be delegated open-ended tasks ('Describe what you need, and our AI agent searches, navigates, and retrieves it') with configurable reasoning effort, and references 'agent job' as a trackable async job type — this is a real delegated-task capability, not just documentation. However this is a narrow search/extraction agent, not a general-purpose in-product assistant for broader task delegation, and there's no first-hand/community corroboration of its behavior. Missing for 10: evidence of a general conversational assistant beyond web search/navigation tasks, and independent/hands-on validation of the agent's delegation quality.",
     "evidenceIds": [
       "firecrawl-gh-1",
-      "firecrawl-gh-2"
+      "firecrawl-gh-2",
+      "firecrawl-docs-11"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Firecrawl offers an API-first product (async scraping, webhooks, CLI, SDKs) that is well-suited to headless/CI use, and docs confirm a CLI and webhook-based async event delivery for automation pipelines. However, there's no explicit CI-specific documentation (e.g., GitHub Actions examples, Docker image for CI), and community comments note some daemon/CLI limitations rather than confirming robust CI usage. missing for 10: explicit CI/headless deployment docs or examples, independent confirmation of stable CLI/daemon behavior in automated pipelines, containerization guidance for CI environments.",
+    "rationale": "Firecrawl offers a REST API, SDKs, webhooks for async event delivery, and a CLI, all of which support headless/CI automation without a browser UI. missing for 10: no explicit CI pipeline examples (GitHub Actions, Docker) or independent hands-on confirmation of headless CI usage.",
     "evidenceIds": [
       "firecrawl-docs-7",
+      "firecrawl-docs-11",
+      "firecrawl-docs-14",
+      "firecrawl-docs-4",
       "firecrawl-probe-4",
-      "firecrawl-gh-5",
-      "firecrawl-comm-4"
+      "firecrawl-gh-5"
     ]
   },
   {
@@ -4691,10 +4703,11 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firecrawl is a web-scraping/crawling API/service that itself exposes an MCP server for other AI tools to consume (firecrawl-docs-5, firecrawl-probe-3); it is not an agent or orchestration platform designed to consume external MCP servers as a client. The evidence pack shows no capability for Firecrawl to import/plug in third-party MCP servers to extend its own tool use, and this is not a fair capability to expect of a scraping API — it's the reverse role.",
+    "rationale": "Firecrawl is a web-scraping/tool API product that exposes itself as an MCP server (docs-5, probe-3) so agents can consume ITS tools — the reverse of this story, which asks whether Firecrawl itself can plug in and consume other MCP servers' tools. As a tool/service rather than an orchestrating agent, that client-side capability is not a fit for this product category.",
     "evidenceIds": [
       "firecrawl-docs-5",
-      "firecrawl-probe-3"
+      "firecrawl-probe-3",
+      "firecrawl-docs-10"
     ]
   },
   {
@@ -4703,9 +4716,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firecrawl is a scraping/data-extraction service (not itself an agent), and it documents an official MCP server for connecting AI tools/agents to Firecrawl, corroborated by a dedicated GitHub repo (firecrawl-mcp-server). Missing for 10: independent hands-on testing of the MCP server itself and details on tool/resource coverage exposed via MCP.",
+    "rationale": "Firecrawl documents an official MCP server (docs.firecrawl.dev/mcp-server.md, firecrawl-mcp-server GitHub repo) that lets any AI agent connect via the Model Context Protocol, with authentication options and clear setup instructions. missing for 10: independent hands-on confirmation from third-party users that the MCP server works reliably in practice, and more detail on tool coverage/limitations of the MCP integration.",
     "evidenceIds": [
       "firecrawl-docs-5",
+      "firecrawl-docs-10",
       "firecrawl-probe-3"
     ]
   },
@@ -4743,62 +4757,74 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firecrawl is API-first: docs cover scrape/crawl/search/extract endpoints, schema-based structured output, webhooks, and SDKs/CLI, all confirmed by an extensive llms.txt-indexed documentation site and GitHub feature list. Missing for 10: a discoverable machine-readable OpenAPI/Swagger spec (probe returned 404s) and independent third-party confirmation of API completeness.",
+    "rationale": "Firecrawl exposes a well-documented public REST API plus official SDKs (Python, Ruby, etc.) covering scrape/crawl/extract/search/parse, with webhooks for async workflows and API key/IP security controls, all backed by extensive docs (203+ pages). This directly enables AI-native users to drive the product programmatically. missing for 10: a discoverable OpenAPI/swagger spec (probe found only 404s) and independent hands-on corroboration of API completeness beyond docs.",
     "evidenceIds": [
       "firecrawl-docs-1",
       "firecrawl-docs-2",
-      "firecrawl-docs-3",
-      "firecrawl-gh-7",
-      "firecrawl-docs-7",
+      "firecrawl-docs-14",
+      "firecrawl-docs-11",
+      "firecrawl-docs-17",
+      "firecrawl-docs-18",
       "firecrawl-probe-1",
-      "firecrawl-probe-2",
-      "firecrawl-probe-4"
+      "firecrawl-probe-2"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of scoped or least-privilege API key/credential management for agents; documentation covers scraping, crawling, MCP, CLI, and webhooks but nothing about API key scopes, permissions, or credential issuance controls.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs show explicit least-privilege controls: locking an API key to specific formats/endpoints (server-enforced, no override), IP allowlisting for team keys, and org-wide URL blocking policy, plus audit event streaming — directly matching the scoped-credential story for agent use. Missing for 10: independent/hands-on verification of these key-scoping features in practice and clearer documentation of role-based or read/write-level scoping beyond endpoint/format locks.",
+    "evidenceIds": [
+      "firecrawl-docs-17",
+      "firecrawl-docs-18",
+      "firecrawl-docs-19",
+      "firecrawl-docs-20"
+    ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "The only concrete artifact tied to 'SDKs' in the evidence is the CLI documented at docs.firecrawl.dev/sdks/cli, implying an SDKs section exists, but no evidence pack item names or links a Python/Node/other language SDK, shows install/usage snippets, or corroborates community usage. Missing for 10: explicit language SDK docs/links, code examples, independent/community confirmation of SDK usage.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Firecrawl has an official SDK overview and language-specific docs (Python, Ruby) showing concrete usage for search, scrape, extract, and file parsing, explicitly positioned to avoid raw HTTP requests — a clear AI-native developer-facing SDK ecosystem. Missing for 10: independent hands-on corroboration of SDK quality/reliability beyond first-party docs.",
     "evidenceIds": [
-      "firecrawl-probe-4",
-      "firecrawl-docs-4"
+      "firecrawl-docs-14",
+      "firecrawl-docs-15",
+      "firecrawl-docs-16",
+      "firecrawl-docs-1",
+      "firecrawl-docs-2"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Firecrawl's docs explicitly document a Webhooks feature for async event delivery, directly matching the story. Missing for 10: details on event types, payload schema, retry/security guarantees, and independent/hands-on confirmation of webhook usage.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Firecrawl has first-party, detailed webhook documentation covering async event delivery for crawl/batch scrape/extract/agent jobs, HMAC-SHA256 signature verification for security, and testing guidance for exposing local servers — a mature, well-documented webhook subscription system. Missing for 10: independent/hands-on community corroboration specifically of webhook reliability in production.",
     "evidenceIds": [
-      "firecrawl-docs-7"
+      "firecrawl-docs-7",
+      "firecrawl-docs-11",
+      "firecrawl-docs-12",
+      "firecrawl-docs-13"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "ai-natural-language-extraction",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Firecrawl's Extract feature lets developers get structured JSON via schemas and its agent can be described in natural language to find/retrieve content without URLs, but the evidence pack shows schema-based extraction more than fully free-form natural-language field extraction replacing selectors. Missing for 10: explicit documentation of prompt-only (no schema) extraction, and independent hands-on confirmation of extraction accuracy.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Firecrawl's extract/scrape JSON format lets developers supply a natural-language prompt plus optional schema instead of writing selectors (firecrawl-docs-16, firecrawl-gh-7), and the AI agent mode explicitly works from natural-language descriptions with no URLs required (firecrawl-gh-1). Docs also show local file extraction to structured JSON without selectors (firecrawl-docs-6, firecrawl-docs-15). missing for 10: independent/hands-on benchmark of extraction accuracy from prompts vs schemas, and no community corroboration specifically validating NL-driven extraction quality.",
     "evidenceIds": [
-      "firecrawl-docs-1",
       "firecrawl-gh-7",
       "firecrawl-gh-1",
-      "firecrawl-docs-3"
+      "firecrawl-docs-16",
+      "firecrawl-docs-6",
+      "firecrawl-docs-15"
     ]
   },
   {
@@ -4807,9 +4833,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference or runnable-example playground; the OpenAPI/swagger probe explicitly returned 404s at all candidate paths, and docs items only describe features, not an interactive reference experience.",
+    "rationale": "The docs pack shows extensive reference material (endpoints, SDKs, webhooks) but no evidence of an interactive playground or runnable-example API console; the probe explicitly found no discoverable OpenAPI/swagger spec (all candidate paths 404).",
     "evidenceIds": [
-      "firecrawl-probe-2"
+      "firecrawl-probe-2",
+      "firecrawl-docs-14"
     ]
   },
   {
@@ -4818,10 +4845,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "A direct probe for OpenAPI/Swagger spec files at all standard locations (openapi.json, swagger.json, etc.) returned 404s, and no other evidence pack item mentions a downloadable machine-readable API spec; only an llms.txt documentation index was found, which is not an OpenAPI-equivalent spec.",
+    "rationale": "A direct probe for OpenAPI/Swagger specs at all standard locations returned 404s, and no evidence pack item points to a downloadable machine-readable API spec (llms.txt exists but is not an API spec); SDK/docs pages describe endpoints in prose only.",
     "evidenceIds": [
-      "firecrawl-probe-2",
-      "firecrawl-probe-1"
+      "firecrawl-probe-2"
     ]
   },
   {
@@ -4829,9 +4855,12 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "Firecrawl's docs mention a 'Browser Sandbox' for managed browser sessions and a no-auth request option, but neither is described as a dedicated sandbox/staging environment for testing separate from production data — there's no evidence of test API keys, staging mode, or explicit production-data isolation.",
+    "evidenceIds": [
+      "firecrawl-docs-8",
+      "firecrawl-docs-9"
+    ]
   },
   {
     "productId": "firecrawl",
@@ -4839,7 +4868,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs reference a 'v2' API version (firecrawl-probe-1), showing some versioning exists, but there is no evidence of a documented deprecation policy, version support timelines, or migration guides, and an OpenAPI spec could not even be located (firecrawl-probe-2). Missing for 10: explicit deprecation policy documentation, versioning/support lifecycle statements, migration guidance for older API versions.",
+    "rationale": "Evidence shows a v2/v1 API structure exists (llms.txt lists v2 and v1 docs) but there is no documented deprecation policy, versioning changelog, or sunset timeline for old API versions anywhere in the evidence pack; openapi spec is also unreachable (404s).",
     "evidenceIds": [
       "firecrawl-probe-1",
       "firecrawl-probe-2"
@@ -4865,18 +4894,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of automatic cost-optimal configuration selection; docs mention manual controls like reasoning effort but nothing about the API choosing cheapest successful config automatically.",
+    "rationale": "No evidence Firecrawl automatically selects the cheapest configuration/plan that still succeeds; docs mention reasoning effort settings and API keys but nothing about auto-optimizing cost vs. success tradeoffs.",
     "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "auto-retry-proxy-chain",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "No evidence describes proxy rotation or anti-bot retry chains; the only relevant community comment explicitly states Firecrawl lacks a proxy service, which is core to bypassing anti-bot blocks.",
+    "rationale": "Firecrawl's GitHub README claims 'no proxy headaches, just clean data' implying built-in anti-bot/proxy handling, but a hands-on community comment directly contradicts this, stating Firecrawl 'doesn't have proxy service which is the heart of any crawler and scraper.' No documentation describes a retry-through-proxy-chain mechanism or exposes proxy configuration/rotation controls. missing for 10: explicit docs on proxy chain retry logic, evidence of configurable proxy pools, independent confirmation the anti-bot bypass actually rotates proxies on block.",
     "evidenceIds": [
-      "firecrawl-comm-3"
+      "firecrawl-gh-8",
+      "firecrawl-comm-3",
+      "firecrawl-comm-6"
     ]
   },
   {
@@ -4885,11 +4916,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firecrawl explicitly supports bulk operations at scale: crawling entire websites, scraping thousands of URLs asynchronously, batch discovery of URLs, and async webhook delivery for large jobs. This directly matches an AI-native user's need to operate across many items at once. Missing for 10: independent hands-on benchmarks validating throughput/reliability at scale and more detail on rate limits/error handling for bulk jobs.",
+    "rationale": "Firecrawl clearly supports bulk operations: crawling entire websites, batch scraping thousands of URLs asynchronously, discovering all URLs on a site, and async webhook notifications for job status instead of polling. This is well documented across docs and GitHub with concrete features like 'Scrape thousands of URLs asynchronously' and webhook-based completion callbacks for batch jobs. Missing for 10: independent hands-on benchmarks of bulk throughput/reliability at scale and no rate-limit/cost details for large batch jobs.",
     "evidenceIds": [
       "firecrawl-gh-3",
       "firecrawl-gh-4",
       "firecrawl-gh-5",
+      "firecrawl-docs-11",
       "firecrawl-docs-7"
     ]
   },
@@ -4897,11 +4929,14 @@
     "productId": "firecrawl",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Firecrawl offers webhooks for async event delivery (e.g., notifying when a crawl job completes), which is the only automation-adjacent capability in the evidence; there's no documented rule-definition engine or conditional trigger system for defining custom actions on events. Missing for 10: a rules/trigger engine, conditional logic, or action-chaining beyond simple webhook notifications, and any independent confirmation of automation depth.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Firecrawl offers webhooks that fire on job lifecycle events (crawl/scrape/extract/monitor check start, progress, finish) with HMAC verification, letting users react automatically when those events occur [firecrawl-docs-7][firecrawl-docs-11][firecrawl-docs-12]. This is event-driven automation but limited to notifying an external endpoint about Firecrawl's own job states, not a general rule/condition engine for defining arbitrary triggers-and-actions workflows. Missing for 10: evidence of conditional rule definitions, multi-step action chains, or a dedicated automation/rules UI beyond simple webhook delivery.",
     "evidenceIds": [
-      "firecrawl-docs-7"
+      "firecrawl-docs-7",
+      "firecrawl-docs-11",
+      "firecrawl-docs-12",
+      "firecrawl-docs-13"
     ]
   },
   {
@@ -4910,7 +4945,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firecrawl offers webhooks for async event delivery and async crawling/scraping, but there is no evidence of a scheduler or recurring-job/workflow feature (e.g., cron-based crawls or scheduled scrape jobs).",
+    "rationale": "Firecrawl offers webhooks for async job notification and crawl/extract/monitor jobs, but there's no evidence of a scheduling mechanism for recurring jobs or workflows (e.g., cron-like triggers, scheduled crawls) in the docs or repo.",
     "evidenceIds": []
   },
   {
@@ -4919,7 +4954,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firecrawl is a web scraping/extraction API and toolset; there is no evidence of automation versioning, review workflows, or rollback capabilities for crawl/scrape configurations or workflows in any of the docs, GitHub, or community sources.",
+    "rationale": "Firecrawl is a web scraping/extraction API; no evidence of any versioning, review, or rollback system for 'automations' (e.g., crawl configs, workflows) appears anywhere in docs, GitHub, or community sources.",
     "evidenceIds": []
   },
   {
@@ -4927,11 +4962,12 @@
     "storyId": "batch-scrape-async",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Firecrawl's GitHub docs explicitly advertise batch/async scraping of thousands of URLs, plus webhook-based async event delivery for pipeline integration, and crawl/map endpoints for URL discovery at scale, aligning well with the data-engineer scale story. Missing for 10: independent hands-on benchmarks proving reliability at thousands-of-URL scale and details on rate limits/retry/error handling under batch load.",
+    "confidence": "high",
+    "rationale": "Firecrawl explicitly documents batch scraping thousands of URLs asynchronously (firecrawl-gh-5), backed by webhooks for async event delivery/status notifications instead of polling (firecrawl-docs-7, firecrawl-docs-11), and crawl/discover-all-URLs features to feed batch jobs (firecrawl-gh-3, firecrawl-gh-4). Missing for 10: independent hands-on benchmarks confirming reliability at true 'thousands of URLs' scale, and no rate-limit/throughput SLA details beyond docs claims.",
     "evidenceIds": [
       "firecrawl-gh-5",
       "firecrawl-docs-7",
+      "firecrawl-docs-11",
       "firecrawl-gh-3",
       "firecrawl-gh-4"
     ]
@@ -4941,8 +4977,8 @@
     "storyId": "block-ads-for-speed",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions ad-blocking or any option to strip ads/trackers on target pages to speed up scraping; only general scraping, crawling, and extraction features are documented.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions ad-blocking or content-blocking options for scraping requests; nothing about performance optimization via ad blocking is documented.",
     "evidenceIds": []
   },
   {
@@ -4950,8 +4986,8 @@
     "storyId": "block-images-css-for-speed",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack mentions blocking images or CSS resources, resource-type filtering, or bandwidth-saving scrape options; only general scraping/crawling features are documented.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions blocking images/CSS resources or any resource-blocking option to reduce bandwidth; Firecrawl's docs focus on scraping, crawling, extraction, and structured output but nothing about selective resource-loading controls.",
     "evidenceIds": []
   },
   {
@@ -4960,35 +4996,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item documents rate limits, concurrency caps per pricing tier, or the cost to raise them; only unrelated product feature docs and community anecdotes about usage cost are present. missing for 10: documented per-tier concurrency/request limits, documented pricing to upgrade limits, any rate-limit or quota API reference.",
+    "rationale": "No evidence pack items mention concurrency limits per pricing tier, rate caps, or costs to raise them; only unrelated docs, features, and community commentary are present.",
     "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "concurrent-sessions-at-scale",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Firecrawl explicitly supports scraping 'thousands of URLs asynchronously' and full-site crawling with async webhooks for event delivery, which supports scaling to many concurrent scrape jobs. However, there is no documentation of concurrency limits, session management, or dedicated infrastructure for spinning up many parallel sessions, and community feedback raises cost/efficiency concerns at scale (proxy usage, cost overpay) without directly disputing the concurrency capability itself. Missing for 10: explicit concurrency/rate-limit documentation, first-party benchmarks or case studies of large-scale concurrent scraping, and independent verification of scale claims.",
+    "rationale": "Firecrawl documents async batch scraping of thousands of URLs, webhooks for async status updates, and a hosted cloud service designed for scale, which supports concurrent large-scale scraping. However, there's no explicit documentation of concurrency limits, rate-limit tiers, or infrastructure guarantees for 'many concurrent sessions', and community comments note proxy/cost limitations at scale. Missing for 10: documented concurrency/rate-limit specs, infrastructure scaling guarantees, independent benchmarks of concurrent session throughput.",
     "evidenceIds": [
       "firecrawl-gh-5",
-      "firecrawl-gh-3",
       "firecrawl-docs-7",
-      "firecrawl-comm-6",
-      "firecrawl-comm-7"
+      "firecrawl-docs-11",
+      "firecrawl-gh-10",
+      "firecrawl-comm-6"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "content-change-monitoring",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack shows scraping, crawling, extraction, and webhook-based async event delivery, but no dedicated change-tracking/monitoring feature (e.g., diffing pages over time, price/listing change alerts) is documented anywhere in the pack.",
+    "rationale": "Firecrawl's webhook docs explicitly reference a 'monitor check' event type alongside crawl/scrape/extract jobs, implying a native change-monitoring feature that pushes notifications via webhook (with HMAC verification) rather than requiring polling. However, there is no dedicated documentation describing how monitors are configured, what change-detection logic is used (e.g., price/listing diffing), scheduling/frequency options, or independent confirmation this feature works reliably in production. Missing for 10: dedicated monitor-configuration docs, change-diff mechanics, scheduling controls, and independent/hands-on validation of the monitoring feature.",
     "evidenceIds": [
-      "firecrawl-docs-7",
-      "firecrawl-gh-3",
-      "firecrawl-gh-5"
+      "firecrawl-docs-11",
+      "firecrawl-docs-12",
+      "firecrawl-docs-7"
     ]
   },
   {
@@ -4997,7 +5033,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions viewport width/height, mobile emulation, or screen size configuration for rendering pages; the docs mention scraping, actions, and a browser sandbox but nothing about viewport control.",
+    "rationale": "The evidence pack has no mention of viewport width/height controls or other page-rendering dimension settings for scraping; nothing in the docs or GitHub excerpts references configuring browser viewport size.",
     "evidenceIds": []
   },
   {
@@ -5006,7 +5042,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or evidence describes robots.txt compliance settings or automatic rate-limit throttling; the only related community comment (firecrawl-comm-8) suggests sites must proactively disallow the crawler, which doesn't confirm built-in respect for robots.txt as a configurable, automatic behavior.",
+    "rationale": "No first-party documentation describes configurable robots.txt compliance or automatic rate-limit handling; the only related mention is a community complaint (firecrawl-comm-8) that Firecrawl scrapes by default unless a site explicitly disallows its agent, which is not evidence of a data-engineer-configurable robots.txt/rate-limit feature.",
     "evidenceIds": [
       "firecrawl-comm-8"
     ]
@@ -5017,7 +5053,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses billing behavior when a plan's credit/request quota is exceeded — nothing on overage charges vs. hard cutoffs. This is a fair pricing question for a paid API product, so absence of evidence yields none. Missing for 10: any pricing/billing docs describing quota overage policy, hard-stop vs auto-billing behavior, or community reports confirming either.",
+    "rationale": "No evidence in the pack addresses what happens when a plan's monthly credit or request quota is exceeded—no mention of overage billing, rate-limit cutoffs, or quota-exceeded behavior.",
     "evidenceIds": []
   },
   {
@@ -5026,20 +5062,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Firecrawl's extraction relies on schema-based/LLM extraction (firecrawl-gh-7) and general markdown/HTML/JSON output (firecrawl-docs-1), but nothing in the pack documents CSS or XPath selector-based field extraction rules. Missing for 10: any mention of CSS selector or XPath rule support in scrape/extract config, docs page confirming selector-based extraction, or independent confirmation of this capability.",
-    "evidenceIds": [
-      "firecrawl-gh-7",
-      "firecrawl-docs-1"
-    ]
+    "rationale": "Firecrawl's documented extraction is schema/prompt-based structured JSON extraction (firecrawl-gh-7, firecrawl-docs-16), not CSS or XPath selector rules; no evidence pack item mentions selector-based field extraction. The axis applies to a scraping product, but no supporting evidence exists.",
+    "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "custom-actor-development",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Firecrawl's evidence shows a fixed API/SDK/CLI for scraping, crawling, extracting, and search, plus webhooks and an MCP server — but nothing about writing and deploying custom serverless scripts or actor-style code that runs on Firecrawl's own infrastructure (unlike platforms such as Apify Actors). No docs, GitHub, or community evidence mentions custom script deployment or a functions/actors runtime.",
-    "evidenceIds": []
+    "rationale": "Firecrawl offers hosted scraping via API/SDK with built-in interactive actions (click, fill, extract, navigate) and a managed Browser Sandbox, letting developers scrape without running their own crawler/browser infrastructure. However, the evidence shows only Firecrawl's predefined actions/endpoints, not a general mechanism to write and deploy arbitrary custom scraping scripts as serverless functions on the platform. Missing for 10: evidence of custom code/script deployment (e.g., a functions/actions runtime for arbitrary logic), documentation of scaling/execution limits for such scripts, and independent confirmation of this deploy-your-own-script workflow.",
+    "evidenceIds": [
+      "firecrawl-docs-3",
+      "firecrawl-docs-8",
+      "firecrawl-docs-14",
+      "firecrawl-gh-5",
+      "firecrawl-docs-7"
+    ]
   },
   {
     "productId": "firecrawl",
@@ -5047,33 +5086,38 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Firecrawl's outputs (markdown/HTML/structured JSON) are inherently portable formats, and its open-source AGPL-3.0 license means self-hosting/forking is possible, reducing lock-in — but there is no documented feature for exporting job configurations, crawl settings, or webhooks setups for migration to another provider. missing for 10: explicit job-configuration export/import tooling, migration guides, or documented data-portability features beyond raw scrape output formats.",
+    "rationale": "Firecrawl's outputs (markdown, HTML, structured JSON) are inherently portable data formats, and the AGPL-3.0 open-source license means developers can self-host or fork the codebase, reducing lock-in risk, but there is no documented feature for exporting job/crawl configurations or a migration path to another provider. Missing for 10: explicit config/job export or import tooling, documented migration guides, and any evidence of exporting scrape schedules or API-key/team settings for portability.",
     "evidenceIds": [
       "firecrawl-docs-1",
       "firecrawl-gh-6",
-      "firecrawl-comm-2"
+      "firecrawl-docs-6"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "data-quality-monitoring-alerts",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows webhooks for async event delivery but nothing about job performance dashboards, data quality validation, or failure alerting mechanisms for a data-engineering monitoring workflow.",
-    "evidenceIds": []
+    "rationale": "Firecrawl provides webhooks for job status/failure notifications (crawl, batch scrape, extract, agent job, monitor check start/progress/finish) with HMAC verification for security, which covers alerting on failures. However, there's no evidence of dedicated data-quality validation tooling, job performance dashboards/metrics, or SLA monitoring beyond basic webhook events and an audit log stream. Missing for 10: dashboards/metrics for job performance monitoring, data quality validation features, independent corroboration of alerting reliability in production use.",
+    "evidenceIds": [
+      "firecrawl-docs-11",
+      "firecrawl-docs-12",
+      "firecrawl-docs-13",
+      "firecrawl-docs-20"
+    ]
   },
   {
     "productId": "firecrawl",
     "storyId": "deep-crawl-bfs-with-limit",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Evidence confirms Firecrawl can crawl an entire website and discover all URLs (firecrawl-gh-3, firecrawl-gh-4), which implies a crawl feature suitable for a data-engineer's bulk scraping needs, but nothing in the pack explicitly documents a breadth-first crawl strategy or a configurable maximum page limit parameter. Missing for 10: explicit mention of BFS traversal mode, documented maxPages/limit parameter, and independent confirmation that these controls work at scale.",
+    "confidence": "medium",
+    "rationale": "Firecrawl's crawl feature (firecrawl-gh-3, firecrawl-gh-4, firecrawl-docs-21) confirms it can crawl an entire site and discover all URLs, implying some traversal strategy and page discovery, but no evidence explicitly documents a configurable 'breadth-first' strategy or an explicit max-page-limit parameter. missing for 10: explicit documentation of breadth-first vs depth-first crawl strategy option, explicit max page limit configuration parameter, independent verification of crawl ordering behavior.",
     "evidenceIds": [
       "firecrawl-gh-3",
       "firecrawl-gh-4",
-      "firecrawl-gh-5"
+      "firecrawl-docs-21"
     ]
   },
   {
@@ -5081,10 +5125,11 @@
     "storyId": "docker-container-deploy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence confirms Firecrawl is open source (AGPL-3.0) and self-hostable, but no citation mentions Docker, docker-compose, or containerized deployment instructions for production use.",
+    "confidence": "medium",
+    "rationale": "The evidence confirms Firecrawl is open source and self-hostable (firecrawl-gh-6, firecrawl-gh-10) but never mentions a Docker container, Dockerfile, or docker-compose setup for deployment. Without any citation describing containerized deployment, this applicable dev-experience axis has no supporting evidence.",
     "evidenceIds": [
-      "firecrawl-gh-6"
+      "firecrawl-gh-6",
+      "firecrawl-gh-10"
     ]
   },
   {
@@ -5092,8 +5137,8 @@
     "storyId": "documented-rate-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item documents specific rate limits (requests per second/minute) per API key or plan tier; only general product features and community commentary are present.",
+    "confidence": "low",
+    "rationale": "No evidence pack item documents specific rate-limit numbers (requests per second/minute) per API key or plan tier; there is mention of IP allowlisting and key restrictions but nothing about throttling thresholds.",
     "evidenceIds": []
   },
   {
@@ -5101,8 +5146,8 @@
     "storyId": "failed-request-billing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items discuss billing/credit treatment for failed, blocked, or empty-result requests; documentation snippets cover features (scrape, crawl, MCP, webhooks) but not quota/credit consumption policy.",
+    "confidence": "low",
+    "rationale": "No evidence pack item addresses billing/credit consumption for failed, blocked, or empty-result requests — pricing/quota documentation on this topic is absent.",
     "evidenceIds": []
   },
   {
@@ -5111,11 +5156,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "GitHub docs explicitly state 'Crawl an entire website and get content from all pages' with supporting features like URL discovery and async scraping of thousands of URLs, directly matching the story. Missing for 10: independent hands-on validation specifically of full-site crawl completeness/reliability at scale (community comments discuss cost/proxy issues but not crawl-completeness failures).",
+    "rationale": "Core crawl capability is explicitly documented and central to Firecrawl's value prop: \"Crawl an entire website and get content from all pages\" plus URL discovery, async batch scraping, and high site-coverage reliability claims. This is corroborated across GitHub README and docs, though independent hands-on validation specifically of full-site crawl completeness is thin. Missing for 10: independent/hands-on benchmark confirming completeness of full-site crawls at scale.",
     "evidenceIds": [
       "firecrawl-gh-3",
       "firecrawl-gh-4",
-      "firecrawl-gh-5"
+      "firecrawl-gh-5",
+      "firecrawl-gh-8",
+      "firecrawl-docs-21"
     ]
   },
   {
@@ -5124,7 +5171,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack shows Firecrawl offering country-specific or geolocation proxy selection; in fact a community comment explicitly states Firecrawl lacks a proxy service entirely, and no docs or GitHub references mention proxy/geolocation features.",
+    "rationale": "No documentation or evidence describes a country-specific proxy selection feature; the only relevant community comment explicitly states Firecrawl 'don't have proxy service which is the heart of any crawler and scraper,' reinforcing the absence of this capability.",
     "evidenceIds": [
       "firecrawl-comm-3"
     ]
@@ -5134,8 +5181,8 @@
     "storyId": "image-captioning-for-text-llm",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Firecrawl generates automatic image captions or alt-text descriptions for visual content; evidence only covers text/HTML/markdown extraction, crawling, and structured data extraction.",
+    "confidence": "medium",
+    "rationale": "No evidence Firecrawl generates image captions/alt-text descriptions for embedded images; docs mention markdown/JSON/screenshot extraction but nothing about automatic image captioning for text-only model reasoning.",
     "evidenceIds": []
   },
   {
@@ -5154,13 +5201,14 @@
     "productId": "firecrawl",
     "storyId": "js-rendering-spa",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm Firecrawl scrapes pages with an actual browser session ('Browser Sandbox... managed browser sessions for interactive workflows', 'click, fill forms, extract dynamic content'), and community evidence confirms it uses a real headless browser (Puppeteer) to render pages rather than static HTTP fetch, which supports JS-heavy SPA rendering. Output can be returned as HTML per docs-1. Missing for 10: independent benchmark/proof of correctly rendering complex SPAs, and community notes it uses Puppeteer not Playwright with some limitations in certain modes.",
+    "rationale": "Firecrawl explicitly claims industry-leading coverage of JS-heavy pages via managed browser sessions, and supports interactive scraping (click, fill forms, extract dynamic content) plus rendering to markdown/HTML/JSON. Community discussion questions proxy robustness but does not concretely contradict JS-rendering capability itself. missing for 10: independent hands-on benchmark confirming JS rendering fidelity, more detail on rendering engine (Puppeteer vs Playwright) reliability.",
     "evidenceIds": [
-      "firecrawl-docs-1",
+      "firecrawl-gh-8",
       "firecrawl-docs-3",
       "firecrawl-docs-8",
+      "firecrawl-docs-1",
       "firecrawl-comm-3"
     ]
   },
@@ -5170,11 +5218,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firecrawl's docs and GitHub explicitly advertise passing a JSON schema to extract structured data (\"Use a schema to get structured data\") and general structured JSON extraction from URLs, PDFs, and other formats. Missing for 10: independent/hands-on confirmation of schema-conformance accuracy and edge-case handling beyond vendor docs.",
+    "rationale": "Firecrawl explicitly documents schema-based structured extraction: GitHub README states 'Use a schema to get structured data' and SDK docs describe including a 'json' format with a prompt and schema on the scrape endpoint. This directly matches the story of passing a JSON schema to get structured output. Missing for 10: independent hands-on verification of schema-conformance accuracy and no direct code example shown in the pack.",
     "evidenceIds": [
       "firecrawl-gh-7",
-      "firecrawl-docs-1",
-      "firecrawl-docs-6"
+      "firecrawl-docs-16",
+      "firecrawl-docs-1"
     ]
   },
   {
@@ -5182,8 +5230,8 @@
     "storyId": "large-table-chunked-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention table extraction, large-table handling, or intelligent chunking strategies for oversized data; the evidence only covers general scraping, crawling, and structured extraction features. missing for 10: any mention of table-specific extraction, chunking mechanisms, or handling of oversized documents/tables to fit token/processing limits.",
+    "confidence": "medium",
+    "rationale": "The evidence covers general scraping, structured JSON extraction via schema, and file parsing (PDF/DOCX/XLSX), but nothing addresses handling very large tables or intelligent chunking to fit processing/context limits.",
     "evidenceIds": []
   },
   {
@@ -5192,11 +5240,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Firecrawl offers async webhooks for event delivery and an agent 'reasoning effort' setting that trades speed for thoroughness, plus async bulk scraping — all of which let a developer influence when/how much content comes back, but there's no explicit documented parameter (e.g., wait-time or completeness threshold) framed as a direct latency-vs-completeness control on the standard scrape/crawl endpoints. missing for 10: explicit sync-return timeout/partial-completeness parameter, independent benchmarking of latency vs completeness tradeoffs, and hands-on confirmation of the reasoning-effort knob's effect.",
+    "rationale": "Firecrawl offers async/webhook delivery for crawl/extract jobs (firecrawl-docs-7, firecrawl-docs-11) and a 'reasoning effort' style agent-search knob (firecrawl-gh-2), which imply some tradeoff between waiting for completeness vs. getting quicker results, but there's no explicit documented parameter (e.g., a 'wait_for'/streaming-vs-batch mode toggle) framed as controlling latency-vs-completeness tradeoffs for scrape/crawl operations. missing for 10: explicit docs describing a latency/completeness control (e.g., partial vs full page load wait, streaming partial results), independent/hands-on confirmation that developers can tune this tradeoff, and clarity on how webhook async delivery vs synchronous calls actually let you choose completeness at request time.",
     "evidenceIds": [
-      "firecrawl-gh-2",
       "firecrawl-docs-7",
-      "firecrawl-gh-5"
+      "firecrawl-docs-11",
+      "firecrawl-gh-2",
+      "firecrawl-docs-3"
     ]
   },
   {
@@ -5205,36 +5254,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a real-time dashboard for monitoring system metrics, worker pool, or browser pool status; evidence only covers scraping/crawling features, CLI, MCP server, and community discussion unrelated to monitoring dashboards.",
+    "rationale": "No evidence of a real-time dashboard for monitoring system metrics, worker pools, or browser pool status; evidence only covers scraping features, SDKs, webhooks, and security controls.",
     "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "llm-driven-extraction",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Firecrawl's docs and GitHub note schema-based structured extraction (\"Use a schema to get structured data\") and general LLM-driven content extraction to JSON, which aligns with selector-free, LLM-decided field extraction. However, evidence doesn't show prompt-only (schema-less) extraction quality, nor independent verification of how well the LLM infers fields without any schema hints. missing for 10: evidence of extraction working from a pure natural-language prompt without any schema, and independent/hands-on validation of extraction accuracy.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Firecrawl's extract/scrape endpoints support LLM-driven structured extraction using a natural-language prompt and/or schema instead of hand-written selectors (docs-16, gh-7, docs-1), directly matching the story. Missing for 10: independent hands-on benchmarking of extraction accuracy/field-selection quality beyond vendor docs.",
     "evidenceIds": [
       "firecrawl-docs-1",
+      "firecrawl-docs-16",
       "firecrawl-gh-7",
-      "firecrawl-gh-1"
+      "firecrawl-gh-9"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "llm-ready-text-instead-of-raw-html",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Firecrawl's core value proposition is turning any URL into clean markdown/structured JSON, handling rendering, JS-heavy pages, and blocking via a managed browser sandbox, explicitly for LLM/RAG use cases. Docs and GitHub confirm markdown/HTML/JSON extraction, PDF/DOCX conversion, and managed browser sessions abstracting away rendering complexity, though community comments note some limitations (e.g., proxy/anti-bot gaps, missing HTML in some modes). Missing for 10: independent benchmark of output cleanliness vs raw HTML scraping, and resolution of community-reported edge-case limitations (daemon mode HTML issue).",
+    "rationale": "Firecrawl's core value proposition is directly on point: it handles JS rendering, blocking, and proxies to deliver clean markdown/structured JSON output for LLMs, explicitly marketed as 'LLM-ready output: Clean markdown, structured JSON... spend fewer tokens' and covering '96% of the web, including JS-heavy pages — no proxy headaches, just clean data'. This is corroborated by extensive docs on scrape/extract/crawl endpoints and community usage discussing it as a scraping/RAG solution. Missing for 10: independent benchmark of actual token/cost savings or head-to-head cleanliness comparison beyond vendor claims.",
     "evidenceIds": [
+      "firecrawl-gh-8",
+      "firecrawl-gh-9",
       "firecrawl-docs-1",
-      "firecrawl-docs-3",
-      "firecrawl-docs-6",
-      "firecrawl-docs-8",
-      "firecrawl-gh-3",
-      "firecrawl-comm-4"
+      "firecrawl-docs-6"
     ]
   },
   {
@@ -5243,7 +5291,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence that Firecrawl allows swapping in a local or self-hosted LLM as the extraction backend; a community comment even suggests adding Ollama support as a future wish, implying it isn't currently offered.",
+    "rationale": "No documentation or evidence shows Firecrawl allows swapping in a local/self-hosted LLM for extraction; a community comment even suggests Ollama support as a desired future feature, implying it isn't currently available.",
     "evidenceIds": [
       "firecrawl-comm-9"
     ]
@@ -5254,9 +5302,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "First-party docs explicitly state extraction as markdown (alongside HTML/JSON) and support converting local files to markdown, confirming clean markdown output is a core, well-documented feature. Missing for 10: independent hands-on confirmation specifically praising markdown output quality/cleanliness.",
+    "rationale": "Firecrawl explicitly markets markdown as a core output format (docs-1, gh-9) alongside HTML/JSON, and this is corroborated across docs, GitHub README, and file-parsing features (docs-6). Missing for 10: independent hands-on confirmation of markdown output quality/cleanliness beyond marketing claims.",
     "evidenceIds": [
       "firecrawl-docs-1",
+      "firecrawl-gh-9",
       "firecrawl-docs-6"
     ]
   },
@@ -5275,10 +5324,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm output as markdown, HTML, or structured JSON (firecrawl-docs-1, firecrawl-docs-6), and a community comment notes a daemon-mode limitation where HTML return is unsupported in some contexts, suggesting partial reliability. No explicit mention of 'frontmatter' or 'text' formats, and no documentation snippet showing a format-selection parameter/API example. Missing for 10: explicit mention of frontmatter/text format options, and a documented parameter/example showing developers selecting formats.",
+    "rationale": "Docs and GitHub README confirm output format choice among markdown, HTML, and structured JSON, and note that API keys can be locked to specific output formats (implying selectable formats per request). However, 'text' and 'frontmatter' formats are never explicitly documented, and a hands-on community report specifically complains that a mode of Firecrawl (daemon mode) 'not being able to return html', showing the format selection isn't uniformly reliable across the product. missing for 10: explicit support for 'text' and 'frontmatter' formats, and resolution of the reported HTML-return limitation in daemon mode.",
     "evidenceIds": [
       "firecrawl-docs-1",
-      "firecrawl-docs-6",
+      "firecrawl-gh-9",
+      "firecrawl-docs-18",
       "firecrawl-comm-4"
     ]
   },
@@ -5287,8 +5337,8 @@
     "storyId": "nocode-automation-connector",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a prebuilt n8n or Zapier connector; docs mention MCP server, CLI, SDKs, and webhooks but nothing about no-code automation platform integrations.",
+    "confidence": "medium",
+    "rationale": "No evidence of any prebuilt n8n or Zapier connector; evidence only covers webhooks, SDKs, MCP server, and CLI, none of which constitute a no-code automation platform connector.",
     "evidenceIds": []
   },
   {
@@ -5297,11 +5347,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firecrawl is a hosted scraping/crawling API with its own primitives (scrape, crawl, extract, browser sandbox) rather than a framework for developers to write Playwright/Puppeteer/Selenium/Scrapy scripts; there is no documented support for plugging in or building on these open-source libraries. A community comment even notes Firecrawl internally uses Puppeteer (not user-selectable) and lacks the openness these libraries provide, contradicting any claim of multi-library dev flexibility.",
+    "rationale": "Firecrawl positions itself as an all-in-one scraping API/SDK that replaces the need for raw Playwright/Puppeteer/Selenium/Scrapy code, not as a framework for building scrapers atop those libraries; evidence only shows it internally uses Puppeteer (per community comment) with no documented way for developers to plug in or extend scrapers via these OSS libraries.",
     "evidenceIds": [
       "firecrawl-comm-3",
-      "firecrawl-docs-8",
-      "firecrawl-gh-6"
+      "firecrawl-docs-14"
     ]
   },
   {
@@ -5310,14 +5359,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Firecrawl is fundamentally API-first — scrape, crawl, extract, search, and structured data features are all exposed via API/SDKs and docs, and there is no evidence of a rich standalone UI with capabilities withheld from the API. However, the evidence pack lacks a discoverable OpenAPI spec (probe found 404s) and does not explicitly confirm dashboard-only features (e.g., billing, team management, job monitoring) are also API-accessible. missing for 10: a published OpenAPI/swagger spec, explicit confirmation that all dashboard/UI-only functions (usage analytics, team/billing management, job history) are API-reachable, and independent verification of full UI/API parity.",
+    "rationale": "Firecrawl's docs and SDKs show the core capabilities (scrape, crawl, search, extract, map, webhooks, parse local files) are all exposed via API/SDKs and CLI, suggesting the API is the primary and comprehensive surface, with the dashboard likely just a thin wrapper — implying API-only usage is the norm rather than a subset of a richer UI. However there is no explicit evidence contrasting dashboard-only features (e.g. playground, usage analytics, team management) against API parity, so full equivalence can't be confirmed. Missing for 10: explicit UI feature inventory compared against API, confirmation that dashboard-only settings (team/API-key management, billing, monitoring UI) are all API-accessible, and independent corroboration of full parity.",
     "evidenceIds": [
       "firecrawl-docs-1",
       "firecrawl-docs-2",
       "firecrawl-docs-3",
-      "firecrawl-gh-3",
-      "firecrawl-gh-5",
-      "firecrawl-probe-2",
+      "firecrawl-docs-6",
+      "firecrawl-docs-7",
+      "firecrawl-docs-14",
+      "firecrawl-docs-15",
       "firecrawl-probe-4"
     ]
   },
@@ -5327,36 +5377,38 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Firecrawl outputs are natively in open formats (markdown, HTML, structured JSON) and the core engine is open source (AGPL-3.0), letting a user self-host and avoid lock-in to the hosted service. However there's no explicit 'export all your account/config data' feature documented, and community notes only touch on forking rights, not a formal data-export path. Missing for 10: a documented account-data export/migration flow, evidence of exporting crawl history/settings, and independent confirmation users have actually migrated off the hosted service.",
+    "rationale": "Firecrawl's outputs are natively delivered in open formats (markdown, HTML, structured JSON) and the core engine is open source (AGPL-3.0) with a self-hostable version, which supports both 'open formats' and 'leave without lock-in' aspects of the story. However there's no explicit account-level 'export all my data' feature, no documented data-portability/account-deletion workflow, and the product doesn't store user data in a way that maps directly to a bulk-export story. Missing for 10: dedicated account data export/deletion documentation, evidence of exporting crawl history or stored jobs, independent confirmation of self-hosted parity with cloud service.",
     "evidenceIds": [
       "firecrawl-docs-1",
       "firecrawl-gh-6",
-      "firecrawl-comm-2"
+      "firecrawl-gh-10",
+      "firecrawl-docs-6"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Firecrawl's GitHub repo confirms it is open source under the AGPL-3.0 license, with community discussion also confirming this (including implications of AGPL forking rights). Source is publicly readable on GitHub with an OSI-approved-family open license. Missing for 10: no evidence of clarity on which parts of the cloud-only features are excluded from the open license, and no independent audit of full repo completeness.",
+    "rationale": "GitHub confirms Firecrawl's source is open under the AGPL-3.0 license, with the hosted cloud offering additional features on top, and community commentary corroborates this is a real, forkable open-source project. missing for 10: no independent audit of license compliance across all repo components.",
     "evidenceIds": [
       "firecrawl-gh-6",
+      "firecrawl-gh-10",
       "firecrawl-comm-2"
     ]
   },
   {
     "productId": "firecrawl",
     "storyId": "openness-self-host",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Firecrawl's GitHub repo confirms the core product is open source under AGPL-3.0 and can be self-hosted, with the hosted cloud version offering extra features (firecrawl-gh-6). However, community reports note self-hosted/simple versions lack key production features like proxy support and have functional limitations (e.g., daemon mode restrictions, no HTML return) compared to the cloud offering (firecrawl-comm-3, firecrawl-comm-4). Missing for 10: official self-hosting setup docs/guide in the evidence pack, and confirmation that self-hosted deployment achieves full feature parity with the hosted service.",
+    "rationale": "Firecrawl's core repo is explicitly AGPL-3.0 open source with the cloud version offering only 'additional features,' confirming the core product can be self-hosted, and community discussion corroborates its open-source/forkable nature. Missing for 10: first-party self-hosting setup docs (e.g. docker-compose instructions) and independent hands-on reports of successfully running a self-hosted instance.",
     "evidenceIds": [
       "firecrawl-gh-6",
-      "firecrawl-comm-3",
-      "firecrawl-comm-4"
+      "firecrawl-gh-10",
+      "firecrawl-comm-2"
     ]
   },
   {
@@ -5364,8 +5416,8 @@
     "storyId": "pass-session-cookies",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions passing custom cookies, headers, or session/auth tokens to Firecrawl's scrape API; only generic scraping, crawling, and browser-sandbox features are documented.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions passing custom session cookies or headers for authenticated scraping; docs reference browser sandbox, MCP auth (API key sign-in), and general scraping features but nothing about developer-supplied session cookies for authenticated page fetches.",
     "evidenceIds": []
   },
   {
@@ -5373,11 +5425,11 @@
     "storyId": "pdf-office-doc-extraction",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Firecrawl explicitly documents converting local PDFs, DOCX, XLSX, HTML and more into Markdown or structured JSON as a hosted (cloud) service, directly matching the story of extracting text from PDFs/Word/Excel/PowerPoint without self-hosting. Missing for 10: explicit mention of PowerPoint (.pptx) support and independent hands-on confirmation of file-parsing quality/accuracy.",
+    "confidence": "high",
+    "rationale": "Firecrawl's `parse` endpoint explicitly supports uploading local PDFs, DOCX, XLSX, HTML and more to be converted into Markdown or structured JSON, directly matching the story's need to extract text from Office/PDF files without self-hosting infrastructure. This is documented in both product docs and SDK references, though there's no independent hands-on validation of extraction quality across all these formats specifically. Missing for 10: independent/community corroboration of file-parsing accuracy, and explicit confirmation of PowerPoint (PPTX) support beyond the general 'and more' phrasing.",
     "evidenceIds": [
       "firecrawl-docs-6",
-      "firecrawl-docs-1"
+      "firecrawl-docs-15"
     ]
   },
   {
@@ -5385,8 +5437,8 @@
     "storyId": "per-url-pattern-config",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers crawling, scraping, extraction, webhooks, and CLI/MCP features, but nothing describes per-URL-pattern configuration overrides within a single crawl/batch job (e.g., different scrape options for different path patterns). No docs or community evidence mention such rule-based configuration.",
+    "confidence": "low",
+    "rationale": "No evidence describes per-URL-pattern configuration rules within a single crawl/batch job; the evidence only covers crawling whole sites, batch scraping, and general config options without pattern-based differentiation.",
     "evidenceIds": []
   },
   {
@@ -5395,10 +5447,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence mentions a 'Browser Sandbox' for managed sessions and interactive workflows, but nothing describes persisting cookies/login state or reusing a browser profile across multiple separate requests. No docs, SDK, or community evidence confirms this capability.",
-    "evidenceIds": [
-      "firecrawl-docs-8"
-    ]
+    "rationale": "Evidence mentions a 'Browser Sandbox' for managed interactive sessions but no documentation of persistent profiles, saved cookies, or reusable login state across requests. Firecrawl's scraping model is largely stateless per-request with no mention of profile persistence.",
+    "evidenceIds": []
   },
   {
     "productId": "firecrawl",
@@ -5406,7 +5456,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions PII detection, redaction, or filtering capabilities; Firecrawl's documented features cover scraping, extraction, crawling, and structured output but nothing about privacy/PII compliance controls.",
+    "rationale": "No evidence of any PII detection or redaction feature in Firecrawl's docs, GitHub, or community discussion; extraction features cover markdown/JSON/schema output but nothing about identifying or filtering PII before storage.",
     "evidenceIds": []
   },
   {
@@ -5433,11 +5483,12 @@
   {
     "productId": "firecrawl",
     "storyId": "premium-residential-proxies",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no vendor documentation mentioning residential or datacenter proxy support; in fact a community source explicitly states 'Firecrawl... don't have proxy service which is the heart of any crawler and scraper' (firecrawl-comm-3). No official docs or GitHub features reference proxy rotation, IP pools, or anti-bot proxy tiers.",
+    "rationale": "Firecrawl markets itself as handling scraping without 'proxy headaches' and covering 96% of the web (gh-8), implying built-in anti-bot/proxy handling, but no docs ever mention premium residential or datacenter proxy options, and a hands-on community comment explicitly states Firecrawl 'don't have proxy service which is the heart of any crawler and scraper' (comm-3), directly contradicting the implied anti-bot capability. missing for 10: explicit documentation of premium residential/datacenter proxy selection, first-party proxy infrastructure details, and independent confirmation that proxy-based bypass actually works.",
     "evidenceIds": [
+      "firecrawl-gh-8",
       "firecrawl-comm-3"
     ]
   },
@@ -5446,8 +5497,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance controls for where scraped data is processed/stored; the open-source AGPL version could theoretically be self-hosted for residency control, but this is not documented anywhere in the evidence.",
+    "confidence": "high",
+    "rationale": "No evidence of regional data residency options or self-hosted/region-specific storage controls; open-source self-hosting exists but is not documented as a data residency feature.",
     "evidenceIds": []
   },
   {
@@ -5456,7 +5507,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions any data-training opt-out, privacy policy on model training use, or data retention/DPA controls for Firecrawl's scraped or user data; the only related community comment raises concerns about scraping others' data, not about protecting the user's own data from AI training use.",
+    "rationale": "No evidence in the pack addresses AI-training data usage policies, opt-out mechanisms, or data retention commitments regarding model training; the pack covers scraping features, SDKs, webhooks, and access controls but nothing about AI training data exclusion.",
     "evidenceIds": []
   },
   {
@@ -5465,7 +5516,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions data retention policies, deletion controls, or privacy settings for stored crawl/scrape data; this is a fair question for a cloud scraping/data API but no documentation addresses it.",
+    "rationale": "The evidence pack covers scraping, crawling, SDKs, webhooks, security controls like IP allowlisting and key restrictions, but contains no mention of data retention policies, data deletion controls, or user-facing options to purge stored/crawled data.",
     "evidenceIds": []
   },
   {
@@ -5474,7 +5525,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out setting/flag for Firecrawl's CLI, SDK, or self-hosted deployment; while the open-source AGPL nature suggests self-hosting is possible, nothing documents a telemetry toggle or privacy control.",
+    "rationale": "No evidence pack mentions telemetry, usage tracking, or opt-out settings for Firecrawl's CLI, SDKs, or MCP server; the open-source AGPL license is noted but that does not address telemetry controls.",
     "evidenceIds": []
   },
   {
@@ -5483,7 +5534,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions a public status page, uptime history, or incident postmortems for Firecrawl; the docs and community threads cover product features and complaints but nothing about SLA/uptime transparency.",
+    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the pack; only product feature docs and community discussion unrelated to status/uptime tracking.",
     "evidenceIds": []
   },
   {
@@ -5492,7 +5543,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows CLI, SDKs, MCP server, and API docs, but nothing about a library of ready-made project templates or starter projects to jumpstart development.",
+    "rationale": "No evidence in the pack of any starter/template library — only SDKs, CLI, MCP server, and API docs are documented, none of which constitute ready-made project templates for quick starts.",
     "evidenceIds": []
   },
   {
@@ -5500,8 +5551,8 @@
     "storyId": "reasoning-effort-control",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "GitHub README explicitly states the agent lets users 'set how much reasoning the agent spends on the task,' directly matching the story, but there's no detailed documentation confirming discrete low/medium/high levels or pricing-tied reasoning-effort controls. Missing for 10: first-party docs specifying the exact reasoning-effort parameter/levels, independent confirmation of how this affects cost/limits.",
+    "confidence": "low",
+    "rationale": "GitHub README explicitly mentions setting how much reasoning the agent spends on a task, directly matching the story, but there is no detailed documentation showing the low/medium/high options, API parameters, or pricing implications, nor independent corroboration. missing for 10: documented parameter/enum values (low/medium/high), pricing-tier implications, and independent/hands-on confirmation of the effort-setting behavior.",
     "evidenceIds": [
       "firecrawl-gh-2",
       "firecrawl-gh-1"
@@ -5513,7 +5564,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firecrawl offers general scraping, structured JSON extraction, and search, but the evidence pack shows no dedicated preset/mode tuned specifically for research agents that returns citable, source-attributed output — no citation formatting, source-tracking, or research-agent-specific configuration is documented.",
+    "rationale": "Firecrawl offers structured JSON extraction, schemas, and citable source URLs generally, but there is no evidence of a dedicated 'research agent' preset configuration tuned specifically to return structured, citable output for agentic research use cases.",
     "evidenceIds": []
   },
   {
@@ -5522,17 +5573,18 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of checkpointing or resuming crawls from saved state; docs mention crawling, webhooks, and async scraping but nothing about crash recovery or resumable checkpoints.",
+    "rationale": "No evidence of checkpointing or resuming a crashed crawl from a saved state; webhooks provide async status updates but nothing about persisting and resuming crawl progress.",
     "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "rotating-proxy-pool",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No first-party documentation or GitHub evidence claims a rotating proxy pool feature; in fact community commentary explicitly states Firecrawl 'don't have proxy service which is the heart of any crawler and scraper.' Without vendor claims to dispute, this is simply unevidenced.",
+    "verdict": "disputed",
+    "quality": 2,
+    "confidence": "low",
+    "rationale": "Firecrawl's marketing claims 'no proxy headaches, just clean data' implying built-in handling of anti-bot issues, but a hands-on community comment explicitly states Firecrawl lacks a proxy service, calling it 'the heart of any crawler and scraper' that's missing. No first-party docs describe a rotating proxy pool feature. Missing for 10: explicit docs on proxy rotation configuration, independent confirmation of proxy pool usage, and resolution of the community contradiction.",
     "evidenceIds": [
+      "firecrawl-gh-8",
       "firecrawl-comm-3"
     ]
   },
@@ -5541,19 +5593,19 @@
     "storyId": "scheduled-runs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of scheduled/cron-based scraping jobs; Firecrawl's evidence covers crawling, scraping, webhooks, and async batch scraping, but nothing about scheduling jobs to run at specific times.",
+    "confidence": "low",
+    "rationale": "Evidence shows async crawling, webhooks for event notification, and monitor checks, but there is no mention of scheduling scrape jobs to run at specific times/recurring intervals — no cron-like scheduler or 'schedule' feature is documented.",
     "evidenceIds": []
   },
   {
     "productId": "firecrawl",
     "storyId": "screenshot-capture",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack lists output formats as markdown/HTML/JSON but never mentions screenshot capture, full-page or selector-based, as a capability. A community comment even raises it as an open question ('does it support screenshots?') without confirmation, so there's no evidence the capability exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Firecrawl's GitHub README lists 'screenshots' as one of its LLM-ready output formats (firecrawl-gh-9), confirming basic screenshot capture capability, but no documentation details specify full-page vs. selected-area capture options, and a community comment even asks whether screenshots are supported at all, suggesting inconsistent documentation (firecrawl-comm-4). Missing for 10: explicit docs on full-page vs. specific-selector screenshot parameters, and independent hands-on confirmation of the feature working as described.",
     "evidenceIds": [
-      "firecrawl-docs-1",
+      "firecrawl-gh-9",
       "firecrawl-comm-4"
     ]
   },
@@ -5572,15 +5624,14 @@
   {
     "productId": "firecrawl",
     "storyId": "self-host-open-source",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Firecrawl is explicitly confirmed open source under AGPL-3.0 with the cloud version noted as having 'additional features', confirming self-hosting is possible but with reduced functionality (firecrawl-gh-6). Community commentary corroborates this, noting the self-hosted version lacks the proxy service considered 'the heart' of a scraper and other missing capabilities like screenshots (firecrawl-comm-3, firecrawl-comm-4). Missing for 10: first-party self-hosting setup/docker docs, explicit feature-parity comparison, and independent hands-on confirmation of a smooth self-host deployment experience.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "GitHub repo explicitly confirms Firecrawl is open source under AGPL-3.0 and can be self-hosted, with the cloud version at firecrawl.dev being an optional add-on with extra features, and community discussion (AGPL forking) corroborates this dual open-source/hosted model. Missing for 10: detailed self-hosting setup/deployment docs (Docker, infra requirements) and independent hands-on reports of running the self-hosted version successfully.",
     "evidenceIds": [
       "firecrawl-gh-6",
-      "firecrawl-comm-3",
-      "firecrawl-comm-4",
-      "firecrawl-comm-9"
+      "firecrawl-gh-10",
+      "firecrawl-comm-2"
     ]
   },
   {
@@ -5589,10 +5640,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firecrawl's evidence covers markdown/HTML/structured JSON extraction, crawling, and PDF/DOCX conversion, but nothing describes a semantic chunking feature or chunked output mode for retrieval pipelines. The axis applies (chunked output is a plausible feature for a scraping/RAG-prep tool) but no evidence shows it exists.",
+    "rationale": "Firecrawl documents markdown/HTML/JSON output and structured extraction via schema, but no evidence of a semantic-chunking output mode (e.g., splitting content into retrieval-sized chunks) anywhere in docs, GitHub, or community threads.",
     "evidenceIds": [
       "firecrawl-docs-1",
-      "firecrawl-docs-6",
+      "firecrawl-gh-9",
       "firecrawl-gh-7"
     ]
   },
@@ -5602,10 +5653,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "First-party docs explicitly state that Firecrawl's scrape endpoint extracts content from any URL as markdown, HTML, or structured JSON in a single call, directly matching the story. A community comment raises a narrow caveat about HTML not being returned in a separate 'daemon mode', but this does not contradict the main scrape API. Missing for 10: independent hands-on confirmation of raw HTML output quality/fidelity for the primary scrape endpoint.",
+    "rationale": "Firecrawl's docs explicitly state the scrape endpoint returns content as markdown, HTML, or structured JSON in a single call (firecrawl-docs-1), and SDK docs confirm a single scrape call handles this (firecrawl-docs-14). A community comment (firecrawl-comm-4) notes HTML isn't returned in a separate 'daemon mode', but this is a distinct mode, not the primary scrape API, so it doesn't concretely contradict the core claim. Missing for 10: independent hands-on verification of HTML output quality/fidelity, and no direct third-party test confirming raw HTML retrieval via the standard API.",
     "evidenceIds": [
       "firecrawl-docs-1",
-      "firecrawl-comm-4"
+      "firecrawl-docs-14",
+      "firecrawl-gh-8"
     ]
   },
   {
@@ -5614,10 +5666,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of spending caps, budget alerts, or usage-limit notifications; community comments even describe unexpectedly high consumption ('10gb of proxy gone in two days') with no mention of a cap/alert mechanism to prevent overage.",
+    "rationale": "Evidence covers API key restrictions, allowlisting, and audit events, but nothing in the pack describes a spending cap, budget threshold, or usage alert mechanism to prevent credit overrun; a community comment even notes surprise at rapid proxy/credit consumption without mention of alerting controls.",
     "evidenceIds": [
-      "firecrawl-comm-6",
-      "firecrawl-comm-5"
+      "firecrawl-docs-17",
+      "firecrawl-docs-18",
+      "firecrawl-comm-6"
     ]
   },
   {
@@ -5626,7 +5679,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence that Firecrawl exposes a session-identifier parameter to pin requests to the same proxy IP; the closest evidence is a community comment stating Firecrawl lacks its own proxy service entirely, which undercuts rather than supports this specific anti-bot capability.",
+    "rationale": "No evidence in the pack shows Firecrawl exposing a session-identifier mechanism to reuse the same proxy IP across requests; the closest related evidence is a community comment stating Firecrawl 'don't have proxy service which is the heart of any crawler and scraper' (firecrawl-comm-3), indicating this anti-bot capability is not documented or delivered.",
     "evidenceIds": [
       "firecrawl-comm-3"
     ]
@@ -5637,11 +5690,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Firecrawl docs explicitly support extracting content as structured JSON, including with a defined schema, alongside markdown/HTML options, and this extends to document formats like PDFs/DOCX as well. Missing for 10: independent hands-on confirmation of JSON output quality/schema fidelity beyond vendor docs and GitHub README.",
+    "rationale": "Firecrawl's docs and GitHub repeatedly document structured JSON output, including using a schema/prompt to extract structured data via the scrape endpoint, converting files to structured JSON, and SDK support (Ruby, Python) for JSON format extraction. This is a core, well-documented, first-party capability with multiple corroborating references. missing for 10: independent hands-on developer confirmation specifically praising JSON output quality/accuracy.",
     "evidenceIds": [
       "firecrawl-docs-1",
+      "firecrawl-docs-6",
+      "firecrawl-docs-16",
       "firecrawl-gh-7",
-      "firecrawl-docs-6"
+      "firecrawl-gh-9"
     ]
   },
   {
@@ -5650,7 +5705,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention team collaboration, organizations, workspaces, or role-based access control for sharing scrapers; documentation focuses on scraping, extraction, CLI, and MCP features only.",
+    "rationale": "Evidence covers API key restrictions (IP allowlisting, format locking) but there is no mention of team/organization management, shared workspaces for scrapers, or role-based access control (RBAC) among teammates.",
     "evidenceIds": []
   },
   {
@@ -5658,11 +5713,12 @@
     "storyId": "undetected-browser-mode",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence mentions a 'Browser Sandbox' for managed browser sessions and general scraping/crawling features, but there is no documentation or claim of a stealth/undetected browser mode specifically designed to bypass sophisticated bot detection. Community comments (e.g., proxy tiers, captcha solves) hint indirectly at anti-bot infrastructure but do not confirm an official 'undetected mode' feature. missing for 10: explicit stealth/undetected browser mode docs, technical details on bypassing bot detection (fingerprint spoofing, TLS/JA3 randomization, etc.), independent verification of bypass success.",
+    "confidence": "low",
+    "rationale": "Firecrawl's evidence covers scraping, crawling, and a generic 'Browser Sandbox' for interactive workflows, plus a general claim of high reliability with JS-heavy pages, but no documentation mentions a specific 'undetected' or stealth browser mode designed to bypass sophisticated bot detection. A community comment even notes the lack of a proxy service, which is central to anti-bot evasion, further indicating this capability isn't evidenced.",
     "evidenceIds": [
       "firecrawl-docs-8",
-      "firecrawl-comm-6"
+      "firecrawl-gh-8",
+      "firecrawl-comm-3"
     ]
   },
   {
@@ -5671,7 +5727,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firecrawl explicitly offers a 'Map' capability described as 'Discover all URLs on a website instantly,' distinct from full crawling, directly matching the story. This is a first-party GitHub claim but lacks independent hands-on corroboration or detail on accuracy/limits at scale. missing for 10: independent/hands-on verification of speed and completeness, documentation of limits on very large sites.",
+    "rationale": "Firecrawl explicitly documents a 'Map' style capability ('Discover all URLs on a website instantly') as distinct from full crawling, matching the story directly. Missing for 10: independent/hands-on corroboration of the map endpoint's speed/accuracy and no direct API doc excerpt showing response schema.",
     "evidenceIds": [
       "firecrawl-gh-4",
       "firecrawl-gh-3"
@@ -5683,7 +5739,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions waiting for a specific CSS selector before returning rendered content; only general mentions of scraping, interactive actions, and browser sandboxing are present without detail on selector-based wait conditions.",
+    "rationale": "No evidence pack item mentions waiting for a CSS selector or DOM element before returning rendered content; only general JS-rendering and interactive scraping mentions appear without selector-wait specifics.",
     "evidenceIds": []
   },
   {
@@ -5692,11 +5748,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Firecrawl's docs explicitly advertise a search endpoint that returns full page content from results in one call, matching the story exactly, and this is backed by broader scrape/extract capabilities showing it can fetch full markdown/HTML/structured content rather than just snippets. Missing for 10: independent hands-on verification of the search+content endpoint specifically (community evidence discusses scraping/crawling generally but not this exact combined search feature).",
+    "rationale": "Firecrawl's docs explicitly state a 'search the web and get full page content from results in one call' capability, directly matching the story, backed by broader scrape/extract features (markdown/JSON output, structured extraction) that support rich content retrieval. missing for 10: independent/hands-on corroboration specifically testing the combined search+full-content endpoint, and details on limits/edge cases of this feature.",
     "evidenceIds": [
       "firecrawl-docs-2",
       "firecrawl-docs-1",
-      "firecrawl-gh-1"
+      "firecrawl-gh-9"
     ]
   },
   {
