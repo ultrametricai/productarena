@@ -11,7 +11,9 @@ import type { SimStep } from '@/lib/processSim'
 import { buildPageEntries } from '@/lib/search-index'
 import {
   allChoiceCombos,
+  applyYcCalibration,
   ARTIFACT_TASK_IDS,
+  buildEventExamples,
   buildJourneyArtifacts,
   buildYearCandidates,
   comboKey,
@@ -19,15 +21,25 @@ import {
   dayOf,
   DECISIONS,
   DEFAULT_CHOICES,
+  EVENT_EXAMPLES,
+  eventRows,
   journeyPhases,
   journeyStats,
   journeyTaskIds,
+  presetById,
   resolveYearMonths,
   RUNS_PER_YEAR,
   synthCompany,
   unionTaskIds,
   VS_CHAIN_IDS,
+  VS_PRESETS,
+  WINDOW_INTERVAL_DAYS,
+  windowRows,
+  YC_BATCH,
+  YC_CALIBRATION,
+  YC_DEAL,
   YEAR_CHAIN_IDS,
+  YEAR_SWEEP_GATES,
   yearRows,
   yearStats,
   type RouteMix,
@@ -42,6 +54,27 @@ const chains: VsChain[] = loadChains(DATA_DIR).map(({ id, name, taskIds }) => ({
 const corpusById = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
 const corpusIds = new Set(corpusById.keys())
 const combos = allChoiceCombos()
+
+// The same corpus reshape app/virtual-startup/page.tsx performs — shared by the rhythm suites.
+const routeMixOf = (taskId: string): RouteMix => {
+  const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
+  for (const n of corpusById.get(taskId)!.dag.nodes) {
+    mix[n.route] += 1
+    if (n.legalSignature) mix.legalSignature += 1
+  }
+  return mix
+}
+const sources: YearTaskSource[] = [...corpusById.values()].map((t) => ({
+  taskId: t.id,
+  title: t.title,
+  slug: processSlug(t.title),
+  cadence: t.cadence,
+  cadenceLabel: CADENCE_META[t.cadence].label,
+  totalSteps: t.dag.nodes.length,
+  routes: routeMixOf(t.id),
+  ceilingPct: taskCeiling(t).pct,
+}))
+const candidates = buildYearCandidates(chains, sources)
 
 describe('decision → journey mapping (against the live corpus)', () => {
   it('every journey chain exists in data/process-chains.json', () => {
@@ -290,27 +323,6 @@ describe('journey stats & elapsed time (corpus estimates only)', () => {
 })
 
 describe('year one — the operating rhythm, derived from live corpus cadence', () => {
-  const routeMix = (taskId: string): RouteMix => {
-    const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
-    for (const n of corpusById.get(taskId)!.dag.nodes) {
-      mix[n.route] += 1
-      if (n.legalSignature) mix.legalSignature += 1
-    }
-    return mix
-  }
-  // The same corpus reshape app/virtual-startup/page.tsx performs.
-  const sources: YearTaskSource[] = [...corpusById.values()].map((t) => ({
-    taskId: t.id,
-    title: t.title,
-    slug: processSlug(t.title),
-    cadence: t.cadence,
-    cadenceLabel: CADENCE_META[t.cadence].label,
-    totalSteps: t.dag.nodes.length,
-    routes: routeMix(t.id),
-    ceilingPct: taskCeiling(t).pct,
-  }))
-  const candidates = buildYearCandidates(chains, sources)
-
   it('always includes every month-end-close and tax-season task, with corpus-true runs/yr', () => {
     for (const cid of YEAR_CHAIN_IDS) {
       const chain = chains.find((c) => c.id === cid)
@@ -393,7 +405,7 @@ describe('year one — the operating rhythm, derived from live corpus cadence', 
     const row = (over: Partial<YearRow>): YearRow => ({
       taskId: 't', title: 'T', slug: 't', cadence: 'monthly', cadenceLabel: 'Monthly',
       totalSteps: 4, routes: { agent: 3, form: 1, person: 0, legalSignature: 0 }, ceilingPct: 75,
-      runsPerYear: 12, always: true, months: [1], monthSource: 'cadence', monthNote: null,
+      runsPerYear: 12, always: true, gate: null, months: [1], monthSource: 'cadence', monthNote: null,
       ...over,
     })
     const stats = yearStats([
@@ -401,6 +413,246 @@ describe('year one — the operating rhythm, derived from live corpus cadence', 
       row({ taskId: 'a', cadence: 'annual', cadenceLabel: 'Annual', runsPerYear: 1, totalSteps: 3, routes: { agent: 1, form: 1, person: 1, legalSignature: 0 } }),
     ])
     expect(stats).toEqual({ rows: 2, totalRuns: 13, stepRuns: 51, agentStepRuns: 37 })
+  })
+})
+
+describe('preset example companies (founder ask 2026-09-25)', () => {
+  it('exactly three presets carrying the briefed decision combos', () => {
+    expect(VS_PRESETS.map((p) => p.id)).toEqual(['software', 'hardware', 'biotech'])
+    const c = Object.fromEntries(VS_PRESETS.map((p) => [p.id, p.choices]))
+    expect(c.software).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'subscriptions',
+      ordering: 'name-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'yes',
+    })
+    expect(c.hardware).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
+      ordering: 'build-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'no',
+    })
+    expect(c.biotech).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
+      ordering: 'name-first', hire: 'yes', compliance: 'now', enterprise: 'yes', ph: 'no',
+    })
+  })
+
+  it('every preset journey is composed of real corpus tasks only', () => {
+    for (const p of VS_PRESETS) {
+      const ids = journeyTaskIds(p.choices, chains)
+      expect(ids.length).toBeGreaterThan(0)
+      for (const id of ids) expect(corpusIds.has(id), `unknown ${id} in ${p.id}`).toBe(true)
+    }
+  })
+
+  it('HONESTY LINE: hardware and biotech disclose the same-corpus limit; software needs none', () => {
+    const by = Object.fromEntries(VS_PRESETS.map((p) => [p.id, p]))
+    expect(by.software.disclosure).toBeNull()
+    for (const id of ['hardware', 'biotech'] as const) {
+      expect(by[id].disclosure).toContain('same real software-company process corpus')
+      expect(by[id].disclosure).toContain('aren’t modeled yet')
+      expect(by[id].disclosure).toContain('regulatory')
+    }
+    expect(by.hardware.disclosure).toContain('manufacturing')
+    expect(by.biotech.disclosure).toContain('trials')
+  })
+
+  it('identity overrides the seeded name deterministically and flavors the existing artifacts', () => {
+    for (const p of VS_PRESETS) {
+      const co = synthCompany(p.choices, p.company)
+      expect(co).toEqual(synthCompany(p.choices, p.company))
+      expect(co.name).toBe(p.company.name)
+      expect(co.display).toBe(`${p.company.name}, Inc.`) // all three presets are C-corps
+      expect(co.descriptor).toBe(p.company.descriptor)
+      const ids = journeyTaskIds(p.choices, chains)
+      const byTask = buildJourneyArtifacts(p.choices, ids, { identity: p.company })
+      expect(byTask).toEqual(buildJourneyArtifacts(p.choices, ids, { identity: p.company }))
+      expect(byTask.brand_001?.[0].value).toBe(co.display)
+      expect(byTask.domain_002?.[0].value).toContain(`${co.slug}.example`)
+      expect(byTask.form_002?.[0].value).toBe('00-0000000') // impossible-real stays impossible-real
+      for (const art of Object.values(byTask).flat()) expect(art.simulated).toBe(true)
+    }
+  })
+
+  it('presetById resolves ids and rejects junk', () => {
+    expect(presetById('hardware')?.company.name).toBe('Holofield')
+    expect(presetById('software')?.company.name).toBe('Agentloop')
+    expect(presetById('biotech')?.company.name).toBe('Demovax')
+    expect(presetById('nope')).toBeNull()
+    expect(presetById(null)).toBeNull()
+  })
+})
+
+describe('YC batch mode — calibration, published deal, honesty', () => {
+  it('applyYcCalibration forces seed + PH launch + build-first and touches nothing else', () => {
+    expect(Object.keys(YC_CALIBRATION).sort()).toEqual(['funding', 'ordering', 'ph'])
+    for (const combo of combos) {
+      const c = applyYcCalibration(combo)
+      expect(c.funding).toBe('seed')
+      expect(c.ph).toBe('yes')
+      expect(c.ordering).toBe('build-first')
+      expect({ ...c, funding: combo.funding, ph: combo.ph, ordering: combo.ordering }).toEqual(combo)
+    }
+  })
+
+  it('yc journeys ONLY rearrange — the same real tasks as the plain calibrated combo', () => {
+    for (const combo of combos) {
+      const c = applyYcCalibration(combo)
+      const plain = journeyTaskIds(c, chains)
+      const ycIds = journeyPhases(c, chains, { yc: true }).flatMap((p) => p.taskIds)
+      expect([...ycIds].sort()).toEqual([...plain].sort())
+    }
+  })
+
+  it('the raise compresses to Demo-Day timing: after launch day, before the enterprise close', () => {
+    const c = applyYcCalibration({ ...DEFAULT_CHOICES, enterprise: 'yes' })
+    const phases = journeyPhases(c, chains, { yc: true })
+    const idx = (id: string) => phases.findIndex((p) => p.chainId === id)
+    expect(idx('raise-a-seed-round')).toBeGreaterThan(idx('launch-on-product-hunt'))
+    expect(idx('raise-a-seed-round')).toBeLessThan(idx('land-the-enterprise-deal'))
+    expect(phases[phases.length - 1].chainId).toBe('land-the-enterprise-deal')
+    expect(phases.find((p) => p.chainId === 'raise-a-seed-round')!.note).toContain('Demo-Day')
+    // Without yc the raise stays in its classic early slot.
+    const plain = journeyPhases(c, chains)
+    expect(plain.findIndex((p) => p.chainId === 'raise-a-seed-round')).toBeLessThan(
+      plain.findIndex((p) => p.chainId === 'launch-on-product-hunt'),
+    )
+  })
+
+  it('the standard published YC deal replaces ONLY the fund_001 SAFE numbers — still SIMULATED', () => {
+    const c = applyYcCalibration(DEFAULT_CHOICES)
+    const ids = journeyTaskIds(c, chains)
+    const plain = buildJourneyArtifacts(c, ids)
+    const ycArts = buildJourneyArtifacts(c, ids, { yc: true })
+    expect(ycArts.fund_001?.[0].value).toBe(YC_DEAL.value)
+    expect(ycArts.fund_001?.[0].value).toContain('$125,000 for 7%')
+    expect(ycArts.fund_001?.[0].value).toContain('$375,000')
+    expect(ycArts.fund_001?.[0].value.toLowerCase()).toContain('mfn')
+    expect(ycArts.fund_001?.[0].simulated).toBe(true)
+    for (const [tid, arts] of Object.entries(ycArts)) {
+      if (tid === 'fund_001') continue
+      expect(arts, `yc mode altered ${tid}`).toEqual(plain[tid])
+    }
+  })
+
+  it('the batch shape is disclosed simulated/non-affiliated; office hours is synthetic, never a corpus process', () => {
+    expect(YC_BATCH.disclosure).toContain('not affiliated with or endorsed by Y Combinator')
+    expect(YC_BATCH.disclosure.toLowerCase()).toContain('simulated')
+    expect(YC_BATCH.officeHours.runsPerBatch).toBe(YC_BATCH.weeks)
+    const titles = new Set([...corpusById.values()].map((t) => t.title))
+    expect(titles.has(YC_BATCH.officeHours.title)).toBe(false)
+  })
+})
+
+describe('cadence sweep + event-driven examples (richer rhythm, 2026-09-25)', () => {
+  it('every sweep key is a real calendar-recurring corpus task, disjoint from the journey union', () => {
+    const union = new Set(unionTaskIds(chains))
+    for (const [id, gate] of Object.entries(YEAR_SWEEP_GATES)) {
+      const t = corpusById.get(id)
+      expect(t, `unknown sweep task ${id}`).toBeDefined()
+      expect(RUNS_PER_YEAR[t!.cadence], `${id} is not calendar-recurring`).not.toBeNull()
+      expect(union.has(id), `${id} is journey-carried — journey gating owns it`).toBe(false)
+      expect(gate.why.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('sweeps EVERY calendar-recurring corpus process except the VC-fund back office', () => {
+    const covered = new Set(candidates.map((c) => c.taskId))
+    for (const t of corpusById.values()) {
+      if (RUNS_PER_YEAR[t.cadence] === null) continue
+      if (t.id === 'vc_003') {
+        // launch-a-vc-fund playbook — not something a startup's journey activates.
+        expect(covered.has(t.id)).toBe(false)
+        continue
+      }
+      expect(covered.has(t.id), `calendar-recurring ${t.id} (${t.title}) missing from the year sweep`).toBe(true)
+    }
+  })
+
+  it('sweep rows gate on the decisions that plausibly activate them', () => {
+    for (const combo of combos) {
+      const rows = new Set(yearRows(combo, journeyTaskIds(combo, chains), candidates).map((r) => r.taskId))
+      for (const id of ['opp_008', 'opp_009', 'sw_001', 'sw_002', 'growth_011', 'growth_012', 'opp_012', 'fin_010', 'ins_001', 'qs_045', 'qs_047']) {
+        expect(rows.has(id), `${id} should be always-on`).toBe(true)
+      }
+      expect(rows.has('scale_001')).toBe(combo.hire === 'yes')
+      expect(rows.has('scale_012')).toBe(combo.hire === 'yes')
+      expect(rows.has('comp_011')).toBe(combo.funding === 'seed')
+      expect(rows.has('scale_005')).toBe(combo.funding === 'seed')
+      expect(rows.has('fund_003')).toBe(combo.funding === 'seed')
+      expect(rows.has('qs_053')).toBe(combo.funding === 'seed')
+      expect(rows.has('growth_015')).toBe(combo.product === 'subscriptions')
+      expect(rows.has('vc_003')).toBe(false)
+    }
+  })
+
+  it('sweep completeness: every cadence-bearing journey task appears in year one', () => {
+    for (const combo of combos) {
+      const ids = journeyTaskIds(combo, chains)
+      const rows = new Set(yearRows(combo, ids, candidates).map((r) => r.taskId))
+      for (const id of ids) {
+        if (RUNS_PER_YEAR[corpusById.get(id)!.cadence] === null) continue
+        expect(rows.has(id), `journey task ${id} missing from year one`).toBe(true)
+      }
+    }
+  })
+
+  it('event examples: real event-driven corpus tasks with named triggers, gated per combo', () => {
+    const examples = buildEventExamples(sources)
+    expect(examples.length).toBe(Object.keys(EVENT_EXAMPLES).length)
+    for (const e of examples) {
+      expect(corpusById.get(e.taskId)!.cadence).toBe('event-driven')
+      expect(e.trigger.length).toBeGreaterThan(0)
+      expect(e.gate.why.length).toBeGreaterThan(0)
+    }
+    for (const combo of combos) {
+      const on = new Set(eventRows(combo, examples).map((e) => e.taskId))
+      expect(on.has('opp_001')).toBe(true)
+      expect(on.has('opp_004')).toBe(true)
+      expect(on.has('growth_002')).toBe(combo.product === 'subscriptions')
+      expect(on.has('hr_005')).toBe(combo.hire === 'yes')
+      expect(on.has('opp_007')).toBe(combo.hire === 'yes')
+      expect(on.has('legal_001')).toBe(combo.enterprise === 'yes')
+      expect(on.has('comp_014')).toBe(combo.enterprise === 'yes')
+      expect(on.has('qs_052')).toBe(combo.funding === 'seed')
+    }
+  })
+
+  it('event examples throw on an unknown task rather than inventing a row', () => {
+    expect(() => buildEventExamples(sources.filter((s) => s.taskId !== 'opp_001'))).toThrow(/opp_001/)
+  })
+})
+
+describe('first 30 / first 90 days — cadence-math slicing', () => {
+  const rows = yearRows(DEFAULT_CHOICES, journeyTaskIds(DEFAULT_CHOICES, chains), candidates)
+
+  it('day intervals are the standard conventions; annual and event-driven work carries no day', () => {
+    expect(WINDOW_INTERVAL_DAYS).toEqual({
+      daily: 1, weekly: 7, monthly: 30, quarterly: 90, annual: null, 'event-driven': null, once: null,
+    })
+  })
+
+  it('30-day window: dailies from day 1, weeklies ×4, first month-end close and first payroll land at day 30', () => {
+    const w = windowRows(rows, 30)
+    const by = new Map(w.map((r) => [r.taskId, r]))
+    expect(by.get('sw_001')).toMatchObject({ firstRunDay: 1, runsInWindow: 30 })
+    expect(by.get('sw_002')).toMatchObject({ firstRunDay: 7, runsInWindow: 4 })
+    expect(by.get('fin_002')).toMatchObject({ firstRunDay: 30, runsInWindow: 1 })
+    expect(by.get('hr_002')).toMatchObject({ firstRunDay: 30, runsInWindow: 1 }) // DEFAULT hire = yes
+    for (const r of w) expect(['daily', 'weekly', 'monthly'].includes(r.cadence), r.taskId).toBe(true)
+  })
+
+  it('90-day window: monthlies ×3, quarterlies land once at day 90, annuals still excluded', () => {
+    const w = windowRows(rows, 90)
+    const by = new Map(w.map((r) => [r.taskId, r]))
+    expect(by.get('fin_002')).toMatchObject({ firstRunDay: 30, runsInWindow: 3 })
+    const quarterly = w.filter((r) => r.cadence === 'quarterly')
+    expect(quarterly.length).toBeGreaterThan(0) // DEFAULT funding = seed → board cadence
+    for (const q of quarterly) expect(q).toMatchObject({ firstRunDay: 90, runsInWindow: 1 })
+    expect(w.some((r) => r.cadence === 'annual')).toBe(false)
+    expect(w[0].firstRunDay).toBe(1) // sorted: the day-1 loops lead
+  })
+
+  it('windows replay deterministically from the same rows', () => {
+    expect(windowRows(rows, 30)).toEqual(windowRows(rows, 30))
+    expect(windowRows(rows, 90)).toEqual(windowRows(rows, 90))
   })
 })
 

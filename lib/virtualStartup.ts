@@ -184,6 +184,131 @@ export function allChoiceCombos(): Choices[] {
 }
 
 // ---------------------------------------------------------------------------
+// Preset example companies (founder ask 2026-09-25: "prefill the simulator with real-feeling
+// example companies") — one tap sets a full decision combo plus a fixed, clearly-fictional
+// themed identity. HONESTY LINE: the journey is always the same real software-company process
+// corpus; the hardware and biotech presets carry a visible disclosure saying exactly that —
+// domain-specific steps (regulatory, manufacturing, trials) are NOT modeled and never implied.
+// ---------------------------------------------------------------------------
+
+export type PresetId = 'software' | 'hardware' | 'biotech'
+
+// A preset's fixed synthetic identity — overrides the combo-seeded company name
+// deterministically (a constant is trivially deterministic; tests still assert it).
+export interface SynthIdentity {
+  name: string
+  descriptor: string
+}
+
+export interface VsPreset {
+  id: PresetId
+  label: string
+  // What the example company makes — flavor via strings only, no new artifact types.
+  product: string
+  company: SynthIdentity
+  choices: Choices
+  // The visible one-line honesty disclosure — null only for the pure-software preset, whose
+  // journey the corpus actually models end to end.
+  disclosure: string | null
+}
+
+export const VS_PRESETS: VsPreset[] = [
+  {
+    id: 'software',
+    label: 'Pure software',
+    product: 'Agentic company control',
+    company: { name: 'Agentloop', descriptor: 'an agentic company-control platform' },
+    choices: {
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'subscriptions',
+      ordering: 'name-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'yes',
+    },
+    disclosure: null,
+  },
+  {
+    id: 'hardware',
+    label: 'Hardware',
+    product: 'Headsetless VR',
+    company: { name: 'Holofield', descriptor: 'a headsetless VR display' },
+    choices: {
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
+      ordering: 'build-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'no',
+    },
+    disclosure:
+      'Runs the same real software-company process corpus — hardware-specific steps (regulatory, manufacturing) aren’t modeled yet.',
+  },
+  {
+    id: 'biotech',
+    label: 'Biotech',
+    product: 'Oncology vaccine co',
+    company: { name: 'Demovax', descriptor: 'oncology vaccine programs' },
+    choices: {
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
+      ordering: 'name-first', hire: 'yes', compliance: 'now', enterprise: 'yes', ph: 'no',
+    },
+    disclosure:
+      'Runs the same real software-company process corpus — biotech-specific steps (regulatory, trials, manufacturing) aren’t modeled yet.',
+  },
+]
+
+export function presetById(id: string | null): VsPreset | null {
+  return VS_PRESETS.find((p) => p.id === id) ?? null
+}
+
+// ---------------------------------------------------------------------------
+// YC batch mode (founder ask 2026-09-25) — calibrates the SAME real corpus journey to the
+// publicly known YC batch shape. Honesty rules: only real corpus processes, rearranged; the
+// standard PUBLISHED deal replaces the generic seed numbers in the SYNTHETIC artifacts (still
+// SIMULATED-chipped); the weekly group-partner update is synthetic (the corpus has no such
+// process — it is rendered SIMULATED and never added to the corpus); and the mode carries a
+// visible non-affiliation disclosure.
+// ---------------------------------------------------------------------------
+
+// The launch-early calibration YC mode forces onto any combo: raise (Demo Day), PH launch ON,
+// ship-v1 pulled forward. Manually flipping one of these away turns the mode off.
+export const YC_CALIBRATION = { funding: 'seed', ph: 'yes', ordering: 'build-first' } as const satisfies Partial<Choices>
+
+export function applyYcCalibration(c: Choices): Choices {
+  return { ...c, ...YC_CALIBRATION }
+}
+
+// The standard published YC deal — replaces the generic fund_001 SAFE numbers in YC mode.
+export const YC_DEAL = {
+  label: 'SAFE round',
+  value: '$500,000 YC standard deal — $125,000 for 7% + $375,000 on an uncapped MFN SAFE',
+} as const
+
+export const YC_BATCH = {
+  // The publicly known batch shape: ~3 months, kickoff → weekly group office hours → Demo Day.
+  weeks: 12,
+  calendar: 'kickoff week 1 · weekly group office hours · Demo Day ~week 12',
+  disclosure:
+    'Calibrated to the publicly known YC batch shape — simulated, not affiliated with or endorsed by Y Combinator.',
+  // The synthetic recurring row for the rhythm views. NOT a corpus process; rendered with the
+  // SIMULATED chip, never linked to a process page, and excluded from corpus-derived stats.
+  officeHours: {
+    title: 'Weekly update to your group partner',
+    cadenceLabel: 'Weekly (batch)',
+    intervalDays: 7,
+    runsPerBatch: 12,
+    months: [1, 2, 3] as number[],
+  },
+} as const
+
+// ---------------------------------------------------------------------------
+// Decision gates — shared shape for the cadence-sweep and event-driven example rows
+// ---------------------------------------------------------------------------
+
+// null choice = every operating company runs it; otherwise on only when the named decision has
+// the named value. `why` names the reasoning so the gating is visible, not vibes.
+export type VsGate =
+  | { choice: null; why: string }
+  | { choice: keyof Choices; value: string; why: string }
+
+export function gateActive(gate: VsGate, choices: Choices): boolean {
+  return gate.choice === null || choices[gate.choice] === gate.value
+}
+
+// ---------------------------------------------------------------------------
 // Decision → journey mapping (real chains from data/process-chains.json only)
 // ---------------------------------------------------------------------------
 
@@ -224,11 +349,18 @@ function chainOrThrow(chains: VsChain[], id: string): VsChain {
   return hit
 }
 
+export interface JourneyOpts {
+  // YC batch calibration: the raise phase compresses to Demo-Day timing (batch end) — same real
+  // raise-a-seed-round chain, relocated, never altered.
+  yc?: boolean
+}
+
 // The whole journey for one decision combo: time-ordered phases, each seeded by a REAL curated
 // chain's taskIds with the decision transforms applied — a task id is only ever swapped for
 // another real corpus task (form_001 → form_011) or dropped, never invented. Tasks appearing in
 // several chains (domain_002, prod_005) run once: first occurrence wins, later phases lose them.
-export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase[] {
+export function journeyPhases(choices: Choices, chains: VsChain[], opts: JourneyOpts = {}): JourneyPhase[] {
+  const yc = opts.yc === true
   const phases: JourneyPhase[] = []
   const push = (id: string, title: string, chainId: string, transform?: (ids: string[]) => string[], note?: string | null) => {
     const chain = chainOrThrow(chains, chainId)
@@ -255,6 +387,17 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
         : 'compliance deferred — the same playbook, after launch',
     )
 
+  const raisePhase = () =>
+    push(
+      'raise',
+      'Raise the seed',
+      'raise-a-seed-round',
+      undefined,
+      yc
+        ? 'YC calibration — the raise compresses to Demo-Day timing (batch end); the SAFE artifact carries the standard published YC deal'
+        : null,
+    )
+
   if (choices.ordering === 'build-first') buildPhase()
   push('name', 'Name & brand', 'name-the-company')
   push(
@@ -271,9 +414,7 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
         ? 'solo founder — the founder equity split (startup_002) is skipped'
         : null,
   )
-  if (choices.funding === 'seed') {
-    push('raise', 'Raise the seed', 'raise-a-seed-round')
-  }
+  if (choices.funding === 'seed' && !yc) raisePhase()
   if (choices.compliance === 'now') compliancePhase()
   if (choices.ordering === 'name-first') buildPhase()
   push('website', 'Launch the website', 'launch-website')
@@ -294,6 +435,8 @@ export function journeyPhases(choices: Choices, chains: VsChain[]): JourneyPhase
   if (choices.hire === 'yes') push('hire', 'First hire', 'first-hire')
   if (choices.ph === 'yes') push('launch', 'Launch day', 'launch-on-product-hunt')
   if (choices.compliance === 'later') compliancePhase()
+  // YC calibration: the same raise chain, at Demo-Day timing — the end of the batch.
+  if (choices.funding === 'seed' && yc) raisePhase()
   // Always last: the enterprise close leans on the compliance playbook's posture either way.
   if (choices.enterprise === 'yes') push('enterprise', 'Enterprise motion', 'land-the-enterprise-deal')
 
@@ -402,17 +545,25 @@ export interface SynthCompany {
   name: string // "Quantforge"
   display: string // "Quantforge, Inc." / "Quantforge LLC" — follows the entity decision
   slug: string // "quantforge"
+  // What the company makes — only set by a preset identity (null for combo-seeded names).
+  descriptor: string | null
 }
 
 // The virtual company's identity, deterministic from the decision combo. Its own seed stream so
-// the name never shifts when the artifact set changes.
-export function synthCompany(choices: Choices): SynthCompany {
-  const rng = mulberry32(hashSeed(`vs:name:${comboKey(choices)}`))
-  const name = `${pick(rng, NAME_ROOTS)}${pick(rng, NAME_TAILS)}`
+// the name never shifts when the artifact set changes. A preset identity overrides the seeded
+// name deterministically (a fixed constant) — entity suffix and slug still derive the same way.
+export function synthCompany(choices: Choices, identity?: SynthIdentity | null): SynthCompany {
+  const name = identity
+    ? identity.name
+    : (() => {
+        const rng = mulberry32(hashSeed(`vs:name:${comboKey(choices)}`))
+        return `${pick(rng, NAME_ROOTS)}${pick(rng, NAME_TAILS)}`
+      })()
   return {
     name,
     display: choices.entity === 'llc' ? `${name} LLC` : `${name}, Inc.`,
-    slug: name.toLowerCase(),
+    slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    descriptor: identity?.descriptor ?? null,
   }
 }
 
@@ -503,17 +654,31 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
 // is a real corpus task reachable by some decision combo (no dead or invented demo data).
 export const ARTIFACT_TASK_IDS: readonly string[] = Object.keys(ARTIFACT_GENERATORS)
 
+export interface ArtifactOpts {
+  // Preset identity — themes every name-carrying artifact string via the existing generators.
+  identity?: SynthIdentity | null
+  // YC mode: the standard PUBLISHED YC deal replaces the generic fund_001 SAFE numbers. The rng
+  // stream is still consumed identically, so every OTHER artifact stays byte-identical.
+  yc?: boolean
+}
+
 // Every artifact for one journey, keyed by task id. Deterministic: the rng stream is seeded by
 // the decision combo and consumed in journey (taskIds) order — the same choices replay the same
 // artifacts, byte for byte. The `simulated: true` stamp happens HERE, once, for every artifact.
-export function buildJourneyArtifacts(choices: Choices, taskIds: string[]): Record<string, SyntheticArtifact[]> {
-  const co = synthCompany(choices)
+export function buildJourneyArtifacts(
+  choices: Choices,
+  taskIds: string[],
+  opts: ArtifactOpts = {},
+): Record<string, SyntheticArtifact[]> {
+  const co = synthCompany(choices, opts.identity ?? null)
   const rng = mulberry32(hashSeed(`vs:artifacts:${comboKey(choices)}`))
   const out: Record<string, SyntheticArtifact[]> = {}
   for (const taskId of taskIds) {
     const gen = ARTIFACT_GENERATORS[taskId]
     if (!gen) continue
-    out[taskId] = gen({ rng, choices, co }).map((d) => ({ taskId, ...d, simulated: true as const }))
+    const drafts = gen({ rng, choices, co })
+    const flavored = opts.yc === true && taskId === 'fund_001' ? [{ ...YC_DEAL }] : drafts
+    out[taskId] = flavored.map((d) => ({ taskId, ...d, simulated: true as const }))
   }
   return out
 }
@@ -622,25 +787,63 @@ export interface YearTaskSource {
   ceilingPct: number
 }
 
+// Founder iteration 2026-09-25 (richer year view): sweep data/processes.json for EVERY
+// calendar-recurring process the journey plausibly activates — not just the tasks the journey
+// chains happen to carry. Each swept task names its gate: null = every operating company runs
+// it; a choice gate turns it on only when the decision that plausibly activates it is set.
+// Deliberately excluded: vc_003 (Run the fund back office) — that is the launch-a-vc-fund
+// playbook's process, not something a startup's journey activates. Keys must be disjoint from
+// unionTaskIds (journey tasks stay journey-gated); tests enforce both.
+export const YEAR_SWEEP_GATES: Record<string, VsGate> = {
+  // Daily loops — the operating baseline once the company runs.
+  opp_008: { choice: null, why: 'operating baseline — email goes out every day' },
+  opp_009: { choice: null, why: 'operating baseline — tasks become tracked issues daily' },
+  sw_001: { choice: null, why: 'the product keeps shipping after v1' },
+  // Weekly.
+  sw_002: { choice: null, why: 'a shipping team cuts releases weekly' },
+  growth_011: { choice: null, why: 'the launched website needs the content engine' },
+  growth_012: { choice: null, why: 'the first-10-customers motion — outbound runs weekly' },
+  // Monthly.
+  opp_012: { choice: null, why: 'the name-the-company playbook filed the mark (legal_002) — monitoring follows' },
+  // Quarterly.
+  comp_011: { choice: 'funding', value: 'seed', why: 'a financed board keeps a minutes cadence' },
+  scale_005: { choice: 'funding', value: 'seed', why: 'a financed board meets quarterly' },
+  scale_001: { choice: 'hire', value: 'yes', why: 'reviews start once there is an employee' },
+  scale_012: { choice: 'hire', value: 'yes', why: 'OKRs start once there is a team' },
+  growth_015: { choice: 'product', value: 'subscriptions', why: 'win-backs are a subscription motion' },
+  // Annual.
+  fin_010: { choice: null, why: 'every operating company budgets annually' },
+  ins_001: { choice: null, why: 'insurance quotes renew annually' },
+  qs_045: { choice: null, why: 'state registration review is an annual chore' },
+  qs_047: { choice: null, why: 'the state annual report is due yearly' },
+  fund_003: { choice: 'funding', value: 'seed', why: 'the 409A follows the raise and its option pool' },
+  qs_053: { choice: 'funding', value: 'seed', why: 'the audited cap table follows the raise' },
+}
+
 export interface YearCandidate extends YearTaskSource {
   runsPerYear: number
   // From a YEAR_CHAIN_IDS chain — in every company's year regardless of decisions. Non-always
-  // candidates appear only when the selected journey includes their task.
+  // candidates appear when the selected journey includes their task, or when their sweep gate
+  // (below) is active for the combo.
   always: boolean
+  // The cadence-sweep gate, for candidates that enter via YEAR_SWEEP_GATES; null for candidates
+  // the journey chains carry (those stay gated on journey inclusion).
+  gate: VsGate | null
 }
 
 const YEAR_CADENCE_ORDER: readonly Cadence[] = ['daily', 'weekly', 'monthly', 'quarterly', 'annual']
 
 // All year-view candidates, decision-independent (pure — callers pass the WHOLE corpus mapped
-// to YearTaskSource plus the full chain list): the always chains' recurring tasks plus every
-// calendar-recurring task any decision combo can reach. Sorted tightest loop first, mirroring
-// /processes/operating-rhythm's CADENCE_ORDER convention.
+// to YearTaskSource plus the full chain list): the always chains' recurring tasks, every
+// calendar-recurring task any decision combo can reach, plus the cadence sweep
+// (YEAR_SWEEP_GATES). Sorted tightest loop first, mirroring /processes/operating-rhythm's
+// CADENCE_ORDER convention.
 export function buildYearCandidates(chains: VsChain[], tasks: YearTaskSource[]): YearCandidate[] {
   const byId = new Map(tasks.map((t) => [t.taskId, t]))
   const alwaysIds = new Set(YEAR_CHAIN_IDS.flatMap((id) => chainOrThrow(chains, id).taskIds))
   const candidateIds: string[] = []
   const seen = new Set<string>()
-  for (const id of [...alwaysIds, ...unionTaskIds(chains)]) {
+  for (const id of [...alwaysIds, ...unionTaskIds(chains), ...Object.keys(YEAR_SWEEP_GATES)]) {
     if (!seen.has(id)) {
       seen.add(id)
       candidateIds.push(id)
@@ -652,7 +855,7 @@ export function buildYearCandidates(chains: VsChain[], tasks: YearTaskSource[]):
     if (!t) throw new Error(`year view references unknown task "${taskId}"`)
     const runsPerYear = RUNS_PER_YEAR[t.cadence]
     if (runsPerYear === null) continue
-    out.push({ ...t, runsPerYear, always: alwaysIds.has(taskId) })
+    out.push({ ...t, runsPerYear, always: alwaysIds.has(taskId), gate: YEAR_SWEEP_GATES[taskId] ?? null })
   }
   return out.sort(
     (a, b) =>
@@ -694,12 +897,13 @@ export function resolveYearMonths(
   }
 }
 
-// The virtual company's year: always-on chain rows plus the journey-gated recurring rows, each
-// with its calendar slots. Deterministic from the decision combo, like every artifact.
+// The virtual company's year: always-on chain rows, journey-gated recurring rows, plus the
+// cadence-sweep rows whose gate the combo activates — each with its calendar slots.
+// Deterministic from the decision combo, like every artifact.
 export function yearRows(choices: Choices, journeyIds: string[], candidates: YearCandidate[]): YearRow[] {
   const inJourney = new Set(journeyIds)
   return candidates
-    .filter((c) => c.always || inJourney.has(c.taskId))
+    .filter((c) => c.always || inJourney.has(c.taskId) || (c.gate !== null && gateActive(c.gate, choices)))
     .map((c) => ({ ...c, ...resolveYearMonths(c, choices) }))
 }
 
@@ -721,4 +925,100 @@ export function yearStats(rows: YearRow[]): YearStats {
     s.agentStepRuns += r.runsPerYear * r.routes.agent
   }
   return s
+}
+
+// ---------------------------------------------------------------------------
+// Event-driven examples — real corpus processes that run when triggered, not on a calendar.
+// A trigger is not a cron job: these rows carry NO months, NO runs/yr, and never enter
+// yearStats — they name their trigger instead. Curated with the same gate shape as the
+// cadence sweep; tests enforce every key is a real event-driven corpus task.
+// ---------------------------------------------------------------------------
+
+export const EVENT_EXAMPLES: Record<string, { gate: VsGate; trigger: string }> = {
+  opp_001: { gate: { choice: null, why: 'every company pays vendors' }, trigger: 'a vendor bill needs paying' },
+  opp_004: { gate: { choice: null, why: 'every company with revenue refunds sometimes' }, trigger: 'a customer asks for their money back' },
+  growth_002: { gate: { choice: 'product', value: 'subscriptions', why: 'churn saves are a subscription motion' }, trigger: 'a subscriber hits cancel' },
+  hr_005: { gate: { choice: 'hire', value: 'yes', why: 'offboarding exists once there is an employee' }, trigger: 'an employee leaves' },
+  opp_007: { gate: { choice: 'hire', value: 'yes', why: 'provisioning rides the first-hire playbook' }, trigger: 'a new teammate needs accounts' },
+  legal_001: { gate: { choice: 'enterprise', value: 'yes', why: 'enterprise conversations start under NDA' }, trigger: 'an enterprise conversation starts' },
+  comp_014: { gate: { choice: 'enterprise', value: 'yes', why: 'enterprise buyers send questionnaires' }, trigger: 'a buyer sends the security questionnaire' },
+  qs_052: { gate: { choice: 'funding', value: 'seed', why: 'SAFEs keep the cap table moving' }, trigger: 'a SAFE or option grant changes the cap table' },
+}
+
+export interface EventExample {
+  taskId: string
+  title: string
+  slug: string
+  totalSteps: number
+  routes: RouteMix
+  ceilingPct: number
+  trigger: string
+  gate: VsGate
+}
+
+// Decision-independent event-example candidates (pure — callers pass the corpus mapped to
+// YearTaskSource); throws on an unknown or non-event-driven key rather than inventing a row.
+export function buildEventExamples(tasks: YearTaskSource[]): EventExample[] {
+  const byId = new Map(tasks.map((t) => [t.taskId, t]))
+  return Object.entries(EVENT_EXAMPLES)
+    .map(([taskId, meta]) => {
+      const t = byId.get(taskId)
+      if (!t) throw new Error(`event example references unknown task "${taskId}"`)
+      if (t.cadence !== 'event-driven') throw new Error(`event example "${taskId}" is not event-driven in the corpus`)
+      return {
+        taskId,
+        title: t.title,
+        slug: t.slug,
+        totalSteps: t.totalSteps,
+        routes: t.routes,
+        ceilingPct: t.ceilingPct,
+        trigger: meta.trigger,
+        gate: meta.gate,
+      }
+    })
+    .sort((a, b) => a.title.localeCompare(b.title))
+}
+
+export function eventRows(choices: Choices, examples: EventExample[]): EventExample[] {
+  return examples.filter((e) => gateActive(e.gate, choices))
+}
+
+// ---------------------------------------------------------------------------
+// First 30 / first 90 days — the launch journey's day math plus the first occurrences of the
+// recurring runs, sliced onto a day-granularity window. Honesty: journey days come from corpus
+// estimatedMinutes (dayOf above); recurring first-run days are pure cadence math on the
+// standard day intervals below (a month ≈ day 30, a quarter ≈ day 90 — conventions, not
+// corpus dates); annuals and event-driven work carry no day at all (annuals live on the year
+// view — the sim's day 1 is not anchored to a calendar date; triggers are sequenced undated).
+// ---------------------------------------------------------------------------
+
+export const WINDOW_INTERVAL_DAYS: Record<Cadence, number | null> = {
+  daily: 1,
+  weekly: 7,
+  monthly: 30,
+  quarterly: 90,
+  annual: null,
+  'event-driven': null,
+  once: null,
+}
+
+export interface WindowRow extends YearRow {
+  // Cadence-math day of the first run inside the window (daily work starts day 1).
+  firstRunDay: number
+  runsInWindow: number
+}
+
+// The recurring rows that land inside the first `windowDays` days, from the combo's year rows.
+// A row appears only when at least one cadence-math run fits the window (a quarterly process
+// misses the first 30 days; an annual never has a day here).
+export function windowRows(rows: YearRow[], windowDays: number): WindowRow[] {
+  const out: WindowRow[] = []
+  for (const r of rows) {
+    const interval = WINDOW_INTERVAL_DAYS[r.cadence]
+    if (interval === null) continue
+    const runs = Math.floor(windowDays / interval)
+    if (runs <= 0) continue
+    out.push({ ...r, firstRunDay: interval, runsInWindow: runs })
+  }
+  return out.sort((a, b) => a.firstRunDay - b.firstRunDay || a.title.localeCompare(b.title))
 }
