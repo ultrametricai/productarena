@@ -175,6 +175,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             checkSteps={checkSteps}
             mineHref={mineHref}
             lensKey={task.id}
+            manifestUrl={processManifestUrl(slug)}
           />
         </div>
         {task.contextNeeded.length > 0 && (
