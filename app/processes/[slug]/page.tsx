@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
+import JurisdictionToggle from '@/components/JurisdictionToggle'
 import MineLink from '@/components/MineLink'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
@@ -16,7 +17,8 @@ import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  buildSimSteps, CADENCE_META, findProcessBySlug, loadProcesses, processSlug, slugAliasFor, taskCeiling, vendorRoles,
+  buildSimSteps, CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
+  taskCeiling, vendorRoles,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
@@ -76,6 +78,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // snapshots are both '{}').
   const checkStepList = buildProcessCheckSteps(task)
   const checkSteps = Object.fromEntries(checkStepList.map((s) => [s.nodeId, s]))
+  // Jurisdiction-conditional steps (stripped from every default surface by loadProcesses) —
+  // serialized for the client-side toggle; [] for the many processes that don't branch.
+  const jurisSteps = jurisdictionStepViews(task.id)
 
   return (
     <div className="space-y-10">
@@ -178,6 +183,17 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             manifestUrl={processManifestUrl(slug)}
           />
         </div>
+        {/* Jurisdiction-conditional steps (founder 2026-09-25) — only processes that genuinely
+            branch by jurisdiction get the control. Client-side over the same static HTML: the
+            default (Delaware-only) page is byte-identical and every judged number stays the
+            default's; toggled-on steps render below the DAG with a recomputed, honestly
+            labelled ceiling (components/JurisdictionToggle.tsx). */}
+        {jurisSteps.length > 0 && (
+          <JurisdictionToggle
+            steps={jurisSteps}
+            base={{ agentSteps: ceiling.agentSteps, totalSteps: ceiling.totalSteps, pct: ceiling.pct }}
+          />
+        )}
         {task.contextNeeded.length > 0 && (
           <p className="mt-3 text-xs text-zinc-500">
             Context the agent needs first:{' '}
