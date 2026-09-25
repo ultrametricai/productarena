@@ -173,7 +173,7 @@ export default function ControlSurfacesTable({ surfaces, emerging }: { surfaces:
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-800">
+      <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-xl sm:border">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
@@ -211,7 +211,7 @@ export default function ControlSurfacesTable({ surfaces, emerging }: { surfaces:
             canonical surfaces would be dishonest. Counts below are real but cover only the arenas that judge them; the
             readiness-lift stat is withheld on small samples.
           </p>
-          <div className="overflow-x-auto rounded-xl border border-zinc-800">
+          <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-xl sm:border">
             <table className="w-full border-collapse text-sm">
               <tbody className="divide-y divide-zinc-800/70">
                 {emerging.map((row) => (

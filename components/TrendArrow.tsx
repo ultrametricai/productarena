@@ -1,4 +1,4 @@
-// 30-day trend glyph for table rows: ▲ (emerald, moved up) / ▼ (red, moved down) /
+// 30-day trend glyph for table rows: ↗ (emerald, moved up) / ↘ (red, moved down) /
 // — (zinc, flat or no trend yet — a null delta means <2 history points, see lib/scoreTrend.ts's
 // trendDelta, and renders the same quiet dash rather than implying "flat"). Pure props → markup,
 // safe in both server and client trees.
@@ -13,7 +13,9 @@ export default function TrendArrow({
   metric?: string
 }) {
   const d = delta ?? null
-  const glyph = d !== null && d > 0 ? '▲' : d !== null && d < 0 ? '▼' : '—'
+  // ↗/↘ (not ▲/▼): the solid triangles read as the table-header SORT indicators — founder
+  // 2026-09-24: "up ranking arrow same icon as table sorting, confusing".
+  const glyph = d !== null && d > 0 ? '↗' : d !== null && d < 0 ? '↘' : '—'
   const color = d !== null && d > 0 ? 'text-emerald-400' : d !== null && d < 0 ? 'text-red-400' : 'text-zinc-600'
   return (
     // `relative` keeps the absolutely-positioned sr-only span contained here, so rows scrolled

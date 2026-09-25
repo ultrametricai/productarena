@@ -80,14 +80,17 @@ export default function TableControls<C extends string>({
           {p.label}
         </button>
       ))}
-      <div className="ml-auto flex flex-nowrap items-center gap-2">
+      {/* Founder 2026-09-24 (mobile): the rank select and the arena scope share ONE line; the
+          rank control keeps the width priority and the filter stays narrow, expanding on focus
+          (a phone reader taps it before typing anyway). */}
+      <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-2 sm:ml-auto sm:flex-none">
         {scope && (
-          <span className="relative inline-flex">
+          <span className="relative inline-flex min-w-0 shrink">
             <select
               value={scope.value}
               onChange={(e) => scope.onChange(e.target.value)}
               aria-label={scope.ariaLabel}
-              className="max-w-[11rem] appearance-none rounded-lg border border-zinc-800 bg-zinc-900 py-1.5 pl-2.5 pr-7 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+              className="w-full max-w-[11rem] appearance-none rounded-lg border border-zinc-800 bg-zinc-900 py-1.5 pl-2.5 pr-7 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
             >
               {scope.options.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -105,9 +108,9 @@ export default function TableControls<C extends string>({
           onChange={(e) => onQuery(e.target.value)}
           placeholder="Filter…"
           aria-label="Filter products by name or vendor"
-          className="ml-auto min-w-0 flex-1 basis-16 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:flex-none sm:w-48"
+          className="ml-auto w-20 min-w-0 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 transition-[width] duration-150 placeholder:text-zinc-500 focus:w-40 focus:border-emerald-400/60 focus:outline-none sm:w-48 sm:focus:w-48"
         />
-        {after && <span className="text-xs text-zinc-400">{after}</span>}
+        {after && <span className="hidden text-xs text-zinc-400 sm:inline">{after}</span>}
         {/* Founder 2026-09-15: no "?" beside the filter — the methodology link in the footer and
             the column tooltips carry the definitions; the chip was visual noise. */}
       </div>

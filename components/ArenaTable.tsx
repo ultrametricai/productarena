@@ -5,7 +5,6 @@ import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AiEraBadge from '@/components/AiEraBadge'
-import { BusinessModelChip } from '@/components/BusinessModel'
 import ClaimsChip from '@/components/ClaimsChip'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import HotChip from '@/components/HotChip'
@@ -187,7 +186,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
         onQuery={setQuery}
       />
 
-      <div className="overflow-x-auto rounded-xl border border-zinc-800">
+      <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-xl sm:border">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
@@ -276,7 +275,8 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                           <OssPill variant="compact" />
                         </button>
                       )}
-                      <BusinessModelChip product={product} skipOpenSource={product.type === 'oss'} />
+                      {/* BusinessModelChip removed (founder 2026-09-24: too much info in the
+                          ranking rows) — the model still shows on the product page. */}
                       <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
                     </div>
                     {rival && (
