@@ -296,7 +296,9 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                   <span className="flex flex-wrap gap-1">
                     {r.vendors.slice(0, 3).map((v) =>
                       v.arena ? (
-                        <Link key={v.label} href={`/arena/${v.arena}`} title={`${v.label} — judged in the ${v.arena} arena`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                        // Founder 2026-09-25: a vendor chip opens the PROCESS through that
+                        // vendor (?via= lens, lib/processLens.ts) — not the vendor's own page.
+                        <Link key={v.label} href={`/processes/${r.slug}?via=${v.arena}:${v.id}`} title={`Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
                           <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
                           {v.label}
                         </Link>

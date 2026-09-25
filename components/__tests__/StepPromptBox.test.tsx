@@ -111,10 +111,10 @@ describe('vendor resolution → copy and open links', () => {
     render(box)
     expect(screen.getByText('✓ via Vendor Two')).toBeTruthy()
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Copy agent prompt/ }))
+      fireEvent.click(screen.getByRole('button', { name: /Copy prompt/ }))
     })
     expect(writeText).toHaveBeenCalledWith(resolvedFor('Vendor Two'))
-    expect(screen.getByRole('button', { name: /prompt copied/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Copied/ })).toBeTruthy()
   })
 
   it('falls back to the "I\'m using" stack pick, tagged set for', async () => {
@@ -123,7 +123,7 @@ describe('vendor resolution → copy and open links', () => {
     render(box)
     expect(screen.getByText('set for Vendor Two')).toBeTruthy()
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /Copy agent prompt/ }))
+      fireEvent.click(screen.getByRole('button', { name: /Copy prompt/ }))
     })
     expect(writeText).toHaveBeenCalledWith(resolvedFor('Vendor Two'))
   })
@@ -154,20 +154,21 @@ describe('vendor resolution → copy and open links', () => {
 })
 
 describe('preview, signature honesty, and the manual-path children', () => {
-  it('the prompt text preview stays available behind the small expand', async () => {
+  it('the prompt text preview shows by default and collapses behind the toggle', async () => {
     render(box)
-    expect(document.querySelector('pre')).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: /view prompt/ }))
+    // Founder 2026-09-25: expanded by default — the prompt is the step's main event.
     expect(document.querySelector('pre')?.textContent).toBe(resolvedFor('Vendor One'))
     fireEvent.click(screen.getByRole('button', { name: /hide prompt/ }))
     expect(document.querySelector('pre')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: /view prompt/ }))
+    expect(document.querySelector('pre')?.textContent).toBe(resolvedFor('Vendor One'))
   })
 
   it('legalSignature steps keep the row but say the signature stays human', () => {
     const { container } = render(
       <StepPromptBox prompt={PROMPT} vendors={VENDORS} lensKey={LENS_KEY} legalSignature />,
     )
-    expect(screen.getByRole('button', { name: /Copy agent prompt/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Copy prompt/ })).toBeTruthy()
     expect(container.textContent).toContain('the signature itself is legally yours to give')
   })
 
@@ -179,7 +180,7 @@ describe('preview, signature honesty, and the manual-path children', () => {
     )
     const row = container.querySelector('div.flex')
     const labels = [...(row?.children ?? [])].map((el) => el.textContent ?? '')
-    const ai = labels.findIndex((t) => t.includes('Copy agent prompt'))
+    const ai = labels.findIndex((t) => t.includes('Copy prompt'))
     const manual = labels.findIndex((t) => t.includes('do it yourself'))
     expect(ai).toBeGreaterThanOrEqual(0)
     expect(manual).toBeGreaterThan(ai)

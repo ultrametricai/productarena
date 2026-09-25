@@ -57,7 +57,9 @@ export default function StepPromptBox({
 }) {
   const { lens, stack } = useProcessLens(lensKey)
   const [copied, setCopied] = useState(false)
-  const [open, setOpen] = useState(false)
+  // Founder 2026-09-25: the prompt shows EXPANDED by default — it's the step's main event, not
+  // a footnote (the toggle remains for readers who want the row compact).
+  const [open, setOpen] = useState(true)
   const viaLens = vendors.find((v) => lens.picks[v.arenaId] === v.productId)
   // vendors arrive in the step's ranked order, so the first that is A pick (multi-vendor
   // stacks, lib/myStack.ts isPicked) is the best-ranked vendor the reader runs.
@@ -95,9 +97,21 @@ export default function StepPromptBox({
           type="button"
           onClick={copyResolved}
           title={`Copies the step's agent prompt, resolved for ${vendorName}, to your clipboard`}
-          className="inline-flex items-center gap-1 rounded-md border border-emerald-400/50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300 transition hover:border-emerald-400 hover:bg-emerald-400/10"
+          className="inline-flex items-center gap-1.5 rounded-md border border-emerald-400/50 px-2 py-0.5 text-[10px] font-medium text-emerald-300 transition hover:border-emerald-400 hover:bg-emerald-400/10"
         >
-          {copied ? '✓ prompt copied' : '🪄 Copy agent prompt'}
+          {/* Proper clipboard icon (founder 2026-09-25: "make the copy icon nice") — swaps to a
+              check on success. */}
+          {copied ? (
+            <svg viewBox="0 0 16 16" width={11} height={11} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M2.5 8.5l3.5 3.5 7-8" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 16 16" width={11} height={11} fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <rect x="5" y="5" width="8.5" height="9" rx="1.5" />
+              <path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H4a1.5 1.5 0 0 0-1.5 1.5V11A1.5 1.5 0 0 0 4 12.5h1" />
+            </svg>
+          )}
+          {copied ? 'Copied' : 'Copy prompt'}
         </button>
         <a
           href={claudePromptUrl(resolved)}
@@ -147,9 +161,25 @@ export default function StepPromptBox({
         </p>
       )}
       {open && (
-        <pre className="mt-1.5 whitespace-pre-wrap break-words rounded-lg border border-zinc-800 bg-zinc-900/60 p-2.5 font-mono text-[11px] leading-relaxed text-zinc-300">
-          {resolved}
-        </pre>
+        <div className="mt-1.5 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/60">
+          {/* Clear framing (founder 2026-09-25): the box says what it is and who it's set for. */}
+          <div className="flex items-center justify-between gap-2 border-b border-zinc-800/70 bg-zinc-900 px-2.5 py-1">
+            <span className="text-[9px] uppercase tracking-widest text-zinc-500">
+              Agent prompt · resolved for {vendorName} · paste into any agent
+            </span>
+            <button
+              type="button"
+              onClick={copyResolved}
+              title="Copy this prompt"
+              className="text-[9px] text-emerald-400/80 transition hover:text-emerald-300"
+            >
+              {copied ? '✓ copied' : 'copy'}
+            </button>
+          </div>
+          <pre className="whitespace-pre-wrap break-words p-2.5 font-mono text-[11px] leading-relaxed text-zinc-300">
+            {resolved}
+          </pre>
+        </div>
       )}
     </div>
   )
