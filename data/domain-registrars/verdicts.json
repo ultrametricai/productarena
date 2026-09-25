@@ -2548,11 +2548,12 @@
   {
     "productId": "namecheap",
     "storyId": "account-security",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 2,
     "confidence": "medium",
-    "rationale": "No first-party documentation in the pack claims strong 2FA, scoped API credentials, or IP allowlisting for API access; the only related evidence is a community report describing a PIN-based bypass of 2FA via live chat, which undermines rather than supports the security-engineer requirement. missing for 10: vendor documentation of 2FA enforcement, API key scoping/permissions, IP allowlisting for API access, and independent verification that these controls work as intended.",
+    "rationale": "There is only weak first-party evidence relevant to this story: the Terraform provider mentions an optional client_ip parameter used for API calls, implying some IP-based access control for the API, but nothing in the evidence pack documents scoped/least-privilege API credentials or a real second-factor authentication scheme protecting the registrar account. Community evidence directly contradicts the premise that 2FA meaningfully protects the account: a Hacker News report and the CEO's own response confirm an account was taken over via a 4-digit support PIN even though 2FA was enabled, and another user reports a takeover using only public WHOIS data. Missing for 10: documented API-key scoping/permissions, explicit IP-allowlist policy for API access, and independent confirmation that 2FA cannot be bypassed via support channels.",
     "evidenceIds": [
+      "namecheap-docs-16",
       "namecheap-comm-1",
       "namecheap-comm-2",
       "namecheap-comm-3"
@@ -2564,7 +2565,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation, or any AI-agent-facing docs for Namecheap; evidence only covers API/RDAP responses and unrelated community sentiment. missing for 10: llms.txt file, agent-readable docs format, any mention of AI-agent discoverability.",
+    "rationale": "No evidence of an llms.txt file, agent-oriented documentation, or any explicit accommodation for AI agents crawling Namecheap's docs; evidence pack only covers API/RDAP/Terraform/SDK docs and community sentiment, none addressing agent-readable documentation formats. Missing for 10: llms.txt file, agent-oriented doc format, any mention of AI agent discoverability.",
     "evidenceIds": []
   },
   {
@@ -2573,20 +2574,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack shows Namecheap offering AI-generated insights or suggestions from user data; the evidence covers API/RDAP docs, DNS security features, and unrelated community complaints/praise about support and policies. Missing for 10: any mention of AI/ML features, data insights, or recommendation engines within the product.",
+    "rationale": "No evidence of any AI-generated insights, recommendations, or analytics features within Namecheap's product; evidence covers only domain APIs, RDAP data, Terraform/SDK tooling, and community sentiment about support/security. missing for 10: any AI/ML-driven insights feature, in-product suggestions, or dashboards surfacing AI-generated data analysis.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence only shows Namecheap's XML API and RDAP endpoints returning basic domain/DNS data and error messages; there is no documentation or example of setting up autonomous, AI-driven automations or scheduled/background workflows. Community evidence focuses on security incidents and support quality, not agentic automation.",
+    "rationale": "Namecheap exposes a scriptable XML API, Go SDK, and Terraform provider that let developers build background automation (e.g., dynamic DNS auto-update, domain renewal, registrar lock via context-aware calls), which could underpin autonomous scripts or agents. However, none of the evidence shows AI-agent-specific orchestration, webhooks, or event-driven triggers designed for autonomous background operation. Missing for 10: native scheduling/webhook support, explicit AI-agent or MCP integration, and evidence of agents actually running unattended via these APIs.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8"
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-15",
+      "namecheap-docs-23"
     ]
   },
   {
@@ -2602,14 +2606,19 @@
     "productId": "namecheap",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence shows Namecheap exposes an XML-based API (api.namecheap.com/xml.response) and a sandbox environment, which could in principle be scripted for headless/CI automation, but the only evidence is raw error responses ('Parameter APIUser is missing') rather than documentation of successful automated workflows, CLI tooling, or CI integration examples. Missing for 10: working API call examples, official CLI/SDK, CI-specific docs, and independent confirmation of automation use in pipelines.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Namecheap offers an XML-based API (with sandbox environment), a Go SDK with context-aware calls, and a Terraform provider that can be scripted/run headlessly in CI to manage domains and DNS. However, there's no evidence of a modern REST/JSON API, official CLI, or CI-specific tooling/examples, and the API docs shown are raw error responses rather than curated automation guides. Missing for 10: dedicated CLI tool, first-party CI/CD integration examples, modern REST API, evidence of headless auth flows beyond API keys.",
     "evidenceIds": [
       "namecheap-docs-1",
       "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9"
+      "namecheap-docs-15",
+      "namecheap-docs-16",
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22"
     ]
   },
   {
@@ -2618,7 +2627,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence Namecheap allows plugging in MCP servers or any agent tool-use integration; the evidence pack covers API/RDAP docs and unrelated community complaints/praise. Missing for 10: any mention of MCP support, tool-calling integration, or agentic plug-in capability.",
+    "rationale": "No evidence of an official Namecheap MCP server or any MCP integration; evidence covers only REST/XML API, RDAP, Terraform provider, and Go SDK, none of which mention MCP or agent tool-plugging.",
     "evidenceIds": []
   },
   {
@@ -2627,7 +2636,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official MCP server for connecting AI agents; evidence only covers Namecheap's traditional XML/REST API, RDAP lookups, and unrelated community sentiment. Missing for 10: any mention of an MCP server, agent integration, or AI-native connector.",
+    "rationale": "Namecheap is a domain registrar/DNS service (not an agent), so this axis applies, but no evidence pack item mentions an official MCP server or any MCP integration — only XML/REST API, RDAP, Terraform provider, and Go SDK are documented. Missing for 10: an official MCP server implementation, documentation of MCP tool/resource definitions, or any first-party MCP endpoint.",
     "evidenceIds": []
   },
   {
@@ -2636,7 +2645,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any natural-language command interface, chatbot, or AI-native control layer for Namecheap; evidence only covers XML/REST API errors, RDAP data, and unrelated community complaints. Missing for 10: any NLP interface, AI assistant integration, or documented natural-language command support.",
+    "rationale": "Evidence shows only a traditional XML/REST API, SDKs, Terraform provider, and knowledge base articles — none of which enable natural-language command operation. No chatbot, LLM interface, or NL command parsing is documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -2644,22 +2653,26 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows only an XML-based API and RDAP endpoints, not an official CLI tool for AI-native workflows; no CLI is mentioned anywhere in the pack. missing for 10: any mention of an official CLI, packaging/distribution of such a tool, or documentation targeting AI-agent usage.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Namecheap has an XML/REST API, Terraform provider, and Go SDK, but nothing indicates an official Namecheap-branded CLI tool for AI-native or agentic workflows. missing for 10: any official CLI tool, evidence of CLI supporting agentic/AI workflows, documentation of command-line interface.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence confirms a real Namecheap API (api.namecheap.com/xml.response) with a sandbox environment (api.sandbox.namecheap.com), indicating a documented public API exists for programmatic domain/DNS management, and a separate RDAP API for domain lookups. However, the evidence only shows raw endpoint URLs and error responses (missing APIUser parameter) rather than actual API documentation content, authentication flow, or SDK/agent-friendly design. Missing for 10: authentication/API-key documentation, rate limits, request/response schema examples, and any AI-agent or automation-specific tooling around the API.",
+    "rationale": "Namecheap has a documented public XML API (with sandbox environment) and official SDKs/tooling (Go SDK, Terraform provider) that let developers/agents programmatically check, register, renew, and lock domains, plus RDAP endpoints for domain lookups — evidence of a genuine programmatic surface beyond a GUI. However, the API is XML-based rather than a modern REST/JSON API, requires whitelisted IPs and API keys (friction for autonomous agents), and there's no evidence of an AI-specific or MCP-style interface. missing for 10: modern REST/JSON API docs, evidence of unrestricted/agent-friendly auth flow, first-party AI-agent integration or MCP server.",
     "evidenceIds": [
       "namecheap-docs-1",
       "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9",
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22",
+      "namecheap-docs-15",
       "namecheap-docs-3"
     ]
   },
@@ -2669,25 +2682,31 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Namecheap's API uses a single global API key/username with full account access (no scoped tokens or per-agent least-privilege credentials) and requires IP whitelisting; evidence only shows generic API endpoint errors and unrelated RDAP/WHOIS/security community complaints. Missing for 10: any documentation of scoped API keys, OAuth-style tokens, role-based permissions, or agent-specific credential issuance.",
+    "rationale": "Namecheap's API requires a single account-wide APIUser/APIKey with full account privileges and IP allowlisting; there is no evidence of scoped, least-privilege, or per-agent credential issuance (e.g., OAuth scopes or role-based API tokens). Evidence only shows generic API endpoints and error messages about missing parameters, not scoped credential support.",
     "evidenceIds": [
       "namecheap-docs-1",
       "namecheap-docs-2",
       "namecheap-docs-8",
-      "namecheap-docs-9"
+      "namecheap-docs-13"
     ]
   },
   {
     "productId": "namecheap",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Namecheap's XML-based API and RDAP endpoints but no mention of official SDKs or client libraries for AI-native/agentic development. missing for 10: evidence of official SDKs (Python/Node/etc.), API client libraries, or agent-oriented tooling.",
+    "rationale": "Namecheap publishes first-party SDKs/tooling on GitHub — a Go SDK (go-namecheap-sdk) with documented context-aware methods (CheckWithContext, CreateWithContext, RenewWithContext, SetRegistrarLockWithContext, GetTldListWithContext) and an official Terraform provider for DNS — giving developers real official libraries to build against beyond raw XML API calls. However, the core API itself is a legacy XML-based interface (api.namecheap.com/xml.response) with no evidence of broader official SDKs (Python, JS/TS, etc.) or modern REST/JSON support, and there is no independent corroboration of SDK quality or adoption. Missing for 10: multi-language official SDK coverage, modern API format, independent developer corroboration of SDK reliability.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8"
+      "namecheap-docs-15",
+      "namecheap-docs-16",
+      "namecheap-docs-17",
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22",
+      "namecheap-docs-1"
     ]
   },
   {
@@ -2696,7 +2715,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a webhook or event-subscription feature; only XML API, RDAP, and status-page mentions are present. missing for 10: any webhook/event subscription mechanism, documentation of event types, or third-party confirmation of webhook support.",
+    "rationale": "No evidence of webhook subscriptions or event-driven notifications; Namecheap's API is a request/response XML API with a status page for incident communication, not event webhooks.",
     "evidenceIds": []
   },
   {
@@ -2704,11 +2723,13 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of an interactive API reference or runnable code examples; evidence only shows raw XML/RDAP API endpoints without documentation tooling, sandbox docs pages, or try-it-now consoles. missing for 10: interactive API explorer/console, runnable code samples, SDK/language-specific snippets, any docs portal UI.",
+    "confidence": "high",
+    "rationale": "Evidence shows only a raw XML API endpoint with missing-parameter errors and no interactive/runnable API reference or sandbox playground; no docs portal, code samples runner, or interactive explorer is cited.",
     "evidenceIds": [
       "namecheap-docs-1",
-      "namecheap-docs-2"
+      "namecheap-docs-2",
+      "namecheap-docs-8",
+      "namecheap-docs-13"
     ]
   },
   {
@@ -2716,20 +2737,29 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Namecheap has an XML-based API and RDAP endpoint, but there is no mention of a machine-readable API spec such as OpenAPI/Swagger being available for download. Missing for 10: any reference to an OpenAPI/Swagger spec, machine-readable schema file, or documentation of such a format being offered.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Namecheap exposes a legacy XML-based API (api.namecheap.com/xml.response, sandbox variant) and third-party SDKs/Terraform providers wrap it, but no evidence anywhere in the pack shows a downloadable OpenAPI/Swagger spec or any machine-readable API description format.",
+    "evidenceIds": [
+      "namecheap-docs-1",
+      "namecheap-docs-2",
+      "namecheap-docs-8",
+      "namecheap-docs-9",
+      "namecheap-docs-13",
+      "namecheap-docs-18",
+      "namecheap-docs-19"
+    ]
   },
   {
     "productId": "namecheap",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Namecheap exposes a distinct sandbox API endpoint (api.sandbox.namecheap.com) separate from the production API host, indicating a dedicated test environment exists for API-driven workflows. However, the evidence pack gives no detail on sandbox data parity, account isolation guarantees, or how thoroughly it mirrors production behavior for domain/DNS operations.\n\nmissing for 10: documentation of sandbox account setup/isolation guarantees, confirmation that sandbox fully mirrors production API surface, independent hands-on validation that sandbox testing prevents any production side-effects.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "There is evidence of a dedicated sandbox API endpoint (api.sandbox.namecheap.com) separate from production, which is the core mechanism for testing without touching live data, but the pack shows only bare endpoint references and error responses rather than documentation of sandbox setup, test data isolation, or confirmation it fully mirrors production behavior. missing for 10: sandbox onboarding/documentation detail, confirmation of full feature parity with production, independent developer corroboration of sandbox reliability.",
     "evidenceIds": [
       "namecheap-docs-2",
-      "namecheap-docs-9"
+      "namecheap-docs-9",
+      "namecheap-docs-13"
     ]
   },
   {
@@ -2737,14 +2767,9 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Namecheap has an API and sandbox endpoint but no documentation of API versioning scheme or a deprecation policy; missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guidance for API consumers.",
-    "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence shows Namecheap has an XML API, sandbox environment, and community SDKs (Go SDK, Terraform provider), but nothing in the pack documents API versioning scheme or a deprecation policy for breaking changes. No changelog, version headers, or sunset-policy documentation appears anywhere in the evidence.",
+    "evidenceIds": []
   },
   {
     "productId": "namecheap",
@@ -2752,7 +2777,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack shows Namecheap publishing registry fee breakdowns or an at-cost/low-margin pricing guarantee; the only pricing-related community comment actually contradicts favorable renewal pricing (full price on renewals, discounts only for transfers).",
+    "rationale": "No evidence in the pack shows Namecheap publishing registry fee breakdowns, an at-cost pricing model, or a low-margin guarantee; the only pricing-related community comment (namecheap-comm-9) actually notes customers pay 'full price' on renewals with no ongoing discount, undercutting a wholesale-pricing claim rather than supporting one.",
     "evidenceIds": [
       "namecheap-comm-9"
     ]
@@ -2760,13 +2785,16 @@
   {
     "productId": "namecheap",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only shows a broken/errored API call example (missing APIUser parameter) and RDAP lookup snippets for a single domain; there is no documentation or demonstration of bulk operations (e.g., batch domain registration, bulk DNS updates, or multi-item automation) via API or otherwise. missing for 10: working API examples, bulk/batch endpoint documentation, evidence of multi-item automation workflows.",
+    "rationale": "The official Go SDK exposes CheckWithContext for checking availability of multiple domains at once, showing some batch capability, but other SDK/API operations (Create, Renew, SetRegistrarLock, Terraform provider) are documented as single-item calls with no evidence of bulk registration, renewal, or DNS record updates across many items. missing for 10: bulk create/renew/lock endpoints, bulk DNS record management, and any hands-on confirmation that large-scale bulk operations work reliably.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-8"
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-17"
     ]
   },
   {
@@ -2774,8 +2802,8 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a rules/trigger/event automation engine (e.g., webhooks, event-based workflows) in the Namecheap evidence pack; only API, RDAP, and support/community items are present. missing for 10: event-trigger system, webhook/automation rule builder, documentation of conditional actions on account events.",
+    "confidence": "low",
+    "rationale": "No evidence of event-driven rule/trigger automation (webhooks, event subscriptions, or condition-action workflows) in Namecheap's API, Terraform provider, or SDK docs — only static CRUD operations and Dynamic DNS update mechanisms are described.",
     "evidenceIds": []
   },
   {
@@ -2783,8 +2811,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of any scheduling, automation, or workflow-orchestration capability; the pack only covers API auth errors, RDAP data, and unrelated customer service/security anecdotes. missing for 10: any documentation of scheduled/recurring job support, cron-like automation, or workflow tooling.",
+    "confidence": "high",
+    "rationale": "No evidence of scheduling/recurring workflow automation capability; APIs/SDKs support domain actions but nothing about cron-like scheduled jobs or workflow orchestration.",
     "evidenceIds": []
   },
   {
@@ -2793,84 +2821,96 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Namecheap is a domain registrar/hosting service; version control, review, and rollback of 'automations' is not a capability category it offers or that fits its product type—no CI/CD or automation-workflow versioning is applicable here.",
+    "rationale": "Namecheap is a domain registrar/DNS/API provider; versioning, reviewing, and rolling back 'automations' (as in workflow/agent automations) is not a capability category this product offers—no evidence of any automation-builder, workflow versioning, or rollback feature exists in the pack.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "availability-api",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence shows Namecheap has a live API endpoint (api.namecheap.com/xml.response) and sandbox environment (api.sandbox.namecheap.com), and RDAP domain lookup responses confirming domain data can be queried programmatically, but there is no documentation shown for a dedicated domain availability/check API method, its parameters, or rate limits. missing for 10: actual domain-availability/check API method documentation, explicit rate-limit details, authentication/setup guide, and independent developer corroboration of successful programmatic use.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Namecheap ships a documented API (api.namecheap.com/xml.response) with a sandbox environment, and the official Go SDK exposes a CheckWithContext method explicitly for checking availability of one or more domains, confirming a programmatic domain-check capability exists. However, the evidence pack never surfaces documented rate limits, request quotas, or authentication/whitelisting requirements beyond a generic 'APIUser is missing' error, and there's no independent/hands-on confirmation of the check endpoint's behavior. Missing for 10: documented rate-limit specifics, evidence of API key whitelisting workflow, and third-party corroboration of the check endpoint working reliably.",
     "evidenceIds": [
+      "namecheap-docs-18",
       "namecheap-docs-1",
       "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9",
-      "namecheap-docs-3"
+      "namecheap-docs-22"
     ]
   },
   {
     "productId": "namecheap",
     "storyId": "availability-search",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack contains no material about Namecheap's domain search tool itself—no mentions of search speed, TLD suggestion features, or anti-front-running/domain-squatting protections; it's focused on API/RDAP docs and unrelated support/security community complaints.",
-    "evidenceIds": []
+    "rationale": "The Go SDK docs show a CheckWithContext call for checking availability of one or multiple domains and a GetTldListWithContext for enumerating TLDs, which loosely supports 'instant availability' and 'alternate TLD' checking at the API level, but there is no evidence about the actual consumer-facing search UI speed, suggestion quality, or any policy/behavior regarding not squatting on searched names. Missing for 10: evidence of search speed/UX, alternate-TLD suggestion behavior in the search tool, and any explicit anti-squatting policy or independent confirmation that searched names aren't registered by Namecheap.",
+    "evidenceIds": [
+      "namecheap-docs-18",
+      "namecheap-docs-22"
+    ]
   },
   {
     "productId": "namecheap",
     "storyId": "bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack shows only a raw API endpoint returning an error and RDAP lookups, plus unrelated community complaints about security and support; none of it addresses bulk search, bulk registration, bulk renewal, bulk nameserver changes, or bulk transfers across a domain portfolio. missing for 10: any documentation or user report of a bulk domain management UI or API workflow.",
+    "rationale": "The API/SDK evidence shows per-domain operations (check, create, renew, lock) that could be scripted across many domains, and CheckWithContext explicitly supports checking multiple domains at once, but there is no direct evidence of a native bulk UI for search, registration, renewal, nameserver changes, or transfers across a portfolio. Missing for 10: dashboard bulk-select renewal/nameserver/transfer tools, bulk registration workflow, and any first-party or community confirmation these bulk actions work at scale in the actual product UI.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-8",
-      "namecheap-docs-2",
-      "namecheap-docs-9"
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22"
     ]
   },
   {
     "productId": "namecheap",
     "storyId": "dns-api",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack only shows raw API error responses ('Parameter APIUser is missing') and a sandbox endpoint URL, with no documentation of actual DNS record CRUD operations (e.g., setHosts/getHosts or ACME-friendly TXT record management). No first-party API docs or community confirmation of programmatic DNS record creation/update/deletion appear in the pack.",
+    "rationale": "Namecheap exposes a documented XML API (api.namecheap.com/xml.response, sandbox) and has an official Terraform provider that manages DNS records as individual resources (create/update/delete), plus a Go SDK for domain operations, indicating programmatic DNS management is possible. However, the pack shows only API error snippets rather than actual endpoint documentation for record CRUD (e.g., setHosts), no explicit mention of ACME/DNS-01 challenge support, and the Go SDK README lists domain lifecycle methods but not DNS record CRUD calls directly. missing for 10: direct API doc excerpts for DNS record create/update/delete endpoints, explicit ACME challenge automation example, independent hands-on confirmation of record CRUD via API.",
     "evidenceIds": [
       "namecheap-docs-1",
       "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9"
+      "namecheap-docs-15",
+      "namecheap-docs-17",
+      "namecheap-docs-22"
     ]
   },
   {
     "productId": "namecheap",
     "storyId": "dns-hosting-included",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only tangentially touches DNS hosting: RDAP shows DNSSEC (delegationSigned/zoneSigned) support and community notes Namecheap offers Dynamic DNS as a free extra, implying some DNS hosting capability. There is no evidence about the breadth of record types supported, TTL settings, or the quality/usability of the DNS management UI. missing for 10: documentation of supported record types (A, AAAA, MX, TXT, CNAME, SRV, CAA, etc.), TTL configurability, and any hands-on account of the DNS UI experience.",
+    "rationale": "Evidence shows Namecheap offers DNS-related capabilities like DNSSEC (secureDNS delegationSigned/zoneSigned), Dynamic DNS via HTTPS updates, and a Terraform provider for managing DNS records programmatically, implying DNS hosting is bundled with domains. However there is no evidence detailing supported record types, TTL granularity, or the quality/usability of the DNS management UI itself, and general community feedback on Namecheap's UX is mixed-to-negative (though not DNS-specific). missing for 10: record-type coverage list, TTL configurability details, direct evidence/review of the DNS management UI's usability.",
     "evidenceIds": [
       "namecheap-docs-3",
       "namecheap-docs-10",
-      "namecheap-comm-10"
+      "namecheap-docs-15",
+      "namecheap-docs-17",
+      "namecheap-docs-23",
+      "namecheap-comm-10",
+      "namecheap-comm-14"
     ]
   },
   {
     "productId": "namecheap",
     "storyId": "dnssec-support",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "RDAP records confirm Namecheap's own domain has DNSSEC delegation and DS data properly published at the registry (delegationSigned:true, zoneSigned:true, dsData present), showing DNSSEC signing does work end-to-end. However there is no documentation or evidence describing the actual signing workflow, whether it's one-click in the dashboard, or API-driven DS record automation. Missing for 10: documentation of the UI/API workflow for enabling DNSSEC, evidence of ease-of-use or one-click claims, and any independent confirmation from a security engineer's hands-on setup experience.",
+    "rationale": "RDAP evidence confirms Namecheap's own domain has DNSSEC signed with dsData present, showing the registry-level DNSSEC infrastructure works, but there is no documentation of a one-click UI toggle or an API endpoint for customers to enable/manage DNSSEC signing themselves — the SDK/API docs list only domain check/create/renew/lock methods with no DNSSEC-specific call. Missing for 10: customer-facing DNSSEC enable/disable documentation, API method for DS record management, and any hands-on confirmation of ease of setup.",
     "evidenceIds": [
       "namecheap-docs-3",
-      "namecheap-docs-10"
+      "namecheap-docs-10",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22"
     ]
   },
   {
@@ -2879,7 +2919,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of email forwarding or free SSL bundled with domain registration — it's dominated by API/RDAP technical details and unrelated community complaints/praise about security, support, and pricing. Missing for 10: any documentation or claim about free email forwarding, free SSL certificate inclusion, or bundling of these with domain purchase.",
+    "rationale": "The evidence pack contains no documentation or community mentions of email forwarding or free SSL bundling with domain registration — it covers API/DNS/RDAP/Terraform tooling and unrelated support/security anecdotes, but nothing about these specific bundled features.",
     "evidenceIds": []
   },
   {
@@ -2888,7 +2928,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "RDAP evidence confirms Namecheap's own domain uses 'WITHHELD FOR PRIVACY LLC' as the registrant proxy, showing privacy redaction is active, but there is no documentation confirming it is free-by-default for all customers/TLDs or that no upsell occurs at checkout. Missing for 10: pricing/signup docs confirming free inclusion, independent user confirmation of no upsell flow, and coverage across different TLDs/domains beyond the vendor's own.",
+    "rationale": "RDAP data confirms Namecheap applies WHOIS privacy redaction (\"Privacy service provided by WITHHELD FOR PRIVACY LLC\") on a queried domain, showing the mechanism exists and is active, but there is no evidence in the pack confirming it is free, on by default for all customers, or free of any upsell flow. Missing for 10: pricing/plan documentation stating privacy is free and default, absence-of-upsell confirmation, and independent user corroboration of no upsell during registration.",
     "evidenceIds": [
       "namecheap-docs-4"
     ]
@@ -2898,22 +2938,28 @@
     "storyId": "host-connect",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes a guided domain-connection flow, host templates, or one-click connect features for platforms like Shopify, Wix, or Squarespace; all evidence relates to API/RDAP technical data, security incidents, and general customer sentiment.",
+    "confidence": "medium",
+    "rationale": "No evidence of guided one-click connect/templates for linking a domain to major hosting platforms (e.g., Shopify, Wix, Squarespace, Vercel). Evidence covers API/RDAP/WHOIS/DNS tooling (Terraform, Go SDK, dynamic DNS) but nothing about a founder-friendly guided setup wizard or platform-specific connect flows.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence confirms Namecheap has a public XML API and sandbox endpoint, but there is no documentation or testimony showing the API covers all UI functionality (e.g., account management, support actions, billing) — only error responses and RDAP lookups are shown. Missing for 10: coverage comparison of API vs UI feature parity, documentation of API completeness, and any community confirmation that all UI actions are API-accessible.",
+    "rationale": "Namecheap's XML API and Go SDK/Terraform provider expose core domain operations (check, register, renew, lock/unlock, TLD list, DNS record management) that mirror many UI actions [namecheap-docs-18,19,20,21,22,15,17], and dynamic DNS/API endpoints are documented [namecheap-docs-23,1,2]. However there is no evidence that billing, account/security settings, live-chat support actions, or other UI-only workflows are exposed via API, so full UI/API parity is unproven. missing for 10: evidence of account/billing management parity, explicit vendor statement of full API-UI feature parity, independent confirmation that all UI actions map to API calls.",
     "evidenceIds": [
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-22",
+      "namecheap-docs-15",
+      "namecheap-docs-17",
+      "namecheap-docs-23",
       "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9"
+      "namecheap-docs-2"
     ]
   },
   {
@@ -2922,17 +2968,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data export, open data formats, or account portability/exit for Namecheap; the evidence pack is dominated by API/RDAP technical fragments and unrelated community complaints about security/support. Missing for 10: any documentation of a data export tool, downloadable account/domain data in open formats, or migration/exit support.",
+    "rationale": "There is no evidence of a data export feature or open-format data portability for account/domain data; the pack covers API/DNS/RDAP/Terraform-SDK tooling and unrelated community complaints, none addressing exporting user data to leave the platform.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "openness-open-license",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Namecheap is a domain registrar/hosting SaaS, not open-source software; source code availability is not a meaningful axis for this product category, and no evidence suggests otherwise.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Namecheap open-sources auxiliary SDKs and a Terraform provider (go-namecheap-sdk, terraform-provider-namecheap) under presumably open licenses, but there is no evidence that the core Namecheap platform/service source code itself is published under an open license — only client integration tooling is open. Missing for 10: license text for SDK repos, confirmation that the actual registrar/service platform code is open-sourced, and any statement of an open-source policy for the core product.",
+    "evidenceIds": [
+      "namecheap-docs-15",
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20"
+    ]
   },
   {
     "productId": "namecheap",
@@ -2940,7 +2991,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Namecheap is a domain registrar/hosting SaaS; self-hosting the core product is a category error since it's inherently a hosted registrar service, not open-source software a user could run themselves.",
+    "rationale": "Namecheap is a domain registrar/hosting SaaS; self-hosting the core product is a category error — there is no on-prem/self-hosted deployment option for a registrar service, so this axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -2948,8 +2999,8 @@
     "storyId": "premium-aftermarket",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses premium/aftermarket domain pricing in search results or a marketplace/broker path for acquiring taken domains; the evidence covers API docs, RDAP data, and unrelated community sentiment about security and support.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses premium/aftermarket domain pricing, marketplace listings, or a broker path for taken names; the pack covers API auth, RDAP, DNS, SDKs, and unrelated support/community anecdotes.",
     "evidenceIds": []
   },
   {
@@ -2957,14 +3008,13 @@
     "storyId": "pricing-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Namecheap has a general API (api.namecheap.com/xml.response) and a sandbox endpoint, but nothing documents a pricing-specific method or feed returning per-TLD registration/renewal/transfer prices; community notes only mention manual pricing complaints (e.g., no renewal discounts), not a machine-readable feed.",
+    "confidence": "medium",
+    "rationale": "The evidence shows Namecheap has a general API, SDK, and Terraform provider for domain management (availability checks, registration, renewal, TLD listing) but no documented endpoint or feed that returns machine-readable per-TLD registration/renewal/transfer pricing for budgeting/comparison tooling.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9",
-      "namecheap-comm-9"
+      "namecheap-docs-18",
+      "namecheap-docs-19",
+      "namecheap-docs-20",
+      "namecheap-docs-22"
     ]
   },
   {
@@ -2973,7 +3023,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for user data; the evidence covers API errors, RDAP/WHOIS records, security incidents, and general customer sentiment. Missing for 10: any mention of data center regions, residency options, or user-selectable storage locations.",
+    "rationale": "No evidence of data residency/region selection options for domain, DNS, or account data in Namecheap's docs, API, or Terraform/SDK materials; nothing addresses data storage location controls.",
     "evidenceIds": []
   },
   {
@@ -2982,7 +3032,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Namecheap is a domain registrar/hosting provider; AI-model-training data controls are not a relevant axis for this product category, and no evidence relates to AI training data usage.",
+    "rationale": "Namecheap is a domain registrar/DNS and hosting-related API provider, not an AI model or AI product; there is no AI training data usage to opt out of, so this privacy-posture axis about preventing data use for AI training does not apply.",
     "evidenceIds": []
   },
   {
@@ -2990,8 +3040,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes user-facing data retention or deletion controls (e.g., account data export/delete, retention policy settings); the pack only covers WHOIS privacy masking and unrelated API/RDAP details.",
+    "confidence": "low",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management tools for AI-native users; the pack only covers API/DNS/domain functionality and unrelated security/support anecdotes.",
     "evidenceIds": []
   },
   {
@@ -3000,7 +3050,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This story concerns AI-native telemetry/usage-tracking opt-out, which applies to AI tools/agents, not a domain registrar/DNS/hosting service like Namecheap. Evidence pack covers API, RDAP/WHOIS, security incidents, and customer service—none relate to AI telemetry.",
+    "rationale": "Namecheap is a domain registrar/hosting service, not an AI agent or developer tool with telemetry collection relevant to AI-native workflows; there is no evidence of any product telemetry/usage tracking feature to opt out of, making this a category mismatch rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -3009,7 +3059,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents Namecheap's published per-TLD registration/renewal/transfer pricing or any transparency policy; the closest community remark (namecheap-comm-9) merely warns that renewal pricing is not discounted, which is anecdotal and doesn't confirm a transparent published price list. missing for 10: a first-party pricing page or TLD price list, explicit renewal/transfer pricing disclosure, and independent verification that no teaser pricing hides a renewal spike.",
+    "rationale": "No evidence in the pack shows Namecheap publishing a per-TLD price list broken out by registration, renewal, and transfer; the docs are about API/RDAP/Terraform tooling, not pricing at all. One community comment (namecheap-comm-9) even suggests renewal pricing surprises are a customer concern, but no vendor pricing-page or price-list documentation is cited to confirm or deny transparency. missing for 10: a published price table or pricing page, per-TLD registration/renewal/transfer breakdown, evidence contradicting or confirming teaser-price complaints.",
     "evidenceIds": [
       "namecheap-comm-9"
     ]
@@ -3017,15 +3067,16 @@
   {
     "productId": "namecheap",
     "storyId": "registration-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence only shows raw API endpoint URLs and an error message ('Parameter APIUser is missing') plus a sandbox URL — there is no documented call sequence for domain purchase, contact submission, or nameserver configuration via the API. No evidence demonstrates an end-to-end scriptable registration flow. Missing for 10: documented purchase/registration API call, contact-info API call, nameserver-set API call, any example of a full end-to-end automated registration.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "The official Go SDK documents CreateWithContext (charge-bearing domain registration) plus CheckWithContext and RenewWithContext, showing a real, documented API path for purchasing domains programmatically, and the API/sandbox endpoints exist for scripting. However, the evidence never documents contact-information parameters or nameserver-setting calls as part of the registration flow, so the full 'purchase + contacts + nameservers' deploy-script story is only partially evidenced. Missing for 10: documented contact fields for registration calls, documented nameserver-setting calls tied to registration, and an end-to-end example script combining all three steps.",
     "evidenceIds": [
-      "namecheap-docs-1",
-      "namecheap-docs-2",
-      "namecheap-docs-8",
-      "namecheap-docs-9"
+      "namecheap-docs-19",
+      "namecheap-docs-18",
+      "namecheap-docs-20",
+      "namecheap-docs-21",
+      "namecheap-docs-2"
     ]
   },
   {
@@ -3033,22 +3084,23 @@
     "storyId": "renewal-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community mention of auto-renew settings, expiry notices, or grace/redemption period policies for lapsed domains; it covers API errors, RDAP data, status page, and unrelated security/support anecdotes. Missing for 10: any docs on auto-renew toggle, renewal reminder emails, and grace/redemption window timelines.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses auto-renew toggles, expiry notification settings, or grace/redemption period policies — the closest item (namecheap-comm-9) only discusses renewal pricing, not renewal management or lapse windows. Missing for 10: any documentation of auto-renew per-domain controls, expiry notice cadence, and grace/redemption window policy.",
     "evidenceIds": []
   },
   {
     "productId": "namecheap",
     "storyId": "sandbox-test-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence confirms existence of a dedicated sandbox API endpoint (api.sandbox.namecheap.com) distinct from production, which is the core signal for a safe test environment. However, there's no documentation of the self-serve credential/API key generation process, no confirmation that sandbox registrations are free or fully mirror production behavior, and error responses shown are generic parameter errors rather than a walkthrough. Missing for 10: docs on obtaining API keys self-serve, confirmation sandbox domain registrations don't charge real money, and any independent developer corroboration of sandbox usability.",
+    "rationale": "There's clear evidence of a dedicated sandbox API endpoint (api.sandbox.namecheap.com) distinct from production, which supports safe testing without real charges, and third-party SDKs/Terraform providers exist for self-serve API usage. However, there's no documented self-serve process for obtaining sandbox credentials, no mention of sandbox account signup flow, and the sandbox endpoint evidence only shows error responses (missing parameter), not confirmation of full test-mode functionality. Missing for 10: self-serve sandbox account creation docs, confirmation that domain registration/renewal calls are free in sandbox, independent developer corroboration of the sandbox experience.",
     "evidenceIds": [
       "namecheap-docs-2",
       "namecheap-docs-9",
-      "namecheap-docs-1",
-      "namecheap-docs-8"
+      "namecheap-docs-13",
+      "namecheap-docs-18",
+      "namecheap-docs-19"
     ]
   },
   {
@@ -3056,9 +3108,11 @@
     "storyId": "tld-breadth",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains only API/RDAP technical details and community anecdotes about security, support, and pricing — nothing documents the breadth of TLDs offered or per-TLD special requirements (restricted TLDs, country-code rules). Missing for 10: TLD catalog size/breadth, documentation of restricted TLD requirements, country-code TLD eligibility rules.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of Namecheap's TLD catalog breadth, restricted-TLD rules, or country-code TLD requirements; the only tangential item (GetTldListWithContext API call) merely returns TLD capabilities programmatically but is not itself evidence of per-TLD restriction documentation or catalog breadth. missing for 10: list/count of supported TLDs, documented restricted-TLD requirements, country-code TLD-specific rules, any hands-on or docs confirmation of coverage breadth.",
+    "evidenceIds": [
+      "namecheap-docs-22"
+    ]
   },
   {
     "productId": "namecheap",
@@ -3066,7 +3120,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no first-party documentation of the transfer-in process, EPP/auth-code flow, status tracking, transfer pricing, or handling of remaining registration time — only unrelated API/RDAP snippets and general community sentiment. One community comment (namecheap-comm-11) mentions an EPP code transfer failure, but this reflects a support friction anecdote, not documentation of the process, and does not establish that Namecheap publishes an honest transfer-in guide.",
+    "rationale": "The evidence pack contains no first-party documentation of the domain transfer-in process, EPP/auth-code handling, transfer status tracking, transfer cost, or treatment of remaining registration time. The only relevant community mention (namecheap-comm-11) describes a user's EPP/auth codes failing during a transfer, which is a complaint about transfer friction, not evidence of an honest documented flow.",
     "evidenceIds": [
       "namecheap-comm-11"
     ]
@@ -3075,13 +3129,12 @@
     "productId": "namecheap",
     "storyId": "transfer-registry-lock",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "RDAP evidence shows a live domain with status 'client transfer prohibited' etc., indicating a transfer lock is in effect, but there's no documentation that this is a default policy applied to all domains, and no mention of a registry-lock option for high-value domains. Community evidence highlights unrelated account-security weaknesses (PIN-based support takeover) that raise general trust concerns but don't directly contradict the lock feature. Missing for 10: explicit default-lock policy documentation, registry-lock offering, and independent confirmation of lock robustness.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Evidence shows registrar-level transfer lock functionality: the RDAP record for namecheap.com shows 'client transfer prohibited'/'server transfer prohibited' statuses, and the official Go SDK exposes SetRegistrarLockWithContext to lock/unlock a domain at the registrar. However, there is no documentation of a dedicated registry-lock (registry-level, manual-verification) feature for high-value domains, nor confirmation that transfer lock is on-by-default for all customer domains as a policy. Missing for 10: explicit registry-lock product/option documentation, default-lock policy statement, and independent verification of registry-lock availability.",
     "evidenceIds": [
       "namecheap-docs-5",
-      "namecheap-comm-1",
-      "namecheap-comm-3"
+      "namecheap-docs-21"
     ]
   },
   {

@@ -17,15 +17,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Decagon's Insights & Reporting and Suggestions features let users ask open-ended natural-language questions (e.g. 'Why are customers requesting refunds?') and get AI-driven analysis, heatmaps, and auto-generated content drafts based on detected knowledge gaps, directly surfacing AI-generated insights from customer data. Duet further auto-generates Agent Operating Procedures from past interactions and iterates based on conversation patterns. Missing for 10: independent/hands-on validation of insight quality and no detail on underlying analytics accuracy or limitations.",
+    "rationale": "Decagon's Insights & Reporting and Suggestions products provide AI-generated analysis (Ask AI natural-language queries like 'Why are customers requesting refunds?'), automatic knowledge-gap detection with content draft suggestions, and Watchtower's AI-driven flagging of custom criteria — all surfaced directly inside the product from the user's own data. Missing for 10: independent/hands-on verification beyond vendor docs, and more detail on breadth/accuracy of generated insights across data types.",
     "evidenceIds": [
       "decagon-docs-9",
-      "decagon-docs-10",
-      "decagon-docs-17",
-      "decagon-docs-18",
       "decagon-docs-30",
-      "decagon-docs-6",
-      "decagon-docs-24"
+      "decagon-docs-10",
+      "decagon-docs-18",
+      "decagon-docs-8",
+      "decagon-docs-37",
+      "decagon-docs-17"
     ]
   },
   {
@@ -34,12 +34,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon's Proactive Agents can carry context across sessions and autonomously initiate calls/recommendations based on customer signals, and Watchtower continuously monitors every interaction against custom criteria without manual triggering — both indicate background/autonomous operation. However, there's no explicit documentation of a general-purpose automation/scheduling framework (e.g., triggers, cron-like workflows, or arbitrary background tasks) beyond these two specific features. Missing for 10: a dedicated automation/scheduler product surface, independent/hands-on verification of autonomous behavior, and broader configurability beyond proactive outreach and monitoring.",
+    "rationale": "Decagon supports agents that operate autonomously in the background — Proactive Agents that initiate calls and recommendations based on customer signals across sessions, and Watchtower that continuously reviews every interaction against custom criteria without human triggering. This shows autonomous, non-interactive operation but the evidence frames it around customer-support use cases rather than a general-purpose automation/scheduling framework for AI-native users. Missing for 10: explicit trigger/schedule configuration, a broader automation-builder UI beyond proactive outreach and monitoring, and independent/hands-on confirmation of reliability running unattended.",
     "evidenceIds": [
       "decagon-docs-22",
       "decagon-docs-23",
       "decagon-docs-28",
-      "decagon-docs-31"
+      "decagon-docs-31",
+      "decagon-docs-37"
     ]
   },
   {
@@ -61,35 +62,35 @@
     "storyId": "agentic-headless",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Decagon is a SaaS conversational-AI platform for customer support with no-code configuration (AOPs, Duet, integrations 'no custom code required'); there is no documented CLI, headless mode, or CI-automation interface, and the openapi probe returned 404s, indicating no public API spec for automated/headless invocation. missing for 10: any CLI/SDK for headless execution, CI-pipeline integration docs, or public API reference enabling automation.",
+    "confidence": "low",
+    "rationale": "Decagon is presented as an enterprise conversational-AI platform with dashboards, AOPs, and testing/QA tools, but no evidence describes a CLI, SDK, or documented mechanism for running the agent headlessly or invoking it from CI/CD pipelines; the probe for an OpenAPI spec also returned 404s, suggesting no discoverable API surface for automation.",
     "evidenceIds": [
-      "decagon-docs-19",
-      "decagon-docs-26",
-      "decagon-probe-2"
+      "decagon-probe-2",
+      "decagon-docs-29"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "agentic-mcp-client",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Decagon has a blog post explicitly about MCP (\"getting the most out of MCP\") describing an infrastructure layer to curate, scope, and evaluate tool usage, indicating some MCP integration capability, but there is no concrete documentation of how to actually plug an MCP server into an agent, no config steps, and no independent corroboration of it working. missing for 10: technical setup docs for adding an MCP server, list of supported MCP servers/tools, hands-on or independent verification that agents actually invoke MCP tools.",
+    "rationale": "Decagon has a blog post explicitly about integrating MCP into its agent stack, describing MCP as a standard way to 'package and expose tools' and noting the need for an infrastructure layer to 'curate, scope, and evaluate how tools are actually used,' implying it can connect to external MCP servers as tool sources for its agents. However, there is no concrete documentation on the actual configuration/connection flow, supported server list, or hands-on/independent confirmation that arbitrary MCP servers can be plugged in and used. Missing for 10: step-by-step MCP server connection docs, list of compatible/tested MCP servers, independent or hands-on verification of tool invocation via MCP.",
     "evidenceIds": [
-      "decagon-docs-3"
+      "decagon-docs-3",
+      "decagon-docs-34"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "agentic-mcp-server",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon's MCP blog post (decagon-docs-3) discusses using MCP to curate/scope tool access for its own agents (i.e., Decagon as an MCP client consuming external tools), not exposing an official MCP server that lets an external AI agent connect into Decagon. No documentation, endpoint, or announcement of a first-party Decagon MCP server was found, and the OpenAPI/spec probes returned 404s with no MCP-specific server mentioned.",
+    "rationale": "Decagon is itself an AI agent platform (building/operating customer-support agents), and its MCP references describe consuming/exposing tools as a client to power its own agents (decagon-docs-3, decagon-docs-34), not shipping an official MCP server for external agents to connect to Decagon. Per the agent-role exception, this axis is out of scope unless Decagon documents running as an MCP server itself, which no evidence shows.",
     "evidenceIds": [
       "decagon-docs-3",
-      "decagon-probe-2"
+      "decagon-docs-34"
     ]
   },
   {
@@ -98,13 +99,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon lets operators define agent behavior, flagging criteria, and analytics queries via natural language (AOPs, Watchtower, Ask AI), which supports natural-language operation of the product for configuration/analysis purposes. However, this is primarily aimed at business/support-ops users configuring an agent, not a general 'AI-native user' issuing arbitrary natural-language commands to control the whole product end-to-end. missing for 10: evidence of natural-language command interface for broader product operations (e.g., admin tasks, integrations setup, deployment) beyond AOPs/Watchtower/Insights, and independent/hands-on verification of this capability.",
+    "rationale": "Decagon documents multiple surfaces where natural language substitutes for code/UI configuration: Agent Operating Procedures let teams 'define agent behavior in natural language' instead of SDKs (decagon-docs-16, decagon-docs-36), Watchtower lets users 'define what matters using natural language' for flagging criteria (decagon-docs-8, decagon-docs-20), and Ask AI enables 'flexible, conversational queries' for analytics (decagon-docs-9, decagon-docs-30). This shows broad NL-driven operation across agent-building, monitoring, and reporting, but all evidence is first-party marketing copy with no independent or hands-on corroboration, and full product administration (integrations, deployment, security settings) still appears UI/console-driven rather than command-driven. Missing for 10: independent/hands-on verification of natural-language operation, evidence that core admin/config tasks beyond AOP/Watchtower/Insights can be driven purely by NL commands.",
     "evidenceIds": [
-      "decagon-docs-8",
       "decagon-docs-16",
+      "decagon-docs-36",
+      "decagon-docs-8",
       "decagon-docs-20",
-      "decagon-docs-30",
-      "decagon-docs-9"
+      "decagon-docs-9",
+      "decagon-docs-30"
     ]
   },
   {
@@ -122,11 +124,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a documented public API; the openapi probe returned 404s across all candidate paths and no docs reference an API reference, SDK, or programmatic endpoint. Integrations are described as 'no custom code required' (docs-19, docs-26), suggesting no-code/UI-driven configuration rather than a documented API for AI-native control.",
+    "rationale": "No evidence of a documented public API for programmatic control; the openapi probe returned 404s across all candidate paths, and no docs mention REST/GraphQL API endpoints or SDKs for driving the product externally—only integration/security features (JWT, SSO) are mentioned.",
     "evidenceIds": [
       "decagon-probe-2",
-      "decagon-docs-19",
-      "decagon-docs-26"
+      "decagon-docs-2",
+      "decagon-docs-21"
     ]
   },
   {
@@ -147,11 +149,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of official SDKs for developers; the pack shows only no-code integrations, MCP blog commentary, and a failed openapi probe (404s), with no SDK documentation or API libraries surfaced.",
+    "rationale": "No evidence of official SDKs for developers; the only related mention (decagon-docs-36) explicitly frames Decagon as an alternative to 'complex SDKs,' and the OpenAPI probe returned 404s across all candidate paths, indicating no public API/SDK surface was found.",
     "evidenceIds": [
-      "decagon-docs-3",
-      "decagon-docs-19",
-      "decagon-docs-26",
+      "decagon-docs-36",
       "decagon-probe-2"
     ]
   },
@@ -161,7 +161,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions webhooks, event subscriptions, or any push-notification mechanism; the OpenAPI probe returned 404s and no API reference documenting webhook endpoints was found. This axis applies (Decagon integrates with external systems and could plausibly offer webhooks) but there is no supporting evidence.",
+    "rationale": "No evidence anywhere in the pack of webhook subscription capability, event streams, or API-based notification mechanisms; probes for OpenAPI specs returned 404s and no webhook docs are referenced.",
     "evidenceIds": [
       "decagon-probe-2"
     ]
@@ -172,7 +172,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an interactive API reference or runnable examples; the openapi probe returned 404 across all candidate paths and no docs mention API documentation with runnable examples. Missing for 10: any API reference page, SDK/runnable code samples, interactive docs like Swagger/Redoc, or developer sandbox.",
+    "rationale": "No evidence of an interactive API reference or runnable examples; the openapi probe explicitly returned 404 on all candidate paths, and no docs mention an API explorer or code sandbox.",
     "evidenceIds": [
       "decagon-probe-2"
     ]
@@ -183,10 +183,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probe explicitly checked common OpenAPI/swagger endpoints and all returned 404, and no documentation references a downloadable machine-readable API spec; only an llms.txt file was found, which is not an API spec.",
+    "rationale": "Decagon is a SaaS platform with an API/integrations layer, so a machine-readable API spec is a fair expectation, but the probe explicitly found all candidate OpenAPI/Swagger paths returning 404, and no documentation references a downloadable spec.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-1"
+      "decagon-probe-2"
     ]
   },
   {
@@ -208,7 +207,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public/versioned API, API changelog, or deprecation policy; the openapi probe returned 404s across all candidate paths and no docs mention API versioning or deprecation practices.",
+    "rationale": "No evidence of a public API reference, version numbering, or deprecation policy; the openapi probe found only 404s and docs never mention API versioning or deprecation practices.",
     "evidenceIds": [
       "decagon-probe-2"
     ]
@@ -219,23 +218,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes a bulk-operations feature (e.g., batch editing, bulk tagging, bulk export/import of tickets or conversations) for AI-native users; the closest items describe aggregate analysis (Watchtower reviewing every interaction, Insights analyzing many conversations) rather than user-driven bulk actions across items.",
+    "rationale": "Decagon's evidence covers AI agent automation for individual customer interactions (chat, voice, email) and platform-wide monitoring/analysis tools (Watchtower, Insights), but nothing describes a user-facing capability to select and act on many items/tickets/conversations at once in a single bulk operation.",
     "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon offers Watchtower, which monitors conversations against natural-language criteria and can flag/surface events (compliance risks, sentiment, etc.), and Proactive Agents that act on customer signals (e.g., initiating calls, recommendations) — both function as event-triggered automation. However, there is no explicit documentation of a general-purpose rule-builder (if-event-then-action) framework that an AI-native user could configure directly; the evidence describes narrower, product-specific triggering mechanisms rather than a flexible automation-rules engine. Missing for 10: explicit rule/condition builder UI or API, documentation of arbitrary event types and action bindings, and independent verification of how these triggers are configured.",
+    "rationale": "Decagon supports natural-language defined rules that trigger actions: Watchtower lets teams define custom criteria (e.g., frustration, policy violations) that automatically flag/surface events, AOPs define natural-language SOPs that drive agent behavior, and proactive agents trigger actions (calls, recommendations) 'based on customer signals.' However, there's no documented general-purpose rules/event engine with explicit trigger-condition-action configuration or webhook-style event hooks. Missing for 10: explicit event/trigger architecture documentation, developer-facing rule-builder API or webhook events, and independent/hands-on confirmation of automation reliability.",
     "evidenceIds": [
-      "decagon-docs-8",
       "decagon-docs-20",
       "decagon-docs-31",
+      "decagon-docs-37",
+      "decagon-docs-16",
+      "decagon-docs-36",
       "decagon-docs-22",
-      "decagon-docs-23",
-      "decagon-docs-16"
+      "decagon-docs-23"
     ]
   },
   {
@@ -244,20 +244,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Decagon's evidence covers customer-support agent features (chat, voice, email, analytics, testing, proactive outreach) but nothing addresses scheduling recurring jobs or workflows in the AI-native/automation-depth sense; proactive agents mention initiating calls at 'right moments' but no scheduling/cron-like mechanism is documented. missing for 10: any scheduler, cron/recurring trigger config, or workflow automation timing controls.",
+    "rationale": "Decagon is a customer-support AI agent platform; evidence covers chat/voice/email agents, AOPs, Duet, Watchtower, Experiments, and integrations, but nothing describes scheduling recurring jobs/workflows or a cron-like automation trigger mechanism.",
     "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Decagon offers some adjacent controls—technical teams retain 'visibility and control over guardrails, integrations, and versioning' and Simulations/testing validate agent behavior 'before deploying to production and with every subsequent update'—suggesting some change-management workflow exists, but there's no explicit documentation of version history browsing, diffing, review/approval workflows, or a rollback mechanism to a prior automation state. missing for 10: explicit versioning UI/history, review/approval workflow for changes, documented rollback mechanism, independent confirmation of these capabilities in use.",
+    "rationale": "Decagon's overview page claims technical teams 'retain full visibility and control over... versioning' of agent configurations, and Simulations/Experiments allow testing and controlled rollout before production changes, implying some review workflow. However, there is no concrete documentation of how versions are tracked, compared, or explicitly rolled back — the claim is a single passing phrase, not a described feature with UI or workflow detail. Missing for 10: dedicated version-history UI, diff/review workflow, explicit rollback mechanism, and any independent or hands-on confirmation.",
     "evidenceIds": [
       "decagon-docs-1",
       "decagon-docs-25",
-      "decagon-docs-29"
+      "decagon-docs-29",
+      "decagon-docs-38"
     ]
   },
   {
@@ -281,16 +282,14 @@
     "productId": "decagon",
     "storyId": "configurable-escalation-rules",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Decagon's AOPs let teams define agent behavior in natural language (like SOPs), which could include escalation logic, and Watchtower can flag sentiment/compliance signals, but no evidence explicitly describes configuring handoff triggers by topic, sentiment, customer tier, or explicit request, nor confirms reliable adherence to such rules. Simulations/testing-QA claims validating 'policies' are generic and don't specifically address handoff reliability. Missing for 10: explicit documentation of handoff/escalation configuration options, tier-based routing, and evidence of reliable handoff obedience (e.g., test results or case studies on escalation accuracy).",
+    "rationale": "Decagon's AOPs let ops define agent behavior in natural language 'the same way you train human agents with SOPs,' and integrations docs mention agents 'handle escalations smoothly across chat, email, and voice channels,' implying configurable handoff logic. However, there is no specific documentation of handoff triggers by topic, sentiment, customer tier, or explicit request, nor evidence of reliability/enforcement testing for escalation obedience. missing for 10: explicit documentation of handoff trigger types (topic/sentiment/tier/explicit request), evidence of enforcement reliability or testing results, independent/hands-on corroboration of handoff behavior.",
     "evidenceIds": [
       "decagon-docs-16",
-      "decagon-docs-8",
-      "decagon-docs-20",
-      "decagon-docs-31",
-      "decagon-docs-25",
-      "decagon-docs-29"
+      "decagon-docs-33",
+      "decagon-docs-36",
+      "decagon-docs-11"
     ]
   },
   {
@@ -311,11 +310,13 @@
   {
     "productId": "decagon",
     "storyId": "context-rich-handoff",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of escalation-to-human handoff, conversation summaries handed to agents, or collected-details transfer preventing repetition. Related items about cross-session context (decagon-docs-22, decagon-docs-28) address agent-to-customer continuity, not human-agent handoff, so the specific story is unevidenced despite being a plausible capability for a support AI platform.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Decagon's docs mention that integrations 'ensure your agent can retrieve data, take action, and handle escalations smoothly across chat, email, and voice channels' (decagon-docs-33), implying some escalation handling, but there is no explicit description of passing the full conversation transcript, an auto-generated summary, and collected details to the human agent so the customer avoids repeating themselves. Missing for 10: explicit documentation of transcript/summary/detail hand-off mechanics, evidence of 'no repeat' UX, and any independent/hands-on confirmation of this workflow.",
+    "evidenceIds": [
+      "decagon-docs-33"
+    ]
   },
   {
     "productId": "decagon",
@@ -338,26 +339,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon's evidence describes knowledge-gap detection, AOP generation, and content suggestions (docs-10, docs-18) but nothing shows that end-user-facing answers actually cite or display the specific article/source they were grounded in. Missing for 10: any documentation of inline citations, source attribution UI, or 'view source' feature in chat/voice/email responses.",
+    "rationale": "Decagon's docs describe agents retrieving data and completing tasks via integrations, knowledge-gap detection, and content drafting from support content, but there is no evidence that answers are explicitly grounded with visible citations to the specific article/source they were drawn from. Missing for 10: any documentation or demo of inline source citation, article links, or 'grounded answer with reference' UI in chat/voice/email responses.",
     "evidenceIds": [
       "decagon-docs-10",
       "decagon-docs-18",
-      "decagon-docs-13"
+      "decagon-docs-33"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "hallucination-guardrails",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Decagon provides AOPs to define agent behavior/policies in natural language and a testing suite (Simulations/Duet) that verifies agents 'respond accurately, follow policies' plus Watchtower monitoring for compliance violations, which are the building blocks for guardrails — but no evidence explicitly describes a safe-decline behavior for off-knowledge questions versus fabricating answers. missing for 10: explicit documentation or examples of the agent refusing/declining out-of-scope questions rather than hallucinating, and independent verification that guardrails actually prevent invented prices/policies in practice.",
+    "rationale": "Decagon offers Agent Operating Procedures (AOPs) to define agent behavior/policies in natural language and testing/QA (Simulations, Duet-generated tests) to verify agents 'respond accurately, follow policies' — these could constrain invented promises, but there is no explicit documentation of a safe-decline mechanism for off-knowledge questions or anti-hallucination guardrails. missing for 10: explicit anti-hallucination/knowledge-boundary guardrail documentation, evidence of 'safe decline' behavior for out-of-scope queries, independent validation that agents don't fabricate policies/prices.",
     "evidenceIds": [
-      "decagon-docs-16",
       "decagon-docs-11",
+      "decagon-docs-16",
       "decagon-docs-29",
-      "decagon-docs-20",
-      "decagon-docs-31"
+      "decagon-docs-36"
     ]
   },
   {
@@ -366,14 +366,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon's integrations page claims no-code integrations and system-of-record data portability, and Browser Actions/MCP posts describe connecting to arbitrary systems including ones without native integrations, implying support for helpdesk platforms like Zendesk/Salesforce/Intercom, but no evidence explicitly names these tools or describes ticket-level two-way sync. Missing for 10: named connectors/case studies for Zendesk, Salesforce, or Intercom, explicit description of bidirectional ticket-context syncing, and confirmation of standalone deployment mode.",
+    "rationale": "Decagon documents a general integrations layer (no-code integrations, MCP support, Browser Actions for systems lacking native integration) that implies it can connect to ticketing/helpdesk systems and act within them, but no evidence explicitly names Zendesk, Salesforce, or Intercom, nor describes bidirectional ticket/context syncing or a standalone deployment mode.  missing for 10: named helpdesk platform integrations (Zendesk/Salesforce/Intercom), explicit two-way ticket sync mechanics, confirmation of standalone (non-helpdesk) operation mode.",
     "evidenceIds": [
       "decagon-docs-19",
       "decagon-docs-26",
-      "decagon-docs-21",
-      "decagon-docs-28",
-      "decagon-docs-4",
-      "decagon-docs-27",
+      "decagon-docs-33",
+      "decagon-docs-34",
+      "decagon-docs-35",
       "decagon-docs-3"
     ]
   },
@@ -383,10 +382,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers knowledge gap detection and content suggestions (docs-10/18), integrations without custom code, and agent iteration via Duet, but nowhere mentions automatic re-syncing of knowledge sources on a schedule or on change — the closest analog (Suggestions) generates draft content for humans to review/publish, not an automated re-sync pipeline. Missing for 10: any mention of scheduled/triggered re-ingestion of source documents, sync frequency, or change-detection on connected knowledge bases.",
+    "rationale": "No evidence describes automatic re-syncing of knowledge sources on a schedule or on change; the closest material (decagon-docs-10/18) is about detecting knowledge gaps and generating draft content, and decagon-docs-12 is a vague testimonial about reduced maintenance, neither of which confirms scheduled/event-driven re-ingestion of source data.",
     "evidenceIds": [
       "decagon-docs-10",
-      "decagon-docs-18"
+      "decagon-docs-18",
+      "decagon-docs-12"
     ]
   },
   {
@@ -395,12 +395,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon's integrations page claims 'no custom code required' connections (docs-19/26) and its Suggestions product analyzes help-center content and past agent resolutions to fill knowledge gaps (docs-10/18), implying some ingestion of existing content, but there is no explicit documentation naming help center, internal wikis, docs, and past tickets as ingestible knowledge sources without re-authoring. missing for 10: explicit list/documentation of supported knowledge source connectors (help center, wikis, ticket systems), evidence of automatic re-indexing without manual content rewriting, and independent confirmation of successful multi-source ingestion.",
+    "rationale": "Decagon's docs mention integrations that let agents 'retrieve data' with no custom code (decagon-docs-33, decagon-docs-19/26), and separate products that analyze past customer tickets (decagon-docs-6) and detect gaps in the help center (decagon-docs-10/18), implying some multi-source knowledge grounding. However there is no explicit statement that Decagon directly ingests internal wikis, docs, or help-center content as unified knowledge sources without manual re-authoring, nor any independent/hands-on confirmation of this ingestion pipeline. Missing for 10: explicit doc/wiki ingestion mechanics, confirmation of 'no re-authoring' claim, and third-party validation of knowledge-source breadth.",
     "evidenceIds": [
+      "decagon-docs-6",
       "decagon-docs-10",
       "decagon-docs-18",
-      "decagon-docs-19",
-      "decagon-docs-26"
+      "decagon-docs-33",
+      "decagon-docs-19"
     ]
   },
   {
@@ -409,12 +410,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon documents scoped, short-lived JWT access for agent actions across customer systems and integrations 'with no custom code required,' plus explicit mention of agents adjusting 'refund logic,' supporting real action-taking with scoped auth. However there's no detailed documentation of per-action granularity (e.g., separate refund vs subscription-update scopes), no audit trail examples, and no independent/hands-on verification of actual API action execution — missing for 10: per-action scope definitions, action audit logging, and third-party verification of real transactional actions.",
+    "rationale": "Docs confirm agents perform real actions like refunds, order changes, and subscription updates via integrations (decagon-docs-32, decagon-docs-33) and describe scoped, short-lived JWT access for minimal privilege (decagon-docs-2, decagon-docs-21), but there's no detail on per-action scoping granularity (e.g., different auth scopes for refund vs. subscription change) or independent verification of this in production. Missing for 10: per-action scope configuration examples, third-party/hands-on validation of action execution and auth enforcement.",
     "evidenceIds": [
       "decagon-docs-2",
-      "decagon-docs-19",
-      "decagon-docs-26",
+      "decagon-docs-21",
       "decagon-docs-32",
+      "decagon-docs-33",
       "decagon-docs-27"
     ]
   },
@@ -422,12 +423,13 @@
     "productId": "decagon",
     "storyId": "multi-turn-troubleshooting",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon docs describe AOPs that define multi-step agent behavior like human SOPs and mention agents carrying context across sessions and taking multi-step actions (browser actions, integrations), which implies some troubleshooting flow, but there is no direct documentation or example showing the agent asking clarifying questions or walking through iterative multi-step troubleshooting dialogues. missing for 10: concrete example/transcript of clarifying-question behavior, documentation explicitly describing multi-turn troubleshooting logic, independent/hands-on evidence confirming this behavior in practice.",
+    "rationale": "Decagon's AOPs let teams define agent behavior/logic in natural language akin to human SOPs (decagon-docs-16, decagon-docs-36), and Browser Actions enable multi-step task completion across systems (decagon-docs-4, decagon-docs-27), implying capacity for multi-step workflows rather than single canned replies. However, there is no direct documentation or example showing the agent proactively asking clarifying questions or walking through iterative troubleshooting dialogue — missing for 10: explicit examples/transcripts of clarifying-question behavior, documentation of multi-turn troubleshooting logic, and independent/hands-on evidence of resolution quality in practice.",
     "evidenceIds": [
       "decagon-docs-16",
-      "decagon-docs-22",
+      "decagon-docs-36",
+      "decagon-docs-4",
       "decagon-docs-27"
     ]
   },
@@ -450,13 +452,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Decagon clearly offers a unified agent across chat (web, mobile, messaging platforms), email, and voice, suggesting broad channel reach [decagon-docs-13][decagon-docs-14][decagon-docs-15], with proactive/session-continuity features tying channels together [decagon-docs-22][decagon-docs-28]. However, the evidence never names specific channels like Slack, WhatsApp, or social media explicitly — only generic 'messaging platforms' is mentioned. Missing for 10: explicit documentation naming Slack, WhatsApp, and social media integrations as supported channels, plus any customer proof of omnichannel handoff across these specific channels.",
+    "rationale": "Decagon's docs show one agent spanning chat (web, mobile, messaging platforms), email, and voice, suggesting broad channel coverage, but no evidence names specific channels like Slack, WhatsApp, or social media explicitly as supported. Missing for 10: explicit documentation naming Slack, WhatsApp, or social media integrations, and confirmation these run through the same unified agent as chat/email.",
     "evidenceIds": [
       "decagon-docs-13",
-      "decagon-docs-14",
       "decagon-docs-15",
-      "decagon-docs-22",
-      "decagon-docs-28"
+      "decagon-docs-14",
+      "decagon-docs-33"
     ]
   },
   {
@@ -465,14 +466,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Decagon documents a dedicated Testing & QA suite (Simulations) that validates agent behavior pre-deploy and on updates, plus Watchtower which reviews every live interaction against custom flagging criteria (compliance, sentiment, frustration) and surfaces failures, and Duet which auto-generates tests/AOPs and iterates on the agent based on conversation gaps — together covering scored/flagged QA and a feedback loop into agent fixes. missing for 10: no independent/hands-on corroboration of scoring accuracy or the closed-loop fix cycle, and no explicit description of 'sampling' methodology for QA review.",
+    "rationale": "Decagon documents a full QA loop: Watchtower flags failures via natural-language criteria across every interaction, Simulations/Duet auto-generate diverse test cases to validate agent behavior pre- and post-deployment, and Duet automatically iterates on the agent based on conversation gaps, closing the loop back into agent logic; Experiments adds A/B validation of changes. Missing for 10: explicit 'scored sample' rubric/scoring mechanics and independent/hands-on evidence corroborating the review-loop efficacy.",
     "evidenceIds": [
       "decagon-docs-8",
-      "decagon-docs-11",
       "decagon-docs-20",
+      "decagon-docs-31",
+      "decagon-docs-37",
+      "decagon-docs-11",
       "decagon-docs-29",
       "decagon-docs-24",
-      "decagon-docs-31"
+      "decagon-docs-7",
+      "decagon-docs-38"
     ]
   },
   {
@@ -480,10 +484,11 @@
     "storyId": "openness-api-parity",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a public API at all — the openapi probe returned 404 across all candidate paths, and none of the docs describe an API that mirrors UI capabilities like AOP configuration, Duet, Watchtower, or experiments. Absence of evidence for this applicable capability yields none.",
+    "confidence": "medium",
+    "rationale": "No evidence of a public Decagon API at all — the openapi probe returned 404s across all candidate paths, and no docs reference an API for configuring agents, AOPs, Watchtower, Experiments, etc. Integrations mentioned are for connecting external systems into Decagon, not for exposing Decagon's own UI functionality programmatically.",
     "evidenceIds": [
-      "decagon-probe-2"
+      "decagon-probe-2",
+      "decagon-probe-1"
     ]
   },
   {
@@ -491,11 +496,10 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Decagon's evidence pack contains no documented data-export feature, open-format export tooling, or account-deletion/portability workflow; the only tangential mention (\"data portability and control\" in decagon-docs-28) is vague marketing language about maintaining conversation context, not a concrete export/exit mechanism, and the probe shows no public API/OpenAPI spec that could support programmatic data extraction.",
+    "confidence": "high",
+    "rationale": "Decagon is an enterprise customer-support AI platform aimed at businesses, not individual AI-native end users; there is no evidence of a user-facing data export feature in open formats or any account-portability mechanism for end users to 'leave' with their data. The only related mentions are vague 'data portability and control' phrasing for enterprise systems of record, not a concrete open-format export capability. Missing for 10: any documented export functionality, open format specification, or user-initiated data-export/leave workflow.",
     "evidenceIds": [
-      "decagon-docs-28",
-      "decagon-probe-2"
+      "decagon-docs-28"
     ]
   },
   {
@@ -519,16 +523,15 @@
   {
     "productId": "decagon",
     "storyId": "personalized-account-answers",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon's docs describe real-time, scoped access to customer systems via short-lived JWTs, MCP-based tool integrations, and Browser Actions that let agents log into and pull data from any system (including those without native integrations), which supports live-data-driven answers rather than static help content. However, there is no concrete example or case study showing an actual answer surfacing a customer's plan, order status, or account history — the evidence is architectural/capability-level rather than demonstrated output. Missing for 10: a documented example or case study showing live plan/order/account data appearing in an actual customer-facing answer, and independent verification that this works in production.",
+    "rationale": "Decagon's docs describe real-time, scoped access to customer systems via short-lived JWT tokens, integrations that 'retrieve data, take action' across chat/email/voice, MCP-based tool connectivity, and Browser Actions for systems lacking a traditional integration — all framed as enabling agents to act on live account/order data rather than static help content. missing for 10: independent/hands-on verification that responses actually surface specific plan/order/account details, and a concrete case study showing this in production.",
     "evidenceIds": [
       "decagon-docs-2",
-      "decagon-docs-3",
-      "decagon-docs-4",
-      "decagon-docs-27",
-      "decagon-docs-19",
+      "decagon-docs-33",
+      "decagon-docs-34",
+      "decagon-docs-35",
       "decagon-docs-21"
     ]
   },
@@ -538,11 +541,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Decagon's Simulations product is explicitly described as an integrated testing suite that validates agent behavior across channels before production deployment and on every update, and Duet can generate diverse test pathways to check accuracy, policy adherence, and brand voice. Missing for 10: no explicit mention of testing against historical ticket logs specifically, and no independent/hands-on evidence corroborating the testing suite's effectiveness beyond vendor docs.",
+    "rationale": "Decagon's Simulations product explicitly validates agent behavior before production and on every update, and Duet generates tests covering diverse pathways including historical-interaction-derived scenarios, directly matching the story. Missing for 10: independent/hands-on verification of simulation fidelity against real historical tickets and details on how simulated conversations are constructed/scored.",
     "evidenceIds": [
       "decagon-docs-29",
       "decagon-docs-11",
-      "decagon-docs-6"
+      "decagon-docs-6",
+      "decagon-docs-24"
     ]
   },
   {
@@ -551,7 +555,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions data residency, region selection, or storage location controls; security page content covers JWTs and SSO but not data residency options. Missing for 10: any mention of regional data storage, residency compliance (e.g., EU/US hosting options), or customer-facing controls to choose storage location.",
+    "rationale": "No evidence pack mentions data residency, region selection, or storage location controls anywhere in Decagon's docs; only general security items like JWT tokens and SSO integration are covered.",
     "evidenceIds": []
   },
   {
@@ -559,8 +563,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI model training or an opt-out/no-training policy; the security page covers JWT tokens and SSO but not training data practices.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses AI model training data usage, opt-out policies, or data-use-for-training controls; the security page mentions token scoping and SSO but nothing about training data exclusion.",
     "evidenceIds": []
   },
   {
@@ -581,7 +585,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out controls; the security and product pages cover access control, JWT tokens, and SSO but never mention analytics/telemetry opt-out settings for end users. Missing for 10: any documentation of a telemetry toggle, data-collection opt-out mechanism, or privacy settings page.",
+    "rationale": "No evidence pack item addresses telemetry opt-out or usage tracking controls for end users; Decagon is a customer-support AI platform and this could plausibly be documented (e.g., in privacy/security docs) but isn't.",
     "evidenceIds": []
   },
   {
@@ -590,13 +594,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon explicitly ships 'Agent Operating Procedures (AOPs)' described as letting teams 'define agent behavior in natural language, the same way you train human agents with SOPs,' with Duet auto-generating and iterating these procedures from real interactions. This directly matches encoding step-by-step SOPs for known issue types. Missing for 10: concrete technical detail on how branching logic/decision trees are structured and enforced deterministically, and independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Decagon's Agent Operating Procedures (AOPs) let ops teams define agent behavior in natural language 'the same way you train human agents with SOPs,' with non-technical teams architecting and iterating on this logic, and Duet auto-generating AOPs from real interactions. This directly matches encoding step-by-step SOPs for known issue types. Missing for 10: explicit documentation of deterministic branching logic (conditional paths/decision trees) within AOPs and independent/hands-on validation of how strictly the agent adheres to defined steps.",
     "evidenceIds": [
       "decagon-docs-16",
-      "decagon-docs-6",
+      "decagon-docs-36",
       "decagon-docs-5",
-      "decagon-docs-25",
-      "decagon-docs-24"
+      "decagon-docs-6",
+      "decagon-docs-24",
+      "decagon-docs-25"
     ]
   },
   {
@@ -604,28 +609,27 @@
     "storyId": "resolution-analytics",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Decagon's Insights & Reporting product includes customizable dashboards, visual heatmaps for key metrics, and 'Ask AI' conversational analytics for querying conversation trends, which supports general exec-reporting use cases. However, the evidence never explicitly names resolution rate, CSAT, handoff rate, or cost-per-resolution as tracked/reported metrics. missing for 10: explicit confirmation that CSAT, resolution rate, handoff rate, and cost-per-resolution are specific dashboard metrics; independent/customer corroboration of these exact KPIs being reported to execs.",
+    "confidence": "medium",
+    "rationale": "Decagon's Insights & Reporting product offers customizable heatmaps to track 'key metrics' and conversational Ask AI queries, plus Watchtower for flagging criteria, indicating a dashboard/analytics capability exists — but no evidence explicitly names resolution rate, CSAT, handoff rate, or cost per resolution as tracked metrics. missing for 10: explicit documentation naming CSAT, resolution rate, handoff rate, and cost per resolution as dashboard metrics; independent/customer confirmation of exec-level reporting use.",
     "evidenceIds": [
-      "decagon-docs-9",
       "decagon-docs-17",
-      "decagon-docs-30"
+      "decagon-docs-9",
+      "decagon-docs-30",
+      "decagon-docs-37"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "restricted-topic-controls",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Decagon's AOPs let teams define agent behavior/escalation rules in natural language, and 'guardrails' are described as retained under technical team control, which could support marking certain topics as human-only; Watchtower can flag legal/compliance/sentiment topics for review. However, there's no explicit documentation of a dedicated 'human-only topic' or hard-escalation feature, nor any evidence (hands-on or audit) confirming the agent never engages on flagged categories. Missing for 10: explicit human-only/topic-exclusion configuration feature, proof/testing that the agent reliably refuses or escalates on those topics, and independent verification of enforcement.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Decagon documents general 'guardrails' and AOPs that let teams define agent behavior in natural language, which could in principle be used to mark certain topics as human-only, but no evidence describes a specific human-only topic flag, escalation rule, or guarantee that the agent will never act on legal/cancellation/security topics. Missing for 10: explicit human-only topic tagging feature, hard escalation enforcement mechanism, and independent/hands-on confirmation that agents never freelance on flagged topics.",
     "evidenceIds": [
       "decagon-docs-1",
-      "decagon-docs-16",
       "decagon-docs-25",
-      "decagon-docs-8",
-      "decagon-docs-20",
-      "decagon-docs-31"
+      "decagon-docs-16",
+      "decagon-docs-36"
     ]
   },
   {
@@ -634,7 +638,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Decagon's evidence covers testing/simulation (Simulations, Duet), experiments, guardrails, and monitoring (Watchtower), but nothing describes a supervised/human-in-the-loop 'draft-for-approval' mode where a human must approve each reply before it reaches a customer. Testing/QA and experiments happen pre-production or on traffic splits, not as a live approval queue for individual replies.",
+    "rationale": "The evidence pack covers testing/QA, guardrails, experiments, monitoring (Watchtower), and agent building tools, but there is no mention of a supervised/human-in-the-loop mode where the agent drafts replies for approval before reaching customers — Simulations and Watchtower are pre/post-deployment checks, not draft-approval workflows.",
     "evidenceIds": []
   },
   {
@@ -643,14 +647,15 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon's Insights & Reporting and Watchtower products support natural-language querying of conversations (e.g., 'Why are customers requesting refunds?'), heatmaps to spot spikes/dips in key metrics, and custom flagging criteria across every interaction, which together enable topic-level pattern detection and early issue surfacing. However, the evidence never explicitly describes automated topic clustering or a proactive 'before ticket volume spikes' alerting mechanism—these are inferred from adjacent features. Missing for 10: explicit description of automatic conversation clustering by topic, independent/hands-on evidence of early trend detection preventing ticket spikes, and case-study proof of this specific insight workflow in production.",
+    "rationale": "Decagon's Insights & Reporting and Suggestions products let support leaders ask open-ended questions like 'Why are customers requesting refunds?', view heatmaps to catch spikes/dips, and auto-detect knowledge gaps from conversations — closely matching topic-level trend surfacing, and Watchtower flags custom criteria across every interaction. However, none of the docs explicitly describe automated topic clustering of conversations or proactive alerting tied to ticket-volume forecasting, and there's no independent/hands-on corroboration of this capability. Missing for 10: explicit topic-clustering mechanics, proactive spike-prediction alerting, and third-party validation.",
     "evidenceIds": [
       "decagon-docs-9",
       "decagon-docs-17",
       "decagon-docs-30",
+      "decagon-docs-10",
+      "decagon-docs-18",
       "decagon-docs-31",
-      "decagon-docs-20",
-      "decagon-docs-10"
+      "decagon-docs-37"
     ]
   },
   {
@@ -659,7 +664,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions pricing, resolution-based billing, caps, controls, or published pricing pages — all evidence concerns product features (AOPs, Duet, Watchtower, integrations, security) rather than pricing model. Absence of evidence for this applicable axis yields 'none'. Missing for 10: published pricing page, resolution-based billing structure, caps/controls documentation, any pricing transparency claims.",
+    "rationale": "No evidence pack item discusses pricing model, per-resolution pricing, caps, controls, or published rates; all evidence concerns product features (AOP, Duet, Watchtower, integrations, security). Pricing appears to be opaque/quote-based with no published outcome-based structure documented.",
     "evidenceIds": []
   },
   {
@@ -668,13 +673,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon explicitly offers a Voice product for 'natural, multilingual conversations' and can 'initiate intelligent, on-brand calls,' and its platform architecture (AOPs, integrations, guardrails) is shared across channels including chat, implying shared knowledge/actions. However, there's no explicit vendor statement confirming full parity of knowledge/actions between voice and chat, no technical detail on speech-to-speech quality, and no independent/hands-on corroboration of call handling. Missing for 10: explicit parity confirmation between voice and chat agent logic, technical/latency details of the voice pipeline, independent or customer testimonial evidence of voice call handling in production.",
+    "rationale": "Decagon explicitly offers a Voice product ('Voice AI agents built for natural, multilingual conversations') and states integrations let the agent 'retrieve data, take action, and handle escalations smoothly across chat, email, and voice channels with no custom code required,' implying shared knowledge/actions across channels; proactive-agents also supports outbound calls. However, this is all vendor documentation with no independent/hands-on validation of call quality, latency, or parity of capabilities between chat and voice. Missing for 10: independent or customer-reported evidence of voice call quality/parity, technical detail on how AOPs/actions execute identically in voice vs chat, and case-study proof of voice deployment success.",
     "evidenceIds": [
       "decagon-docs-14",
-      "decagon-docs-23",
-      "decagon-docs-13",
-      "decagon-docs-16",
-      "decagon-docs-25"
+      "decagon-docs-33",
+      "decagon-docs-23"
     ]
   },
   {

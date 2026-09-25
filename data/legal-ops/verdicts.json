@@ -2,14 +2,15 @@
   {
     "productId": "beglaubigt",
     "storyId": "agent-drafts-routes-nda",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Beglaubigt.de's docs show a notarization API for submitting existing documents, managing signers, and detecting signature fields, but there is no evidence of AI drafting of contract content (e.g., an NDA) nor of any MCP server or agent-facing interface — only a REST API for notarization/incorporation/translation workflows. The story's core capabilities (AI drafting + MCP server) are unevidenced.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Beglaubigt.de exposes a REST API for notarization requests with AI-powered signature/field detection and signer management, which covers document creation and routing for signature, but there is no evidence of NDA-specific templating, an agent drafting document content, or an MCP server for agentic orchestration. missing for 10: evidence of MCP server support, evidence of agent-driven document drafting (vs just submitting pre-made documents), and confirmation of an OpenAPI spec (probe shows 404s) that would enable reliable agent integration.",
     "evidenceIds": [
       "beglaubigt-docs-4",
       "beglaubigt-docs-5",
       "beglaubigt-docs-9",
+      "beglaubigt-docs-26",
       "beglaubigt-probe-2"
     ]
   },
@@ -18,14 +19,16 @@
     "storyId": "agent-files-annual-report",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Beglaubigt.de exposes APIs for tax-registration, trade-registration, incorporation and notarization with webhooks (e.g. appointment.completed) that could plausibly be orchestrated by an agent with minimal human input, but there is no evidence of an 'annual report' filing endpoint or of any product feature specifically marketed as agent-delegated compliance preparation. missing for 10: explicit annual report/Jahresabschluss filing capability, evidence of an actual autonomous agent workflow completing filings end-to-end, and confirmation that human signatures/appointments aren't still required as bottlenecks.",
+    "confidence": "medium",
+    "rationale": "The API supports several compliance-adjacent filings (tax registration via ELSTER, trade registration, mandatory post-incorporation notifications) that could be driven end-to-end by an agent with webhook-based status polling, and a dedicated 'Compliance API' is mentioned. However, this Compliance API is gated to Enterprise plans with no documented endpoints, and there's no explicit evidence of 'annual report' preparation or filing as a discrete workflow. missing for 10: dedicated annual-report filing workflow, full Compliance API endpoint documentation (currently Enterprise-only and undocumented), evidence of agent-level orchestration across these APIs with minimal human input.",
     "evidenceIds": [
       "beglaubigt-docs-7",
       "beglaubigt-docs-8",
-      "beglaubigt-docs-9",
-      "beglaubigt-docs-11",
-      "beglaubigt-docs-24"
+      "beglaubigt-docs-24",
+      "beglaubigt-docs-25",
+      "beglaubigt-docs-31",
+      "beglaubigt-docs-32",
+      "beglaubigt-docs-33"
     ]
   },
   {
@@ -34,7 +37,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a transactional API for notarization, incorporation, translation, apostille and tax registration — one-off legal document workflows, not an ongoing contract-lifecycle/renewal-tracking product. There is no concept of recurring contracts, renewal dates, or deadline monitoring in the evidence, making this axis a category mismatch rather than a missing feature.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API service with no evidence of contract lifecycle management, renewal tracking, or deadline monitoring features; this is a category mismatch, not a missing capability of the same product type.",
     "evidenceIds": []
   },
   {
@@ -43,7 +46,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Beglaubigt.de has a live llms.txt confirmed via direct probe (HTTP 200) plus an llms-full.txt with detailed API/event docs, and a separate marketing-domain llms.txt listing product capabilities, giving agents a clear entry point into agent-oriented documentation. Missing for 10: no OpenAPI/machine-readable schema (probe shows 404s) and no independent third-party confirmation of agent usage.",
+    "rationale": "There's a confirmed HTTP 200 llms.txt at both docs.beglaubigt.de/llms.txt and beglaubigt.de/llms.txt, plus an llms-full.txt with detailed API/event docs, giving agents a direct machine-readable entry point into agent-oriented documentation. Missing for 10: no discoverable OpenAPI/machine schema (probe shows all openapi candidate paths 404'd), reducing full agent-native tooling completeness.",
     "evidenceIds": [
       "beglaubigt-probe-1",
       "beglaubigt-docs-12",
@@ -57,7 +60,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation workflow API; the only AI-related mention is signature/date field auto-detection during document processing (beglaubigt-docs-5), which is a document-parsing feature, not AI-generated insights or suggestions surfaced to the user from their data. No evidence of dashboards, analytics, recommendations, or generative insights derived from user data.",
+    "rationale": "Beglaubigt.de is a legal/notarization/incorporation workflow API; the only AI mention is document field auto-detection for signatures/dates, not AI-generated insights or suggestions from a user's own data. No evidence of dashboards, analytics, or generative insight features.",
     "evidenceIds": [
       "beglaubigt-docs-5"
     ]
@@ -66,14 +69,15 @@
     "productId": "beglaubigt",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "The API supports triggering document workflows (incorporation, notarization, translation, tax registration) and emits webhook events like appointment.completed with HMAC-signed real-time notifications, which together allow building background automations that react to business events without manual polling — docs explicitly claim businesses can 'automate notarization workflows'. However there is no evidence of a built-in scheduler, multi-step workflow builder, or agent-triggered chaining beyond basic API+webhook usage. Missing for 10: evidence of a no-code/automation builder, orchestration across multiple document types, third-party automation platform integrations, and independent confirmation that webhooks reliably drive autonomous flows.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Beglaubigt.de's API supports background automation via webhooks and event triggers (e.g. `appointment.completed`, real-time notifications) and explicitly markets 'automate notarization workflows' and API integration for bulk B2B use, which lets a developer wire up autonomous background processing of notarizations/incorporations. However, this is generic API/webhook automation rather than anything framed for AI-agent orchestration, scheduling, or multi-step autonomous workflows. Missing for 10: evidence of AI-agent-specific automation tooling, scheduling/cron-like autonomous triggers, or multi-step orchestration beyond simple webhook callbacks.",
     "evidenceIds": [
       "beglaubigt-docs-1",
       "beglaubigt-docs-9",
-      "beglaubigt-docs-10",
-      "beglaubigt-docs-11"
+      "beglaubigt-docs-11",
+      "beglaubigt-docs-32",
+      "beglaubigt-docs-27"
     ]
   },
   {
@@ -82,24 +86,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation API and document-workflow service, not an AI-agent product; there's no built-in AI assistant to delegate tasks to (only mentions of AI-powered field detection in documents). This axis is a category error for this product type.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/document-processing service with an API, not a product with a built-in conversational AI assistant that users delegate tasks to; the AI mentioned is only for signature-field detection, not an assistant interface. This axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Beglaubigt.de exposes a REST API (incorporation, notarization, translation, tax/trade registration) with webhooks and HMAC-signed events, which is inherently callable headlessly from scripts or CI pipelines. However, there is no explicit CI/automation guidance, SDK, or CLI, and an OpenAPI spec probe returned 404s, so headless integration must be inferred rather than confirmed. Missing for 10: explicit CI/automation documentation, official SDK/CLI, and a machine-readable OpenAPI spec.",
+    "rationale": "Beglaubigt.de is API-first: it exposes REST endpoints (incorporation, notarization, translation, tax-registration, trade-registration) that can be called headlessly, supports polling of status, webhooks for async events, and HMAC-signed callbacks — all core building blocks for CI/automation pipelines without a UI. Missing for 10: explicit CLI/SDK tooling, documented rate limits or idempotency guarantees for automated retries, and independent/hands-on confirmation of real CI usage.",
     "evidenceIds": [
-      "beglaubigt-docs-1",
       "beglaubigt-docs-2",
       "beglaubigt-docs-4",
       "beglaubigt-docs-9",
       "beglaubigt-docs-10",
       "beglaubigt-docs-11",
-      "beglaubigt-probe-2"
+      "beglaubigt-docs-31",
+      "beglaubigt-docs-32",
+      "beglaubigt-probe-1"
     ]
   },
   {
@@ -108,7 +113,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS API, not an AI agent or assistant product; the evidence pack contains no MCP client capability, and consuming MCP servers is a client-side agent role that doesn't apply to this kind of product. This differs from publishing an MCP server (which would be applicable to a SaaS product) — here the story is about the product acting as an MCP client, which is not a fit for its category.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS with a REST API and webhooks, not an AI agent or MCP-client product; the story about plugging MCP servers into a product so it can use their tools applies to agent-like products, not to this transactional API service.",
     "evidenceIds": []
   },
   {
@@ -116,20 +121,17 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Beglaubigt.de offers a REST API and webhooks for notarization/incorporation workflows but no evidence of an official MCP server; probes for OpenAPI/MCP artifacts returned 404s. Missing for 10: any MCP server documentation, endpoint, or SDK enabling agent connection.",
-    "evidenceIds": [
-      "beglaubigt-probe-2",
-      "beglaubigt-docs-1"
-    ]
+    "confidence": "high",
+    "rationale": "Beglaubigt.de is a SaaS notarization/incorporation platform with a REST API and webhooks, so an official MCP server is a plausible axis, but no evidence pack item mentions MCP at all — only REST API, webhooks, and llms.txt files are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
     "storyId": "agentic-nl-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows only structured REST API endpoints (incorporation, notarization, translation, tax registration) and llms.txt files aimed at helping AI agents read documentation — there is no chat interface, NL command parser, or agentic control surface letting an end user type natural-language instructions to operate the product.",
+    "confidence": "medium",
+    "rationale": "Evidence shows only a structured REST API (endpoints for incorporation, notarization, translation, tax/trade registration, webhooks) and llms.txt files meant to help AI systems read documentation—not any natural-language command interface, chatbot, or agent-driven control surface for end users. No evidence of a conversational or NL-command mode of operating the product exists in the pack.",
     "evidenceIds": [
       "beglaubigt-docs-1",
       "beglaubigt-docs-2",
@@ -144,23 +146,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/legal-document API/SaaS product, not a developer tool or CLI-oriented platform where an official CLI would be a natural offering; there is no CLI mentioned anywhere and the product's interface is API/web-based only, making a CLI axis a category mismatch rather than a missing feature.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS with a REST API and webhooks, not a developer tool/agent category where a CLI is a natural product offering; no evidence even hints at a CLI. This axis is a category error for this kind of legal/document-processing API product.",
     "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Beglaubigt.de publishes a documented public API with clear endpoints for incorporation, notarization, translation, tax and trade registration, webhooks, and signature verification, confirmed live via llms.txt probe (HTTP 200). Missing for 10: a discoverable OpenAPI/Swagger spec (all standard paths 404) and independent third-party corroboration of API usage.",
+    "rationale": "Beglaubigt.de has extensive documented REST API endpoints (incorporation, notarization, translation, tax-registration, trade-registration), webhooks with signature verification, and an llms.txt for AI-native discovery, confirmed reachable via probe. Missing for 10: no verified public OpenAPI/swagger spec (probe found 404s on standard paths) and no independent/hands-on third-party corroboration of the API working end-to-end.",
     "evidenceIds": [
       "beglaubigt-docs-1",
       "beglaubigt-docs-2",
       "beglaubigt-docs-4",
       "beglaubigt-docs-8",
       "beglaubigt-docs-10",
-      "beglaubigt-docs-11",
+      "beglaubigt-docs-32",
       "beglaubigt-probe-1",
       "beglaubigt-probe-2"
     ]
@@ -171,9 +173,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API key scoping, permission tiers, or least-privilege credential issuance for agents; docs describe HMAC signature verification for webhooks but nothing about scoped/restricted API credentials. Missing for 10: scoped API key/token creation, permission/role granularity, agent-specific credential management, documentation on least-privilege access control.",
+    "rationale": "No evidence of scoped/least-privilege API key management, permission scopes, or agent-specific credential issuance—only general API usage, webhook signing, and HMAC verification are documented.",
     "evidenceIds": [
-      "beglaubigt-docs-10"
+      "beglaubigt-docs-10",
+      "beglaubigt-docs-32",
+      "beglaubigt-docs-33"
     ]
   },
   {
@@ -182,23 +186,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a REST API with docs and webhooks, but there is no mention of official SDKs, client libraries, or language-specific packages, and the OpenAPI spec probe returned 404s across all candidate paths, suggesting no machine-consumable spec to auto-generate SDKs either.",
+    "rationale": "The evidence only documents raw REST API endpoints (incorporation, notarization, translation, tax-registration) and webhook/HMAC guides, with no mention of official client SDKs in any language; a probe for OpenAPI specs also returned 404s, suggesting no machine-consumable spec to auto-generate SDKs from.",
     "evidenceIds": [
-      "beglaubigt-probe-2",
-      "beglaubigt-docs-10"
+      "beglaubigt-docs-1",
+      "beglaubigt-docs-4",
+      "beglaubigt-docs-32",
+      "beglaubigt-probe-2"
     ]
   },
   {
     "productId": "beglaubigt",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe webhook events (e.g., appointment.completed), real-time notarization notifications, and HMAC-SHA256 signature verification for incoming webhook payloads, indicating an event-driven webhook system exists. However, there's no explicit documentation of a subscription/registration endpoint or full event catalog for AI-native automation. Missing for 10: explicit webhook subscription/management API, full list of subscribable event types, and independent confirmation of webhook reliability.",
+    "rationale": "Docs explicitly describe registering webhook URLs via dashboard, real-time event notifications (e.g. appointment.completed, notarization completion), and HMAC-SHA256 signature verification for securing webhook payloads. This covers subscription, event types, and security, giving solid coverage of an event-driven/webhook subscription model. Missing for 10: independent/hands-on confirmation that webhooks fire reliably in production and a full enumerated list of all subscribable event types.",
     "evidenceIds": [
       "beglaubigt-docs-9",
       "beglaubigt-docs-10",
-      "beglaubigt-docs-11"
+      "beglaubigt-docs-11",
+      "beglaubigt-docs-32"
     ]
   },
   {
@@ -207,11 +214,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only one-time post-incorporation filings (tax registration via ELSTER, trade registration, transparency register entry) at company formation, not recurring annual report or franchise-tax filing services on an ongoing basis. Missing for 10: any evidence of recurring/annual compliance filing, franchise tax handling, or ongoing registered-agent style maintenance work.",
+    "rationale": "Beglaubigt.de's documented compliance filings (docs-7, docs-23, docs-24, docs-25) cover one-time post-incorporation registrations (ELSTER tax registration, Gewerbeanmeldung, Transparenzregister) at the time of founding, not recurring annual report or franchise-tax filings. No evidence describes an ongoing/annual compliance filing service akin to a registered agent's yearly obligations.",
     "evidenceIds": [
       "beglaubigt-docs-7",
-      "beglaubigt-docs-8",
-      "beglaubigt-docs-24"
+      "beglaubigt-docs-23",
+      "beglaubigt-docs-24",
+      "beglaubigt-docs-25"
     ]
   },
   {
@@ -220,11 +228,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs describe endpoints (POST/GET) for incorporation, notarization, translation, etc., but there is no evidence of an interactive API reference with runnable examples (e.g., embedded try-it console, SDK code snippets executable in-browser). A probe explicitly found no OpenAPI/Swagger spec at common paths, undermining any interactive reference tooling. Missing for 10: interactive 'try it' console, runnable code samples, OpenAPI/Swagger spec availability.",
+    "rationale": "Docs describe API endpoints (incorporation, notarization, translation, etc.) but there is no evidence of an interactive reference with runnable/try-it examples; a probe for standard OpenAPI/Swagger spec files returned 404 across all checked paths, suggesting no machine-readable spec to power an interactive explorer.",
     "evidenceIds": [
       "beglaubigt-probe-2",
-      "beglaubigt-docs-2",
-      "beglaubigt-docs-4"
+      "beglaubigt-docs-1",
+      "beglaubigt-docs-2"
     ]
   },
   {
@@ -233,7 +241,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger spec files at common paths returned 404 on all candidates, and no evidence pack item references a downloadable machine-readable API spec — only an llms.txt (plain text docs index) exists, which is not an OpenAPI-equivalent schema.",
+    "rationale": "A direct probe for OpenAPI/Swagger specs at all common paths returned 404s, and no evidence pack item references a downloadable machine-readable API spec; only an llms.txt (documentation index for LLMs, not an API spec) is confirmed present.",
     "evidenceIds": [
       "beglaubigt-probe-2",
       "beglaubigt-probe-1"
@@ -245,48 +253,45 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any sandbox, test-mode, or staging environment is mentioned anywhere in the docs or probes; all documented endpoints relate to live notarization, incorporation, and tax registration workflows involving real legal documents. Given the legal/notarial nature of the product, a sandbox axis is plausible for API testing, but the evidence pack shows no such offering.",
-    "evidenceIds": [
-      "beglaubigt-docs-1",
-      "beglaubigt-probe-1",
-      "beglaubigt-probe-2"
-    ]
+    "rationale": "No evidence of a sandbox, test mode, or staging environment anywhere in the docs, blog posts, or API references; all endpoints appear to operate on live legal/notarization/incorporation data with no mention of test API keys or mock environments.",
+    "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The API endpoints use a /v1/ prefix suggesting some versioning, but there is no documented deprecation policy, versioning strategy, or changelog anywhere in the evidence; OpenAPI spec probes even returned 404s. missing for 10: documented versioning scheme, deprecation policy, changelog, migration guidance.",
+    "confidence": "high",
+    "rationale": "Evidence shows an API exists with endpoints and webhooks, but there is no mention of API versioning (e.g., /v2 paths) or any documented deprecation policy; the openapi.json probe returned 404s and no versioning/deprecation docs appear anywhere.",
     "evidenceIds": [
-      "beglaubigt-docs-8",
-      "beglaubigt-probe-2"
+      "beglaubigt-probe-2",
+      "beglaubigt-docs-1"
     ]
   },
   {
     "productId": "beglaubigt",
     "storyId": "audit-trail-certificate",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Beglaubigt.de documents webhook events (e.g. appointment.completed) with HMAC-SHA256 signature verification, which provides some tamper-evidence for API notifications, and its notarization process implies an eventual notarized/certified output. However, there is no explicit documentation of a dedicated audit-trail feature or a formal 'completion certificate' artifact for each signed document. Missing for 10: explicit audit-trail export/report, a documented completion certificate deliverable, and independent verification of tamper-evidence claims.",
+    "rationale": "There is some audit-adjacent tooling — webhook payloads are HMAC-SHA256 signed for verification, and appointment.completed/notarization events are emitted for real-time tracking — plus a gated 'Compliance API' mentioned for Enterprise plans, but no documentation describes a tamper-evident audit trail or a formal completion certificate issued per signed document. Missing for 10: explicit tamper-evident audit log/ledger per document, description of a 'completion certificate' artifact, and any compliance-API detail beyond the fact it exists.",
     "evidenceIds": [
-      "beglaubigt-docs-9",
       "beglaubigt-docs-10",
       "beglaubigt-docs-11",
-      "beglaubigt-docs-4"
+      "beglaubigt-docs-9",
+      "beglaubigt-docs-33"
     ]
   },
   {
     "productId": "beglaubigt",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The API supports creating individual notarization, translation, incorporation, and tax-registration requests, and translation requests can include 'one or multiple documents,' but there is no evidence of batch/bulk endpoints, list-based submission across many items, or bulk status operations. No documentation of pagination-based bulk retrieval, batch job submission, or CSV/array-based multi-record processing was found.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "The docs mention a translation endpoint that can handle 'one or multiple documents' and a marketing line claiming 'B2B bulk notarization and API integration,' suggesting some batch capability, but there is no documented bulk/batch endpoint for notarization, incorporation, or other core workflows — most endpoints (incorporation, notarization, tax-registration) appear designed for single-item requests. Missing for 10: dedicated batch/bulk API endpoints (e.g., bulk notarization submission, bulk incorporation status retrieval), documented pagination or batch response formats, and independent confirmation that bulk operations work in practice.",
     "evidenceIds": [
       "beglaubigt-docs-6",
+      "beglaubigt-docs-27",
       "beglaubigt-docs-4",
       "beglaubigt-docs-2"
     ]
@@ -297,11 +302,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Beglaubigt.de exposes webhook-style events (e.g. `appointment.completed`, notarization completion notifications) with HMAC signature verification, letting external systems react automatically to platform events — a foundation for automation-on-event. However there is no evidence of an in-product rule-definition UI or conditional logic engine; users must build the 'if event, then action' logic themselves in their own system. Missing for 10: a native rules/trigger builder, support for multiple event-condition combinations, and documentation of a broader event catalog beyond a couple of named events.",
+    "rationale": "Beglaubigt.de exposes webhooks and named events (e.g. `appointment.completed`, notarization completion) with HMAC signature verification, letting external systems react automatically to platform events. However, there is no evidence of a native rules/trigger builder within Beglaubigt.de itself—automation logic must be implemented entirely in the customer's own system consuming webhooks, not defined as declarative rules in the product. Missing for 10: an in-product rule/condition builder, evidence of configurable trigger-action pairs, and any UI/API for defining 'if event X then do Y' logic beyond raw webhook delivery.",
     "evidenceIds": [
       "beglaubigt-docs-9",
       "beglaubigt-docs-10",
-      "beglaubigt-docs-11"
+      "beglaubigt-docs-11",
+      "beglaubigt-docs-32"
     ]
   },
   {
@@ -310,7 +316,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a document notarization/incorporation API/service, not an AI agent or workflow platform; there is no concept of scheduling recurring jobs or workflows in this product category. This axis is a category error for a notarization/legal-services API.",
+    "rationale": "Beglaubigt.de is a document notarization/incorporation API service, not an agentic/workflow automation tool with scheduling capabilities; recurring job scheduling is not a fair axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -319,32 +325,34 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation API service, not an automation/workflow-building tool; there is no concept of user-created 'automations' to version, review, or roll back in the evidence.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/document-processing API, not an automation-building platform with workflow definitions to version, review, or roll back; this axis is a category error for its product type.",
     "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
     "storyId": "board-consents",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Beglaubigt.de offers generic document submission, signer management, and notarization workflows (with signature-field auto-detection and appointment/event webhooks) that could technically be applied to notarize a board resolution, but there is no evidence of board-consent/resolution templates, multi-party approval tracking, or governance-specific workflows tailored to equity fundraising. Missing for 10: dedicated board-resolution/consent templates, multi-signer approval sequencing/voting, and any governance-specific use case documentation.",
+    "rationale": "Beglaubigt.de's API lets users submit documents, manage signers, and run notarization workflows with webhook events on completion, which could technically be used to notarize a signed board resolution — but nothing in the evidence describes board-consent/resolution templates, multi-party online approval collection, or governance-specific workflows tailored to equity-fundraising use cases; the product is framed around German notarization/incorporation/translation/apostille services. missing for 10: dedicated board-resolution/consent templates, evidence of online approval-gathering across multiple stakeholders (vs. notary-centric signing), and any fundraising/governance-specific workflow.",
     "evidenceIds": [
       "beglaubigt-docs-1",
       "beglaubigt-docs-4",
       "beglaubigt-docs-5",
-      "beglaubigt-docs-9"
+      "beglaubigt-docs-9",
+      "beglaubigt-docs-32"
     ]
   },
   {
     "productId": "beglaubigt",
     "storyId": "bulk-send-envelopes",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Beglaubigt.de's docs describe creating a single notarization/translation/incorporation request and managing signers on that request, but there is no mention of a bulk-send or mass-distribution feature for sending one document to many recipients at once. Missing for 10: any bulk-send/batch-recipient API or UI capability, evidence of multi-recipient campaign sending.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The docs mention 'manage signers' and 'automate notarization workflows' plus a marketing bullet 'B2B bulk notarization and API integration,' suggesting some bulk capability, but no endpoint or workflow details show sending one document to many recipients at once. missing for 10: explicit bulk-recipient API/endpoint documentation, batch-signer management details, hands-on or independent confirmation of bulk-send functionality.",
     "evidenceIds": [
-      "beglaubigt-docs-1",
+      "beglaubigt-docs-26",
+      "beglaubigt-docs-27",
       "beglaubigt-docs-4"
     ]
   },
@@ -353,11 +361,12 @@
     "storyId": "compliance-calendar",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Beglaubigt.de offers notarization, incorporation, and registration APIs with event webhooks, but there is no evidence of a compliance calendar view or proactive deadline reminders for legal-ops tracking of filing deadlines. Event webhooks like appointment.completed are transactional notifications, not a forward-looking deadline calendar.",
+    "confidence": "medium",
+    "rationale": "There's a 'Compliance API' mentioned only as an Enterprise-only endpoint name, but no evidence of any compliance calendar, deadline tracking, or reminder feature for legal-ops users; webhooks exist for notarization/tax events but not for filing-deadline reminders.",
     "evidenceIds": [
-      "beglaubigt-docs-9",
-      "beglaubigt-docs-11"
+      "beglaubigt-docs-33",
+      "beglaubigt-docs-32",
+      "beglaubigt-docs-9"
     ]
   },
   {
@@ -366,7 +375,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API service, not a contract-lifecycle or e-signature platform with configurable multi-step approval workflows; the evidence shows document submission and notary/signer management, not approval routing before signature. This is a category mismatch rather than a missing feature.",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation/translation document API, not a contract-lifecycle or e-signature platform with configurable approval routing. Configurable multi-step approval workflows before signature are outside its product category, which focuses on notary/signer submission and government filings rather than internal legal-ops approval chains.",
     "evidenceIds": []
   },
   {
@@ -375,7 +384,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API product focused on legal document certification workflows, not a contract-drafting or redlining tool; the story's subject (contract negotiation/redlining workflow) is outside its product category.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API service, not a contract drafting or redlining platform; contract negotiation workflows are entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -384,7 +393,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API service, not a contract repository or CLM tool; there is no evidence of any document storage, search, or metadata-extraction repository for executed contracts. This axis is a category error for this product type.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API service, not a contract repository or CLM tool; nothing in the evidence relates to storing executed contracts with searchable metadata/key-term extraction — this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -393,16 +402,18 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Documentation shows concrete POST endpoints for creating incorporation, notarization, translation, tax-registration, and trade-registration requests, plus GET endpoints and webhook events, indicating a genuine programmatic API for populating/sending legal documents. However, missing for 10: a discoverable OpenAPI/Swagger spec (probe found all candidate spec URLs 404), independent developer corroboration or third-party usage reports, and detail on request/response schemas or SDKs.",
+    "rationale": "Docs describe a documented REST API with endpoints to create/populate/retrieve notarization, translation, incorporation, tax-registration, and trade-registration requests (POST/GET), plus webhooks and HMAC signature verification for automation. Missing for 10: a public OpenAPI/Swagger spec (probe found 404s on all candidate paths) and independent third-party developer confirmation of working integration.",
     "evidenceIds": [
+      "beglaubigt-docs-1",
       "beglaubigt-docs-2",
-      "beglaubigt-docs-3",
       "beglaubigt-docs-4",
       "beglaubigt-docs-6",
       "beglaubigt-docs-7",
       "beglaubigt-docs-8",
       "beglaubigt-docs-9",
-      "beglaubigt-docs-11",
+      "beglaubigt-docs-10",
+      "beglaubigt-docs-32",
+      "beglaubigt-probe-1",
       "beglaubigt-probe-2"
     ]
   },
@@ -412,8 +423,13 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a German platform for notarization, translation, apostilles, and GmbH/UG incorporation, with tax registration handled via the German ELSTER system (Finanzamt), not the U.S. IRS. A 'federal EIN' is a U.S.-specific tax ID concept that has no analog in this German jurisdiction, so the axis is a category mismatch for this product.",
-    "evidenceIds": []
+    "rationale": "Beglaubigt.de is a German incorporation and notarization platform (GmbH/UG formation, German tax registration via ELSTER, trade registration) with no US presence; a 'federal EIN' is a US IRS concept that has no equivalent in this product's German-only registration workflows, making this a country/category mismatch rather than a missing feature.",
+    "evidenceIds": [
+      "beglaubigt-docs-7",
+      "beglaubigt-docs-14",
+      "beglaubigt-docs-23",
+      "beglaubigt-docs-24"
+    ]
   },
   {
     "productId": "beglaubigt",
@@ -421,14 +437,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Beglaubigt.de exposes API endpoints for notarization, translation, incorporation, etc., but there is no evidence of any embeddable widget, iframe, or SDK for embedding a signing UI inside a third-party app or website — the evidence pack only shows backend API calls and webhook events. missing for 10: embeddable signing widget/iframe, front-end SDK or JS component, hosted signing page for embedding, customization/branding options for embedded flow.",
-    "evidenceIds": [
-      "beglaubigt-docs-4",
-      "beglaubigt-docs-5",
-      "beglaubigt-docs-9",
-      "beglaubigt-probe-1",
-      "beglaubigt-probe-2"
-    ]
+    "rationale": "The evidence shows a REST API for submitting documents, notarization, webhooks, and a secure upload portal, but nothing about an embeddable signing widget, iframe, or JS SDK for placing the signing UI inside a third-party app or website.",
+    "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
@@ -436,11 +446,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Beglaubigt.de's documented capabilities cover generic document notarization, translation, incorporation, tax/trade registration, and apostilles for German companies — but no evidence pack item mentions offer letters, confidentiality/IP agreements, or option grants, nor any equity/HR paperwork workflow support. The evidence shows only signature-field detection on arbitrary uploaded documents, which is not the same as a legal-ops equity/hiring document suite.",
+    "rationale": "Beglaubigt.de's documented capabilities are generic document notarization, translation, apostille, and German company incorporation/tax/trade registration workflows — there is no evidence of templates or workflows specifically for offer letters, confidentiality/IP agreements, or option grants used in equity/hiring paperwork. While the generic notarization API could theoretically process arbitrary uploaded documents, nothing in the evidence pack ties the product to HR or equity-grant paperwork specifically.",
     "evidenceIds": [
       "beglaubigt-docs-1",
       "beglaubigt-docs-4",
-      "beglaubigt-docs-5"
+      "beglaubigt-docs-30",
+      "beglaubigt-docs-14"
     ]
   },
   {
@@ -462,11 +473,12 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a German notarization/incorporation API focused on German entities (GmbH, UG) and German legal processes (ELSTER tax, Transparenzregister, Gewerbeanmeldung) — it has no connection to Delaware or US corporate law; this is a wrong-jurisdiction category error, not a missing feature.",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation platform focused entirely on German entities (GmbH, UG) and German legal processes (ELSTER tax filing, Transparenzregister, Gewerbeanmeldung); there is no mention of Delaware, US corporate law, or US filings anywhere in the evidence. Delaware incorporation is a wrong-jurisdiction axis for this product's category, not a missing capability.",
     "evidenceIds": [
       "beglaubigt-docs-2",
       "beglaubigt-docs-14",
-      "beglaubigt-docs-22"
+      "beglaubigt-docs-22",
+      "beglaubigt-docs-24"
     ]
   },
   {
@@ -475,7 +487,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/translation API platform, not a legal-document template library; the evidence shows no offering of vetted NDA/agreement/policy templates for founders to self-serve, so this axis is a category mismatch rather than a gap.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation/translation workflow API and service, not a legal document template library; nothing in the evidence relates to providing NDAs, agreements, or policy templates for founders to self-serve. This is a category mismatch, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -484,17 +496,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "The docs show a genuine API-first design covering the core workflows also available in the UI—incorporation, notarization, translation, tax registration, and trade registration (docs-2,4,6,7,8), plus webhooks/signature verification for automation (docs-9,10,11), and the company explicitly markets itself as the first in Germany to offer incorporation via API (docs-22). However, some UI-surfaced conveniences (free business account bundling, company-name availability check, package selection in docs-17/18) aren't confirmed as API endpoints, and no discoverable OpenAPI/swagger spec was found (probe-2 all 404), making full UI/API parity unverifiable. Missing for 10: confirmed API endpoints for all UI-only conveniences (name check, account bundling), and a published machine-readable OpenAPI spec.",
+    "rationale": "The API exposes core workflows also present in the UI (incorporation, notarization, translation, tax registration, trade registration, webhooks) matching many marketing/UI features, and docs explicitly frame these as programmatic equivalents of manual dashboard actions. However, several UI-advertised features (apostilles, eID/video identity verification, free business account bundling) have no corresponding API endpoint in the evidence, and the Compliance API is restricted to Enterprise plans, plus no discoverable OpenAPI spec was found (404s), suggesting incomplete API parity with the full UI feature set. missing for 10: apostille API endpoint, identity-verification API endpoint, confirmed OpenAPI/spec availability, parity confirmation for Enterprise-gated Compliance features.",
     "evidenceIds": [
       "beglaubigt-docs-2",
       "beglaubigt-docs-4",
       "beglaubigt-docs-6",
       "beglaubigt-docs-7",
       "beglaubigt-docs-8",
-      "beglaubigt-docs-9",
-      "beglaubigt-docs-22",
-      "beglaubigt-docs-17",
-      "beglaubigt-docs-18",
+      "beglaubigt-docs-32",
+      "beglaubigt-docs-33",
+      "beglaubigt-docs-15",
+      "beglaubigt-docs-16",
       "beglaubigt-probe-2"
     ]
   },
@@ -503,13 +515,9 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Beglaubigt.de is a notarization/incorporation API service, not a data-storage platform, but the story asks whether users can export their own data (documents, records) in open formats and leave — no evidence of any export/download-all-data feature or data portability mechanism appears anywhere in the docs. This is a fair question since users submit sensitive documents and company data that they'd reasonably want to retrieve or migrate away with, so the axis applies, and no evidence of such a capability exists.",
-    "evidenceIds": [
-      "beglaubigt-docs-1",
-      "beglaubigt-docs-4",
-      "beglaubigt-docs-6"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence of any data export or portability feature; the product is a notarization/incorporation API service with no mention of exporting user data in open formats or account/data portability options. missing for 10: data export functionality, open-format export (CSV/JSON/etc.), account deletion/data portability mechanism.",
+    "evidenceIds": []
   },
   {
     "productId": "beglaubigt",
@@ -517,7 +525,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a closed commercial SaaS API for notarization/incorporation services, not an open-source software product; there is no indication source code publication is a relevant axis for this kind of service.",
+    "rationale": "Beglaubigt.de is a closed commercial SaaS for notarization/incorporation workflows, not open-source software; there is no source code to license, so open-source availability is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -526,7 +534,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/legal-services SaaS API tied to German notaries and regulatory infrastructure (ELSTER, Transparenzregister), not software that can be run on one's own infrastructure; self-hosting is not a meaningful axis for this kind of regulated service product.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS API service, not open-source or self-hostable software; self-hosting the core product is a category error for this kind of legal/notary workflow platform.",
     "evidenceIds": []
   },
   {
@@ -535,7 +543,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a German notarization/incorporation platform for GmbH/UG entities under German law; the story's specific mechanisms (founder stock purchases, IP assignment agreements, IRS 83(b) elections) are U.S. corporate/tax law constructs that do not exist in the German legal system this product operates in. This is a jurisdictional category mismatch, not a missing feature.",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation platform (GmbH/UG formation, ELSTER tax registration, Handelsregister filings) — it has no connection to US-specific founder equity mechanics like 83(b) elections, which are an IRS/Delaware-C-corp concept entirely outside its German civil-law jurisdiction and product scope.",
     "evidenceIds": []
   },
   {
@@ -543,8 +551,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack about data residency options, region selection, or data storage location controls; the product is a German notarization/incorporation API but nothing addresses configurable data storage region for AI-native users.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location choices for documents or company data; Beglaubigt.de's docs focus on notarization/incorporation workflows without any data-residency controls disclosed.",
     "evidenceIds": []
   },
   {
@@ -553,7 +561,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/document API service, not an AI model or AI product that trains on user data; the AI-training opt-out axis doesn't apply to this category of product.",
+    "rationale": "Beglaubigt.de is a document notarization/incorporation API service, not an AI model or AI product that trains on user data; the AI-training opt-out axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -561,8 +569,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any data retention controls, deletion endpoints, or privacy/data lifecycle settings in the docs; the evidence pack covers notarization, incorporation, translation, and webhook features only.",
+    "confidence": "medium",
+    "rationale": "No evidence anywhere in the pack about data retention policies, deletion endpoints, data export, or user control over stored documents/personal data; the docs cover notarization, incorporation, translation and webhooks but nothing about privacy/retention controls.",
     "evidenceIds": []
   },
   {
@@ -571,7 +579,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS API product, not an AI agent/assistant tool with telemetry settings relevant to AI-native usage; no evidence pack content relates to telemetry or usage tracking opt-out at all.",
+    "rationale": "Beglaubigt.de is a notarization/incorporation SaaS/API product, not an AI agent or developer tool with a telemetry-collecting client; the story about opting out of AI-native telemetry/usage tracking does not apply to this product category.",
     "evidenceIds": []
   },
   {
@@ -580,7 +588,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a German notarization/incorporation/translation API platform, not a US-style registered agent service handling service of process; this is a category/jurisdiction mismatch, not a missing feature.",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation/translation/apostille API platform; there is no concept of a US-style 'registered agent' service or receiving service of process, which is a wrong axis for this product category and jurisdiction.",
     "evidenceIds": []
   },
   {
@@ -589,7 +597,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a notarization/incorporation/document-legalization API service, not a contract-lifecycle management tool; nothing in the evidence relates to tracking contract renewals, expirations, or obligations with alerts.",
+    "rationale": "Beglaubigt.de is a notarization, translation, incorporation, and apostille API/service, not a contract-lifecycle management tool; contract renewal/expiration tracking with alerts is outside its product category — wrong axis rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -598,7 +606,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Beglaubigt.de is a German notarization/incorporation/document API platform (notarization, translation, apostille, company registration), not a fundraising-document or SAFE/convertible-note generation tool; generating equity-fundraising instruments is outside its product category.",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation/translation API product; generating SAFEs or convertible notes on standard equity-fundraising terms is outside its category (notarization, apostille, tax/trade registration), not something this type of product would offer.",
     "evidenceIds": []
   },
   {
@@ -607,10 +615,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Beglaubigt.de's docs mention submitting documents and managing signers for notarization requests with AI-detected signature fields, which implies some multi-signer capability, but there is no evidence of routing logic (sequential/parallel order, per-recipient roles) for standard e-signature workflows — the platform's core focus is notarization/incorporation, not generic e-signature routing. Missing for 10: explicit routing/order configuration for multiple recipients, confirmation that signatures are 'legally binding e-signatures' rather than tied only to notarization appointments, and any independent corroboration of multi-recipient workflows.",
+    "rationale": "Docs mention that businesses can 'submit documents, manage signers, and automate notarization workflows' with AI-detected signature fields, implying some multi-signer capability, but there is no evidence of routing logic (sequential/parallel signing order) or explicit multi-recipient e-signature flows — the core product is notarization, not a dedicated e-signature platform. Missing for 10: explicit multi-recipient routing/sequencing documentation, evidence of a standalone e-signature (non-notarized) flow, and independent confirmation of the 'manage signers' feature in practice.",
     "evidenceIds": [
       "beglaubigt-docs-1",
-      "beglaubigt-docs-4",
+      "beglaubigt-docs-26",
       "beglaubigt-docs-5"
     ]
   },
@@ -620,10 +628,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Docs mention remote identity verification via eID or video as part of notarization, which is a form of stronger identity check, but there is no evidence of SMS verification, knowledge-based authentication, or a legal-ops control to selectively require stronger verification tiers per document. Missing for 10: SMS verification option, knowledge-based authentication, and an API/UI setting letting legal-ops choose verification strength per document.",
+    "rationale": "The docs mention remote identity verification via eID or video (doc-16), which is a form of stronger signer identity check, but there is no evidence of configurable verification tiers (SMS OTP, ID check, knowledge-based authentication) that a legal-ops lead could selectively require per sensitive document.\n\nmissing for 10: per-document configurable verification levels (SMS, KBA), explicit ID-check workflow documentation, admin controls to enforce stronger verification on specific documents.",
     "evidenceIds": [
-      "beglaubigt-docs-16",
-      "beglaubigt-docs-4"
+      "beglaubigt-docs-16"
     ]
   },
   {
@@ -631,12 +638,13 @@
     "storyId": "signing-order-reminders",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Beglaubigt.de's docs describe managing signers and notarization/appointment events (e.g., appointment.completed webhooks) but nowhere mention configurable signing order, automatic reminders, or expiration settings on signature requests.",
+    "confidence": "high",
+    "rationale": "Beglaubigt.de is a German notarization/incorporation/translation API; evidence covers document submission, signer management, and notarization workflows but nowhere mentions signing order, automatic reminders, or expiration settings on signature requests. This is a plausible axis for an esignature-adjacent product but no evidence supports it.",
     "evidenceIds": [
       "beglaubigt-docs-1",
+      "beglaubigt-docs-5",
       "beglaubigt-docs-9",
-      "beglaubigt-docs-11"
+      "beglaubigt-docs-26"
     ]
   },
   {
@@ -2041,20 +2049,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company-formation/back-office platform (registered agent, banking, accounting, payroll) with no document-automation or e-signature product surface; drafting/routing an NDA via API or MCP is outside its category entirely.",
-    "evidenceIds": []
+    "rationale": "Firstbase is a company-incorporation/back-office platform (registered agent, banking, accounting, payroll); it has no document-automation or e-signature/NDA feature, and no API or MCP server evidence exists (probes for openapi/llms.txt return 404). Drafting and routing an NDA via agent/API/MCP is outside this product's category, not an unmet capability.",
+    "evidenceIds": [
+      "firstbase-probe-1",
+      "firstbase-probe-2"
+    ]
   },
   {
     "productId": "firstbase",
     "storyId": "agent-files-annual-report",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Firstbase offers registered agent and compliance services performed by its human/back-office staff (docs-1, docs-7, docs-14), but there is no evidence of an AI agent or automated delegation workflow that lets an AI-native user hand off filings with minimal human input; no API/llms.txt exists to support agentic access (probe-1, probe-2).",
+    "confidence": "high",
+    "rationale": "Firstbase offers registered-agent and compliance dashboard services operated via human interaction (dashboard clicks, bookkeeper chat) but there is no evidence of an API, agent-accessible interface, or automation layer that would let an AI agent independently prepare and file annual reports with minimal human input; probes for openapi/llms.txt both return 404, indicating no machine-callable interface exists.",
     "evidenceIds": [
-      "firstbase-docs-1",
       "firstbase-docs-7",
       "firstbase-docs-14",
+      "firstbase-docs-28",
       "firstbase-probe-1",
       "firstbase-probe-2"
     ]
@@ -2065,9 +2076,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows a compliance dashboard with deadline visibility but no API for programmatic agent access to contract renewals/deadlines; probes confirm no public API or OpenAPI spec exists, and no mention of 'contracts' specifically.",
+    "rationale": "Firstbase offers a compliance dashboard showing deadlines (docs-7, docs-28) but there is no evidence of an API for agents to monitor or programmatically act on contract renewals/deadlines; API/openapi probes returned 404s, indicating no public API exists.",
     "evidenceIds": [
       "firstbase-docs-7",
+      "firstbase-docs-28",
       "firstbase-probe-1",
       "firstbase-probe-2"
     ]
@@ -2078,10 +2090,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office service, not a developer/API product, but the story asks about llms.txt or agent-oriented docs which any product could provide; probes confirm no llms.txt exists (404) and no OpenAPI docs found, so there's no evidence of agent-oriented documentation.",
+    "rationale": "Firstbase is a business incorporation/back-office service, not a developer tool, but the axis still applies since any company could publish agent-oriented docs. A direct probe found llms.txt returns 404 and no evidence of agent-oriented documentation exists.",
     "evidenceIds": [
-      "firstbase-probe-1",
-      "firstbase-probe-2"
+      "firstbase-probe-1"
     ]
   },
   {
@@ -2090,7 +2101,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of AI-generated insights or suggestions anywhere in the pack; Firstbase's offering is described entirely as compliance/back-office services with no AI/analytics features mentioned.",
+    "rationale": "No evidence of any AI-generated insights, analytics, or suggestions feature within Firstbase's product; all evidence describes compliance, banking, mail, and accounting services with no AI/ML capability mentioned.",
     "evidenceIds": []
   },
   {
@@ -2111,7 +2122,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-formation/compliance back-office service, not an AI product; there is no AI assistant feature to delegate tasks to.",
+    "rationale": "Firstbase is a business incorporation/compliance/back-office platform, not an AI product; no evidence of any built-in AI assistant capability, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2129,7 +2140,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office service, not an AI agent or developer platform with tool integrations; MCP plug-in capability is not a relevant axis for this product category.",
+    "rationale": "Firstbase is a business incorporation/back-office service, not an AI agent or developer platform with tool integrations; MCP plug-in capability is a category error for this product.",
     "evidenceIds": []
   },
   {
@@ -2138,7 +2149,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-incorporation/back-office SaaS, not an AI agent or agentic tool; MCP server connectivity is not a relevant axis for this category, and no evidence suggests otherwise.",
+    "rationale": "Firstbase is a business incorporation/back-office service, not an AI agent or developer platform; MCP server connectivity is a category mismatch for this product type, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -2147,7 +2158,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of natural-language command interfaces, chatbots, or AI-native controls; the product is a company-formation/back-office service with no API/agent surface (llms.txt and openapi probes both 404).",
+    "rationale": "No evidence of any natural-language command interface, chatbot, or AI-native control surface; Firstbase is a business-formation/back-office service with a dashboard UI. Probes for llms.txt and OpenAPI both returned 404, and no docs mention NL commands.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2159,7 +2170,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-incorporation/back-office platform; no evidence of any official CLI exists, and probes for API/llms.txt endpoints returned 404s, suggesting no developer-facing tooling at all.",
+    "rationale": "Firstbase is a business-incorporation/back-office service; no evidence of any official CLI tool exists, and probes for llms.txt and API specs both returned 404s. missing for 10: any CLI documentation, release, or repo; even basic API/SDK access.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2171,7 +2182,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented public API; probes for llms.txt and OpenAPI/Swagger specs all returned 404, and no docs mention API access for developers.",
+    "rationale": "No evidence of a documented public API; probes for llms.txt and OpenAPI/Swagger specs all returned 404s, and no docs mention an API for programmatic access.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2183,7 +2194,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-formation/back-office platform (registered agent, accounting, banking, payroll), not an API/agent-credentialing product; scoped API credential issuance for AI agents is a wrong axis for this category.",
+    "rationale": "Firstbase is a business-incorporation/back-office service, not an API platform or agent-facing developer tool; scoped API credential issuance for agents is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2192,7 +2203,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company-incorporation/back-office service with no evidence of any SDK, API, or developer documentation; probes for llms.txt and OpenAPI specs both returned 404s, confirming no official SDK exists.",
+    "rationale": "No evidence of any official SDK for developers; Firstbase is a business-incorporation/back-office service and probes for API/OpenAPI specs returned 404s, indicating no public API or SDK exists.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2204,7 +2215,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook or event subscription capability; probes for API/OpenAPI specs returned 404s, and documentation covers only business incorporation/compliance services with no mention of webhooks.",
+    "rationale": "No evidence of any webhook or event subscription capability; probes for API/openapi specs return 404, and no docs mention webhooks.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2216,13 +2227,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Firstbase provides registered agent service, a compliance dashboard with state deadlines/requirements, and tax filing (extensions, R&D credit determination) plus bookkeeper support for deadlines, which together support timely annual report and franchise tax filing. However, evidence doesn't explicitly confirm automatic annual report filing across all states or a guarantee of on-time franchise tax payment, and community evidence shows filing fees are still owed by the founder separately. missing for 10: explicit proof of automated annual report filing, franchise tax payment handling, and independent verification of on-time filing track record.",
+    "rationale": "Firstbase's compliance dashboard shows per-state status, deadlines, and required actions, and its Registered Agent/compliance service handles notifications and multi-state filings, which supports timely annual report filing; community evidence confirms actual annual state filings (e.g., Wyoming annual returns) occur. However, franchise tax filing specifically is not directly documented — tax mentions focus on extensions and R&D credits rather than franchise tax itself. missing for 10: explicit franchise tax filing confirmation, independent verification of on-time annual report filing track record, details on deadline-miss guarantees or penalties handling.",
     "evidenceIds": [
       "firstbase-docs-7",
       "firstbase-docs-14",
-      "firstbase-docs-9",
+      "firstbase-docs-28",
       "firstbase-docs-10",
-      "firstbase-docs-15",
       "firstbase-comm-1"
     ]
   },
@@ -2232,7 +2242,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any API reference, interactive docs, or runnable examples; probes confirm no OpenAPI spec or llms.txt exists. Evidence pack is entirely about business incorporation/compliance services, not developer API tooling.",
+    "rationale": "Firstbase is a business-incorporation/back-office service with no evidence of any API reference, developer docs, or runnable examples; probes for llms.txt and OpenAPI specs both returned 404s.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2244,9 +2254,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probes for OpenAPI/Swagger specs and llms.txt all returned 404s, and no docs mention a machine-readable API spec for developers.",
+    "rationale": "Probes for OpenAPI/Swagger spec files all return 404, and no evidence pack items reference a machine-readable API spec.",
     "evidenceIds": [
-      "firstbase-probe-1",
       "firstbase-probe-2"
     ]
   },
@@ -2256,7 +2265,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office service (registered agent, banking, payroll, accounting), not a developer platform with sandbox/test environments or production data concerns — this axis is a category error for this product type.",
+    "rationale": "Firstbase is a business incorporation/back-office compliance service, not a development platform or API product with production/sandbox environments; testing against a sandbox without touching production data is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2265,7 +2274,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-formation/back-office service; no evidence of any public API, versioning scheme, or deprecation policy — probes for llms.txt and OpenAPI specs both returned 404s.",
+    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy; probes for llms.txt and OpenAPI specs both returned 404, and all evidence relates to business-formation/compliance services rather than developer APIs.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2277,7 +2286,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/compliance/back-office platform, not a document-signing/e-signature product; audit trails and completion certificates for signed documents are outside its category.",
+    "rationale": "Firstbase is a company-incorporation/back-office platform (registered agent, banking, accounting, tax), not a document-signing or e-signature product; a tamper-evident audit trail and completion certificate for signed documents is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2286,7 +2295,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office service; no evidence of any bulk operations feature (e.g., batch processing multiple entities, filings, or records at once). The 'apply to more than one service at a time' item refers to applying to a handful of financial services, not bulk operations across many items, and no API/automation surface exists (openapi/llms.txt probes both 404). Missing for 10: any bulk-action UI, batch API endpoints, or documentation of processing many items simultaneously.",
+    "rationale": "Firstbase is a company-formation/back-office platform with no evidence of bulk operations across items; the only 'multiple at once' mention is applying to multiple banking partners individually, not bulk automation, and no API/openapi exists per probes.",
     "evidenceIds": [
       "firstbase-docs-13",
       "firstbase-probe-1",
@@ -2308,7 +2317,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business-formation/back-office compliance platform, not an automation or workflow-execution product; scheduling recurring jobs/workflows is outside its category (wrong axis).",
+    "rationale": "Firstbase is a business incorporation/compliance/back-office platform, not an automation or workflow-orchestration tool; scheduling recurring jobs/workflows is a category mismatch for this product type.",
     "evidenceIds": []
   },
   {
@@ -2317,7 +2326,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office compliance platform, not an automation or workflow tool; versioning, reviewing, and rolling back automations is not a category-relevant capability.",
+    "rationale": "Firstbase is a business incorporation/back-office compliance platform, not an automation/workflow tool with versionable automations to review or roll back — this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2335,7 +2344,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, banking, accounting, payroll), not an e-signature or document-distribution product; bulk-sending documents for signature is outside its category.",
+    "rationale": "Firstbase is a company incorporation/compliance back-office platform; bulk e-signature document sending is outside its product category and not part of any evidenced offering.",
     "evidenceIds": []
   },
   {
@@ -2343,12 +2352,13 @@
     "storyId": "compliance-calendar",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Firstbase offers a compliance dashboard showing per-state status, upcoming deadlines, and required actions, plus a bookkeeper available for deadline questions — supporting the calendar aspect. However, there is no evidence of automated reminder/alert functionality before deadlines. Missing for 10: explicit reminder/notification system, evidence of proactive alerts, independent confirmation of dashboard usability.",
+    "confidence": "medium",
+    "rationale": "Firstbase's compliance dashboard shows company status per state with upcoming deadlines and required actions (docs-7, docs-28), and bookkeepers/tax reminders are mentioned (docs-9, docs-10), suggesting deadline visibility. However, there's no explicit evidence of a dedicated 'compliance calendar' view or proactive reminder/notification system before each deadline. Missing for 10: explicit reminder/notification mechanism (email/push alerts before deadlines), a calendar-style UI, and independent/hands-on confirmation that deadlines are surfaced proactively rather than just viewable on request.",
     "evidenceIds": [
       "firstbase-docs-7",
-      "firstbase-docs-14",
-      "firstbase-docs-9"
+      "firstbase-docs-28",
+      "firstbase-docs-9",
+      "firstbase-docs-10"
     ]
   },
   {
@@ -2357,7 +2367,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/compliance/back-office platform (registered agent, banking, accounting, tax); it has no contract-lifecycle or approval-workflow features. This story targets contract/e-signature routing tools, an entirely different product category.",
+    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, compliance, banking, accounting); it has no contract-lifecycle or approval-workflow functionality. This story is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2366,7 +2376,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, banking, payroll, accounting) with no contract drafting, negotiation, or redlining features in evidence — this is a wrong-axis category error for this product type.",
+    "rationale": "Firstbase is a company incorporation/compliance/back-office platform (registered agent, banking, accounting, tax, mailroom); it has no contract drafting, negotiation, or redlining workflow features in evidence. Contract lifecycle management is outside this product's category entirely.",
     "evidenceIds": []
   },
   {
@@ -2375,7 +2385,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company-formation/back-office platform (registered agent, banking, payroll, accounting) — it has no contract-lifecycle or document repository/search capability; this axis is a category error for this product type.",
+    "rationale": "Firstbase is a company incorporation/compliance/back-office platform (registered agent, banking, payroll, tax) with no contract-repository or contract-metadata-extraction functionality — this is a wrong-axis story for this product category.",
     "evidenceIds": []
   },
   {
@@ -2384,7 +2394,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any documented API for generating, populating, or sending legal documents; probes for openapi/llms.txt returned 404s and all docs describe manual/dashboard-driven compliance services, not developer APIs.",
+    "rationale": "No evidence of any documented API for generating, populating, or sending legal documents programmatically; probes for llms.txt and OpenAPI specs both returned 404s, and all other evidence describes Firstbase's manual/back-office SaaS features (registered agent, banking, mailroom, accounting).",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2393,12 +2403,15 @@
   {
     "productId": "firstbase",
     "storyId": "ein-tax-id",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "No evidence explicitly describes Firstbase filing for or obtaining a federal EIN on the founder's behalf; the closest mention (firstbase-docs-16) merely notes you can open a bank account *without* an EIN, implying EIN acquisition is a separate, unaddressed step. Missing for 10: any documentation or workflow showing Firstbase applying for/obtaining an EIN, timelines, or confirmation of receipt.",
+    "rationale": "Evidence never directly states Firstbase files an EIN application for founders; it only implies EIN status indirectly (e.g., letting non-incorporation users manually enter an EIN, or opening a bank account 'without an EIN'), suggesting EIN acquisition is bundled into incorporation but not explicitly documented. Missing for 10: explicit first-party claim describing EIN application/filing as part of the incorporation flow, and any independent/community confirmation that Firstbase obtains the EIN on the founder's behalf.",
     "evidenceIds": [
-      "firstbase-docs-16"
+      "firstbase-docs-16",
+      "firstbase-docs-21",
+      "firstbase-docs-25",
+      "firstbase-docs-30"
     ]
   },
   {
@@ -2407,7 +2420,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/back-office platform, not an e-signature or document-signing product; embedding a signing experience is outside its category.",
+    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, banking, accounting, compliance); it has no e-signature or embeddable signing SDK product surface in evidence, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2416,7 +2429,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase's evidence covers incorporation, registered agent, accounting, tax, banking, and payroll services, but nothing in the pack mentions offer letters, confidentiality/IP agreements, option grants, or any equity/hiring paperwork workflow.",
+    "rationale": "Evidence covers incorporation, registered agent, banking, accounting, tax, mailroom, and cap-table (Carta) integration, but nothing about offer letters, confidentiality/IP agreements, or option grant paperwork/hiring documents.",
     "evidenceIds": []
   },
   {
@@ -2425,18 +2438,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Firstbase automates incorporation, registered agent, banking, and compliance tasks, but nothing describes guided legal questionnaires that fill documents and flag attorney-review triggers. Pre-filling application answers (docs-20) relates to banking onboarding, not legal document generation or attorney escalation logic.",
+    "rationale": "Firstbase's evidence shows guided application pre-fill for banking/partner services (e.g., firstbase-docs-20) but nothing about a legal document template library, guided legal questionnaires, or flagging items for attorney review.",
     "evidenceIds": []
   },
   {
     "productId": "firstbase",
     "storyId": "incorporate-end-to-end",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Firstbase clearly offers a company-formation product (evidenced by the /incorporate-your-company URL and related account/banking setup features), and a community anecdote confirms users have used it to set up a US entity. However, no evidence explicitly describes Delaware-specific filing, bylaws generation, or initial board approval workflows. Missing for 10: explicit documentation of Delaware filing steps, bylaws templates/generation, and board consent/approval process.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Evidence confirms Firstbase's core incorporation service is real and used by founders (comm-1: Delaware/Wyoming incorporation completed in ~2 weeks) and docs reference incorporating a company (docs-23, docs-30) and post-incorporation cap-table setup (docs-29), but there is no explicit mention of generating bylaws or facilitating initial board approvals/resolutions as part of the flow. Missing for 10: explicit documentation of bylaws generation, initial board consent/approval workflow, and independent confirmation these specific artifacts are produced end-to-end.",
     "evidenceIds": [
-      "firstbase-docs-16",
+      "firstbase-docs-23",
+      "firstbase-docs-30",
+      "firstbase-docs-29",
       "firstbase-comm-1"
     ]
   },
@@ -2445,8 +2460,8 @@
     "storyId": "legal-template-library",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Firstbase's evidence pack covers incorporation, registered agent, banking, payroll, and accounting services but contains no mention of a legal document template library (NDAs, agreements, policies) for founders.",
+    "confidence": "high",
+    "rationale": "Evidence covers incorporation, registered agent, banking, accounting, mailroom, and tax services, but nowhere mentions a legal document/template library (NDAs, agreements, policies) for founders to self-serve instead of hiring counsel.",
     "evidenceIds": []
   },
   {
@@ -2455,7 +2470,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API at all — probes for llms.txt and OpenAPI/Swagger specs both returned 404, and no docs mention an API for AI-native or programmatic access. All evidence concerns UI-driven back-office services (registered agent, banking, accounting).",
+    "rationale": "No evidence of any public API for Firstbase; probes for llms.txt and OpenAPI specs both returned 404, and no docs mention an API at all, let alone parity with the UI.",
     "evidenceIds": [
       "firstbase-probe-1",
       "firstbase-probe-2"
@@ -2466,11 +2481,10 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any data export functionality in open formats; Firstbase is a business incorporation/compliance service with no mention of user data portability. Probes for llms.txt and OpenAPI docs both 404, and no docs mention export tools.",
+    "confidence": "medium",
+    "rationale": "Firstbase is a business-formation/back-office service, not a data/knowledge tool, but the story still asks about data portability/export in open formats, and no evidence shows any export capability or open-format data portability — instead evidence shows a customer struggling with refund/exit terms. No mention of data export, open formats, or account closure with data portability.",
     "evidenceIds": [
-      "firstbase-probe-1",
-      "firstbase-probe-2"
+      "firstbase-comm-2"
     ]
   },
   {
@@ -2479,7 +2493,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company-formation/back-office SaaS, not an open-source software product; source-code availability under an open license is not a relevant axis for this type of product.",
+    "rationale": "Firstbase is a business incorporation/back-office SaaS, not a software product with source code to license; open-source availability is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -2488,7 +2502,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office SaaS (registered agent, banking, payroll, accounting) with no software artifact that could be self-hosted; self-hosting is a category error for this type of service.",
+    "rationale": "Firstbase is a SaaS business-incorporation/compliance service, not infrastructure software that could be self-hosted; self-hosting is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2496,8 +2510,8 @@
     "storyId": "post-incorporation-setup",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers registered agent, banking, payroll, accounting, mail, and tax services but contains no mention of founder stock purchase agreements, IP assignment agreements, or 83(b) election filing support.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions founder stock purchase agreements, IP assignment agreements, or 83(b) election filing support — the closest is a Carta cap table integration, which is unrelated to these specific post-incorporation documents.",
     "evidenceIds": []
   },
   {
@@ -2506,7 +2520,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company-incorporation/back-office service, not a data storage/AI platform; data residency/region selection is not a relevant axis for this product category.",
+    "rationale": "Firstbase is a business incorporation/back-office platform, not a data storage or AI product; data residency/region selection is not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -2515,7 +2529,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/back-office platform, not an AI product or model provider; AI-training data opt-out is not a relevant axis for this product category.",
+    "rationale": "Firstbase is a business incorporation/back-office service, not an AI model or AI product with training data policies; the axis of preventing data use for AI model training does not apply to this category.",
     "evidenceIds": []
   },
   {
@@ -2524,11 +2538,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office platform with no evidence of any data retention/deletion controls, privacy settings, or AI data handling policies in the evidence pack; probes for API/docs surfaces returned 404s. Missing for 10: any documentation of data retention policy, deletion mechanisms, or user controls over stored data.",
-    "evidenceIds": [
-      "firstbase-probe-1",
-      "firstbase-probe-2"
-    ]
+    "rationale": "Firstbase is a company-incorporation/back-office platform; no evidence anywhere in the pack addresses data retention/deletion controls, privacy settings, or export/delete mechanisms for AI-native users. Absence of evidence for this applicable axis means 'none'.",
+    "evidenceIds": []
   },
   {
     "productId": "firstbase",
@@ -2536,7 +2547,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/back-office service, not an AI tool or SDK with telemetry collection relevant to AI-native users; opting out of telemetry is a category mismatch for this product type.",
+    "rationale": "Firstbase is a business incorporation/back-office service, not an AI tool or developer product with telemetry/tracking settings relevant to AI-native usage; this privacy-posture axis about opting out of telemetry does not apply to this category of product.",
     "evidenceIds": []
   },
   {
@@ -2545,13 +2556,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Firstbase explicitly offers a Registered Agent service (appoint or switch) with a compliance dashboard for state requirements, and a separate Mailroom product that scans all incoming mail into PDFs, functionally covering legal mail/service-of-process handling as part of its registered-agent offering. Missing for 10: explicit mention of \"service of process\" terminology, and independent/hands-on user corroboration of receiving real legal notices digitally.",
+    "rationale": "Firstbase explicitly offers a Registered Agent service with compliance dashboard tracking deadlines/state requirements, plus a mailroom that scans and digitizes mail into PDFs, which covers receiving legal mail digitally. However, evidence doesn't explicitly confirm service-of-process handling specifically or independent corroboration of mail scanning quality/timeliness. Missing for 10: explicit mention of service-of-process handling, independent/hands-on review of registered agent mail scanning experience.",
     "evidenceIds": [
       "firstbase-docs-1",
-      "firstbase-docs-2",
       "firstbase-docs-7",
       "firstbase-docs-14",
-      "firstbase-docs-18"
+      "firstbase-docs-18",
+      "firstbase-docs-28"
     ]
   },
   {
@@ -2560,7 +2571,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company formation/compliance/back-office platform (registered agent, banking, payroll, accounting); it has no contract-lifecycle management or legal document tracking features. This axis targets contract-lifecycle management tools, a different product category.",
+    "rationale": "Firstbase is a company incorporation/compliance/back-office platform, not a contract-lifecycle-management tool; nothing in the evidence relates to tracking contracts, renewals, or obligations. This story is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2569,7 +2580,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers incorporation, registered agent, banking, accounting, and mail services but contains no mention of SAFE or convertible note generation, fundraising documents, or cap table/equity paperwork tools.",
+    "rationale": "No evidence Firstbase offers SAFE or convertible note generation/signing; its documented features are incorporation, registered agent, banking, accounting/tax, mail handling, and a Carta cap-table integration, none of which address fundraising document generation.",
     "evidenceIds": []
   },
   {
@@ -2587,7 +2598,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a business incorporation/compliance/back-office platform (registered agent, banking, accounting, tax); it has no e-signature/document-signing product surface, so signer identity verification requirements are a category error for this product.",
+    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, banking, accounting, payroll); it has no e-signature/document-signing product feature at all, so signer identity verification options are a category mismatch, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2596,7 +2607,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firstbase is a company incorporation/back-office platform (registered agent, banking, accounting, tax) with no e-signature product or document-signing feature in evidence; signing order/reminders/expirations is outside its category.",
+    "rationale": "Firstbase is a company incorporation/compliance/back-office platform, not an e-signature product; nothing in evidence relates to signature request workflows like signing order or reminders.",
     "evidenceIds": []
   },
   {

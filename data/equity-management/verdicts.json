@@ -5,11 +5,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cake's MCP/AI integration is explicitly read-only—querying cap table data (shareholders, vesting, option pool headroom) in plain English—with no evidence of drafting securities, creating option grants programmatically, or queuing them for board approval via an agent. The OpenAPI/API probe also returned 404s, and board approval features (docs-10) are described as human-driven UI flows, not agent-initiated.",
+    "rationale": "The only programmatic/agent surface documented is the MCP integration, which is explicitly described as read-only ('Ask your AI assistant about shareholders, option pool headroom, vesting, share classes, SAFEs and notes - answered from your live Cap Table in Cake. All read-only.'), and there is no OpenAPI/API surface (probe shows 404s) or any mention of drafting option grants or queuing items for board approval via an agent.",
     "evidenceIds": [
+      "cake-equity-docs-27",
       "cake-equity-docs-11",
-      "cake-equity-docs-12",
-      "cake-equity-docs-10",
+      "cake-equity-docs-26",
       "cake-equity-probe-2"
     ]
   },
@@ -19,11 +19,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Cake offers an MCP server allowing AI assistants like Claude/Cursor/Codex to query live cap table data (shareholders, option pools, vesting, SAFEs) in plain English, which supports programmatic cap table pulls. However, there's no evidence of reconciliation against an external data room, no documented API/OpenAPI spec for structured programmatic access (openapi probe returned 404s), and no mention of data-room integration or comparison workflows. missing for 10: documented API/OpenAPI for structured data pulls, data room integration or reconciliation feature, evidence of comparing cap table against external documents.",
+    "rationale": "Cake ships an MCP server (docs-11/12/26/27) letting AI assistants like Claude/Cursor query live cap table data (shareholders, vesting, option pool, SAFEs) read-only, which covers the 'pull cap table programmatically' half of the story. However there is no evidence of data-room integration or any reconciliation feature comparing cap table data against data-room documents. Missing for 10: data room integration/API, reconciliation logic or diff/compare feature, and any explicit financing-workflow tie-in beyond capital-raise modelling.",
     "evidenceIds": [
       "cake-equity-docs-11",
       "cake-equity-docs-12",
-      "cake-equity-probe-2"
+      "cake-equity-docs-26",
+      "cake-equity-docs-27",
+      "cake-equity-docs-7"
     ]
   },
   {
@@ -32,11 +34,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a live, working llms.txt at help.cakeequity.com listing agent-oriented documentation structure, and Cake also provides dedicated MCP-related help articles describing how to connect AI agents to query cap table data in plain English. Missing for 10: no explicit first-party announcement/dedicated 'for AI agents' landing page beyond the llms.txt file itself.",
+    "rationale": "There is a confirmed working llms.txt endpoint at help.cakeequity.com/llms.txt (HTTP 200, listing help center content in agent-friendly format), plus dedicated agent-oriented docs explaining MCP connectivity for AI assistants. missing for 10: independent third-party confirmation that agents successfully use llms.txt in practice beyond the probe check.",
     "evidenceIds": [
       "cake-equity-probe-1",
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-26"
     ]
   },
   {
@@ -45,10 +47,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake exposes an MCP server so external AI assistants (Claude, Codex, Cursor) can query live cap table data (shareholders, option pool, vesting, SAFEs) in plain English, effectively delivering AI-generated insights from the user's data. However this relies on connecting an external AI client rather than a native in-product AI feature, and there's no evidence of proactive suggestions or recommendations, only Q&A-style answers. Missing for 10: native in-app AI assistant/insights UI, proactive suggestion generation, independent corroboration of MCP usage quality.",
+    "rationale": "Cake ships an MCP server that lets AI assistants (Claude, Codex, Cursor) query live cap table data and answer questions about shareholders, vesting, option pool headroom, SAFEs and notes in plain English — a genuine AI-insight capability tied to the product's data. However, this is read-only Q&A via external AI clients rather than a built-in in-product AI feature generating proactive suggestions or recommendations. Missing for 10: native in-app AI chat/insights UI, proactive suggestion generation (vs. reactive Q&A only), and independent/hands-on corroboration of the MCP integration's quality.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -57,12 +61,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Cake Equity offers an MCP integration for read-only Q&A about the cap table (docs-11, docs-12) and built-in business-process automation (vesting schedules, board approvals), but there is no evidence of user-configurable autonomous background automations or agent workflows that run independently — missing for 10: any trigger/scheduler/agent-orchestration capability, evidence of autonomous multi-step tasks, or automation setup UI beyond static vesting rules.",
+    "rationale": "Cake Equity offers a read-only MCP integration for querying the cap table (docs-11, docs-12, docs-27) and built-in vesting automation for cliffs/schedules (docs-4), but there is no evidence of user-configurable automations or agentic workflows that run autonomously in the background—MCP access is explicitly read-only and no scheduling/trigger/agent-loop capability is documented.",
     "evidenceIds": [
       "cake-equity-docs-11",
       "cake-equity-docs-12",
-      "cake-equity-docs-4",
-      "cake-equity-docs-10"
+      "cake-equity-docs-27",
+      "cake-equity-docs-4"
     ]
   },
   {
@@ -71,10 +75,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Cake exposes an MCP server so external AI clients (Claude, Codex, Cursor) can query the cap table in plain English, which enables AI-driven interaction with Cake data, but this is not a built-in assistant embedded in the Cake product itself — it requires a separate external AI client to connect. Missing for 10: a native, in-app AI assistant UI, evidence of task delegation (not just read-only Q&A), and any first-party assistant hosted directly inside Cake's interface.",
+    "rationale": "Cake exposes its cap table via an MCP server so external AI clients (Claude, Codex, Cursor) can query data in plain English, but this is read-only Q&A via third-party assistants rather than a built-in in-product assistant that can be delegated tasks. Missing for 10: a native embedded assistant UI inside Cake itself, task-execution/delegation capability (only read-only querying is documented), and independent evidence of real-world usage beyond first-party docs.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -82,12 +88,13 @@
     "storyId": "agentic-headless",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a CLI, API, or headless/automation mode for Cake Equity; the openapi probe explicitly returned 404 across all candidate endpoints, and MCP support (docs-11/12) is scoped to conversational querying via chat clients, not CI-style automation.",
+    "confidence": "high",
+    "rationale": "Cake Equity offers a read-only MCP server for chat-based AI assistants (docs-11, docs-26, docs-27) but there is no evidence of a CLI, public API, or CI/automation hooks; an openapi probe returned 404 on all candidate paths (probe-2), indicating no documented programmatic/headless interface for automation pipelines.",
     "evidenceIds": [
       "cake-equity-probe-2",
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -96,10 +103,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Cake Equity's MCP integration goes the opposite direction: it exposes its own cap table data as an MCP server for external AI clients like Claude, Cursor, or Codex to query (docs-11, docs-12), rather than Cake itself consuming external MCP servers' tools. There is no evidence that Cake Equity acts as an MCP client plugging in outside tool servers.",
+    "rationale": "The evidence describes Cake Equity exposing its own MCP server so external AI assistants (Claude, Cursor, Codex) can query the cap table — this is Cake acting as an MCP *server*/tool provider, not the product consuming external MCP servers' tools. There is no evidence that Cake Equity itself can be configured to plug in and use external MCP servers.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -107,11 +115,13 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cake Equity documents an official MCP server ('Cake MCP') that lets Claude, Codex, Cursor, or any MCP client connect and query live cap table data (shareholders, vesting, SAFEs, option pool headroom). This is a first-party, explicit MCP server offering, not just client integration. Missing for 10: independent/hands-on corroboration beyond vendor docs, and technical details on server setup/auth scope.",
+    "confidence": "high",
+    "rationale": "Cake documents an official MCP server allowing Claude, Codex, Cursor or any MCP client to connect and query the live cap table (shareholders, vesting, option pool, SAFEs) in plain English, explicitly read-only. Missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and no technical spec (endpoint/auth details) for the MCP server.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -120,10 +130,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake documents an MCP integration letting users connect Claude, Codex, Cursor or other MCP clients to ask natural-language questions about their cap table (shareholders, vesting, option pool headroom, etc.), which directly enables natural-language operation of read/query functionality. However, this appears limited to querying/reporting rather than performing actions (e.g., issuing grants, modeling raises) via natural language. Missing for 10: evidence of write/action capabilities via natural language, independent hands-on validation of the MCP integration, and broader in-app conversational command support beyond the MCP query use case.",
+    "rationale": "Cake ships an MCP integration letting users connect Claude/Codex/Cursor and query cap table data (shareholders, vesting, option pool headroom) in plain English, which is genuine natural-language operation of part of the product. However, this is explicitly read-only ('All read-only'), so natural-language commands cannot perform actions like issuing shares, running raises, or editing vesting — core write operations remain UI-only. Missing for 10: natural-language support for write/action commands (issuances, approvals, raises), independent hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -138,14 +150,16 @@
   {
     "productId": "cake-equity",
     "storyId": "agentic-public-api",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows an MCP server for AI assistants to query cap table data (docs-11, docs-12), but this is a narrow, purpose-built integration, not a documented general-purpose public API. Explicit probes for OpenAPI/Swagger documentation all returned 404, indicating no public API is documented. Missing for 10: any documented REST/GraphQL API, API reference docs, authentication/rate-limit details, or SDKs that would let an AI-native user drive the product generally.",
+    "rationale": "Cake documents an MCP server that lets AI assistants (Claude, Codex, Cursor) query the cap table in plain English, which is a form of agent-facing interface, but it is explicitly read-only (no write/drive actions) and no general public REST/OpenAPI API is documented — openapi.json/swagger.json probes all returned 404. missing for 10: a documented public API for write/action operations, OpenAPI/swagger spec, and evidence of actually driving (not just querying) the product via API.",
     "evidenceIds": [
-      "cake-equity-probe-2",
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27",
+      "cake-equity-probe-2"
     ]
   },
   {
@@ -154,11 +168,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Cake Equity documents an MCP connector for AI assistants (Claude, Codex, Cursor) to query cap table data, but there is no evidence of scoped or least-privilege API credentials/tokens that can be issued specifically for an agent's use — no API key management, permission scoping, or OpenAPI surface (probe shows no OpenAPI endpoint found). Missing for 10: any documentation of credential scoping, token permissions, or per-agent API key issuance.",
+    "rationale": "Cake documents an MCP connection for AI assistants that is explicitly read-only, but there is no evidence of an API credential system, key/token issuance, or configurable least-privilege scopes for agents — the read-only MCP restriction is a blanket product behavior, not a user-issuable scoped credential. Missing for 10: any mention of API keys/tokens, credential scoping UI, or per-agent permission configuration.",
     "evidenceIds": [
       "cake-equity-docs-11",
       "cake-equity-docs-12",
-      "cake-equity-probe-2"
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -167,10 +182,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an official SDK (Python/JS/etc.) for developers to build against; the only AI-related integration found is an MCP connector for chat assistants (docs-11, docs-12), and probes show no OpenAPI/Swagger spec exists (probe-2 all 404s), indicating no developer SDK is published.",
+    "rationale": "Evidence shows only an MCP integration for AI assistants to query cap table data (read-only), not official SDKs for building applications; a probe for OpenAPI/API specs returned 404 on all candidate paths, and no docs mention client libraries or SDKs in any language.",
     "evidenceIds": [
       "cake-equity-docs-11",
-      "cake-equity-docs-12",
+      "cake-equity-docs-27",
       "cake-equity-probe-2"
     ]
   },
@@ -180,11 +195,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook subscription capability; Cake offers an MCP server for AI assistants to query cap table data, but nothing about outbound event notifications via webhooks, and OpenAPI probe returned 404s.",
+    "rationale": "No evidence of any webhook subscription capability; Cake only offers an MCP read-only client integration and no public API/OpenAPI docs were found (probe returned 404s), so event-driven webhook subscriptions are not documented.",
     "evidenceIds": [
       "cake-equity-probe-2",
-      "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-26",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -193,11 +208,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an interactive API reference or runnable examples; the openapi probe returned 404s across all candidate paths, and the only developer-facing surface documented is an MCP connector for chat assistants, not an API reference.",
+    "rationale": "There is no evidence of an interactive API reference or runnable examples; Cake Equity exposes an MCP server for AI assistants to query cap table data, but no public API docs/reference exist, and probes for OpenAPI specs all returned 404.",
     "evidenceIds": [
       "cake-equity-probe-2",
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-26"
     ]
   },
   {
@@ -206,9 +221,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger spec files returned 404 on all candidate paths, and no evidence pack item mentions a downloadable machine-readable API spec; the only related capability is an MCP server for AI assistants, not a REST API spec.",
+    "rationale": "Cake Equity offers an MCP server for AI assistants to query cap table data, but there is no evidence of a downloadable OpenAPI or other machine-readable API spec; a direct probe for common OpenAPI/Swagger endpoints returned 404 on all candidates.",
     "evidenceIds": [
-      "cake-equity-probe-2"
+      "cake-equity-probe-2",
+      "cake-equity-docs-11",
+      "cake-equity-docs-26"
     ]
   },
   {
@@ -217,10 +234,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox or test environment separate from production data; the MCP integration explicitly connects to the 'live Cap Table' with no mention of a test mode, and OpenAPI/sandbox endpoints return 404.",
+    "rationale": "No evidence of a sandbox/test environment separate from production; the MCP integration explicitly reads from the 'live Cap Table' only, and no docs mention sandbox, staging, or test accounts.",
     "evidenceIds": [
-      "cake-equity-docs-12",
-      "cake-equity-probe-2"
+      "cake-equity-docs-11",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -229,11 +246,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of a versioned public API or any documented deprecation policy; the only API-adjacent evidence is an MCP connector for chat assistants, and a probe explicitly found no OpenAPI/spec endpoints. Missing for 10: versioned API docs, API changelog/versioning scheme, deprecation policy documentation.",
+    "rationale": "No evidence of any versioned API or documented deprecation policy; the openapi probe returned 404 on all candidate paths, and the only API-adjacent feature is an MCP read-only integration with no versioning/deprecation documentation.",
     "evidenceIds": [
       "cake-equity-probe-2",
       "cake-equity-docs-11",
-      "cake-equity-docs-12"
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -242,7 +259,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers cap table management, vesting engines, 409A valuations, and capital raises, but nowhere mentions ASC 718 expense reporting or auditor-ready stock-based compensation expense outputs. This is a plausible axis for an equity management platform, but no evidence shows Cake delivers it.",
+    "rationale": "No evidence anywhere in the pack of ASC 718 stock-based compensation expense reporting, expense amortization schedules, or auditor-ready SBC reports; Cake's docs cover cap table, vesting, 409A valuation, and migration but never mention ASC 718 or SBC expense reporting for auditors.",
     "evidenceIds": []
   },
   {
@@ -251,10 +268,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The only evidence of bulk handling is a spreadsheet/Carta migration bulk-upload tool for initial cap table setup, not a general bulk-operations capability across ongoing items like grants, certificates, or approvals. Missing for 10: bulk editing/updating of existing stakeholders or grants, bulk e-signature or certificate issuance, bulk API operations (no OpenAPI/API found), and any AI-native bulk automation beyond one-time import.",
+    "rationale": "The only bulk-operation evidence is a one-time 'bulk upload tools' import feature used during spreadsheet migration (docs-17), not a general capability to perform bulk actions across many cap table items (e.g., mass edits, batch grants, bulk certificate issuance) in normal use. The MCP/AI assistant integration is explicitly read-only (docs-27), so it cannot perform bulk write operations either. Missing for 10: evidence of bulk edit/update/delete across grants, stakeholders, or certificates in regular workflows, and any AI-driven bulk action capability beyond read-only queries.",
     "evidenceIds": [
       "cake-equity-docs-17",
-      "cake-equity-probe-2"
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -276,7 +293,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cake Equity is a cap table/equity management SaaS, not an automation/workflow platform; scheduling recurring jobs or workflows is not a fair axis for this product category.",
+    "rationale": "Cake Equity is a cap table management SaaS, not an automation/workflow platform; scheduling recurring jobs or workflows is outside its product category. It offers an MCP server for read-only Q&A on cap table data, but no evidence of any job scheduler or workflow automation trigger system for AI-native users.",
     "evidenceIds": []
   },
   {
@@ -285,7 +302,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cake Equity is a cap table management SaaS, not an automation/workflow engine with versionable, reviewable, revertible automations; this story is a category mismatch for the product type.",
+    "rationale": "Cake Equity is a cap table management SaaS, not an automation/agentic tool that runs user-defined 'automations' needing version control, review, or rollback. Its MCP integration is read-only Q&A over cap table data, not an automation execution engine, so this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -306,11 +323,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake explicitly advertises 'bulk upload tools' that import cap table data directly, with most spreadsheet-managed cap tables migrated in under two hours, and a human-assisted upload/reconciliation flow for Carta migrations — covering the core ask of loading historical transactions/grants in bulk rather than one at a time. However, the evidence frames this mainly as a one-time migration/onboarding feature rather than an ongoing bulk-issuance workflow for new grants, with no detail on file formats, validation, or in-app bulk-grant creation tools. Missing for 10: documentation of a repeatable bulk grant-issuance workflow (not just migration), supported file formats/templates, and independent/hands-on confirmation of the process.",
+    "rationale": "Cake explicitly offers 'bulk upload tools' for migrating spreadsheet cap tables (docs-17) and a managed migration/data-matching process for Carta/Pulley imports (docs-2, docs-15, docs-37, docs-38), showing batch ingestion of historical transactions is supported. However, evidence is centered on one-time migration workflows rather than an ops user self-service bulk grant issuance tool for ongoing operations, and no UI/API details (e.g., CSV template for new grants, bulk-issue button) are shown. Missing for 10: documented self-serve bulk grant issuance interface (not just migration), evidence of batch API/CSV upload for day-to-day new transactions, and independent confirmation of ease/scale.",
     "evidenceIds": [
       "cake-equity-docs-17",
       "cake-equity-docs-2",
-      "cake-equity-docs-15"
+      "cake-equity-docs-15",
+      "cake-equity-docs-37",
+      "cake-equity-docs-38"
     ]
   },
   {
@@ -318,9 +337,13 @@
     "storyId": "cap-table-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers migration, pricing, features, MCP assistant access, and security, but contains no mention of exporting the cap table or transaction history to Excel/CSV formats, nor any data-portability guarantee. No documentation confirms export capability exists.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack only describes importing/migrating cap tables into Cake from competitors (Carta, Pulley, spreadsheets) via reports like the 'Cap table report, Vesting report and Stakeholder details' — these are export instructions for the *source* platforms, not for exporting live data out of Cake itself. One doc even states Cake's own cap table view requires 'no spreadsheet export needed,' suggesting no dedicated CSV/Excel export feature is emphasized. No first-party or independent evidence shows ops users can export their full cap table and transaction history from Cake to Excel/CSV at any time.",
+    "evidenceIds": [
+      "cake-equity-docs-36",
+      "cake-equity-docs-42",
+      "cake-equity-docs-43"
+    ]
   },
   {
     "productId": "cake-equity",
@@ -328,13 +351,15 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Cake documents concrete migration paths from Carta, Pulley, and spreadsheets, including bulk upload tools, human data-matching review, and a 'see your cap table before you pay' verification step before go-live (docs-1,2,15,16,17). This covers guided import and validation, but the process appears largely concierge-driven (Cake staff build the table from exported data) rather than a self-serve ops workflow with explicit reconciliation against source legal documents. Missing for 10: explicit reconciliation/audit workflow comparing imported data against source cap docs, and self-service validation tooling for ops users rather than vendor-run migration.",
+    "rationale": "Cake provides detailed guided migration paths from Carta, Pulley, and spreadsheets, including data upload, 'a human reviews it,' accurate data matching, and a review-before-you-pay step that acts as informal reconciliation (docs-2, docs-15, docs-17, docs-37, docs-38). However, there's no explicit description of validating imported data against original source documents (e.g., signed SAFEs, option agreements) or a formal reconciliation report/checklist. Missing for 10: explicit document-level reconciliation/validation process, independent/hands-on evidence of migration accuracy, and detail on handling discrepancies during migration.",
     "evidenceIds": [
-      "cake-equity-docs-1",
       "cake-equity-docs-2",
       "cake-equity-docs-15",
-      "cake-equity-docs-16",
-      "cake-equity-docs-17"
+      "cake-equity-docs-17",
+      "cake-equity-docs-37",
+      "cake-equity-docs-38",
+      "cake-equity-docs-41",
+      "cake-equity-docs-42"
     ]
   },
   {
@@ -343,16 +368,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Cake explicitly covers cap table core elements: share classes, SAFEs, option grants, certificates, and vesting, positioned as a live single source of truth investors/auditors can use (migration tools, 409A valuations, certificate issuance, contract editor for SAFEs/Convertibles/Options/RSUs). Multiple docs corroborate breadth across share classes, options, SAFEs, and certificate management as an integrated live system rather than disparate tools. Missing for 10: independent/third-party validation (e.g., investor or auditor testimonials) confirming reliance on Cake as source of truth, and no evidence of audit-log/versioning features that concretely prove 'live single source of truth' guarantees.",
+    "rationale": "Cake Equity is explicitly built as a live cap table system covering share classes, certificates, SAFEs/convertibles, and option grants (docs-6, 18, 22, 29-35, 36), with investor/employee portals and admin controls (docs-14, 46) supporting reliance by investors, and features like 409A valuations and reporting for auditor-facing needs (docs-8, 20). missing for 10: independent/third-party corroboration (e.g., customer case studies or reviews) confirming investors/auditors actually rely on it as source of truth, and explicit audit-trail/versioning documentation.",
     "evidenceIds": [
       "cake-equity-docs-6",
-      "cake-equity-docs-7",
-      "cake-equity-docs-8",
       "cake-equity-docs-18",
-      "cake-equity-docs-20",
       "cake-equity-docs-22",
-      "cake-equity-docs-4",
-      "cake-equity-docs-5"
+      "cake-equity-docs-29",
+      "cake-equity-docs-30",
+      "cake-equity-docs-33",
+      "cake-equity-docs-36",
+      "cake-equity-docs-46",
+      "cake-equity-docs-8",
+      "cake-equity-docs-20"
     ]
   },
   {
@@ -361,24 +388,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake's docs describe a 'flexible vesting engine' that automates cliffs, schedules, milestones, and pauses, plus a vesting event counter on the home dashboard indicating automatic tracking of upcoming vesting events. However, there is no explicit mention of acceleration-on-exit provisions or clear confirmation of automatic vested-vs-unvested breakdown reporting. Missing for 10: explicit acceleration-on-exit handling, detailed vested/unvested reporting UI, and independent/hands-on verification beyond vendor claims.",
+    "rationale": "Cake documents a 'flexible vesting engine' that automates cliffs, schedules, milestones, and pauses, plus the ability to attach vesting to founder/ordinary shares, and dashboard tracking of upcoming vesting events. However, there's no explicit documented support for acceleration-on-exit clauses, or clear detail on how vested-vs-unvested splits are automatically computed and surfaced beyond a 7-day count. Missing for 10: explicit acceleration-on-exit handling, detailed vested/unvested automatic tracking/reporting, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "cake-equity-docs-4",
+      "cake-equity-docs-29",
       "cake-equity-docs-25",
-      "cake-equity-docs-24"
+      "cake-equity-docs-10"
     ]
   },
   {
     "productId": "cake-equity",
     "storyId": "digital-share-certificates",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Cake explicitly supports 'Issue and manage share certificates digitally' and certificates carry company branding, and the platform separately advertises e-signing/board sign-off automation for equity events, implying signed certificates tied to the cap table. However, no evidence explicitly confirms certificates are 'legally signed in-platform' (e.g., binding e-signature workflow specifically for certificates) or describes the permanent technical linkage between a certificate and its cap table entry. missing for 10: explicit description of legal e-signature process for certificates, explicit statement of permanent record-linking between certificate and cap table entry, independent/hands-on corroboration.",
+    "rationale": "Cake documents digital certificate issuance permanently tied to cap table entries (docs-22, docs-33, docs-23) and supports two certificate types plus linking of externally issued certificates, and separately advertises in-platform digital/e-signing for approvals and raises (docs-7, docs-10). However, no evidence explicitly confirms that share certificates themselves are e-signed as legally binding documents within the platform, only that e-signing exists elsewhere in workflows. Missing for 10: explicit documentation that certificate issuance itself includes a legal e-signature step, and independent/hands-on confirmation of legal enforceability.",
     "evidenceIds": [
       "cake-equity-docs-22",
       "cake-equity-docs-23",
-      "cake-equity-docs-10"
+      "cake-equity-docs-33",
+      "cake-equity-docs-34",
+      "cake-equity-docs-10",
+      "cake-equity-docs-7"
     ]
   },
   {
@@ -387,24 +418,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Cake documents permissioned stakeholder portals where admins control exactly what external parties (investors) can see (doc-14) and supports underlying documents like contracts and share certificates (docs-6, docs-22, docs-23), which are building blocks for a diligence packet. However, there's no evidence of a purpose-built 'data room' feature that bundles cap table views with documents for counsel/investor diligence sharing specifically. Missing for 10: explicit data-room/document-repository feature, counsel-specific access role, and any diligence workflow evidence beyond generic stakeholder portal permissions.",
+    "rationale": "Cake documents permissioned views (admin-controlled 'My Cake Portal' vs Company View) and some document handling (share certificates, uploaded/linked certificates) that gesture toward controlled sharing, but there is no evidence of a dedicated diligence 'data room' feature bundling documents (SAFEs, board consents, agreements) for external counsel/investor review beyond certificate management. Missing for 10: explicit data-room/document-repository feature, counsel-specific sharing workflow, evidence of bundling legal/financial documents alongside cap table views for diligence.",
     "evidenceIds": [
       "cake-equity-docs-14",
-      "cake-equity-docs-6",
+      "cake-equity-docs-46",
       "cake-equity-docs-22",
-      "cake-equity-docs-23"
+      "cake-equity-docs-33",
+      "cake-equity-docs-34"
     ]
   },
   {
     "productId": "cake-equity",
     "storyId": "employee-equity-portal",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake confirms a distinct 'My Cake Portal' for stakeholders separate from the admin cap-table view, and free-plan docs list 'stakeholder portals' as included, implying employees see their own equity info. However, there is no explicit evidence describing what the portal shows (grant details, vesting progress bars, strike price) or any 'what-if' scenario/outcome value modeling for individual stakeholders. missing for 10: documentation of vesting progress visualization, strike price display, and equity outcome/scenario modeling shown to employees.",
+    "rationale": "Cake documents a dedicated 'My Cake Portal' where employees/investors view their individual holdings separate from the admin cap table view, and stakeholder portals are included even on the free plan, with linked certificates visible there. However, there's no explicit evidence of the portal showing strike price detail or 'what your equity could be worth under different outcomes' scenario/valuation modeling for employees specifically (the raise/dilution modeling evidence is company-facing, not employee-facing). Missing for 10: explicit portal screenshots/docs confirming strike price display, vesting progress visualization, and outcome/scenario valuation modeling for individual employees.",
     "evidenceIds": [
-      "cake-equity-docs-14",
-      "cake-equity-docs-18"
+      "cake-equity-docs-46",
+      "cake-equity-docs-18",
+      "cake-equity-docs-34",
+      "cake-equity-docs-14"
     ]
   },
   {
@@ -413,10 +447,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Cake documents an MCP server that lets AI assistants query shareholders, share classes, SAFEs, notes and vesting from the live cap table (docs-11, docs-12), which is a documented, programmatic interface to the same data domains the story asks about. However, this is a conversational/agent-oriented interface rather than a structured REST/GraphQL API for bulk data pulls, and an explicit probe found no OpenAPI/swagger documentation (cake-equity-probe-2), so a traditional developer-facing API is unconfirmed. Missing for 10: a documented REST/GraphQL API spec, evidence of bulk/structured export via API, and confirmation the MCP server returns full raw cap table records rather than natural-language answers.",
+    "rationale": "Cake documents an MCP server that lets developers connect AI clients and query stakeholders, share classes, vesting, SAFEs and notes from the live cap table, which is a documented programmatic access channel, but it is explicitly read-only and Q&A-style rather than a structured API returning the full cap table dataset; a probe found no OpenAPI/REST API endpoints. Missing for 10: a documented REST/GraphQL API with structured endpoints for stakeholders/share classes/securities/vesting states, evidence of bulk/full data retrieval beyond conversational queries, and independent confirmation of API completeness.",
     "evidenceIds": [
       "cake-equity-docs-11",
       "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27",
       "cake-equity-probe-2"
     ]
   },
@@ -426,11 +462,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack describes an audit log or change-tracking feature capturing who changed what, when, and under what authorization; the closest items are approval workflows (board sign-offs) and admin permissions, but no audit trail/history feature is documented. missing for 10: dedicated audit log documentation, change history records, user/timestamp/authorization tracking, exportable audit reports.",
-    "evidenceIds": [
-      "cake-equity-docs-10",
-      "cake-equity-docs-14"
-    ]
+    "rationale": "No evidence pack item mentions an audit log, change history, or authorization trail for cap table edits; documentation covers migration, features, vesting, certificates, and MCP read-only queries but not change tracking/audit trails.",
+    "evidenceIds": []
   },
   {
     "productId": "cake-equity",
@@ -438,12 +471,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Cake has a stakeholder portal, NSO/ISO support, vesting engine, and dilution modeling for raises, plus an AI/MCP assistant for querying cap table data, but nothing indicates these are packaged as plain-language, employee-facing explanations of tax treatment, exercise windows, or personal dilution impact. missing for 10: employee-facing tax treatment explanations, exercise window guidance, personalized dilution narratives, any UI/doc evidence of 'plain language' equity education for stakeholders (not just admins).",
+    "rationale": "Cake provides employees a portal to view individual holdings (My Cake Portal) and admins control what stakeholders see, but there is no evidence of plain-language explanations of tax treatment, exercise windows, or dilution tailored for employees — the AI/MCP assistant and dilution modeling tools are framed as admin/company-facing, not employee education features.",
     "evidenceIds": [
-      "cake-equity-docs-5",
       "cake-equity-docs-14",
-      "cake-equity-docs-19",
-      "cake-equity-docs-11"
+      "cake-equity-docs-46",
+      "cake-equity-docs-19"
     ]
   },
   {
@@ -451,12 +483,9 @@
     "storyId": "exit-waterfall-analysis",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Cake Equity's evidence covers cap table management, dilution/raise modeling, vesting, and 409A valuations, but there is no mention of exit waterfall analysis, proceeds-per-share-class modeling under different exit values, or handling of liquidation preferences and participation rights. This is a fair capability to expect from a cap table platform, so it applies, but no evidence supports it.",
-    "evidenceIds": [
-      "cake-equity-docs-7",
-      "cake-equity-docs-19"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence pack mentions exit waterfall modeling, liquidation preferences, participation rights, or proceeds distribution across share classes under varying exit values. Cake's evidence covers cap table management, vesting, fundraising/dilution modeling, and migrations, but exit waterfall analysis is not described anywhere.",
+    "evidenceIds": []
   },
   {
     "productId": "cake-equity",
@@ -464,7 +493,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any HRIS/payroll integration (e.g., Gusto, Rippling) or automated syncing of new hires/terminations into equity records; the evidence only covers cap table management, migrations, MCP/AI assistant, and stock option features.",
+    "rationale": "No evidence anywhere in the pack mentions HRIS/payroll integrations (e.g., Gusto, Rippling) or any automated stakeholder sync from such systems; Cake's documented data flows are manual bulk uploads/migrations from Carta, Pulley, or spreadsheets, not HRIS sync.",
     "evidenceIds": []
   },
   {
@@ -472,24 +501,22 @@
     "storyId": "intl-scheme-valuations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only shows US-style 409A valuations and general cap table/option management features; there is no mention of UK HMRC/EMI valuations or country-specific option plans for international entities.",
-    "evidenceIds": [
-      "cake-equity-docs-20",
-      "cake-equity-docs-8"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence mentions UK HMRC/EMI valuations or country-specific option plans; only US-style 409A valuations and NSO/ISO option support are documented, with no reference to non-US schemes or international entity support.",
+    "evidenceIds": []
   },
   {
     "productId": "cake-equity",
     "storyId": "investor-updates-portal",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Cake documents a distinct 'My Cake' investor portal where admins control exactly what stakeholders can see, separate from the full cap table (cake-equity-docs-14), and the free plan explicitly includes 'stakeholder portals' (cake-equity-docs-18). Capital-raise features also mention the ability to 'communicate with your investors' within the platform (cake-equity-docs-7). However, there is no concrete evidence of a structured, scheduled investor-update/reporting feature (e.g. automated periodic updates, update templates) that would fully eliminate ad hoc emailing. Missing for 10: dedicated investor-update/reporting tool documentation, evidence of scheduled or templated update distribution, and independent confirmation investors actually use the portal instead of emailing founders.",
+    "rationale": "Cake explicitly provides a separate 'My Cake Portal' for investors/employees to view their own holdings, distinct from the admin Company View, with admin-controlled visibility limits so investors don't see the full cap table; certificates and vesting details are accessible there without emailing the founder. Missing for 10: explicit evidence of proactive 'structured update' notifications/reports pushed to investors (beyond portal access) and independent/third-party corroboration of investor experience.",
     "evidenceIds": [
       "cake-equity-docs-14",
-      "cake-equity-docs-18",
-      "cake-equity-docs-7"
+      "cake-equity-docs-46",
+      "cake-equity-docs-34",
+      "cake-equity-docs-18"
     ]
   },
   {
@@ -498,10 +525,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a general contract editor that can be 'customised with your attorney' and admin-controlled stakeholder portal views, but there is no evidence of a dedicated law-firm/outside-counsel role, permissions tier, or workflow letting counsel directly prepare documents and update records in-platform.",
+    "rationale": "Evidence covers admin (Company View) vs stakeholder (My Cake Portal) roles and a contract editor that can be 'customised with your attorney,' but there is no mention of a dedicated law-firm/outside-counsel role that lets counsel log in directly to prepare documents or update cap-table records — counsel involvement appears advisory/offline rather than a platform seat.",
     "evidenceIds": [
       "cake-equity-docs-6",
-      "cake-equity-docs-14"
+      "cake-equity-docs-14",
+      "cake-equity-docs-46"
     ]
   },
   {
@@ -510,19 +538,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers cap table management, vesting automation, e-signing for board approvals, and digital certificate issuance, but nothing describes an employee-facing option exercise workflow that includes payment processing and resulting share issuance. No mention of exercise price payment, exercise request flow, or completing exercise digitally end-to-end for employees.",
-    "evidenceIds": []
+    "rationale": "The evidence covers option grant creation, vesting automation, board e-signing, and certificate issuance, but nowhere describes an employee-facing 'exercise my options' workflow that includes payment collection and resulting share issuance. Missing for 10: an exercise request/payment flow for employees, confirmation of payment methods, and evidence of automated share issuance upon exercise.",
+    "evidenceIds": [
+      "cake-equity-docs-4",
+      "cake-equity-docs-5",
+      "cake-equity-docs-10",
+      "cake-equity-docs-22",
+      "cake-equity-docs-46"
+    ]
   },
   {
     "productId": "cake-equity",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Evidence shows only a read-only MCP integration for querying cap table data in plain English (docs-11, docs-12), not a full API enabling all UI actions (writes, approvals, e-signing, migrations, etc.). A direct probe for an OpenAPI/API spec returned 404 on all candidate paths, indicating no public API exists for parity with UI functionality.",
+    "rationale": "Cake offers an MCP server that lets AI assistants query cap table data in plain English, but this access is explicitly read-only, covering only viewing shareholders, vesting, SAFEs, etc. There is no evidence of write capabilities (issuing shares, managing vesting, capital raises, certificates) via API, and probes for a public OpenAPI/REST API returned 404s, indicating no full API parity with the UI. Missing for 10: write/mutation endpoints via API, a documented general-purpose API/OpenAPI spec, and evidence that all UI actions (raises, certificates, board approvals) can be performed via API.",
     "evidenceIds": [
       "cake-equity-docs-11",
       "cake-equity-docs-12",
+      "cake-equity-docs-26",
+      "cake-equity-docs-27",
       "cake-equity-probe-2"
     ]
   },
@@ -531,12 +567,14 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers importing/migrating data INTO Cake (from Carta, Pulley, spreadsheets) but there is no mention of exporting a user's own data out of Cake in open formats, nor any data-portability/export policy for leaving the platform. missing for 10: any documented export feature, open-format data dump, or account closure/data-portability policy.",
+    "confidence": "medium",
+    "rationale": "All export-related evidence describes importing/migrating data FROM Carta/Pulley/spreadsheets INTO Cake, not exporting data OUT of Cake for a user to leave with their data in open formats; one item even states 'no spreadsheet export needed' for viewing the cap table in Cake, suggesting no such outbound export feature is documented.",
     "evidenceIds": [
-      "cake-equity-docs-15",
-      "cake-equity-docs-16",
-      "cake-equity-docs-17"
+      "cake-equity-docs-42",
+      "cake-equity-docs-43",
+      "cake-equity-docs-36",
+      "cake-equity-docs-37",
+      "cake-equity-docs-38"
     ]
   },
   {
@@ -545,7 +583,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cake Equity is a closed-source SaaS cap table management platform; open-sourcing its source code is not a plausible axis for this type of product, and no evidence suggests otherwise.",
+    "rationale": "Cake Equity is a closed-source SaaS cap table platform, not an open-source project; source availability under an open license is not a fair axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -554,7 +592,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cake Equity is a SaaS cap table management platform, not open-source or self-hostable software; self-hosting is not a coherent axis for this product category.",
+    "rationale": "Cake Equity is a SaaS cap table management platform, not open-source or self-hostable software; self-hosting the core product is a category error for this type of hosted SaaS product.",
     "evidenceIds": []
   },
   {
@@ -563,11 +601,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake documents board approvals/e-signing ('Fast approvals... board sign-offs and e-signing in minutes'), NSO/ISO option issuance, vesting automation, and integrated 409A valuations within the cap table plan, which together cover the major pieces of the story. However, no evidence explicitly ties the 409A valuation as the compliance-checked strike price input within the same automated grant-issuance workflow, nor shows an end-to-end single flow from new-hire grant creation through board approval to 409A-priced options. missing for 10: explicit end-to-end workflow showing 409A strike price auto-populating into the option grant before board approval, and independent/hands-on confirmation of this integrated flow.",
+    "rationale": "Cake documents the individual pieces of this workflow — fast board sign-offs/e-signing (docs-10), NSO/ISO option issuance with vesting (docs-4, docs-5), and an included 409A valuation delivered within 3 business days (docs-20) — but no evidence describes these as chained into a single end-to-end 'issue options to a new hire' workflow that pulls a live 409A strike price directly into a board approval and grant issuance step. missing for 10: explicit documentation that the 409A price auto-populates the option grant, a walkthrough of the new-hire grant flow tying board approval, strike price, and issuance together, and independent/hands-on confirmation.",
     "evidenceIds": [
       "cake-equity-docs-10",
-      "cake-equity-docs-5",
       "cake-equity-docs-4",
+      "cake-equity-docs-5",
       "cake-equity-docs-20",
       "cake-equity-docs-8"
     ]
@@ -575,13 +613,14 @@
   {
     "productId": "cake-equity",
     "storyId": "partner-scoped-equity-access",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Cake documents a general permissions feature where 'admin controls exactly what they can see' outside the full cap table (docs-14), suggesting some scoped-access capability exists, but there is no evidence of dedicated third-party professional access (law firm, HRIS vendor, wealth manager) roles, API keys, or scoped credential systems built for this specific use case. Missing for 10: named integrations or role types for external professionals, API/token-based scoped access, and documentation of granular permission levels beyond the generic stakeholder portal distinction.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows admin-controlled visibility only between Company View and My Cake Portal for stakeholders (employees/investors), and read-only MCP access for AI assistants — neither addresses granting scoped access to external third parties like law firms, HRIS vendors, or wealth managers acting on the company's behalf. No mention of advisor roles, delegated access, API keys, or permissioned third-party integrations of this kind.",
     "evidenceIds": [
       "cake-equity-docs-14",
-      "cake-equity-docs-13"
+      "cake-equity-docs-46",
+      "cake-equity-docs-27"
     ]
   },
   {
@@ -590,7 +629,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or any control over where data is stored; the security page only references 2FA. Missing for 10: any mention of data region selection, residency guarantees, or hosting location options.",
+    "rationale": "No evidence anywhere in the pack about data residency, regional hosting, or data storage location controls for Cake Equity's cap table platform.",
     "evidenceIds": []
   },
   {
@@ -599,7 +638,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions AI-training data opt-out, data usage policies for model training, or any privacy controls specific to preventing AI training use; the only AI-related evidence concerns MCP connectivity for querying cap table data, not data-training opt-outs.",
+    "rationale": "No evidence pack item addresses AI training data usage, opt-out policies, or data-privacy controls related to model training; the MCP-related docs describe read-only cap table querying but say nothing about training data exclusion.",
     "evidenceIds": []
   },
   {
@@ -608,7 +647,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers cap table management, MCP AI assistant connectivity, and general security (2FA), but there is no mention of data retention policies, deletion controls, or data lifecycle management that an AI-native user could configure.",
+    "rationale": "The evidence pack covers cap table features, migration, pricing, and MCP/AI-assistant read-only querying, but contains no mention of data retention policies, deletion controls, or data lifecycle management that an AI-native user could control. missing for 10: any documentation on data retention settings, deletion/export-then-purge workflows, or AI query data handling/retention policy.",
     "evidenceIds": []
   },
   {
@@ -626,11 +665,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake explicitly supports raise modeling, dilution visualization, SAFE/Convertible workflows, digital signing, and investor communication (docs-7, docs-19), plus attorney-customizable contract templates (docs-6). However, there is no explicit evidence of option-pool top-up modeling or pro-forma ownership tables, and no dedicated 'share scenario with counsel' feature beyond general document/contract editing. Missing for 10: explicit option pool top-up simulation, pro-forma ownership output, and a named scenario-sharing workflow with counsel/investors.",
+    "rationale": "Cake explicitly supports modeling a raise (SAFEs/Convertible Notes) and dilution impact, has a full contract editor for SAFEs/Convertibles/Options that can be customized with an attorney, and offers investor communication/e-signing workflows, and scenarios live in a shared cap table viewable by counsel/investors via portals. However, there's no explicit mention of an option pool top-up step within round modeling or dedicated 'pro-forma ownership' scenario comparison/export feature, and no evidence of a sandboxed 'what-if' scenario mode distinct from the live cap table. Missing for 10: explicit option pool top-up modeling in the raise workflow, dedicated pro-forma/what-if scenario comparison tooling, and independent/hands-on corroboration of the round-modeling accuracy.",
     "evidenceIds": [
       "cake-equity-docs-7",
       "cake-equity-docs-19",
-      "cake-equity-docs-6"
+      "cake-equity-docs-6",
+      "cake-equity-docs-46",
+      "cake-equity-docs-14"
     ]
   },
   {
@@ -639,8 +680,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of Rule 701 threshold tracking, Form 3921 filing generation, or 83(b) election tracking anywhere in the docs; the pack covers 409A, cap table management, migrations, and MCP integration but no US equity compliance filing automation.",
-    "evidenceIds": []
+    "rationale": "Evidence covers general cap table, vesting, NSO/ISO, 409A valuation, and document management features, but nothing addresses Rule 701 disclosure thresholds, Form 3921 filings, or 83(b) election tracking/generation — all specific US equity compliance filing requirements. This axis clearly applies to a cap table/equity management platform, but no evidence shows Cake tracks or generates these specific compliance items.",
+    "evidenceIds": [
+      "cake-equity-docs-5",
+      "cake-equity-docs-8",
+      "cake-equity-docs-20"
+    ]
   },
   {
     "productId": "cake-equity",
@@ -662,10 +707,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cake documents 409A valuations as a built-in feature, done by expert appraisers and delivered within 3 business days, bundled into the cap table plan (cake-equity-docs-20, cake-equity-docs-8), implying it draws on the live cap table data already in the platform. However, there is no explicit mention of 'audit-ready' certification or a defined refresh/renewal schedule for keeping valuations current. Missing for 10: explicit audit-ready/compliance language, and evidence of scheduled/automatic re-valuation cadence tied to cap table changes.",
+    "rationale": "Cake explicitly offers a 409A valuation delivered by expert appraisers within 3 business days, included in the cap table plan and referenced in pricing tiers, implying it is generated from live cap table data. However, there is no evidence of 'audit-ready' certification detail, no mention of scheduled/recurring refresh cadence, and no independent or hands-on corroboration of the valuation process or its accuracy. missing for 10: explicit audit-ready packaging/documentation, automatic refresh scheduling, independent verification of valuation quality/turnaround.",
     "evidenceIds": [
-      "cake-equity-docs-20",
-      "cake-equity-docs-8"
+      "cake-equity-docs-8",
+      "cake-equity-docs-20"
     ]
   },
   {
@@ -2115,15 +2160,14 @@
     "storyId": "agent-drafts-grants",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The API surface documented is read-only (auth, companyCaptable) with no evidence of any write/create operations for securities like option grants, let alone a queued-for-approval workflow; granting is only described as a manual UI feature (bulk grant/sign in the app), not a programmatic agent-drafting capability. missing for 10: any documented API endpoint to create/draft a grant, any concept of an approval queue or draft state reachable via API, and evidence of an agent-facing programmatic interface for equity issuance.",
+    "confidence": "medium",
+    "rationale": "The documented API surface only exposes read operations (auth, companyCaptable, companyTransactions) for retrieving cap table/transaction data; there is no evidence of a write/draft endpoint for creating option grants or other securities, nor any mention of a board-approval queue workflow accessible programmatically.",
     "evidenceIds": [
-      "ledgy-docs-5",
       "ledgy-docs-6",
       "ledgy-docs-21",
-      "ledgy-docs-22",
-      "ledgy-docs-12",
-      "ledgy-probe-2"
+      "ledgy-docs-30",
+      "ledgy-docs-5",
+      "ledgy-docs-22"
     ]
   },
   {
@@ -2132,10 +2176,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Ledgy exposes an OAuth2-authenticated API with a companyCaptable operation that lets an agent programmatically pull cap table data, which is the core enabler for this story. However, there is no evidence of a documented reconciliation/data-room comparison capability, no data-room API, no openapi/llms.txt discoverability (both probes 404), and no example of an agent workflow tying cap table pulls to data-room reconciliation. Missing for 10: data-room integration/API, reconciliation logic or workflow support, machine-readable API spec (openapi.json/llms.txt) for agent discovery, independent/hands-on evidence of this workflow.",
+    "rationale": "Ledgy exposes an OAuth2 service-account API with a companyCaptable operation that returns cap table data programmatically, including paging/delta sync (companyTransactions/companyCaptable), which supports an agent pulling current cap table data. However, there is no evidence of a data-room integration, reconciliation logic, or any documented API surface for financing/data-room workflows, and no published OpenAPI spec or llms.txt was found (probes returned 404), limiting agent-native discoverability. Missing for 10: documented data room API/export, reconciliation or diffing tooling between cap table and data room documents, and a discoverable machine-readable API spec.",
     "evidenceIds": [
       "ledgy-docs-6",
       "ledgy-docs-21",
+      "ledgy-docs-30",
       "ledgy-docs-18",
       "ledgy-docs-1",
       "ledgy-probe-1",
@@ -2148,7 +2193,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe found no llms.txt (404) and no discoverable OpenAPI/agent-oriented docs at standard locations, and no evidence pack item mentions an agent-facing docs format.",
+    "rationale": "A direct probe found no llms.txt (404) and no agent-oriented API spec files (openapi/swagger all 404), and no docs mention agent-oriented documentation formats.",
     "evidenceIds": [
       "ledgy-probe-1",
       "ledgy-probe-2"
@@ -2160,7 +2205,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any AI-generated insights, analytics, or suggestions feature within Ledgy; the evidence pack only covers cap table management, compliance, reporting, and API authentication mechanics. Missing for 10: any mention of AI/ML-driven analysis, natural-language insights, or suggestion features derived from user data.",
+    "rationale": "The evidence pack covers API authentication, cap table, compliance, and reporting features, but contains no mention of AI-generated insights, suggestions, or any AI/ML analysis capability within the product.",
     "evidenceIds": []
   },
   {
@@ -2168,13 +2213,9 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Ledgy offers workflow automation for cap table/equity management (bulk granting, HRIS integrations) and an API with OAuth service accounts, but nothing describes autonomous background automations that a user or AI agent can set up and let run independently (e.g., scheduled jobs, triggers, webhooks). No mention of automation-builder, scheduling, or agentic execution.",
-    "evidenceIds": [
-      "ledgy-docs-9",
-      "ledgy-docs-10",
-      "ledgy-docs-14"
-    ]
+    "confidence": "high",
+    "rationale": "Ledgy's evidence covers cap table management, API authentication, and equity workflow automation (bulk granting, vesting, reporting) but nothing about setting up autonomous background automations/agents that run independently to trigger actions. The 'automation' mentions refer to bulk manual workflows and data sync, not agentic/autonomous background processes.",
+    "evidenceIds": []
   },
   {
     "productId": "ledgy",
@@ -2182,7 +2223,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a built-in AI assistant within Ledgy for delegating tasks; all evidence relates to cap table management, API authentication, and integrations, not an AI assistant feature.",
+    "rationale": "No evidence of any built-in AI assistant or agentic task-delegation feature in Ledgy; the evidence pack covers cap table, compliance, trading, and API/service-account authentication topics only.",
     "evidenceIds": []
   },
   {
@@ -2191,15 +2232,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Ledgy's API supports non-interactive, machine-to-machine authentication via OAuth 2.0 client_credentials with service accounts, which enables scripted/CI-style access without a human login (ledgy-docs-1, ledgy-docs-18, ledgy-docs-19). However, the documented API surface is very limited (only `auth` and `companyCaptable` operations), no CLI, SDK, or CI-specific tooling is evidenced, and llms.txt/openapi probes both 404, suggesting thin machine-readable API documentation. Missing for 10: a broader documented API/CLI for automating core workflows (grants, reports, compliance), explicit CI/automation examples, and discoverable OpenAPI spec.",
+    "rationale": "Ledgy exposes machine-to-machine API access via OAuth 2.0 client_credentials grants tied to service accounts (not user logins), which is a headless-friendly auth model suitable for scripted/CI use, and API operations like auth, companyCaptable, and companyTransactions can be called programmatically with pagination/delta support. However there is no documented CLI, SDK, CI/CD pipeline examples, webhooks, or explicit guidance on running Ledgy workflows unattended in automation pipelines. Missing for 10: official CI/CD or automation examples, SDKs/CLI tooling, webhook/event triggers for headless workflows.",
     "evidenceIds": [
       "ledgy-docs-1",
       "ledgy-docs-18",
-      "ledgy-docs-19",
-      "ledgy-docs-5",
-      "ledgy-docs-6",
-      "ledgy-probe-1",
-      "ledgy-probe-2"
+      "ledgy-docs-27",
+      "ledgy-docs-28",
+      "ledgy-docs-30"
     ]
   },
   {
@@ -2208,7 +2247,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a cap table/equity management SaaS, not an AI agent or assistant; the evidence shows an OAuth-based REST API for its own data, with no mention of MCP server support or agentic tool-plugging capability. This axis is a category error for this product type.",
+    "rationale": "Ledgy is a cap table/equity management SaaS platform, not an AI agent; the story asks whether the product itself can consume MCP servers as a client, which is a category error for this kind of product — no evidence suggests it functions as an AI agent needing to plug in external tools.",
     "evidenceIds": []
   },
   {
@@ -2217,12 +2256,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a cap table/equity management platform; it exposes an OAuth-authenticated API with specific operations (auth, companyCaptable) but no evidence of an official MCP server for agent connectivity. Probes for llms.txt and OpenAPI specs both returned 404, and no MCP-related documentation appears anywhere in the evidence.",
+    "rationale": "Ledgy is a cap-table/equity management platform with a documented OAuth2 API, but there is no evidence of an official MCP server or agent-connectivity offering; probes for standard discovery files (llms.txt, openapi) both return 404.",
     "evidenceIds": [
       "ledgy-probe-1",
-      "ledgy-probe-2",
-      "ledgy-docs-5",
-      "ledgy-docs-6"
+      "ledgy-probe-2"
     ]
   },
   {
@@ -2245,22 +2282,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a cap table/equity management SaaS with an API and OAuth-based service accounts, but there is no mention of an official CLI tool anywhere in the evidence pack.",
+    "rationale": "No evidence of an official CLI tool anywhere in the docs; Ledgy exposes an OAuth-based REST API but nothing about a command-line interface for AI-native workflows.",
     "evidenceIds": []
   },
   {
     "productId": "ledgy",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Ledgy documents a public API with OAuth 2.0 client_credentials auth, service accounts, and specific operations (auth, companyCaptable) that can be driven programmatically, which supports AI-native automation. However, probes show no discoverable OpenAPI spec or llms.txt, and only two operations are evidenced, suggesting limited API surface documentation for broader agentic use. Missing for 10: a full API reference/OpenAPI spec, broader endpoint coverage beyond auth/captable, and independent corroboration of real-world API usage.",
+    "rationale": "Ledgy documents a real public API with OAuth2 client_credentials auth, service accounts, discoverable authorization server metadata, and defined operations (auth, companyCaptable, companyTransactions) supporting pagination/delta sync — enough for programmatic/agentic driving of the product. However, no OpenAPI/machine-readable spec or llms.txt was found (probes returned 404s), and there's no evidence of broader write operations (e.g., granting equity, managing transactions) via API beyond read endpoints. Missing for 10: discoverable OpenAPI/machine-readable schema, evidence of broader write/action endpoints, independent third-party corroboration of API usage.",
     "evidenceIds": [
       "ledgy-docs-1",
-      "ledgy-docs-5",
       "ledgy-docs-6",
       "ledgy-docs-18",
       "ledgy-docs-19",
+      "ledgy-docs-27",
+      "ledgy-docs-30",
       "ledgy-probe-1",
       "ledgy-probe-2"
     ]
@@ -2271,13 +2309,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ledgy supports OAuth 2.0 service accounts with credentials 'scoped per integration', short-lived tokens, immediate revocation, and a client_credentials grant flow, which are solid least-privilege primitives that could be used to provision an agent's credentials. However, there's no evidence of fine-grained scope/permission configuration (e.g., read-only vs write, specific data-domain scopes) or any agent-specific tooling/framing. Missing for 10: granular permission-scope controls beyond 'per integration', explicit agent-oriented credential issuance workflow, and independent corroboration of least-privilege enforcement.",
+    "rationale": "Ledgy supports OAuth 2.0 service accounts with client_credentials grant, credentials 'scoped per integration', short-lived tokens, and immediate revocation/rotation (ledgy-docs-1,4,18,27,28,29), which functions as a least-privilege machine credential mechanism suitable for an autonomous agent. However, there is no explicit framing for AI agents, no documented fine-grained permission/scope selection beyond per-integration binding, and the API surface itself is narrow (auth, companyCaptable, companyTransactions) rather than a rich scope model. Missing for 10: explicit agent-oriented provisioning flow, granular read/write scope selection, and independent corroboration beyond vendor docs.",
     "evidenceIds": [
+      "ledgy-docs-1",
       "ledgy-docs-4",
       "ledgy-docs-18",
+      "ledgy-docs-27",
+      "ledgy-docs-28",
+      "ledgy-docs-29",
       "ledgy-docs-3",
-      "ledgy-docs-20",
-      "ledgy-docs-2"
+      "ledgy-docs-20"
     ]
   },
   {
@@ -2286,11 +2327,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows raw OAuth 2.0 API operations (auth, companyCaptable) with no mention of official SDKs/client libraries in any language, and probes confirm no discoverable OpenAPI spec or llms.txt that would support SDK generation. missing for 10: no official SDK packages, no language-specific client libraries, no SDK documentation or GitHub repos referenced anywhere in the pack.",
+    "rationale": "Evidence shows only a raw OAuth2-secured API with named operations (auth, companyCaptable, companyTransactions) and no mention of official client libraries/SDKs in any language; probes for openapi.json and llms.txt both return 404, indicating no machine-readable spec or SDK generation artifacts either.",
     "evidenceIds": [
       "ledgy-docs-1",
-      "ledgy-docs-5",
-      "ledgy-docs-6",
+      "ledgy-docs-18",
+      "ledgy-docs-21",
+      "ledgy-docs-22",
+      "ledgy-docs-30",
       "ledgy-probe-1",
       "ledgy-probe-2"
     ]
@@ -2301,7 +2344,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of webhook support anywhere in the docs; only OAuth-authenticated REST-style operations (auth, companyCaptable) are described, with no mention of event subscriptions or webhook callbacks.",
+    "rationale": "The evidence pack shows Ledgy's API supports OAuth-based query operations (auth, companyCaptable, companyTransactions with pagination/delta support) but there is no mention of webhooks or event subscriptions anywhere in the docs or probes; the API appears pull-based only.",
     "evidenceIds": []
   },
   {
@@ -2310,12 +2353,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only text descriptions of two API operations (auth, companyCaptable) with no interactive reference, no runnable examples/sandbox, and explicit probes show no OpenAPI spec or llms.txt available.",
+    "rationale": "Evidence shows only static, prose-style docs describing operations like auth and companyCaptable; there is no mention of an interactive API reference, sandbox, or runnable examples, and probes for openapi.json/swagger.json/llms.txt all return 404, indicating no machine-explorable or interactive spec is published.",
     "evidenceIds": [
-      "ledgy-docs-5",
-      "ledgy-docs-6",
+      "ledgy-probe-2",
       "ledgy-probe-1",
-      "ledgy-probe-2"
+      "ledgy-docs-5",
+      "ledgy-docs-6"
     ]
   },
   {
@@ -2324,12 +2367,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probes for llms.txt and common OpenAPI/Swagger spec paths all returned 404, and no docs evidence links to a downloadable machine-readable API spec despite documenting individual operations like auth and companyCaptable.",
+    "rationale": "Docs describe API operations (auth, companyCaptable) in prose, but explicit probes for OpenAPI/Swagger spec files all returned 404, and no llms.txt or machine-readable spec is available.",
     "evidenceIds": [
       "ledgy-probe-1",
-      "ledgy-probe-2",
-      "ledgy-docs-5",
-      "ledgy-docs-6"
+      "ledgy-probe-2"
     ]
   },
   {
@@ -2338,7 +2379,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox, staging, or test environment offered by Ledgy's API or platform; documentation covers only production OAuth authentication and API operations. Missing for 10: any mention of sandbox/test environment, test credentials, or non-production data mode.",
+    "rationale": "No evidence of a sandbox, staging, or test environment separate from production in Ledgy's API or product docs; only production API operations, auth, and reporting features are described.",
     "evidenceIds": []
   },
   {
@@ -2347,21 +2388,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; docs cover auth, rotation, and specific operations but nothing about version numbers, changelogs, or deprecation timelines. OpenAPI/spec probes also failed (404s), reinforcing absence of formal versioned API documentation.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; docs cover auth, rotation, and specific operations but nothing about version numbers, changelogs, or deprecation timelines. Probes for OpenAPI spec and llms.txt both returned 404, further indicating no discoverable versioning/deprecation documentation.",
     "evidenceIds": [
-      "ledgy-probe-2",
-      "ledgy-probe-1"
+      "ledgy-probe-1",
+      "ledgy-probe-2"
     ]
   },
   {
     "productId": "ledgy",
     "storyId": "asc-718-expense-report",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Ledgy explicitly advertises financial reports for equity compensation under US GAAP (which ASC 718 is part of) with tranche-level detail generated in one click, directly relevant to SBC expense reporting for auditors. However, the evidence never names ASC 718 specifically or describes audit-ready formatting/export conventions accountants expect. Missing for 10: explicit ASC 718 terminology, sample report/audit trail evidence, and confirmation of accountant-facing export formats.",
+    "rationale": "Ledgy explicitly markets financial reporting for equity under IFRS 2, UK GAAP, or US GAAP with tranche-level detail, one-click generation, and configurable settings/permissions, which is the closest documented capability to ASC 718 expense reporting — but ASC 718 is not explicitly named anywhere in the evidence, so it's unclear if US GAAP reporting maps directly to ASC 718 requirements auditors expect. Missing for 10: explicit mention of ASC 718 by name, audit-ready report format/sample, and any third-party/auditor validation that the output is accepted by auditors.",
     "evidenceIds": [
       "ledgy-docs-13",
+      "ledgy-docs-32",
+      "ledgy-docs-33",
       "ledgy-docs-24"
     ]
   },
@@ -2371,13 +2414,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Ledgy documents bulk operations for humans in-app (bulk granting, document/signature workflows, HRIS-driven bulk data accuracy), but there's no evidence of an API/automation surface allowing an AI-native user to programmatically perform bulk operations across many items — the API docs only show narrow operations like 'auth' and 'companyCaptable', and no bulk/batch endpoints or OpenAPI spec are found. missing for 10: API-level bulk/batch endpoints, evidence of programmatic multi-item operations, OpenAPI/spec confirmation of bulk actions.",
+    "rationale": "Ledgy documents bulk workflows for humans (bulk granting/signing contracts, bulk vesting schedule changes, HRIS sync for large data volumes, paginated API reads for cap table/transactions), suggesting some bulk capability exists, but there is no documented API/AI-native mechanism for bulk write operations (e.g., batch grant creation via API) — the only API operations listed are 'auth' and 'companyCaptable' (read-only), and no OpenAPI spec was discoverable. missing for 10: documented bulk-write API endpoints, evidence of programmatic/AI-agent-driven batch operations, an accessible OpenAPI schema confirming bulk operation support.",
     "evidenceIds": [
-      "ledgy-docs-9",
       "ledgy-docs-10",
+      "ledgy-docs-11",
+      "ledgy-docs-9",
       "ledgy-docs-12",
+      "ledgy-docs-30",
       "ledgy-docs-6",
-      "ledgy-docs-5",
       "ledgy-probe-2"
     ]
   },
@@ -2387,7 +2431,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any rule engine, event triggers, or automated actions based on conditions/events; the 'automation' mentioned relates to bulk workflows (granting, reporting) not event-driven rule triggers.",
+    "rationale": "No evidence of any rule engine, event triggers, or automated conditional actions (e.g., 'if X happens, do Y'); Ledgy's 'automation' references are limited to bulk workflows and data sync, not user-defined event-driven rules.",
     "evidenceIds": []
   },
   {
@@ -2413,8 +2457,8 @@
     "storyId": "board-consents-esign",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers cap table management, equity compliance reporting, HRIS integrations, and API authentication, plus e-signature use for grant contracts, but there is no mention of board consents or stockholder approval workflows being drafted, routed for signature, and archived against specific authorizing transactions.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Ledgy's API authentication, cap table, equity plan automation, financial reporting, compliance, and trading/settlement features, but contains no mention of board consent drafting, stockholder approval workflows, e-signature routing for governance resolutions, or archiving approvals against transactions. Equity grant signing (ledgy-docs-10, ledgy-docs-12) refers to grant contracts, not board/stockholder consents.",
     "evidenceIds": []
   },
   {
@@ -2434,14 +2478,14 @@
     "productId": "ledgy",
     "storyId": "cap-table-full-export",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Ledgy's docs mention building custom reports/views and 'custom views and exports' for compliance reporting, plus an API (companyCaptable operation) for pulling cap table data, which implies some export capability. However, there is no explicit confirmation of Excel/CSV format exports, no documentation of a full transaction-history export, and no statement guaranteeing unrestricted, anytime data portability without vendor lock-in. missing for 10: explicit CSV/Excel export format documentation, full transaction-history export scope, explicit anti-lock-in / data-portability guarantee.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Ledgy offers a companyCaptable API and 'custom views and exports' / report building features, implying data can be pulled out, but there is no explicit documentation of a native Excel/CSV export of the full cap table and complete transaction history, nor any statement guaranteeing unrestricted, anytime export without vendor lock-in. missing for 10: explicit CSV/Excel export documentation, confirmation of full transaction history export (not just paginated API deltas), and independent evidence that exports are unrestricted/always available.",
     "evidenceIds": [
       "ledgy-docs-6",
       "ledgy-docs-8",
       "ledgy-docs-24",
-      "ledgy-docs-7"
+      "ledgy-docs-30"
     ]
   },
   {
@@ -2460,15 +2504,17 @@
     "storyId": "cap-table-single-source",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Ledgy's docs describe core cap-table functionality: bringing in historical transactions with attached documents, share classes/grants, reporting, and API access to cap table data (companyCaptable operation), positioning it as a live system of record used by companies and relied on for compliance/audit reporting. missing for 10: independent/third-party corroboration (e.g., investor or auditor testimonials) that Ledgy is trusted as the authoritative source of truth, and explicit documentation of SAFE instrument support.",
+    "confidence": "medium",
+    "rationale": "Ledgy's docs directly describe cap-table core functionality: importing historical transactions/certificates with documents attached, share/option grant issuance in bulk, custom vesting schedules, SAFE/instrument support implied via cap table data model, and a companyCaptable API exposing live cap table data for integrations with auditors/investors. Reporting and compliance features (financial reporting under IFRS/GAAP, audit-ready reports, permissioned access) reinforce the 'single source of truth' claim.\n\nmissing for 10: explicit mention of SAFE instrument handling, independent/third-party corroboration (e.g., customer case study or review) that investors/auditors actually rely on the platform as source of truth.",
     "evidenceIds": [
-      "ledgy-docs-6",
       "ledgy-docs-7",
       "ledgy-docs-8",
+      "ledgy-docs-11",
+      "ledgy-docs-12",
       "ledgy-docs-13",
-      "ledgy-docs-14",
-      "ledgy-docs-21"
+      "ledgy-docs-6",
+      "ledgy-docs-30",
+      "ledgy-docs-33"
     ]
   },
   {
@@ -2476,8 +2522,8 @@
     "storyId": "custom-vesting-schedules",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Ledgy's own equity-plan-automation page confirms custom vesting schedules ('Switch up vesting schedules for different groups, or create custom vesting') and bulk granting workflows, which supports the core ask, but there is no explicit evidence of cliff/milestone/acceleration-on-exit configuration or of automatic vested-vs-unvested tracking mechanics. Missing for 10: explicit cliff/milestone/acceleration-on-exit setup details, documentation of automatic vested/unvested calculation logic, and independent corroboration beyond marketing copy.",
+    "confidence": "low",
+    "rationale": "Docs confirm custom vesting schedules and switching schedules per group (ledgy-docs-11), plus bulk granting workflows (ledgy-docs-10), but there is no explicit mention of cliffs, milestone-based vesting, acceleration-on-exit clauses, or automated vested/unvested tracking mechanics. missing for 10: explicit cliff/milestone/acceleration support, details on automatic vested-vs-unvested calculation, independent/hands-on corroboration.",
     "evidenceIds": [
       "ledgy-docs-11",
       "ledgy-docs-10",
@@ -2501,13 +2547,14 @@
     "productId": "ledgy",
     "storyId": "diligence-data-room",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows Ledgy attaches documents to cap table records (ledgy-docs-7) and offers permission segmentation for team members (ledgy-docs-23), which are building blocks for a shared, permissioned repository, but there is no explicit mention of a dedicated 'data room' feature, external counsel/investor access controls, or diligence-specific sharing workflow. Missing for 10: explicit data-room/document-sharing feature description, external party (counsel/investor) access permissioning, and any hands-on or documented workflow for diligence sharing.",
+    "rationale": "Ledgy supports attaching historical documents to the cap table and segmenting permissions/access controls for team members and financial reporting, which are building blocks for diligence sharing, but the evidence never describes a dedicated permissioned 'data room' feature for sharing with external counsel or investors. missing for 10: explicit external investor/counsel sharing or data-room feature, granular document-level permissioning for outside parties, audit trail of external access.",
     "evidenceIds": [
       "ledgy-docs-7",
       "ledgy-docs-23",
-      "ledgy-docs-8"
+      "ledgy-docs-33",
+      "ledgy-docs-34"
     ]
   },
   {
@@ -2515,8 +2562,8 @@
     "storyId": "employee-equity-portal",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack focuses on API authentication, cap table administration, compliance reporting, and trading/settlement features, but contains no mention of an employee-facing portal showing grants, vesting progress, strike price, or scenario-based equity valuation. missing for 10: any documentation of an employee equity portal, vesting progress visualization, strike price display, or outcome/scenario modeling tools.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Ledgy's cap table, compliance, financial reporting, API, and trading/settlement features, but contains no mention of an employee-facing portal showing personal grants, vesting progress, strike price, or exit-scenario valuations. This is a plausible and expected capability for an equity management platform, but nothing in the provided evidence documents it.",
     "evidenceIds": []
   },
   {
@@ -2525,10 +2572,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ledgy docs describe a documented, OAuth2-authenticated API with a `companyCaptable` operation that retrieves 'cap table data' for a company, which is the correct programmatic-access mechanism a developer would need. However, the evidence never enumerates the specific fields (stakeholders, share classes, securities, vesting states) returned by that operation, and probes for a public OpenAPI/swagger spec all 404, so the schema depth and completeness cannot be confirmed. Missing for 10: field-level schema documentation confirming stakeholders/share classes/securities/vesting data, and an accessible OpenAPI/reference spec.",
+    "rationale": "Docs confirm an OAuth2-authenticated API with a companyCaptable operation that returns cap table data (stakeholders, securities) with pagination/delta support, plus an auth operation. However, evidence doesn't explicitly confirm coverage of share classes and vesting states specifically, and no OpenAPI spec or discoverable schema was found (probes returned 404s), limiting confidence in full data completeness. Missing for 10: explicit documentation of share classes and vesting state fields in the API response, a public OpenAPI/schema reference, and independent/hands-on confirmation of full data fidelity.",
     "evidenceIds": [
       "ledgy-docs-6",
       "ledgy-docs-21",
+      "ledgy-docs-30",
       "ledgy-docs-18",
       "ledgy-docs-1",
       "ledgy-probe-2"
@@ -2539,8 +2587,8 @@
     "storyId": "equity-audit-log",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a change/audit log tracking who changed what, when, or under what authorization for the cap table; evidence covers authentication, API scoping, and reporting features but nothing about audit trails or change history. Missing for 10: any mention of audit log, change history, user attribution for edits, or authorization trail.",
+    "confidence": "medium",
+    "rationale": "No evidence describes an audit log capturing who changed cap table data, when, or under what authorization. The evidence pack covers API authentication, service accounts, reporting features, and compliance permissions, but nothing about change-tracking/audit trails for cap table edits.",
     "evidenceIds": []
   },
   {
@@ -2549,7 +2597,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers API auth, cap table admin features, compliance reporting, and trading/settlement, but nothing addresses employee-facing plain-language explanations of tax treatment, exercise windows, or dilution impact. Missing for 10: employee education content, tax explainer tools, exercise window guidance, dilution simulators aimed at employees.",
+    "rationale": "Evidence pack covers API authentication, cap table administration, financial reporting, compliance, and trading/settlement features aimed at company admins, but contains no mention of employee-facing plain-language explanations of tax treatment, exercise windows, or dilution.",
     "evidenceIds": []
   },
   {
@@ -2558,7 +2606,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API authentication, cap table reporting, equity plan automation, compliance, and trading/settlement, but contains no mention of exit waterfall analysis, liquidation preferences, participation rights, or proceeds-per-share modeling under different exit scenarios. Missing for 10: any documentation of exit waterfall/scenario modeling, preference stack handling, participation calculations, or proceeds distribution by exit value.",
+    "rationale": "No evidence in the pack mentions exit waterfall analysis, exit proceeds modeling, liquidation preferences, or participation rights — the pack covers API auth, cap table data, equity plan automation, compliance, and trading/settlement, but nothing about scenario/waterfall modeling.",
     "evidenceIds": []
   },
   {
@@ -2567,9 +2615,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Ledgy claims '70+ HRIS integrations to keep large volumes of data accurate' for equity plan automation, implying HRIS/payroll sync is supported, but there is no detail on which systems (e.g., Gusto, Rippling), how new hire/termination events flow into equity records, or sync mechanics/frequency. Missing for 10: named HRIS/payroll connectors, description of automated new-hire/termination event handling, setup/configuration docs, and independent or hands-on confirmation of the sync working.",
+    "rationale": "Ledgy claims '70+ HRIS integrations to keep large volumes of data accurate,' implying HRIS sync capability, but there is no specific mention of named systems like Gusto or Rippling, no detail on how new hires/terminations flow into equity records, and no documentation of sync mechanics or setup. missing for 10: named HRIS connectors (Gusto/Rippling), documentation of new-hire/termination event handling, sync frequency/setup details, independent corroboration.",
     "evidenceIds": [
-      "ledgy-docs-9"
+      "ledgy-docs-9",
+      "ledgy-docs-31"
     ]
   },
   {
@@ -2590,7 +2639,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers API authentication, cap table data, equity plan automation, compliance, and trading/settlement features, but contains no mention of an investor portal, investor login access, or structured update/reporting features aimed at external investors. missing for 10: investor portal login, investor-facing update/reporting workflow, evidence of reducing founder-investor email traffic.",
+    "rationale": "The evidence pack covers API authentication, cap table management, equity compliance, and trading/settlement features, but contains no mention of an investor-facing portal, investor login access, or automated structured update distribution to investors. Missing for 10: evidence of an investor portal, investor self-service holdings view, and automated update/reporting delivery to investors without founder involvement.",
     "evidenceIds": []
   },
   {
@@ -2599,53 +2648,53 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of a law-firm/counsel-specific role or external-counsel collaboration workflow; docs mention only generic 'segment permissions for team members' and API/service-account access, nothing about outside counsel drafting documents or updating records in-platform.",
-    "evidenceIds": [
-      "ledgy-docs-23"
-    ]
+    "rationale": "No evidence describes a law-firm/outside-counsel role, external counsel access, or document preparation workflows for external legal advisors; evidence only covers API auth, cap table, compliance, and trading features. Missing for 10: any mention of outside counsel roles, permissioned external collaborator access, or document workflows for law firms.",
+    "evidenceIds": []
   },
   {
     "productId": "ledgy",
     "storyId": "online-option-exercise",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence covers cap-table management, grant automation, financial reporting, and a trading/settlement/payout system (nominee, broker, paying agent, Airwallex payouts) for share transactions, but nothing describes an employee-facing online option-exercise workflow that includes paying the strike price and triggering share issuance without paper forms. missing for 10: documentation of an exercise request flow, payment collection for exercise price, and automated share issuance upon exercise.",
+    "rationale": "Ledgy's trading-and-settlement docs show employees can submit market orders (sell to cover, sell all, hold all) and receive payouts via an integrated paying agent in 170 countries/60 currencies, suggesting some self-service equity transaction capability, but none of the evidence explicitly describes an online option-exercise workflow with strike-price payment and resulting share issuance. Missing for 10: explicit exercise workflow (selecting options to exercise), online payment of exercise cost, and confirmation that shares are issued/cap table updated as a direct result of exercise (rather than just secondary sale/liquidity events).",
     "evidenceIds": [
       "ledgy-docs-16",
       "ledgy-docs-17",
       "ledgy-docs-25",
-      "ledgy-docs-26"
+      "ledgy-docs-26",
+      "ledgy-docs-35"
     ]
   },
   {
     "productId": "ledgy",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The API surface documented is limited to authentication and a single read-only companyCaptable query — nothing evidencing parity with the extensive UI functionality (bulk grants, vesting schedules, compliance reports, trading/settlement, HRIS integrations, financial reporting). No OpenAPI spec or broader endpoint catalog was found (probes 404), so there's no evidence the API covers most UI capabilities let alone all of them.",
+    "rationale": "Ledgy's API exposes only a narrow set of operations (auth, companyCaptable, companyTransactions) for reading cap table/transaction data, whereas the UI supports a vastly broader set of actions (granting equity, bulk workflows, financial reporting, compliance management, trading/settlement, HRIS sync). No evidence the API allows write actions or covers most UI functionality. Missing for 10: API endpoints for granting/administering share plans, financial reporting generation, compliance workflows, trading/settlement operations, and any documented OpenAPI spec (probes show 404s) confirming full API surface parity.",
     "evidenceIds": [
       "ledgy-docs-5",
       "ledgy-docs-6",
       "ledgy-docs-21",
       "ledgy-docs-22",
-      "ledgy-probe-2",
-      "ledgy-probe-1"
+      "ledgy-docs-30",
+      "ledgy-probe-2"
     ]
   },
   {
     "productId": "ledgy",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows API access via cap table/company queries and report exports (custom views/exports), but there is no mention of a full open-format data export/portability feature enabling a user to take all their data and leave the platform; no llms.txt or OpenAPI spec found either.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Ledgy offers an API with cap table and transaction data retrieval (companyCaptable, companyTransactions) and mentions custom exports/reports, suggesting data can be extracted programmatically, but there's no documented bulk 'export all data' feature, no stated open format (CSV/JSON schema) guarantee, and no explicit data-portability/account-closure export flow. missing for 10: explicit full-account data export capability, documented open format specification, evidence of a one-click 'export everything and leave' feature, independent confirmation of completeness.",
     "evidenceIds": [
+      "ledgy-docs-6",
+      "ledgy-docs-21",
+      "ledgy-docs-30",
       "ledgy-docs-24",
-      "ledgy-docs-8",
-      "ledgy-probe-1",
-      "ledgy-probe-2"
+      "ledgy-docs-8"
     ]
   },
   {
@@ -2654,7 +2703,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a closed-source SaaS equity management platform, not an open-source project; source code availability under an open license is not a plausible axis for this product category.",
+    "rationale": "Ledgy is a closed-source SaaS equity management platform; source code availability under an open license is not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -2663,7 +2712,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a SaaS cap-table/equity management platform; self-hosting the core product is not a plausible axis for this category, and no evidence suggests any self-hosted deployment option.",
+    "rationale": "Ledgy is a SaaS cap table/equity management platform with no evidence of any self-hosted deployment option; it is inherently a hosted, cloud-only product, making self-hosting a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2685,14 +2734,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ledgy's docs show OAuth 2.0 service accounts that are credential-scoped per integration, short-lived, and revocable, which supports the general concept of granting a third-party integration access without sharing admin credentials, and the 70+ HRIS integrations point to real external vendor connectivity. However, there's no explicit documentation of granular data-slice scoping (e.g., read-only cap-table subsets) or of onboarding named third-party personas like law firms or wealth managers specifically, only generic 'auth' and 'companyCaptable' API operations. Missing for 10: explicit fine-grained permission/data-scope controls per third party, documented support for law-firm/wealth-manager use cases, and any admin UI showing how a developer restricts a partner's access scope.",
+    "rationale": "Ledgy's docs describe API service accounts that use OAuth2 client_credentials tokens scoped per integration (not full admin credentials), with specific operations like companyCaptable/companyTransactions limiting what data can be retrieved, and rotation/revocation controls — a reasonable mechanism for granting external vendors like HRIS or law firms scoped, non-admin access. However, there's no explicit example or guidance for onboarding named third-party categories (law firms, wealth managers) or fine-grained field/data-segment scoping beyond the fixed API operations. Missing for 10: explicit third-party onboarding workflow, granular data-field/segment scoping controls, and independent confirmation of real-world third-party integrations.",
     "evidenceIds": [
-      "ledgy-docs-1",
       "ledgy-docs-4",
       "ledgy-docs-6",
-      "ledgy-docs-9",
-      "ledgy-docs-18",
-      "ledgy-docs-22"
+      "ledgy-docs-21",
+      "ledgy-docs-27",
+      "ledgy-docs-30",
+      "ledgy-docs-9"
     ]
   },
   {
@@ -2700,8 +2749,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or where customer data is hosted; the docs cover only authentication, cap table, equity, and reporting features.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for Ledgy; the docs focus on API authentication, cap table, and compliance reporting features only.",
     "evidenceIds": []
   },
   {
@@ -2710,7 +2759,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Ledgy's evidence pack covers API authentication, cap table, equity plan, compliance, and trading features, but contains no mention of AI training data usage, opt-out controls, or data-use policies for AI models. This is a fair question for a SaaS platform handling sensitive company data, so absence of evidence yields 'none' rather than 'na'. Missing for 10: any policy statement, opt-out mechanism, or documentation addressing whether customer data is used for AI/ML model training.",
+    "rationale": "Ledgy is a cap table/equity management platform; evidence covers OAuth authentication, API scopes, and equity/compliance features, but nothing addresses AI training data usage or an opt-out policy for AI model training.",
     "evidenceIds": []
   },
   {
@@ -2718,8 +2767,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence covers credential/access-token revocation and rotation, but there is nothing about data retention policies, data deletion of user/company data, or export/erasure controls for AI-native use. missing for 10: data retention policy documentation, data deletion/erasure workflow, export controls tied to AI agent usage.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers credential/service-account rotation and revocation (auth security), but contains no mention of data retention policies, data deletion for company/user data, export-and-delete, or AI-native data controls. Access token revocation is not the same as data retention/deletion control.",
     "evidenceIds": []
   },
   {
@@ -2728,7 +2777,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ledgy is a cap table/equity management SaaS platform, not an AI agent or dev tool with telemetry settings relevant to AI-native usage; no evidence pack content addresses telemetry opt-out at all, and this axis is a category mismatch for this product type.",
+    "rationale": "Ledgy is a cap-table/equity management SaaS platform, not an AI assistant/agent tool with client-side telemetry to opt out of; this axis targets AI-native developer tools, not enterprise SaaS products like this.",
     "evidenceIds": []
   },
   {
@@ -2737,7 +2786,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API authentication, cap table management, equity plan automation, compliance, and trading/settlement, but contains no mention of fundraising round modeling, dilution scenarios, option pool top-ups, SAFE conversion modeling, pro-forma ownership tables, or sharing scenarios with counsel/investors. Nothing in the pack addresses this specific fundraising-modeling capability.",
+    "rationale": "The evidence pack covers cap table data, API authentication, equity compliance, trading/settlement, and financial reporting, but contains no mention of fundraising round modeling, dilution/pro-forma scenario planning, option pool top-up simulation, SAFE conversion modeling, or scenario sharing with counsel/investors. This is an applicable axis for a cap table/equity management platform, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -2746,12 +2795,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows generic equity-compliance features (error flags, global mobility reporting, one-click compliance reports) but no mention of Rule 701 disclosure thresholds, Form 3921 filings, or 83(b) election tracking/generation — the specific US regulatory triggers named in the story are absent from the evidence pack.",
-    "evidenceIds": [
-      "ledgy-docs-14",
-      "ledgy-docs-15",
-      "ledgy-docs-24"
-    ]
+    "rationale": "Evidence shows general equity compliance features (error flags, global mobility reporting, one-click compliance reports, financial reporting under IFRS/GAAP) but no mention of US-specific compliance items like Rule 701 disclosure thresholds, Form 3921 filings, or 83(b) election tracking/generation.",
+    "evidenceIds": []
   },
   {
     "productId": "ledgy",
@@ -2759,12 +2804,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers cap table reporting, equity plan automation, share grants, compliance, and API auth, but there is no mention of creating/sending/e-signing SAFEs or convertible notes, nor of automatic conversion-term modeling on the cap table. missing for 10: SAFE/convertible note creation workflow, e-signature for investment instruments, conversion term modeling on cap table.",
-    "evidenceIds": [
-      "ledgy-docs-7",
-      "ledgy-docs-12",
-      "ledgy-docs-8"
-    ]
+    "rationale": "Evidence covers API auth, cap table reporting, equity plan automation, financial reporting, compliance, and trading, but nothing mentions creating, sending, or e-signing SAFEs/convertible notes or modeling their conversion terms on the cap table. Missing for 10: any mention of SAFE/convertible note issuance, e-signature workflow for fundraising instruments, or conversion-term modeling.",
+    "evidenceIds": []
   },
   {
     "productId": "ledgy",
@@ -2772,7 +2813,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API auth, cap table management, equity plans, compliance reporting, and trading/settlement, but contains no mention of 409A valuations, audit-ready valuation reports, or scheduled valuation refreshes.",
+    "rationale": "The evidence pack covers Ledgy's API auth, cap table, equity plan automation, financial reporting, compliance, and trading features, but contains no mention of 409A valuations, valuation ordering, audit-ready valuation reports, or scheduled valuation refreshes.",
     "evidenceIds": []
   },
   {
@@ -2781,9 +2822,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any programmatic/API surface for drafting securities like option grants, nor any agent-queue-for-approval workflow; the OpenAPI probe returned 404s across all candidate paths, indicating no public API is documented. This is an applicable axis for an equity platform, but there is no evidence it is supported.",
+    "rationale": "No evidence of any programmatic surface (API, SDK, or agent-facing interface) for drafting securities; the openapi probe returned 404s and no API/agent-related docs exist. All evidence describes manual UI-based workflows for cap table management, SAFEs, and grants, with no mention of agentic or programmatic drafting with human-approval queuing.",
     "evidenceIds": [
-      "pulley-probe-3"
+      "pulley-probe-3",
+      "pulley-docs-21",
+      "pulley-docs-23"
     ]
   },
   {
@@ -2792,11 +2835,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any API, programmatic export, or agent-accessible data access — probes explicitly found no OpenAPI/API spec, and only manual Excel downloads and UI workflows are documented; nothing about reconciling against a data room.",
+    "rationale": "No evidence of any API, programmatic export, or agent-accessible endpoint for cap table data; probes explicitly show no OpenAPI/API discovery (pulley-probe-3), and only manual Excel download and UI-based workflows are documented (pulley-docs-18). There is no mention of reconciliation tooling against a data room.",
     "evidenceIds": [
       "pulley-probe-3",
-      "pulley-docs-18",
-      "pulley-probe-2"
+      "pulley-docs-18"
     ]
   },
   {
@@ -2805,30 +2847,37 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "There's confirmed evidence Pulley serves a working llms.txt at help.pulley.com with structured links to help docs, directly supporting agent-oriented discovery of documentation. However, other agent-doc formats (per-page .md endpoints, OpenAPI spec) return 404s, showing the agentic documentation support is limited to this single file rather than a comprehensive agent-native docs setup. Missing for 10: per-page markdown/API-accessible docs, broader agent-oriented API surface beyond the single llms.txt file.",
+    "rationale": "Pulley's help center serves a working llms.txt file (HTTP 200) listing agent-oriented doc links, and several docs pages are available in .md format, showing genuine agent-friendly documentation. However, the probe for a docs-md wildcard 404s, no OpenAPI/agent spec is discoverable, and there's no explicit vendor messaging about supporting AI agents. missing for 10: broader confirmation that all docs pages are consistently .md-accessible, an official statement encouraging agent use, and API/schema discoverability for agents.",
     "evidenceIds": [
       "pulley-probe-1",
       "pulley-probe-2",
-      "pulley-probe-3"
+      "pulley-probe-3",
+      "pulley-docs-15",
+      "pulley-docs-21"
     ]
   },
   {
     "productId": "pulley",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack shows Pulley as a cap table/equity management tool with templates, modeling, and compliance features, but there is no mention of AI-generated insights, suggestions, or any AI/ML-driven analysis surfaced from user data. Missing for 10: any AI feature, insight-generation capability, or agentic suggestion mechanism.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Pulley's Term Sheet Scanner uses AI to summarize potential problems from an uploaded term sheet in seconds, which is a narrow AI-generated insight feature, but there's no evidence of broader AI-generated insights or suggestions across cap table, vesting, or fundraising data generally. missing for 10: AI insights across cap table/ownership data, proactive suggestions from company-wide data, any independent corroboration of AI accuracy.",
+    "evidenceIds": [
+      "pulley-docs-7",
+      "pulley-docs-36"
+    ]
   },
   {
     "productId": "pulley",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management platform, not an agentic or automation-oriented product; there is no concept in the evidence of autonomous background automations, and this axis is a category error for this type of product.",
-    "evidenceIds": []
+    "rationale": "Pulley is a cap table/equity management platform; there is no evidence of any automation/agentic workflow engine that runs autonomously in the background (e.g., scheduled triggers, workflow builders, or agent execution). Notifications like vesting alerts exist but are not user-configurable autonomous automations. Missing for 10: any automation builder, trigger/action framework, or documentation of background autonomous tasks.",
+    "evidenceIds": [
+      "pulley-docs-37"
+    ]
   },
   {
     "productId": "pulley",
@@ -2845,8 +2894,10 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS, not a tool meant for headless/CI automation execution; running it in CI is a category error for this product type.",
-    "evidenceIds": []
+    "rationale": "Pulley is a cap table/equity management SaaS product for humans, not a CLI/agent tool meant to be run headlessly in CI; there is no API/CLI exposed for automation (probe shows no OpenAPI spec found), and the story of running 'headlessly in CI' is a category error for this kind of product.",
+    "evidenceIds": [
+      "pulley-probe-3"
+    ]
   },
   {
     "productId": "pulley",
@@ -2854,7 +2905,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS product, not an AI agent; the evidence shows no MCP client/server capability and none is expected for this product category.",
+    "rationale": "Pulley is a cap table/equity management SaaS product, not an AI agent or coding assistant; plugging MCP servers into it to gain tool use is not a fair axis for this kind of product, and no evidence suggests it has any MCP client capability.",
     "evidenceIds": []
   },
   {
@@ -2863,9 +2914,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS product, so an official MCP server is a plausible axis, but no evidence pack item mentions MCP, an agent integration, or an API for agent connectivity; probes even show no OpenAPI spec available. Missing for 10: any mention of an MCP server, agent integration, or public API supporting agentic access.",
+    "rationale": "Pulley is a cap table/equity management SaaS; the evidence pack shows no MCP server, API openapi endpoints all 404, and no mention of agent connectivity, so the applicable axis (official MCP server) has no supporting evidence.",
     "evidenceIds": [
-      "pulley-probe-3"
+      "pulley-probe-3",
+      "pulley-probe-2"
     ]
   },
   {
@@ -2874,7 +2926,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any natural-language command interface, chatbot, or AI assistant for operating Pulley—only standard cap-table management UI features and docs are described. Missing for 10: any NL command interface, chat/assistant feature, or documented natural-language operation capability.",
+    "rationale": "No evidence of any natural-language command interface, chatbot, or AI assistant for operating Pulley; all evidence describes UI-driven cap table management workflows (clicks, forms, uploads).",
     "evidenceIds": []
   },
   {
@@ -2883,7 +2935,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS product, not a developer tool or agent; an official CLI for AI-native workflows is not a fair axis for this kind of product, and no evidence suggests otherwise.",
+    "rationale": "Pulley is a cap table/equity management SaaS product, not a coding agent or dev tool; an official CLI for AI-native workflows is not a fair axis for this product category, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -2892,9 +2944,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented public API; the openapi probe returned 404s on all candidate paths and no API docs are referenced anywhere in the evidence pack.",
+    "rationale": "No evidence of a public API for Pulley; probes for OpenAPI/swagger specs all returned 404, and no docs mention an API for programmatic access. Only an llms.txt help-center index and standard help articles exist, none of which document an API.",
     "evidenceIds": [
-      "pulley-probe-3"
+      "pulley-probe-3",
+      "pulley-probe-1"
     ]
   },
   {
@@ -2903,7 +2956,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS product, not an AI agent or agent-facing developer platform; issuing scoped API credentials for agents is outside its product category entirely, and no evidence pack item indicates any API or credential system at all.",
+    "rationale": "Pulley is a cap table/equity management SaaS; there is no evidence of any API or credentialing system, let alone scoped API credentials for AI agents — this axis is a category error for this product type rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -2912,7 +2965,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any official SDK; the openapi probe returned 404s across all candidate paths, and no docs mention SDKs or client libraries. Missing for 10: any official SDK, client library, or API documentation.",
+    "rationale": "Pulley is a cap table/equity management SaaS with no evidence of any official SDK; probes for OpenAPI/API specs all returned 404s and no SDK documentation is referenced anywhere in the evidence pack.",
     "evidenceIds": [
       "pulley-probe-3"
     ]
@@ -2923,7 +2976,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook or event subscription capability in Pulley's documentation; the evidence pack covers cap table management, fundraising, and compliance features only, with no API/webhook mentions and probes confirming no OpenAPI spec found. missing for 10: webhook documentation, event subscription API, any mention of push-based notifications.",
+    "rationale": "No evidence of any webhook subscription capability; API probes for OpenAPI/Swagger definitions all returned 404, and no docs mention webhooks or event subscriptions. Missing for 10: any webhook endpoint documentation, event types list, or API reference supporting event subscriptions.",
     "evidenceIds": [
       "pulley-probe-3"
     ]
@@ -2934,9 +2987,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any API reference, runnable examples, or developer API docs; probes for OpenAPI/swagger endpoints all returned 404, indicating no public API documentation exists.",
+    "rationale": "Pulley is a cap table/equity management SaaS; the story asks for an interactive API reference with runnable examples, which is a fair ask for a SaaS with a developer platform, but no evidence pack item mentions an API reference, SDK, or runnable examples—probes confirm no OpenAPI spec is discoverable and only help-center docs exist.",
     "evidenceIds": [
-      "pulley-probe-3"
+      "pulley-probe-3",
+      "pulley-probe-1"
     ]
   },
   {
@@ -2945,7 +2999,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack explicitly shows a probe for OpenAPI/Swagger specs at all standard candidate paths returning 404, with no machine-readable API spec found anywhere else in the docs.",
+    "rationale": "The probe explicitly checked for OpenAPI/swagger specs at standard locations and found all candidates returned 404, and no evidence pack item references a public API or machine-readable spec.",
     "evidenceIds": [
       "pulley-probe-3"
     ]
@@ -2956,7 +3010,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS product, not an AI agent or developer platform with a sandbox/test environment concept for AI-native testing; this axis is a category error for this product type.",
+    "rationale": "Pulley is a cap table/equity management SaaS product, not an agentic/AI-native tool with a sandbox environment for testing; the evidence pack contains no mention of sandbox or test environments, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2965,7 +3019,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public API at all, let alone versioning or a deprecation policy; probes for OpenAPI/swagger specs all returned 404s. missing for 10: any public API documentation, versioning scheme, deprecation policy, changelog.",
+    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy; OpenAPI probes all returned 404 and nothing in the docs pack references an API at all.",
     "evidenceIds": [
       "pulley-probe-3"
     ]
@@ -2976,9 +3030,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley explicitly markets ASC 718 reporting as part of its compliance product, alongside tax filings and board management, indicating built-in stock-based compensation expense reporting. However, there is no evidence detailing report format, auditor-readiness specifics, or independent/hands-on confirmation that accountants can directly hand these reports to auditors. Missing for 10: sample ASC 718 report output, auditor/accountant corroboration, detail on methodology (e.g., valuation inputs, expense recognition schedules).",
+    "rationale": "Pulley explicitly markets ASC 718 reporting as part of its compliance product suite for finance teams, alongside audit-defensible 409A valuations, suggesting auditor-ready expense reporting is a supported use case. However, there is no evidence of report format, specifics on what accountants/auditors actually receive, or independent corroboration that outputs are audit-accepted. Missing for 10: sample/detail of the actual ASC 718 report output, evidence of accountant/auditor acceptance in practice, independent third-party validation.",
     "evidenceIds": [
-      "pulley-docs-19"
+      "pulley-docs-19",
+      "pulley-docs-17"
     ]
   },
   {
@@ -2998,11 +3053,13 @@
   {
     "productId": "pulley",
     "storyId": "automation-rules-engine",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management platform, not an automation/rules engine; the evidence pack shows no notion of user-defined triggers or event-based actions, and this capability is outside its product category.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence only shows fixed, built-in notifications (e.g., vesting event emails) rather than any user-configurable rule/trigger-action system; there is no documentation of custom automation rules for AI-native or any users.",
+    "evidenceIds": [
+      "pulley-docs-37"
+    ]
   },
   {
     "productId": "pulley",
@@ -3010,7 +3067,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management platform, not a workflow automation or AI agent tool; scheduling recurring jobs/workflows is outside its product category.",
+    "rationale": "Pulley is a cap table/equity management platform, not an automation/workflow tool; scheduling recurring jobs or workflows is outside its product category and is a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -3019,7 +3076,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management platform, not an automation/workflow tool with version control, review, or rollback of 'automations' — this axis is a category error for this product type.",
+    "rationale": "Pulley is a cap-table/equity management platform, not an automation-building or workflow-orchestration tool; there is no concept in the evidence of user-authored 'automations' that could be versioned, reviewed, or rolled back. This story targets an axis (automation-depth for AI-native workflows) that doesn't apply to this product category.",
     "evidenceIds": []
   },
   {
@@ -3027,12 +3084,13 @@
     "storyId": "board-consents-esign",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Pulley documents e-signature collection for board members and investors on SAFEs (pulley-docs-9) and lists 'board management' under its compliance product (pulley-docs-19), plus standard equity document templates (pulley-docs-21), suggesting some support for routing approvals for signature. However, there is no explicit documentation of drafting board consents or stockholder approvals specifically, nor evidence they are archived and linked against the transactions they authorize. Missing for 10: explicit board consent/stockholder approval drafting workflow, archival linkage to specific transactions, and independent confirmation of this governance workflow.",
+    "confidence": "medium",
+    "rationale": "Pulley documents e-signing directly on the platform for equity documents (SAFEs, stock agreements) and mentions 'board management' under its compliance product, plus a Signatory Status page to monitor signature outs — supporting the sign/archive/track loop for transaction documents. However, there is no explicit evidence of board consent or stockholder approval templates being drafted and specifically routed/archived against transactions (as opposed to option grants, SAFEs, and stock certificates). Missing for 10: dedicated board consent/stockholder approval templates, explicit board-resolution drafting workflow, and evidence tying signed approvals directly to the specific transaction record in an auditable chain.",
     "evidenceIds": [
       "pulley-docs-9",
       "pulley-docs-19",
-      "pulley-docs-21"
+      "pulley-docs-30",
+      "pulley-docs-33"
     ]
   },
   {
@@ -3041,25 +3099,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley's docs show bulk cap-table migration via Excel/Carta import, treating the spreadsheet as the source of truth for populating many securities/stakeholders at once (pulley-docs-1, pulley-docs-14, pulley-docs-15, pulley-docs-2), which covers bulk-loading historical transactions. However, there's no explicit documentation of a dedicated bulk-grant issuance workflow (e.g., uploading a batch of new option grants post-migration) distinct from the one-time cap table import. Missing for 10: evidence of an ongoing bulk-grant-issuance tool (not just initial migration), and any independent/hands-on confirmation of the bulk upload process working smoothly.",
+    "rationale": "Docs describe using an Excel cap table template as the source of truth for migrating historical stakeholders/transactions in bulk, and direct Carta import for bulk migration, supporting bulk upload of historical data. However, there's no explicit documentation of a bulk grant-issuance workflow for ongoing batches of new grants (e.g., CSV upload for new option grants) distinct from initial cap table setup. Missing for 10: explicit bulk new-grant issuance tool/API, evidence of batch processing beyond initial migration, independent corroboration of scale/reliability.",
     "evidenceIds": [
       "pulley-docs-1",
+      "pulley-docs-2",
       "pulley-docs-14",
       "pulley-docs-15",
-      "pulley-docs-2"
+      "pulley-docs-26",
+      "pulley-docs-39"
     ]
   },
   {
     "productId": "pulley",
     "storyId": "cap-table-full-export",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley docs confirm cap tables can be downloaded as Excel 'as of a specific date or for all time' (pulley-docs-18), and Excel is treated as the source of truth during migration (pulley-docs-1/14), supporting open-format export of the cap table. However, there is no explicit evidence of exporting full transaction history or CSV format, nor independent confirmation that data is never held hostage. Missing for 10: explicit transaction-history export documentation, CSV format support, and third-party/independent verification of unrestricted export access.",
+    "rationale": "Pulley documents Excel export of the cap table for a specific date or all time (pulley-docs-18), and treats Excel as source of truth during migration (pulley-docs-1, pulley-docs-14), plus mentions complete cap table history and ownership data being available (pulley-docs-39). However, there is no explicit documentation of full transaction history export or CSV format specifically, and no independent/hands-on confirmation of export completeness or of unrestricted 'anytime' access without vendor lock-in. Missing for 10: explicit CSV export option, full transaction-history export (not just point-in-time cap table snapshot), and independent verification that exports are truly unrestricted/self-serve at any time.",
     "evidenceIds": [
       "pulley-docs-18",
       "pulley-docs-1",
-      "pulley-docs-14"
+      "pulley-docs-14",
+      "pulley-docs-39"
     ]
   },
   {
@@ -3068,12 +3129,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley documents a guided migration flow (Excel template as source of truth, direct Carta report import) and attaches source documents to specific securities for reconciliation, but there's no detailed description of a validation/error-checking step or explicit reconciliation workflow beyond document linking. missing for 10: explicit validation rules/error reports during import, described reconciliation process against source documents, independent user corroboration of migration accuracy.",
+    "rationale": "Pulley documents a guided cap table migration process using an Excel template treated as source of truth, with document attachment to specific securities and a dedicated white-glove path for Carta migrations. However, there's no explicit evidence of a structured validation/error-checking step or a formal reconciliation workflow against source documents beyond attaching files to securities. missing for 10: documented validation rules/error checks during import, explicit reconciliation reporting or diff against source documents, independent/hands-on evidence of the migration experience.",
     "evidenceIds": [
       "pulley-docs-1",
+      "pulley-docs-2",
       "pulley-docs-14",
       "pulley-docs-15",
-      "pulley-docs-2"
+      "pulley-docs-26",
+      "pulley-docs-39"
     ]
   },
   {
@@ -3082,40 +3145,45 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Pulley's docs describe core cap table management covering share classes, SAFEs, options, RSAs, convertible notes, stakeholder profiles, contract-specific tabs, and migration/import from Excel or Carta as a source of truth, plus downloadable cap tables and equity plan capacity tracking — directly matching the founder's need for a live, comprehensive single source of truth. Missing for 10: explicit evidence of investor/auditor-facing access controls or reporting portals, and independent third-party corroboration of accuracy/reliability as an audit-grade source of truth.",
+    "rationale": "Pulley's docs show a comprehensive cap table system covering share classes, certificates, SAFEs, RSAs, RSUs, convertible notes, option grants, stakeholder profiles, migration from Excel/Carta, and downloadable cap table history — positioning it as a live source of truth used by admins, and its 409A/compliance/transfer-agent features imply investor/auditor reliance. Missing for 10: explicit third-party investor/auditor testimonials confirming trust in Pulley as source of truth, and independent corroboration beyond vendor docs.",
     "evidenceIds": [
       "pulley-docs-1",
       "pulley-docs-3",
-      "pulley-docs-4",
       "pulley-docs-14",
       "pulley-docs-15",
       "pulley-docs-21",
       "pulley-docs-22",
-      "pulley-docs-23",
+      "pulley-docs-25",
+      "pulley-docs-34",
+      "pulley-docs-39",
       "pulley-docs-18"
     ]
   },
   {
     "productId": "pulley",
     "storyId": "custom-vesting-schedules",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack covers cap table basics, fundraising modeling, SAFEs, 409A valuations, and compliance, but contains no mention of custom vesting schedule configuration (cliffs, milestones, acceleration on exit) or automatic vested/unvested tracking. This is a plausible and expected capability for a cap table/equity management platform, so absence of evidence yields 'none' rather than 'na'.",
-    "evidenceIds": []
+    "rationale": "Pulley docs show acceleration-on-exit handling and termination-triggered vesting stops, plus automatic vesting-event email alerts, indicating some automated vested/unvested tracking (pulley-docs-31, pulley-docs-32, pulley-docs-37). However there is no explicit documentation of defining custom cliffs or milestone-based vesting schedules, or a dashboard view showing vested vs unvested split. missing for 10: explicit cliff/milestone schedule configuration UI, a vested-vs-unvested tracking view/report, independent corroboration of automation accuracy.",
+    "evidenceIds": [
+      "pulley-docs-31",
+      "pulley-docs-32",
+      "pulley-docs-37"
+    ]
   },
   {
     "productId": "pulley",
     "storyId": "digital-share-certificates",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley documents e-signature collection for agreements like SAFEs (board/investor signatures) and confirms it acts as transfer agent, implying stock issuance is tracked in-platform, but no evidence directly describes issuing electronic share certificates with in-platform legal signing permanently linked to the cap table entry. missing for 10: explicit documentation of share certificate generation/e-signing workflow, evidence of permanent linkage between a signed certificate and its cap table record, and confirmation this applies beyond SAFEs to common stock/RSAs.",
+    "rationale": "Pulley supports e-signing documents directly on the platform (pulley-docs-33), collecting signatures without third-party e-sign tools (pulley-docs-9), customizing stock certificates (pulley-docs-35), and tracking signature/acceptance status tied to securities (pulley-docs-30). This strongly implies certificates are signed and linked to cap table entries, but there's no explicit documentation confirming certificates are 'legally signed' with legal validity assurances or explicit permanent linkage architecture beyond the status tracker. missing for 10: explicit confirmation of legal enforceability/validity of in-platform signatures, and detailed description of the permanent data linkage between certificate and cap table record.",
     "evidenceIds": [
+      "pulley-docs-33",
       "pulley-docs-9",
-      "pulley-docs-21",
-      "pulley-docs-22",
-      "pulley-docs-25"
+      "pulley-docs-35",
+      "pulley-docs-30"
     ]
   },
   {
@@ -3124,24 +3192,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows document attachment to securities, stakeholder profiles, and cap table downloads, but there is no mention of a permissioned data room, investor/counsel access portal, or diligence-sharing feature. Missing for 10: dedicated data room, granular external permissioning for investors/counsel, and document bundling for diligence.",
+    "rationale": "The evidence shows Pulley attaches documents to securities and offers e-signing and stakeholder profile views, but there is no mention of a dedicated, permissioned 'data room' feature for sharing cap table plus underlying documents with counsel/investors. No documentation of role-based external sharing or diligence packages is present.",
     "evidenceIds": [
       "pulley-docs-1",
       "pulley-docs-4",
-      "pulley-docs-18",
-      "pulley-docs-19"
+      "pulley-docs-33"
     ]
   },
   {
     "productId": "pulley",
     "storyId": "employee-equity-portal",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack covers admin-side cap table management, fundraising modeling, 409A valuations, and compliance, but contains no mention of an employee-facing portal showing personal grants, vesting progress, strike price, or scenario-based equity value. Docs-4 mentions clicking a stakeholder's name for a profile, but this is from the admin/cap-table-manager view, not a dedicated employee self-service experience. Missing for 10: employee login/portal documentation, vesting progress display, strike price disclosure, and outcome/scenario modeling tailored to individual employees.",
+    "rationale": "Evidence shows employee-facing vesting alerts (pulley-docs-37) and a stakeholder profile view (pulley-docs-4), plus 'interactive offer letters' (pulley-docs-38), suggesting some employee-facing equity info exists, but there is no documentation of a dedicated employee portal showing grants, vesting progress, strike price, and equity value under different outcome scenarios. Missing for 10: dedicated employee self-service portal UI, strike price display to employees, and equity outcome/valuation scenario modeling accessible to employees.",
     "evidenceIds": [
+      "pulley-docs-37",
       "pulley-docs-4",
-      "pulley-docs-3"
+      "pulley-docs-38"
     ]
   },
   {
@@ -3150,11 +3218,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented API for programmatic cap table access; probes for OpenAPI/Swagger specs all returned 404, and all documentation covers manual UI/download workflows (Excel export, dashboard views) rather than an API.",
+    "rationale": "No evidence of any documented programmatic API for pulling cap table data — the evidence only covers UI features (downloading Excel exports, cap table views, migration workflows). The probe explicitly found no OpenAPI/swagger spec at any candidate path, indicating no public API documentation exists.",
     "evidenceIds": [
       "pulley-probe-3",
-      "pulley-docs-18",
-      "pulley-docs-24"
+      "pulley-docs-18"
     ]
   },
   {
@@ -3163,10 +3230,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence mentions a dashboard for 'tracking cap table activity' (docs-24) but there is no documentation of a structured audit log capturing who changed what, when, and under what authorization. Missing for 10: explicit audit-log/change-history feature, user attribution, timestamped authorization trail.",
-    "evidenceIds": [
-      "pulley-docs-24"
-    ]
+    "rationale": "No evidence pack items mention an audit log, change history with user attribution/timestamps, or authorization tracking for cap table edits — closest items reference download history, admin dashboard, and 'complete cap table history' but nothing about who-changed-what audit trails.",
+    "evidenceIds": []
   },
   {
     "productId": "pulley",
@@ -3174,11 +3239,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack only covers admin/founder-facing cap table management, fundraising, 409A valuations, and compliance tooling — none of it describes employee-facing plain-language guidance on tax treatment, exercise windows, or dilution. The 83(b) tracker (pulley-docs-13) is a status tool, not an explanatory feature. Missing for 10: employee-facing educational content, tax treatment explainers, exercise window guidance, dilution explanations in plain language.",
-    "evidenceIds": [
-      "pulley-docs-13",
-      "pulley-docs-19"
-    ]
+    "rationale": "The evidence pack is dominated by admin/cap-table management features (fundraising modeling, SAFEs, 409A valuations, transfer agent tools) with only scattered employee-adjacent items like vesting alert emails and an 83(b) tracker; none describe plain-language explanations of tax treatment, exercise windows, or dilution aimed at employees.",
+    "evidenceIds": []
   },
   {
     "productId": "pulley",
@@ -3186,10 +3248,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Pulley's fundraising-modeling docs mention running models for 'complex pre-financing, post-financing, or exit scenarios' and pro-formas for priced rounds/SAFEs, implying some exit modeling capability, but there is no specific evidence of a waterfall analysis showing per-share-class/stakeholder proceeds honoring liquidation preferences and participation rights. missing for 10: explicit documentation of a waterfall model breaking down proceeds by share class/stakeholder, preference stacking, participation rights handling, and any independent/hands-on validation.",
+    "rationale": "Pulley's fundraising modeling docs confirm running exit scenario models (pulley-docs-6, pulley-docs-27) and pro-forma modeling (pulley-docs-5), but no evidence explicitly describes a waterfall analysis breaking out proceeds per share class/stakeholder honoring liquidation preferences and participation rights. missing for 10: explicit waterfall output showing per-share-class/stakeholder proceeds, documentation of preference stacking and participation handling in exit scenarios.",
     "evidenceIds": [
+      "pulley-docs-5",
       "pulley-docs-6",
-      "pulley-docs-5"
+      "pulley-docs-27"
     ]
   },
   {
@@ -3198,7 +3261,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions HRIS/payroll integrations (Gusto, Rippling, or similar) or any automated sync of new hires/terminations into equity records; Pulley's evidence only covers cap table setup, fundraising modeling, SAFEs, 409A valuations, and stakeholder management. missing for 10: any mention of HRIS/payroll connectors, automated new-hire/termination sync, or an integrations marketplace.",
+    "rationale": "No evidence pack items mention HRIS/payroll integrations (e.g., Gusto, Rippling) or automated syncing of new hires/terminations into cap table records; terminations are described as manual actions (docs-32), not HRIS-driven. This applicable integration axis lacks any supporting documentation.",
     "evidenceIds": []
   },
   {
@@ -3207,27 +3270,29 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions UK HMRC/EMI valuations, non-US option schemes, or any international entity support—all documentation focuses on US-style SAFEs, 409A valuations, and cap table management. Missing for 10: any mention of HMRC/EMI valuations, non-US equity plan types, or international entity/compliance support.",
-    "evidenceIds": []
+    "rationale": "No evidence in the pack mentions UK HMRC/EMI valuations, non-US option schemes, or any country-specific plan support—only US-centric 409A valuation and SAFE templates are documented. missing for 10: any mention of HMRC/EMI valuations, non-US equity plan types, or international entity support.",
+    "evidenceIds": [
+      "pulley-docs-10",
+      "pulley-docs-17",
+      "pulley-docs-19"
+    ]
   },
   {
     "productId": "pulley",
     "storyId": "investor-updates-portal",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers cap table management, fundraising modeling, SAFEs, 409A valuations, and compliance, but contains no mention of an investor-facing portal or structured update/reporting feature that would let investors self-serve their holdings without contacting the founder. Stakeholder profile views (pulley-docs-4) appear to be an admin-side feature, not an investor portal. missing for 10: dedicated investor portal login, structured update/reporting tool for investors, evidence investors can self-serve holdings data.",
-    "evidenceIds": [
-      "pulley-docs-4"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack covers cap table management, fundraising modeling, SAFEs, and stakeholder profiles from the admin/founder side, but contains no mention of a dedicated investor-facing portal, investor login access, or structured investor update/reporting feature that would let investors self-serve their holdings without contacting the founder.",
+    "evidenceIds": []
   },
   {
     "productId": "pulley",
     "storyId": "law-firm-collaboration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a specific outside-counsel/law-firm role or permission tier, or of external counsel editing documents/records directly in Pulley; evidence only covers cap table management, fundraising docs, and e-signature features for internal/board/investor use. Missing for 10: named law-firm/counsel role type, counsel-specific document preparation workflow, evidence of external counsel access controls.",
+    "confidence": "low",
+    "rationale": "No evidence of any outside-counsel or law-firm role/permission type, or of external collaborators editing records/preparing documents directly in Pulley; e-signing and document features (e.g., pulley-docs-33) describe internal issuance workflows, not a dedicated counsel collaboration role.",
     "evidenceIds": []
   },
   {
@@ -3236,7 +3301,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes an employee-facing option exercise workflow (selecting shares, payment, and resulting issuance) — the pack covers cap table management, fundraising, 409A, and admin-side tools, but nothing about employees exercising vested options online. Missing for 10: employee exercise portal, payment collection, automated share issuance upon exercise, paperless exercise agreement signing.",
+    "rationale": "No evidence describes an employee-facing option exercise workflow (selecting options, making payment, and issuance of shares). Evidence covers cap table management, SAFEs, 409A, e-signing, vesting alerts, and terminations, but nothing about the exercise-and-pay process itself.",
     "evidenceIds": []
   },
   {
@@ -3245,10 +3310,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API at all—probes for OpenAPI/Swagger endpoints all returned 404, and no documentation references an API for cap table management, fundraising, or compliance actions. All evidence pack items describe UI-based workflows only. Missing for 10: any public API documentation, API reference, endpoint list, or evidence that any UI action can be performed programmatically.",
+    "rationale": "No evidence of any public API at all—OpenAPI/swagger probes all returned 404, and no docs mention an API for cap table management, transactions, or any UI functionality. Missing for 10: any public API documentation, API endpoints, authentication mechanism, or coverage parity claims between UI and API.",
     "evidenceIds": [
-      "pulley-probe-3",
-      "pulley-probe-2"
+      "pulley-probe-3"
     ]
   },
   {
@@ -3257,7 +3321,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Pulley allows exporting the cap table as an Excel file for a specific date or all-time, which is an open format export of core data, but there's no evidence of full data export (all documents, stakeholder details, transaction history, agreements) in open formats or documented account-closure/data-portability workflow. missing for 10: comprehensive full-account data export, open-format export of all documents/agreements/records, explicit data portability policy.",
+    "rationale": "Pulley documents let users download the cap table as an Excel file at any point in time or historically, which is an open, portable format — a real but partial data-export capability. There is no evidence of a full data export (documents, stakeholder records, agreements, vesting history) or an account-closure/leave workflow. Missing for 10: full-account export beyond cap table, export of uploaded documents/agreements, explicit 'leave/close account' process, and open-format guarantees for non-spreadsheet data.",
     "evidenceIds": [
       "pulley-docs-18"
     ]
@@ -3268,7 +3332,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a closed SaaS cap table management platform, not open-source software; source code availability under an open license is not a fair axis for this product category.",
+    "rationale": "Pulley is a closed SaaS cap-table/equity management platform, not an open-source project; source code availability under an open license is not a fair expectation for this category of product.",
     "evidenceIds": []
   },
   {
@@ -3277,22 +3341,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cloud-based cap table management SaaS with no self-hosted deployment option; self-hosting the core product is not a fair axis for this category of managed financial/compliance SaaS.",
+    "rationale": "Pulley is a SaaS cap-table/equity management platform, not open-source software or infrastructure that could plausibly be self-hosted; self-hosting is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "pulley",
     "storyId": "option-grant-board-approval",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley documents the individual components — standard option templates (pulley-docs-21), fast 409A valuations to set strike price (pulley-docs-10, pulley-docs-17), equity plan capacity tracking (pulley-docs-23), and compliance/board management support (pulley-docs-19) — but no evidence shows these are stitched into a single guided board-approval-to-grant workflow for issuing options to a new hire. Missing for 10: explicit documentation of a board consent/approval step integrated with grant creation, and confirmation that the 409A strike price auto-populates into the option issuance flow.",
+    "rationale": "Pulley documents standard option templates, equity plan capacity, board/investor e-signature collection, and 409A valuation services, which together cover pieces of an equity-issuance workflow, but no single evidence item describes an integrated end-to-end flow linking board approval to a 409A-derived strike price at grant time. missing for 10: explicit documentation of a unified workflow connecting board approval, 409A strike price application, and option issuance in one step; independent/hands-on confirmation of this flow working as described.",
     "evidenceIds": [
       "pulley-docs-21",
+      "pulley-docs-23",
+      "pulley-docs-9",
       "pulley-docs-10",
       "pulley-docs-17",
-      "pulley-docs-19",
-      "pulley-docs-23"
+      "pulley-docs-33"
     ]
   },
   {
@@ -3300,8 +3365,8 @@
     "storyId": "partner-scoped-equity-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes scoped, permissioned access for external third parties (law firms, HRIS vendors, wealth managers) to limited slices of cap table data; documentation covers admin dashboards, cap table management, fundraising, and transfer agent functions but not third-party scoped access controls. Missing for 10: any mention of role-based/scoped external access, third-party integration permissions, or delegated credential-free access for outside parties.",
+    "confidence": "high",
+    "rationale": "No evidence of scoped, role-based external access (e.g., auditor/law-firm/HRIS portal permissions or granular data-sharing controls) — the evidence pack covers cap table management, fundraising, and admin features but never mentions third-party scoped access or permission tiers. Missing for 10: any documentation of scoped external user roles, permission-limited views, or third-party access grants.",
     "evidenceIds": []
   },
   {
@@ -3319,7 +3384,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management platform, not an AI model or AI product feature; opting out of AI training data usage is not a relevant axis for this kind of product based on the evidence pack, which covers cap tables, fundraising, and compliance only.",
+    "rationale": "Pulley is a cap table/equity management platform, not an AI model or AI product; the evidence contains no AI training-data usage at all, making an 'opt out of AI training' story a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3328,7 +3393,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items address data retention policies, data deletion controls, or export/delete workflows for AI-native or general privacy purposes; Pulley is a cap table management product and this axis, while plausible for a SaaS handling sensitive equity data, has no supporting documentation.",
+    "rationale": "The evidence pack covers cap table management, fundraising, compliance, and e-signature features but contains no mention of data retention policies, data deletion controls, or privacy/data-lifecycle settings that a user could control. This axis is applicable to any SaaS handling sensitive company/stakeholder data, but no evidence supports Pulley offering such controls.",
     "evidenceIds": []
   },
   {
@@ -3337,7 +3402,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulley is a cap table/equity management SaaS, not an AI agent or developer tool where telemetry opt-out for AI-native usage is a relevant axis; the evidence pack contains nothing about telemetry or AI usage tracking.",
+    "rationale": "Pulley is a cap table/equity management SaaS, not an AI agent tool or developer product where telemetry opt-out for AI-native workflows would be a relevant axis; no evidence pack content relates to telemetry or usage tracking at all.",
     "evidenceIds": []
   },
   {
@@ -3346,12 +3411,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley explicitly offers pro-forma modeling for priced rounds and SAFEs, complex pre/post-financing scenarios, and term sheet analysis, directly matching the core modeling need. However, there's no explicit evidence of option pool top-up modeling, SAFE conversion mechanics being detailed, or a sharing/collaboration workflow with counsel and investors on scenarios. missing for 10: explicit option pool top-up handling, SAFE conversion mechanics detail, and scenario-sharing/collaboration features with external counsel/investors.",
+    "rationale": "Pulley's fundraising modeling product explicitly supports pro-forma modeling for priced rounds and SAFEs, complex pre/post-financing scenarios, and term sheet scanning, which covers dilution and pro-forma ownership modeling; SAFE conversion is implied via SAFE templates and pro-forma tooling. However, evidence does not explicitly confirm option pool top-up modeling or a specific sharing/collaboration workflow with counsel and investors beyond general term sheet upload. Missing for 10: explicit mention of option pool top-up modeling, explicit share/export/collaboration workflow for scenarios with external parties, and independent/hands-on validation of the modeling accuracy.",
     "evidenceIds": [
       "pulley-docs-5",
       "pulley-docs-6",
       "pulley-docs-7",
-      "pulley-docs-8"
+      "pulley-docs-27",
+      "pulley-docs-8",
+      "pulley-docs-28"
     ]
   },
   {
@@ -3360,7 +3427,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulley explicitly ships an 83(b) Election status tracker and a compliance product that generically covers 'tax filings' and ASC 718 reporting from the cap table, but there is no specific mention of Rule 701 disclosure threshold tracking or Form 3921 filing generation. Missing for 10: explicit Rule 701 threshold monitoring/alerts, explicit Form 3921 filing generation, and any independent corroboration that these filings are auto-generated rather than manually prepared.",
+    "rationale": "Pulley documents an 83(b) Election status tracker and broadly claims its 'equity compliance software' handles 'tax filings' and ASC 718 reporting as a company grows, but there is no specific mention of Rule 701 disclosure threshold tracking or Form 3921 filing generation. Missing for 10: explicit Rule 701 threshold monitoring/alerts, Form 3921 generation/filing workflow, and evidence these are auto-generated directly from cap table data rather than manual processes.",
     "evidenceIds": [
       "pulley-docs-13",
       "pulley-docs-19"
@@ -3372,14 +3439,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Pulley docs show SAFE creation using standard YC templates, e-signature collection in-platform without third-party tools, convertible notes/SAFEs as first-class contract tabs on the cap table, and pro-forma modeling for SAFEs/priced rounds. This covers create, send, e-sign, and cap table modeling for SAFEs and convertible notes. Missing for 10: independent/hands-on corroboration of the end-to-end e-sign-to-cap-table flow and explicit confirmation that conversion terms auto-populate without manual entry.",
+    "rationale": "Pulley offers standard YC SAFE templates, in-platform e-signature collection from board members and investors, term sheet scanning, and fundraising/pro-forma modeling that ties into the cap table with contract-specific SAFE/convertible note tabs, indicating creation-to-modeling flow within the platform. missing for 10: independent/hands-on confirmation that signed SAFEs auto-populate conversion terms without manual entry, and explicit convertible note creation workflow (evidence focuses mostly on SAFEs).",
     "evidenceIds": [
       "pulley-docs-8",
       "pulley-docs-9",
       "pulley-docs-16",
+      "pulley-docs-28",
       "pulley-docs-5",
+      "pulley-docs-7",
       "pulley-docs-22",
-      "pulley-docs-21"
+      "pulley-docs-33"
     ]
   },
   {
@@ -3388,11 +3457,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulley explicitly offers in-platform 409A valuations with a fast 3-day turnaround and describes them as 'audit-defensible,' produced by their expert team, implying integration with the company's live cap table data. However, there is no explicit evidence of automatic 'on schedule' refresh/renewal scheduling or direct confirmation that valuations are generated programmatically from live cap table data versus a service workflow layered on top. Missing for 10: documented automatic refresh/renewal scheduling cadence, explicit description of live cap-table-driven generation (vs. analyst-assisted service), and independent/third-party corroboration of audit-readiness.",
+    "rationale": "Pulley explicitly offers in-platform 409A valuations with 3-day turnaround and audit-defensible output performed by their expert team, tied to the company's cap table data (pulley-docs-10, pulley-docs-17). However, evidence doesn't confirm automatic generation directly from live cap table data without manual steps, nor does it describe scheduled/recurring refresh cadence or renewal automation. missing for 10: explicit description of automated pull from live cap table data, scheduled/recurring valuation refresh mechanics, independent audit confirmation.",
     "evidenceIds": [
       "pulley-docs-10",
-      "pulley-docs-17",
-      "pulley-docs-19"
+      "pulley-docs-17"
     ]
   },
   {
