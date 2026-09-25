@@ -6,7 +6,7 @@ import MegaTable from '@/components/MegaTable'
 import ProcessesTable from '@/components/ProcessesTable'
 import ProductLogo from '@/components/ProductLogo'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
-import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
+import { buildMegaTableArenaOptions, buildMegaTableRows, isHardwareClass } from '@/lib/megaTable'
 import { buildProcessRows } from '@/lib/processRows'
 
 export const metadata: Metadata = {
@@ -42,7 +42,9 @@ export default function Home() {
           <code className="text-xs text-zinc-400">/vs/</code> page.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((data) => {
+          {/* Hardware-class arenas excluded here too (founder 2026-09-25) — a CPU 'battle' under
+              an agentic framing reads wrong; the arenas keep their own pages. */}
+          {categories.filter((d) => !isHardwareClass(d)).map((data) => {
             const battle = leadingBattle(data)
             if (!battle) return null
             const a = data.products.find((p) => p.id === battle.a)!
