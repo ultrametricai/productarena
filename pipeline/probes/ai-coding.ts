@@ -226,4 +226,30 @@ export const probes: LocalProbe[] = [
       expect: /Invalid User API Key/,
       timeoutMs: 30_000,
     },
+    {
+      // ByteAsk publishes a product-site llms.txt (text/plain) that self-describes the C/C++
+      // coding agent, install channels, editors, pricing, and data handling — agent-oriented
+      // docs verified keylessly. Added at the 2026-09-25 YC F26 coverage-queue bring-up.
+      probeId: 'llms-docs-index',
+      productId: 'byteask',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://byteask.ai/llms.txt | head -4'],
+      displayCommand: 'curl -s https://byteask.ai/llms.txt | head -4',
+      expect: /# ByteAsk[\s\S]*AI coding agent for C and C\+\+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The docs subdomain serves its own llms.txt index of the CLI documentation pages
+      // (random-labs precedent: the docs host is the agent-readable surface; byteask.ai's
+      // /docs/* paths are an SPA shell that 200s unknown pages). Same recorded pattern.
+      probeId: 'docs-llms-index',
+      productId: 'byteask',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.byteask.ai/llms.txt | head -4'],
+      displayCommand: 'curl -s https://docs.byteask.ai/llms.txt | head -4',
+      expect: /# ByteAsk Docs[\s\S]*Documentation for ByteAsk/,
+      timeoutMs: 30_000,
+    },
 ]
