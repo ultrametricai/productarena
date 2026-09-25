@@ -109,6 +109,7 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <ProcessDag
             lensKey={def.id}
+            manifestUrl={chainManifestUrl(def.id)}
             sections={tasks.map((task, i) => ({
               key: `${task.id}-${i}`,
               kicker: `process ${i + 1} of ${tasks.length}`,
