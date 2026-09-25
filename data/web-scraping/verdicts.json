@@ -2263,14 +2263,14 @@
   {
     "productId": "context-dev",
     "storyId": "adaptive-stop-crawling",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The docs describe crawling with fixed page caps (500 for sync, 25,000 for async) and extraction with 'coverage' controls, but there is no evidence of an adaptive mechanism that halts crawling once sufficient information for a query has been gathered.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Context.dev's extract/answers endpoints crawl only 'relevant pages' with controls for coverage and freshness rather than a fixed full crawl, implying some query-driven targeting (docs-4, docs-21, docs-35), but there is no explicit documentation of an adaptive stopping algorithm that halts crawling once sufficient information is gathered. missing for 10: explicit adaptive-stopping mechanics/criteria, benchmark or example showing early termination, independent verification of this behavior.",
     "evidenceIds": [
-      "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-4"
+      "context-dev-docs-4",
+      "context-dev-docs-21",
+      "context-dev-docs-35"
     ]
   },
   {
@@ -2279,14 +2279,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Context.dev has a confirmed live llms.txt at docs.context.dev/llms.txt (HTTP 200, agent-oriented index of docs), plus agent-oriented docs, MCP server, CLI, and a coding-agent skill install guide, directly enabling an agent to be pointed at agent-native documentation. Missing for 10: independent third-party confirmation that agents successfully consume the llms.txt in practice beyond the probe check.",
+    "rationale": "There's a confirmed llms.txt served at docs.context.dev/llms.txt (probe-1) plus a dedicated www.context.dev/llms.txt reference, and extensive agent-oriented docs (MCP install guide, CLI, skill install guide, OpenAPI) explicitly designed for pointing agents at machine-readable docs. missing for 10: independent third-party confirmation that agents successfully consume the llms.txt in practice.",
     "evidenceIds": [
       "context-dev-probe-1",
+      "context-dev-docs-28",
       "context-dev-docs-13",
-      "context-dev-docs-14",
       "context-dev-docs-15",
-      "context-dev-probe-3",
-      "context-dev-probe-4"
+      "context-dev-probe-2",
+      "context-dev-docs-14"
     ]
   },
   {
@@ -2295,13 +2295,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Context.dev is a data-extraction/scraping API (Markdown, structured JSON extraction, screenshots, brand data) intended to feed external AI agents and applications, but there is no evidence of the product itself surfacing AI-generated insights, recommendations, or analysis inside a Context.dev interface — it delivers raw/structured data, not in-product AI insight generation.",
-    "evidenceIds": [
-      "context-dev-docs-1",
-      "context-dev-docs-4",
-      "context-dev-docs-11",
-      "context-dev-docs-13"
-    ]
+    "rationale": "Context.dev is a web-scraping/data-extraction API (Markdown, structured JSON, brand/company data) with an Answers endpoint for question research, but there is no evidence of an in-product experience that generates insights or suggestions from the user's own data — it delivers raw/extracted data via API/SDK/CLI/MCP rather than an insights dashboard or proactive suggestion feature.",
+    "evidenceIds": []
   },
   {
     "productId": "context-dev",
@@ -2309,10 +2304,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Context.dev supports background automation via async batch crawling that runs as a tracked job until completion, and scheduled monitoring of pages/sitemaps/datasets that emits signed change events without user intervention — both run autonomously once configured. However, there's no evidence of a broader automation/workflow engine (e.g., chaining actions, triggering downstream agent tasks, retries/orchestration) beyond these two specific background job types. Missing for 10: evidence of workflow chaining or agent-triggered automation, independent confirmation of monitoring reliability, and details on scheduling flexibility.",
+    "rationale": "Context.dev supports background automation in limited, domain-specific ways: async batch crawls of up to 25,000 pages with progress tracking (context-dev-docs-3, context-dev-docs-34) and scheduled monitoring of pages/sitemaps/datasets that emits signed change events (context-dev-docs-9). This is genuine autonomous background execution, but it's scoped narrowly to web-scraping/monitoring jobs rather than a general agent-automation framework with triggers, multi-step workflows, or scheduling across arbitrary tasks. Missing for 10: evidence of a general-purpose automation/scheduling system beyond crawl+monitor, multi-step workflow chaining, and independent confirmation that monitoring/webhooks work reliably in production.",
     "evidenceIds": [
       "context-dev-docs-3",
-      "context-dev-docs-9"
+      "context-dev-docs-9",
+      "context-dev-docs-34"
     ]
   },
   {
@@ -2329,15 +2325,16 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Context.dev ships a CLI explicitly documented for scripting and CI use ('Call Context.dev from your terminal and use JSON responses in scripts or CI'), backed by a full REST API with OpenAPI spec, async batch jobs for long-running headless crawls, and documented rate-limit/timeout handling suited to automated pipelines. Missing for 10: no explicit CI/CD pipeline example (e.g., GitHub Actions), and no independent/community confirmation of headless CI usage beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Context.dev is API-first with a documented REST API, OpenAPI spec, CLI ('Call Context.dev from your terminal and use JSON responses in scripts or CI'), and SDKs, all enabling headless/CI automation without a GUI dependency; async batch jobs and scheduled monitoring further support unattended pipelines. Missing for 10: no explicit CI recipe/example (e.g., GitHub Actions snippet) or independent hands-on CI report confirming this in practice.",
     "evidenceIds": [
       "context-dev-docs-14",
-      "context-dev-docs-3",
-      "context-dev-docs-17",
-      "context-dev-docs-18",
+      "context-dev-probe-4",
       "context-dev-probe-2",
-      "context-dev-probe-4"
+      "context-dev-docs-34",
+      "context-dev-docs-9",
+      "context-dev-docs-26",
+      "context-dev-docs-27"
     ]
   },
   {
@@ -2346,7 +2343,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Context.dev is a web-scraping/data-extraction API/service that itself exposes an MCP server (context-dev-docs-13, context-dev-probe-3) so that AI clients can call ITS tools — it is not an agentic product that would consume other MCP servers' tools. The 'plug MCP servers in' client-role story is a category error for this kind of product.",
+    "rationale": "Context.dev is a web-scraping/data API and ships as an MCP server for other AI clients to consume (docs-13, probe-3) — it is not itself an agentic runtime that would plug in external MCP servers to use their tools. This client-side capability axis is a category error for this kind of product.",
     "evidenceIds": [
       "context-dev-docs-13",
       "context-dev-probe-3"
@@ -2358,10 +2355,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Context.dev is a web-data API (not itself an agent), so the MCP-server axis applies, and it publishes an official hosted MCP endpoint (mcp.context.dev/mcp) plus install docs for connecting AI clients to its tools for live web/company data. Missing for 10: independent/hands-on verification of the MCP server working in practice beyond first-party docs and a probe confirming the endpoint exists.",
+    "rationale": "Context.dev is a data/API product (not itself an agent), so an official MCP server axis applies and is documented: docs explicitly describe connecting an AI client to Context.dev tools via MCP (context-dev-docs-13), and a probe confirms a live official MCP endpoint at mcp.context.dev/mcp (context-dev-probe-3). Missing for 10: independent/hands-on community confirmation of MCP usage and more detail on supported tool scopes via MCP.",
     "evidenceIds": [
-      "context-dev-probe-3",
-      "context-dev-docs-13"
+      "context-dev-docs-13",
+      "context-dev-probe-3"
     ]
   },
   {
@@ -2370,13 +2367,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Context.dev ships an official MCP server ('Connect your AI client to Context.dev tools for live web and company data') and an agent 'skill' file that teaches coding agents how to call the API, which together let AI-native users issue natural-language requests that get translated into API calls; there is also a CLI for scripted/terminal use. However, all natural-language operation is mediated through third-party AI clients (Claude, agents) rather than a native NL interface in Context.dev itself, and no community/hands-on evidence confirms this NL workflow works smoothly in practice. Missing for 10: first-party or independent evidence of actual natural-language usage/output quality via the MCP or skill integration, and any native chat/NL interface within the product itself.",
+    "rationale": "Context.dev ships an official MCP server and CLI/skill install guides so an AI agent or coding assistant can translate natural-language requests into API calls, and its Answers endpoint directly accepts a natural-language 'question or task' and returns JSON with sources. However, the core product remains a structured REST API (JSON Schema extraction, explicit parameters) rather than a native NL interface, so operating it in natural language depends on an external AI client/agent layer. Missing for 10: evidence of a first-party chat/NL interface within Context.dev itself, and independent hands-on confirmation that MCP/agent NL commands reliably map to correct API calls.",
     "evidenceIds": [
       "context-dev-docs-13",
       "context-dev-docs-15",
-      "context-dev-docs-14",
-      "context-dev-probe-3",
-      "context-dev-probe-4"
+      "context-dev-docs-35",
+      "context-dev-probe-3"
     ]
   },
   {
@@ -2385,7 +2381,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs and probe confirm an official CLI exists ('Call Context.dev from your terminal and use JSON responses in scripts or CI') with a dedicated install page, supporting agentic/CI workflows. However, there's no independent/hands-on corroboration of the CLI's functionality or depth beyond first-party docs. Missing for 10: independent verification/hands-on review of CLI usage, details on CLI command coverage vs the full API surface.",
+    "rationale": "Docs and probe confirm an official CLI exists (\"Call Context.dev from your terminal and use JSON responses in scripts or CI\") with a dedicated install page, fitting agentic/scripting use. missing for 10: no independent/hands-on corroboration of CLI usage, no detail on command set or feature parity with the API/SDKs.",
     "evidenceIds": [
       "context-dev-docs-14",
       "context-dev-probe-4"
@@ -2397,15 +2393,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Context.dev is fundamentally an API product with a public OpenAPI spec, documented endpoints (crawl, extract, screenshot, brand data, auth), API key management, rate-limit headers, plus a CLI and MCP server built on top of the same API — clear evidence of a documented, drivable public API for AI-native consumption. Missing for 10: independent third-party developer confirmation of full API coverage beyond docs/probes.",
+    "rationale": "Context.dev exposes a comprehensive documented public API (OpenAPI spec, auth flow, SDKs, CLI, rate limits, timeouts) covering scraping, crawling, extraction, screenshots, brand data, and more, confirmed by both docs and live probes. missing for 10: independent hands-on developer confirmation of API usage beyond vendor docs/probes.",
     "evidenceIds": [
       "context-dev-probe-2",
-      "context-dev-docs-1",
-      "context-dev-docs-10",
-      "context-dev-docs-14",
-      "context-dev-docs-18",
       "context-dev-docs-19",
-      "context-dev-probe-4"
+      "context-dev-docs-26",
+      "context-dev-docs-27",
+      "context-dev-probe-4",
+      "context-dev-docs-18",
+      "context-dev-docs-25"
     ]
   },
   {
@@ -2423,14 +2419,15 @@
   {
     "productId": "context-dev",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows an OpenAPI spec, CLI, MCP server, and 'skill' for coding agents, but there is no mention of official SDK client libraries (e.g., Python, JS, Go packages) for Context.dev. Missing for 10: explicit official SDK packages/documentation, language-specific client libraries, versioning/release notes for SDKs.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Context.dev documents official TypeScript/JavaScript and Python SDKs with install and usage guides (scrape, brand data retrieval), backed by an OpenAPI spec and additional official CLI/MCP tooling for broader ecosystem access. Missing for 10: independent hands-on developer corroboration of SDK usage beyond docs, and coverage of other languages beyond TS/Python.",
     "evidenceIds": [
+      "context-dev-docs-26",
+      "context-dev-docs-27",
       "context-dev-probe-2",
-      "context-dev-probe-4",
-      "context-dev-docs-14"
+      "context-dev-docs-28"
     ]
   },
   {
@@ -2439,7 +2436,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Context.dev supports monitoring pages/sitemaps/datasets and receiving 'signed change events' on a schedule, which functions as a webhook-like event delivery mechanism, but the docs never explicitly describe a subscribe/webhook API, event types, delivery retries, or webhook management endpoints. missing for 10: explicit webhook subscription/management API docs, event schema/type documentation, delivery reliability/retry details, and independent confirmation of webhook functionality.",
+    "rationale": "The monitor-website-changes guide describes watching a page/sitemap/dataset on a schedule and receiving 'signed change events,' which implies a webhook-style push notification mechanism, but no docs explicitly detail webhook subscription setup, payload format, or delivery guarantees. Missing for 10: explicit webhook subscription/configuration docs, payload schema, retry/delivery semantics, and independent confirmation of webhook functionality.",
     "evidenceIds": [
       "context-dev-docs-9"
     ]
@@ -2448,25 +2445,33 @@
     "productId": "context-dev",
     "storyId": "ai-natural-language-extraction",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe an extract endpoint that crawls relevant pages and returns an object matching a JSON Schema with controls for grounding, coverage, and freshness—no CSS/XPath selectors required, just a schema/instructions-driven approach. Missing for 10: no explicit mention of natural-language instruction fields (vs. schema-only), no independent hands-on benchmark of extraction accuracy/quality.",
+    "rationale": "Context.dev's extract-structured-data guide explicitly lets developers provide a JSON Schema (not selectors) and have the system crawl relevant pages, ground results, and return matching JSON, with a dedicated API endpoint for this purpose. This is corroborated by the async batch/extraction endpoints and SDK guides showing structured extraction usage. missing for 10: independent hands-on benchmarking of extraction accuracy/quality versus selector-based scraping, and no third-party review specifically validating natural-language-to-schema extraction fidelity.",
     "evidenceIds": [
       "context-dev-docs-4",
-      "context-dev-docs-1",
-      "context-dev-docs-11"
+      "context-dev-docs-21",
+      "context-dev-docs-34",
+      "context-dev-docs-20",
+      "context-dev-probe-2"
     ]
   },
   {
     "productId": "context-dev",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence confirms docs, guides, and an OpenAPI spec exist, but nothing indicates an interactive reference with runnable/try-it-out examples (no Swagger/Redoc playground, no 'try it' feature mentioned).",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Context.dev publishes a full API reference (endpoint docs for brand, news, people, scraping, batches, etc.) and exposes a machine-readable OpenAPI spec (openapi.json), which is the underlying requirement for an interactive/try-it-out reference, plus SDK quickstart snippets showing example calls. However, no evidence confirms an actual interactive console (e.g., 'Try it' button, live request execution in-browser) — the docs appear to be static markdown/API reference pages rather than a runnable playground. Missing for 10: explicit interactive 'run request' UI, live sandbox execution, and independent confirmation that examples are runnable rather than static code snippets.",
     "evidenceIds": [
       "context-dev-probe-2",
-      "context-dev-docs-1"
+      "context-dev-docs-29",
+      "context-dev-docs-30",
+      "context-dev-docs-33",
+      "context-dev-docs-34",
+      "context-dev-docs-35",
+      "context-dev-docs-26",
+      "context-dev-docs-27"
     ]
   },
   {
@@ -2475,10 +2480,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a live OpenAPI JSON spec at docs.context.dev/openapi.json (HTTP 200, contains 'openapi' key), directly satisfying the machine-readable spec requirement, alongside first-party docs describing the API surface. Missing for 10: independent third-party corroboration of spec completeness/versioning beyond the probe check.",
+    "rationale": "A probe confirms a live, machine-readable OpenAPI spec at https://docs.context.dev/openapi.json returning valid OpenAPI JSON, and llms.txt is also served, giving AI-native users direct machine-readable access. missing for 10: no independent third-party corroboration of the OpenAPI spec's completeness beyond the automated probe.",
     "evidenceIds": [
       "context-dev-probe-2",
-      "context-dev-docs-1"
+      "context-dev-probe-1"
     ]
   },
   {
@@ -2495,9 +2500,12 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows an OpenAPI spec exists but no documentation of API versioning scheme or a deprecation policy anywhere in the pack. Missing for 10: versioning scheme documentation, explicit deprecation policy, migration/sunset notices.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "There is an OpenAPI spec and rebranding notice (Brand.dev → Context.dev deprecated), but no documented API versioning scheme or explicit deprecation policy for the current API itself is evidenced.",
+    "evidenceIds": [
+      "context-dev-probe-2",
+      "context-dev-docs-28"
+    ]
   },
   {
     "productId": "context-dev",
@@ -2505,12 +2513,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Context.dev is a web scraping/crawling/data-extraction API; there is no evidence of CAPTCHA-solving, login/session automation, or form-wall bypass capability. Community comments even question its handling of restricted/anti-scraping sites, and no docs describe login or CAPTCHA handling.",
+    "rationale": "Docs describe browser actions (click/wait/scroll) and an auth flow that explicitly requires the *user* to complete a claim step in their own browser (context-dev-docs-19), not an agent bypassing CAPTCHA/login automatically. No documentation or community evidence describes automated CAPTCHA solving or credential-based login bypass, and community comments note the absence of any IP-rotation/residential-proxy infrastructure typically needed for anti-bot evasion (context-dev-comm-2, context-dev-comm-5).",
     "evidenceIds": [
+      "context-dev-docs-7",
+      "context-dev-docs-19",
       "context-dev-comm-2",
-      "context-dev-comm-4",
-      "context-dev-comm-5",
-      "context-dev-docs-7"
+      "context-dev-comm-5"
     ]
   },
   {
@@ -2519,7 +2527,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of automatic model/config selection based on cost-success tradeoffs; docs cover crawling, extraction, timeouts, and rate limits but nothing about auto-selecting cheapest successful configuration.",
+    "rationale": "No evidence of automatic cost/configuration optimization where the API selects the cheapest viable settings; the pack shows manual controls (timeouts, deadlines, batch sizes) but nothing about automatic cheapest-config selection.",
     "evidenceIds": []
   },
   {
@@ -2528,7 +2536,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or evidence describes proxy rotation, proxy-chain retries, or anti-bot bypass mechanisms; a community comment explicitly notes the homepage never mentions IP rotation or residential proxies, reinforcing the absence of this capability.",
+    "rationale": "No documentation mentions proxy rotation, retry chains, or anti-bot handling; community comments explicitly note the homepage never mentions IPs, rotating IPs, or residential proxies, suggesting this capability is absent.",
     "evidenceIds": [
       "context-dev-comm-2",
       "context-dev-comm-5"
@@ -2537,14 +2545,17 @@
   {
     "productId": "context-dev",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs describe genuine bulk capability: async crawl jobs processing up to 25,000 pages in the background with progress tracking, plus a smaller 500-page synchronous crawl mode, which cover bulk operations across many web pages. However, evidence doesn't show bulk operations across arbitrary item sets (e.g., batch brand lookups, batch document parsing, or bulk extraction across a list of disparate items) beyond website crawling, and there's no independent/hands-on corroboration of large-scale batch reliability. Missing for 10: evidence of bulk/batch endpoints beyond crawling (e.g., batch document conversion, batch structured extraction across arbitrary item lists), and third-party validation of large-scale batch performance.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Context.dev documents batch operations explicitly: async crawling up to 25,000 pages with job tracking (context-dev-docs-3, context-dev-docs-34), background batch submission API, and bulk URL discovery via sitemaps (context-dev-docs-5/22). These are accessible programmatically via CLI, SDKs, and MCP for AI-native automation. Missing for 10: no independent/hands-on corroboration of batch job performance at scale, and no explicit bulk operation support for other endpoints like brand/people enrichment beyond single-item calls.",
     "evidenceIds": [
-      "context-dev-docs-2",
       "context-dev-docs-3",
-      "context-dev-docs-4"
+      "context-dev-docs-34",
+      "context-dev-docs-5",
+      "context-dev-docs-22",
+      "context-dev-docs-13",
+      "context-dev-docs-14"
     ]
   },
   {
@@ -2553,7 +2564,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Context.dev supports watching a page, sitemap, or dataset on a schedule and receiving signed change events, which functions as an event-trigger mechanism, but this is presented as a single monitoring feature rather than a general rule-definition system with configurable conditions and varied actions. Missing for 10: evidence of a rules/conditions engine, multiple trigger types beyond scheduled monitoring, and configurable downstream actions (e.g., webhooks to arbitrary endpoints, multi-step workflows).",
+    "rationale": "Context.dev supports watching a page/sitemap/dataset on a schedule and emitting signed change events (webhooks), which is a basic event-trigger mechanism, but there's no evidence of a broader rule engine allowing conditional logic or custom automated actions beyond notification. Missing for 10: documented conditional/rule syntax, ability to chain custom actions (not just webhook delivery), and evidence of integration with automation platforms (e.g. Zapier) to complete the 'trigger actions' loop.",
     "evidenceIds": [
       "context-dev-docs-9"
     ]
@@ -2564,7 +2575,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The docs describe a monitoring feature that watches a page, sitemap, or dataset 'on a schedule' and emits signed change events (context-dev-docs-9), which is a form of recurring job scheduling, but this is scoped only to change-detection, not general recurring crawl/extract/workflow jobs. Missing for 10: evidence of cron-style scheduling for arbitrary crawl/extract jobs, workflow chaining, or a broader job-scheduling API beyond the single 'monitor' feature.",
+    "rationale": "Context.dev documents a scheduled 'monitor website changes' feature that watches a page, sitemap, or dataset and emits signed change events on a schedule — a concrete recurring job. However, there's no evidence of a general-purpose recurring job/workflow scheduler (e.g., scheduling arbitrary scrapes, crawls, or extraction pipelines) beyond this single monitoring use case. Missing for 10: broader scheduling of arbitrary workflows/jobs (not just change-monitoring), a job management UI/API for recurring tasks, and independent confirmation of the monitor feature working in practice.",
     "evidenceIds": [
       "context-dev-docs-9"
     ]
@@ -2575,20 +2586,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Context.dev is a web-scraping/data-extraction API product, not an automation/workflow-builder tool; versioning, reviewing, and rolling back 'automations' is not a fair axis for this kind of product.",
+    "rationale": "Context.dev is a web-scraping/data-extraction API product, not an automation/workflow builder; there is no concept of 'automations' to version, review, or roll back in this product category.",
     "evidenceIds": []
   },
   {
     "productId": "context-dev",
     "storyId": "batch-scrape-async",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe an async background crawl job handling up to 25,000 pages with progress tracking and retrieval on completion, plus rate-limit headers and partial-result timeout handling that support reliability at scale. However, this is framed as crawling one site rather than an arbitrary list of thousands of distinct URLs, and there is no independent/hands-on evidence confirming real-world throughput or reliability at that scale. Missing for 10: evidence of scraping an arbitrary batch/list of thousands of URLs (not just one site's crawl), independent benchmarks or user reports validating async batch reliability at scale.",
+    "rationale": "Docs explicitly describe batch scraping up to 25,000 URLs asynchronously with background job tracking and retrieval (context-dev-docs-3, context-dev-docs-34), plus timeout/partial-result and rate-limit handling for large jobs (context-dev-docs-17, context-dev-docs-18, context-dev-docs-25). Missing for 10: independent/hands-on benchmarks confirming throughput/reliability at scale and no third-party corroboration of the 25K batch limit in practice.",
     "evidenceIds": [
       "context-dev-docs-3",
+      "context-dev-docs-34",
       "context-dev-docs-17",
-      "context-dev-docs-18"
+      "context-dev-docs-18",
+      "context-dev-docs-25"
     ]
   },
   {
@@ -2597,7 +2610,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions ad-blocking, resource blocking, or any performance optimization feature to skip ads/media during scraping; the docs cover crawling, extraction, screenshots, and browser actions but never ad-blocking specifically. Missing for 10: any documentation of an ad-block or resource-blocking option, any performance/speed benefit tied to blocking ads.",
+    "rationale": "No evidence anywhere in the docs or community mentions ad-blocking, resource-blocking, or similar performance/cost optimizations for scraping requests; timeouts and rate-limits are addressed but not ad blocking specifically.",
     "evidenceIds": []
   },
   {
@@ -2606,7 +2619,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence that Context.dev offers a resource-blocking option (images/CSS) for scraping or crawling to reduce bandwidth; docs describe crawling, screenshot, extraction, and monitoring but never mention selective resource blocking.",
+    "rationale": "Context.dev is a web scraping/data extraction API; the evidence covers scraping, crawling, screenshots, and brand data but no mention of blocking images/CSS resource loading for bandwidth optimization during scraping.",
     "evidenceIds": []
   },
   {
@@ -2614,10 +2627,11 @@
     "storyId": "concurrency-cap-by-plan",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Docs mention rate-limit headers exist and per-minute limits apply, but there is no evidence of tier-specific concurrency/session caps or the cost to raise them. Missing for 10: documented tier limits table, concrete numeric caps per plan, and pricing/upgrade path to raise the cap.",
+    "confidence": "medium",
+    "rationale": "Docs mention rate-limit headers and timeouts but never specify concrete tier concurrency/request caps or upgrade pricing to raise them; community notes call pricing 'wildly expensive' but give no concrete cap/cost figures either.",
     "evidenceIds": [
-      "context-dev-docs-18"
+      "context-dev-docs-18",
+      "context-dev-comm-2"
     ]
   },
   {
@@ -2626,12 +2640,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Context.dev supports large single crawls (up to 25,000 pages async) and exposes rate-limit headers, implying some capacity for scaled scraping, but there is no explicit documentation of running many concurrent scraping sessions or session-level concurrency controls. Community feedback also raises doubts about scaling to high-volume/high-value scraping due to lack of rotating/residential proxy support. missing for 10: explicit concurrency/session-limit documentation, evidence of parallel job orchestration, and independent benchmarks confirming multi-session scale.",
+    "rationale": "Docs show scale-oriented features — async batch crawling up to 25,000 pages, background job tracking, and per-minute rate-limit headers — which support large-scale data gathering, but nothing explicitly documents spinning up many *concurrent* scraping sessions or parallel job throughput limits. Community feedback also raises concerns about lack of rotating/residential proxies for high-volume scraping, suggesting real-world scale limitations. Missing for 10: explicit concurrency/session-parallelism documentation, proxy/IP rotation for high-volume use, and independent benchmarks proving many simultaneous jobs work reliably.",
     "evidenceIds": [
       "context-dev-docs-3",
+      "context-dev-docs-34",
       "context-dev-docs-18",
-      "context-dev-comm-2",
-      "context-dev-comm-5"
+      "context-dev-comm-2"
     ]
   },
   {
@@ -2640,7 +2654,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe a monitoring feature that watches a page, sitemap, or dataset on a schedule and delivers signed change events, directly matching the story's core ask. However, there's no independent/hands-on corroboration of this feature working in practice, and no detail on notification channels (webhooks, email, etc.) or reliability at scale. Missing for 10: independent evidence of monitoring reliability, details on notification delivery mechanisms/channels, and evidence of scale/performance under continuous monitoring.",
+    "rationale": "Docs explicitly describe a monitoring feature ('Watch a page, sitemap, or structured dataset on a schedule and receive signed change events'), directly matching the story's core need. However, there is no evidence of notification channels (webhooks/email/Slack), no independent/hands-on corroboration of this feature working reliably, and community discussion focuses on scraping/proxy concerns rather than monitoring reliability. Missing for 10: documented notification delivery mechanisms, evidence of scale/reliability at high monitoring frequency, and independent confirmation the monitor feature works as described.",
     "evidenceIds": [
       "context-dev-docs-9"
     ]
@@ -2649,11 +2663,12 @@
     "productId": "context-dev",
     "storyId": "control-viewport-size",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The screenshot guide mentions a 'viewport' capture mode alongside full-page and offset options, implying some viewport-based rendering, but no evidence specifies developer control over exact width/height dimensions. missing for 10: explicit API parameters for setting viewport width and height, documentation confirming custom viewport sizing, and any hands-on confirmation.",
+    "rationale": "Docs mention a 'viewport' capture mode and letting users 'choose the capture area' when taking screenshots, implying some control over the rendered viewport, but there is no explicit documentation of setting numeric width/height parameters for the browser viewport. Missing for 10: explicit width/height parameter documentation, examples showing custom viewport dimensions, and independent confirmation of this control working.",
     "evidenceIds": [
-      "context-dev-docs-6"
+      "context-dev-docs-6",
+      "context-dev-docs-23"
     ]
   },
   {
@@ -2674,17 +2689,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses what happens when a monthly credit or request quota is exceeded—no mention of overage billing or hard cutoffs; only per-minute rate-limit headers and timeout behavior are documented, which are unrelated to plan quota exhaustion.",
-    "evidenceIds": []
+    "rationale": "Evidence covers rate limits and timeouts but never states whether exceeding plan credit/request quota results in overage billing or a hard stop.",
+    "evidenceIds": [
+      "context-dev-docs-18",
+      "context-dev-docs-25"
+    ]
   },
   {
     "productId": "context-dev",
     "storyId": "css-xpath-extraction",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Context.dev's extraction is schema-based (JSON Schema-driven structured extraction) with no evidence of CSS or XPath selector-based field extraction rules; docs mention Markdown conversion, crawling, and JSON-schema extraction but never selector syntax.",
-    "evidenceIds": []
+    "rationale": "Docs explicitly mention returning 'CSS-selected fields' as part of a scrape request (context-dev-docs-20), confirming CSS selector-based extraction exists, but there is no dedicated guide detailing selector syntax, XPath support, or field-mapping examples, and no independent/hands-on confirmation. missing for 10: dedicated docs/examples for CSS selector usage, explicit XPath selector support, independent verification of selector-based extraction accuracy.",
+    "evidenceIds": [
+      "context-dev-docs-20"
+    ]
   },
   {
     "productId": "context-dev",
@@ -2692,7 +2712,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Context.dev exposes a fixed set of hosted scraping endpoints (crawl, extract, screenshot, monitor, parse) accessed via API/CLI/MCP, but there is no evidence of a mechanism for developers to write and deploy their own custom scraping scripts or actors on the platform's infrastructure. This is a fair question for a web-scraping-as-a-service category, so absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "Context.dev's evidence describes a fixed set of hosted API endpoints (scrape, crawl, extract-with-schema, screenshot, browser actions, monitor) that developers call via SDK/CLI/MCP — this is serverless in the sense of no infra to manage, but there is no evidence of a capability to write and deploy arbitrary custom scraping scripts/code on the platform (no actors, functions, or custom-code deployment feature is documented).",
     "evidenceIds": []
   },
   {
@@ -2700,8 +2720,8 @@
     "storyId": "data-export-portability",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of an export feature for scraped data or job configurations in a portable format, nor any migration/lock-in-avoidance tooling; data is returned via API responses (Markdown/JSON) but no mention of bulk export or config portability to another provider.",
+    "confidence": "medium",
+    "rationale": "No evidence of any export/portability feature for scraped data or job configs, nor any migration tooling to move data or configs to another provider; the data returned via API (Markdown/JSON) is inherently retrievable, but there's no documented bulk export, config export, or provider-migration tooling to justify a lock-in-avoidance claim.",
     "evidenceIds": []
   },
   {
@@ -2725,10 +2745,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Context.dev documents crawling with configurable maximum page limits (500 for sync, up to 25,000 for async batch crawls), satisfying the page-limit part of the story, but no evidence describes a selectable crawl strategy (e.g., breadth-first vs depth-first) as a configurable parameter. Missing for 10: explicit breadth-first strategy option/documentation, evidence of strategy configurability alongside the page limit.",
+    "rationale": "Context.dev clearly supports crawling with configurable maximum page limits (500 pages synchronously, up to 25,000 pages via async batch crawl), satisfying the page-limit part of the story. However, none of the docs mention a selectable crawl strategy (breadth-first vs depth-first) or any parameter to configure traversal order. Missing for 10: explicit breadth-first crawl strategy option, documentation of crawl traversal algorithm, and independent confirmation of strategy behavior.",
     "evidenceIds": [
       "context-dev-docs-2",
-      "context-dev-docs-3"
+      "context-dev-docs-3",
+      "context-dev-docs-34"
     ]
   },
   {
@@ -2737,7 +2758,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Context.dev is offered as a hosted API/SaaS with SDKs, CLI, and MCP server, but no evidence anywhere in the pack mentions a Docker image, container, or self-hosted deployment option for the scraping service.",
     "evidenceIds": []
   },
   {
@@ -2757,9 +2778,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs explicitly state that in the timeout/return-partial flow, if no usable result exists the request 'fails without a charge,' directly addressing billing behavior on failure. However, there's no broader documentation covering all failure modes (e.g., blocked requests, empty-result extractions, rate-limited calls) confirming whether they also skip billing. Missing for 10: explicit policy for blocked requests, empty JSON extraction results, and general error responses beyond the timeout optimization guide; independent/community confirmation of billing behavior.",
+    "rationale": "Docs specify that timeouts with no usable result fail 'without a charge' (return-partial policy) and describe rate-limit headers, giving some clarity on billing behavior for failed/timeout requests, but there's no explicit statement covering blocked or empty-result requests generally across all endpoints. missing for 10: explicit policy on blocked/empty-result billing for scrape/crawl/extract endpoints, independent confirmation of billing behavior, comprehensive documentation across all product surfaces.",
     "evidenceIds": [
-      "context-dev-docs-17"
+      "context-dev-docs-17",
+      "context-dev-docs-25",
+      "context-dev-docs-18"
     ]
   },
   {
@@ -2768,12 +2791,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe a one-request crawl endpoint that returns page Markdown for a site (up to 500 pages synchronously) plus an async option for up to 25,000 pages, and a real customer (SiteGPT) is cited using it to scrape entire websites into a knowledge base. Missing for 10: independent hands-on verification of crawl completeness/accuracy at scale and no third-party benchmark of crawl reliability beyond vendor docs and one customer quote.",
+    "rationale": "Docs clearly describe crawling an entire site in one request (up to 500 pages synchronously, or 25,000 pages via async batch) returning Markdown/HTML, plus a case study of SiteGPT using Context.dev to scrape entire websites for a knowledge base. Missing for 10: independent hands-on verification of crawl completeness/reliability at scale and clarity on handling of dynamic/JS-heavy sites during crawl.",
     "evidenceIds": [
       "context-dev-docs-2",
       "context-dev-docs-3",
-      "context-dev-docs-16",
-      "context-dev-docs-1"
+      "context-dev-docs-34",
+      "context-dev-docs-16"
     ]
   },
   {
@@ -2781,8 +2804,8 @@
     "storyId": "geo-targeted-proxy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No documentation or feature mentions country-specific proxy selection or geolocation control; community comments even question whether Context.dev uses rotating/residential proxies at all, suggesting no such capability exists.",
+    "confidence": "high",
+    "rationale": "No evidence of country-specific proxy selection or geolocation targeting; community comments explicitly note absence of IP/residential proxy features, indicating this capability isn't offered.",
     "evidenceIds": [
       "context-dev-comm-2",
       "context-dev-comm-5"
@@ -2793,8 +2816,8 @@
     "storyId": "image-captioning-for-text-llm",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of automatic image captioning or alt-text generation for visual content; the product's extraction focuses on Markdown/JSON/screenshots and document parsing, not describing images for text-only models. Missing for 10: any mention of image captioning, vision-to-text description, or alt-text generation feature.",
+    "confidence": "medium",
+    "rationale": "Context.dev offers scraping into Markdown/HTML, screenshots, and document-to-Markdown conversion, but no evidence describes automatic image captioning/alt-text generation to make visual content reasoned about by a text-only model.",
     "evidenceIds": []
   },
   {
@@ -2803,8 +2826,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "Context.dev's evidence describes only programmatic scraping/crawling/extraction with optional pre-scrape browser actions (click, scroll, wait) executed as part of an automated API call, not an interactive, manually-drivable remote browser session/sandbox. No docs, probes, or community reports mention a live browser view, remote desktop, or session users can manually control.",
+    "evidenceIds": [
+      "context-dev-docs-7",
+      "context-dev-docs-24",
+      "context-dev-docs-1"
+    ]
   },
   {
     "productId": "context-dev",
@@ -2812,12 +2839,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Context.dev supports browser actions (click/wait/scroll) before scraping, and screenshot rendering, implying JS execution via a real browser, and crawl/scrape guides return Markdown/HTML output — suggesting rendered SPA content is retrievable. However, there is no explicit statement that scraping fully executes JavaScript-heavy SPAs or waits for hydration/network-idle by default, and no independent/hands-on confirmation of SPA rendering fidelity. missing for 10: explicit documentation confirming full JS/SPA rendering (e.g., wait-for-network-idle, headless browser execution) as default behavior, and independent verification of rendered output correctness for JS-heavy sites.",
+    "rationale": "Docs show scraping returns HTML/Markdown/screenshots and support pre-scrape browser actions (click, wait, scroll), which implies a headless-browser rendering pipeline capable of handling JS-driven pages, but no evidence explicitly states SPA/JS-heavy rendering support or fully-rendered DOM capture guarantees. missing for 10: explicit claim of JavaScript execution/headless browser engine, confirmation of handling dynamic SPA content, and independent verification of SPA rendering accuracy.",
     "evidenceIds": [
+      "context-dev-docs-20",
       "context-dev-docs-7",
+      "context-dev-docs-24",
       "context-dev-docs-6",
-      "context-dev-docs-2",
-      "context-dev-docs-3"
+      "context-dev-docs-23"
     ]
   },
   {
@@ -2826,10 +2854,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe extracting structured data by supplying a JSON Schema, with the API returning an object matching it, plus controls for grounding, coverage, and freshness; an OpenAPI spec is also available for verification. Missing for 10: independent hands-on confirmation of schema-conformance accuracy and no explicit mention of schema validation/error handling edge cases.",
+    "rationale": "Docs explicitly describe passing a JSON Schema to an extraction endpoint that crawls relevant pages and returns data shaped to that schema, with controls for grounding/coverage/freshness. Missing for 10: independent/hands-on corroboration of schema-conformance accuracy and edge-case handling.",
     "evidenceIds": [
       "context-dev-docs-4",
-      "context-dev-probe-2"
+      "context-dev-docs-21"
     ]
   },
   {
@@ -2844,14 +2872,15 @@
   {
     "productId": "context-dev",
     "storyId": "latency-completeness-tradeoff",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Context.dev offers explicit controls that trade off latency vs completeness: synchronous small crawls (fast, limited to 500 pages) vs async background crawls up to 25,000 pages, plus a 'return-partial' timeout policy that returns usable completed work with a completion marker rather than waiting for full completion. This directly supports controlling when content is returned along a latency/completeness axis, though it's documented only in claimed-docs with no independent hands-on validation of the tradeoff behavior. Missing for 10: independent/community confirmation of the return-partial and sync/async tradeoff working as documented, and more granular mid-request streaming or partial-result controls beyond the two crawl modes and timeout policy.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs show explicit deadline/timeout controls with a 'return-partial' mode that returns completed work with a completion marker instead of waiting for full completion, directly enabling a latency-vs-completeness tradeoff, plus separate sync (small, fast) vs async batch (large, complete) crawl modes. missing for 10: independent/hands-on verification that return-partial behaves as documented under real load, and clearer guidance on tuning latency for extraction/answers endpoints specifically.",
     "evidenceIds": [
+      "context-dev-docs-17",
+      "context-dev-docs-25",
       "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-17"
+      "context-dev-docs-3"
     ]
   },
   {
@@ -2860,19 +2889,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "No evidence of any real-time dashboard for monitoring system metrics or worker/browser pool status; docs cover rate-limit headers and timeout markers but nothing resembling a live monitoring UI.",
     "evidenceIds": []
   },
   {
     "productId": "context-dev",
     "storyId": "llm-driven-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The extract-structured-data guide shows the product accepts a JSON Schema and returns matching structured data with grounding/coverage controls, which fits an LLM-driven extraction without pre-written CSS/XPath selectors. However, the evidence doesn't explicitly describe the underlying mechanism as an LLM 'deciding' fields freely versus schema-guided extraction, and there's no example of open-ended field discovery without a supplied schema. Missing for 10: evidence of schema-less/free-form field discovery, and independent hands-on confirmation of extraction quality without selectors.",
+    "rationale": "Context.dev's extraction guide explicitly describes providing a JSON Schema (not CSS selectors) and having the system 'crawl relevant pages and return an object that matches your JSON Schema' with grounding/coverage controls, i.e., LLM-driven field extraction rather than pre-written selectors (docs-4, docs-21). This is reinforced by contrast with the separate CSS-selector scrape option (docs-20), showing schema-based extraction is a distinct, selector-free path. Missing for 10: independent/hands-on evidence of extraction accuracy or field-inference quality beyond vendor docs, and no example showing the LLM inferring fields without any schema at all.",
     "evidenceIds": [
       "context-dev-docs-4",
-      "context-dev-docs-1"
+      "context-dev-docs-21",
+      "context-dev-docs-20",
+      "context-dev-docs-34"
     ]
   },
   {
@@ -2881,14 +2912,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Context.dev's core offering is scraping/crawling websites directly into clean Markdown (and JSON) for AI agents, handling rendering, browser actions, and document parsing so the user doesn't deal with raw HTML; this is corroborated by docs and a real-world migration story (SiteGPT switching from Firecrawl). missing for 10: independent hands-on benchmark of output cleanliness/quality versus alternatives, and no detail on how well it strips boilerplate/ads beyond doc claims.",
+    "rationale": "Context.dev's core product is scraping/crawling into clean Markdown/JSON specifically for AI agents, avoiding raw HTML handling, with docs and probes confirming Markdown output, JSON extraction, and llms.txt support; a customer case study (SiteGPT) confirms real-world use for AI knowledge bases. missing for 10: independent benchmark of output cleanliness vs raw HTML, and no hands-on verification beyond vendor docs/case study.",
     "evidenceIds": [
       "context-dev-docs-1",
       "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-7",
-      "context-dev-docs-8",
-      "context-dev-docs-16"
+      "context-dev-docs-20",
+      "context-dev-docs-16",
+      "context-dev-probe-1"
     ]
   },
   {
@@ -2905,14 +2935,15 @@
     "storyId": "markdown-output",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "First-party docs consistently describe scraping/crawling output as Markdown (sync and async crawl endpoints, single-page scrape, document parsing all return Markdown rather than raw HTML), and this is corroborated by a customer case study (SiteGPT) using it to build a knowledge base. Missing for 10: independent hands-on verification of markdown output quality/cleanliness and no explicit sample output shown.",
+    "confidence": "medium",
+    "rationale": "Multiple docs confirm scraping/crawling returns clean Markdown output alongside HTML/JSON options, across single-page, crawl, and async batch endpoints, plus document-to-Markdown conversion. Missing for 10: independent hands-on verification of Markdown output quality/cleanliness beyond vendor docs.",
     "evidenceIds": [
       "context-dev-docs-1",
       "context-dev-docs-2",
       "context-dev-docs-3",
+      "context-dev-docs-20",
       "context-dev-docs-8",
-      "context-dev-docs-16"
+      "context-dev-probe-1"
     ]
   },
   {
@@ -2930,12 +2961,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show explicit format choice for Markdown (sync/async crawl) and HTML (async crawl), plus JSON output via structured extraction, but no mention of plain 'text' or 'frontmatter' output options anywhere in the docs. missing for 10: explicit text output mode, frontmatter output mode, independent confirmation of format selection working in practice.",
+    "rationale": "Docs confirm scrape/crawl responses can be returned as Markdown or HTML (and other formats like screenshots or CSS-selected fields), giving developers format choice for core outputs (context-dev-docs-20, context-dev-docs-3). However, there is no evidence of a plain-text or frontmatter output option being selectable. Missing for 10: explicit plain-text output mode, explicit frontmatter output mode, and any parameter documentation showing all four formats as selectable options in one API.",
     "evidenceIds": [
-      "context-dev-docs-2",
+      "context-dev-docs-20",
       "context-dev-docs-3",
-      "context-dev-docs-4",
-      "context-dev-docs-1"
+      "context-dev-docs-2"
     ]
   },
   {
@@ -2944,7 +2974,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a prebuilt n8n or Zapier connector; the product exposes an API, CLI, MCP server, and SDK, but nothing about no-code automation platform integrations.",
+    "rationale": "No evidence of any n8n, Zapier, or other no-code automation platform connector; only MCP server, CLI, and SDK integrations are documented.",
     "evidenceIds": []
   },
   {
@@ -2959,33 +2989,31 @@
   {
     "productId": "context-dev",
     "storyId": "openness-api-parity",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Context.dev is API-first: the product's core functions (crawl, extract, screenshot, monitor, brand data) are all documented as API endpoints with an OpenAPI spec, and the CLI/MCP/skill installs are just wrappers around that same API, implying no UI-exclusive functionality. missing for 10: explicit confirmation that the web UI itself exposes zero features unavailable via API (e.g., dashboard-only settings) and independent hands-on verification of full parity.",
+    "rationale": "Context.dev is API-first: every functional capability (scrape, crawl, extract, screenshot, browser actions, monitor, brand/people/news lookups, batches) is documented as an API endpoint, plus CLI, SDKs and MCP server give multiple non-UI access paths, implying the UI is a thin wrapper. However, there's no explicit statement enumerating dashboard-only features (e.g., API key management, billing) and confirming they too are API-accessible, so parity isn't fully proven. Missing for 10: explicit confirmation that all account/dashboard settings (billing, key restrictions, usage analytics) are also API-controllable, and independent verification that no UI-only feature exists.",
     "evidenceIds": [
       "context-dev-docs-1",
-      "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-4",
-      "context-dev-docs-9",
+      "context-dev-docs-10",
       "context-dev-docs-14",
       "context-dev-probe-2",
-      "context-dev-probe-4"
+      "context-dev-probe-4",
+      "context-dev-docs-34"
     ]
   },
   {
     "productId": "context-dev",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Context.dev's outputs (Markdown, JSON, HTML) are inherently open, portable formats rather than proprietary lock-in formats, and structured extraction lets users get their scraped/monitored data in JSON Schema-conformant form (docs-1, docs-3, docs-4, docs-9). However there is no explicit account-level 'export all your data and leave' feature (e.g., bulk export of saved crawls, monitors, API key configs, or account deletion with data portability) documented anywhere in the evidence. Missing for 10: dedicated account/data export tooling, documentation of account deletion/data portability guarantees, and independent confirmation that historical crawl/monitor data can be bulk-exported.",
+    "rationale": "Context.dev's core outputs (Markdown, JSON, HTML, screenshots) are inherently open formats returned via API, so scraped/crawled data is never locked into a proprietary format, and there's no subscription lock-in since it's a pay-per-call API. However, there is no explicit account-level 'export all my data and close account' feature, no bulk export of stored history/configurations, and no documentation addressing full data portability beyond per-request outputs. missing for 10: explicit account-wide data export tooling, evidence of stored data (job history, monitors, API keys) being exportable, and any documented account-closure/data-portability workflow.",
     "evidenceIds": [
       "context-dev-docs-1",
+      "context-dev-docs-2",
       "context-dev-docs-3",
-      "context-dev-docs-4",
-      "context-dev-docs-9"
+      "context-dev-docs-20"
     ]
   },
   {
@@ -2994,7 +3022,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of Context.dev's source code being available under an open license; this is a closed API/SaaS product with no mention of open-sourcing its codebase. Missing for 10: any public repository, license file, or open-source announcement.",
+    "rationale": "No evidence of an open-source license or public source code repository for Context.dev; it is presented as a closed commercial API/SaaS product with SDKs and docs, not an open-source codebase.",
     "evidenceIds": []
   },
   {
@@ -3003,7 +3031,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Context.dev is a hosted API/SaaS product (web scraping, extraction, MCP, CLI) with no evidence of an open-source core or self-hosting option; all evidence points to a cloud-only API service.",
+    "rationale": "Context.dev is offered exclusively as a hosted API/SaaS product with API keys, rate limits, and a cloud MCP endpoint; no evidence anywhere in the docs or community discussion mentions a self-hosted deployment option, open-source repo, or Docker image for running the core scraping/extraction engine locally.",
     "evidenceIds": []
   },
   {
@@ -3011,8 +3039,8 @@
     "storyId": "pass-session-cookies",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions passing custom session cookies, headers, or authentication credentials for scraping protected pages; only browser-actions (click/wait/scroll) and general crawl/scrape features are documented.",
+    "confidence": "medium",
+    "rationale": "No evidence in the documentation or elsewhere mentions passing custom session cookies, headers, or authentication credentials to fetch pages requiring login; browser-actions and headers docs mention interactions and target headers but not session cookie injection.",
     "evidenceIds": []
   },
   {
@@ -3031,11 +3059,11 @@
     "storyId": "per-url-pattern-config",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The docs describe a single batch crawl job (up to 25,000 pages) with one set of settings, but there is no evidence of applying different crawl configurations to different URL patterns within the same job.",
+    "confidence": "medium",
+    "rationale": "The batch/async crawl docs (context-dev-docs-3, -34) describe crawling up to 25,000 pages as a single background job with progress tracking, but there's no evidence of applying different crawl configurations (e.g., different depth, extraction rules, or actions) per URL pattern within one batch job.",
     "evidenceIds": [
       "context-dev-docs-3",
-      "context-dev-docs-2"
+      "context-dev-docs-34"
     ]
   },
   {
@@ -3044,10 +3072,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of persistent browser profiles, saved cookies, or reusable login/session state across requests; browser-actions doc only covers click/wait/scroll per single request. Missing for 10: any mention of persistent sessions, cookie storage, authentication state reuse, or profile management across multiple API calls.",
-    "evidenceIds": [
-      "context-dev-docs-7"
-    ]
+    "rationale": "No evidence of persistent browser profiles, saved cookies, or session/login state reuse across requests; the product only documents one-off browser actions (click/wait/scroll) within a single scrape/extract call, not persistent session storage.",
+    "evidenceIds": []
   },
   {
     "productId": "context-dev",
@@ -3055,7 +3081,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions PII detection, redaction, or filtering of sensitive personal data in scraped content; the docs cover scraping, crawling, extraction, screenshots, document parsing, and monitoring but nothing about PII compliance or content filtering.",
+    "rationale": "No evidence anywhere in the pack mentions PII detection, redaction, filtering, or compliance controls applied to scraped content; the docs cover scraping, crawling, extraction, brand data, and screenshots but nothing about privacy/PII handling before storage.",
     "evidenceIds": []
   },
   {
@@ -3063,10 +3089,11 @@
     "storyId": "post-render-behind-login",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Context.dev documents browser actions (click, wait, scroll) that can run before a scrape or extraction, which supports some interactive page manipulation, but there is no evidence of form-filling, typing credentials, or a persistent multi-step session capable of reaching authenticated/login-walled content. Missing for 10: explicit support for filling login forms/typing input, session/cookie persistence across interactions, and any documented login-wall use case or example.",
+    "confidence": "medium",
+    "rationale": "Context.dev's browser-actions guide documents click, wait, and scroll actions performed before a single scrape/extract call, which covers basic pre-scrape interaction, but there is no evidence of form-filling (text input) actions or persistent authenticated sessions needed to actually get behind a login wall across multiple steps. missing for 10: explicit form-fill/type action support, session/cookie persistence across requests, and any documented login-wall workflow or example.",
     "evidenceIds": [
-      "context-dev-docs-7"
+      "context-dev-docs-7",
+      "context-dev-docs-24"
     ]
   },
   {
@@ -3074,14 +3101,9 @@
     "storyId": "prebuilt-scraper-marketplace",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Context.dev's evidence describes a general-purpose scraping/crawling/extraction API, CLI, and MCP server that developers configure themselves, but no marketplace of pre-built, ready-made scrapers for specific sites/use-cases is mentioned anywhere in the docs, community discussion, or probes.",
-    "evidenceIds": [
-      "context-dev-docs-1",
-      "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-4"
-    ]
+    "confidence": "medium",
+    "rationale": "Context.dev provides a general-purpose scraping/extraction API (crawl, extract, screenshot, monitor, etc.) that developers configure themselves, but there is no evidence of a marketplace of pre-built, ready-made scrapers for specific sites/use-cases that a developer could just run off the shelf.",
+    "evidenceIds": []
   },
   {
     "productId": "context-dev",
@@ -3089,11 +3111,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or product page mentions residential/datacenter proxies, IP rotation, or anti-bot bypass infrastructure; community comments explicitly note the absence of any proxy mention and question whether the product can handle high-value/anti-scraping targets like LinkedIn.",
+    "rationale": "Docs never mention residential/datacenter proxies, IP rotation, or anti-bot bypass mechanisms — the entire docs corpus covers scraping, crawling, extraction, screenshots, and brand data with no proxy language. Community commenters explicitly ask whether Context.dev uses rotating/residential proxies and note the homepage never mentions 'ip', with no vendor response confirming such capability, reinforcing the absence.",
     "evidenceIds": [
       "context-dev-comm-2",
       "context-dev-comm-5",
-      "context-dev-docs-1"
+      "context-dev-docs-1",
+      "context-dev-docs-20"
     ]
   },
   {
@@ -3102,7 +3125,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location options for Context.dev; the product is a web-scraping/data API with no documented control over where data is stored. Missing for 10: any mention of regional hosting, data residency options, or compliance certifications tied to storage location.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Context.dev's API/service.",
     "evidenceIds": []
   },
   {
@@ -3119,8 +3142,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or data export/erasure mechanisms; the docs cover scraping, crawling, extraction, and API key permissions but nothing about how customer data is retained or can be deleted.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-facing settings for managing stored data; only API key permissioning and unrelated scraping/data features are documented.",
     "evidenceIds": []
   },
   {
@@ -3129,7 +3152,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out settings for Context.dev; the API/product docs focus on scraping, crawling, and data extraction features rather than privacy controls.",
+    "rationale": "No evidence pack item addresses telemetry, opt-out settings, or usage tracking controls for Context.dev; this is a fair question for an API/data platform but no documentation or community evidence confirms such a feature exists.",
     "evidenceIds": []
   },
   {
@@ -3138,7 +3161,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the docs, probes, or community discussion. missing for 10: public status page, uptime metrics, incident postmortem history.",
+    "rationale": "No evidence of a public status page, uptime history, or postmortem documentation anywhere in the evidence pack; only product docs and general community discussion exist.",
     "evidenceIds": []
   },
   {
@@ -3162,11 +3185,15 @@
   {
     "productId": "context-dev",
     "storyId": "research-agent-preset",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Context.dev is a web scraping/data extraction API with structured extraction, crawling, and monitoring features, but there is no evidence of a preset or configuration profile specifically tuned for 'research agents' that returns structured, citable output (e.g., with source attribution/citations). The extraction guide supports JSON Schema output but nothing about citation tracking or a research-agent preset.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Context.dev offers a web 'Answers' API that returns JSON with source URLs (context-dev-docs-35) and structured extraction with grounding controls (context-dev-docs-4/21), which supports citable structured output for research-like tasks, but there is no evidence of a dedicated 'research agent' preset/persona configuration or agent-tuned output mode. missing for 10: a named research-agent preset or configuration profile, explicit agent-oriented tuning documentation, and independent verification that outputs are consistently structured/citable for research workflows.",
+    "evidenceIds": [
+      "context-dev-docs-35",
+      "context-dev-docs-4",
+      "context-dev-docs-21"
+    ]
   },
   {
     "productId": "context-dev",
@@ -3174,10 +3201,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows async batch crawling with progress tracking (up to 25,000 pages) but no mention of checkpointing or resuming a crashed crawl from a saved state; only completed-job retrieval or partial-result return on timeout is documented, not crash recovery/resume.",
+    "rationale": "Evidence shows async batch crawls with progress tracking and job retrieval, plus timeout/partial-result handling, but no mention of checkpointing or resuming a crashed crawl from saved state — jobs must be tracked/retrieved, not resumed after failure.",
     "evidenceIds": [
       "context-dev-docs-3",
-      "context-dev-docs-17"
+      "context-dev-docs-17",
+      "context-dev-docs-25",
+      "context-dev-docs-34"
     ]
   },
   {
@@ -3198,10 +3227,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Context.dev's monitor-website-changes feature watches a page, sitemap, or dataset \"on a schedule\" and emits change events, which functions as scheduled recurring scraping, but this is framed narrowly as change-detection rather than a general-purpose cron/scheduler for arbitrary scrape/crawl jobs. Missing for 10: explicit documentation of configurable schedule intervals/cron syntax, ability to schedule full crawl or extract jobs (not just change monitors), and any independent/hands-on confirmation of scheduling reliability.",
+    "rationale": "Context.dev documents a scheduled 'monitor' feature that watches a page, sitemap, or dataset on a schedule and emits change events, which is the closest evidence to automated, time-based scraping jobs; async batch crawls also exist but are triggered on-demand, not scheduled. Missing for 10: general-purpose cron-like scheduling for arbitrary scrape/crawl jobs (not just change-monitoring), documentation of specific time/interval configuration options, and independent confirmation the scheduling feature works reliably in production.",
     "evidenceIds": [
       "context-dev-docs-9",
-      "context-dev-docs-3"
+      "context-dev-docs-3",
+      "context-dev-docs-34"
     ]
   },
   {
@@ -3210,9 +3240,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe rendering an exact URL or resolved page and returning a viewport, full-page, or offset PNG capture, directly matching the story of full-page or selected-area screenshots. Missing for 10: independent/hands-on corroboration of screenshot quality or selector-based area capture beyond viewport/offset options.",
+    "rationale": "Docs explicitly describe rendering a URL and returning viewport, full-page, or offset PNG captures, plus inline PNG/JPEG/WebP data URLs with a choosable capture area, directly matching the full-page and selected-area screenshot story. missing for 10: independent/hands-on corroboration of screenshot output quality and no example showing selector-based area selection beyond offset/viewport options.",
     "evidenceIds": [
-      "context-dev-docs-6"
+      "context-dev-docs-6",
+      "context-dev-docs-23",
+      "context-dev-docs-20"
     ]
   },
   {
@@ -3221,9 +3253,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe a browser-actions capability allowing click, wait, or scroll before scraping/extracting content, with success verification, directly matching the story. Missing for 10: independent/hands-on corroboration of scripted interactions beyond first-party docs, and no detail on filling form inputs specifically.",
+    "rationale": "Dedicated 'browser-actions' docs explicitly cover clicking, waiting, and scrolling before scraping or extraction, with verification of which interactions succeeded. missing for 10: no independent/hands-on corroboration of scripted interactions working reliably beyond vendor docs.",
     "evidenceIds": [
-      "context-dev-docs-7"
+      "context-dev-docs-7",
+      "context-dev-docs-24"
     ]
   },
   {
@@ -3232,7 +3265,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of an open-source or self-hostable version of Context.dev; it is presented exclusively as a hosted cloud API/service with CLI, MCP server, and SDKs pointing to context.dev endpoints. Missing for 10: any open-source repo, self-hosting instructions, Docker image, or license permitting local deployment.",
+    "rationale": "No evidence of an open-source, self-hostable version of Context.dev's scraper; it is presented exclusively as a hosted cloud API/service with SDKs, CLI, and MCP client access, not a deployable open-source codebase.",
     "evidenceIds": []
   },
   {
@@ -3241,25 +3274,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Context.dev's docs describe scraping/crawling into full-page Markdown, JSON extraction, and document parsing, but nowhere mention a chunking feature (e.g., configurable chunk size, semantic segmentation, or overlap controls) intended for retrieval pipelines. Output is delivered as whole-page Markdown/HTML/JSON blobs per page, not sub-page semantic chunks.",
+    "rationale": "Context.dev's docs describe output as Markdown, HTML, JSON-schema extraction, or screenshots, but nowhere mention semantic chunking, splitting content into retrieval-sized segments, or any chunk-size/overlap controls typically used in RAG pipelines.",
     "evidenceIds": [
       "context-dev-docs-1",
       "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-8"
+      "context-dev-docs-20",
+      "context-dev-docs-21"
     ]
   },
   {
     "productId": "context-dev",
     "storyId": "single-call-html-extraction",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Context.dev's primary scrape endpoints convert pages to Markdown by default (docs-1, docs-2), and raw HTML is only mentioned as an output option for the async batch-crawl job that must be polled for completion (docs-3), not as an immediate single-call response for a single page. This satisfies the general 'scrape a page via API' need but not the specific 'single call → raw HTML' expectation. Missing for 10: documented synchronous single-page endpoint that returns raw HTML directly, independent confirmation of HTML fidelity/quality.",
+    "rationale": "Docs explicitly confirm single-call scraping returning raw HTML (context-dev-docs-20 lists HTML as an output option alongside Markdown/screenshot/etc.), and the async/batch crawl guide states HTML can be retrieved (context-dev-docs-3), with an OpenAPI spec and llms.txt confirming the API surface. Missing for 10: no independent hands-on test showing exact raw HTML fidelity/edge cases, and community discussion focuses on proxies/pricing rather than HTML output quality.",
     "evidenceIds": [
-      "context-dev-docs-1",
-      "context-dev-docs-2",
-      "context-dev-docs-3"
+      "context-dev-docs-20",
+      "context-dev-docs-3",
+      "context-dev-probe-2",
+      "context-dev-probe-1"
     ]
   },
   {
@@ -3268,8 +3302,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows rate-limit headers and API key restriction, but nothing about setting a spending cap, budget alert, or usage threshold notification; community mentions pricing complaints but no dispute of a cap feature since none is claimed.",
-    "evidenceIds": []
+    "rationale": "Evidence covers rate-limit headers and timeout/partial-result handling, but there is no mention of a spending cap, budget alert, or usage threshold notification feature for proxy/credit consumption.",
+    "evidenceIds": [
+      "context-dev-docs-18",
+      "context-dev-docs-25"
+    ]
   },
   {
     "productId": "context-dev",
@@ -3277,11 +3314,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or product page mentions session-based IP persistence, sticky sessions, or proxy identity management; the crawl/scrape/extract guides only cover content retrieval, not proxy control. A community comment even flags the total absence of any IP/residential-proxy discussion on the site, reinforcing that this capability isn't offered.",
+    "rationale": "No documentation or evidence describes session-based IP persistence or sticky proxy sessions; in fact a community comment explicitly notes the homepage never mentions IP handling, rotating, or residential proxies, suggesting this capability isn't offered.",
     "evidenceIds": [
-      "context-dev-docs-2",
-      "context-dev-docs-3",
-      "context-dev-docs-7",
       "context-dev-comm-2"
     ]
   },
@@ -3289,14 +3323,16 @@
     "productId": "context-dev",
     "storyId": "structured-json-output",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe extracting structured JSON matching a user-supplied JSON Schema from crawled pages, with controls for grounding, coverage, and freshness, plus an OpenAPI spec confirming API-driven JSON responses and a CLI that returns JSON for scripting/CI. missing for 10: independent hands-on verification of JSON extraction accuracy/quality beyond vendor docs.",
+    "rationale": "Docs clearly show structured JSON extraction via JSON Schema (context-dev-docs-4, -21), plus JSON output for brand data, news, people enrichment, and general extraction endpoints (context-dev-docs-11, -29, -32, -33, -35), with an OpenAPI spec confirming JSON responses (context-dev-probe-2). missing for 10: independent hands-on verification of JSON schema fidelity beyond vendor docs.",
     "evidenceIds": [
       "context-dev-docs-4",
-      "context-dev-docs-1",
-      "context-dev-probe-2",
-      "context-dev-docs-14"
+      "context-dev-docs-21",
+      "context-dev-docs-11",
+      "context-dev-docs-20",
+      "context-dev-docs-35",
+      "context-dev-probe-2"
     ]
   },
   {
@@ -3305,7 +3341,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of team/organization features, shared scraper workflows, or role-based permission management beyond restricted API keys, which is a single-key scoping mechanism, not team/org collaboration. Missing for 10: organization/team creation, member invites, role-based access control across users, shared scraper/workflow assets.",
+    "rationale": "No evidence of team/organization features, sharing scrapers with teammates, or role-based permission management—only API key restriction scopes are documented (context-dev-docs-10), which is not team/org RBAC.",
     "evidenceIds": [
       "context-dev-docs-10"
     ]
@@ -3316,9 +3352,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack claims an 'undetected browser' or anti-bot-bypass mode; the docs describe scraping, crawling, screenshots, and browser actions but never mention stealth/anti-detection techniques, and community comments explicitly question whether the product uses rotating/residential IPs at all, suggesting no such capability is documented.",
+    "rationale": "No evidence of stealth/undetected browser mode, anti-bot-bypass, CAPTCHA solving, or proxy rotation; community explicitly questions IP/proxy handling and no rebuttal is present.",
     "evidenceIds": [
-      "context-dev-docs-7",
       "context-dev-comm-2",
       "context-dev-comm-5"
     ]
@@ -3328,34 +3363,35 @@
     "storyId": "url-discovery-map",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Context.dev has a dedicated URL discovery endpoint that reads a site's public sitemaps and returns a filtered URL list \"without rendering each page,\" explicitly avoiding a full crawl — directly matching the story. Missing for 10: independent/hands-on corroboration of discovery speed or scale beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Docs explicitly describe a dedicated URL-discovery capability that reads sitemaps to return a filtered URL list \"without rendering each page\" and maps all URLs via an index with titles/descriptions/keywords/languages, distinct from full crawling. Missing for 10: independent/hands-on verification of discovery speed/accuracy at scale beyond vendor docs.",
     "evidenceIds": [
-      "context-dev-docs-5"
+      "context-dev-docs-5",
+      "context-dev-docs-22"
     ]
   },
   {
     "productId": "context-dev",
     "storyId": "wait-for-selector",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs describe browser actions supporting 'wait' among click/scroll before scraping or extracting a page, which directly matches waiting for content before returning rendered output, but there's no explicit mention of waiting for a CSS/DOM selector specifically (vs. fixed delays) nor independent confirmation of this behavior. missing for 10: explicit selector-based wait documentation, example showing selector syntax, independent/hands-on verification.",
+    "rationale": "Context.dev's browser-actions guide explicitly supports pre-scrape actions including a 'wait' step (alongside click/scroll) before the page is captured, which covers the general capability of waiting before returning rendered content. However, the evidence never explicitly confirms a selector-based wait (e.g., 'wait for CSS selector X to appear') as opposed to a generic time-based or state-based wait, so it's unclear the API supports waiting specifically for an arbitrary selector's appearance. Missing for 10: explicit documentation of a selector-targeted wait parameter/mechanism, and any hands-on example showing selector-wait behavior.",
     "evidenceIds": [
-      "context-dev-docs-7"
+      "context-dev-docs-7",
+      "context-dev-docs-24"
     ]
   },
   {
     "productId": "context-dev",
     "storyId": "web-search-with-content",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Context.dev's documented capabilities are URL-based (crawl, scrape, extract, sitemap discovery, screenshot, document parsing, monitoring) but no evidence shows a web-search endpoint that returns full page content for search results in one call — 'discover website URLs' only reads a site's own sitemap, not the open web.",
+    "rationale": "The Answers API (\"Research a question or task on the live web and return JSON with source URLs\") suggests search-like functionality with source URLs, and the Scrape API can return full Markdown for a page in one request, but no evidence confirms a single call that returns full page content for multiple search results combined (as opposed to just source URLs or single-page scrapes). missing for 10: explicit documentation that the search/answers endpoint bundles full page content per result, independent verification of this behavior beyond claimed docs.",
     "evidenceIds": [
-      "context-dev-docs-1",
-      "context-dev-docs-5",
-      "context-dev-docs-2",
+      "context-dev-docs-35",
+      "context-dev-docs-20",
       "context-dev-docs-4"
     ]
   },
