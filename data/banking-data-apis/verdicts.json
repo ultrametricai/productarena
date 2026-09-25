@@ -2,17 +2,19 @@
   {
     "productId": "mastercard-open-finance",
     "storyId": "account-numbers-for-ach",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Mastercard's docs list dedicated 'Get ACH details' and 'Validate account details' products alongside account-ownership verification and balance checks, which together match the story of retrieving account/routing data and validating funding source without micro-deposits. However, the evidence pack only shows product titles/index links rather than detailed descriptions of the actual data returned (e.g., explicit account/routing number fields, tokenization format, or confirmation that validation replaces micro-deposits). Missing for 10: detailed API schema/response showing routing+account numbers or tokens, explicit statement that validation eliminates micro-deposit verification, and independent developer confirmation of real-world usage.",
+    "rationale": "The docs explicitly describe a 'Get ACH details' / 'Get Account Payment (ACH) details' endpoint alongside account ownership verification and account validation, indicating developers can retrieve account/routing details (or tokenized equivalents) from a linked account without micro-deposits, and this is testable via Test Drive/sandbox personas. Missing for 10: explicit confirmation of tokenization format for routing/account numbers and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "mastercard-open-finance-docs-6",
       "mastercard-open-finance-docs-14",
-      "mastercard-open-finance-docs-3",
-      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-30",
       "mastercard-open-finance-docs-1",
-      "mastercard-open-finance-docs-15"
+      "mastercard-open-finance-docs-15",
+      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-25"
     ]
   },
   {
@@ -21,30 +23,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe an Account Owner Verification service retrieving name, address, email and phone from the connected FI account, and a match-account-ownership endpoint that compares provided customer data against the bank's on-file details with confidence scores — directly matching the ops matching workflow. Missing for 10: independent/hands-on corroboration beyond vendor docs and more detail on data completeness/edge cases across FIs.",
+    "rationale": "Mastercard's Account Owner Verification product explicitly retrieves account ownership details—name, address, email, phone—directly from the connected financial institution, and supports matching that data against customer-provided data via confidence scores, which directly matches the ops-lead story. missing for 10: no independent/hands-on corroboration of match accuracy or field completeness across institutions.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-15",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-30"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Mastercard's Open Finance APIs clearly support the core actions an agent would need — creating link sessions via Connect, retrieving balances (Account Balance service), pulling transactions (Transaction Data), and managing connections/webhooks — all gated by PartnerID/secret/appKey OAuth tokens that function as scoped credentials. There is also a documented official MCP surface (agent-toolkit/mcp-overview) explicitly referencing Open Finance use cases like verifying ownership and checking balances, but its documented function is 'dynamic code generation' for developers rather than confirmed direct agentic execution of live account operations. missing for 10: evidence the MCP server itself executes link-session/balance/transaction calls (vs. just generating code samples), and independent/hands-on confirmation of an agent operating end-to-end with scoped MCP credentials.",
+    "rationale": "Mastercard's Open Finance APIs support the core operations (link via Connect, balances, transactions, account ownership) and there is an official MCP surface (agent-toolkit) documented for developer Q&A and code generation, but the MCP overview is framed as a docs/code-gen assistant for AI tools like Claude/Cursor, not as an agentic interface for actually creating link sessions, retrieving live balances/transactions, or managing connections with scoped credentials at runtime. missing for 10: evidence that the MCP server exposes actual banking operations (create link session, get balance, list transactions, manage connections) rather than just documentation/code-sample retrieval, and evidence of scoped/limited credentials for agent use versus full partner API keys.",
     "evidenceIds": [
+      "mastercard-open-finance-docs-27",
       "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-10",
-      "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-27",
       "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28",
-      "mastercard-open-finance-probe-2"
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-2",
+      "mastercard-open-finance-docs-10"
     ]
   },
   {
@@ -53,14 +53,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Mastercard Open Finance provides structured JSON APIs with documented schemas for account, transaction, balance, and enrichment data (transaction categorization, recurring transactions, spending insights), an OpenAPI spec with generated client libraries, and even an official MCP/agent-toolkit for AI consumption. However, evidence doesn't show explicit example JSON payloads or schema definitions in the pack, nor confirmation that enrichment fields are agent-optimized (e.g., no heuristic parsing needed) versus requiring developer interpretation. missing for 10: concrete JSON schema examples/response samples, explicit confirmation that enrichment output avoids downstream heuristic parsing, independent developer corroboration of agent-readiness.",
+    "rationale": "The API returns structured account/transaction/ownership data with documented endpoints, categorized data segments, enrichment (transaction types, recurring transactions, spending insights), webhooks for real-time events instead of polling, and even an llms.txt plus MCP server for AI-tool consumption, suggesting agent-friendly design. However, evidence doesn't confirm JSON schema specs (e.g. OpenAPI/JSON Schema files) are published for automated validation, nor explicit claims that enrichment fields eliminate heuristic parsing for downstream agents. missing for 10: published JSON schema/OpenAPI spec details, explicit confirmation that enrichment output requires no heuristic interpretation, independent/hands-on validation of agent consumption quality.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
+      "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-31",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-1",
+      "mastercard-open-finance-probe-2"
     ]
   },
   {
@@ -69,12 +71,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at developer.mastercard.com/llms.txt (HTTP 200), and Mastercard also documents an agent-oriented MCP toolkit with dynamic code generation for agents. Missing for 10: no independent third-party confirmation that agents actually consume this llms.txt effectively, and no explicit doc listing Open Finance-specific sections within it.",
+    "rationale": "There is a confirmed live llms.txt at developer.mastercard.com (HTTP 200) plus an official agent-oriented MCP toolkit doc explicitly describing AI tools (Claude, ChatGPT, Cursor, Windsurf) querying Mastercard docs contextually, showing a real agent-facing entry point beyond generic docs. Missing for 10: no evidence llms.txt is scoped specifically to Open Finance product docs (it's platform-wide), and no independent/hands-on confirmation of agent success using it.",
     "evidenceIds": [
       "mastercard-open-finance-probe-1",
       "mastercard-open-finance-probe-2",
       "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -83,11 +85,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Mastercard Open Finance exposes categorized financial data (transaction types, recurring transactions, spending, loan payments) via APIs, and a separate MCP agent toolkit for developers to generate code, but there is no evidence of AI-generated insights or suggestions surfaced to an end-user inside the product itself.",
+    "rationale": "Mastercard Open Finance is a B2B data/API platform (account verification, balances, transaction aggregation) consumed by other apps; there is no evidence of AI-generated insights or suggestions surfaced directly to an end user 'inside the product.' The 'Insights into transaction types/spending/recurring payments' item is a raw data categorization API output, not an AI-generated suggestion delivered within a user-facing product, and the MCP/agent toolkit evidence is about developers querying API documentation, not end-users getting insights from their own financial data.",
     "evidenceIds": [
       "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-docs-12"
     ]
   },
   {
@@ -95,36 +97,42 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows webhooks for event notifications and an MCP toolkit for code generation, but nothing about scheduling or configuring autonomous background automations/workflows that run without user intervention. Missing for 10: any documentation of scheduled/triggered automation setup, autonomous workflow orchestration, or agentic task execution running independently in the background.",
+    "confidence": "medium",
+    "rationale": "The evidence shows Mastercard Open Finance is a financial-data API platform with webhooks for event notifications (eliminating polling) and an MCP server for AI coding assistants to look up docs/generate code — but there is no evidence of an end-user-facing capability to configure autonomous background automations (e.g., a workflow/automation builder or agent runtime that executes actions on a schedule/trigger). Webhooks only notify of events; building any 'automation' still requires the developer to write and host their own logic elsewhere.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Mastercard Open Finance is a developer API platform for financial data/verification, not a consumer or workflow product with a built-in AI assistant persona to delegate tasks to; the MCP toolkit evidence is about exposing APIs to external agents/tools, not a native in-product assistant.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Mastercard exposes MCP tooling so external AI agents (Claude, ChatGPT, Cursor) can query its API docs, but this is the product acting as a data source for outside assistants, not a built-in AI assistant living inside the Open Finance product that users can delegate tasks to.",
+    "evidenceIds": [
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-2"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "As a pure REST API platform, Open Finance is inherently headless — it uses PartnerID/secret token auth (docs-10, docs-23), an OpenAPI spec with generated client libraries (mastercard-open-finance-gh-1), and a non-billable 'Test Drive' sandbox with scripted test personas (docs-24, docs-25) suitable for automated/CI testing. Missing for 10: no explicit CI/CD pipeline examples, no documented headless SDK/CLI runner, and no first-party guidance on automating the flow end-to-end in a build pipeline.",
+    "rationale": "Open Finance is a REST API platform with token-based auth (PartnerID/secret/appKey), a non-interactive Sandbox/Test Drive plan, and a GitHub project that generates an API client library for automated testing — all of which support headless, scriptable use in CI-like environments. However, there is no explicit CI/CD pipeline example, SDK for automation frameworks, or documentation calling out CI-specific usage. Missing for 10: explicit CI/pipeline integration guide, official SDKs/automation examples, and evidence of non-interactive end-to-end runs beyond sandbox testing.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
-      "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-33"
     ]
   },
   {
@@ -133,11 +141,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a financial data/API platform, not an agent or assistant host that could itself consume external MCP servers as tools; the evidence only shows Mastercard publishing its own MCP server (agent-toolkit) for others to call into Open Finance APIs, which is the opposite role from 'plugging MCP servers into this product'.",
-    "evidenceIds": [
-      "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
-    ]
+    "rationale": "Mastercard Open Finance is a financial-data/API platform, not an AI agent or assistant capable of hosting an MCP client that consumes external MCP servers' tools. The MCP-related evidence describes Mastercard publishing its own MCP server for other AI tools to query its docs (the reverse direction), which does not make this client-side 'plug in MCP servers' axis applicable to this product.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
@@ -145,9 +150,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Mastercard documents an official Agent Toolkit MCP server (mcp-overview) that includes dynamic code generation and an example use case directly referencing Open Finance verification and balance checks, confirming AI agents can connect via this official MCP server to access Open Finance APIs. Missing for 10: independent/hands-on corroboration of the MCP server working with Open Finance endpoints, and detailed API-to-tool mapping documentation.",
+    "rationale": "Mastercard documents an official MCP server (agent-toolkit) that lets AI tools like Claude/Cursor/Windsurf query Mastercard services including Open Finance use cases (e.g., verifying account ownership, checking balances), confirmed by a dedicated docs page and probe. Missing for 10: independent/hands-on verification of the MCP server working specifically with Open Finance endpoints, and more detail on setup/auth flow for the MCP server itself.",
     "evidenceIds": [
       "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
       "mastercard-open-finance-docs-28",
       "mastercard-open-finance-probe-2"
     ]
@@ -156,11 +162,12 @@
     "productId": "mastercard-open-finance",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Mastercard offers an official Agent Toolkit/MCP server with dynamic code generation and natural-language-friendly API access (e.g., 'I need to integrate Open Finance to verify account ownership and check balances'), which supports operating the platform via AI-native/natural-language workflows. However, this is a developer-integration tool rather than end-user natural-language command execution over the product's core financial functions. missing for 10: evidence of an end-user-facing natural-language interface, broader coverage of MCP tool capabilities beyond code generation, and independent/hands-on validation of the MCP server's reliability.",
+    "rationale": "Mastercard documents an Agent Toolkit/MCP server that lets AI assistants (Claude, ChatGPT, Cursor, Windsurf) ask natural-language questions about its services and get contextual answers plus dynamically generated code examples, which is a real natural-language interface layer. However, this is scoped to documentation Q&A and code generation for developers, not natural-language execution of the Open Finance product's actual financial operations (verify account, get balances, etc.) — missing for 10: evidence that NL commands can directly trigger/execute API actions (not just generate code), independent/hands-on validation of the MCP server, and coverage of NL control over the core finance workflows themselves.",
     "evidenceIds": [
       "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
       "mastercard-open-finance-docs-28",
       "mastercard-open-finance-probe-2"
     ]
@@ -170,8 +177,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of an official CLI tool; evidence covers APIs, webhooks, MCP server, and SDK/test client generation but nothing describing a command-line interface for AI-native workflows. Missing for 10: any mention of an official CLI, its installation, or its use in agentic/AI workflows.",
+    "confidence": "high",
+    "rationale": "No evidence of an official CLI tool for Mastercard Open Finance/Finicity; the evidence pack only covers APIs, webhooks, onboarding, testing personas, and an MCP server/agent toolkit, none of which constitute a CLI. This is a fair axis for a developer platform, but no CLI is documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -180,15 +187,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance exposes a well-documented public REST API (accounts, balances, transactions, ownership verification, webhooks) with OpenAPI spec, token-based auth, sandbox/test-drive access, and even an llms.txt plus official MCP toolkit for agent-driven access. missing for 10: independent third-party developer confirmation of API usability/reliability beyond vendor docs.",
+    "rationale": "Mastercard Open Finance exposes a well-documented public REST API (accounts, transactions, balances, ACH, verification, etc.) with token-based auth, sandbox/test-drive access, OpenAPI spec/client generation, webhooks, and an llms.txt plus an official MCP/agent toolkit enabling AI tools to query and generate code against the API. This gives strong evidence of a documented, machine-consumable API surface suitable for AI-native driving. Missing for 10: no independent/third-party corroboration of AI agents successfully driving the API end-to-end, and no explicit examples of autonomous agent workflows beyond code-generation/doc-lookup use cases.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
       "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-docs-12",
       "mastercard-open-finance-probe-1",
       "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-9"
     ]
   },
   {
@@ -197,10 +206,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows PartnerID/secret/appKey token generation for API access (docs-10, docs-23) but no mention of scoped, least-privilege, or per-agent credential issuance — auth appears to be a single partner-level secret rather than granular scoped tokens for agents. Missing for 10: any documentation of scoped/limited-permission API keys, per-agent credential issuance, or role-based access control for agent use.",
+    "rationale": "Onboarding uses a single PartnerID/secret/appKey pair to generate access tokens (broad account credentials), with no evidence of scoped, per-agent, or least-privilege credential issuance mechanisms such as fine-grained scopes, short-lived agent tokens, or delegated permission sets.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
-      "mastercard-open-finance-docs-23"
+      "mastercard-open-finance-docs-23",
+      "mastercard-open-finance-docs-24"
     ]
   },
   {
@@ -209,9 +219,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The only relevant evidence is a GitHub repo showing an OpenAPI-generated client library used for testing, not a fully documented, officially published SDK across languages. Missing for 10: dedicated official SDK repositories/packages (e.g., npm, PyPI, Maven), SDK version support docs, and independent developer confirmation of SDK usability.",
+    "rationale": "The only evidence close to 'official SDKs' is a GitHub OpenAPI spec project that lets developers generate a client library for testing, not a maintained, documented set of official SDKs; the rest of the evidence covers REST API docs and an MCP/agent-toolkit for AI assistants, not language SDKs. missing for 10: documented official SDKs in specific languages (e.g. Java/Python/Node), SDK versioning/release notes, package registry listings, and independent confirmation of SDK usage.",
     "evidenceIds": [
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -220,7 +232,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe webhook support for real-time event notifications (avoiding polling) and a subscription-based OBWMS API letting developers subscribe to specific events. Missing for 10: concrete webhook payload/setup examples, independent/hands-on confirmation, and detail on programmatic subscription management via API/SDK.",
+    "rationale": "Docs explicitly describe webhook support for real-time event notifications and a subscription API (OBWMS) letting users subscribe to specific events instead of polling. Missing for 10: independent/hands-on corroboration, detailed payload schemas, and explicit programmatic/AI-native subscription flow examples.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26"
@@ -229,14 +241,16 @@
   {
     "productId": "mastercard-open-finance",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows extensive product/API documentation, an OpenAPI spec-driven test client, and a 'Test Drive' sandbox plan, but nothing describes an interactive API reference (e.g., Swagger/Postman-style try-it console) with runnable code examples in the docs portal itself.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows a Test Drive sandbox plan giving access to all API endpoints, an OpenAPI spec used to generate a client library for testing, and an MCP toolkit that can dynamically generate 'working code examples based on current API specifications' for AI tools — all suggesting some runnable/interactive exploration exists. However, there is no explicit mention of an interactive API reference page (e.g., Swagger/Redoc-style 'try it now' console) embedded in the docs themselves. Missing for 10: direct evidence of an in-browser interactive API reference with executable request/response examples, and independent confirmation of its usability.",
     "evidenceIds": [
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
       "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-docs-11"
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -259,12 +273,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mastercard provides a dedicated non-billable 'Test Drive' plan with unlimited access to all Open Finance API endpoints plus documented testing personas representing example users, explicitly for sandbox-style integration testing without production data, and a GitHub sample project generating a client from the API spec for testing. missing for 10: independent/hands-on confirmation of full production-data isolation and details on sandbox data realism or limitations.",
+    "rationale": "Docs describe a dedicated Sandbox/Test Drive plan with unlimited, non-billable access to all API endpoints, plus test banks (FinBanks), test payroll (FinPayroll), and testing personas representing sample users — clearly separated from production data. This directly supports safe sandbox testing without touching production. Missing for 10: no explicit statement that sandbox data is fully synthetic/isolated from production systems, and no independent/hands-on confirmation beyond vendor docs.",
     "evidenceIds": [
       "mastercard-open-finance-docs-24",
-      "mastercard-open-finance-docs-11",
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-docs-33",
       "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-docs-11"
     ]
   },
   {
@@ -273,7 +288,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention API versioning scheme or a documented deprecation policy; docs reference endpoints, onboarding, testing, and webhooks but not version lifecycle management.",
+    "rationale": "The evidence pack shows extensive API documentation, onboarding, testing, and webhook capabilities, but nowhere mentions API versioning schemes or a documented deprecation policy for endpoints. No citation addresses version lifecycle, sunset timelines, or migration guidance for breaking changes.",
     "evidenceIds": []
   },
   {
@@ -282,7 +297,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes batch/bulk endpoints or multi-item operations (e.g., submitting many account IDs or requests in a single call); documented APIs appear per-account/per-transaction oriented, and webhooks only address real-time single-event notifications, not bulk processing.",
+    "rationale": "No evidence of bulk/batch endpoints or multi-item operations across accounts/customers; APIs described are single-account or single-transaction oriented, and webhooks/MCP mentions relate to event notifications and AI code assistance rather than batch processing. Missing for 10: batch API endpoints, bulk data export/import, multi-item request support, documented rate-limit or batching guidance for large-scale operations.",
     "evidenceIds": []
   },
   {
@@ -291,7 +306,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Webhooks provide event notifications but there is no evidence of user-definable rules or automated triggered actions based on those events; missing for 10: rule-definition engine, conditional logic, automated action execution tied to events.",
+    "rationale": "The evidence shows webhooks for real-time event notifications (subscribing to specific events) but nothing about defining rules that trigger automated actions in response to those events — there's no rules engine, condition/action automation, or workflow builder described. Webhooks only deliver notifications; the user would still need to build their own automation logic externally.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26"
@@ -312,7 +327,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a financial data/API platform, not an automation/workflow tool with user-created 'automations' to version or roll back; no evidence pack item addresses automation versioning, review, or rollback capabilities.",
+    "rationale": "Mastercard Open Finance is a financial data/API platform, not an automation-building tool with workflows to version or roll back; this axis targets AI-native automation builders, not this product category.",
     "evidenceIds": []
   },
   {
@@ -321,19 +336,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers account data products, webhooks, onboarding, and testing personas, but nothing documents connection health statuses (expired/revoked), a re-authentication or 'update mode' flow, or any repair-without-restart mechanism for broken links. Missing for 10: documented connection status states (e.g., expired/revoked/error), an update/re-auth flow API or UI, and any evidence of preserving existing account links during re-auth.",
-    "evidenceIds": [
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-27"
-    ]
+    "rationale": "No evidence in the pack addresses connection health states (expired/revoked links), reconnect/update-mode flows, or any documented status codes for broken links; the pack covers data products (balances, transactions, verification) and onboarding/testing but nothing about repairing or re-authenticating an existing Connect session. missing for 10: documented connection status/error codes for expired or revoked links, an update/reconnect flow API or Connect mode that avoids re-linking from scratch, and any ops-facing guidance on monitoring/repairing broken links.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "data-deletion-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item documents a delete/disconnect endpoint, user data purge process, or data retention/deletion policy for connections or held account data; coverage is limited to data retrieval, verification, and onboarding APIs.",
+    "confidence": "low",
+    "rationale": "No evidence pack item documents an API, endpoint, or process for deleting a connection/user or purging held data; documentation focuses on onboarding, data retrieval, and testing, with no mention of disconnect/deletion or data purge workflows.",
     "evidenceIds": []
   },
   {
@@ -353,12 +365,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm transaction data services with insights into recurring transactions, transaction types, consumer spending, and loan payments, plus credit-decisioning report APIs — directly supporting cash-flow/recurring-stream signals. However, there's no explicit mention of payroll detection or a dedicated income-verification product built on this data. missing for 10: explicit payroll/income detection feature, named income-verification product, independent validation of accuracy.",
+    "rationale": "Docs show recurring-transaction insights, consumer spending and loan-payment insights, and a dedicated Transaction Data/Aggregation service (docs-22, docs-7, docs-8), plus a test payroll provider (FinPayroll) used in sandbox testing (docs-33) and credit-decisioning report APIs (docs-13), indicating cash-flow and payroll-adjacent signals are derivable from the data. However, there is no explicit named 'income verification' product or documented payroll-detection algorithm distinct from the generic transaction insights. Missing for 10: a first-party income-verification/payroll-detection product page, independent validation of recurring-stream accuracy, and explicit payroll payer identification beyond the test persona.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-22",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-8",
       "mastercard-open-finance-docs-13",
-      "mastercard-open-finance-docs-8"
+      "mastercard-open-finance-docs-33"
     ]
   },
   {
@@ -367,7 +380,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API capabilities (verification, balances, transaction data, webhooks, onboarding) but contains no published institution-coverage numbers, geographic breakdowns, or bank-reach statistics that a founder could check against their users' banks.",
+    "rationale": "The evidence pack covers API products, onboarding, testing personas, and webhooks, but contains no published institution coverage numbers, bank/FI counts, or geographic coverage lists that a founder could check against their users' banks.",
     "evidenceIds": []
   },
   {
@@ -376,17 +389,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API products (balance, ownership, transaction data, webhooks, onboarding) but contains no mention of institution status dashboards, outage/degradation signals, or error codes distinguishing bank-side vs integration-side issues.",
+    "rationale": "The evidence pack covers product APIs (account verification, balances, transactions, ACH, webhooks) and onboarding/testing, but there is no mention of institution-level health/status dashboards, outage or degradation signals, or error codes that distinguish bank-side failures from client-side issues. Webhooks are described only for event notifications, not institution health monitoring.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "multi-product-sessions",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence lists multiple separate data products (account ownership, balances, transactions) and mentions a generic 'Connect' linking step, but nothing describes a single link/Connect session simultaneously provisioning auth, balances, transactions, and identity without repeated connection flows per product.",
-    "evidenceIds": []
+    "rationale": "Docs show account linking via Connect (docs-27) feeds multiple products—verification/account ownership, balances, transactions, ACH details—implying a shared linked-account model rather than per-product re-auth, but no explicit statement that a single Connect/link session simultaneously authorizes and returns auth+balances+transactions+identity without separate flows. missing for 10: explicit documentation confirming one link session grants access to all data products at once, developer walkthrough or hands-on evidence showing multi-product access from a single Connect session, and clarification on whether each product still requires separate permissioning/re-consent.",
+    "evidenceIds": [
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-1",
+      "mastercard-open-finance-docs-2",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-30"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
@@ -394,39 +413,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Connect/account-linking, webhooks, and API products but never mentions OAuth-based bank authentication coverage, connectivity method mix, or a documented plan/status for retiring screen-scraped credential flows. Without explicit documentation of OAuth coverage vs. legacy scraping, this specific developer-facing transparency claim is unevidenced.",
-    "evidenceIds": [
-      "mastercard-open-finance-docs-27",
-      "mastercard-open-finance-docs-9"
-    ]
+    "rationale": "The evidence pack covers account linking, connect flows, and data aggregation but contains no documentation of OAuth-based bank connections versus screen-scraped/credential-based flows, nor any statement about retiring legacy credential flows or OAuth coverage across institutions.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "on-demand-refresh",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows account balance can be 'real-time or cached' and webhooks provide event notifications, but there is no documented API endpoint or explicit refresh semantics (e.g., a force-refresh trigger, freshness guarantees, or polling-for-refresh-status flow) for triggering an on-demand data refresh. Missing for 10: an explicit refresh/force-update endpoint, documented refresh semantics (sync vs async, staleness thresholds), and any independent confirmation of on-demand refresh behavior.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state that although Transaction Aggregation data refreshes daily, developers can trigger a refresh via dedicated 'Data Refresh' endpoints when more recent data is needed, confirming an on-demand refresh capability tied to the API. However, the evidence pack only points to this capability rather than detailing the actual refresh semantics (e.g., sync/async behavior, expected latency, status codes, or webhook completion notification), so the depth of documented semantics is unclear. Missing for 10: detailed refresh endpoint spec/semantics, confirmation of applicability to Account Balance/other data types beyond transactions, and independent corroboration of refresh behavior.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-2",
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-7"
+      "mastercard-open-finance-docs-32",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-8"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "As an API-first data platform, virtually all core functions (account verification, balances, transactions, ACH details, webhooks/event management, token generation) are exposed directly via documented REST APIs rather than gated behind a UI, and even administrative functions like webhook subscriptions and token creation are API-driven (docs-9, docs-23, docs-26). However, the 'Connect' account-linking flow is a hosted widget/UI experience (docs-27) whose full API-equivalence isn't evidenced, and there's no explicit confirmation that all developer-portal/dashboard actions (billing, partner management) have API parity. Missing for 10: explicit API equivalents for the Connect linking UI, and confirmation that portal/dashboard admin tasks are fully scriptable.",
+    "rationale": "Mastercard Open Finance is API-first by design (account ownership, balance, transaction data, ACH details, webhooks, etc. all exposed via documented endpoints), and there is no separate end-user UI whose functionality would need to be matched — most flows (Connect widget) are meant to be embedded via API/SDK. However, the evidence doesn't explicitly confirm full parity for every UI-exposed configuration (e.g., partner dashboard/admin settings, Connect widget customization options) is achievable purely via API. missing for 10: explicit confirmation that all dashboard/admin/configuration actions available in the Mastercard developer portal UI are also exposed via API, and independent/hands-on verification of full API-UI parity.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-1",
+      "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
-      "mastercard-open-finance-docs-1"
+      "mastercard-open-finance-docs-9",
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-35"
     ]
   },
   {
@@ -434,8 +450,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "This is a B2B financial data API platform, not a consumer product with user-owned data to export; the evidence shows no data export/portability feature for end users to take their data out in open formats and leave. No mention of any account/data export or account deletion/portability capability anywhere in the docs.",
+    "confidence": "medium",
+    "rationale": "This is a B2B financial data API platform (for fintechs/partners to access end-user financial data), not an end-user product with personal data export/portability controls; the evidence covers API endpoints for account/transaction data retrieval by partner apps, but no mention of a data export/portability feature or account deletion for the platform's own users/developers.",
     "evidenceIds": []
   },
   {
@@ -444,8 +460,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "This is a proprietary financial API/SaaS product; there's a public GitHub repo for a test client generator, but no evidence the core product source is released under an open license. Absence of evidence for source availability under an open license means this applicable axis is unmet.",
+    "evidenceIds": [
+      "mastercard-open-finance-gh-1"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
@@ -453,7 +471,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a hosted financial-data API/SaaS platform; self-hosting the core product is not a coherent capability for this kind of service, so the axis does not apply.",
+    "rationale": "Mastercard Open Finance is a cloud-hosted financial data API/platform, not a software artifact designed to be self-hosted; self-hosting a bank-grade regulated financial aggregation service is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -462,14 +480,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes the 'Pay' product family only as verification (account ownership, balance, ACH details, match), fraud/success prediction, and switching services — none of the docs describe an actual payment-initiation endpoint that moves funds from a connected account, nor any stated live geographies for such a capability. Without a documented API to actually initiate a bank payment, this axis is unmet.",
+    "rationale": "The docs describe a 'Pay' category with account verification, balance checks, ACH detail retrieval, account validation and payment-success prediction, but none of these evidence items describe an actual API call that initiates or moves a bank payment (i.e., pay-by-bank execution), and there is no statement of live geographies for any payment-initiation capability. This looks like decisioning/verification support for payments rather than payment initiation itself.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-2",
-      "mastercard-open-finance-docs-15",
+      "mastercard-open-finance-docs-6",
+      "mastercard-open-finance-docs-16",
       "mastercard-open-finance-docs-17",
-      "mastercard-open-finance-docs-18",
-      "mastercard-open-finance-docs-6"
+      "mastercard-open-finance-docs-30"
     ]
   },
   {
@@ -478,7 +496,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack discusses data residency, regional storage options, or geographic controls for where customer data is stored/processed. This is an applicable axis for a financial data platform handling sensitive PII, but nothing addresses it.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls for Open Finance data; the documentation covers APIs for account data, verification, payments, and testing but nothing about choosing storage regions.",
     "evidenceIds": []
   },
   {
@@ -486,8 +504,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses AI-training data opt-out or data usage controls; the documentation covers financial data APIs and MCP tooling but nothing about preventing use of user data for AI model training.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers Mastercard Open Finance's data aggregation, verification, and payment APIs, plus an MCP/agent toolkit for developer documentation Q&A, but contains no mention of AI model training policies, data usage opt-outs, or any mechanism for users to prevent their data from being used to train AI models. missing for 10: any privacy policy or setting addressing AI training use of data, opt-out mechanism, or public statement on model training practices.",
     "evidenceIds": []
   },
   {
@@ -495,8 +513,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers API products (account data, verification, transactions, webhooks, onboarding) but contains no mention of data retention policies, deletion controls, or user-facing privacy/data-lifecycle management tools. Missing for 10: any documentation of data retention periods, deletion/erasure APIs, or consumer-facing controls over stored financial data.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses user-controlled data retention or deletion policies, consent revocation, or data purge mechanisms for accounts connected via Finicity/Open Finance; documentation covers data access, aggregation, and onboarding but not retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -505,37 +523,41 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention telemetry, usage tracking, analytics collection, or any opt-out mechanism for AI-native or any users; this is an applicable axis for a developer platform but simply unevidenced.",
+    "rationale": "No evidence in the pack addresses telemetry/usage tracking opt-out for AI-native users or developers; the docs focus on financial data APIs, onboarding, and MCP tooling with no privacy/telemetry controls mentioned.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "processor-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mastercard Open Finance provides account ownership verification, balance, ACH details, and account aggregation APIs accessible via token-based auth (PartnerID/secret) that developers can integrate into payment processing flows, and it supports Connect for account linking. However, the evidence does not document specific third-party payment processor/platform integration partnerships or an explicit token-exchange handoff mechanism to hand verified credentials to external processors — the story implies pre-built plug-and-play integrations rather than raw APIs a developer must wire up themselves. missing for 10: named third-party processor/platform integration partners, explicit token-exchange-to-processor handoff documentation, independent confirmation of such integrations working in production.",
+    "rationale": "Mastercard Open Finance documents account ownership verification, ACH details, balance data, and a partner-ID/secret token exchange model (including a 'Partner Direct Model' for onboarding affiliate customers), which supports the general mechanism of handing verified account/payment data to third parties. However, there is no named documentation of specific payment-processor integrations or a concrete token-exchange flow explicitly built for processors like Stripe/Dwolla. Missing for 10: named third-party processor integration partners, explicit processor-facing token/credential handoff flow, and independent confirmation of processor usage.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
-      "mastercard-open-finance-docs-2",
+      "mastercard-open-finance-docs-15",
       "mastercard-open-finance-docs-6",
+      "mastercard-open-finance-docs-30",
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-27"
+      "mastercard-open-finance-docs-35"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "quickstart-first-connection",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show a self-serve-ish onboarding path (PartnerID/secret/appKey token generation, a non-billable unlimited 'Test Drive' plan, and test personas for sandbox account linking) and a GitHub OpenAPI spec that can generate a client library, but there's no explicit runnable quickstart tutorial or multi-language official client libraries beyond the one generated test project. Missing for 10: an explicit step-by-step quickstart guide, published official SDKs in multiple languages, and clear evidence of instant self-serve API key issuance without a sales/partner approval step.",
+    "rationale": "Docs show self-serve onboarding via PartnerID/secret/appKey token generation, a free unlimited 'Test Drive' sandbox plan, and test personas/test banks for realistic sandbox linking, plus a quick-start guide and a GitHub project that generates a client library from the OpenAPI spec. However, there's no evidence of officially published client libraries in multiple languages or a clearly fast, guided end-to-end quickstart tutorial from signup to first linked account. missing for 10: multi-language official SDKs, a concrete step-by-step quickstart walkthrough, evidence of quick sandbox-to-first-linked-account turnaround time.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
       "mastercard-open-finance-docs-25",
+      "mastercard-open-finance-docs-33",
+      "mastercard-open-finance-docs-35",
       "mastercard-open-finance-gh-1"
     ]
   },
@@ -557,50 +579,55 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers account data (balances, ownership, transactions), ACH details, and 'switch deposits and bill payments' but nothing documents variable recurring payments, standing consents, or a recurring debit/payment-initiation flow — this product's Pay APIs appear focused on verification (account owner, balance, ACH details) rather than initiating recurring debits.",
+    "rationale": "The evidence pack shows account verification, balances, transaction data, ACH details, and payment success prediction, but nothing about variable recurring payments, standing consents, or documented recurring debit/payment-initiation flows — this is an account information/data product, not a payment-initiation API with recurring capabilities.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "sandbox-test-institutions",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm a dedicated Test Drive sandbox with unlimited access to all endpoints, testing personas representing different user scenarios, and a GitHub sample project generating a real API client for end-to-end testing — covering linking, data retrieval, and onboarding tokens. However, there is no explicit documentation of error-state simulation or a catalog of documented test credentials/institutions with specific failure scenarios. Missing for 10: explicit documented test credentials list, coverage of error/failure state simulation, and independent/hands-on confirmation of the sandbox experience.",
+    "rationale": "Docs describe a dedicated non-billable Test Drive sandbox with full API access, test banks (FinBanks) and test payroll provider (FinPayroll), and multiple 'testing personas' representing different user profiles for exercising linking (via Connect) and data retrieval scenarios, plus a GitHub sample project that generates a client library from the spec for realistic integration testing. Missing for 10: explicit documentation of test credentials/login details for the test institutions and explicit coverage of simulated error states (e.g., failed auth, MFA challenges) in the sandbox.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-11",
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-docs-33",
       "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-docs-27"
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-gh-1"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "scoped-data-access",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The docs show a product-based API structure (separate endpoints for account ownership, balance, transactions, ACH, etc.), which implicitly allows requesting only specific data products rather than a single blob, but there is no explicit documentation of scoped consent tokens, granular permission grants, or data-minimization controls presented to developers. missing for 10: explicit consent-scoping API/parameters, documentation of minimal-data-grant mechanisms, evidence of per-scope authorization tokens, and any independent confirmation of data-minimization enforcement.",
+    "rationale": "The docs show Open Finance is organized into discrete products (account ownership verification, balance, transaction data, ACH details, payment prediction, etc.) that are called via separate endpoints, implying developers can integrate only the specific data product they need rather than one monolithic feed, and account/transaction data is further broken into 'data segments' varying by account type. However, there is no explicit documentation of a consent-scope selection UI, granular permission grants surfaced to end users, or stated data-minimization policy/controls tied to those product APIs. Missing for 10: explicit consent-scope selection mechanism in the Connect flow, documented end-user permission granularity, and a stated data-minimization policy.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
-      "mastercard-open-finance-docs-19"
+      "mastercard-open-finance-docs-31",
+      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-17",
+      "mastercard-open-finance-docs-18"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "transaction-enrichment",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Docs confirm Transaction Data Services return categorized insights (transaction types, recurring transactions, consumer spending, loan payments), which implies some enrichment/categorization layer, but nothing explicitly documents merchant-name cleansing or logo attachment as a first-class capability. Missing for 10: explicit documentation of merchant name normalization/cleanup and logo enrichment fields in the transaction schema.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs confirm a Transaction Data Services product with account/transaction data elements and higher-level insights (transaction types, recurring transactions, consumer spending), suggesting some categorization-level enrichment, but nowhere do the docs explicitly mention cleaned/normalized merchant names or merchant logos as a documented output. missing for 10: explicit documentation of merchant-name cleansing, category taxonomy definitions, and logo delivery in transaction responses.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
-      "mastercard-open-finance-docs-22"
+      "mastercard-open-finance-docs-22",
+      "mastercard-open-finance-docs-31"
     ]
   },
   {
@@ -609,14 +636,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence confirms a dedicated Transaction Data Services API that returns account/transaction details and varies by account type, plus a webhook/notification system explicitly framed as eliminating constant polling, which implies a change-based sync pattern. However, no evidence documents pagination mechanics or a specific stated history depth (e.g., days/months of transactions) for the transaction endpoint. missing for 10: explicit pagination documentation, stated transaction history depth/lookback window, explicit delta/cursor sync pattern for transactions specifically (webhooks reference is generic, not transaction-specific).",
+    "rationale": "Docs confirm Transaction Data Services return account transaction data, note refresh/sync via 'Data Refresh' endpoints (daily refresh, can be refreshed on demand), and webhooks for change notifications instead of constant polling — supporting a sync pattern. However, there's no explicit documentation of pagination mechanics or a stated history depth (e.g., days/months of history available) in the evidence. missing for 10: explicit pagination parameters/response structure, documented transaction history depth/lookback window, and independent/hands-on confirmation of the sync pattern in practice.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
       "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-19",
-      "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-docs-26"
+      "mastercard-open-finance-docs-32",
+      "mastercard-open-finance-docs-31"
     ]
   },
   {
@@ -624,8 +650,8 @@
     "storyId": "user-consent-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers data retrieval, verification, transaction data, webhooks, onboarding tokens, and testing personas, but nowhere documents an end-user-facing consent management portal, dashboard, or revocation mechanism for shared bank-data access. No mention of a consent surface for users to view or revoke connected apps' access.",
+    "confidence": "high",
+    "rationale": "No evidence pack item describes an end-user-facing consent management portal, dashboard, or revocation surface for data sharing; the docs cover developer-facing APIs (account verification, balances, transactions, webhooks) and testing personas, but nothing about users viewing/revoking connected app access. This axis applies to any data-aggregation/open-banking product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -634,11 +660,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm webhooks exist for real-time event notifications instead of polling, and OBWMS lets you subscribe to specific events; transaction/notification-type docs exist too. However, there's no evidence of webhook payload signing/verification, and no explicit documentation enumerating events like balance updates or connection-state changes with delivery guarantees. Missing for 10: signature verification mechanism, explicit event-type catalog (transactions/balances/connection state), delivery retry/reliability details.",
+    "rationale": "Docs confirm webhooks exist for real-time event notifications instead of polling, covering event subscriptions and transaction/connection state changes. missing for 10: explicit confirmation of payload signing/verification mechanism for webhook authenticity, and concrete coverage of balance-update webhook events specifically.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-20"
+      "mastercard-open-finance-docs-26"
     ]
   },
   {
@@ -661,42 +686,51 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX's Account Owner Identification product explicitly retrieves name and address data tied to a financial account, directly enabling ops to match account holder identity against a customer record; this is well documented with first-party docs. Missing for 10: independent/hands-on corroboration beyond MX's own docs, and no explicit mention of retrieving full contact data (phone/email) alongside name/address.",
+    "rationale": "MX's Account Owner Identification product explicitly retrieves name and address data tied to a financial account, directly enabling ops to match account holder identity against a customer record. Missing for 10: no evidence of retrieving broader contact data (phone/email) beyond name/address, and no independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "mx-docs-2",
-      "mx-docs-16"
+      "mx-docs-16",
+      "mx-docs-39"
     ]
   },
   {
     "productId": "mx",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "MX exposes a full Platform API (with OpenAPI spec) covering balances, transactions, account aggregation, connect sessions/members, and webhooks, and there is a documented MCP surface at docs.mx.com/mcp confirming an MCP entry point exists. However, the evidence pack lacks detail on MCP tool scoping, credential/permission scoping for agent use, or hands-on confirmation of agent-driven session creation and connection management via MCP. missing for 10: documented MCP tool list/schema, evidence of scoped credentials for agent access, independent/hands-on validation of the MCP surface in agentic workflows.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "MX's Platform API/OpenAPI spec supports the core banking-agent tasks (connect sessions via Connect Widget/Platform API, balances, transactions, account aggregation, connection management via webhooks/dashboard) and a probe finds a documented MCP endpoint at docs.mx.com/mcp, suggesting an MCP surface exists. However there is no detail on what the MCP server exposes, no documentation of scoped/limited credentials for agent use (API keys are only described as rotatable, not scope-restricted), and no first-party description of an 'agent' or AI-native operating mode. missing for 10: documented MCP tool/capability list, scoped-credential mechanism for agent access, explicit agent/AI use-case guidance.",
     "evidenceIds": [
-      "mx-probe-3",
-      "mx-gh-1",
+      "mx-docs-21",
       "mx-docs-4",
       "mx-docs-5",
-      "mx-docs-21",
-      "mx-docs-22"
+      "mx-docs-6",
+      "mx-docs-22",
+      "mx-docs-32",
+      "mx-docs-33",
+      "mx-gh-1",
+      "mx-probe-3"
     ]
   },
   {
     "productId": "mx",
     "storyId": "agent-ready-financial-data",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "MX publishes a full OpenAPI specification (mx-gh-1, mx-docs-12/26) covering structured request/response payloads across accounts, transactions, balances, identity, and verification endpoints, plus webhooks for event-driven consumption (mx-docs-7/22) and even an official MCP server for agent access (mx-probe-3), directly supporting machine-consumable, schema-documented data for automated workflows. Missing for 10: concrete sample JSON response bodies in the evidence pack and independent third-party corroboration that the schemas are agent-friendly without extra parsing.",
+    "rationale": "MX publishes a formal OpenAPI specification (mx-gh-1, mx-docs-12/26/31) documenting request/response schemas, offers webhooks for event-driven consumption (mx-docs-7/22/41), structured endpoints for balances/transactions/owner info (mx-docs-2/4/5/6/18/19/20), and even an official MCP server for agent access (mx-probe-3), plus data-driven intelligence/personalized insight features (mx-docs-13/14/27) suggesting enrichment beyond raw data. Missing for 10: concrete example JSON payloads/categorization schema documentation and independent verification that the data is heuristic-free/agent-ready in practice.",
     "evidenceIds": [
       "mx-gh-1",
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-docs-7",
-      "mx-probe-3",
-      "mx-probe-1"
+      "mx-docs-22",
+      "mx-docs-41",
+      "mx-docs-13",
+      "mx-docs-14",
+      "mx-docs-27",
+      "mx-probe-3"
     ]
   },
   {
@@ -705,10 +739,9 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "MX hosts a working llms.txt at docs.mx.com/llms.txt (confirmed HTTP 200 with structured doc links) and also documents an official MCP server, both explicitly agent-oriented entry points into their docs. Missing for 10: independent third-party confirmation of an AI agent successfully consuming these resources end-to-end.",
+    "rationale": "MX hosts a working llms.txt at docs.mx.com/llms.txt confirmed via direct probe (HTTP 200, listing 152 product pages), which is exactly what this story asks for. Missing for 10: no independent third-party confirmation that agents actually consume it successfully in practice.",
     "evidenceIds": [
-      "mx-probe-1",
-      "mx-probe-3"
+      "mx-probe-1"
     ]
   },
   {
@@ -729,13 +762,13 @@
     "productId": "mx",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "MX documents autonomous background behavior — automatic re-aggregation of accounts roughly every 24 hours and webhook callbacks for events — which could underpin background automations, and an MCP endpoint is referenced. However there's no evidence of a user-facing automation/workflow builder or agent-orchestration framework for setting up custom autonomous tasks. Missing for 10: explicit automation/workflow configuration tooling, evidence of AI-agent-driven autonomous task execution beyond scheduled sync, and independent confirmation of the MCP server's automation capabilities.",
+    "rationale": "MX supports background/autonomous processes such as automatic re-aggregation of accounts roughly every 24 hours and webhook-driven event notifications that let integrators build automated workflows, and it exposes an MCP server that could let AI agents invoke MX capabilities. However, there is no evidence of an AI-native automation builder, scheduling/orchestration UI, or explicit support for agents autonomously configuring and running multi-step automations. missing for 10: AI-native automation configuration UI/API, evidence of agent-triggered multi-step workflows, orchestration/scheduling beyond fixed 24h aggregation.",
     "evidenceIds": [
       "mx-docs-25",
       "mx-docs-7",
-      "mx-docs-22",
+      "mx-docs-41",
       "mx-probe-3"
     ]
   },
@@ -745,7 +778,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows MX enabling data connectivity and hints at conversational/personalized finance experiences (mx-docs-27, mx-docs-13/14) that MX's customers could build for their end-users, but there is no evidence of a built-in AI assistant inside the MX product itself that an AI-native user could delegate tasks to.",
+    "rationale": "MX's evidence shows consumer-facing conversational features (e.g., end consumers asking about their money in plain language) but nothing describing a built-in AI assistant that the platform's own (AI-native) user can delegate tasks to. The MCP server evidence (mx-probe-3) pertains to a different axis (external agent connectivity), not an in-product assistant.",
     "evidenceIds": []
   },
   {
@@ -754,14 +787,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "MX is an API-first platform with a documented REST/OpenAPI spec (mx-gh-1, mx-docs-12/26) and webhooks (mx-docs-7/22) that could be driven headlessly from CI, but there is no explicit evidence of a CLI, headless SDK mode, or documented CI/automation workflow — the Connect Widget appears UI-embedded (mx-docs-9, mx-docs-21) which cuts against pure headless use. missing for 10: explicit CI/headless usage docs, a CLI or automation-focused SDK, confirmation that Connect flows can run without embedded UI.",
+    "rationale": "MX exposes a documented REST/OpenAPI Platform API, developer API keys, webhooks, and a test platform with test institutions that together allow headless, credential-free automation (e.g., in CI) rather than requiring the embedded Connect Widget for every operation. However, there is no explicit documentation of CI usage, a CLI, or automated testing guidance beyond Postman import. Missing for 10: explicit CI/CD or automation-pipeline documentation, headless/CLI tooling, and independent evidence of running the API in an automated pipeline.",
     "evidenceIds": [
-      "mx-gh-1",
+      "mx-docs-8",
       "mx-docs-12",
       "mx-docs-26",
-      "mx-docs-7",
-      "mx-docs-9",
-      "mx-docs-21"
+      "mx-docs-32",
+      "mx-docs-22",
+      "mx-gh-1"
     ]
   },
   {
@@ -805,8 +838,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX is a financial data API/SDK platform; no evidence of an official CLI tool for developers or AI-native workflows appears in the evidence pack — only API specs, webhooks, and a widget/UI. Evidence exists of an MCP server and OpenAPI spec, but no CLI is documented.",
-    "evidenceIds": []
+    "rationale": "MX is a developer API/platform (financial data connectivity), and it would be plausible for such a platform to ship an official CLI, but no evidence pack item mentions any CLI tool — only OpenAPI spec, Postman collection, SDKs (React Native, Web), webhooks, and an MCP server reference. Missing for 10: any mention of an official CLI, its installation, or command usage.",
+    "evidenceIds": [
+      "mx-docs-26",
+      "mx-docs-31",
+      "mx-gh-1",
+      "mx-probe-2"
+    ]
   },
   {
     "productId": "mx",
@@ -814,15 +852,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX exposes a documented Platform API with OpenAPI spec (available via GitHub and Postman import), REST endpoints across account verification, aggregation, statements, and webhooks, plus llms.txt and an MCP endpoint enabling AI-native access. Missing for 10: the official openapi.json isn't directly hosted at expected docs.mx.com paths (probe 404s), and there's no independent third-party corroboration of API robustness beyond MX's own docs.",
+    "rationale": "MX exposes a fully documented Platform API with OpenAPI spec (hosted on GitHub), Postman import, developer API keys, webhooks, SDKs, and test institutions, all central to programmatic/agentic access — clearly satisfying an AI-native user's need to drive the product via API. missing for 10: independent/third-party corroboration of real-world API usage and a working openapi.json directly on the docs domain (probe found 404s there, mitigated by the GitHub spec).",
     "evidenceIds": [
       "mx-gh-1",
       "mx-docs-12",
       "mx-docs-26",
-      "mx-probe-1",
-      "mx-probe-3",
-      "mx-docs-21",
-      "mx-docs-7"
+      "mx-docs-31",
+      "mx-docs-32",
+      "mx-docs-33",
+      "mx-docs-41",
+      "mx-probe-2"
     ]
   },
   {
@@ -831,20 +870,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents—docs cover data connectivity, webhooks, OpenAPI spec, and even an MCP server reference, but nothing about issuing restricted-scope API keys/tokens for AI agent use.",
-    "evidenceIds": []
+    "rationale": "Evidence shows MX has basic API key issuance and rotation via the Client Dashboard (mx-docs-32, mx-docs-33), but there is no mention of scoped or least-privilege permission levels, role-based scopes, or agent-specific credential grants — the core ask of this story. Without evidence of granular scoping, this axis is unmet.",
+    "evidenceIds": [
+      "mx-docs-32",
+      "mx-docs-33"
+    ]
   },
   {
     "productId": "mx",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX publishes an official OpenAPI specification (mx-gh-1) and supports importing it into Postman for API exploration (mx-docs-12/26), which enables building typed/generated clients, but there is no evidence of dedicated first-party SDK libraries (e.g., Python, JS, Java) or SDK-specific documentation/examples. missing for 10: named official SDK packages/libraries, language-specific SDK docs, and independent confirmation of SDK usage.",
+    "rationale": "MX ships official SDKs for embedding the Connect Widget (Web SDK, React Native SDK) plus a first-party OpenAPI spec on GitHub and Postman collection for API integration, giving AI-native developers a documented path to build against MX programmatically. However, evidence shows no broad set of official server-side client-library SDKs (e.g., Python/Node/Java API clients) beyond the widget SDKs and generic OpenAPI spec, and a direct openapi.json probe 404'd, suggesting the spec isn't uniformly hosted as advertised. missing for 10: dedicated backend-language SDKs beyond widget embedding, working hosted OpenAPI endpoint, independent corroboration of SDK quality/usage.",
     "evidenceIds": [
+      "mx-docs-29",
+      "mx-docs-30",
+      "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-docs-12",
-      "mx-docs-26"
+      "mx-probe-2"
     ]
   },
   {
@@ -853,24 +898,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX documents a webhooks system that sends HTTPS POST callbacks so developers can subscribe to specific events, clearly supporting webhook-based event subscription. Missing for 10: an exhaustive list of supported event types and independent/hands-on confirmation beyond first-party docs.",
+    "rationale": "MX documents webhooks that send HTTPS POST callbacks to a chosen URL for subscribing to events, with a Client Dashboard UI to create, edit, test, and delete these webhook subscriptions. missing for 10: independent/hands-on corroboration of webhook reliability and a full list of supported event types.",
     "evidenceIds": [
       "mx-docs-7",
-      "mx-docs-22"
+      "mx-docs-22",
+      "mx-docs-41"
     ]
   },
   {
     "productId": "mx",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "MX publishes an OpenAPI spec (mx-gh-1) that users can import into Postman to explore requests/responses (mx-docs-12, mx-docs-26), and provides a sandbox test-platform with test institutions (mx-docs-8). However, there is no evidence of an embedded, in-docs interactive API reference with directly runnable examples (e.g., a Swagger/Redoc-style try-it-now console) — probes for a hosted openapi.json on the docs site 404 (mx-probe-2), meaning users must leave the docs and use an external tool like Postman to run calls. Missing for 10: an in-browser interactive explorer with click-to-run examples, and confirmation the OpenAPI spec is directly hosted/interactive on docs.mx.com rather than requiring external import.",
+    "rationale": "MX ships a downloadable OpenAPI spec (and a public GitHub repo) that can be imported into Postman to explore requests/responses, but there is no evidence of a native interactive API reference with in-page 'try it now' runnable examples — a probe for a hosted openapi.json/swagger UI on the docs site returned 404s. missing for 10: an embedded interactive/try-it API console on docs.mx.com, evidence of runnable code examples in-browser, and independent confirmation of the Postman workflow's usability.",
     "evidenceIds": [
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-docs-8",
       "mx-probe-2"
     ]
   },
@@ -878,12 +924,13 @@
     "productId": "mx",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "MX explicitly documents downloading its OpenAPI Specification for import into Postman, and a dedicated GitHub repo (mxenabled/openapi) hosts the machine-readable spec. Missing for 10: no evidence of a standard hosted openapi.json endpoint (probe found 404s at common paths), so discovery relies on docs/GitHub rather than a canonical URL.",
+    "rationale": "MX documents that developers can download an OpenAPI Specification and import it into Postman, and a dedicated GitHub repo (mxenabled/openapi) hosts the actual machine-readable spec for the MX Platform API. missing for 10: independent/hands-on confirmation that the hosted spec stays current and is discoverable at a standard well-known endpoint (probe found no /openapi.json at expected paths, relying on docs/GitHub instead).",
     "evidenceIds": [
       "mx-docs-12",
       "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
       "mx-probe-2"
     ]
@@ -891,15 +938,16 @@
   {
     "productId": "mx",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX explicitly documents a test platform with four test institutions and OpenAPI spec/Postman import for exercising the API without touching real production financial data, plus dedicated guidance for testing the Connect Widget/OAuth flows. missing for 10: no explicit statement distinguishing a separate 'sandbox' credential set or environment isolation guarantee, and no independent/hands-on confirmation that test data never touches production systems.",
+    "rationale": "MX documents a dedicated test platform with four test institutions and an OpenAPI spec/Postman collection for exercising the API outside production, plus guidance on testing the Connect Widget/OAuth flows — a clear sandbox testing path. However, evidence doesn't explicitly frame this as an 'AI-native' or agentic testing workflow, nor confirm isolation guarantees (e.g., no real data ever touched) beyond the test institutions being separate from production. missing for 10: explicit AI-agent-oriented sandbox usage, independent/hands-on confirmation of full production-data isolation.",
     "evidenceIds": [
       "mx-docs-8",
       "mx-docs-12",
       "mx-docs-23",
-      "mx-docs-26"
+      "mx-docs-42",
+      "mx-docs-31"
     ]
   },
   {
@@ -908,12 +956,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms MX publishes an OpenAPI spec (mx-gh-1, mx-docs-12/26) but nowhere documents API versioning conventions or a formal deprecation policy for breaking changes. Missing for 10: documented version numbering scheme, deprecation timeline/notice policy, changelog of breaking changes.",
-    "evidenceIds": [
-      "mx-gh-1",
-      "mx-docs-12",
-      "mx-docs-26"
-    ]
+    "rationale": "MX documents API keys, OpenAPI specs, and webhooks, but there is no evidence of a documented API versioning scheme or a deprecation policy for its endpoints. The only lifecycle-related policy found (mx-docs-33) concerns API key rotation, not API version deprecation.",
+    "evidenceIds": []
   },
   {
     "productId": "mx",
@@ -921,7 +965,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes per-user/per-account connectivity, aggregation, and identity verification features, but nothing documents bulk or batch operations across many items/accounts/users at once. Missing for 10: any batch API endpoints, bulk data export/import operations, or documentation of multi-item processing at scale.",
+    "rationale": "The evidence pack documents connectivity products, webhooks, dashboard tools, and an OpenAPI spec, but nothing describes bulk/batch operations across many items (e.g., batch API calls, mass user management, or bulk data export endpoints). This is a plausible axis for an API-driven platform, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -930,11 +974,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "MX provides webhooks that let subscribers receive event notifications (e.g., aggregation completion) which developers can use to trigger their own downstream actions, but there is no evidence of a native rules/automation engine where users define conditional trigger-action logic within MX itself. missing for 10: a documented rules/automation builder or conditional trigger-action configuration UI, evidence of built-in actions (not just external webhook consumption).",
+    "rationale": "MX provides webhooks that notify a developer's system of events (mx-docs-7, mx-docs-22, mx-docs-41) and a dashboard to create/test/delete webhooks, which is the event-detection half of the story, but there is no evidence of a built-in rules engine where users define conditional actions that MX itself executes automatically — the 'action' side is left entirely to the developer's own downstream system. Missing for 10: a native rule/condition builder, documented automatic action execution (e.g., trigger a payment, alert, or workflow) tied to events, and any example of an end-to-end automated rule.",
     "evidenceIds": [
       "mx-docs-7",
       "mx-docs-22",
-      "mx-docs-25"
+      "mx-docs-41"
     ]
   },
   {
@@ -955,7 +999,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a financial data connectivity/aggregation API platform, not an automation-builder tool; there is no concept of 'automations' with version/review/rollback in its product surface, so this axis is a category error rather than an unmet capability.",
+    "rationale": "MX is a financial data connectivity/API platform, not an automation-builder product with workflows to version, review, or roll back; this axis does not apply to its category.",
     "evidenceIds": []
   },
   {
@@ -963,8 +1007,8 @@
     "storyId": "connection-repair-relink",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers MX's connectivity products (aggregation, IAV, AOI, microdeposits, webhooks) but never documents connection/member status codes (e.g., expired, revoked, challenged) or a dedicated re-authentication/update flow that lets users fix a broken link without re-onboarding. This is a plausible and expected capability for an account-aggregation platform, but nothing in the pack substantiates it.",
+    "confidence": "low",
+    "rationale": "The evidence pack shows connectivity, webhooks, and a user-lookup dashboard for viewing connection attempts, but nothing documents specific expired/revoked connection status codes or an 'update mode' re-authentication flow that preserves prior state. No citation addresses the reconnect/re-auth-without-restart mechanic the story asks about.",
     "evidenceIds": []
   },
   {
@@ -973,8 +1017,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers connectivity, aggregation, webhooks, and API testing but contains no documentation of a delete/disconnect flow for members or users, nor any statement about MX stopping data collection or purging held data upon request. This is a fair question for a financial data aggregator handling sensitive consumer data, but no supporting evidence exists.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers connectivity, data retrieval, webhooks, API key rotation, and dashboard features like webhook deletion or user lookup, but no documentation addresses deleting a user/connection, stopping ongoing data collection, or purging previously held data. This is a plausible and expected axis for a data-aggregation platform handling sensitive financial data, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": [
+      "mx-docs-34",
+      "mx-docs-41"
+    ]
   },
   {
     "productId": "mx",
@@ -982,12 +1029,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "MX docs describe the Connect Widget as a ready-made, embeddable UI that prompts end users to authenticate with their institution credentials, paired with the Platform API for server-side session/member creation, matching the drop-in hosted flow with no custom institution UI needed. Webhooks and member/account tokens (e.g., guid-based member connections) round out the server-to-client flow.\nmissing for 10: explicit mention of a 'connect token' generation endpoint and independent/third-party confirmation of the end-to-end session-create-then-widget-open flow.",
+    "rationale": "MX's Connect Widget is a drop-in hosted flow embeddable via Web SDK or React Native SDK that prompts end users to authenticate with their institution, and the Platform API/webhooks allow server-side session creation and retrieval of a connected 'member' token without building institution UI. missing for 10: no independent/hands-on corroboration of the exact server-side session-create-then-open-widget-then-get-token sequence, and no explicit third-party account confirming ease of integration.",
     "evidenceIds": [
-      "mx-docs-9",
       "mx-docs-21",
-      "mx-docs-22",
-      "mx-docs-23",
+      "mx-docs-9",
+      "mx-docs-29",
+      "mx-docs-30",
+      "mx-docs-7",
       "mx-docs-25"
     ]
   },
@@ -997,7 +1045,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX's evidence covers account aggregation, balances, identity/ownership verification, and general 'data intelligence' or 'personalized guidance' claims, but nothing documents a specific income/cash-flow signal product — no mention of recurring-income detection, payroll detection, or a named income verification offering built on transaction data.",
+    "rationale": "MX's evidence covers account aggregation, transaction history, balances, and identity/verification products, but nothing describes income/cash-flow signal derivation, recurring income stream detection, payroll detection, or a documented income-verification product built on this data.",
     "evidenceIds": []
   },
   {
@@ -1006,7 +1054,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers MX's connectivity products, APIs, and webhooks but contains no published figures on number of institutions reached, geographic coverage, or any coverage map/list a founder could check against their users' banks.",
+    "rationale": "The evidence pack contains extensive API/product documentation but no published institution-coverage numbers or geographic breakdowns (e.g., count of connected institutions, countries served) that a founder could check against their user base.",
     "evidenceIds": []
   },
   {
@@ -1015,8 +1063,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers connectivity, aggregation, webhooks, and test institutions, but there is no documented institution status dashboard, outage/degradation signal, or error-code taxonomy distinguishing bank-side failures from client-side issues. Missing for 10: institution health/status page, outage or degradation indicators, and documented error codes for bank vs integration failure.",
-    "evidenceIds": []
+    "rationale": "The evidence covers MX's connectivity products, webhooks, test institutions, and dashboard tools (e.g., User lookup for a single user's connection attempts) but nothing documents a per-institution status page, outage/degradation signals, or an error-code taxonomy that distinguishes institution-side failures from integrator-side problems. This is a fair ask for an aggregation platform whose core risk is bank-side outages, so absence of evidence is 'none' rather than 'na'.",
+    "evidenceIds": [
+      "mx-docs-34",
+      "mx-docs-8",
+      "mx-docs-7",
+      "mx-docs-41"
+    ]
   },
   {
     "productId": "mx",
@@ -1043,9 +1096,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows MX supports OAuth in its Connect Widget (mx-docs-23) but there is no documentation of overall OAuth coverage across institutions or any stated plan for retiring legacy credential-based (screen-scraped) connections, which is the core of this story.",
+    "rationale": "Evidence only shows a testing note about loading an institution's OAuth window in a WebView (mx-docs-23, mx-docs-42) and mentions that Connect prompts users to log in with credentials (mx-docs-9) — there is no documentation of OAuth coverage across institutions, nor any statement about retiring screen-scraped credential flows.",
     "evidenceIds": [
-      "mx-docs-23"
+      "mx-docs-23",
+      "mx-docs-42",
+      "mx-docs-9"
     ]
   },
   {
@@ -1054,7 +1109,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows MX automatically aggregates accounts on a ~24-hour cycle (mx-docs-25) and describes webhooks for event notifications, but there is no documented API endpoint or semantics for a developer-triggered on-demand refresh of a connected account's data.",
+    "rationale": "The evidence shows MX auto-aggregates data on ~24h cycles (mx-docs-25) and offers webhooks for events (mx-docs-7), but no documentation in this pack describes an on-demand/manual refresh API endpoint or its semantics (e.g., a member refresh call, sync status, or freshness guarantees). Missing for 10: an explicit on-demand refresh/sync API endpoint, documented refresh semantics (sync vs async, status polling), and confirmation that developers can trigger it outside the automatic 24h cycle.",
     "evidenceIds": [
       "mx-docs-25",
       "mx-docs-7"
@@ -1066,12 +1121,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "MX exposes a full Platform API (with public OpenAPI spec and even an MCP server) covering the same core capabilities as its Connect Widget UI—account verification, aggregation, balances, transaction history, webhooks—so most end-user and data flows are API-accessible. However, there is no explicit documentation confirming full parity between the API and MX's dashboard/admin UI (e.g., configuration, analytics, or account-management screens), so some UI-only functions may not be exposed. Missing for 10: explicit parity statement, evidence covering dashboard/admin functions via API, independent confirmation of no UI-only features.",
+    "rationale": "MX exposes a broad Platform API (aggregation, verification, balances, statements, webhooks) with an OpenAPI spec and SDKs, and the Client Dashboard also has API-key management, suggesting most functions are API-accessible. However, some dashboard-only features (SSO SAML setup, user lookup UI, mobile maintenance mode toggles, webhook creation via dashboard UI) are documented as dashboard actions without a clearly confirmed equivalent API endpoint, and there's no explicit statement of full UI/API parity. missing for 10: explicit parity statement or evidence that dashboard-only admin functions (SSO config, user lookup, mobile maintenance mode) are also exposed via API, independent confirmation of full coverage.",
     "evidenceIds": [
-      "mx-docs-21",
+      "mx-docs-26",
+      "mx-docs-31",
       "mx-gh-1",
-      "mx-probe-3",
-      "mx-docs-26"
+      "mx-docs-32",
+      "mx-docs-34",
+      "mx-docs-35",
+      "mx-docs-36",
+      "mx-docs-41"
     ]
   },
   {
@@ -1093,7 +1152,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a closed commercial fintech API/SaaS product; the only public GitHub repo (mx-gh-1) contains an OpenAPI specification for documentation/integration purposes, not the actual application source code, and no license grants access to MX's implementation source.",
+    "rationale": "MX is a closed commercial fintech data platform; the only GitHub artifact (mx-gh-1) is merely an OpenAPI specification file, not the product's actual source code, and no license terms for reading/using MX's core source are documented anywhere in the evidence.",
     "evidenceIds": [
       "mx-gh-1"
     ]
@@ -1104,7 +1163,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX is a cloud-hosted financial data connectivity API/SaaS platform with no evidence of any self-hostable core product; self-hosting is a category error for this kind of managed financial-data service.",
+    "rationale": "MX is a hosted financial data connectivity/SaaS API platform, not open-source software that could be self-hosted; the evidence pack shows only cloud API/dashboard access, not a deployable core product. Self-hosting is a category mismatch for this kind of managed banking-data service.",
     "evidenceIds": []
   },
   {
@@ -1113,7 +1172,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "MX's evidence covers account verification, aggregation, balance, transaction history, and identity data, plus 'Tokenized Account Numbers... for secure ACH money movement' (mx-docs-24), but there is no documented payment-initiation API/product, no description of initiating a bank payment/transfer, and no stated live geographies for such a capability.",
+    "rationale": "MX's docs cover account verification, aggregation, balance, and identity data, and mention Tokenized Account Numbers for 'secure ACH money movement,' but there is no documented pay-by-bank or payment-initiation product, no API for initiating a payment, and no stated live geographies for such a capability.",
     "evidenceIds": [
       "mx-docs-24",
       "mx-docs-15",
@@ -1126,7 +1185,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for MX's data; all citations concern connectivity, aggregation, and API/testing features. missing for 10: any mention of data residency/region options, compliance certifications tied to geographic storage, or configuration for where data is stored.",
+    "rationale": "No evidence in the pack discusses data residency, regional storage options, or data location controls for MX's platform; all citations concern connectivity, aggregation, webhooks, dashboards, etc.",
     "evidenceIds": []
   },
   {
@@ -1135,7 +1194,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy policy statement about model training; the pack is entirely about financial data connectivity, aggregation, and webhooks.",
+    "rationale": "MX is a financial data connectivity/API platform; nothing in the evidence pack addresses AI training data usage, opt-out controls, or data-usage privacy policies for AI model training. This is an applicable axis for any data-handling platform, but no evidence supports it being delivered.",
     "evidenceIds": []
   },
   {
@@ -1143,8 +1202,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data retention periods, deletion policies, or user/data-controller controls over stored financial data; all citations relate to connectivity, aggregation, and API features rather than privacy/data lifecycle controls.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers MX's data connectivity, aggregation, webhooks, dashboard, and API features extensively, but contains no mention of data retention policies, user-initiated deletion controls, or consent/data-lifecycle management. Missing for 10: any documentation of retention periods, deletion APIs/endpoints, user consent revocation, or compliance controls (GDPR/CCPA-style deletion) — the axis clearly applies to a financial data aggregator handling sensitive PII, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -1153,7 +1212,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item addresses telemetry, usage tracking, analytics opt-out, or data collection controls for AI-native usage; the docs focus entirely on financial data connectivity and APIs. Missing for 10: any mention of telemetry collection, an opt-out mechanism, or privacy settings related to usage tracking.",
+    "rationale": "No evidence anywhere in the pack addresses telemetry/usage-tracking opt-out controls for MX; the docs focus entirely on financial data connectivity, APIs, webhooks, and dashboard features. This is a fair question for an API/data platform, so the axis applies, but nothing in the evidence supports or denies such a capability.",
     "evidenceIds": []
   },
   {
@@ -1162,27 +1221,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "MX provides Instant Account Verification (account/routing numbers) and Tokenized Account Numbers (TANs) explicitly described as 'substitute account numbers used for secure ACH money movement,' which supports handing verified account credentials to processors for payment initiation, plus a Connect Widget/Platform API for linking accounts. However, evidence does not show explicit named integrations or token-exchange flows with specific third-party payment processors (e.g., Stripe, Plaid-style processor partnerships) beyond MX's own ACH/TAN mechanism. missing for 10: documented named processor/platform integrations or partner list, explicit token-exchange API examples handing credentials to a specific external processor, independent confirmation of processor handoff working in production.",
+    "rationale": "MX documents Instant Account Verification (account/routing numbers) and Tokenized Account Numbers (TANs) for secure ACH money movement, which serve as the mechanism for handing verified account credentials to third-party processors for payments. However, the evidence does not show explicit named integrations or documented token-exchange flows with specific third-party payment processors (e.g., named partnerships or processor-specific APIs) — it's mostly generic MX-to-bank connectivity described from MX's own docs. missing for 10: named third-party processor/platform integrations, explicit token-exchange API documentation with a payment processor, independent verification of processor handoff working in production.",
     "evidenceIds": [
       "mx-docs-1",
       "mx-docs-15",
       "mx-docs-24",
-      "mx-docs-21",
-      "mx-gh-1"
+      "mx-docs-17"
     ]
   },
   {
     "productId": "mx",
     "storyId": "quickstart-first-connection",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX provides developer-facing artifacts like a downloadable OpenAPI spec (importable into Postman), a public GitHub OpenAPI repo, and a test platform with sandbox test institutions, which support quick experimentation. However there's no evidence of a self-serve API key signup flow, a step-by-step quickstart guide, or officially maintained client libraries/SDKs in specific languages. missing for 10: self-serve API key/account signup flow, official quickstart tutorial, language-specific client libraries/SDKs.",
+    "rationale": "MX documents self-serve developer API keys via the Client Dashboard (free, easy to obtain) plus a sandbox with test institutions and an importable OpenAPI spec for Postman/API exploration, and offers Web/React Native SDKs to embed Connect. However there's no explicit 'quickstart' tutorial evidenced, client libraries are limited to JS/React Native (no broader multi-language SDK coverage), and the direct openapi.json endpoint 404s (spec only via GitHub repo). Missing for 10: explicit fast quickstart guide, multi-language client libraries beyond web/RN, and a working hosted OpenAPI endpoint.",
     "evidenceIds": [
+      "mx-docs-32",
       "mx-docs-8",
       "mx-docs-12",
       "mx-docs-26",
       "mx-gh-1",
+      "mx-docs-29",
+      "mx-docs-30",
       "mx-probe-2"
     ]
   },
@@ -1204,21 +1265,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "MX's evidence covers account aggregation, identity/verification, balances, transaction history and ACH microdeposit verification, plus tokenized account numbers for ACH money movement — but there is no mention of variable recurring payments, standing consents, or any recurring/scheduled debit payment-initiation flow.",
+    "rationale": "MX's evidence pack covers account verification, aggregation, balances, transaction history, and ACH microdeposits for account verification, but no evidence mentions recurring payment initiation, variable recurring payments, standing consents, or recurring debit flows built on the connection.",
     "evidenceIds": []
   },
   {
     "productId": "mx",
     "storyId": "sandbox-test-institutions",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "MX documents a dedicated test platform with four test institutions and an OpenAPI spec importable into Postman, plus guidance on testing the Connect Widget's OAuth flow end-to-end — directly supporting sandbox-based linking/testing before production use. However, the evidence does not show explicit documented test credentials for each test institution or guidance on simulating specific error states. Missing for 10: documented test credentials per institution, explicit error-state/failure simulation guidance.",
+    "rationale": "MX documents a dedicated test platform with four test institutions and a downloadable OpenAPI spec importable into Postman, and separately documents OAuth testing behavior in the Connect Widget, supporting end-to-end linking/testing before production. However, the evidence doesn't show documented test credentials per institution, explicit coverage of simulating error states, or examples of retrieving test transaction/account data end-to-end. Missing for 10: documented test credentials, explicit error-state simulation guidance, and a walkthrough tying test institutions to data retrieval and error handling.",
     "evidenceIds": [
       "mx-docs-8",
       "mx-docs-12",
+      "mx-docs-23",
       "mx-docs-26",
-      "mx-docs-23"
+      "mx-docs-42"
     ]
   },
   {
@@ -1227,14 +1289,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "MX splits data access into distinct products (Instant Account Verification, Account Owner Identification, Account Aggregation, Extended Transaction History, Balance), which implies a developer could integrate only the specific product/data type needed rather than one monolithic grant. However, there is no explicit documentation of a consent-scoping mechanism, a permission UI showing only requested scopes to end users, or stated data-minimization principles/controls. Missing for 10: explicit consent/scope management docs, evidence of end-user-facing scope selection in Connect Widget, and any stated data-minimization policy.",
+    "rationale": "MX offers distinct, separately documented products (Instant Account Verification, Account Owner Identification, Account Aggregation, Extended Transaction History, balance, statements) that a developer could choose to integrate individually, implying some product-level scoping, but there is no evidence of a formal consent/permission scoping mechanism, granular OAuth-like scopes, or documented data-minimization controls letting a developer request only specific fields/products at the API/consent layer. missing for 10: explicit scope/permission model documentation, granular consent API or configuration for limiting requested data fields, independent confirmation that products are enforced as separate consent grants rather than bundled under one broad authorization.",
     "evidenceIds": [
       "mx-docs-1",
       "mx-docs-2",
       "mx-docs-5",
       "mx-docs-6",
       "mx-docs-4",
-      "mx-docs-21"
+      "mx-docs-10"
     ]
   },
   {
@@ -1243,13 +1305,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers connectivity, verification, aggregation, webhooks, and testing tools, but never documents transaction enrichment specifics like cleaned merchant names, categorization, or logos — only vague references to 'data-driven intelligence' and 'account and transaction history in one view.' Since enrichment is a fair and expected capability for a financial-data-aggregation platform, but no concrete documentation of merchant cleansing/categories/logos appears, this is 'none' rather than 'na'.",
-    "evidenceIds": [
-      "mx-docs-13",
-      "mx-docs-28",
-      "mx-docs-5",
-      "mx-docs-19"
-    ]
+    "rationale": "The evidence pack covers connectivity, account verification, balances, transaction history, webhooks, and vague 'data-driven intelligence' claims, but nowhere documents transaction enrichment specifics like cleaned merchant names, categorization, or logos. This is a standard capability question for an account-aggregation platform like MX, so it applies, but no citation concretely supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "mx",
@@ -1276,24 +1333,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers MX's data connectivity products (account verification, aggregation, transaction history) and webhooks, but contains no mention of any end-user-facing consent dashboard, permissions center, or revocation portal where users can view/manage which apps hold access to their bank data. missing for 10: documented consent/permissions portal, revocation flow, any UI or API for end users to view/manage connected app access.",
+    "rationale": "Evidence shows a Client Dashboard for MX's business customers (API keys, user lookup, webhooks, SSO) but nothing describing an end-user-facing consent portal where the bank's actual end users can view and revoke which apps hold access to their data. 'User lookup' (mx-docs-34) is for the client/developer to inspect connection attempts, not for the consumer to self-manage access.",
     "evidenceIds": [
-      "mx-docs-9",
-      "mx-docs-21",
-      "mx-docs-11"
+      "mx-docs-32",
+      "mx-docs-34",
+      "mx-docs-35",
+      "mx-docs-36"
     ]
   },
   {
     "productId": "mx",
     "storyId": "webhook-data-events",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "MX docs confirm webhooks with HTTPS POST callbacks for subscribing to events like transaction/balance/connection changes, and note that account aggregation runs automatically (~every 24h) with webhook notification rather than requiring polling. Missing for 10: explicit documentation of webhook payload signing/verification mechanism and a full enumerated list of event types, plus independent/hands-on corroboration beyond first-party docs.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "MX docs confirm webhooks deliver HTTPS POST callbacks for events like connection state changes and can be managed/tested via the Client Dashboard, supporting event-driven freshness instead of polling. However, none of the evidence explicitly describes webhook payload signing/verification, nor do docs confirm coverage specifically for new transactions and balance updates as webhook triggers. Missing for 10: explicit signature/verification mechanism for webhooks, confirmation that transaction/balance events trigger webhooks, and independent/hands-on corroboration.",
     "evidenceIds": [
       "mx-docs-7",
       "mx-docs-22",
-      "mx-docs-25"
+      "mx-docs-41"
     ]
   },
   {
@@ -4045,44 +4103,51 @@
     "productId": "yapily",
     "storyId": "account-ownership-data",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Yapily explicitly documents confirming account ownership and retrieving customer details, plus broader Data API access to account details/balances for identity matching purposes. Missing for 10: no explicit breakdown of which fields (name, address, contact) are returned, and no independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Yapily explicitly offers account ownership/customer detail confirmation ('Confirm account ownership and customer details instantly' and account details retrieval via the Data API, including name/consumer/business/corporate account details), directly matching the ops lead's need to match account owner against customer records. missing for 10: explicit documentation of exact fields returned (name, address, contact data) and independent/hands-on confirmation of this feature beyond first-party docs.",
     "evidenceIds": [
       "yapily-docs-4",
       "yapily-docs-15",
-      "yapily-docs-2"
+      "yapily-docs-34",
+      "yapily-docs-27"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's API clearly supports creating consent/link sessions, retrieving balances/transactions, and managing connections (yapily-docs-2, -7, -9, -15), and there is an MCP surface (yapily-docs-6, yapily-probe-3) — but that MCP is documented as connecting coding agents (Claude/Cursor) to the documentation, not as an operational interface for agents to actually invoke banking actions with scoped credentials. Missing for 10: evidence of an MCP tool surface that performs live API calls (link sessions, balance/transaction retrieval) rather than just docs access, and explicit scoped-credential/agent-auth model for such calls.",
+    "rationale": "Yapily's REST API fully supports the core actions an agent would need — creating authorisation/consent sessions (create-embedded-account-authorisation, create-bulk-payment-authorisation, re-authorise-account-consent), retrieving accounts/balances/transactions, and scoped credential auth via Application ID/Secret or consent tokens. However, the documented MCP surface is explicitly for connecting coding agents to the *documentation* (a 'live, searchable connection to this documentation'), not an MCP server for actually invoking banking operations like link-session creation or balance retrieval. Missing for 10: an MCP server/tool surface that exposes actual banking operations (not just docs search), and any evidence of scoped/delegated credentials specifically for agent-driven MCP calls.",
     "evidenceIds": [
-      "yapily-docs-2",
-      "yapily-docs-7",
-      "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-6",
-      "yapily-probe-3"
+      "yapily-docs-32",
+      "yapily-probe-3",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-30",
+      "yapily-docs-31",
+      "yapily-docs-23"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "agent-ready-financial-data",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show enrichment (merchant detection, spending insights) and a Data API returning structured account/transaction/balance data, plus OpenAPI-based client generation implying documented schemas (yapily-docs-3, yapily-docs-2, yapily-docs-8, yapily-docs-15). However, a probe found the openapi.json/swagger.json spec not resolvable at standard paths, casting doubt on how discoverable the machine-readable schema actually is, and no evidence pack item shows an actual JSON response sample or schema definition. Missing for 10: concrete JSON response examples/schema snippets, confirmation of a publicly resolvable OpenAPI spec, and explicit statement that enrichment fields are machine-parseable without heuristics.",
+    "rationale": "Yapily's Data API documents structured JSON endpoints (accounts, balances, transactions) with categorisation/merchant-detection enrichment, and provides an OpenAPI spec plus API reference schemas that a workflow could consume programmatically; it also exposes docs via MCP/llms.txt so agents can query documentation without heuristic scraping. However, the MCP/llms.txt integration is for documentation search, not for the live financial data payloads themselves, and a probe for the actual OpenAPI file at standard paths returned 404s, leaving the machine-readable schema discovery unconfirmed. Missing for 10: independent verification of a live, agent-fetchable OpenAPI/schema endpoint, and explicit confirmation that transaction/enrichment payloads follow a stable versioned schema.",
     "evidenceIds": [
       "yapily-docs-2",
       "yapily-docs-3",
-      "yapily-docs-8",
-      "yapily-docs-15",
-      "yapily-probe-2"
+      "yapily-docs-22",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-6",
+      "yapily-probe-1",
+      "yapily-probe-2",
+      "yapily-probe-3"
     ]
   },
   {
@@ -4091,10 +4156,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Yapily explicitly documents an llms.txt file (confirmed live via probe returning HTTP 200) and dedicated agent-oriented docs describing how to connect Claude, Cursor, or other AI agents via MCP, llms.txt, or Agent Skills, directly matching the story. Missing for 10: independent third-party confirmation of an agent successfully consuming the docs end-to-end.",
+    "rationale": "Yapily explicitly documents llms.txt and agent-oriented docs (docs.yapily.com/llms.txt, ai-agents.md) with instructions to connect Claude, Cursor, or other agents via MCP, llms.txt, or Agent Skills, and this is confirmed live by an independent probe returning HTTP 200 with structured llms.txt content. Missing for 10: no independent evidence of an actual agent session successfully consuming the llms.txt content end-to-end.",
     "evidenceIds": [
       "yapily-docs-6",
       "yapily-docs-7",
+      "yapily-docs-32",
       "yapily-probe-1",
       "yapily-probe-3"
     ]
@@ -4115,15 +4181,15 @@
     "productId": "yapily",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Yapily's Payments API supports scheduled and recurring/variable-recurring payments that execute autonomously without re-authorisation, and webhooks provide background event notifications — both are forms of autonomous background automation. However, there's no evidence of an AI-agent-specific automation-setup flow (e.g., an agent configuring or monitoring these jobs), just generic API-level scheduling. Missing for 10: explicit AI-agent-driven automation setup, agent monitoring/adjusting of scheduled tasks, and independent confirmation of reliability of unattended runs.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Yapily supports background-running automations such as scheduled/recurring payments and variable recurring payments without re-authorisation, plus webhooks for real-time monitoring of payment/status changes, which are the mechanisms an AI-native integrator could use to build autonomous background flows. However, this is generic payments-API automation, not an AI-agent-specific orchestration or scheduling tool, and there's no evidence of agent-driven setup or management of these automations. Missing for 10: dedicated agent/automation orchestration layer, evidence of AI agents actually configuring or monitoring these schedules autonomously, and any workflow/scheduling UI beyond raw API primitives.",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-5",
-      "yapily-docs-16",
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-16",
+      "yapily-docs-24"
     ]
   },
   {
@@ -4132,21 +4198,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/infrastructure platform, not an AI assistant product; the evidence shows it supports AI agents connecting to its docs (MCP/llms.txt) as an API consumer, but it does not embed a built-in AI assistant for users to delegate tasks to within the product itself.",
+    "rationale": "Yapily is an open banking API/infrastructure product for developers, not a product with a built-in AI assistant UI for end users; its AI-related evidence is about connecting external coding agents (Claude, Cursor) to its docs via MCP, not a built-in assistant users delegate tasks to. This axis is a category error for an API platform.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Yapily is a REST/API-first platform (payments, data, webhooks) with a sandbox for testing and generated client libraries, implying it can be scripted/automated without a UI, but there is no explicit documentation of running it headlessly in a CI pipeline, no CLI tool, and no automation/testing-pipeline example. missing for 10: explicit CI/CD or headless automation documentation, a CLI or scriptable test harness, evidence of pipeline integration examples.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Yapily is fundamentally an API/webhook platform (HTTP Basic Auth with app ID/secret, REST endpoints, OpenAPI spec, generated client libraries, webhook notifications) which is inherently scriptable and automatable without a UI, supporting headless/CI-style usage of the Data and Payments APIs.  Missing for 10: explicit CI/CD pipeline examples or documentation, a dedicated CLI tool, and independent confirmation of automated/headless test-suite integration.",
     "evidenceIds": [
-      "yapily-docs-12",
+      "yapily-docs-23",
+      "yapily-docs-22",
       "yapily-docs-8",
       "yapily-docs-13",
-      "yapily-docs-9"
+      "yapily-docs-25",
+      "yapily-docs-12"
     ]
   },
   {
@@ -4155,21 +4223,19 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open-banking API/platform, not an agentic runtime that consumes external tools; the evidence only shows Yapily exposing an MCP server so AI coding agents can query its docs, not Yapily itself acting as an MCP client that plugs in and uses other servers' tools. This client-side 'use MCP tools' axis is a category mismatch for a banking API product.",
-    "evidenceIds": [
-      "yapily-docs-6",
-      "yapily-probe-3"
-    ]
+    "rationale": "Yapily is a banking/open-banking API platform, not an AI agent or orchestration tool that would itself consume MCP servers' tools. The evidence only shows Yapily exposing its own docs via an MCP server for other agents to query (yapily-docs-6, yapily-docs-32, yapily-probe-3) — the reverse of this story's client-side capability, which doesn't apply to this product category.",
+    "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "agentic-mcp-server",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily documents an official MCP server for connecting AI agents (Claude, Cursor) to its docs, confirmed by both docs and a probe verifying the ai-agents.md resource, so the axis clearly applies and is addressed. However, the evidence only shows MCP access to documentation/context, not to Yapily's actual banking APIs (payments, data, AIS/PIS) as agent-callable tools, and there's no independent or hands-on confirmation of the MCP server's tool set in action. Missing for 10: evidence that the MCP server exposes real API operations (payments, account data) as agent tools, tool/resource list details, and independent corroboration beyond first-party docs.",
+    "rationale": "Yapily documents an official MCP server that lets AI agents (Claude, Cursor, etc.) connect directly to its docs for a live, searchable connection, and a probe confirms the resource exists at docs.yapily.com/resources/ai-agents. This is docs-focused rather than exposing full banking API operations via MCP tools, so it's a real but limited agentic integration. Missing for 10: evidence of MCP tools invoking actual Yapily API operations (payments/data) rather than just documentation search, and independent/hands-on confirmation beyond the vendor's own docs and probe.",
     "evidenceIds": [
       "yapily-docs-6",
+      "yapily-docs-32",
       "yapily-probe-3"
     ]
   },
@@ -4179,9 +4245,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily's evidence covers a developer API/SDKs and an MCP-served documentation assistant for coding agents (yapily-docs-6, yapily-probe-3), but there is no evidence that end users can issue natural-language commands to actually operate Yapily's core functions (payments, account data retrieval, etc.). The MCP/llms.txt integration is for helping coding agents navigate docs, not a natural-language control interface for the product's operations.",
+    "rationale": "Yapily provides MCP/llms.txt access so AI agents can query its documentation, but there is no evidence that end users can actually operate Yapily's core functions (payments, account data retrieval) via natural-language commands — the MCP integration is documentation-search only, not an agentic command interface for the product's banking operations.",
     "evidenceIds": [
       "yapily-docs-6",
+      "yapily-docs-32",
       "yapily-probe-3"
     ]
   },
@@ -4191,7 +4258,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily provides SDK/client library generation (yapily-docs-8) and AI-agent connectivity via MCP/llms.txt (yapily-docs-6), but there is no evidence of an official CLI tool for interacting with the Yapily platform or APIs.",
+    "rationale": "Evidence shows client library/code generation (OpenAPI-based), MCP/llms.txt for AI agents, and API auth, but there is no mention of an official CLI tool for Yapily; SDK generation and MCP docs are distinct from a CLI product.",
     "evidenceIds": []
   },
   {
@@ -4200,15 +4267,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Yapily is API-first: docs describe endpoints for payments, data, webhooks, and confirm OpenAPI-based client library generation, plus explicit AI-agent access via MCP/llms.txt (confirmed live by probe-1 and probe-3), directly matching the 'documented public API for AI-native use' story. Missing for 10: a verifiable OpenAPI spec file (probe-2 found all standard OpenAPI/swagger paths 404) and independent third-party confirmation of API completeness beyond first-party docs.",
+    "rationale": "Yapily publishes a full REST API reference (accounts, transactions, payments, authorisations), documented HTTP Basic Auth, an OpenAPI spec for client-library generation, and webhooks for async status — all core requirements for an AI-native user to programmatically drive the product. Missing for 10: independent/hands-on verification of the OpenAPI spec (probe found expected openapi.json paths 404) and third-party corroboration beyond first-party docs.",
     "evidenceIds": [
+      "yapily-docs-22",
+      "yapily-docs-23",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-29",
       "yapily-docs-8",
-      "yapily-docs-6",
-      "yapily-probe-1",
-      "yapily-probe-3",
-      "yapily-probe-2",
-      "yapily-docs-16",
-      "yapily-docs-15"
+      "yapily-docs-13",
+      "yapily-probe-2"
     ]
   },
   {
@@ -4216,19 +4284,22 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes issuing scoped or least-privilege API credentials/keys for agent use; documentation covers payments, data access, consent flows, and AI-agent documentation connectivity (MCP/llms.txt) but not credential scoping mechanisms.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Yapily's documented authentication model is a single HTTP Basic Auth pair (Application ID + Application Secret) applied at the whole-application level, with no evidence of scoped, granular, or per-agent least-privilege credential issuance (e.g., OAuth scopes, restricted API keys, or role-based tokens).",
+    "evidenceIds": [
+      "yapily-docs-23"
+    ]
   },
   {
     "productId": "yapily",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Yapily documents generating client libraries from an OpenAPI spec for Java, Python, Node.js, etc., which supports the 'official SDK' story, but this is code generation rather than a maintained, first-party SDK repository, and the probe found no accessible OpenAPI spec file, undermining confidence in this claim. missing for 10: evidence of actual published/maintained SDK repos (GitHub links, versioning, install instructions), independent corroboration, and working OpenAPI spec access.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Yapily documents OpenAPI-based code generation for client libraries in Java, Python, Node.js and more, and states this is the same spec they use to generate server-side libraries, but there's no evidence of dedicated, maintained official SDK repos (e.g. on GitHub) with versioning/release history — only generated clients from a spec. The probe also found no live OpenAPI/swagger file at expected endpoints, weakening confidence in easy self-generation. missing for 10: published/maintained official SDK repositories (not just generator instructions), independent confirmation of SDK quality, and a working discoverable OpenAPI spec endpoint.",
     "evidenceIds": [
       "yapily-docs-8",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
@@ -4237,24 +4308,30 @@
     "storyId": "agentic-webhooks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Yapily documents a dedicated webhooks system delivering real-time HTTP notifications of platform events (e.g., payment status changes), directly matching the story. Missing for 10: independent/hands-on corroboration of webhook reliability and no detail on subscription filtering/event types.",
+    "confidence": "high",
+    "rationale": "Yapily documents a full webhook subscription system: real-time HTTP notifications for platform and payment events, multi-event-category subscriptions, and setup guidance for secure endpoints. This directly satisfies the story of subscribing to events via webhooks. Missing for 10: independent/hands-on corroboration of webhook reliability and no explicit example of an AI agent programmatically subscribing/managing webhooks itself.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference or runnable code examples; the OpenAPI spec probe returned 404s and docs only mention static content, code-gen libraries, and AI-agent integration (MCP/llms.txt), not an interactive playground with runnable examples.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Yapily has a structured API reference (endpoint docs like get-accounts, create-bulk-payment-authorisation, etc.) and an OpenAPI spec used for client-library generation, plus a sandbox for testing, but there is no evidence of an interactive, in-browser 'try it now' console or embedded runnable code examples—an openapi.json probe even returned 404 at expected locations. missing for 10: explicit interactive try-it/run console in docs, confirmed live OpenAPI spec endpoint, runnable code snippets embedded in reference pages.",
     "evidenceIds": [
-      "yapily-probe-2",
-      "yapily-docs-8",
-      "yapily-docs-6"
+      "yapily-docs-22",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-29",
+      "yapily-docs-12",
+      "yapily-probe-2"
     ]
   },
   {
@@ -4263,8 +4340,9 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs reference an OpenAPI specification used to generate client libraries (yapily-docs-8), implying a machine-readable spec exists, but a direct probe for standard OpenAPI/Swagger file locations returned 404 everywhere (yapily-probe-2), meaning no publicly downloadable spec could be located. missing for 10: a working public URL/download link for the OpenAPI/Swagger file, confirmation of its format and completeness, and independent corroboration that it can actually be fetched.",
+    "rationale": "Docs claim Yapily provides an OpenAPI v3 spec used to generate client libraries (yapily-docs-22, yapily-docs-8), but a direct probe for the OpenAPI file at all standard candidate paths (openapi.json, swagger.json, etc.) returned 404 (yapily-probe-2), so the machine-readable spec is not verifiably downloadable as claimed. missing for 10: a working, discoverable URL for the OpenAPI file itself, independent confirmation of successful download/parsing.",
     "evidenceIds": [
+      "yapily-docs-22",
       "yapily-docs-8",
       "yapily-probe-2"
     ]
@@ -4275,10 +4353,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Yapily explicitly documents a sandbox environment that simulates real Open Banking flows with test accounts/banks so developers can test without touching production data (yapily-docs-12), supported by webhook and API docs for testing flows. Missing for 10: independent/hands-on confirmation of sandbox behavior and explicit detail on data isolation guarantees beyond the doc description.",
+    "rationale": "Yapily explicitly documents a sandbox test environment allowing connection to a bank with test accounts to simulate the real Open Banking experience without touching production, and it's tied into the broader API/dev workflow that AI agents can access via MCP docs. Missing for 10: no independent/hands-on confirmation of sandbox behavior, no explicit detail on how an AI agent programmatically invokes/tests against the sandbox distinct from production endpoints.",
     "evidenceIds": [
       "yapily-docs-12",
-      "yapily-docs-13"
+      "yapily-docs-6",
+      "yapily-docs-32"
     ]
   },
   {
@@ -4287,18 +4366,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention API versioning scheme or a documented deprecation policy; docs reference API capabilities, sandbox, webhooks, and client library generation but nothing about version lifecycle or deprecation commitments. missing for 10: versioning scheme documentation, deprecation policy/notice process, changelog or migration guides.",
+    "rationale": "The evidence pack shows extensive API documentation, OpenAPI spec references, authentication, webhooks, etc., but nowhere mentions API versioning strategy or a documented deprecation policy for breaking changes.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Yapily's docs mention 'bulk' as a supported payment type alongside scheduled/periodic/international payments, indicating some batch-processing capability, but there is no detailed documentation of bulk API semantics (batch size limits, bulk data retrieval, bulk consent management, etc.) beyond this one-line reference. missing for 10: dedicated bulk API endpoint documentation, batch limits/pagination for data retrieval, examples of bulk operations in practice.",
+    "rationale": "Yapily explicitly supports bulk payment authorisation (create-bulk-payment-authorisation endpoint) and 'bulk' payment types via the Payments API, giving direct evidence of bulk operations for payments. However, there's no evidence of bulk operations for other item types (e.g., bulk account/consent retrieval, bulk webhooks management, or batch data queries), and no AI-native/agent-driven bulk automation workflow is documented. missing for 10: bulk support across data/account retrieval, bulk consent management, batch webhook operations, and explicit agent-orchestrated bulk workflows.",
     "evidenceIds": [
       "yapily-docs-17",
+      "yapily-docs-29",
       "yapily-docs-16"
     ]
   },
@@ -4308,26 +4388,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily documents webhooks for real-time event notifications, but there is no evidence of a rules engine or mechanism letting users define conditional triggers that automatically execute actions based on events — webhooks only notify, they don't let a user configure 'if X then do Y' automation.",
+    "rationale": "Yapily offers webhooks for real-time event notifications, but there is no evidence of a rules engine or mechanism letting users define conditional 'if event X then action Y' automations — webhooks only push raw notifications, leaving all rule logic and triggered actions to be built externally by the developer.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Payments API explicitly supports scheduled and recurring (periodic/variable recurring) payment initiation, which is a concrete recurring-job capability exposed via API and webhooks for status tracking. However, this is domain-specific (payments only) rather than a general-purpose job/workflow scheduler or automation engine that an AI agent could use to orchestrate arbitrary recurring tasks. Missing for 10: evidence of a generic scheduling/orchestration API or cron-like trigger system beyond payment initiation, and no independent corroboration of this working end-to-end.",
+    "rationale": "Yapily's Payments API explicitly supports scheduled, periodic, and variable recurring payments (yapily-docs-1, yapily-docs-16, yapily-docs-17, yapily-docs-5), which an AI agent could invoke via the API (and MCP-connected docs, yapily-docs-6/32) to set up recurring financial workflows. However, this is domain-specific payment scheduling, not a general-purpose job/workflow scheduler for arbitrary AI-driven automations, and there's no evidence of a broader orchestration or cron-like automation layer for agent workflows. Missing for 10: a general workflow/job scheduling mechanism beyond payment initiation, and independent/hands-on confirmation that AI agents can reliably trigger recurring jobs end-to-end.",
     "evidenceIds": [
       "yapily-docs-1",
-      "yapily-docs-5",
       "yapily-docs-16",
       "yapily-docs-17",
-      "yapily-docs-18",
-      "yapily-docs-21"
+      "yapily-docs-5",
+      "yapily-docs-6",
+      "yapily-docs-32"
     ]
   },
   {
@@ -4336,17 +4418,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/payments platform, not an automation-builder product with a versionable workflow concept; version/review/rollback of 'automations' is a category error for this kind of product.",
+    "rationale": "Yapily is an open banking API/payments platform, not a workflow/automation-builder product with a concept of versioning, reviewing, or rolling back 'automations' — this axis targets tools with automation/workflow definitions, which is a wrong category for an API infrastructure provider.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "connection-repair-relink",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers payments, data retrieval, webhooks, and Yapily Connect UI, but nothing documents how expired/revoked consent links surface as statuses or how users re-authenticate via an update flow without restarting the linking process — missing for 10: documented consent-expiry/revocation status codes, and an explicit re-auth/update flow that preserves prior linkage.",
-    "evidenceIds": []
+    "rationale": "Yapily documents a re-authorise-account-consent endpoint explicitly for when a previously AUTHORIZED consent 'can no longer be used to retrieve data', letting users re-consent without starting a fresh integration. However, there's no documented status taxonomy for expired/revoked links, no explicit ops-facing dashboard or webhook event naming these states, and no equivalent documented re-auth flow for payments consents. missing for 10: documented consent status codes (expired/revoked/failed) surfaced to ops, webhook event types for consent expiry/revocation, an equivalent re-auth update flow for payment authorisations, and independent/hands-on confirmation this works smoothly in practice.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-13",
+      "yapily-docs-18"
+    ]
   },
   {
     "productId": "yapily",
@@ -4354,8 +4440,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes a documented deletion/revocation flow for connections or users, nor confirmation that data collection stops and held data is purged; docs only mention consent collection, sandbox, webhooks, and data retrieval, not consent revocation or data deletion/purge.",
-    "evidenceIds": []
+    "rationale": "The evidence pack documents consent creation, re-authorisation, and data retrieval endpoints, but nowhere describes a way to delete/revoke a consent or user, stop data collection, or purge held data — only a re-authorise-account-consent endpoint is shown, which is about renewing consent, not severing it.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-27",
+      "yapily-docs-15"
+    ]
   },
   {
     "productId": "yapily",
@@ -4375,11 +4465,15 @@
   {
     "productId": "yapily",
     "storyId": "income-cashflow-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Yapily's docs show transaction categorisation, merchant detection, and spending insights (yapily-docs-3), but there is no evidence of recurring income/payroll detection, cash-flow signal derivation, or income verification products built on the data.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Yapily documents generic transaction categorisation, merchant detection, and spending insights built on account/transaction data (yapily-docs-3, yapily-docs-15, yapily-docs-28), which is adjacent to income/cash-flow signal derivation, but there is no evidence of dedicated recurring-income/payroll detection or a documented income verification product. Missing for 10: explicit recurring income/payroll detection logic, dedicated income verification API/product, and any documentation tying categorisation to cash-flow or income signals specifically.",
+    "evidenceIds": [
+      "yapily-docs-3",
+      "yapily-docs-15",
+      "yapily-docs-28"
+    ]
   },
   {
     "productId": "yapily",
@@ -4387,7 +4481,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no published institution counts, geographic coverage lists, or bank-name directories that a founder could check against their users' banks—only product/API feature descriptions.",
+    "rationale": "No evidence in the pack cites published institution counts, country coverage lists, or bank directories that a founder could check against their users' banks; the docs describe API capabilities (payments, data, webhooks) but not coverage numbers/geographies.",
     "evidenceIds": []
   },
   {
@@ -4396,11 +4490,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented institution status page, outage/degradation signals, or error-code taxonomy distinguishing bank-side failures from client-side issues; only generic webhook and payment-status mentions are present. Missing for 10: institution status/availability page, degradation/outage signals, and documented bank-vs-integration error code distinctions.",
-    "evidenceIds": [
-      "yapily-docs-18",
-      "yapily-docs-13"
-    ]
+    "rationale": "No evidence pack items reference institution status pages, outage/degradation dashboards, per-bank health signals, or error code taxonomies distinguishing bank-side vs integrator-side failures; webhooks cover payment status but not institution health/coverage visibility.",
+    "evidenceIds": []
   },
   {
     "productId": "yapily",
@@ -4408,14 +4499,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Data API and consent flow (via Yapily Connect) grant access to accounts, balances, transactions, and identity data under a single AIS consent/session (yapily-docs-2, yapily-docs-4, yapily-docs-15, yapily-docs-20), and Yapily Connect explicitly reduces repeated consent screens across flows (yapily-docs-7, yapily-docs-9). However, payments (PIS) are documented as a separate initiation flow/API from data access (AIS), and no evidence explicitly confirms a single link/consent session spans both AIS and PIS products without re-authentication. missing for 10: explicit confirmation that one consent/session token covers both payments and data products together, and independent/hands-on evidence of a true single multi-product session rather than per-product consent screens.",
+    "rationale": "Yapily's Account Authorisation flow covers both AIS (accounts, balances, transactions) and identity/account confirmation under a single consent grant, and Yapily Connect provides a single white-label UI for these AIS flows, implying one session can cover multiple data products. However, payments (PIS) are documented as a separate authorisation/consent flow, and there's no explicit documentation confirming a single link session spans both AIS and PIS or that identity confirmation is bundled without a separate re-auth step. missing for 10: explicit documentation of one unified session/consent token covering AIS+PIS+identity simultaneously, and independent/hands-on confirmation that users aren't re-prompted per product.",
     "evidenceIds": [
       "yapily-docs-2",
       "yapily-docs-4",
       "yapily-docs-7",
-      "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-20",
+      "yapily-docs-30",
+      "yapily-docs-33",
+      "yapily-docs-31",
       "yapily-docs-16"
     ]
   },
@@ -4425,10 +4517,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Yapily's docs describe bank redirect and SCA-based consent flows (docs-9, docs-10) which imply OAuth-style bank-hosted authentication rather than screen-scraping, but no evidence explicitly uses the term 'OAuth,' documents OAuth coverage across institutions, or discusses retirement of legacy credential-scraping flows. Missing for 10: explicit OAuth terminology/documentation, institution-by-institution OAuth coverage stats, and any statement about phasing out screen-scraped credential flows.",
+    "rationale": "Docs describe redirecting users to their bank's own login screen for consent (create-bulk-payment-authorisation, create-embedded-account-authorisation) and automatic handling of Strong Customer Authentication/bank redirects, implying bank-hosted authentication rather than screen-scraping, but nowhere do the docs use the term 'OAuth', quantify coverage across institutions, or discuss retirement of legacy credential-sharing flows. Missing for 10: explicit OAuth terminology/coverage stats, any mention of legacy screen-scraping methods being deprecated, and independent confirmation of bank-hosted OAuth across the institution network.",
     "evidenceIds": [
-      "yapily-docs-9",
-      "yapily-docs-10"
+      "yapily-docs-29",
+      "yapily-docs-30",
+      "yapily-docs-10",
+      "yapily-docs-9"
     ]
   },
   {
@@ -4436,11 +4530,12 @@
     "storyId": "on-demand-refresh",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence covers account data retrieval, webhooks for real-time notifications, and payments, but nothing describes an on-demand refresh endpoint/parameter or documents refresh semantics (e.g., how often data updates or how to force a refresh). Missing for 10: any mention of a refresh API/endpoint, refresh frequency/rate limits, or documented semantics for on-demand data freshness.",
+    "confidence": "medium",
+    "rationale": "Docs describe GET accounts/transactions and balances endpoints and a re-authorise-consent endpoint, but there is no documented on-demand 'refresh' endpoint or explicit refresh semantics (e.g., how a fresh pull vs cached data is triggered) anywhere in the evidence pack.",
     "evidenceIds": [
-      "yapily-docs-2",
-      "yapily-docs-13",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-31",
       "yapily-docs-15"
     ]
   },
@@ -4450,13 +4545,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's UI (Yapily Connect) is explicitly described as a pre-built white-label layer for AIS/PIS flows that sits on top of the same Data and Payments APIs (docs-7, docs-9, docs-15, docs-16), implying most UI functionality is API-backed rather than API-exclusive. However, there is no explicit documentation stating full UI/API parity, and a probe found no discoverable OpenAPI spec at expected locations, raising doubt about complete self-service API coverage. Missing for 10: explicit parity statement enumerating any UI-only conveniences (e.g., branding, consent screen customization) and their API equivalents, and a working public OpenAPI spec confirming full endpoint coverage.",
+    "rationale": "Yapily's core data/payments/consent operations are all exposed via the API (accounts, transactions, payment initiation, authorisations), and the Yapily Connect UI is explicitly a pre-built wrapper around the same API flows, suggesting API parity for core banking actions. However, evidence doesn't confirm that UI-only conveniences (e.g., branding/customisation controls in Yapily Connect, institution selection UX logic) are fully API-configurable, and the OpenAPI spec probe returned 404s, weakening confidence in complete self-service API discoverability. Missing for 10: confirmation that all UI configuration/branding options are API-settable, a working public OpenAPI spec link, and independent verification of full UI/API parity beyond vendor docs.",
     "evidenceIds": [
       "yapily-docs-7",
       "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-16",
-      "yapily-docs-8",
+      "yapily-docs-27",
+      "yapily-docs-30",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
@@ -4484,22 +4580,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is a regulated open-banking API/aggregation platform requiring bank connectivity, licensing, and infrastructure that only the vendor can provide; self-hosting the core product is not a meaningful capability for this category of service.",
+    "rationale": "Yapily is a cloud-based open banking API/SaaS platform, not a product designed for self-hosting; self-hosting the core banking infrastructure/regulatory service is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "pay-by-bank-initiation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily's docs clearly describe payment initiation (single, scheduled, periodic, recurring/VRP) via its Payments API using local rails like UK Faster Payments and European SEPA, giving some geographic grounding, but there is no comprehensive, explicit list of supported countries/markets or independent confirmation of live coverage claims. missing for 10: full country/geography list, independent verification of live markets, and any hands-on confirmation of payment success rates.",
+    "rationale": "Yapily's docs clearly describe payment initiation (single, scheduled, recurring, bulk) via a dedicated Payments API, with local rail settlement mentioned for UK (Faster Payments) and Europe (SEPA), and status tracking via webhooks — a coherent, honestly-scoped payment-initiation product. Missing for 10: an explicit full country/geography coverage list beyond UK/SEPA, and independent or hands-on corroboration of live payment initiation (only first-party docs are cited).",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-16",
       "yapily-docs-17",
       "yapily-docs-21",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-29"
     ]
   },
   {
@@ -4507,8 +4604,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data residency, regional storage choice, or hosting location options for customer data; all docs focus on payments, data access APIs, and AI-agent connectivity.",
+    "confidence": "high",
+    "rationale": "No evidence pack mentions data residency, region selection, or data storage location controls for Yapily's platform; the docs focus on payments, data API, webhooks, and AI-agent connectivity with no mention of regional/data residency configuration options.",
     "evidenceIds": []
   },
   {
@@ -4517,7 +4614,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/payments platform, not an AI model or AI product that trains on user data; the axis of preventing data use for AI model training does not apply to its category.",
+    "rationale": "Yapily is an open banking API/payments platform, not an AI model provider or chatbot with training-data controls; the evidence pack contains no mention of AI training data usage policies at all, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -4526,7 +4623,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-initiated data removal options for Yapily; the documentation covers data access, payments, and AI-agent integration but nothing about retention/deletion controls.",
+    "rationale": "Evidence covers consent/re-authorisation flows for account access but no mention of data retention policies, deletion of stored data, or user/developer controls over how long financial data is retained or how to delete it.",
     "evidenceIds": []
   },
   {
@@ -4534,18 +4631,24 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for Yapily's products or docs; this is a fair question for an API/SaaS platform but is unaddressed.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out controls for Yapily; the docs cover open banking APIs, payments, data access, and AI-agent connectivity but nothing about privacy/telemetry settings.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "processor-integrations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's docs describe account verification and payment initiation via its own Payments/Data APIs, but there is no evidence of documented integrations or token-exchange mechanisms that hand verified account credentials to third-party payment processors or platforms.",
-    "evidenceIds": []
+    "rationale": "Yapily documents Data API/consent flows and Payments API that let developers retrieve verified account/balance data and initiate bank-to-bank payments, effectively handing verified account data to the developer's own platform, and its Data API is positioned for building 'personalised financial products and services.' However, the story specifically asks about handing credentials/data to third-party payment processors — Yapily's docs describe Yapily itself as the aggregator/PISP, not documented integrations or token exchange with named third-party processors (e.g., Stripe, Adyen). missing for 10: explicit documented integrations or token-exchange flows with named third-party payment processors/platforms, and independent confirmation of such handoffs.",
+    "evidenceIds": [
+      "yapily-docs-15",
+      "yapily-docs-27",
+      "yapily-docs-16",
+      "yapily-docs-23",
+      "yapily-docs-34"
+    ]
   },
   {
     "productId": "yapily",
@@ -4553,23 +4656,28 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence confirms a sandbox test environment (yapily-docs-12) and client library generation via OpenAPI spec for Java, Python, Node.js, etc. (yapily-docs-8), but there is no evidence of a self-serve signup flow, API key issuance process, or a runnable quickstart guide. The openapi.json probe returned 404s across all candidate paths, casting doubt on how straightforward the client-library generation actually is in practice. missing for 10: self-serve signup/API-key evidence, an explicit quickstart walkthrough, working OpenAPI spec endpoint, independent corroboration of time-to-first-sandbox-account.",
+    "rationale": "Docs confirm a sandbox test environment, Basic-Auth API keys (App ID/Secret), and OpenAPI-based codegen for Java/Python/Node client libraries, which cover much of the technical integration path. However, there is no evidence of a self-serve signup flow to obtain API keys, no dedicated 'quickstart' tutorial, and a probe found the claimed OpenAPI spec file returning 404 at all standard paths, undermining the client-library generation claim. Missing for 10: documented self-serve signup/API key creation, a runnable quickstart guide, and a verifiable/working OpenAPI spec link for client-library generation.",
     "evidenceIds": [
       "yapily-docs-12",
+      "yapily-docs-23",
       "yapily-docs-8",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "realtime-balance-checks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Data API explicitly documents retrieving account balances (via AIS/Open Banking) alongside accounts and transactions, which is the core capability needed for pre-payment balance checks. Missing for 10: explicit 'real-time' latency guarantees and explicit framing of the endpoint for NSF/risk-check use cases.",
+    "rationale": "Yapily's Data API documents a get-accounts endpoint that 'Returns all accounts and balances for the end user associated with the presented consent token' (yapily-docs-27), and account/balance data access is repeatedly described as core functionality (yapily-docs-2, yapily-docs-15, yapily-docs-34). However, no evidence explicitly frames this as a real-time pre-payment NSF/risk check workflow, nor documents latency guarantees, freshness of balance data, or an explicit pattern linking balance-check to payment initiation. Missing for 10: explicit documentation tying the balance endpoint to pre-payment NSF/risk-check use cases, guidance on real-time freshness/staleness of returned balances, and any hands-on/independent confirmation of this workflow.",
     "evidenceIds": [
+      "yapily-docs-27",
       "yapily-docs-2",
-      "yapily-docs-15"
+      "yapily-docs-15",
+      "yapily-docs-34",
+      "yapily-docs-16"
     ]
   },
   {
@@ -4578,14 +4686,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly cover recurring/scheduled/periodic payments (yapily-docs-1, -16, -17) and dedicated variable recurring payment support without re-authorisation (yapily-docs-5), plus webhook-based status tracking and local rail settlement for recurring debits (yapily-docs-18, -21). Missing for 10: independent/hands-on confirmation of VRP flows in production and more detail on standing consent lifecycle management beyond docs claims.",
+    "rationale": "Docs explicitly cover scheduled/periodic/recurring payments (yapily-docs-1, yapily-docs-16, yapily-docs-17) and specifically call out variable recurring payments 'without re-authorisation each time' (yapily-docs-5), plus re-authorisation/consent renewal endpoints (yapily-docs-31) and webhook status tracking for recurring flows (yapily-docs-18, yapily-docs-24). Missing for 10: independent/hands-on corroboration of VRP working in practice, and explicit standing-order/mandate terminology or regulatory VRP scheme detail.",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-5",
       "yapily-docs-16",
       "yapily-docs-17",
-      "yapily-docs-18",
-      "yapily-docs-21"
+      "yapily-docs-31",
+      "yapily-docs-18"
     ]
   },
   {
@@ -4594,9 +4702,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm a sandbox exists to connect to test banks and simulate the Open Banking experience, but the evidence pack doesn't detail documented test credentials, specific error-state simulation, or step-by-step end-to-end linking/retrieval walkthroughs. missing for 10: explicit test credentials list, error/edge-case simulation documentation, independent/hands-on confirmation of the sandbox experience.",
+    "rationale": "Docs explicitly describe a sandbox with test institutions/accounts simulating the real Open Banking experience, plus API references for accounts/transactions/authorisation flows and error handling patterns via webhooks. However, there is no evidence of documented test credentials, explicit error-state simulation guidance, or a hands-on walkthrough confirming end-to-end sandbox usage. missing for 10: documented test credentials, explicit error-state/failure simulation examples, independent/hands-on confirmation of sandbox completeness.",
     "evidenceIds": [
-      "yapily-docs-12"
+      "yapily-docs-12",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-31"
     ]
   },
   {
@@ -4605,12 +4716,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Yapily separates its offerings into distinct products (Data API for AIS, Payments API for PIS, account confirmation, VRP) each with its own consent screen, implying developers only request the product-specific consent they need rather than a single blanket grant (yapily-docs-2, -15, -16, -20). However, there is no explicit documentation of fine-grained data-minimization controls within a product (e.g., requesting balances only vs. full transaction history) or scope parameters in the API reference.\nmissing for 10: granular in-product scope/field-level consent documentation, explicit data-minimization API parameters, independent confirmation of scope enforcement.",
+    "rationale": "Yapily's docs show consent-based access control separated by product (Data API for AIS vs Payments API for PIS), account-level consent tokens, and re-authorisation flows, which implies some scoping. However, there is no explicit documentation of granular field-level or scope-level data-minimization controls (e.g., balances-only vs transactions-only consent) or configurable minimal-scope requests. missing for 10: explicit scope/permission granularity docs, evidence of selecting only specific data fields, and independent confirmation that minimal-scope consents are enforced.",
     "evidenceIds": [
       "yapily-docs-2",
-      "yapily-docs-15",
-      "yapily-docs-16",
-      "yapily-docs-20"
+      "yapily-docs-27",
+      "yapily-docs-30",
+      "yapily-docs-31",
+      "yapily-docs-34",
+      "yapily-docs-15"
     ]
   },
   {
@@ -4631,10 +4744,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs confirm transaction/account/balance retrieval via the Data API with consent (yapily-docs-2, yapily-docs-15) and webhooks for real-time change notifications (yapily-docs-13), which could support a sync pattern, but there is no documented pagination mechanism, no stated history depth/lookback window, and no explicit delta/incremental-fetch API for transactions. missing for 10: pagination details, documented transaction history depth, explicit changed-only/delta sync endpoint or pattern beyond generic webhooks.",
+    "rationale": "Yapily's Data API clearly supports pulling account transactions via a dedicated endpoint (get-account-transactions) under consented access, and webhooks exist for real-time notifications of platform changes. However, the evidence pack contains no documentation of pagination parameters, no stated history depth/lookback window, and no explicit sync/delta pattern for fetching only changed transactions since a webhook or polling cursor. missing for 10: pagination parameter docs, transaction history depth/retention window, explicit incremental-sync (delta) pattern tied to transactions.",
     "evidenceIds": [
-      "yapily-docs-2",
       "yapily-docs-15",
+      "yapily-docs-28",
+      "yapily-docs-34",
       "yapily-docs-13"
     ]
   },
@@ -4644,19 +4758,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Yapily Connect provides consent screens for initiating AIS/PIS authorization (docs-7, docs-20) but nothing about a portal or surface where end users can view all apps/connections and actively revoke previously granted consent to their bank data.",
-    "evidenceIds": []
+    "rationale": "Yapily's docs cover consent creation, re-authorisation, and revocation is implied only via bank-side flows (e.g., yapily-docs-31 covers re-authorising lapsed consent, not user-initiated revocation), but there is no documented end-user consent dashboard/portal where users can view and revoke which apps hold access to their bank data. Yapily Connect provides consent *screens* during onboarding, not an ongoing management surface.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-7",
+      "yapily-docs-9"
+    ]
   },
   {
     "productId": "yapily",
     "storyId": "webhook-data-events",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily documents webhooks for real-time HTTP notifications of platform changes, explicitly used for payment status tracking, supporting event-driven updates instead of polling. However, the evidence never confirms webhook payloads are cryptographically signed, nor details specific coverage for new transactions/balance updates/connection state changes as separate event types. Missing for 10: signature/verification mechanism documentation, explicit event types for transactions/balances/connection state, and independent confirmation of reliability.",
+    "rationale": "Yapily's docs clearly describe real-time webhooks for transactions, balances, and payment status changes, explicitly positioning them as the way to avoid polling (docs-13, docs-18, docs-24, docs-26), with setup guidance requiring a secure HTTPS endpoint (docs-25). However, the evidence never explicitly confirms webhook payloads are cryptographically 'signed' or details a signature-verification mechanism, and 'connection state changes' as a discrete webhook event type isn't directly evidenced. Missing for 10: explicit signature/verification scheme for webhooks, explicit connection-state-change event category, independent/hands-on confirmation of webhook reliability.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   }
 ]
