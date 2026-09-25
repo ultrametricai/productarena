@@ -689,14 +689,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence describes Gazebo as a physics simulator with C++/plugin APIs, transport messaging, and CLI tools for simulated robots, but there is no mention of authentication, scoped credentials, or any mechanism for an AI agent to command a real (non-simulated) robot end-to-end via an API/SDK. Probes for API/auth surfaces (llms.txt, openapi.json) also returned 404s.",
-    "evidenceIds": [
-      "gazebo-gh-6",
-      "gazebo-gh-9",
-      "gazebo-gh-5",
-      "gazebo-gh-8",
-      "gazebo-probe-3"
-    ]
+    "rationale": "Evidence shows Gazebo is a simulation platform with C++/plugin APIs, transport messaging, and ROS integration, but nothing about authentication, scoped credentials, or commanding a real (non-simulated) robot end-to-end. No API/SDK auth model or hardware-control security scheme is documented anywhere in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "gazebo",
@@ -704,7 +698,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes show no llms.txt (404), no markdown-alt docs, and no OpenAPI spec, indicating no agent-oriented documentation format is provided; no evidence of any agent-discoverable docs endpoint.",
+    "rationale": "Direct probes show no llms.txt, no markdown-accessible docs endpoint, and no agent-oriented API discovery file; nothing in the evidence pack indicates Gazebo publishes agent-oriented documentation formats.",
     "evidenceIds": [
       "gazebo-probe-1",
       "gazebo-probe-2",
@@ -717,7 +711,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulation engine, not a data analytics or AI-insights product; nothing in the evidence pack relates to AI-generated insights/suggestions from user data, and this axis is a category error for a simulator.",
+    "rationale": "Gazebo is a robotics simulator focused on physics simulation, plugins, and transport, not a data-analytics or AI-insights product; there is no concept of 'insights from data' as a product feature here, making this a category error rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -726,7 +720,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an automation/agent-orchestration platform; the concept of setting up autonomous background 'automations' (e.g., scheduled agent tasks) is a category error for this product type. Its plugins and headless server mode run simulations, not user-defined autonomous automations.",
+    "rationale": "Gazebo is a robotics simulator, not an automation/agent platform; there is no concept of background autonomous 'automations' in its product category — this axis is a category error for a simulation engine.",
     "evidenceIds": []
   },
   {
@@ -735,7 +729,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulation engine, not an AI assistant product; there is no built-in AI assistant concept applicable to this category, and no evidence suggests one exists.",
+    "rationale": "Gazebo is a robotics simulation platform with no evidence of any AI assistant feature; this axis is a category error for a simulator product, not a missing capability.",
     "evidenceIds": []
   },
   {
@@ -744,11 +738,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Gazebo explicitly supports headless server-only operation via the -s flag and even offers a dedicated lightweight server-only package (gz-sim-server) without GUI/Qt dependencies, plus CLI tools and TCP/IP transport for remote/automated control, all of which are well suited to CI pipelines. Missing for 10: explicit first-party CI/CD example (e.g., GitHub Actions workflow) or independent report confirming headless CI usage in practice.",
+    "rationale": "Gazebo Sim documents a dedicated server-only headless mode (-s flag) and even a lightweight server-only package with no GUI/Qt deps, plus extensive CLI tools for scripted control and TCP/IP transport for remote/automated interfacing — all consistent with running in CI/automation pipelines. Missing for 10: no explicit CI pipeline example/Dockerfile or documented exit-code/scripting pattern for automated test runs, and no independent third-party corroboration of CI usage.",
     "evidenceIds": [
       "gazebo-docs-2",
       "gazebo-docs-4",
-      "gazebo-docs-12",
       "gazebo-gh-3",
       "gazebo-gh-6"
     ]
@@ -759,7 +752,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an AI agent or MCP-capable platform; there is no evidence of MCP server integration and this axis is a category error for this product type.",
+    "rationale": "Gazebo is a robotics simulator, not an AI agent or MCP-capable client/server platform; there is no evidence of MCP integration and the concept doesn't fit its product category.",
     "evidenceIds": []
   },
   {
@@ -783,17 +776,17 @@
   {
     "productId": "gazebo",
     "storyId": "agentic-official-cli",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Gazebo ships an official `gz` CLI with documented commands (e.g. `gz sim shapes.sdf`), headless/server-only mode (`-s` flag) and server-only packages that are ideal for scripted/automated (agentic) invocation without a GUI, plus GitHub docs calling out 'extensive command line tools for increased simulation introspection and control'. Missing for 10: explicit framing of the CLI for AI-agent orchestration use-cases and independent (non-vendor) corroboration of CLI usage in automated pipelines.",
+    "rationale": "Gazebo ships an official CLI (`gz sim`, headless `-s` server mode, extensive command-line tools for introspection/control per gazebo-gh-3/10 and docs-2/11/19) that can be scripted or driven programmatically, which an AI-native user could leverage for agentic automation. However, there is no evidence of AI-specific tooling, structured/machine-readable CLI output, or documentation framing the CLI for agentic/LLM workflows. missing for 10: explicit AI-agent-oriented CLI documentation, structured output modes (JSON/machine-readable) for agent parsing, examples of agentic/automated CLI orchestration.",
     "evidenceIds": [
-      "gazebo-docs-10",
+      "gazebo-gh-3",
+      "gazebo-gh-10",
       "gazebo-docs-2",
       "gazebo-docs-11",
-      "gazebo-docs-4",
-      "gazebo-gh-3",
-      "gazebo-gh-10"
+      "gazebo-docs-19",
+      "gazebo-docs-4"
     ]
   },
   {
@@ -802,13 +795,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gazebo exposes documented, non-GUI ways to drive the simulator programmatically: a headless server mode (-s flag), gz-transport for socket-based TCP/IP message passing to remote-control simulations, extensive CLI tools for introspection/control, and C++ library APIs (gz-math, sdformat, gz-transport) for building custom integrations/plugins. However, probes for a modern machine-readable API spec (OpenAPI/swagger) and an llms.txt all returned 404, and there is no evidence of a REST/HTTP API or AI-specific SDK. missing for 10: OpenAPI/swagger spec or any public HTTP API, explicit AI-agent-oriented API docs or llms.txt, independent confirmation that an AI agent can drive Gazebo via gz-transport.",
+    "rationale": "Gazebo exposes programmatic interfaces (gz-transport socket-based message passing, C++ libraries like gz-math/sdformat, and extensive CLI tools) that let external programs drive simulations, and these are documented on the official site. However, probes confirm there is no REST/OpenAPI-style public API and no AI-consumable docs endpoint (llms.txt 404, openapi.json 404), so it's not a modern AI-native API surface. Missing for 10: a REST/HTTP or OpenAPI-documented API, machine-readable API spec, and explicit AI-agent-oriented documentation (llms.txt or similar).",
     "evidenceIds": [
-      "gazebo-docs-11",
       "gazebo-gh-6",
+      "gazebo-gh-9",
+      "gazebo-gh-3",
       "gazebo-gh-10",
-      "gazebo-docs-14",
+      "gazebo-docs-6",
       "gazebo-probe-1",
+      "gazebo-probe-2",
       "gazebo-probe-3"
     ]
   },
@@ -818,7 +813,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator with no API-credential/authentication system for agents; scoped API credential issuance is not a concept that applies to this product category.",
+    "rationale": "Gazebo is a robotics simulator with no API credentialing/authentication system for agents; scoped API credential issuance is not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -853,7 +848,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an interactive API reference or runnable examples; probes for llms.txt, markdown docs, and OpenAPI specs all returned 404, and the docs are static C++ library documentation without interactive tooling.",
+    "rationale": "Gazebo is a robotics simulator with C++ library docs, not a web API product; there is no evidence of an interactive API reference with runnable examples, and probes confirm no OpenAPI/llms.txt/machine-readable API docs exist.",
     "evidenceIds": [
       "gazebo-probe-1",
       "gazebo-probe-2",
@@ -866,7 +861,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an HTTP API service, and probes explicitly show no OpenAPI/swagger endpoints or llms.txt exist. No evidence of any machine-readable API spec being offered.",
+    "rationale": "Gazebo is a robotics simulator with C++ libraries and CLI tools, not a web/HTTP API service; probes for OpenAPI/llms.txt endpoints all returned 404 and no evidence of any machine-readable API spec exists.",
     "evidenceIds": [
       "gazebo-probe-3",
       "gazebo-probe-1",
@@ -876,16 +871,16 @@
   {
     "productId": "gazebo",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Gazebo is fundamentally a robot/environment simulator that lets users test robots, sensors, and physics in a virtual sandbox instead of on real (production) hardware — it can run headless or on remote servers via TCP/IP transport, and supports numerous pre-built simulation models via Gazebo Fuel, letting an AI-native user iterate safely without touching production systems. Missing for 10: explicit framing around isolating from 'production data' (e.g., data provenance, reset/snapshot guarantees) and no first-party mention of AI/agent-specific sandbox workflows.",
+    "rationale": "Gazebo is fundamentally a simulation sandbox—it lets developers test robots, sensors, and environments (with example SDF worlds, physics engines, and headless server mode) entirely apart from real hardware or production systems, which functionally satisfies the sandbox-testing story. However, the evidence never explicitly frames this in terms of 'production data' isolation, CI/testing pipelines, or AI-agent-specific sandbox workflows. Missing for 10: explicit production-data isolation language, CI/testing pipeline integration examples, and AI-agent-specific sandbox testing documentation.",
     "evidenceIds": [
-      "gazebo-docs-2",
-      "gazebo-docs-4",
       "gazebo-gh-5",
-      "gazebo-gh-6",
-      "gazebo-gh-2"
+      "gazebo-docs-20",
+      "gazebo-docs-11",
+      "gazebo-gh-2",
+      "gazebo-docs-4"
     ]
   },
   {
@@ -893,13 +888,12 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a versioned API policy or documented deprecation schedule; ROS/Gazebo version compatibility docs mention supporting multiple versions but don't describe an API deprecation policy, and API probes (openapi, llms.txt) all 404. Missing for 10: any explicit versioning/deprecation policy documentation, API changelogs, or stability guarantees for AI/agentic consumers.",
+    "confidence": "high",
+    "rationale": "No evidence of any versioned API contract or documented deprecation policy; probes for OpenAPI/spec files returned 404s and no docs reference API versioning or deprecation guarantees.",
     "evidenceIds": [
-      "gazebo-docs-9",
-      "gazebo-docs-13",
       "gazebo-probe-3",
-      "gazebo-probe-1"
+      "gazebo-probe-1",
+      "gazebo-probe-2"
     ]
   },
   {
@@ -930,7 +924,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a workflow/task automation platform; scheduling recurring jobs is outside its product category (wrong axis).",
+    "rationale": "Gazebo is a robotics simulator; scheduling recurring jobs/workflows is not a feature category applicable to a simulation engine — this is a category mismatch, not a missing capability.",
     "evidenceIds": []
   },
   {
@@ -939,7 +933,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an automation/workflow tool with versioned automations to review or roll back; this axis is a category error for this product type.",
+    "rationale": "Gazebo is a robotics simulator, not an automation/workflow tool; there is no concept of 'automations' to version, review, or roll back in this product category.",
     "evidenceIds": []
   },
   {
@@ -948,12 +942,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Gazebo supports headless server-only execution and CLI-driven simulation control, which are prerequisites for CI-based regression testing, but there is no evidence of a documented CI integration, test harness, or automated regression-test framework/examples. missing for 10: CI pipeline examples (e.g. GitHub Actions), automated test/assertion framework for simulation regression, documented headless test workflows, third-party corroboration of CI usage.",
+    "rationale": "Gazebo can run headless via the -s flag and offers a lightweight server-only package plus extensive CLI tools for introspection/control, which are building blocks that could enable CI-based simulation runs. However, there is no evidence of dedicated test frameworks, CI pipeline examples (e.g., GitHub Actions), automated regression-test tooling, or documented CI integration patterns. missing for 10: documented CI/regression-test workflows, test framework/harness integration, examples of automated pass/fail assertions on simulation runs.",
     "evidenceIds": [
       "gazebo-docs-2",
       "gazebo-docs-4",
       "gazebo-gh-3",
-      "gazebo-gh-6"
+      "gazebo-gh-10"
     ]
   },
   {
@@ -962,22 +956,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any role-based access control, user permissions, or authentication system in Gazebo; it is a robotics simulator with no mention of RBAC or multi-user access governance.",
+    "rationale": "Gazebo is a robotics simulator with no evidence of any user/role/permission system for access control over who can command, configure, or view robots; the evidence only covers plugins, physics engines, GUI, CLI, and transport features.",
     "evidenceIds": []
   },
   {
     "productId": "gazebo",
     "storyId": "community-modules",
     "verdict": "full",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Gazebo Fuel is documented as a registry/ecosystem from which developers can pull ready-made robot models (PR2, TurtleBot, etc.) and physically accurate environment models, and the docs show copying SDF snippets directly from a model's Fuel page into a project; plugins extend hardware/behavior reuse further. missing for 10: no evidence of versioning/dependency management, search/discovery tooling details, or independent hands-on corroboration of the Fuel registry experience.",
+    "rationale": "Gazebo Fuel is explicitly referenced as a registry/ecosystem for accessing numerous ready-made robot models (PR2, Pioneer2 DX, iRobot Create, TurtleBot) and environment models, and docs show pulling SDF snippets from model pages into custom files, directly matching the 'pull reusable hardware packages' story. missing for 10: no evidence of a browsable/searchable Fuel catalog UI details, versioning, or independent hands-on confirmation of the workflow's reliability.",
     "evidenceIds": [
       "gazebo-gh-5",
       "gazebo-gh-8",
       "gazebo-docs-5",
-      "gazebo-gh-1",
-      "gazebo-gh-7"
+      "gazebo-docs-21",
+      "gazebo-docs-20"
     ]
   },
   {
@@ -986,7 +980,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an on-robot data-capture/cloud-sync product; there is no on-robot deployment or bandwidth-aware cloud sync concept in its evidence, and this capability is outside the simulator's category.",
+    "rationale": "Gazebo is a robotics simulator focused on physics simulation, sensor modeling, and simulated transport/plugins — it is not an on-robot data-capture/telemetry sync product with cloud bandwidth-aware sync policies; this is a category error for the product type.",
     "evidenceIds": []
   },
   {
@@ -995,8 +989,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any SQL database, data export tool, or query API for offline analysis of collected robot/simulation data; evidence only covers transport messaging, plugins, and CLI simulation control, and API probes for OpenAPI/docs endpoints returned 404.",
-    "evidenceIds": []
+    "rationale": "Gazebo provides transport, CLI, and plugin APIs for simulation control but there is no evidence of any data-export API or SQL interface for querying collected robot data for offline analysis; probes for OpenAPI/docs also failed to surface such a capability.",
+    "evidenceIds": [
+      "gazebo-probe-3",
+      "gazebo-gh-6",
+      "gazebo-gh-10"
+    ]
   },
   {
     "productId": "gazebo",
@@ -1004,13 +1002,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "While Gazebo supports custom plugins for robot/sensor/environment control and command-line introspection tools that could theoretically be used to build safety logic, none of the evidence mentions emergency-stop, safety-interlock, or any documented safety pattern/support specifically. missing for 10: any documentation or example referencing e-stop or safety-interlock patterns, guidance on implementing safety-critical control logic, or built-in safety plugin APIs.",
-    "evidenceIds": [
-      "gazebo-gh-1",
-      "gazebo-gh-7",
-      "gazebo-gh-10",
-      "gazebo-docs-1"
-    ]
+    "rationale": "The evidence pack covers general Gazebo architecture (headless server, plugins, physics engines, GUI, CLI tools) but contains no mention of emergency-stop, safety-interlock, or any safety-specific pattern, plugin, or documentation. No citation is about the story's subject.",
+    "evidenceIds": []
   },
   {
     "productId": "gazebo",
@@ -1018,7 +1011,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a fleet-management/monitoring platform for physical robots; alerting on real-world battery, connectivity, or fault status of deployed robots is outside its product category.",
+    "rationale": "Gazebo is a robotics simulator/development tool, not a fleet-operations platform; it has no concept of production robot fleet monitoring, battery/connectivity alerting, or ops dashboards. This story applies to fleet-management SaaS products, not a simulation engine, so the axis is a category error here.",
     "evidenceIds": []
   },
   {
@@ -1027,7 +1020,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a fleet-management or device-management platform; it has no concept of deploying configuration to physical robot fleets grouped by tags/groups. This is a category mismatch, not a missing feature.",
+    "rationale": "Gazebo is a robotics simulator, not a fleet-management/device-management tool; it has no concept of managing or configuring physical robot fleets or grouping deployed robots for targeted config pushes. This is a category error for the product type.",
     "evidenceIds": []
   },
   {
@@ -1036,7 +1029,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a fleet-management/monitoring platform; the evidence pack is entirely about simulation, plugins, physics engines, and CLI tooling with no fleet dashboard concept. This story is a category error for a simulation tool.",
+    "rationale": "Gazebo is a robotics simulator, not a fleet operations/monitoring platform; the evidence pack is entirely about simulation, physics engines, plugins, and CLI/GUI tools for simulating robots, with no fleet dashboard, telemetry aggregation, or ops monitoring capability referenced. This is a category mismatch, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1044,14 +1037,12 @@
     "storyId": "hardware-abstraction",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Gazebo's plugin architecture lets robot, sensor, environment, and physics-engine components be swapped as plugins (gazebo-gh-1/7, gazebo-gh-2, gazebo-docs-15), and simulated hardware is accessed via SDF/gz-transport rather than hard-coded app logic, which supports a hardware-abstraction-like workflow. However, the evidence never explicitly discusses interface stability guarantees or confirms application code is untouched when swapping sensors/actuators. Missing for 10: explicit documentation of stable/versioned sensor-actuator interface contracts, and case evidence that application code needed zero changes across a hardware swap.",
+    "confidence": "low",
+    "rationale": "Gazebo's plugin architecture provides some hardware-abstraction-like capability — e.g. a 'plugin based interface to physics engines' (ODE, Bullet, DART) and plugins for 'robot, sensor, and environment control' — suggesting sensors/actuators can be swapped via plugin interfaces. However there is no evidence of a stable, documented sensor/actuator API contract that guarantees application code doesn't need rewriting when swapping hardware models. missing for 10: explicit documentation of a stable sensor/actuator abstraction API, real-hardware bring-up examples, independent confirmation that application code survives sensor/actuator swaps.",
     "evidenceIds": [
-      "gazebo-gh-1",
-      "gazebo-gh-7",
-      "gazebo-gh-2",
       "gazebo-docs-15",
-      "gazebo-gh-5"
+      "gazebo-gh-1",
+      "gazebo-gh-7"
     ]
   },
   {
@@ -1060,7 +1051,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a teleoperation/monitoring platform with human-in-the-loop intervention workflows; there is no concept of routing autonomy failures to a human operator queue. This story is a category error for a simulation engine.",
+    "rationale": "Gazebo is a robotics simulator, not a teleoperation/monitoring or fleet-management platform with a human intervention queue workflow; routing autonomy failures to an operator queue is outside its product category.",
     "evidenceIds": []
   },
   {
@@ -1069,7 +1060,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not an ML training/deployment pipeline tool; there is no concept of feeding data into model training and deploying models to a fleet within its scope. This story is a category error for a simulation platform.",
+    "rationale": "Gazebo is a robotics simulator focused on physics, sensors, and simulation tooling, not an ML training/deployment pipeline; there is no concept of feeding collected data into model training and pushing models back to a physical fleet within its evidenced scope. This axis is a category error for a simulator product.",
     "evidenceIds": []
   },
   {
@@ -1078,11 +1069,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Gazebo is primarily a C++ library/simulator with plugin APIs, ROS integration, and CLI tools, but there is no mention of official typed SDKs in Python, TypeScript, or Go, nor any unified multi-language SDK covering the platform surface. Missing for 10: Python/TypeScript/Go SDK docs, typed client libraries, and evidence of full API-surface coverage across languages.",
+    "rationale": "Gazebo's evidence only shows native C++ libraries and ROS integration; there is no mention of official typed SDKs in Python, TypeScript, or Go covering the platform surface. Probes for API/docs artifacts also came back 404, further suggesting no multi-language SDK ecosystem.",
     "evidenceIds": [
-      "gazebo-docs-1",
       "gazebo-docs-6",
-      "gazebo-gh-1"
+      "gazebo-docs-9",
+      "gazebo-probe-3"
     ]
   },
   {
@@ -1100,7 +1091,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator/development tool, not a fleet operations or cloud-connectivity product; offline buffering and cloud-reconnect recovery for deployed robots is outside its scope as evidenced by docs (physics engine, GUI, plugins, transport tools).",
+    "rationale": "Gazebo is a robotics simulator, not a fleet/cloud connectivity management product; offline buffering and cloud-reconnect recovery for deployed robots is entirely outside its category (simulation environment, physics, plugins, GUI).",
     "evidenceIds": []
   },
   {
@@ -1122,11 +1113,17 @@
   {
     "productId": "gazebo",
     "storyId": "openness-full-export",
-    "verdict": "na",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Gazebo is an open-source, locally-installed robotics simulator rather than a hosted data platform that accumulates user data subject to lock-in; there is no 'account data' or walled garden to export from before leaving. The evidence pack discusses plugins, CLI tools, physics engines, and ROS integration, none of which relate to a data-export/exit story, making this axis a category mismatch for this product type.",
-    "evidenceIds": []
+    "rationale": "Gazebo is open-source and its native simulation data (SDF worlds, model descriptions) is stored in open XML/text formats that users can freely copy, modify, and reuse outside the tool, as shown by docs on example worlds and SDF snippet copying. However, there is no explicit documentation framing this as a 'data export' or migration/exit path, nor any discussion of account/data portability since Gazebo is a local/self-hosted tool without a proprietary data store to escape. Missing for 10: explicit export tooling or documentation, discussion of data portability/migration, and independent confirmation that all simulation artifacts (not just SDF files) are open-format.",
+    "evidenceIds": [
+      "gazebo-docs-20",
+      "gazebo-docs-21",
+      "gazebo-docs-5",
+      "gazebo-docs-10",
+      "gazebo-docs-19"
+    ]
   },
   {
     "productId": "gazebo",
@@ -1147,7 +1144,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Gazebo is open-source, self-installable software with documented server-only installs (gz-sim10-server package, headless -s flag) and remote TCP/IP transport for running simulation on remote servers, enabling full self-hosting of the core simulation engine. missing for 10: no explicit containerized/docker self-hosting guide or independent third-party confirmation of a full self-hosted deployment at scale.",
+    "rationale": "Gazebo is open-source software installable and runnable entirely on one's own infrastructure, including headless server-only mode, remote server operation via TCP/IP transport, and a lightweight server-only package without GUI/Qt dependencies. missing for 10: no explicit first-party 'self-hosting guide' or containerized/cloud-deployment reference architecture, and no independent hands-on corroboration of a full self-hosted deployment.",
     "evidenceIds": [
       "gazebo-docs-2",
       "gazebo-docs-4",
@@ -1163,7 +1160,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a fleet management/OTA deployment tool; deploying software updates to physical robots with staged rollouts and rollback is entirely outside its product category.",
+    "rationale": "Gazebo is a robotics simulation platform, not a fleet management or OTA deployment tool; deploying software updates to physical robots with staged rollouts/rollback is entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -1188,7 +1185,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is an open-source robotics simulator run locally/self-hosted, not a cloud data-storage or SaaS service with region/residency options; this axis is a category error for this type of product.",
+    "rationale": "Gazebo is a self-hosted, open-source robotics simulator, not a cloud/SaaS product where data residency or region selection is a meaningful concept; users run it on their own infrastructure so this axis is a category error.",
     "evidenceIds": []
   },
   {
@@ -1197,7 +1194,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is an open-source robotics simulator run locally/self-hosted; it is not an AI model provider or SaaS collecting user data for training, so an AI-training data opt-out policy is a category error for this product.",
+    "rationale": "Gazebo is an open-source robotics simulator run locally/self-hosted; it does not involve sending user data to a vendor for AI model training, so an AI-training data privacy opt-out is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1206,7 +1203,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a data-processing/AI service that stores user data requiring retention/deletion controls; this privacy-posture axis is a category error for this product type.",
+    "rationale": "Gazebo is a local/self-hosted robotics simulator, not a data-processing SaaS that collects or retains user data on a vendor's servers; data retention/deletion controls are not an applicable axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1215,24 +1212,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is an open-source, locally-run robotics simulator with no telemetry or cloud tracking service described anywhere in the evidence; the privacy-opt-out axis is a category error for a self-hosted open-source simulation tool.",
+    "rationale": "Gazebo is an open-source robotics simulator run locally; it has no telemetry/usage-tracking service to opt out of, making this SaaS-style privacy axis a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "gazebo",
     "storyId": "remote-debugging",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Gazebo provides remote TCP/IP transport (gz-transport) for interfacing with simulations over the network, a headless server mode, and extensive CLI tools for 'simulation introspection and control', which could plausibly extend to inspecting topics/state on a running (simulated or transport-connected) robot. However, none of the evidence explicitly addresses inspecting logs or state on a physically deployed robot, or dedicated remote debugging/monitoring dashboards. Missing for 10: log inspection tooling, explicit remote/robot (non-simulated) debugging workflow, and independent hands-on confirmation of remote monitoring in production robot deployments.",
+    "rationale": "Gazebo's docs and GitHub description mention TCP/IP transport for running simulations on remote servers (gz-transport, socket-based messaging) and 'extensive command line tools for increased simulation introspection and control,' plus GUI plugins to 'introspect and interact with your simulations' — these give some remote-inspection capability. However, all evidence frames this around simulated worlds/servers, not a physically deployed robot in the field, and there's no mention of live log streaming or state/log aggregation tooling for a real robot. missing for 10: evidence of monitoring an actual deployed/physical robot (vs simulated server), log inspection tooling, and independent hands-on confirmation of remote debugging workflows.",
     "evidenceIds": [
       "gazebo-gh-6",
       "gazebo-gh-9",
-      "gazebo-gh-10",
       "gazebo-gh-3",
+      "gazebo-gh-10",
+      "gazebo-gh-4",
+      "gazebo-gh-12",
       "gazebo-docs-2",
-      "gazebo-docs-11",
-      "gazebo-gh-4"
+      "gazebo-docs-3"
     ]
   },
   {
@@ -1240,14 +1238,15 @@
     "storyId": "robot-bring-up",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Gazebo provides reusable robot/sensor plugins, Fuel-hosted models (PR2, TurtleBot, etc.), SDF snippet copy-paste, and CLI tools that could speed up assembling a simulated robot and getting first motion quickly, but there is no first-party or independent evidence of an actual hours-vs-weeks bring-up workflow, driver integration, or hardware configuration case study. missing for 10: quantified bring-up time claims, driver/hardware configuration workflow evidence, independent case study or hands-on report of a new robot going from zero to first motion",
+    "confidence": "medium",
+    "rationale": "Gazebo provides fast simulated robot bring-up: pre-built robot/model libraries via Fuel, SDF snippets, quickstart commands (gz sim shapes.sdf), and plugins for robot/sensor/actuator control, letting an engineer stand up a robot model and see first motion quickly in simulation. However, the story explicitly includes 'drivers' and real hardware configuration, and Gazebo's evidence is entirely about simulated models/plugins/SDF — there is no evidence of real hardware driver integration or physical bring-up workflow. missing for 10: evidence of real hardware driver support/integration, end-to-end time-to-first-motion case study on physical robots, and confirmation this maps to actual hardware bring-up rather than pure simulation.",
     "evidenceIds": [
+      "gazebo-docs-19",
+      "gazebo-docs-20",
+      "gazebo-docs-5",
       "gazebo-gh-5",
       "gazebo-gh-7",
-      "gazebo-docs-5",
-      "gazebo-gh-10",
-      "gazebo-docs-17"
+      "gazebo-gh-3"
     ]
   },
   {
@@ -1301,7 +1300,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gazebo is a robotics simulator, not a real-world teleoperation platform; its evidence is about simulating robots and remote servers running simulations, not operating a physical robot over real-world networks with live video feed. This is a wrong-axis story for a simulation tool.",
+    "rationale": "Gazebo is a robotics simulator; its remote/TCP transport features (gz-transport) are for interfacing with simulated environments running on remote servers, not for teleoperating physical robots over real-world networks with live video. This story targets real-world robot operations, which is outside Gazebo's simulation-focused product category.",
     "evidenceIds": []
   },
   {
@@ -1310,7 +1309,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Gazebo's general plugin architecture, transport, physics engines, and ROS integration, but there is no mention of VLA models, robotics foundation models, or any supported tooling/SDK for integrating such models into an autonomy stack. Nothing in the pack ties Gazebo to AI/foundation-model integration workflows.",
+    "rationale": "Gazebo's evidence pack covers simulation, plugins, physics engines, and ROS integration but contains no mention of VLA models, robotics foundation models, or any tooling/SDK for integrating such models into an autonomy stack.",
     "evidenceIds": []
   },
   {
