@@ -1935,17 +1935,17 @@
     "storyId": "account-opening-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs show full account-provisioning lifecycle: customer creation (personal/business), identity/KYC-KYB verification, account creation with multiple types, disclosures, cards, transfers, and a documented sandbox with API key issuance plus explicit KYC/KYB sandbox test cases for multi-flow testing, indicating sandbox parity before launch. Missing for 10: explicit end-to-end walkthrough tying application-to-active-account into one continuous API sequence, and independent/hands-on confirmation of sandbox-to-prod parity beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Docs show the full account-provisioning path: create a personal/business customer as a PROSPECT and activate it (synctera-docs-18/31), run KYC/KYB identity and watchlist checks (synctera-docs-9/19/32), open DDA account types like SAVING/CHECKING (synctera-docs-33/20), and issue cards (synctera-docs-4/30) — all reachable via an API key issued in Sandbox where KYB is auto-passed and dedicated sandbox test cases exist to validate flows before going live (synctera-docs-14/35/25). Bank-partner network language implies these are real bank-held deposit accounts (synctera-docs-16/17), and an OpenAPI spec is live (synctera-probe-2).\nmissing for 10: explicit statement that accounts are FDIC-insured, and an end-to-end worked example tying prospect→verified→active account into one documented flow.",
     "evidenceIds": [
-      "synctera-docs-1",
-      "synctera-docs-3",
-      "synctera-docs-9",
       "synctera-docs-18",
-      "synctera-docs-20",
+      "synctera-docs-9",
+      "synctera-docs-33",
       "synctera-docs-14",
+      "synctera-docs-35",
       "synctera-docs-25",
-      "synctera-docs-11"
+      "synctera-docs-16",
+      "synctera-probe-2"
     ]
   },
   {
@@ -1968,12 +1968,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera offers general APIs for balances, transfers, and admin access control, but no evidence names or documents an agent-specific scoped-credential mechanism with amount caps or counterparty allowlists for AI agents. missing for 10: no vendor documentation of agent-scoped API keys/tokens, no amount-cap or counterparty-allowlist controls, no explicit 'AI agent' or 'banking-agent' naming in docs.",
-    "evidenceIds": [
-      "synctera-docs-5",
-      "synctera-docs-14",
-      "synctera-docs-26"
-    ]
+    "rationale": "Synctera documents general APIs (transfers, accounts, cards, webhooks) but no evidence names an agent-specific capability with scoped credentials, amount caps, or counterparty allowlists for AI agents; API key access appears to be broad/developer-level rather than agent-scoped policy controls.",
+    "evidenceIds": []
   },
   {
     "productId": "synctera",
@@ -1998,11 +1994,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Synctera hosts a working llms.txt (HTTP 200, structured with links to versioned agent-oriented docs like _llms/v2.md) plus a machine-readable OpenAPI spec, both directly probed and confirmed, giving agents structured entry points into the docs. Missing for 10: no independent/community confirmation of agents actually consuming these files successfully.",
+    "rationale": "Synctera hosts a working llms.txt (HTTP 200) that indexes hundreds of pages of agent-consumable docs (v2/v0 .md files), and multiple docs are directly served under /_llms/ paths, confirming agent-oriented documentation structure. Also has a machine-readable OpenAPI spec available. missing for 10: no independent/third-party confirmation of an agent successfully consuming these docs end-to-end.",
     "evidenceIds": [
       "synctera-probe-1",
       "synctera-probe-2",
       "synctera-docs-26",
+      "synctera-docs-27",
       "synctera-docs-28"
     ]
   },
@@ -2021,7 +2018,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Synctera offers scheduled payments and webhook-driven event automation, which can run in the background without manual polling, but there's no evidence of an AI-native automation/agent framework — missing for 10: agent orchestration, autonomous decision-making triggers, AI-specific automation tooling beyond simple scheduled payments and webhook push notifications.",
+    "rationale": "Synctera offers webhooks for event-driven automation and scheduled payments, which could allow background processes to run without manual triggering, but there is no evidence these are framed as AI-native or agent-configurable automations. missing for 10: explicit AI-agent setup flow, natural-language automation configuration, and any documentation of autonomous agent-driven workflows beyond generic webhooks/scheduling.",
     "evidenceIds": [
       "synctera-docs-6",
       "synctera-docs-13",
@@ -2034,7 +2031,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service API platform for building fintech products, not a product with a built-in AI assistant persona for delegating tasks; this axis is a category error for this type of product.",
+    "rationale": "Synctera is a banking-as-a-service API/platform for building fintech products, not a product with an end-user-facing built-in AI assistant; no evidence pack items reference such an assistant, making this a category error rather than a gap.",
     "evidenceIds": []
   },
   {
@@ -2043,11 +2040,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Synctera is API-first (OpenAPI spec, sandbox API keys) which inherently supports programmatic/headless calls, and docs show you can call APIs immediately after obtaining a sandbox key. However there is no explicit CI/CD guidance, CLI tool, or automation example (e.g., GitHub Actions, test harness) showing headless operation in a pipeline. Missing for 10: explicit CI/automation documentation, CLI or SDK examples for pipeline integration, and confirmation of non-interactive auth flows suited for CI.",
+    "rationale": "Synctera is an API/webhook-based banking platform with a documented REST/OpenAPI interface (openapi.json) and sandbox API-key access that can be called programmatically without a UI, implying headless usability. However, there is no explicit documentation of CI/CD integration, SDKs, automation examples, or scripted test pipelines for AI-native/automated workflows. missing for 10: explicit CI/CD or automation-pipeline guidance, SDK/CLI tooling for scripted use, examples of headless test automation against sandbox.",
     "evidenceIds": [
       "synctera-docs-14",
-      "synctera-probe-2",
-      "synctera-probe-1"
+      "synctera-docs-25",
+      "synctera-probe-2"
     ]
   },
   {
@@ -2056,7 +2053,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service API platform, not an AI agent or MCP-client product; the evidence pack contains no mention of MCP or plugging tool servers into it. Consuming MCP servers is a category error for this kind of backend banking API product.",
+    "rationale": "Synctera is a banking-as-a-service platform providing APIs for fintech operations, not an AI agent or assistant that consumes external tools via MCP. Plugging MCP servers into a product so it can 'use their tools' applies to agentic AI products, not to a BaaS/API platform — this axis is a category error here.",
     "evidenceIds": []
   },
   {
@@ -2065,8 +2062,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service platform (API/webhooks/docs), and the axis applies since a platform could plausibly ship an official MCP server, but no evidence pack item mentions MCP, agent connectivity, or an MCP server offering.",
-    "evidenceIds": []
+    "rationale": "Synctera is a banking-as-a-service platform (not an AI agent), so the MCP-server axis applies, but no evidence in the pack mentions an official MCP server, MCP tool integration, or agent connectivity of any kind — only REST/OpenAPI docs and webhooks are documented.",
+    "evidenceIds": [
+      "synctera-probe-2",
+      "synctera-docs-13"
+    ]
   },
   {
     "productId": "synctera",
@@ -2083,7 +2083,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service API platform; evidence shows API docs, OpenAPI spec, and llms.txt but no mention of an official CLI tool for developers or AI agents.",
+    "rationale": "Evidence pack shows API docs, webhooks, and OpenAPI spec but no mention of an official CLI tool for interacting with Synctera; this axis applies since a banking-as-a-service platform could plausibly ship a CLI for developers, but none is evidenced.",
     "evidenceIds": []
   },
   {
@@ -2092,13 +2092,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Synctera provides a documented, extensive public REST API (confirmed by live OpenAPI spec and llms.txt with 664+ pages of v2 docs) covering customer onboarding, accounts, cards, transfers, ACH, wires, KYC/KYB, webhooks, and sandbox testing with API keys — enabling an AI-native user to drive the full platform programmatically. Missing for 10: independent/third-party corroboration of real-world API usage (e.g., community integration reports) and explicit mention of SDKs or agent-specific tooling beyond raw REST/OpenAPI.",
+    "rationale": "Synctera provides a comprehensive documented public REST API (confirmed via live openapi.json spec) covering accounts, customers, cards, payments, verification, and webhooks, plus a sandbox with API keys for immediate programmatic access. Missing for 10: no explicit SDK/client library evidence or independent third-party developer corroboration beyond first-party docs.",
     "evidenceIds": [
-      "synctera-probe-1",
       "synctera-probe-2",
       "synctera-docs-14",
       "synctera-docs-13",
-      "synctera-docs-7"
+      "synctera-docs-29",
+      "synctera-probe-1"
     ]
   },
   {
@@ -2106,8 +2106,8 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only that a single API key is issued in Sandbox (synctera-docs-14) and that an internal admin can grant/change team member access (synctera-docs-26), but there is no documentation of scoped, least-privilege, or role-based API credentials that could be issued specifically to an AI agent.",
+    "confidence": "low",
+    "rationale": "Evidence covers API key issuance for Sandbox and admin-based access grants for team members, but there is no mention of scoped/least-privilege credentials specifically for AI agents, nor any granular permission model for automated/agent callers. Missing for 10: agent-specific scoped credential issuance, granular permission/role scoping documentation, evidence of least-privilege API key controls.",
     "evidenceIds": [
       "synctera-docs-14",
       "synctera-docs-26"
@@ -2118,8 +2118,8 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack shows Synctera exposes a REST API with an OpenAPI spec and rich docs, but nowhere mentions official client SDKs (e.g., Python, JS, Java libraries) that AI-native developers could build against. Since Synctera is an API platform, official SDKs are a fair expectation, but no evidence confirms their existence.",
+    "confidence": "medium",
+    "rationale": "The evidence shows extensive API documentation and an OpenAPI spec, but no mention of official client SDKs (e.g., Python, Node, Java libraries) that AI-native developers could build against directly; only raw REST/OpenAPI access is documented.",
     "evidenceIds": [
       "synctera-probe-2",
       "synctera-docs-14",
@@ -2132,7 +2132,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Synctera has a dedicated Webhook API documented specifically to let integrators subscribe to platform events, with push-based delivery instead of polling, confirmed via first-party docs. Missing for 10: independent/hands-on corroboration of webhook reliability, event catalog completeness, or retry/delivery guarantees.",
+    "rationale": "Synctera has a dedicated Webhook API that lets integrators subscribe to specific platform events, with push-based delivery instead of polling, documented in a first-party webhooks guide. Missing for 10: no independent/hands-on corroboration of webhook reliability, and no detail on event catalog breadth or agent-specific integration patterns.",
     "evidenceIds": [
       "synctera-docs-13",
       "synctera-docs-23"
@@ -2143,12 +2143,12 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Synctera has API documentation, an OpenAPI spec, and llms.txt for docs discovery, but nothing indicates an interactive API reference with runnable/try-it-out examples (e.g., Swagger UI, Postman collections, live sandbox console). missing for 10: interactive explorer UI, runnable code samples, live 'try it' console evidence.",
+    "confidence": "low",
+    "rationale": "The evidence shows extensive prose documentation and an OpenAPI spec exists, but nothing describes an interactive API reference with runnable/try-it-out examples for exploring endpoints live. Missing for 10: explicit interactive console or 'try it out' feature, evidence of runnable code examples, any UI screenshot or description of live API testing.",
     "evidenceIds": [
       "synctera-probe-2",
-      "synctera-probe-1",
-      "synctera-docs-14"
+      "synctera-docs-14",
+      "synctera-docs-29"
     ]
   },
   {
@@ -2157,7 +2157,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a machine-readable OpenAPI spec is publicly downloadable at docs.synctera.com/openapi.json (HTTP 200, contains 'openapi' key), and docs also expose an llms.txt index for discoverability. Missing for 10: independent third-party confirmation/usage of the spec beyond the direct probe.",
+    "rationale": "Probe confirms a machine-readable OpenAPI spec is directly downloadable at https://docs.synctera.com/openapi.json (HTTP 200, contains 'openapi' key), and docs also expose an llms.txt index for further machine-readable navigation. Missing for 10: no independent/community corroboration of spec completeness or usage beyond the probe.",
     "evidenceIds": [
       "synctera-probe-2",
       "synctera-probe-1"
@@ -2167,12 +2167,13 @@
     "productId": "synctera",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe a Sandbox environment with its own API keys ('Once an API key is issued in Sandbox, you can immediately start calling the APIs') and dedicated sandbox test cases for KYC/KYB flows, confirming a non-production environment for testing. missing for 10: explicit statement that sandbox data is fully isolated from production, independent/hands-on confirmation beyond vendor docs.",
+    "rationale": "Synctera explicitly provides a Sandbox environment with API keys, documented sandbox test cases for KYC/KYB flows, and auto-pass behaviors (e.g., KYB auto-approved in Sandbox), letting users exercise the API stack without touching production data. Missing for 10: no independent/hands-on corroboration of sandbox fidelity or data-isolation guarantees, and no explicit statement about data reset/isolation mechanics.",
     "evidenceIds": [
       "synctera-docs-14",
-      "synctera-docs-25"
+      "synctera-docs-25",
+      "synctera-docs-35"
     ]
   },
   {
@@ -2192,8 +2193,8 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Synctera's evidence covers individual API operations (creating customers, accounts, cards, transfers) via REST/OpenAPI, but nothing in the pack describes batch or bulk endpoints, bulk import/export, or multi-item operations in a single call — a fair capability to expect from a fintech platform API. missing for 10: bulk/batch API endpoints, bulk data import/export documentation, any mention of multi-record operations in one request.",
+    "confidence": "medium",
+    "rationale": "Synctera's docs describe per-record API operations (create a customer, issue a card, transfer funds) via REST/OpenAPI, but there is no evidence of batch/bulk endpoints or mechanisms for operating across many items in a single call, which is what an AI-native user would need for automation-depth bulk operations.",
     "evidenceIds": []
   },
   {
@@ -2201,8 +2202,8 @@
     "storyId": "automation-rules-engine",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Synctera's Webhook API lets integrators subscribe to platform events and receive pushed updates, which is a building block for event-driven automation, but there's no evidence of an in-platform rules engine where users can define conditional logic that automatically triggers actions—the actual 'rule' and 'action' must be built externally by the integrator. Missing for 10: a documented rules/automation engine (conditions + actions), example rule definitions, and evidence of automatic action execution beyond simple event notification.",
+    "confidence": "low",
+    "rationale": "Synctera provides a Webhook API so integrators can subscribe to platform events and receive pushed updates, which is a building block for event-driven automation, but there is no evidence of a native rules engine or UI where users define conditional 'if event X then action Y' automation rules within Synctera itself — automation must be built externally by the integrator. Missing for 10: a documented rules/automation builder, conditional trigger-action configuration, or examples of automated actions (not just notifications) fired from events.",
     "evidenceIds": [
       "synctera-docs-13",
       "synctera-docs-23"
@@ -2225,7 +2226,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service API platform; there is no automation/workflow-builder feature in the product for which versioning, review, or rollback would apply. This story targets automation-builder tools, which is a different product category, so it is a category error here rather than a missing feature.",
+    "rationale": "Synctera is a banking-as-a-service platform for building fintech products, not an automation/workflow tool with versioned automations to review or roll back; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2234,7 +2235,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any built-in AI features for banking operations—no natural-language transaction search, dispute drafting, or anomaly summaries appear anywhere in the docs pack, which covers only core banking APIs (accounts, cards, transfers, KYC, webhooks).",
+    "rationale": "No evidence of any built-in AI features (natural-language transaction search, dispute drafting, anomaly summaries); evidence pack only covers core banking APIs, KYC/KYB, accounts, cards, transfers, and webhooks.",
     "evidenceIds": []
   },
   {
@@ -2242,8 +2243,8 @@
     "storyId": "card-disputes-rege",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers account/customer management, cards, ACH, verification, webhooks, and case notifications generally, but contains no mention of dispute handling, Reg E investigation timelines, provisional credit mechanics, or documented operational responsibilities for disputes. Missing for 10: dispute intake/workflow docs, Reg E timeline tooling, provisional credit issuance mechanics, ops responsibility documentation.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers customer onboarding, accounts, cards, ACH, wires, KYC/KYB, and webhooks, but contains no mention of dispute case management, Reg E investigation timelines, provisional credit mechanics, or ops responsibilities for chargebacks/disputes. As a card-issuing/BaaS platform this is a fair and expected axis, but no supporting evidence exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -2252,7 +2253,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Synctera's docs explicitly mention handling remote deposit capture (RDC) transactions, which covers check deposit with image capture, but there is no evidence of programmatic check issuance (printing/mailing paper checks) or detailed API guides for check writing. missing for 10: dedicated check-issuance API docs, image-capture technical details, check issuance workflow examples, independent corroboration.",
+    "rationale": "Evidence confirms RDC (remote deposit capture) handling via [synctera-docs-8], which covers check deposit with image capture, but there is no mention of programmatic check issuance/printing or physical check writing capability anywhere in the pack. missing for 10: check issuance/printing API documentation, evidence of image capture workflow details, independent/hands-on confirmation of RDC in practice.",
     "evidenceIds": [
       "synctera-docs-8"
     ]
@@ -2263,7 +2264,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Synctera's docs show KYC/KYB and watchlist screening, enhanced due diligence for high-risk review, case notifications for employees, and an admin-controlled access model implying a split of duties between integrator/bank — supporting parts of the compliance-ops workflow. However, there is no explicit evidence of a dedicated transaction-monitoring engine or SAR-filing support/workflow, which are core to the story. Missing for 10: explicit transaction monitoring tooling, SAR filing/e-filing support, detailed alert case-management UI beyond notifications.",
+    "rationale": "Docs show KYC/KYB identity and watchlist screening (docs-9/19/32), enhanced due diligence for AML review (docs-28), case notifications implying case management (docs-27), and centralized operational tooling with 'seamless collaboration' between integrator and bank partner (docs-16), suggesting a duty split. However there is no explicit mention of ongoing transaction monitoring rules/engine or SAR-filing workflow support. Missing for 10: explicit transaction monitoring capability, SAR filing/e-filing support, and detailed documentation of the ops/platform/bank duty split for compliance actions.",
     "evidenceIds": [
       "synctera-docs-9",
       "synctera-docs-19",
@@ -2305,7 +2306,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows generic account/customer management docs but no documentation explicitly addressing FBO pooled vs individual account structure, where FDIC insurance attaches, or ledger visibility/access controls for finance stakeholders — an axis that clearly applies to a BaaS/embedded banking platform.",
+    "rationale": "Evidence covers account types (DDA, credit card), verification, and general access-control admin features, but nothing documents whether funds sit in FBO pools vs individual accounts, where FDIC insurance attaches, or explicit ledger-visibility/permissioning transparency for finance leads.",
     "evidenceIds": []
   },
   {
@@ -2314,12 +2315,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows fraud-prevention tooling (KYC/KYB verification, EDD, external-account ownership verification to reduce overdrafts) but nowhere documents who bears ACH return fraud, card dispute, or ATO losses, nor any explicit liability-split language between Synctera, the bank partner, and the program.",
+    "rationale": "The evidence shows KYC/KYB verification, EDD, and external-account verification features aimed at fraud/risk reduction, but nowhere does it document who bears ACH return fraud, card dispute, or account-takeover losses, nor any explicit liability split between Synctera, its bank partners, and the fintech program. This is a fair question for a BaaS platform coordinating bank partnerships, so the axis applies, but no evidence supports it.",
     "evidenceIds": [
-      "synctera-docs-9",
-      "synctera-docs-19",
       "synctera-docs-24",
-      "synctera-docs-28"
+      "synctera-docs-28",
+      "synctera-docs-19",
+      "synctera-docs-16"
     ]
   },
   {
@@ -2328,11 +2329,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence only covers domestic wires, ACH, and internal transfers between Synctera accounts; there is no mention of international wires, SWIFT, FX rates, or currency/corridor coverage anywhere in the pack.",
+    "rationale": "Evidence only documents domestic wires (Fedwire, US-to-US) and internal/ACH transfers; there is no mention of international wires, SWIFT, FX rates, or a currency/corridor coverage map anywhere in the pack.",
     "evidenceIds": [
       "synctera-docs-15",
-      "synctera-docs-21",
-      "synctera-docs-22"
+      "synctera-docs-34",
+      "synctera-docs-21"
     ]
   },
   {
@@ -2341,16 +2342,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Synctera provides programmatic KYC/KYB verification objects for both personal and business customers with identity and watchlist screening, document verification, PROSPECT/ACTIVE application states, enhanced due diligence for high-risk cases, and sandbox test cases covering multiple verification flows. missing for 10: independent/third-party corroboration of verification accuracy and no explicit enumeration of all possible application/customer states beyond PROSPECT/ACTIVE.",
+    "rationale": "Synctera documents dedicated KYC/KYB verification objects for both personal and business customers, watchlist and identity checks, PROSPECT-to-active application state modeling, document verification, enhanced due diligence for high-risk cases, and sandbox test cases covering multiple verification flows — all programmatically accessible via API with OpenAPI spec confirmed. missing for 10: no independent/hands-on corroboration beyond vendor docs, and document collection specifics (e.g., upload endpoints) are only lightly referenced.",
     "evidenceIds": [
       "synctera-docs-9",
       "synctera-docs-19",
+      "synctera-docs-32",
       "synctera-docs-18",
+      "synctera-docs-31",
       "synctera-docs-10",
-      "synctera-docs-25",
       "synctera-docs-28",
-      "synctera-docs-1",
-      "synctera-docs-2"
+      "synctera-docs-25",
+      "synctera-docs-35",
+      "synctera-probe-2"
     ]
   },
   {
@@ -2359,7 +2362,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers account, card, KYC, transfer, and webhook features but contains no documentation of a daily reconciliation process between Synctera's ledger and the bank core, nor any explicit statement addressing the Synapse-style ledger-mismatch risk. missing for 10: any mention of reconciliation cadence, ledger-to-bank-core matching, discrepancy alerts, or audit/reconciliation reporting.",
+    "rationale": "Evidence covers account creation, cards, KYC/KYB, transfers, webhooks, and operational tooling, but nothing addresses ledger reconciliation to the bank core or a documented daily reconciliation process — the exact failure mode cited in the story. Missing for 10: any mention of reconciliation reports, ledger-vs-bank-core matching, or daily settlement verification documentation.",
     "evidenceIds": []
   },
   {
@@ -2380,16 +2383,15 @@
     "storyId": "onboarding-review-controls",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs show prospect/pending customer creation, KYC/KYB verification, and enhanced due diligence for supplying additional info (docs-9, docs-18, docs-19, docs-28), plus a general platform claim of operational workflows and 'complete data visibility and seamless collaboration' between integrator and bank partner (docs-16, docs-17) and case notifications for employees (docs-27). However there is no explicit onboarding queue UI, no documented 'reason for pending' surface, and no clear articulation of which decisions belong to ops vs the bank. Missing for 10: dedicated queue/dashboard view, explicit pending-reason display, explicit decision-ownership boundary documentation.",
+    "confidence": "medium",
+    "rationale": "Synctera docs show elements relevant to onboarding ops work: KYC/KYB verification and PROSPECT status flows (docs-9/18/31/32), document verification (docs-10), enhanced due diligence for high-risk cases (docs-28), case notifications for employees (docs-27), and a stated goal of centralized operational workflows with 'complete data visibility and seamless collaboration' between the fintech and bank partner (docs-16). This covers document supply and some collaboration framing, but there's no explicit description of a pending-application queue UI, no articulation of which decisions are ops-owned vs bank-owned, and no evidence of a 'reason for pending' surface. Missing for 10: a documented onboarding queue/dashboard view, explicit decision-rights split between ops and bank partner, and hands-on/independent corroboration of the ops workflow.",
     "evidenceIds": [
-      "synctera-docs-18",
       "synctera-docs-9",
-      "synctera-docs-19",
-      "synctera-docs-28",
+      "synctera-docs-10",
       "synctera-docs-16",
-      "synctera-docs-17",
-      "synctera-docs-27"
+      "synctera-docs-27",
+      "synctera-docs-28",
+      "synctera-docs-31"
     ]
   },
   {
@@ -2398,13 +2400,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Synctera exposes a very broad API surface (OpenAPI spec, customer/account/card/transfer/ACH/wire/KYC/webhook APIs) that covers the core banking functions, suggesting most operational capability is API-driven. However, the evidence also references dashboard-only workflows (admin access management, case notifications, 'centralized platform' for operational workflows) with no documentation confirming these are also exposed via API, so full UI/API parity is not demonstrated. Missing for 10: explicit statement or evidence that dashboard-only features (admin/team management, case notifications, operational workflow console) are fully API-accessible.",
+    "rationale": "Synctera exposes an extensive API surface (OpenAPI spec, customer/account/card/payment/KYC endpoints) covering most core banking operations, suggesting an API-first design. However, docs also reference dashboard-only administrative functions (team admin setup, case notifications, linking external accounts) with no corresponding API endpoints mentioned, and there is no explicit vendor claim of full UI/API parity. Missing for 10: explicit parity statement, evidence that admin/case-management/dashboard operations (docs-16, 26, 27, 36) are also API-accessible, and independent confirmation from a hands-on integrator.",
     "evidenceIds": [
       "synctera-probe-2",
       "synctera-docs-16",
       "synctera-docs-26",
       "synctera-docs-27",
-      "synctera-docs-7"
+      "synctera-docs-36",
+      "synctera-docs-14"
     ]
   },
   {
@@ -2412,8 +2415,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any bulk data export or open-format data portability feature for end users; evidence only covers API access to create/manage banking records, not exporting/leaving with one's data.",
+    "confidence": "medium",
+    "rationale": "No evidence of data export/portability features or open-format data export for end users leaving the platform; the API/docs are about creating and managing banking data via API, not about bulk exporting one's own data to leave.",
     "evidenceIds": []
   },
   {
@@ -2422,7 +2425,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a closed banking-as-a-service platform; source code openness is not an applicable axis for this proprietary financial infrastructure product.",
+    "rationale": "Synctera is a proprietary banking-as-a-service platform, not open-source software; open-license source-code availability is not a fair axis for this kind of closed commercial API product.",
     "evidenceIds": []
   },
   {
@@ -2431,7 +2434,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a cloud-based banking-as-a-service platform requiring bank partnerships and regulated infrastructure; self-hosting the core product is not a coherent capability for this category of service.",
+    "rationale": "Synctera is a cloud-hosted banking-as-a-service platform requiring bank partner integrations, regulatory compliance infrastructure, and licensed financial rails — self-hosting a BaaS core is a category error, not a feature gap.",
     "evidenceIds": []
   },
   {
@@ -2440,7 +2443,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service API platform for fintech products (accounts, cards, payments, KYC); data residency/region selection is not addressed anywhere and is not a feature category this type of product typically exposes to end users. This is a category mismatch rather than a missing feature.",
+    "rationale": "Synctera is a banking-as-a-service API platform for building fintech products, not a data-storage or AI product where end users choose regional data residency; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2449,7 +2452,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service/embedded fintech platform; AI-model-training data usage opt-out is not a relevant axis for this category of product, and no evidence pack item addresses AI training data policies.",
+    "rationale": "Synctera is a banking-as-a-service platform for building fintech products, not an AI model or AI product with training-data usage; controlling AI training data usage is not a fair axis for this category of product.",
     "evidenceIds": []
   },
   {
@@ -2458,7 +2461,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service platform for building financial products, not an AI-native tool where users control model/data retention or deletion of AI-processed data. This axis (AI data retention/deletion controls) is a category error for a BaaS API provider.",
+    "rationale": "Synctera is a banking-as-a-service/embedded fintech platform for building financial products, not an AI tool processing user data with a data-retention/deletion control surface for AI-native users; this privacy-posture axis about AI data handling is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2467,7 +2470,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Synctera is a banking-as-a-service platform, not an AI agent/tool product that collects telemetry from AI-native users; telemetry opt-out is a category mismatch for this kind of financial infrastructure API.",
+    "rationale": "Synctera is a banking-as-a-service API platform, not an AI agent/tool whose telemetry collection would be a relevant privacy-posture axis for AI-native users; no evidence pack item relates to telemetry opt-out at all.",
     "evidenceIds": []
   },
   {
@@ -2476,21 +2479,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers KYC/KYB, accounts, cards, payments, and EDD, but nothing documents program-level growth limits, approval-stage thresholds, or a documented process for raising them proactively rather than learning via bank communication. This axis is fair for a BaaS platform working with sponsor banks, but no evidence shows Synctera publishes such limits or escalation paths.",
+    "rationale": "Evidence covers KYC/KYB, accounts, cards, payments, and webhooks, but nothing documents program-level growth limits, approval-stage thresholds, or a defined process for raising limits with the bank partner — the specific concern in this story is never addressed.",
     "evidenceIds": []
   },
   {
     "productId": "synctera",
     "storyId": "realtime-balances-events",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Synctera documents a real-time Internal Transfer API and a Webhook API that pushes updates instead of requiring polling, which supports event-driven architecture, but the evidence never explicitly confirms balance reads reflect holds/pending activity or that webhooks fire for every transaction state change. Missing for 10: documentation on balance API reflecting holds/pending transactions, explicit list/coverage of webhook events per transaction lifecycle state, and independent/hands-on confirmation of webhook completeness.",
+    "rationale": "Synctera documents a webhook system that pushes event updates rather than requiring polling (docs-13, docs-23), and highlights real-time internal transfers and Fedwire settlement (docs-5, docs-22, docs-34), supporting an event-driven ledger model. However, there is no explicit documentation of balance reads reflecting holds/pending authorizations, nor confirmation that webhooks cover every transaction state change comprehensively. Missing for 10: documentation of hold/pending balance semantics, explicit list of all transaction-state webhook events, and independent confirmation of webhook completeness/reliability.",
     "evidenceIds": [
-      "synctera-docs-5",
       "synctera-docs-13",
+      "synctera-docs-23",
+      "synctera-docs-5",
       "synctera-docs-22",
-      "synctera-docs-23"
+      "synctera-docs-34"
     ]
   },
   {
@@ -2498,8 +2502,8 @@
     "storyId": "statements-tax-documents",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention monthly statement generation or 1099-INT tax document production/retrieval via API; the docs cover accounts, cards, payments, KYC/KYB, and webhooks but never reference statements or tax reporting.",
+    "confidence": "high",
+    "rationale": "No evidence pack items mention monthly statement generation or 1099-INT tax document production/retrieval via API; the docs cover accounts, cards, payments, KYC, and webhooks but nothing about statements or tax forms.",
     "evidenceIds": []
   },
   {
@@ -2507,26 +2511,21 @@
     "storyId": "transaction-data-quality",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Synctera's transaction-related APIs (ACH, wires, internal transfers, external account linking via Plaid/Finicity) but contains no mention of transaction-level enrichment such as counterparty details, rail-specific metadata fields, stable transaction identifiers, or merchant/category enrichment that would make raw bank feeds usable in-product.",
-    "evidenceIds": [
-      "synctera-docs-15",
-      "synctera-docs-21",
-      "synctera-docs-22",
-      "synctera-docs-12",
-      "synctera-docs-24"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence documents various money-movement rails (ACH, wires, internal transfers) and account/card management, but nothing describes transaction-level data richness — no mention of counterparty details, rail-specific metadata fields, stable transaction identifiers, or enrichment layers on the transaction feed. Missing for 10: transaction schema documentation, counterparty/enrichment fields, rail-specific metadata examples, stable ID guarantees.",
+    "evidenceIds": []
   },
   {
     "productId": "synctera",
     "storyId": "virtual-account-numbers",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Synctera docs confirm generic account creation and multiple account types (synctera-docs-3, synctera-docs-20), which implies basic account provisioning, but there is no explicit mention of issuing unique routing numbers, virtual accounts for reconciliation, per-customer collection accounts, or sub-account/master account hierarchies. Missing for 10: explicit routing-number issuance, virtual account/reconciliation account docs, sub-account/master-account structure documentation, and scale/bulk provisioning evidence.",
+    "rationale": "Synctera clearly supports account creation and multiple account types (DDA, checking/savings, credit card) via its accounts API, implying it can generate accounts programmatically at scale, but the evidence never explicitly mentions unique routing number issuance, virtual accounts for reconciliation, or sub-account/master-account hierarchies. missing for 10: explicit routing-number-per-account documentation, virtual account / reconciliation account creation, and sub-account-under-master-structure support.",
     "evidenceIds": [
       "synctera-docs-3",
-      "synctera-docs-20"
+      "synctera-docs-20",
+      "synctera-docs-33"
     ]
   },
   {
@@ -2535,11 +2534,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Domestic wires are explicitly documented with dedicated guide (synctera-docs-15), and ACH/internal transfer rails are also documented, but there is no evidence of RTP or FedNow origination/receipt capability anywhere in the pack. missing for 10: RTP support/documentation, FedNow origination and receipt documentation, per-rail capability comparison across all three named rails.",
+    "rationale": "Synctera documents domestic wires in detail, including real-time Fedwire settlement (synctera-docs-15, synctera-docs-34), but there is no evidence in the pack of RTP or FedNow origination/receipt support or documentation. Missing for 10: RTP rail documentation, FedNow origination/receipt documentation, and a per-rail capability comparison covering all three faster rails.",
     "evidenceIds": [
       "synctera-docs-15",
-      "synctera-docs-21",
-      "synctera-docs-22"
+      "synctera-docs-34",
+      "synctera-docs-14"
     ]
   },
   {
@@ -2548,8 +2547,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers account creation, transfers, cards, KYC, ACH, wires and webhooks but nothing on interest-bearing accounts, interest rate mechanics, or sweep programs and spread ownership. Missing for 10: any mention of interest accrual, APY, sweep networks, or spread/revenue-sharing terms.",
-    "evidenceIds": []
+    "rationale": "Synctera documents SAVING/CHECKING (DDA) account types and internal transfers, but no evidence describes interest-bearing rate mechanics, sweep programs, or how interest spread is split between platform and bank partner. Missing for 10: interest rate configuration docs, sweep/interest program mechanics, spread/revenue-share disclosure.",
+    "evidenceIds": [
+      "synctera-docs-20",
+      "synctera-docs-33"
+    ]
   },
   {
     "productId": "treasury-prime",
