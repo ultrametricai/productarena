@@ -5759,13 +5759,13 @@
     "productId": "jina-reader",
     "storyId": "adaptive-stop-crawling",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Reader offers a related knob (`x-respond-timing` to trade off latency vs completeness) and a `research` preset for agentic use, suggesting some adaptive control over when it returns results, but there is no evidence of true query-driven adaptive crawling that stops once 'enough information' has been gathered to answer a specific question — the search flow simply fetches a fixed top-5 results. Missing for 10: explicit query-aware stopping criteria, evidence of dynamic crawl depth/breadth adjustment based on information sufficiency, and independent validation of this behavior.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Jina Reader offers x-respond-timing to trade off latency vs completeness and x-max-tokens to cap output, which resemble adaptive stopping controls, but these are manually-set parameters rather than an autonomous mechanism that detects 'enough information gathered to answer the query' and stops on its own. There's no evidence of query-aware adaptive crawling logic, only per-request format/engine/timing knobs. missing for 10: autonomous query-relevance stopping criteria, evidence of dynamic multi-page crawl termination based on answer sufficiency, independent validation of x-respond-timing behavior.",
     "evidenceIds": [
       "jina-reader-gh-7",
-      "jina-reader-gh-6",
-      "jina-reader-gh-2"
+      "jina-reader-gh-17",
+      "jina-reader-gh-6"
     ]
   },
   {
@@ -5786,8 +5786,8 @@
     "storyId": "agentic-ai-insights",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "confidence": "medium",
+    "rationale": "Jina Reader converts URLs/search results into clean, LLM-ready text and offers extraction/formatting controls (schema extraction, VLM image captioning), but this is data preparation for downstream LLMs, not the product itself generating insights or suggestions from the user's data. No evidence shows Reader producing summaries, analysis, or recommendations natively.",
     "evidenceIds": []
   },
   {
@@ -5811,19 +5811,17 @@
   {
     "productId": "jina-reader",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Jina Reader is a plain HTTP endpoint and also ships a self-hostable Docker image bundling headless Chrome/LibreOffice, making it straightforward to script and run in CI pipelines (curl, headers for output control). However, community reports show real-world automation attempts hitting 401/404 errors, and there is no first-party CI/automation guide or examples. missing for 10: explicit CI/CD documentation or examples, rate-limit/reliability guarantees for unattended use, and resolution of the reported auth/404 failures in automated contexts.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Reader is designed as a pure HTTP/curl API (r.jina.ai, s.jina.ai) with a headless-mode Docker image bundling Chrome, LibreOffice, etc., explicitly for running it 'without building it yourself,' making it trivial to script in CI pipelines with header-based options like x-engine, x-respond-with, x-max-tokens for automation control. Missing for 10: no explicit CI-pipeline example/tutorial and community reports note occasional auth (401) failures needing API keys, which is a minor operational caveat rather than a core capability gap.",
     "evidenceIds": [
       "jina-reader-gh-1",
       "jina-reader-gh-8",
-      "jina-reader-gh-5",
-      "jina-reader-gh-6",
-      "jina-reader-gh-7",
-      "jina-reader-comm-3",
-      "jina-reader-comm-4",
-      "jina-reader-comm-5"
+      "jina-reader-gh-9",
+      "jina-reader-gh-16",
+      "jina-reader-gh-17",
+      "jina-reader-comm-4"
     ]
   },
   {
@@ -5832,10 +5830,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jina Reader is a single-purpose URL-to-text/content-extraction API, not an agentic host that consumes external tools; the only MCP-related evidence (jina-reader-probe-3) shows Jina exposing itself as an MCP server for others to call, not Reader acting as an MCP client that plugs in external servers. This story's direction (product consuming other MCP servers) is a category mismatch for this kind of product.",
-    "evidenceIds": [
-      "jina-reader-probe-3"
-    ]
+    "rationale": "Jina Reader is a URL-to-text/web-scraping API service, not an agent that consumes MCP servers itself; the evidence pack shows Jina publishes its own MCP server (jina-reader-probe-3) for others to plug into, which is the inverse capability, not evidence of Reader consuming MCP tools.",
+    "evidenceIds": []
   },
   {
     "productId": "jina-reader",
@@ -5843,7 +5839,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jina explicitly documents an official MCP server repository (jina-ai/MCP) that would expose Reader's capabilities to agents, but the evidence pack lacks first-party details on setup, tool list, or hands-on/independent corroboration of its use. missing for 10: detailed MCP server docs/tool schema, hands-on or community verification of the MCP server working end-to-end.",
+    "rationale": "There is a documented official MCP server repository (jina-ai/MCP) referenced directly in the evidence pack, indicating Jina provides an official MCP server for connecting agents. However, evidence is limited to a single probe citation with no detail on setup, tool coverage, or independent hands-on confirmation. Missing for 10: first-party docs describing the MCP server's capabilities, independent/community usage confirmation, and details on installation/config.",
     "evidenceIds": [
       "jina-reader-probe-3"
     ]
@@ -5852,11 +5848,12 @@
     "productId": "jina-reader",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The `x-instruction` header lets users give natural-language instructions to extract specific fields (via ReaderLM-v2), and the `x-preset: research` bundle is tailored for AI agents, showing some natural-language-driven operation. However, this is limited to extraction/formatting rather than full natural-language control of the whole reading/search pipeline, and there's no independent corroboration of reliability. Missing for 10: broader NL control across all Reader operations (search, fetch, formatting) and third-party validation that x-instruction works robustly.",
+    "rationale": "Reader exposes an `x-instruction` header that lets users give natural-language instructions (alongside `x-json-schema`) to steer field extraction via ReaderLM-v2, which is a genuine NL-command surface, but the rest of the product (fetching, searching, chunking, engine selection, presets) is controlled via structured HTTP headers/flags rather than natural language. missing for 10: NL control extending beyond extraction to core operations like search/fetch behavior, and independent/hands-on confirmation that x-instruction reliably works as described.",
     "evidenceIds": [
       "jina-reader-docs-3",
+      "jina-reader-docs-4",
       "jina-reader-gh-6"
     ]
   },
@@ -5866,7 +5863,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Jina Reader as an HTTP API/service (curl-based usage, headers like x-respond-with, x-preset) and a self-hostable Docker image, but there is no mention of an official dedicated CLI tool for interacting with Reader. No evidence names a packaged command-line binary or npm/pip CLI client.",
+    "rationale": "Evidence shows Jina Reader is an HTTP API/service (r.jina.ai, s.jina.ai) with a self-hosted Docker image and an official MCP server, but no evidence of a dedicated official CLI tool for interacting with Reader.",
     "evidenceIds": []
   },
   {
@@ -5875,15 +5872,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Jina Reader ships an extensively documented public HTTP API (r.jina.ai) with numerous header-controlled options (output format, presets, chunking, cookies, JSON schema extraction, proxy routing) all detailed in first-party GitHub docs, directly enabling programmatic/agentic use. Missing for 10: a discoverable machine-readable spec (OpenAPI/swagger probes returned 404, llms.txt 404), and independent confirmation beyond community auth-error reports which reflect expected key requirements rather than API failure.",
+    "rationale": "Jina Reader is delivered entirely as an HTTP API (r.jina.ai / s.jina.ai) with extensive documented headers/parameters (x-respond-with, x-preset, x-engine, x-json-schema, x-instruction, x-markdown-chunking, etc.), curl examples, and even a 'code builder' tool to explore parameter combinations, making it highly amenable to agentic/programmatic use. Missing for 10: a discoverable formal OpenAPI/Swagger spec (probe found all candidate paths 404) and an llms.txt, so machine-discoverability of the API contract is weaker than ideal, though the API itself is thoroughly documented.",
     "evidenceIds": [
       "jina-reader-gh-1",
       "jina-reader-gh-5",
       "jina-reader-gh-6",
-      "jina-reader-gh-7",
-      "jina-reader-gh-10",
+      "jina-reader-gh-16",
+      "jina-reader-gh-17",
+      "jina-reader-gh-22",
       "jina-reader-docs-3",
-      "jina-reader-probe-1",
       "jina-reader-probe-2"
     ]
   },
@@ -5892,9 +5889,12 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of scoped or least-privilege API key/credential issuance for agents; the pack only shows a single API key auth requirement and no mention of scoped tokens, permissions, or credential management.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "No evidence of scoped or least-privilege API key issuance, permission scopes, or credential management features—only a generic API key/Authorization header requirement is mentioned.",
+    "evidenceIds": [
+      "jina-reader-comm-4",
+      "jina-reader-comm-5"
+    ]
   },
   {
     "productId": "jina-reader",
@@ -5902,11 +5902,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents Jina Reader purely as an HTTP endpoint (curl-style requests with custom headers like x-respond-with, x-preset, x-json-schema) and an OpenAPI/llms.txt probe that both 404'd — there is no mention of an official Python/JS/other SDK package for building against it.",
+    "rationale": "The evidence shows Jina Reader as a plain HTTP API (r.jina.ai/s.jina.ai) with curl examples, headers, and a 'code builder' tool, but no mention of official Python/JS/other SDKs or client libraries; probes for openapi spec and llms.txt both 404, suggesting no formal SDK/API surface is published. The axis applies (an API-first product plausibly ships SDKs) but no evidence supports it.",
     "evidenceIds": [
-      "jina-reader-gh-5",
-      "jina-reader-gh-6",
-      "jina-reader-docs-3",
+      "jina-reader-gh-22",
       "jina-reader-probe-1",
       "jina-reader-probe-2"
     ]
@@ -5916,29 +5914,31 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack of Jina Reader supporting webhooks or event subscriptions; it's a synchronous URL-to-text conversion API with no mention of push/callback mechanisms.",
+    "confidence": "high",
+    "rationale": "Jina Reader is a synchronous URL-to-text/search API with request-time headers for formatting, engine, chunking, etc.; no evidence anywhere in the pack of webhook subscriptions, event callbacks, or push-notification mechanisms.",
     "evidenceIds": []
   },
   {
     "productId": "jina-reader",
     "storyId": "ai-natural-language-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Jina Reader's docs describe an `x-instruction` header that accepts natural-language extraction instructions (alongside a JSON-schema alternative), directly matching the story of skipping selectors, and this is paired with ReaderLM-v2 for field extraction. However, this is a single first-party doc mention with no independent hands-on validation, extraction accuracy examples, or benchmark, and community threads focus on unrelated auth/JS issues rather than confirming this feature's real-world quality. Missing for 10: independent verification of extraction accuracy, example outputs, and confirmation the feature works reliably outside vendor docs.",
+    "rationale": "Jina Reader explicitly supports the `x-instruction` header for natural-language extraction instructions (alongside JSON schema), working with ReaderLM-v2 to extract specific fields, avoiding manual selector writing entirely. Missing for 10: independent/hands-on verification of natural-language extraction accuracy, and clearer documentation of output reliability/edge cases beyond first-party docs.",
     "evidenceIds": [
-      "jina-reader-docs-3"
+      "jina-reader-docs-3",
+      "jina-reader-docs-4"
     ]
   },
   {
     "productId": "jina-reader",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "There is no evidence of an interactive API reference or runnable examples; probes explicitly found no OpenAPI/swagger spec (404s) and no llms.txt, and the documentation snippets only describe headers/params in prose form, not an interactive playground.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only hint of an interactive reference is a passing mention of a 'code builder' to explore parameter combinations (jina-reader-gh-22), but there is no documented interactive API reference site with runnable examples, and direct probes found no OpenAPI/Swagger spec or docs endpoint (jina-reader-probe-1, jina-reader-probe-2). missing for 10: dedicated interactive API explorer/playground page, runnable code examples embedded in docs, OpenAPI/Swagger spec confirming machine-readable + interactive reference.",
     "evidenceIds": [
+      "jina-reader-gh-22",
       "jina-reader-probe-1",
       "jina-reader-probe-2"
     ]
@@ -5949,9 +5949,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for OpenAPI/Swagger spec files and llms.txt all returned 404, and no evidence pack item shows a downloadable machine-readable API spec being published.",
+    "rationale": "A direct probe found no OpenAPI/swagger spec at any standard location, and no evidence pack item points to a downloadable machine-readable API spec despite extensive header/parameter documentation.",
     "evidenceIds": [
-      "jina-reader-probe-1",
       "jina-reader-probe-2"
     ]
   },
@@ -5970,7 +5969,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is no evidence of API versioning (e.g., /v1/ paths) or a published deprecation policy; probes for OpenAPI spec and llms.txt both 404, and no docs mention version lifecycle commitments. missing for 10: versioned endpoint scheme, documented deprecation/sunset policy, changelog or migration guide.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; probes for openapi spec/llms.txt returned 404s and no changelog or version-lifecycle docs are cited.",
     "evidenceIds": [
       "jina-reader-probe-1",
       "jina-reader-probe-2"
@@ -5994,13 +5993,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence Jina Reader has any automatic cost-optimization logic that selects the cheapest configuration guaranteed to succeed; the options exposed (x-preset, x-respond-timing, x-proxy) are manually set by the developer, not auto-selected for cost minimization, and pricing/limits aren't even documented per community reports.",
-    "evidenceIds": [
-      "jina-reader-gh-6",
-      "jina-reader-gh-7",
-      "jina-reader-gh-9",
-      "jina-reader-comm-1"
-    ]
+    "rationale": "There is no evidence of an automatic cost/config optimization feature that picks the cheapest option guaranteed to succeed; the API offers manual engine/preset selection (x-engine=auto, x-preset) but these are about fetch reliability, not cost-based fallback logic.",
+    "evidenceIds": []
   },
   {
     "productId": "jina-reader",
@@ -6017,13 +6011,12 @@
     "productId": "jina-reader",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The search endpoint fetches and converts the top 5 results in one call (jina-reader-gh-2), showing some multi-item processing, but there's no documented bulk/batch API for submitting many arbitrary URLs or files at once beyond single-item POST endpoints (jina-reader-gh-1, jina-reader-gh-3). missing for 10: a dedicated batch/bulk endpoint accepting arbitrary lists of URLs, documented concurrency/rate limits for bulk jobs, and evidence of large-scale automation use.",
+    "rationale": "Reader has no documented batch/bulk endpoint for submitting many arbitrary URLs at once; the closest evidence is that its search endpoint automatically fetches and converts the top 5 search results in one call, which is a narrow, non-configurable form of multi-item processing. Missing for 10: an explicit bulk/batch API accepting an arbitrary list of URLs, documented concurrency/rate limits for bulk use, and any hands-on confirmation of large-scale batch runs.",
     "evidenceIds": [
       "jina-reader-gh-2",
-      "jina-reader-gh-1",
-      "jina-reader-gh-3"
+      "jina-reader-gh-12"
     ]
   },
   {
@@ -6041,7 +6034,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jina Reader is a URL-to-text/API conversion service with no evidence of a scheduler, cron-like trigger, or recurring workflow feature; nothing in the evidence pack describes recurring jobs or workflow automation beyond single-shot fetch requests.",
+    "rationale": "Jina Reader is a URL-to-markdown/content-extraction API with caching, formatting, and parsing options, but there is no evidence of any scheduling, cron-like, or recurring-job/workflow-orchestration capability in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -6050,17 +6043,24 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jina Reader is a URL-to-LLM-text conversion API/service, not an automation platform with workflow definitions; there is no concept of an 'automation' to version, review, or roll back. This axis is a category error for this product type.",
+    "rationale": "Jina Reader is a URL-to-text/content extraction API, not an automation/workflow builder—there is no concept of 'automations' to version, review, or roll back in this product category.",
     "evidenceIds": []
   },
   {
     "productId": "jina-reader",
     "storyId": "batch-scrape-async",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers single-URL conversion, search-based fetching, proxy rotation, and format options, but nothing documents a batch/bulk endpoint, job queue, or async processing pipeline for thousands of URLs at once.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Reader exposes only a single-URL fetch endpoint (r.jina.ai) plus a proxy pool for anti-bot handling and a 5-minute cache, which could be scripted into a loop for many URLs, but there is no documented batch/async job API, concurrency limits, or throughput guarantees for scraping 'thousands' of URLs. Community reports also note unclear rate limits and intermittent auth/404 errors, suggesting scale reliability is unproven. missing for 10: dedicated batch/bulk endpoint, documented concurrency/rate limits, async job queue or status polling, evidence of successful large-scale runs.",
+    "evidenceIds": [
+      "jina-reader-gh-1",
+      "jina-reader-gh-9",
+      "jina-reader-docs-7",
+      "jina-reader-gh-20",
+      "jina-reader-comm-1",
+      "jina-reader-comm-4"
+    ]
   },
   {
     "productId": "jina-reader",
@@ -6068,7 +6068,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of any ad-blocking or content-filtering feature to speed up scraping; Reader's evidence covers output formatting, chunking, proxy rotation, and cookie forwarding, but nothing about blocking ads/trackers on the target page.",
+    "rationale": "No evidence of an ad-blocking feature or option to strip ads from target pages before scraping; headers cover engine choice, images, cookies, locale, etc., but nothing about ad-blocking to speed up requests.",
     "evidenceIds": []
   },
   {
@@ -6077,7 +6077,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of an option to block images or CSS resources by default; Reader's documented features focus on content extraction, VLM image captioning, and output formatting, not resource-blocking for bandwidth savings.",
+    "rationale": "There is a header for controlling image retention in output (x-retain-images) and engine selection, but no evidence of an option to block/skip fetching images or CSS resources during the request itself to reduce bandwidth—these headers control post-fetch rendering/output, not resource-blocking during page load.",
     "evidenceIds": []
   },
   {
@@ -6085,12 +6085,10 @@
     "storyId": "concurrency-cap-by-plan",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence documents concurrency/request caps per pricing tier or the cost to increase them; community comments explicitly note the website doesn't mention API limits, and authentication errors appear but no rate-limit specifics.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item documents concurrent session/request caps per pricing tier or costs to raise them; a community comment even notes the website doesn't mention API limits at all.",
     "evidenceIds": [
-      "jina-reader-comm-1",
-      "jina-reader-comm-4",
-      "jina-reader-comm-5"
+      "jina-reader-comm-1"
     ]
   },
   {
@@ -6099,11 +6097,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Reader offers infrastructure that could support scale (a rotating proxy pool for anti-bot handling, and a self-hostable Docker image bundling headless Chrome so engineers could run many parallel instances), but there is no first-party documentation of concurrency limits, rate limits, or guidance for running many simultaneous scraping sessions. Community commentary explicitly notes the site doesn't mention API limits, adding uncertainty rather than confirmation.\nmissing for 10: documented concurrency/rate limits, guidance or benchmarks for running many parallel sessions, independent evidence of successful large-scale concurrent use.",
+    "rationale": "Jina Reader supports proxy rotation, caching, and configurable fetch engines that hint at scale-friendly usage, but there's no direct evidence of rate limits, concurrency quotas, or documented guidance for running many parallel scraping sessions. Community reports note undocumented API limits and auth errors, suggesting scaling is not well-documented or guaranteed. Missing for 10: explicit concurrency/rate-limit documentation, benchmarks or case studies of large-scale parallel scraping, and confirmation that free/paid tiers support high-volume concurrent sessions.",
     "evidenceIds": [
       "jina-reader-gh-9",
-      "jina-reader-gh-8",
-      "jina-reader-comm-1"
+      "jina-reader-gh-20",
+      "jina-reader-docs-7",
+      "jina-reader-comm-1",
+      "jina-reader-comm-4"
     ]
   },
   {
@@ -6112,7 +6112,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jina Reader converts URLs into LLM-ready content on-demand but there is no evidence of scheduled monitoring, diffing, or change-notification features (webhooks, alerts, polling schedules) that would let a data-engineer track content changes over time.",
+    "rationale": "Jina Reader is a URL-to-text/markdown fetch API with caching, proxy, and formatting options, but there is no evidence of any monitoring, scheduling, diffing, or notification/webhook capability for tracking page changes over time.",
     "evidenceIds": []
   },
   {
@@ -6120,8 +6120,8 @@
     "storyId": "control-viewport-size",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions viewport width/height control, browser window sizing, or any device-emulation/viewport configuration options for Jina Reader's rendering.",
+    "confidence": "medium",
+    "rationale": "Evidence covers many Reader headers (engine, wait-for-selector, locale, cookies, caching, etc.) but no header or option controls browser viewport width/height for rendering; this capability is not documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -6129,8 +6129,8 @@
     "storyId": "crawl-respects-robots-and-rate-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions robots.txt compliance or configurable rate-limiting; features described relate to output formatting, proxying, and anti-bot bypass, not politeness controls.",
+    "confidence": "medium",
+    "rationale": "No evidence anywhere in the pack mentions robots.txt compliance or automatic rate-limiting/throttling per target site; the feature set covers formatting, proxying, caching, and content extraction but not crawl politeness controls.",
     "evidenceIds": []
   },
   {
@@ -6139,7 +6139,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes what happens when a plan's monthly credit/request quota is exceeded — no mention of overage billing or hard cutoff behavior; community commentary even notes the site doesn't document API limits at all.",
+    "rationale": "No evidence anywhere in the pack describes plan quotas, overage billing, or hard cutoffs; community comments explicitly note the website doesn't mention API limits, and no pricing/quota documentation is present.",
     "evidenceIds": [
       "jina-reader-comm-1"
     ]
@@ -6147,12 +6147,14 @@
   {
     "productId": "jina-reader",
     "storyId": "css-xpath-extraction",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader offers structured field extraction via `x-json-schema` and `x-instruction` headers (backed by ReaderLM-v2), which lets developers pull specific fields, but the evidence never mentions CSS or XPath selector syntax as the extraction mechanism. Missing for 10: explicit CSS selector support, explicit XPath selector support, documentation showing selector-based (not just schema/instruction-based) targeting.",
+    "rationale": "Jina Reader exposes CSS-selector usage only for `x-wait-for-selector` (waiting for an element to render, not extracting specific fields), and its structured-extraction path (`x-json-schema`/`x-instruction`) works via schema/NL instructions passed to an LLM, not via CSS or XPath extraction rules. No evidence shows selector-based field extraction as the story describes.",
     "evidenceIds": [
-      "jina-reader-docs-3"
+      "jina-reader-gh-21",
+      "jina-reader-docs-3",
+      "jina-reader-docs-4"
     ]
   },
   {
@@ -6179,7 +6181,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of job performance monitoring, data quality validation, or failure alerting features; evidence covers content extraction and formatting only, with community reports even noting undocumented API limits and auth errors rather than monitoring/alerting tooling.",
+    "rationale": "No evidence of job monitoring dashboards, data quality validation, or alerting/notification mechanisms in Jina Reader's documentation or community reports; the product is a URL-to-text conversion API with caching and fetch-configuration options, but nothing about observability, metrics, or failure alerts.",
     "evidenceIds": []
   },
   {
@@ -6188,7 +6190,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a deep-crawl feature with breadth-first strategy or configurable page-limit; Jina Reader converts single URLs or performs top-5 search results, not a crawler with BFS/page-limit controls.",
+    "rationale": "Jina Reader converts single URLs or search queries to LLM-friendly text but no evidence describes a deep/breadth-first crawl mode with configurable page limits; it operates per-URL/per-query, not as a multi-page crawler.",
     "evidenceIds": []
   },
   {
@@ -6197,7 +6199,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "A prebuilt GitHub Container Registry image bundling headless Chrome, LibreOffice, and CJK fonts is documented, enabling self-hosted Docker deployment without building from source. However, missing for 10: no production deployment guidance (scaling, orchestration, resource sizing), no independent hands-on confirmation of running the container in production, and no docs on configuration/env vars for the containerized service.",
+    "rationale": "There's a prebuilt Docker image published to GitHub Container Registry bundling headless Chrome, LibreOffice, and CJK fonts for self-hosted deployment, confirming Docker-based production deployment is supported. However missing for 10: no evidence of production deployment guidance (scaling, health checks, environment configuration), no independent hands-on report confirming the Docker image works reliably in production, and community evidence shows only hosted-API auth errors rather than self-hosted validation.",
     "evidenceIds": [
       "jina-reader-gh-8"
     ]
@@ -6221,10 +6223,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses billing behavior for failed, blocked, or empty-result requests, nor any quota-consumption policy; community notes only mention lack of clarity on API limits and unrelated authentication errors.",
-    "evidenceIds": [
-      "jina-reader-comm-1"
-    ]
+    "rationale": "No evidence in the pack discusses billing/quota behavior for failed, blocked, or empty-result requests; docs mention caching within 5 minutes but nothing about whether failed/blocked calls consume quota.",
+    "evidenceIds": []
   },
   {
     "productId": "jina-reader",
@@ -6232,8 +6232,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader's evidence describes converting single URLs to LLM-friendly text and a search-then-fetch-top-5 mode, but there is no evidence of a whole-site crawl feature that traverses all pages of a domain in one request.",
-    "evidenceIds": []
+    "rationale": "Jina Reader is designed to convert a single URL (or run a search query returning top results) to LLM-friendly content, not to crawl an entire site and traverse all internal links in one request. There's no evidence of a whole-site crawl feature — s.jina.ai only returns top search results, not full-site traversal.",
+    "evidenceIds": [
+      "jina-reader-gh-1",
+      "jina-reader-gh-2",
+      "jina-reader-gh-12"
+    ]
   },
   {
     "productId": "jina-reader",
@@ -6241,9 +6245,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a proxy toggle (x-proxy: auto) that rotates residential/datacenter IPs and bypasses anti-bot challenges, but no capability to select or request a proxy from a specific country/geolocation.",
+    "rationale": "Jina Reader offers a proxy toggle (x-proxy: auto for rotating residential/datacenter IPs) and a locale header (X-Locale) for content negotiation, but no evidence shows the ability to select a proxy exit node from a specific country/geolocation.",
     "evidenceIds": [
-      "jina-reader-gh-9"
+      "jina-reader-gh-9",
+      "jina-reader-docs-5"
     ]
   },
   {
@@ -6251,10 +6256,12 @@
     "storyId": "image-captioning-for-text-llm",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Jina Reader explicitly auto-captions images lacking alt tags using a VLM and formats them inline as markdown, directly enabling text-only models to reason about visual content. Missing for 10: independent/hands-on verification of caption quality and no mention of configurability or coverage for images with existing (but poor) alt text.",
+    "confidence": "high",
+    "rationale": "Jina Reader explicitly auto-captions images lacking alt text via a VLM and formats them inline as markdown hints for downstream text-only LLMs, directly matching the story. missing for 10: independent/hands-on verification of caption quality and no community corroboration of this specific feature beyond vendor docs.",
     "evidenceIds": [
-      "jina-reader-gh-4"
+      "jina-reader-gh-4",
+      "jina-reader-gh-13",
+      "jina-reader-gh-18"
     ]
   },
   {
@@ -6269,36 +6276,42 @@
   {
     "productId": "jina-reader",
     "storyId": "js-rendering-spa",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "The self-hosted Reader image bundles headless Chrome (gh-8), and docs claim clean output even for 'complex or dynamic pages' (docs-2), implying SPA/JS rendering support. However, a community commenter explicitly notes the website doesn't clearly document dynamic JS support, and no first-party doc or hands-on test explicitly confirms full SPA rendering works end-to-end. Missing for 10: explicit documentation stating JS/SPA rendering is supported, a hands-on demonstration of a JS-heavy site being fully rendered, and resolution of the community's noted uncertainty about dynamic JS handling.",
+    "rationale": "Reader explicitly supports a headless-Chrome engine (`x-engine: browser`) with tunable timing (`x-respond-timing`) and a wait-for-selector option to wait for specific DOM elements before returning content, plus a bundled Docker image containing headless Chrome for JS execution — together these directly enable full JS rendering of SPAs into clean output. Missing for 10: independent hands-on confirmation of successful SPA rendering (community comments only note uncertainty about JS support, not a concrete failure) and a documented benchmark/example against a real SPA.",
     "evidenceIds": [
+      "jina-reader-gh-16",
+      "jina-reader-gh-21",
+      "jina-reader-gh-7",
       "jina-reader-gh-8",
-      "jina-reader-docs-2",
-      "jina-reader-comm-2"
+      "jina-reader-docs-2"
     ]
   },
   {
     "productId": "jina-reader",
     "storyId": "json-schema-extraction",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe an x-json-schema header for passing a JSON schema definition that works with ReaderLM-v2 to extract specific fields, directly matching the story. Missing for 10: independent/hands-on verification of schema-conformant output and no worked example showing exact schema-to-output mapping.",
+    "rationale": "Docs explicitly describe an `x-json-schema` header for passing a JSON schema definition to extract specific structured fields via ReaderLM-v2, directly matching the story. Missing for 10: independent/hands-on confirmation of schema-conformant output and details on how strictly the schema is enforced or error handling for invalid schemas.",
     "evidenceIds": [
-      "jina-reader-docs-3"
+      "jina-reader-docs-3",
+      "jina-reader-docs-4"
     ]
   },
   {
     "productId": "jina-reader",
     "storyId": "large-table-chunked-extraction",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Reader offers an opt-in `x-markdown-chunking` feature that splits markdown output into semantic chunks, which could help fit large content (including tables) within processing limits, but there is no evidence it specifically preserves table structure or handles very large tables intelligently. missing for 10: table-aware chunking logic, evidence of table structure preservation across chunks, benchmarks on large-table extraction accuracy.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Jina Reader offers semantic markdown chunking (x-markdown-chunking) and token-limit trimming (x-max-tokens), which directly address fitting large content within processing limits, plus general table/PDF extraction via markdown conversion. However, there's no table-specific chunking logic or evidence of handling very large tables distinctly from generic page content. Missing for 10: table-specific extraction/chunking strategy, benchmarks or examples showing large-table handling, independent verification of chunking quality on tabular data.",
     "evidenceIds": [
-      "jina-reader-gh-10"
+      "jina-reader-gh-10",
+      "jina-reader-gh-17",
+      "jina-reader-gh-3",
+      "jina-reader-docs-2"
     ]
   },
   {
@@ -6306,10 +6319,12 @@
     "storyId": "latency-completeness-tradeoff",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "The `x-respond-timing` header is documented explicitly as giving developers explicit control over when Reader returns, directly trading off latency against completeness, which is exactly the story described. Missing for 10: independent/hands-on confirmation of the header's behavior and concrete latency/completeness benchmarks beyond the first-party doc snippet.",
+    "confidence": "high",
+    "rationale": "The `x-respond-timing` header is explicitly documented as giving developers explicit control over when Reader returns, directly trading off latency against completeness, complemented by related controls like `x-wait-for-selector` and `x-max-tokens` for tuning completeness/latency. missing for 10: independent/hands-on corroboration of x-respond-timing behavior, and concrete examples of latency/completeness tradeoff values in practice.",
     "evidenceIds": [
-      "jina-reader-gh-7"
+      "jina-reader-gh-7",
+      "jina-reader-gh-21",
+      "jina-reader-gh-17"
     ]
   },
   {
@@ -6318,7 +6333,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any real-time dashboard, metrics UI, or worker/browser pool status monitoring; evidence only covers content extraction features and API options. This is an applicable axis for a scale-reliability story about a self-hostable service with a browser pool, but nothing in the pack shows such a dashboard exists.",
+    "rationale": "No evidence of any real-time dashboard, metrics UI, or worker/browser pool status monitoring; evidence covers API parameters, caching, and fetching engines only.",
     "evidenceIds": []
   },
   {
@@ -6327,31 +6342,29 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Reader explicitly supports `x-instruction` (natural language) and `x-json-schema` headers feeding ReaderLM-v2 to extract specific fields, meaning an LLM/instruction can decide what to pull without pre-written CSS/XPath selectors — directly matching the story. Missing for 10: independent/hands-on verification of extraction quality/accuracy beyond the single first-party doc claim, and no community corroboration of this specific feature working reliably.",
+    "rationale": "Jina Reader explicitly supports `x-instruction` (natural-language field extraction) and `x-json-schema` headers powered by ReaderLM-v2, letting the model decide what to extract without hand-written selectors, and the `research` preset targets AI agents needing structured, citable output. Missing for 10: independent/hands-on verification that the LLM-driven extraction reliably produces correct structured fields (only vendor docs describe this, no third-party test).",
     "evidenceIds": [
       "jina-reader-docs-3",
-      "jina-reader-gh-1",
-      "jina-reader-docs-2"
+      "jina-reader-docs-4",
+      "jina-reader-gh-6"
     ]
   },
   {
     "productId": "jina-reader",
     "storyId": "llm-ready-text-instead-of-raw-html",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Jina Reader's core purpose is converting any URL into clean, LLM-ready Markdown/text, avoiding manual HTML parsing and handling JS rendering, anti-bot blocking, and headless browsing behind the scenes, with configurable output formats (frontmatter, JSON, chunked) tailored to AI agents. Community reports show some auth/404 errors on certain deployments, but the core capability is well documented and corroborated. Missing for 10: broader independent benchmarking of output quality/reliability across diverse sites beyond one HN anecdote of failure.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "First-party docs and code show the core promise delivered: any URL or PDF/Office doc becomes clean Markdown/JSON via a headless-Chrome + curl engine selection, with anti-bot proxy rotation and cookie/session support handling blocking, and explicit positioning against 'unreliable' raw scraping (docs-2, gh-1, gh-9, gh-16, gh-3, docs-1). Additional controls (frontmatter, token limits, chunking, image captioning) reinforce LLM-readiness. Missing for 10: independent benchmarks validating output cleanliness at scale, and some community reports of 404/auth errors suggest occasional real-world friction (comm-3, comm-4, comm-5).",
     "evidenceIds": [
       "jina-reader-gh-1",
       "jina-reader-gh-2",
-      "jina-reader-gh-5",
-      "jina-reader-gh-6",
-      "jina-reader-gh-8",
       "jina-reader-gh-9",
-      "jina-reader-docs-1",
+      "jina-reader-gh-16",
+      "jina-reader-gh-8",
       "jina-reader-docs-2",
-      "jina-reader-gh-10",
-      "jina-reader-docs-3",
+      "jina-reader-docs-1",
+      "jina-reader-gh-3",
       "jina-reader-comm-3",
       "jina-reader-comm-4"
     ]
@@ -6361,12 +6374,13 @@
     "storyId": "local-llm-extraction-backend",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Jina Reader uses fixed VLM captioning and ReaderLM-v2 for structured extraction, with no mention of configuring a local/self-hosted LLM as an alternative extraction backend; the open-source self-hosted image runs Reader's own pipeline (Chrome, LibreOffice) rather than letting users swap in their own LLM.",
+    "confidence": "medium",
+    "rationale": "Reader ships a self-hostable open-source image (bundling Chrome/LibreOffice) and uses Jina's own ReaderLM-v2 for schema/instruction-based extraction, but nothing in the evidence indicates a configuration point to swap in an arbitrary local or self-hosted LLM as the extraction backend — the model choice appears fixed to Jina's own models.",
     "evidenceIds": [
-      "jina-reader-gh-4",
+      "jina-reader-gh-8",
       "jina-reader-docs-3",
-      "jina-reader-gh-8"
+      "jina-reader-docs-4",
+      "jina-reader-gh-4"
     ]
   },
   {
@@ -6375,13 +6389,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Jina Reader's core function is converting URLs into clean, LLM-friendly Markdown (r.jina.ai), with additional options like frontmatter YAML, image captioning, and semantic chunking, all well documented in first-party sources. Missing for 10: independent hands-on verification of markdown output quality (community evidence cited focuses on auth/404 issues, not output format fidelity).",
+    "rationale": "Jina Reader's core function is converting URLs to LLM-friendly markdown output, with strong first-party documentation confirming clean markdown as the default response format, plus configurable output modes (frontmatter, JSON schema extraction, chunking) that all build on the markdown pipeline. Missing for 10: independent hands-on verification of markdown quality/cleanliness beyond vendor docs (community evidence cited only touches auth/availability issues, not output format fidelity).",
     "evidenceIds": [
       "jina-reader-gh-1",
-      "jina-reader-gh-4",
       "jina-reader-gh-5",
+      "jina-reader-docs-2",
       "jina-reader-gh-10",
-      "jina-reader-docs-2"
+      "jina-reader-gh-6"
     ]
   },
   {
@@ -6399,9 +6413,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "jina-reader-gh-5 documents the `x-respond-with` header explicitly selecting output format including markdown, HTML, text, and frontmatter (Markdown+YAML), directly matching the story; gh-10 adds chunking control as extra format nuance. Missing for 10: independent hands-on confirmation of each format option (community evidence only covers auth errors, not format selection).",
+    "rationale": "The `x-respond-with` header explicitly lets developers select output format, with documented options including markdown, HTML/text, and `frontmatter` (Markdown + YAML frontmatter block), plus related controls like `x-markdown-chunking` for structured markdown output. Missing for 10: independent hands-on verification of each format option beyond vendor docs/README.",
     "evidenceIds": [
       "jina-reader-gh-5",
+      "jina-reader-gh-15",
       "jina-reader-gh-10"
     ]
   },
@@ -6411,8 +6426,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a prebuilt n8n or Zapier connector; the evidence only covers the REST API, headers, self-hosting, and an MCP server, none of which constitute a no-code automation platform connector.",
-    "evidenceIds": []
+    "rationale": "No evidence of any prebuilt n8n/Zapier connector or listing on those platforms; the API is documented as a plain HTTP/curl interface, and no OpenAPI spec is even discoverable (probe shows 404s) which would typically enable such integrations.",
+    "evidenceIds": [
+      "jina-reader-probe-2"
+    ]
   },
   {
     "productId": "jina-reader",
@@ -6429,17 +6446,17 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jina Reader is fundamentally an API-first product where nearly all functionality (URL-to-markdown conversion, web search, PDF/Office ingestion, VLM image captioning, JSON schema/instruction-based extraction, chunking, proxy routing, cookie forwarding, output presets) is exposed entirely through API endpoints and headers, with no evidence of a richer separate UI holding back features. This suggests the API is the primary and complete interface, matching the AI-native openness story well.  Missing for 10: no explicit documentation stating 'everything the UI can do the API can also do' or comparison against a dashboard/UI feature set, and no independent corroboration confirming full parity.",
+    "rationale": "Jina Reader is fundamentally API-first — nearly every documented capability (URL/PDF conversion, search, image captioning, custom headers like x-json-schema, x-preset, x-engine, caching, proxy routing) is exposed directly via HTTP endpoints (r.jina.ai, s.jina.ai) rather than gated behind a separate UI, so parity is inherent to the product's design. Missing for 10: no explicit documentation contrasting a dashboard/UI feature set against the API to confirm there is truly no UI-only capability, and no OpenAPI spec was found (probe shows 404s) to formally guarantee full API coverage.",
     "evidenceIds": [
       "jina-reader-gh-1",
       "jina-reader-gh-3",
       "jina-reader-gh-4",
       "jina-reader-gh-5",
       "jina-reader-gh-6",
-      "jina-reader-gh-9",
-      "jina-reader-gh-10",
-      "jina-reader-docs-1",
-      "jina-reader-docs-3"
+      "jina-reader-gh-12",
+      "jina-reader-docs-3",
+      "jina-reader-gh-22",
+      "jina-reader-probe-2"
     ]
   },
   {
@@ -6467,8 +6484,8 @@
     "storyId": "openness-self-host",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "The open-source branch is self-hostable via a prebuilt Docker image on GitHub Container Registry bundling headless Chrome, LibreOffice, and CJK fonts, so users can run Reader without building it themselves. Missing for 10: independent hands-on confirmation of a successful self-hosted deployment and details on feature parity between self-hosted and SaaS versions.",
+    "confidence": "medium",
+    "rationale": "GitHub evidence confirms a prebuilt image of the open-source branch published to GitHub Container Registry, bundling headless Chrome, LibreOffice, and CJK fonts so users can self-host Reader without building it themselves. Missing for 10: independent hands-on reports of running the self-hosted image, and documentation of feature parity/limitations vs the hosted SaaS version.",
     "evidenceIds": [
       "jina-reader-gh-8"
     ]
@@ -6491,12 +6508,12 @@
     "storyId": "pdf-office-doc-extraction",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Jina Reader explicitly supports POSTing PDFs and MS Office (Word, Excel, PowerPoint) files directly via the `file` body field without needing to host them, and the self-hosted image bundles LibreOffice to process these office formats. Community evidence shows some auth/404 issues but none specifically contradict document-extraction functionality. Missing for 10: independent hands-on verification of extraction quality/fidelity across all four file types and no detail on limits (file size, complex formatting).",
+    "confidence": "medium",
+    "rationale": "Direct evidence confirms PDFs and MS Office documents (Word, Excel, PowerPoint) can be POSTed via the `file` field without hosting, and the OSS Docker image bundles LibreOffice specifically to convert these formats, with native PDF fetch-by-URL also supported. Missing for 10: independent hands-on verification of extraction quality/fidelity for Office formats specifically (community evidence only covers auth/404 issues unrelated to file uploads), and no benchmark data on accuracy across file types.",
     "evidenceIds": [
       "jina-reader-gh-3",
       "jina-reader-gh-8",
-      "jina-reader-docs-2"
+      "jina-reader-docs-6"
     ]
   },
   {
@@ -6505,7 +6522,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader operates per-URL request with headers/options (e.g. x-preset, x-respond-with) applied uniformly to a single fetch; there's no evidence of a batch-job concept or per-URL-pattern configuration mapping within one job. missing for 10: batch job API, URL-pattern-based rule matching, differentiated configs within a single request/job.",
+    "rationale": "Jina Reader operates per-URL via headers/parameters (e.g. x-engine, x-preset, x-wait-for-selector), but there is no evidence of a batch job mechanism that applies different configurations per URL pattern within one call — each request is single-URL with its own headers, not a multi-URL batch with per-pattern rules.",
     "evidenceIds": []
   },
   {
@@ -6514,7 +6531,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader supports passing session cookies per-request via the X-Set-Cookie header, but there is no evidence of a persistent browser profile that maintains login/cookie state across multiple requests automatically — each request appears stateless, requiring cookies to be re-supplied manually.",
+    "rationale": "Jina Reader supports passing session cookies per-request via the X-Set-Cookie header, but there is no evidence of a persistent browser profile that stores and reuses login state/cookies across multiple requests automatically; each request appears stateless aside from manual cookie header injection.",
     "evidenceIds": [
       "jina-reader-docs-1"
     ]
@@ -6525,7 +6542,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any PII detection or redaction/filtering feature; Jina Reader's documented capabilities focus on content extraction, formatting, chunking, and structured extraction via schemas, not privacy/PII filtering.",
+    "rationale": "No evidence of any PII detection, redaction, or filtering capability; Reader's features (markdown conversion, schema/instruction extraction, chunking, image captioning) never mention privacy or PII handling.",
     "evidenceIds": []
   },
   {
@@ -6534,12 +6551,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader is a stateless URL-to-markdown converter; there's no evidence of interactive session persistence, clicking, or form-filling to navigate behind a login wall. Cookie forwarding (X-Set-Cookie) only supports pre-authenticated single fetches, not interactive multi-step navigation.",
-    "evidenceIds": [
-      "jina-reader-docs-1",
-      "jina-reader-docs-2",
-      "jina-reader-comm-2"
-    ]
+    "rationale": "Jina Reader is a one-shot URL-to-markdown converter; it supports cookie forwarding and waiting for selectors, but there is no evidence of persistent interactive sessions, clicking, or form-filling to navigate behind a login wall after the initial scrape.",
+    "evidenceIds": []
   },
   {
     "productId": "jina-reader",
@@ -6556,7 +6569,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jina Reader offers a hosted SaaS proxy pool (`x-proxy: auto`) that rotates residential/datacenter IPs and auto-handles anti-bot challenges, directly matching the story. Missing for 10: independent/hands-on confirmation of proxy effectiveness against hard-to-scrape sites, and detail on choosing specific proxy types/locations rather than just 'auto'.",
+    "rationale": "Jina Reader explicitly offers a hosted proxy pool ('x-proxy: auto') that rotates residential/datacenter IPs and auto-handles anti-bot challenges, directly matching the story. However, there's no independent/hands-on evidence confirming its effectiveness on genuinely hard-to-scrape sites, and community reports show some auth/availability issues unrelated to proxy quality specifically. Missing for 10: independent verification of proxy success rates against hard anti-bot targets, more detail on proxy tiers/geolocation options.",
     "evidenceIds": [
       "jina-reader-gh-9"
     ]
@@ -6567,7 +6580,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls; only self-hosting via a prebuilt container image is mentioned, which is a deployment option not a residency control feature.",
+    "rationale": "No evidence of any data residency/region selection controls for the hosted Reader API or self-hosted deployment options tied to region choice; the only self-hosting evidence is a generic Docker image without region/residency framing. Missing for 10: any mention of region selection, data residency guarantees, or compliance certifications (e.g., EU-only processing).",
     "evidenceIds": []
   },
   {
@@ -6576,7 +6589,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence found of any data-training opt-out, privacy policy, or no-training guarantee for Jina Reader; the pack covers only functional features (parsing, chunking, proxying) and unrelated auth/probe issues.",
+    "rationale": "No evidence in the pack addresses data-training opt-outs, privacy policy commitments, or any mechanism to prevent user data from being used for AI model training; Jina Reader is a cloud API service that sends URLs/content to their servers with no documented privacy controls on this axis.",
     "evidenceIds": []
   },
   {
@@ -6585,7 +6598,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses data retention policies, data deletion controls, or user-facing settings to manage stored data lifecycle; evidence covers scraping features, formats, and proxying but nothing about retention/deletion posture.",
+    "rationale": "No evidence pack item addresses data retention policies, deletion requests, or user control over stored data — only caching behavior (5-min cache, S3 bucket cache) is mentioned, which is about performance, not retention/deletion control.",
     "evidenceIds": []
   },
   {
@@ -6594,7 +6607,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics, or an opt-out mechanism for Jina Reader; the docs focus on API features and scraping, not privacy controls.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Jina Reader; the API is a hosted service and its privacy/data-handling posture is not documented in the pack.",
     "evidenceIds": []
   },
   {
@@ -6603,12 +6616,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public status page, uptime history, or incident postmortems; instead there's community evidence of undocumented failures (404s, auth errors) with no transparency page to check beforehand.",
-    "evidenceIds": [
-      "jina-reader-comm-3",
-      "jina-reader-comm-4",
-      "jina-reader-comm-5"
-    ]
+    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the evidence pack; community comments even note failures (404s, auth errors) with no reference to any status page.",
+    "evidenceIds": []
   },
   {
     "productId": "jina-reader",
@@ -6616,7 +6625,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader is a URL-to-text/API service with usage flags and headers, but there is no evidence of any ready-made project templates or starter kits for developers to bootstrap projects with.",
+    "rationale": "Jina Reader is an API/service for converting URLs into LLM-friendly text; the evidence pack shows API parameters, headers, and a code builder tool, but no mention of ready-made project templates or starter kits for developers to bootstrap projects.",
     "evidenceIds": []
   },
   {
@@ -6636,12 +6645,13 @@
     "storyId": "research-agent-preset",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "The `x-preset: research` option is explicitly documented as being 'for AI research agents needing structured, citable output,' directly matching the story, and complements related features like frontmatter/YAML output and JSON schema extraction for structured data. Missing for 10: independent or hands-on verification that the research preset's output quality/citability holds up in practice beyond the first-party docs.",
+    "confidence": "high",
+    "rationale": "The `x-preset` header explicitly offers a `research` preset \"for AI research agents needing structured, citable output,\" directly matching the story, and it can be combined with frontmatter/YAML output and JSON-schema/instruction extraction for structured, citable results. Missing for 10: independent hands-on validation of the research preset's actual output quality and no example showing the citable-output format in practice.",
     "evidenceIds": [
       "jina-reader-gh-6",
+      "jina-reader-gh-19",
       "jina-reader-gh-5",
-      "jina-reader-docs-3"
+      "jina-reader-docs-4"
     ]
   },
   {
@@ -6650,7 +6660,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jina Reader is a URL-to-markdown conversion API/tool, not a deep-crawl orchestration system with crawl-state checkpointing; no evidence anywhere in the pack mentions crawl checkpoints, resumable crawls, or job-state persistence.",
+    "rationale": "Jina Reader is a single-URL/search-to-markdown conversion API with caching and proxy features, but there is no evidence of a 'deep crawl' capability, checkpointing, or crash-resume functionality of any kind in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -6670,7 +6680,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any scheduling, cron, or job-queue feature; Jina Reader is a synchronous URL-to-text API with no mention of automated/recurring execution.",
+    "rationale": "Jina Reader is an on-demand URL-to-text/API conversion service; the evidence pack has no mention of scheduling, cron-like triggers, or job orchestration to run scrapes automatically at set times.",
     "evidenceIds": []
   },
   {
@@ -6678,8 +6688,8 @@
     "storyId": "screenshot-capture",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions screenshot capture of full pages or selected areas; Jina Reader's documented capabilities focus on converting URLs to Markdown/text, image captioning, and structured extraction, not visual screenshots.",
+    "confidence": "high",
+    "rationale": "Jina Reader's evidence covers text/markdown extraction, image captioning, PDF/office ingestion, and output formatting options, but there is no mention of screenshot capture of a full page or a selected area anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -6688,11 +6698,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader offers cookie forwarding, proxy rotation, timing/format controls, and extraction schemas, but no evidence shows any mechanism to script page interactions like clicking, filling inputs, or scrolling before content extraction; community comments explicitly note uncertainty about dynamic JS handling.",
+    "rationale": "Jina Reader offers x-wait-for-selector to wait for an element and x-engine=browser for headless Chrome rendering, but there is no evidence of scripted interactions like clicking, filling inputs, or scrolling before content extraction — it's a passive fetch-and-wait model, not an interactive scripting API.",
     "evidenceIds": [
-      "jina-reader-docs-1",
-      "jina-reader-gh-7",
-      "jina-reader-comm-2"
+      "jina-reader-gh-21",
+      "jina-reader-gh-16"
     ]
   },
   {
@@ -6700,8 +6709,8 @@
     "storyId": "self-host-open-source",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "GitHub repo explicitly documents an open-source branch with a prebuilt image on GitHub Container Registry bundling headless Chrome, LibreOffice, and CJK fonts so developers can self-host without building from scratch. Missing for 10: independent hands-on report confirming self-hosted deployment works smoothly and details on feature parity vs. the hosted proxy (e.g., anti-bot/x-proxy features noted as SaaS-only).",
+    "confidence": "medium",
+    "rationale": "The GitHub repo confirms an open-source branch with a prebuilt container image (bundling headless Chrome, LibreOffice, CJK fonts) that developers can run without building it themselves, directly enabling self-hosting instead of relying on the hosted r.jina.ai service; the SaaS proxy is explicitly optional via 'x-proxy: auto'. Missing for 10: independent hands-on confirmation of a successful self-hosted deployment and detailed self-host setup/config docs beyond the container image mention.",
     "evidenceIds": [
       "jina-reader-gh-8",
       "jina-reader-gh-9"
@@ -6712,8 +6721,8 @@
     "storyId": "semantic-chunked-output",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Jina Reader explicitly supports `x-markdown-chunking`, an opt-in header returning semantically chunked output as a JSON array or delimited text instead of one blob, directly matching the story. Missing for 10: independent hands-on validation of chunk quality/boundaries and no detail on chunking algorithm robustness across document types.",
+    "confidence": "medium",
+    "rationale": "The `x-markdown-chunking` header is explicitly documented to opt into semantic chunking of markdown output, returning a JSON array or delimited chunks instead of one blob, directly matching the story. Missing for 10: independent/hands-on corroboration that chunking is truly semantic (vs. naive splitting) and no detail on chunk size/boundary controls.",
     "evidenceIds": [
       "jina-reader-gh-10"
     ]
@@ -6724,11 +6733,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jina Reader's entire design purpose is to convert pages into LLM-friendly Markdown/JSON/frontmatter output (jina-reader-docs-2, jina-reader-gh-5), not raw HTML; no evidence pack item shows an option to return unprocessed raw HTML, and the docs explicitly frame raw scraping as the problem being solved rather than the deliverable.",
+    "rationale": "Jina Reader's entire design purpose is to convert a URL into 'clean, LLM-ready text' (markdown, frontmatter, JSON) rather than preserve raw HTML — the evidence pack's only documented `x-respond-with` values are markdown-based outputs (frontmatter, chunked markdown), with no mention of a raw-HTML response option. Since the product explicitly transforms/cleans content instead of returning unprocessed HTML, there is no evidence it satisfies a 'get raw HTML back' request.",
     "evidenceIds": [
       "jina-reader-docs-2",
       "jina-reader-gh-5",
-      "jina-reader-gh-1"
+      "jina-reader-gh-10"
     ]
   },
   {
@@ -6737,7 +6746,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of spending caps or usage alerts; community even notes API limits aren't documented on the website (jina-reader-comm-1), and no billing/quota dashboard or alerting feature is mentioned anywhere in the evidence pack.",
+    "rationale": "No evidence of any spending cap, budget alert, or usage-limit configuration feature; community comments even note the absence of documented API limits, and no docs mention billing controls.",
     "evidenceIds": [
       "jina-reader-comm-1"
     ]
@@ -6747,10 +6756,11 @@
     "storyId": "sticky-session-proxy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a proxy rotation feature (x-proxy: auto) that rotates IPs for anti-bot handling, but there is no mention of a session identifier or sticky-IP mechanism to keep the same proxy IP across multiple requests for a consistent identity.",
+    "confidence": "low",
+    "rationale": "There's a proxy rotation feature (x-proxy: auto) and cookie forwarding, but no evidence of a session identifier that pins requests to the same proxy IP across multiple calls for persona consistency.",
     "evidenceIds": [
-      "jina-reader-gh-9"
+      "jina-reader-gh-9",
+      "jina-reader-docs-1"
     ]
   },
   {
@@ -6759,11 +6769,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jina Reader supports structured output via `x-json-schema` for schema-defined field extraction and `x-markdown-chunking` for JSON array chunk output, plus frontmatter YAML metadata — showing real structured-output capability beyond plain markdown. However, the default/primary output is markdown/LLM-friendly text, not JSON, and there's no evidence of a dedicated full-page-to-JSON endpoint or independent confirmation these structured modes work reliably in practice. Missing for 10: independent/hands-on verification of x-json-schema output quality, a documented default JSON response mode, and confirmation these features aren't limited/beta.",
+    "rationale": "Reader supports structured extraction via `x-json-schema`/`x-instruction` headers (with ReaderLM-v2) and a general `x-respond-with` format selector (e.g., frontmatter), implying JSON output is selectable/structured. However, no direct example of the default JSON response schema or independent confirmation of its structure is present. Missing for 10: an explicit JSON output example/schema, third-party validation that returned JSON matches documented fields.",
     "evidenceIds": [
       "jina-reader-docs-3",
-      "jina-reader-gh-10",
-      "jina-reader-gh-5"
+      "jina-reader-docs-4",
+      "jina-reader-gh-5",
+      "jina-reader-gh-15"
     ]
   },
   {
@@ -6778,12 +6789,13 @@
   {
     "productId": "jina-reader",
     "storyId": "undetected-browser-mode",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a rotating IP proxy pool that 'handles common anti-bot challenges automatically' (x-proxy: auto), but there is no mention of an undetected/stealth browser mode, fingerprint spoofing, or bypassing sophisticated bot detection like Cloudflare/Datadome-style challenges. This is a distinct, more specific capability than generic proxy rotation and is unevidenced.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Jina Reader offers a headless Chrome engine (x-engine: browser) and a hosted proxy pool that 'rotates residential/datacenter IPs and handles common anti-bot challenges automatically', which addresses part of the anti-bot theme, but there is no evidence of a specifically 'undetected' or stealth browser fingerprint-evasion mode (e.g., patched headless detection signatures). Missing for 10: explicit undetected/stealth browser fingerprinting evasion, evidence of bypassing sophisticated bot-detection systems (e.g., Cloudflare, DataDome) beyond generic proxy rotation, and independent confirmation of anti-bot effectiveness.",
     "evidenceIds": [
-      "jina-reader-gh-9"
+      "jina-reader-gh-9",
+      "jina-reader-gh-16"
     ]
   },
   {
@@ -6791,21 +6803,19 @@
     "storyId": "url-discovery-map",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Jina Reader converts individual URLs into clean text/markdown and can search top results, but there is no evidence of a sitemap/URL-discovery feature that lists all URLs on a site without crawling it.",
+    "confidence": "medium",
+    "rationale": "Jina Reader converts single URLs to markdown or performs web search (s.jina.ai) for top results, but there is no evidence of a sitemap/URL-discovery feature that lists all URLs on a site without crawling/fetching each page's content.",
     "evidenceIds": []
   },
   {
     "productId": "jina-reader",
     "storyId": "wait-for-selector",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Reader has timing controls (x-respond-timing to trade latency vs completeness) and general JS-rendering via headless Chrome, but there's no mention of a selector-wait mechanism (e.g., waiting for a specific CSS/XPath selector before returning). Community feedback even notes it's unclear whether/how dynamic JS support works.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "The `x-wait-for-selector` header is explicitly documented with a working curl example (`-H 'x-wait-for-selector: #content'`) to wait for a specific element before returning rendered content. missing for 10: independent/community hands-on confirmation of this specific header's reliability, and documentation of timeout/fallback behavior if the selector never appears.",
     "evidenceIds": [
-      "jina-reader-gh-7",
-      "jina-reader-gh-8",
-      "jina-reader-comm-2"
+      "jina-reader-gh-21"
     ]
   },
   {
@@ -6814,12 +6824,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Jina Reader's documented behavior explicitly performs a web search, fetches the top 5 results, and converts each to LLM-friendly full text in one call (s.jina.ai flow), with a 'research' preset tailored for citable agent output. Missing for 10: independent hands-on verification specifically of the search+fetch endpoint (the community evidence cited relates to a different third-party wrapper's auth/404 issues, not this feature directly).",
+    "rationale": "Jina Reader's search endpoint (s.jina.ai) explicitly searches the web, fetches the top 5 results, visits each URL, and applies the Reader converter to return full LLM-ready page content rather than just snippets/links, with query examples and site-filtering support documented first-party.  missing for 10: independent/hands-on verification of the search endpoint's output quality and no clarity on rate limits/reliability at scale.",
     "evidenceIds": [
       "jina-reader-gh-2",
-      "jina-reader-gh-6",
-      "jina-reader-gh-5",
-      "jina-reader-docs-2"
+      "jina-reader-gh-12",
+      "jina-reader-gh-14",
+      "jina-reader-gh-1"
     ]
   },
   {
