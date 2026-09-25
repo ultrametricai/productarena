@@ -3353,32 +3353,37 @@
   {
     "productId": "veriff",
     "storyId": "agent-onboarding-decisions",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Veriff provides structured, machine-readable outcomes via decision webhooks/polling endpoints, HMAC-verified payloads, and separate watchlist/PEP screening webhooks that an automated flow could branch on. However, evidence lacks a documented schema of specific risk-signal fields, granular failure-reason taxonomy, or a published OpenAPI spec (openapi probe returned 404s), making it hard to confirm full structured decisioning suitable for autonomous agent branching. missing for 10: documented response schema/enum of decision/risk-reason codes, OpenAPI/JSON schema spec, independent confirmation of agent-consumable structure.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Veriff's API returns structured decision data via the session decision endpoint and decision webhooks, including approved/declined/resubmission reasons, plus separate webhooks for watchlist/PEP-sanctions and event progress signals that an automated flow can branch on programmatically (not just via UI). This is clearly machine-consumable (JSON webhook payloads, pollable REST endpoint, HMAC-verifiable), suitable for agentic decisioning rather than manual-only review — missing for 10: no explicit documented JSON schema/example payload for decision reason codes or risk-score granularity, and no third-party/independent confirmation of real-world branching use.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
+      "veriff-docs-9",
       "veriff-docs-18",
       "veriff-docs-28",
-      "veriff-docs-10",
-      "veriff-probe-2"
+      "veriff-docs-41",
+      "veriff-docs-49",
+      "veriff-docs-10"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "agent-runs-verification",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Veriff's API supports the core session lifecycle an agent would need — creating sessions, polling decisions, receiving webhooks, and triggering test-integration decisions — which covers create/poll/re-check style operations, but there is no evidence of an MCP server/surface, no scoped-credential model for agent-specific access (only HMAC shared-secret auth for whole integrations), and no explicit 'retrieve extracted data' endpoint documentation beyond decision/webhook payloads. missing for 10: MCP surface or agent-oriented interface, scoped/least-privilege credential support for agents, explicit extracted-data retrieval endpoint, independent confirmation of agent-driven usage.",
+    "rationale": "Veriff's API supports the core agentic loop — create a session (veriff-docs-6/31), poll the decision endpoint (veriff-docs-7), receive extracted/decision data via webhooks (veriff-docs-18, veriff-docs-41), and authenticate via HMAC/shared-secret (veriff-docs-5, veriff-docs-10, veriff-docs-42). Re-check/trigger-decision capability is only documented for test integrations (veriff-docs-9), not clearly for production re-checks, and there is no MCP server/surface anywhere in the docs, nor any concept of scoped/limited credentials tailored for agent access (only account-level HMAC secrets and admin portal logins per veriff-docs-47). missing for 10: MCP surface or agent-specific integration, scoped/limited-privilege credential mechanism, documented production-grade re-check/trigger endpoint.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
       "veriff-docs-9",
-      "veriff-docs-10",
       "veriff-docs-18",
+      "veriff-docs-41",
+      "veriff-docs-5",
+      "veriff-docs-10",
+      "veriff-docs-42",
       "veriff-probe-2"
     ]
   },
@@ -3401,22 +3406,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers identity verification APIs, webhooks, HMAC auth, manual review portal, and pricing add-ons, but nothing indicates AI-generated insights or suggestions surfaced to users from their data. This is a verification/fraud-check product, not an analytics/insight tool, and no such feature is documented.",
+    "rationale": "Veriff's evidence covers identity verification APIs, SDKs, webhooks, and manual review portal features, but there is no mention of AI-generated insights, analytics, or suggestions surfaced to users from their data.",
     "evidenceIds": []
   },
   {
     "productId": "veriff",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Veriff supports webhook-driven, event-based automation (decision webhooks fire automatically after processing, event webhooks report progress, watchlist screening webhooks) and API session polling, which enable background processing without manual intervention. However, there is no evidence of AI-native agent orchestration, scheduled/triggered automations, or an agent framework — this is standard webhook/API integration, not agentic automation tooling. Missing for 10: AI-agent-specific automation/orchestration features, scheduling or trigger-based workflow builders, and any evidence of autonomous decision-making beyond fixed webhook callbacks.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Veriff supports autonomous background automation via webhooks (session/event/decision webhooks that fire without polling) and a no-code Zapier integration explicitly built to 'automate workflows based on end-user verification decisions,' which lets non-developers set up background automations triggered by verification outcomes. However, there is no evidence of AI-agent-specific tooling, scheduled/triggered agent workflows, or an AI-native automation framework beyond generic webhooks/Zapier. Missing for 10: dedicated AI-agent orchestration hooks, evidence of autonomous multi-step agent workflows, and independent corroboration of the Zapier integration's real-world use.",
     "evidenceIds": [
+      "veriff-docs-43",
       "veriff-docs-18",
       "veriff-docs-27",
-      "veriff-docs-28",
-      "veriff-docs-7",
-      "veriff-docs-9"
+      "veriff-docs-41",
+      "veriff-docs-7"
     ]
   },
   {
@@ -3425,22 +3430,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff is an identity verification API/SDK platform, not an assistant-style product; there is no concept of a built-in AI assistant a user delegates tasks to. This axis is a category error for this product type.",
+    "rationale": "Veriff is an identity-verification platform, not an assistant or agent-hosting product; no evidence pack item mentions a built-in AI assistant for users to delegate tasks to, making this a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "veriff",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Veriff's API is callable end-to-end without any UI (create session, submit media, poll decision, receive webhooks) and test integrations let you trigger decisions programmatically for development without incurring paid usage, which supports scripted/automated testing pipelines. However, there is no explicit CLI, CI-integration guide, or documented automation/agent workflow — actual verification still requires real end-user media/liveness capture, which limits true headless automation. Missing for 10: explicit CI/CLI tooling, documented automated test pipelines, and headless-agent-oriented workflow examples.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Veriff exposes a full REST API (session creation, decision polling, webhooks with HMAC auth) that can be driven headlessly from scripts/CI rather than requiring the hosted SDK UI, and test integrations exist specifically for development that don't count toward paid usage and let you trigger decisions programmatically for automated testing. However there's no explicit CI/CD pipeline documentation, headless test-automation framework, or guidance for running verification flows unattended in a build pipeline — the core verification still requires end-user media capture.\nmissing for 10: explicit CI/CD integration guide, documented headless test-automation tooling, examples of scripted end-to-end runs without a human verifier.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
       "veriff-docs-9",
+      "veriff-docs-8",
+      "veriff-docs-10",
       "veriff-docs-17",
-      "veriff-docs-25"
+      "veriff-docs-32",
+      "veriff-docs-44"
     ]
   },
   {
@@ -3449,7 +3457,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff is an identity-verification API/SDK platform, not an AI agent or MCP client; plugging MCP servers into it is a category error for this product type, and no evidence shows any MCP-related capability.",
+    "rationale": "Veriff is an identity verification API/SDK platform, not an AI agent or MCP host; the evidence pack shows no MCP client or agentic tool-plugging capability, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3476,22 +3484,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff is an identity-verification API/SDK platform; no evidence of an official CLI tool for developers or AI-native workflows appears anywhere in docs, pricing, or probes. The axis is applicable since a dev-focused API platform could ship a CLI, but none is documented.",
-    "evidenceIds": []
+    "rationale": "Veriff's docs describe REST APIs, SDKs (web/native/React Native/Flutter), webhooks, Postman collection, and Zapier integration, but no official CLI tool is mentioned anywhere in the evidence pack.",
+    "evidenceIds": [
+      "veriff-docs-1",
+      "veriff-docs-2",
+      "veriff-docs-44",
+      "veriff-probe-1"
+    ]
   },
   {
     "productId": "veriff",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Veriff publishes a full public REST API (session creation, decision polling, webhooks, HMAC-signed auth) allowing programmatic driving of the verification flow without SDKs, per [veriff-docs-6][veriff-docs-7][veriff-docs-10][veriff-docs-17]. However, probes found no machine-readable OpenAPI/Swagger spec (404s) and there's no independent/hands-on corroboration of API usage. missing for 10: discoverable OpenAPI/swagger schema, third-party developer confirmation of API integration.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Veriff provides a comprehensive, well-documented public REST API (session creation, decision polling, HMAC-signed webhooks, Postman collection) that allows fully programmatic driving of verification flows without relying on the UI. missing for 10: no discoverable OpenAPI/swagger spec (probe returned 404s) and no independent third-party corroboration of API usage beyond vendor docs.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
       "veriff-docs-10",
-      "veriff-docs-17",
-      "veriff-docs-5",
+      "veriff-docs-42",
+      "veriff-docs-44",
       "veriff-probe-2"
     ]
   },
@@ -3501,10 +3514,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff's API auth relies on a single shared secret key/HMAC signature and IP allowlisting, not scoped or least-privilege credentials for individual agents; no evidence of role-based API keys, scopes, or token issuance for delegated/agentic use.",
+    "rationale": "Veriff's API uses a single shared API key plus HMAC signature and IP allowlists for authentication; there is no evidence of scoped, least-privilege, or per-agent API credential issuance (e.g., OAuth scopes, role-based tokens, or granular permission grants).",
     "evidenceIds": [
       "veriff-docs-5",
-      "veriff-docs-10"
+      "veriff-docs-10",
+      "veriff-docs-42"
     ]
   },
   {
@@ -3513,16 +3527,17 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Veriff documents official SDKs across web, iOS, Android, and React Native, plus REST APIs, webhooks, and HMAC-signed authentication, giving developers multiple first-party integration paths (veriff-docs-2, veriff-docs-19, veriff-docs-21, veriff-docs-22, veriff-docs-23, veriff-docs-24, veriff-docs-10). Missing for 10: no discoverable OpenAPI/machine-readable spec (probe for openapi.json returned 404s) and no independent/hands-on developer corroboration beyond first-party docs.",
+    "rationale": "Veriff provides extensive official SDK documentation across web, iOS, Android, React Native, Flutter, and JS SDKs, with version requirements, migration guides, and customization options, all documented in first-party devdocs. However missing for 10: independent/hands-on corroboration of SDK reliability, explicit server-side/backend language SDKs (e.g., Python, Node.js) beyond the JS session-URL SDK, and any AI-agent-specific tooling or examples.",
     "evidenceIds": [
       "veriff-docs-2",
       "veriff-docs-19",
-      "veriff-docs-21",
-      "veriff-docs-22",
-      "veriff-docs-23",
       "veriff-docs-24",
-      "veriff-docs-10",
-      "veriff-probe-2"
+      "veriff-docs-34",
+      "veriff-docs-35",
+      "veriff-docs-37",
+      "veriff-docs-38",
+      "veriff-docs-39",
+      "veriff-docs-50"
     ]
   },
   {
@@ -3531,14 +3546,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Veriff provides well-documented webhook subscriptions for decision events, progress events, and watchlist screening, with HMAC signature verification for security. missing for 10: independent/hands-on corroboration of webhook reliability, no explicit event-type catalog or subscription management API shown.",
+    "rationale": "Veriff has extensive documented webhook support: decision webhooks, event (progress) webhooks, watchlist-screening webhooks, and user-defined-status webhooks, all secured via HMAC signatures, allowing subscribers (including AI-native agents) to receive real-time events instead of polling. Missing for 10: no explicit mention of AI-agent-specific consumption patterns or independent/hands-on third-party corroboration beyond vendor docs.",
     "evidenceIds": [
       "veriff-docs-3",
       "veriff-docs-18",
       "veriff-docs-27",
-      "veriff-docs-28",
-      "veriff-docs-10",
-      "veriff-docs-5"
+      "veriff-docs-41",
+      "veriff-docs-48",
+      "veriff-docs-49",
+      "veriff-docs-42",
+      "veriff-docs-10"
     ]
   },
   {
@@ -3546,11 +3563,12 @@
     "storyId": "aml-watchlist-screening",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Veriff offers a dedicated PEP & Sanctions add-on check priced alongside identity verification, a watchlist-screening webhook that returns PEP, sanctions, adverse-media, and ongoing-monitoring results, and a unified Customer Portal for manual review of sessions — all within the same API/vendor pipeline used for identity verification. This confirms one-vendor, one-API, one-review-surface screening as part of the same flow. Missing for 10: independent/third-party confirmation of watchlist accuracy or coverage, and explicit documentation on how PEP/sanctions results integrate into the same decision object as identity verification (vs. separate webhook).",
+    "confidence": "medium",
+    "rationale": "Veriff offers PEP & Sanctions plus adverse media/ongoing monitoring checks as part of the same platform, with a dedicated watchlist-screening webhook returning combined results, and it's priced as an add-on within the same API/portal (pricing, webhook docs). Review of these results happens in the same Customer Portal used for identity verification, giving one vendor/one review surface. Missing for 10: explicit documentation showing PEP/sanctions data surfaced in the same decision object/API response alongside identity verdicts, and independent/hands-on confirmation of combined review UX.",
     "evidenceIds": [
       "veriff-docs-15",
       "veriff-docs-28",
+      "veriff-docs-49",
       "veriff-docs-12",
       "veriff-docs-13",
       "veriff-docs-14"
@@ -3559,14 +3577,15 @@
   {
     "productId": "veriff",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows API endpoint docs (sessions, decisions, webhooks) but no interactive API reference or runnable examples; a probe explicitly found no OpenAPI/Swagger spec exposed. No mention of tools like Postman collections, sandbox consoles, or try-it-now UI.",
+    "rationale": "Veriff provides a Postman collection to test its Public API and demo flows, offering some runnable-example capability, but there is no confirmed interactive in-docs API reference (e.g., Swagger/OpenAPI-style try-it console) — the probe for openapi.json/swagger.json returned 404s. missing for 10: an embedded interactive API console with live 'try it' calls, and a discoverable OpenAPI spec confirming API-native structured access.",
     "evidenceIds": [
+      "veriff-docs-44",
+      "veriff-docs-45",
       "veriff-probe-2",
-      "veriff-docs-6",
-      "veriff-docs-7"
+      "veriff-probe-1"
     ]
   },
   {
@@ -3575,36 +3594,38 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger spec files at standard paths returned 404 for all candidates, and no documentation references a downloadable machine-readable API spec; only an llms.txt knowledge base index exists.",
+    "rationale": "There is a Postman collection and extensive API docs, but no evidence of a downloadable OpenAPI/Swagger spec — probe explicitly found all standard OpenAPI paths returning 404.",
     "evidenceIds": [
       "veriff-probe-2",
-      "veriff-probe-1"
+      "veriff-docs-44"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Veriff provides dedicated test integrations, automatically created on onboarding, where verification sessions do not count toward paid usage and decisions can be manually triggered, enabling sandbox-style testing without touching production data. Missing for 10: no explicit mention of a fully isolated sandbox base URL/environment separate from production, no independent/hands-on confirmation of test-vs-production data isolation, and no details on how synthetic/test documents are supplied.",
+    "rationale": "Veriff provides test integrations that are auto-created on onboarding, don't count toward paid usage, and allow triggering decisions without real verifications—effectively a sandbox mode—plus a free 15-day trial and Postman collection for testing. However, this is aimed at human developers configuring integrations, not framed as an AI-agent-friendly sandbox, and there's no explicit 'sandbox environment' branding or isolated test data guarantees beyond usage exemption. Missing for 10: explicit sandbox/staging environment documentation distinct from production, confirmation that test data is fully isolated from production data stores, and any AI-native testing framing.",
     "evidenceIds": [
       "veriff-docs-8",
       "veriff-docs-9",
       "veriff-docs-25",
-      "veriff-docs-16"
+      "veriff-docs-44",
+      "veriff-docs-30"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Docs reference a 'v1' API (e.g. /v1/sessions) implying some versioning, but there is no evidence of a documented deprecation policy, versioning changelog, or migration guidance anywhere in the pack, and an OpenAPI/spec probe returned 404s.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs show API endpoints under a 'v1' path and an SDK migration guide (Android 6.x→9.0.0), implying some versioning practice, but there is no explicit documented deprecation policy, changelog, or version-sunset timeline for the public API, and OpenAPI/spec probes returned 404s. missing for 10: explicit API deprecation/versioning policy document, changelog of breaking changes, discoverable OpenAPI spec with version history.",
     "evidenceIds": [
       "veriff-docs-6",
-      "veriff-docs-7",
+      "veriff-docs-31",
+      "veriff-docs-50",
       "veriff-probe-2"
     ]
   },
@@ -3612,27 +3633,28 @@
     "productId": "veriff",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 2,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Veriff's API is built around creating and polling individual verification sessions (docs-6, docs-7), with no documented bulk/batch API endpoint for processing many items in one call. The only mention of batch capability is 'Batch upload tests' that are ad-hoc, negotiated with the onboarding team, and 'very use case specific' rather than a standard bulk feature. Missing for 10: a documented bulk/batch API endpoint, SDK support for multi-item submission, and evidence of automated large-scale batch processing.",
+    "rationale": "Veriff's API supports creating individual verification sessions and polling decisions, and there's a Zapier integration for workflow automation, but there's no documented bulk/batch API for processing many verification items at once — batch upload is explicitly described as a special, ad-hoc arrangement negotiated with the onboarding team, not a general self-serve bulk operation. missing for 10: a documented bulk/batch API endpoint, evidence of programmatic multi-item operations, and confirmation that batch processing is generally available rather than case-by-case negotiated.",
     "evidenceIds": [
-      "veriff-docs-16",
       "veriff-docs-6",
-      "veriff-docs-7"
+      "veriff-docs-16",
+      "veriff-docs-43"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Veriff offers webhooks (decision, event, watchlist-screening) that fire on verification-related events, giving a basic event-trigger mechanism, but there is no evidence of a rules engine where a user can define conditional logic (e.g., 'if X then trigger Y') inside Veriff itself — automation logic must be built entirely on the receiving end. Missing for 10: in-platform rule/condition builder, support for chained or conditional actions, and any UI/API for defining custom triggers beyond simple webhook subscription.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Veriff supports event-driven automation via webhooks (session/event/decision/watchlist webhooks) and an explicit no-code Zapier integration described as enabling users to 'automate workflows based on end-user verification decisions,' which lets users define trigger-action rules across apps without custom code. However, there's no evidence of a native rules/conditions engine inside Veriff itself — automation depends on webhooks requiring custom backend logic or a third-party tool (Zapier) rather than an in-product rule builder. Missing for 10: native conditional rule engine within Veriff's own platform, documentation of rule complexity/logic operators, and independent evidence of real-world automation workflows built this way.",
     "evidenceIds": [
-      "veriff-docs-3",
+      "veriff-docs-43",
       "veriff-docs-18",
       "veriff-docs-27",
-      "veriff-docs-28"
+      "veriff-docs-41",
+      "veriff-docs-49"
     ]
   },
   {
@@ -3650,7 +3672,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff is an identity verification API/SDK product, not an automation/workflow-builder tool; there is no concept of 'automations' with versioning, review, or rollback in its product category.",
+    "rationale": "Veriff is an identity verification API/SDK service, not an automation/workflow platform with versionable automations; there is no concept of 'automations' to version, review, or roll back in this product category — this is a wrong-axis story for an IDV vendor.",
     "evidenceIds": []
   },
   {
@@ -3659,7 +3681,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers API/SDK integration, webhooks, liveness detection, and pricing, but there is no documentation addressing GDPR legal bases, BIPA or other US biometric statutes, data retention periods, or consent language for legal review.",
+    "rationale": "The evidence pack contains only technical/API/SDK documentation (session creation, webhooks, HMAC auth, SDK guides) and biometric liveness feature descriptions, but nothing about GDPR legal bases, BIPA or other US biometric statutes, data retention periods, or required consent language for legal review.",
     "evidenceIds": []
   },
   {
@@ -3667,8 +3689,8 @@
     "storyId": "conversion-analytics",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack only covers API/SDK integration, webhooks, manual review pages, and PDF export — there is no mention of funnel analytics, pass-rate dashboards, drop-off tracking, or completion-time-by-country/document reporting. This is a fair capability to expect from a verification-orchestration platform, but no evidence shows Veriff delivers it.",
+    "confidence": "medium",
+    "rationale": "Evidence covers session APIs, SDKs, webhooks, manual review portal, and PDF export of individual session details, but there is no mention of aggregate funnel analytics, pass-rate dashboards, drop-off tracking, or completion-time breakdowns by country/document type.",
     "evidenceIds": []
   },
   {
@@ -3677,7 +3699,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers session creation, webhooks, SDKs, and manual review, but contains no mention of documented data retention windows, a redaction/deletion API, or any PII-scrubbing-on-demand capability.",
+    "rationale": "The evidence pack covers session creation, SDKs, webhooks, HMAC security, and manual review portal features, but contains no mention of documented data retention windows, a redaction/deletion API, or any PII-scrubbing mechanism.",
     "evidenceIds": []
   },
   {
@@ -3686,12 +3708,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Veriff's evidence pack centers on document scanning, biometric liveness, and SDK/API flows for capturing ID documents and selfies; the only database-style check mentioned is PEP & Sanctions/adverse-media screening, which is AML watchlist screening, not a no-document identity match against SSN, national registries, or credit-header data. No evidence describes a documentless identity verification mode.",
+    "rationale": "The evidence pack shows Veriff's core flow is document/biometric-centric (ID scans, liveness, NFC chip reads) plus PEP/Sanctions and watchlist screening webhooks, but there is no mention of SSN verification, national registry lookups, or credit-header database checks as an alternative to document scanning. No API endpoint or docs describe a no-document, database-only identity verification flow.",
     "evidenceIds": [
       "veriff-docs-11",
       "veriff-docs-15",
       "veriff-docs-28",
-      "veriff-docs-19"
+      "veriff-docs-49"
     ]
   },
   {
@@ -3699,8 +3721,8 @@
     "storyId": "deepfake-injection-defense",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only offers a generic marketing-style statement that Veriff's 'Biometric Liveness' solution 'ensures biometric data is from a live person' and 'reduces fraud risk' — no named detection capabilities (e.g., anti-spoofing models, deepfake detection, camera-injection detection, presentation attack detection) are documented. missing for 10: named defenses against AI-generated faces, deepfake detection specifics, camera-injection/virtual-camera attack detection, any technical description of the liveness detection methodology.",
+    "confidence": "high",
+    "rationale": "The only relevant evidence (veriff-docs-11/29) is a generic marketing-style claim that biometric liveness 'ensures data is from a live person, significantly reducing fraud risk' — there is no naming of specific defenses against deepfakes, AI-generated faces, or camera-injection attacks, no detection model names, and no technical documentation of how these threats are addressed.",
     "evidenceIds": [
       "veriff-docs-11",
       "veriff-docs-29"
@@ -3712,7 +3734,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers API/SDK integration, webhooks, and biometric liveness, but contains no mention of a published list of supported countries or document types (passports, national IDs, driver licenses, residence permits) that Veriff verifies.",
+    "rationale": "The evidence pack covers Veriff's API, SDKs, webhooks, and portal mechanics but contains no mention of a published country/document-type coverage list (passports, national IDs, driver licenses, residence permits). This axis clearly applies to an identity-verification product, but no supporting evidence is present.",
     "evidenceIds": []
   },
   {
@@ -3720,16 +3742,17 @@
     "storyId": "hosted-verification-flow",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs show the full server-side session creation API (v1/sessions), SDK/web/native flows and InContext embedding for redirect/embed, and webhook/decision-polling mechanisms to read results — covering the entire create→redirect/embed→result loop without custom capture UI. Missing for 10: independent/hands-on developer corroboration and an explicit end-to-end code sample showing hosted-flow URL redirect alongside embed.",
+    "confidence": "high",
+    "rationale": "Docs cover the full server-side flow: create a session via POST /v1/sessions, embed/redirect using web/native SDKs or hosted InContext flow, and read results via decision webhook or GET /v1/sessions/{id}/decision, with test integrations for dev. Biometric liveness (selfie) is explicitly available via API, web flow, and SDKs, confirming document+selfie capture without building custom capture UI. Missing for 10: independent/hands-on developer corroboration beyond vendor docs, and no explicit end-to-end code sample tying session creation to redirect/embed to result-reading in one place.",
     "evidenceIds": [
       "veriff-docs-6",
+      "veriff-docs-7",
       "veriff-docs-2",
       "veriff-docs-19",
       "veriff-docs-21",
-      "veriff-docs-7",
       "veriff-docs-18",
-      "veriff-docs-3"
+      "veriff-docs-29",
+      "veriff-docs-25"
     ]
   },
   {
@@ -3738,7 +3761,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence pack covers only individual identity verification (KYC), biometric liveness, SDKs, webhooks, and PEP/sanctions checks — nothing about business registry lookups, UBO (ultimate beneficial owner) identification, or a documented KYB flow that chains into KYC for owners.",
+    "rationale": "Evidence pack is entirely focused on individual identity verification (KYC): sessions, SDKs, webhooks, biometric liveness, PEP/sanctions screening for end-users. There is no mention of business registry lookups, UBO identification, or a KYB flow chaining into KYC of owners.",
     "evidenceIds": []
   },
   {
@@ -3747,14 +3770,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Veriff documents a manual review workflow via the Verifications page in the Customer Portal, decision triggering, decision webhooks, and PDF export of session details, indicating a review queue with decision feedback into the record. However, the evidence doesn't explicitly confirm the reviewer UI surfaces the full evidence bundle (document images + extracted fields + check results) together, nor detail how reviewer overrides propagate back to downstream systems beyond the decision webhook. Missing for 10: explicit documentation of the review UI showing document images/extracted fields/check results side-by-side, and confirmation that manual reviewer decisions update the stored verification record accessible via API.",
+    "rationale": "Docs confirm a manual review queue (Verifications page in Customer Portal), decision webhooks, and user-defined-status webhooks that feed reviewer decisions back into the record, but there's no explicit description of the full evidence bundle (document images + extracted fields + check results) being presented together in the review UI, nor independent/hands-on corroboration of the workflow. missing for 10: documentation of the review UI showing combined document images, extracted fields, and check results in one view, and third-party/hands-on confirmation of the manual review + feedback loop.",
     "evidenceIds": [
       "veriff-docs-12",
       "veriff-docs-13",
       "veriff-docs-26",
-      "veriff-docs-9",
-      "veriff-docs-18",
-      "veriff-docs-14"
+      "veriff-docs-46",
+      "veriff-docs-48",
+      "veriff-docs-18"
     ]
   },
   {
@@ -3763,13 +3786,17 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence confirms native iOS, Android, web, and React Native SDKs with a built-in verification flow and branding customization, supporting the core SDK-based capture story, but nothing in the pack specifically documents glare/blur/edge-detection coaching guidance during capture. missing for 10: explicit documentation of glare/blur detection, edge detection, or first-try photo quality coaching UI/UX in the SDKs.",
+    "rationale": "Docs confirm native iOS, Android, React Native, Flutter, and web/JS SDKs with platform version requirements and a built-in verification flow (sdk-guide, incontext-sdk, ios/android/react-native/flutter guides), but none of the evidence explicitly describes glare, blur, or edge-detection coaching during document capture. missing for 10: explicit documentation of glare/blur detection, edge detection, or first-try capture coaching UX, independent/hands-on confirmation of capture guidance quality.",
     "evidenceIds": [
-      "veriff-docs-2",
       "veriff-docs-19",
       "veriff-docs-20",
       "veriff-docs-21",
-      "veriff-docs-24"
+      "veriff-docs-24",
+      "veriff-docs-34",
+      "veriff-docs-35",
+      "veriff-docs-37",
+      "veriff-docs-38",
+      "veriff-docs-39"
     ]
   },
   {
@@ -3778,24 +3805,29 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Veriff docs mention a 'No-code identity verification solution' and a Customer Portal for manual review, implying some no-engineering path, but there is no concrete evidence of a shareable verification link or QR code generation feature for one-off use cases — the bulk of the documentation focuses on API/SDK integration requiring engineering setup. missing for 10: explicit link/QR code generation feature, portal workflow for creating and sending one-off verification links, confirmation this requires no API integration.",
+    "rationale": "Veriff explicitly advertises a 'No-code identity verification solution' (veriff-docs-4) and a Customer Portal for manual review/session management (veriff-docs-12, veriff-docs-13, veriff-docs-26, veriff-docs-46, veriff-docs-47), plus a no-code Zapier integration for automating decisions (veriff-docs-43), suggesting non-engineering usage is possible. However, none of the evidence explicitly documents an ops lead generating a shareable verification link or QR code from the portal for a one-off individual without API/SDK integration — most flows described (sessions API, SDKs, webhooks) require engineering setup. Missing for 10: explicit portal feature/screenshot showing 'create verification link/QR code' workflow, confirmation that no API key or dev work is needed to send a one-off link.",
     "evidenceIds": [
       "veriff-docs-4",
       "veriff-docs-12",
-      "veriff-docs-13"
+      "veriff-docs-13",
+      "veriff-docs-26",
+      "veriff-docs-43",
+      "veriff-docs-46",
+      "veriff-docs-47"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "ongoing-monitoring",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Veriff explicitly offers an 'ongoing monitoring (OGM)' service alongside PEP/Sanctions and adverse-media checks, with a dedicated watchlist-screening webhook that pushes updates so ops can act on new events rather than a one-time check. Missing for 10: independent/hands-on confirmation of re-screening cadence or triggers, and portal UI detail for managing raised events beyond the webhook payload description.",
+    "rationale": "Veriff's watchlist-screening-webhook explicitly returns data from PEP & Sanctions, adverse media, and 'ongoing monitoring (OGM)' services, indicating previously verified users are continuously re-screened and events pushed to the ops team, and PEP & Sanctions checks are also offered as an add-on. However missing for 10: independent/hands-on confirmation of re-screening cadence or configuration options, detail on how watchlist changes are surfaced/actioned in the Customer Portal for ongoing monitoring specifically, and any customer testimonial validating continuous monitoring in production.",
     "evidenceIds": [
       "veriff-docs-28",
+      "veriff-docs-49",
       "veriff-docs-15",
-      "veriff-docs-27"
+      "veriff-docs-41"
     ]
   },
   {
@@ -3804,15 +3836,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Veriff's API supports core verification flows (create sessions, decisions, webhooks, HMAC auth) fully documented, but manual review of verification sessions is explicitly UI-only via the Customer Portal (docs-12, docs-13, docs-26) with no documented API equivalent, and no OpenAPI/swagger spec is discoverable (probe-2 returns 404s), suggesting incomplete API parity with UI capabilities like PDF export and manual review. missing for 10: API equivalent for manual review/decision overrides, discoverable OpenAPI spec, API-driven PDF export confirmation.",
+    "rationale": "The API supports the core verification workflow (creating sessions, polling/webhook decisions, HMAC auth) and even biometric liveness is 'available via API, web flow, and native SDKs' [veriff-docs-29], but several UI-exclusive capabilities—manual review/decision management, team administration, and PDF export—are documented as only available through the Customer Portal [veriff-docs-12, veriff-docs-13, veriff-docs-26, veriff-docs-47, veriff-docs-14], with no corresponding API endpoints mentioned. Missing for 10: API/programmatic access to manual review actions, team/user management endpoints, and PDF export equivalent.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
+      "veriff-docs-29",
       "veriff-docs-12",
       "veriff-docs-13",
       "veriff-docs-26",
-      "veriff-docs-14",
-      "veriff-probe-2"
+      "veriff-docs-47",
+      "veriff-docs-14"
     ]
   },
   {
@@ -3821,7 +3854,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Veriff's docs mention exporting verification session details to PDF for business customers reviewing cases, but there is no evidence of an end-user-facing mechanism to export all personal/identity data in open, machine-readable formats (JSON/CSV) and delete one's account. The axis applies since Veriff stores significant PII/biometric data, but no comprehensive data-portability feature is documented.",
+    "rationale": "The only export-related evidence is exporting verification session details to PDF (a closed, non-machine-readable format) for business customers reviewing sessions, not an end-user data export/portability feature in open formats (e.g., JSON/CSV) with account deletion. No documentation shows an end-user-initiated full data export or data portability workflow.",
     "evidenceIds": [
       "veriff-docs-14"
     ]
@@ -3841,7 +3874,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Veriff is a cloud-based identity verification SaaS with no self-hosting option; self-hosting is a category error for this type of hosted verification service.",
+    "rationale": "Veriff is a cloud-hosted identity verification SaaS with biometric/document checks and compliance services; self-hosting the core verification engine is not a plausible axis for this product category, and no evidence suggests any on-prem/self-host offering.",
     "evidenceIds": []
   },
   {
@@ -3850,7 +3883,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers document/biometric verification, PEP & sanctions checks, and webhooks, but there is no mention of phone/email risk checks, carrier lookups, address history, or device fingerprinting as documented check types.",
+    "rationale": "Evidence covers document/biometric verification, PEP & sanctions checks, and webhooks, but there is no mention of phone/email verification, carrier checks, address history, or device fingerprinting as documented check types.",
     "evidenceIds": []
   },
   {
@@ -3858,8 +3891,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or configurable data location for verification data; documentation covers API/SDK integration, webhooks, and compliance checks only.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data location controls for end-users or customers; the docs cover integration, SDKs, webhooks, and verification flows only.",
     "evidenceIds": []
   },
   {
@@ -3867,8 +3900,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out settings, or any AI-model-training policy for Veriff; the docs focus on identity verification API/SDK usage, webhooks, and biometric liveness with no mention of AI-native data controls.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses AI-training data opt-out or any data-use-for-model-training policy; Veriff's docs focus on integration, SDKs, webhooks, and verification flows with no privacy controls regarding AI training data.",
     "evidenceIds": []
   },
   {
@@ -3876,8 +3909,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers session creation, webhooks, SDKs, and manual review in the Customer Portal, but contains no documentation of data retention policies, deletion APIs, or end-user data control mechanisms. missing for 10: retention policy documentation, data deletion/erasure API or portal control, configurable retention periods.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Veriff's API/SDK integration, webhook, and verification workflows, but contains no documentation on data retention periods, deletion mechanisms, or user-controlled data lifecycle policies.",
     "evidenceIds": []
   },
   {
@@ -3895,7 +3928,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers biometric liveness (proving a live person), session/webhook APIs, and watchlist/PEP screening, but nothing describes duplicate identity detection or cross-verification face/document matching to flag repeat identities under different names.",
+    "rationale": "Evidence covers biometric liveness detection (live-person check), watchlist/PEP screening, and manual review tooling, but nothing describes cross-verification duplicate/repeat identity detection (matching the same face or document under different names across sessions).",
     "evidenceIds": []
   },
   {
@@ -3903,8 +3936,8 @@
     "storyId": "reusable-verifications",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers session creation, decisions, webhooks, SDKs, and manual review, but there is no documentation of reusable identity/verification credentials, cross-session or cross-product recognition, or any mechanism to reuse a prior passed check instead of re-running verification.",
+    "confidence": "medium",
+    "rationale": "Evidence covers session creation, decisions, webhooks, SDKs, and manual review, but there is no documentation of a reuse/recognition mechanism (e.g., identity token reuse, cross-session/cross-product recognition of a prior passed check) that would avoid a full re-verification run.",
     "evidenceIds": []
   },
   {
@@ -3939,13 +3972,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs clearly cover creating a session (v1sessions.md), polling GET /v1/sessions/{id}/decision for status/results, and webhooks for decision/event updates, but there is no evidence in the pack of documented endpoints to retrieve captured media or to cancel/redact a session via API. Missing for 10: documented media-retrieval endpoint, documented cancel/redact endpoint.",
+    "rationale": "Docs clearly cover creating a session (v1sessions), polling decision status, and webhooks for events/decisions, giving strong support for the create-and-status portion of the lifecycle. However, there is no documented API endpoint for retrieving captured media, nor for cancelling or redacting a session — those actions only appear tied to the manual Customer Portal UI, not the API. missing for 10: API endpoint for retrieving captured media, API endpoint for session cancellation, API endpoint for data redaction/deletion, independent corroboration of full lifecycle via API only.",
     "evidenceIds": [
       "veriff-docs-6",
+      "veriff-docs-31",
       "veriff-docs-7",
       "veriff-docs-18",
-      "veriff-docs-27",
-      "veriff-docs-5"
+      "veriff-docs-41",
+      "veriff-docs-10",
+      "veriff-docs-13",
+      "veriff-docs-26"
     ]
   },
   {
@@ -3953,29 +3989,31 @@
     "storyId": "structured-data-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes session creation, decision webhooks/polling, HMAC auth, and SDK flows, but nowhere does it document that the /decision endpoint or webhook payload returns structured extracted fields (name, DOB, document number, address, expiry) — the closest reference (veriff-docs-7) only mentions a decision status endpoint. No evidence of a documented response schema containing these fields.",
+    "confidence": "low",
+    "rationale": "The evidence pack shows session creation, decision webhooks, and webhook types (event, watchlist, user-defined statuses) but no documentation of an endpoint or webhook payload that returns structured extracted document fields (name, DOB, document number, address, expiry) — only pass/fail-type decision data is referenced.",
     "evidenceIds": [
       "veriff-docs-6",
       "veriff-docs-7",
       "veriff-docs-18",
-      "veriff-docs-27"
+      "veriff-docs-41"
     ]
   },
   {
     "productId": "veriff",
     "storyId": "verification-webhooks",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Veriff provides signed decision and event webhooks (HMAC signature headers) covering decision outcomes and progress events, and also polling as a secondary option, but the evidence doesn't explicitly enumerate all lifecycle states like 'created', 'processing', 'requires-input' as distinct webhook event types. missing for 10: explicit documentation of each named lifecycle state (created/processing/requires-input) as webhook payload values, independent/hands-on confirmation of webhook reliability and signature verification in practice.",
+    "rationale": "Veriff docs confirm signed webhooks (HMAC signature headers) with an event webhook covering verification progress ('created', 'processing'-type events) and a decision webhook for final verified/declined outcomes, explicitly framed as an alternative to polling. However, the exact lifecycle state names in the story (created, processing, verified, requires-input) aren't explicitly enumerated in the evidence, and the event webhook is described as optional rather than a full guaranteed lifecycle stream. Missing for 10: explicit documentation of all named lifecycle states (created/processing/requires-input) as distinct webhook payload values, and independent/hands-on confirmation of webhook reliability.",
     "evidenceIds": [
       "veriff-docs-3",
       "veriff-docs-5",
       "veriff-docs-10",
       "veriff-docs-18",
       "veriff-docs-27",
-      "veriff-docs-28"
+      "veriff-docs-41",
+      "veriff-docs-42",
+      "veriff-docs-7"
     ]
   },
   {
@@ -3984,12 +4022,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Veriff advertises itself as a 'no-code identity verification solution' and offers a Customer Portal for manual review and verification management, suggesting some non-engineering configuration is possible, but there is no evidence detailing conditional-step logic, risk-based routing, country-specific requirement configuration, or template changes made without an engineering deploy. missing for 10: documented portal UI for conditional/risk-based routing rules, country-specific requirement configuration, template/flow editing without code, and independent confirmation these changes require no deploy.",
+    "rationale": "Docs mention Veriff as a 'no-code identity verification solution' and a no-code Zapier integration for post-decision workflow automation, but there is no evidence of a rules engine, conditional-step builder, risk-based routing, or country-specific requirement configuration accessible without engineering. missing for 10: documentation of conditional verification flows, risk-based routing rules, country-specific requirement configuration, and no-deploy template/flow editing in the Customer Portal.",
     "evidenceIds": [
       "veriff-docs-4",
-      "veriff-docs-12",
-      "veriff-docs-13",
-      "veriff-docs-26"
+      "veriff-docs-43"
     ]
   }
 ]
