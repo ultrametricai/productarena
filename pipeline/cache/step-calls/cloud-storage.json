@@ -1,6 +1,6 @@
 {
   "fund_005:n1:google-drive": {
-    "hash": "0e16d16c38982a4d3f59a4cc88fb4e337d063a5df858c835ceee0c53027ec289",
+    "hash": "9519368d8c833c36ee19218b034f43ee205bcf0a3f8711d2b6fe170917ac75fa",
     "calls": []
   },
   "fund_005:n1:onedrive": {
@@ -8,7 +8,7 @@
     "calls": []
   },
   "fund_005:n1:box": {
-    "hash": "97879618de7054ee1043a8d62ece46137fb10cd7de65f12d210e4d586c8ef3e6",
+    "hash": "bae649c571bb2a8ff002cf1bfae457ff8489914a750084a76ffbc0a789776c39",
     "calls": []
   },
   "fund_002:n2:dropbox": {
@@ -23,30 +23,30 @@
     ]
   },
   "fund_002:n2:box": {
-    "hash": "cfa0032aad74e4deda003fce0b09a3989a5b41d059e1016eeab5fd1dbf92ffc1",
+    "hash": "f031289adde76b41cd3b21a298f483662fb2b1c3fcb5ee3074458c86b5598da9",
     "calls": [
-      {
-        "method": "POST /2.0/files/{file_id}/versions",
-        "type": "rest",
-        "description": "Upload updated diligence documents as new file versions to refresh the data room",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
-      },
-      {
-        "method": "search_files",
-        "type": "mcp",
-        "description": "Agent searches Box data room content to locate outdated or missing diligence files",
-        "sourceUrl": "https://mcp.box.com/"
-      },
       {
         "method": "GET /2.0/search",
         "type": "rest",
-        "description": "Query full-text search to find existing documents needing refresh in the data room",
+        "description": "Search data room contents to locate outdated or missing diligence documents",
         "sourceUrl": "https://developer.box.com/guides/search/"
+      },
+      {
+        "method": "POST /2.0/files/{file_id}/content",
+        "type": "rest",
+        "description": "Upload new/updated versions of files into the data room",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "POST /2.0/metadata_instances/find_by_query",
+        "type": "rest",
+        "description": "Query metadata on files/folders to verify diligence completeness",
+        "sourceUrl": "https://developer.box.com/guides/metadata/"
       }
     ]
   },
   "legal_001:n6:box": {
-    "hash": "3f9030ec14815fd6b9747db89b9886a480405c9812909a1087226a45c1f2671d",
+    "hash": "670c3576bad8bc8f10cb5ecebf29cde474dccba298e4cad3edbf691c1531ac43",
     "calls": []
   },
   "legal_001:n6:dropbox": {
@@ -54,24 +54,24 @@
     "calls": []
   },
   "fund_002:n2:google-drive": {
-    "hash": "19da88986b6df69db4bb5d45d2fbe9c17118d4293548269ce9635ce67339650d",
+    "hash": "ab41d076ad0f4218b84e0971c9bfe99acc1466e0bc3ce0a55cc4a5fe9a72a932",
     "calls": [
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload new or updated diligence documents to the data room folder",
+        "description": "Upload new or updated diligence documents into the data room",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
-        "method": "GET /drive/v3/files",
+        "method": "PATCH /drive/v3/files/{fileId}",
         "type": "rest",
-        "description": "List existing files/folders to identify stale or missing diligence materials",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+        "description": "Update custom properties/metadata on a file to reflect refreshed diligence status",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
       },
       {
         "method": "POST /drive/v3/files/{fileId}/permissions",
         "type": "rest",
-        "description": "Update sharing permissions for investors accessing the refreshed data room",
+        "description": "Grant or update sharing permissions for diligence reviewers",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
       }
     ]
@@ -104,24 +104,24 @@
     ]
   },
   "legal_003:n6:dropbox": {
-    "hash": "f82d6a41060cdc8ae94f5f70f05423ac2b1b4fbbd58cbb8bb0c019bdf8e37d8d",
+    "hash": "00301d24ab03f213189289d0bc6fabfcd68d33e62f43ebdfb3ad71d19c9c5742",
     "calls": []
   },
   "legal_003:n6:box": {
-    "hash": "592f1cdc8af9b6be0402331267479a26517eb26dd2e6334eb56088d8b43c6d69",
+    "hash": "658badbaec1b9bc07b7dd35b71c503ed2cb1ea19cfa66e624a2f90d19ba15972",
     "calls": []
   },
   "legal_001:n6:onedrive": {
-    "hash": "29303a92d5d9bb09405874ca68423a386bd3c00eb12867095e282c4551f5551d",
+    "hash": "5a4877545ff2506f2776b052ede66eeeb56ed55fab535dec640f574989f973f2",
     "calls": [
       {
-        "method": "PUT /me/drive/items/{parent-id}:/{filename}:/content",
+        "method": "PUT /drive/items/{item-id}:/{filename}:/content",
         "type": "rest",
         "description": "Upload executed NDA file content to OneDrive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
       },
       {
-        "method": "POST /me/drive/items/{item-id}:/createUploadSession",
+        "method": "POST /drive/items/{item-id}:/{filename}:/createUploadSession",
         "type": "rest",
         "description": "Create resumable upload session for larger executed NDA file",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
@@ -129,13 +129,19 @@
     ]
   },
   "legal_003:n6:onedrive": {
-    "hash": "b45f907adb4313e91e3bed988ad1cf8e8272c665bea3a0dddc5ec63552a80838",
+    "hash": "52e6fe1a4bbc74cc48d258e396b89ce4947856651a90b61ca443cb4752b0443e",
     "calls": [
       {
-        "method": "PUT /drives/{drive-id}/items/{item-id}/content",
+        "method": "PUT /me/drive/items/{item-id}/content",
         "type": "rest",
-        "description": "Upload executed IPIA copy content to a file in OneDrive",
+        "description": "Upload signed executed PIIA copy contents to OneDrive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /me/drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session for larger signed PIIA files",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
       }
     ]
   },
@@ -151,44 +157,50 @@
     ]
   },
   "legal_001:n6:google-drive": {
-    "hash": "cb71e6b4e432d0c7243d23d5a7457f23d3b62a83465c10f8eed196c266fef337",
+    "hash": "ca2c2bfa7687857de0cab2a0bae4dcd69c3d03ad37ec70873849071e9859442a",
     "calls": [
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload executed NDA file to Drive (simple upload)",
+        "description": "Upload the executed NDA file content to Drive",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
         "method": "POST /upload/drive/v3/files?uploadType=resumable",
         "type": "rest",
-        "description": "Resumable upload for larger executed NDA file",
+        "description": "Resumable upload of the executed NDA file for reliability on larger files",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search files to confirm the executed NDA copy was filed",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
       }
     ]
   },
   "legal_003:n6:google-drive": {
-    "hash": "19463698db27b34e0da4750cca84f450a4705ab59a20ba129a8f9a6028999b6e",
+    "hash": "e980788667f80052ff1854a46f69ef4215db96f19154ad1562d7551ffd4a41a2",
     "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
-        "type": "rest",
-        "description": "Simple upload of a small executed/signed file into Drive",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
       {
         "method": "POST /upload/drive/v3/files?uploadType=resumable",
         "type": "rest",
-        "description": "Resumable upload of larger executed copies into Drive",
+        "description": "Upload signed executed IP assignment copy as a file (resumable upload)",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload small signed executed IP assignment file without metadata",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       }
     ]
   },
   "tax_001:n5:dropbox": {
-    "hash": "8b8ef376d04c0a3dd06635e25eec45c28f4c5913955e842c40a48e49efc38658",
+    "hash": "482dfe6312be873f1c527326bd0805a684c705ce79e144cf788a1153fc165798",
     "calls": [
       {
-        "method": "dbx.filesUpload({ path, contents })",
+        "method": "dbx.filesUpload({path, contents})",
         "type": "sdk",
         "description": "Upload the confirmation receipt file to Dropbox storage",
         "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
@@ -196,12 +208,12 @@
     ]
   },
   "tax_001:n5:box": {
-    "hash": "d289f67cc5f29974ede23a8c42dfc9194d1c9e0b58e034cd87e527ae25c91fae",
+    "hash": "1104761e3cfeb2defcccd1d81bd8824b63a2d62d0e4c5857110a14734e5c9850",
     "calls": [
       {
         "method": "POST /files/content",
         "type": "rest",
-        "description": "Upload the franchise tax confirmation receipt file to Box",
+        "description": "Upload confirmation receipt file to Box for storage",
         "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
       }
     ]
@@ -260,7 +272,7 @@
     "calls": []
   },
   "qs_015:n1:box": {
-    "hash": "c5c4894868d578876e10cfaee166ec09397566276091d84c6afc7814f10d91d4",
+    "hash": "f7718639b738b9c88403af4335f06f92cd7a4057698aa51e138f7a7219f32c89",
     "calls": []
   },
   "tax_002:n8:onedrive": {
@@ -287,34 +299,34 @@
     ]
   },
   "qs_015:n1:dropbox": {
-    "hash": "225b5a37bc7582ef70f6976f0ec751cbb98fa63b63f2dac5c3eaabf0b675ddbf",
+    "hash": "b4447d2c2f93ee53988789dc3997f1f9f8566f3d71aecefbc8e08aba91f7cddc",
     "calls": []
   },
   "tax_002:n8:box": {
-    "hash": "272e8d749461fc2ddcb1525449eed8704f8312e8c831db28b14f83cf60bf18cc",
-    "calls": [
-      {
-        "method": "POST /chunked_uploads",
-        "type": "rest",
-        "description": "Upload the tax return file copy to Box for storage as a record",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
-      }
-    ]
+    "hash": "ab6906a83779611a8f7f6ad898ffa51032c5e0dc9038ba30cbcddb74935108c2",
+    "calls": []
   },
   "ops_004:n4:onedrive": {
-    "hash": "7443527a5fac9417692fd20ee76956f001ea655f4aae4d05c782ccfaedaf2310",
+    "hash": "a46b491d17615c9b79df207dfa12354961204abc263cd6b982980a822aa1fa3b",
     "calls": []
   },
   "ops_004:n4:google-drive": {
-    "hash": "864238a70297dbbb33769cb8e05fbf2df26174bfa6deb814e63e88b794286045",
+    "hash": "7f84711c32c60a0ab948f286336c7cec1dbba37948506144051d0329c96222eb",
     "calls": []
   },
   "ops_004:n4:dropbox": {
-    "hash": "d892a0c4b40f7da82b76866334e8a846bfc472b12c1e0d76680c9940ccd4272f",
-    "calls": []
+    "hash": "56690176654de14fe18ef6ed606fe3c9b5e3dd70226412ffd5ce93e64c978c6d",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({path: ''})",
+        "type": "sdk",
+        "description": "List folder contents to set up and verify shared drive/folder structure",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
   },
   "ops_004:n4:box": {
-    "hash": "80ab278e39e03b5464e1b5d8e588ebee712e38716c9c0af3c036e00e9553292d",
+    "hash": "4da2b1aa6a342e012f6de76d5048022dc8347d97d72e7a24996dfb7b7791b9aa",
     "calls": []
   },
   "comp_011:n5:dropbox": {

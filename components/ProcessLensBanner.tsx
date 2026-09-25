@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { lensProcessSummary, useLensUrlSync, useProcessLens } from '@/lib/processLens'
+import { loginUrl, useSession } from '@/lib/session'
+import { SITE_URL } from '@/lib/site'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 
 // Process-level lens banner above the DAG (founder 2026-09-21): when any lens click or
@@ -28,6 +30,7 @@ export default function ProcessLensBanner({
   // the URL ⇄ lens sync — a shared link opens in the sender's exact "via vendor" view, and any
   // pick/clear anywhere on the page (step rows, this banner's clear) updates ?via.
   useLensUrlSync(pageKey)
+  const session = useSession()
   const { lens, stack, clearLens } = useProcessLens(pageKey)
   const summary = useMemo(() => lensProcessSummary(steps, lens.picks, stack), [steps, lens, stack])
   const lensPickCount = Object.keys(lens.picks).length
@@ -63,12 +66,24 @@ export default function ProcessLensBanner({
           >
             clear
           </button>
-          <Link
-            href="/my-stack"
-            className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
-          >
-            save these as your stack →
-          </Link>
+          {/* Founder 2026-09-25: anonymous readers go STRAIGHT to signup (MineLink precedent),
+              deep-linked back to /account/vendors to record the stack after auth. */}
+          {session.state === 'authenticated' ? (
+            <Link
+              href="/account/vendors"
+              className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+            >
+              save these as your stack →
+            </Link>
+          ) : (
+            <a
+              href={loginUrl(`${SITE_URL}/account/vendors`)}
+              title="Sign up or log in to record these vendors as your stack"
+              className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+            >
+              save these as your stack →
+            </a>
+          )}
         </>
       )}
     </div>

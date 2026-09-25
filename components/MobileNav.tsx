@@ -11,7 +11,7 @@ const ITEMS: Array<{ href: string; label: string; icon: string }> = [
   { href: '/arenas', label: 'Arenas', icon: '🏟' },
   { href: '/processes', label: 'Processes', icon: '🔁' },
   { href: '/technologies', label: 'Technologies', icon: '🔌' },
-  { href: '/virtual-startup', label: 'Virtual Startup', icon: '🧪' },
+  { href: '/virtual-startup', label: 'Virtual Startup Simulator', icon: '🧪' },
   { href: '/stacks', label: 'Stacks', icon: '🧱' },
   { href: '/compare', label: 'Compare', icon: '⚖' },
   { href: '/global', label: 'Global rankings', icon: '🌍' },

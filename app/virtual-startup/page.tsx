@@ -20,7 +20,7 @@ import {
 // the SIMULATED label — see lib/virtualStartup.ts for the honesty contract.
 
 export const metadata: Metadata = {
-  title: 'Virtual Startup — ProductArena',
+  title: 'Virtual Startup Simulator — ProductArena',
   description:
     'Pick the starting decisions — entity, team, funding, business model, first hire, compliance timing, enterprise motion — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the year-one operating rhythm the company then runs.',
 }
@@ -95,7 +95,7 @@ export default function VirtualStartupPage() {
           <span className="mx-1 text-zinc-600">/</span>
           virtual startup
         </p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Virtual Startup</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Virtual Startup Simulator</h1>
         <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
           A simulated company starts its journey. Pick the starting decisions and watch what
           actually has to happen, in time order — every step is a real corpus process routed

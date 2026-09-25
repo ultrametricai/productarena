@@ -127,7 +127,7 @@ export function buildChainEntries(chains: ChainSearchSource[], keywords?: Record
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/processes', label: 'Processes', sublabel: 'Every founder process and its agent ceiling' },
   { href: '/processes/operating-rhythm', label: 'Operating rhythm', sublabel: 'What a startup actually does, daily through annual' },
-  { href: '/virtual-startup', label: 'Virtual Startup', sublabel: 'Simulate a startup journey through the real processes' },
+  { href: '/virtual-startup', label: 'Virtual Startup Simulator', sublabel: 'Simulate a startup journey through the real processes' },
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },
   { href: '/technologies', label: 'Technologies — control surfaces', sublabel: 'API, MCP, CLI & other agent surfaces, ranked by evidence' },
   { href: '/missing', label: 'Missing startups', sublabel: 'Arena gaps where agent startups are missing' },
