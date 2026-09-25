@@ -4,15 +4,18 @@
     "storyId": "accept-stablecoin-checkout",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs describe a documented API/checkout flow for stablecoin acceptance: creating a payment generates a live quote plus a unique blockchain address (channel), webhooks confirm settlement programmatically, and a sandbox lets developers simulate pay-ins before going live. This covers create-payment, present-address, and confirm-settlement end-to-end. Missing for 10: independent/hands-on developer corroboration beyond first-party docs, and explicit example of programmatic settlement confirmation logic (webhook payload details).",
+    "confidence": "high",
+    "rationale": "BVNK's docs describe a full stablecoin acceptance flow: generating a live quote and unique blockchain address (or reusable 'channel' address) for a payment, accepting stablecoin payments and settling in fiat, plus webhook notifications and signature validation to confirm settlement programmatically, all authenticated via Hawk and testable in a sandbox before going live. missing for 10: no independent/hands-on developer account of building an actual checkout integration, and no explicit end-to-end code sample tying quote creation through webhook confirmation into one flow.",
     "evidenceIds": [
       "bvnk-docs-9",
       "bvnk-docs-10",
       "bvnk-docs-26",
+      "bvnk-docs-33",
       "bvnk-docs-2",
-      "bvnk-docs-22",
-      "bvnk-docs-28"
+      "bvnk-docs-21",
+      "bvnk-docs-29",
+      "bvnk-docs-28",
+      "bvnk-docs-22"
     ]
   },
   {
@@ -21,20 +24,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack shows general BVNK payment/payout/wallet APIs (bvnk-docs-4,11,24,26) and Hawk auth, but nothing documents an agent-specific spend-control model, scoped authority, or agent-initiated payout flow configured by a human. The only hint, a bare repo title 'agent-wallet-cli' (bvnk-probe-2), has no accompanying documentation of scoped authority or spend limits, so it cannot establish the capability.",
-    "evidenceIds": []
+    "rationale": "BVNK's docs describe generic API authentication (Hawk), wallets, payouts, and webhooks, but there is no documented agent-specific payment flow, no concept of scoped spend authority, spend limits, or human-configured controls for an autonomous agent to initiate payments. A GitHub repo named 'agent-wallet-cli' is referenced but its content/capabilities (scoped authority, spend controls) are not described in any evidence.",
+    "evidenceIds": [
+      "bvnk-probe-2",
+      "bvnk-docs-4",
+      "bvnk-docs-29"
+    ]
   },
   {
     "productId": "bvnk",
     "storyId": "agent-wallet-provisioning",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "BVNK documents general wallet creation via API/Portal and Hawk authentication for account-level API access, but there is no evidence of agent-specific scoped keys, programmatic sub-wallet issuance for autonomous agents, or policy/spend-limit controls restricting what an agent can move. The one reference to an 'agent-wallet-cli' repo (bvnk-probe-2) is just a bare link with no documented content on scoping or limits.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "BVNK's API supports programmatic wallet creation (per-customer wallets) secured by Hawk auth, and a probe surfaces an 'agent-wallet-cli' repo suggesting some agent-specific tooling exists, but there is no documentation of scoped/limited API keys, policy engines, or explicit spend limits governing what an agent can move. Missing for 10: scoped key issuance for agents, policy/permission controls, documented transfer limits, and any first-party description of the agent-wallet-cli's capabilities.",
     "evidenceIds": [
       "bvnk-docs-4",
       "bvnk-docs-25",
-      "bvnk-docs-20",
+      "bvnk-docs-29",
       "bvnk-probe-2"
     ]
   },
@@ -44,11 +51,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BVNK has a live, accessible llms.txt at docs.bvnk.com/llms.txt (confirmed by probe with HTTP 200 and descriptive content) plus extensive markdown-based docs pages referenced throughout the pack, making it straightforward for an agent to be pointed at agent-oriented documentation. Missing for 10: no independent/community corroboration of agents actually consuming this llms.txt successfully.",
+    "rationale": "BVNK has a live, confirmed llms.txt at docs.bvnk.com/llms.txt (HTTP 200, structured API doc index) that an agent can be pointed at, corroborated by multiple docs citations sourced directly from that llms.txt file. Missing for 10: no independent third-party confirmation of agent usage/effectiveness beyond the probe check.",
     "evidenceIds": [
       "bvnk-probe-1",
       "bvnk-docs-1",
-      "bvnk-docs-20"
+      "bvnk-docs-20",
+      "bvnk-docs-7"
     ]
   },
   {
@@ -57,7 +65,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any AI-generated insights, analytics, or suggestions surfaced within BVNK's product; documentation covers payments, wallets, APIs, and sandbox testing only, with nothing about AI-driven data analysis or recommendations.",
+    "rationale": "BVNK is a payments/crypto infrastructure API with no evidence of AI-generated insights, analytics, or suggestions surfaced within the product; documentation covers wallets, payments, webhooks, and sandbox testing only.",
     "evidenceIds": []
   },
   {
@@ -66,11 +74,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BVNK exposes a rules API (POST /payment/v1/rules) that automates fiat-to-crypto transfers without manual intervention, plus webhooks for real-time automated notifications, showing some background automation capability. However, there's no evidence of a broader automation/workflow engine, scheduling, or explicit support for AI agents orchestrating multi-step autonomous processes. Missing for 10: a general-purpose automation/workflow builder, evidence of AI-agent-triggered automations, and confirmation that rules run persistently without re-triggering per transaction.",
+    "rationale": "BVNK supports rule-based automations (e.g., POST /payment/v1/rules linking fiat accounts to crypto addresses) that execute autonomously once triggered, plus webhooks for automated event-driven notifications, which together enable background automation of payment flows. However, this is narrowly scoped to payment rule automation rather than a general-purpose agentic automation framework with scheduling, conditional logic, or multi-step orchestration. Missing for 10: evidence of a broader automation/workflow builder, scheduled triggers, or explicit AI-agent-oriented automation tooling beyond payment rules and webhooks.",
     "evidenceIds": [
       "bvnk-docs-5",
       "bvnk-docs-23",
-      "bvnk-docs-2"
+      "bvnk-docs-2",
+      "bvnk-docs-32"
     ]
   },
   {
@@ -85,15 +94,20 @@
   {
     "productId": "bvnk",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "BVNK is fundamentally an API/platform product with Hawk-authenticated REST APIs, webhooks for automated notifications, and a sandbox environment explicitly meant for testing integrations before going live — all of which support headless, script-driven or CI-based automation. A probe also surfaces an official 'agent-wallet-cli' repo, suggesting a CLI path for automation-style usage. However, there is no explicit documentation of CI/CD pipelines, GitHub Actions, or non-interactive automation guides beyond the sandbox/testing framing. Missing for 10: explicit CI/CD integration docs, official SDK examples for automated pipelines, and confirmation that the agent-wallet-cli is production-documented rather than a bare repo.",
+    "rationale": "BVNK is fundamentally an API-first payments platform: authenticated via Hawk (docs-1/20/29), driven entirely through REST endpoints with a sandbox for safe automated testing (docs-3/22/28/31), and webhooks for event-driven automation (docs-2/32) — all of which support headless/CI use. An official 'agent-wallet-cli' is also documented (bvnk-probe-2), reinforcing programmatic/automation-friendly usage. Missing for 10: explicit CI pipeline examples/tutorials, no first-party docs explicitly describing 'headless' or CI integration workflows, and no independent hands-on confirmation of automation in CI.",
     "evidenceIds": [
       "bvnk-docs-1",
-      "bvnk-docs-2",
+      "bvnk-docs-20",
+      "bvnk-docs-29",
       "bvnk-docs-3",
+      "bvnk-docs-22",
       "bvnk-docs-28",
+      "bvnk-docs-31",
+      "bvnk-docs-2",
+      "bvnk-docs-32",
       "bvnk-probe-2"
     ]
   },
@@ -103,7 +117,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BVNK is a payments/crypto infrastructure platform, not an AI agent or assistant that consumes MCP tools; the story of plugging MCP servers into a product 'so it can use their tools' is a category error for this kind of product. No evidence suggests BVNK acts as an MCP client.",
+    "rationale": "BVNK is a payments/crypto infrastructure platform, not an AI agent or assistant product; MCP client-side tool consumption is not a relevant axis for this category, and no evidence suggests it acts as an MCP client.",
     "evidenceIds": []
   },
   {
@@ -111,11 +125,9 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "BVNK is a payments/fintech platform, not an AI agent, so the axis applies to it as a service that could plausibly publish an MCP server, but no evidence shows an official MCP server exists—only API docs, webhooks, and Hawk auth are mentioned. A separate CLI (agent-wallet-cli) is referenced but this is unrelated to MCP server support.",
+    "confidence": "high",
+    "rationale": "BVNK is a payments/crypto infrastructure platform with API docs, webhooks, and Hawk authentication, but no evidence exists of an official MCP server for agent connectivity. The only agent-adjacent probe found is a CLI repo, not an MCP server.",
     "evidenceIds": [
-      "bvnk-docs-1",
-      "bvnk-probe-1",
       "bvnk-probe-2"
     ]
   },
@@ -124,13 +136,9 @@
     "storyId": "agentic-nl-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "BVNK's evidence shows a structured REST API, webhooks, Hawk auth, and an llms.txt for documentation discoverability, plus a mention of an 'agent-wallet-cli' repo, but nothing indicates the product can be operated via natural-language commands (no chat interface, NL parsing, or agent command layer described). The CLI mention is unelaborated and appears to be a structured command tool, not NL-driven.",
-    "evidenceIds": [
-      "bvnk-probe-1",
-      "bvnk-probe-2",
-      "bvnk-docs-1"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence of any natural-language interface, chatbot, or AI command layer for BVNK; documentation only covers REST APIs, webhooks, and a CLI tool, none of which support natural-language operation.",
+    "evidenceIds": []
   },
   {
     "productId": "bvnk",
@@ -138,7 +146,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "A probe finds a GitHub repo named 'agent-wallet-cli' under the BVNK org, suggesting an official CLI exists, but there is no first-party documentation describing its installation, commands, or AI-native workflow integration, and no independent corroboration of its functionality. Missing for 10: official docs page for the CLI, usage examples, AI-agent workflow integration details, independent user verification.",
+    "rationale": "A probe finds a GitHub repo named 'agent-wallet-cli' described as an official CLI, but there is no first-party documentation, feature detail, or independent corroboration of its capabilities beyond the bare link. Missing for 10: official docs/README content, installation/usage examples, confirmation of AI-native/agentic design, independent hands-on validation.",
     "evidenceIds": [
       "bvnk-probe-2"
     ]
@@ -149,15 +157,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BVNK publishes extensive documented public REST APIs (wallets, payments, transfers, payouts, rules, webhooks) with authentication (Hawk), sandbox simulation, and even an llms.txt for AI discoverability, plus a community-referenced agent-wallet-cli. missing for 10: no independent third-party hands-on API integration report or SDK/agent-specific usage benchmarks beyond the documented endpoints.",
+    "rationale": "BVNK provides an extensive, documented public API covering wallets, payments, transfers, payouts, webhooks, and sandbox testing, with authentication via Hawk and clear endpoint documentation (e.g., POST /payment/v1/rules, /payment/v2/payins/simulation). This directly enables AI-native/programmatic control of the product. Missing for 10: independent third-party developer corroboration of API usability and no official SDKs/language libraries mentioned beyond docs.",
     "evidenceIds": [
       "bvnk-docs-1",
       "bvnk-docs-4",
       "bvnk-docs-5",
       "bvnk-docs-6",
       "bvnk-docs-22",
-      "bvnk-probe-1",
-      "bvnk-probe-2"
+      "bvnk-docs-28",
+      "bvnk-docs-29",
+      "bvnk-probe-1"
     ]
   },
   {
@@ -165,10 +174,10 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "BVNK documents general Hawk-based API authentication and webhook signature validation, but there is no evidence of scoped or least-privilege credential issuance (e.g., role-based API keys, permission scopes, or agent-specific tokens). The 'agent-wallet-cli' repo is mentioned only by name with no detail on credential scoping.",
+    "confidence": "medium",
+    "rationale": "BVNK documents Hawk authentication (Auth ID + Secret Key) for API access, but there is no evidence of scoped, least-privilege, or role-restricted credential issuance suitable for delegating limited access to an AI agent. The mention of an 'agent-wallet-cli' repo hints at agent-oriented tooling but provides no detail on credential scoping or permission granularity.",
     "evidenceIds": [
-      "bvnk-docs-1",
+      "bvnk-docs-29",
       "bvnk-docs-20",
       "bvnk-probe-2"
     ]
@@ -179,19 +188,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents BVNK's REST API endpoints, webhook validation, Hawk authentication, and sandbox testing, but contains no mention of official language SDKs (e.g., Python, JS, Java client libraries). The only related artifact is a CLI tool (bvnk-probe-2), which is not an SDK.",
-    "evidenceIds": []
+    "rationale": "Evidence shows a documented HTTP API with Hawk authentication, webhooks, and sandbox tooling, plus a separate CLI repo, but no official SDK libraries (e.g., Python/Node/Java client libraries) are mentioned anywhere in the pack.",
+    "evidenceIds": [
+      "bvnk-docs-1",
+      "bvnk-docs-29",
+      "bvnk-probe-1",
+      "bvnk-probe-2"
+    ]
   },
   {
     "productId": "bvnk",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "BVNK documents webhook creation for real-time event notifications and even provides a signature validator tool, confirming subscribe-to-events functionality via webhooks. Missing for 10: no documentation of event type catalog, retry/delivery guarantees, or independent/hands-on confirmation of reliability.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "BVNK documents webhook subscriptions (create-webhook-listener, event types like bvnk:ledger:report:ready) plus signature validation tooling for secure consumption, directly enabling event-driven/agentic integration. missing for 10: no independent/hands-on corroboration of webhook reliability or a full list of supported event types beyond the reconciliation example.",
     "evidenceIds": [
       "bvnk-docs-2",
-      "bvnk-docs-21"
+      "bvnk-docs-30",
+      "bvnk-docs-21",
+      "bvnk-docs-32"
     ]
   },
   {
@@ -200,11 +216,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "BVNK's docs describe endpoints and a sandbox for testing integrations, but there is no evidence of an interactive API reference (e.g., a Swagger/OpenAPI explorer or embedded runnable code snippets) that lets a user execute example requests directly in the docs. Missing for 10: interactive 'try it' console, embedded runnable code samples, OpenAPI/Swagger explorer evidence.",
+    "rationale": "Evidence shows extensive markdown-based API docs, code snippets, and a sandbox environment for testing integrations, but nothing indicates an interactive API reference (e.g., Swagger/OpenAPI explorer, Postman collection, or 'try it' console) with runnable examples embedded in the docs themselves.",
     "evidenceIds": [
       "bvnk-docs-3",
-      "bvnk-docs-22",
       "bvnk-docs-28",
+      "bvnk-docs-31",
       "bvnk-probe-1"
     ]
   },
@@ -213,24 +229,22 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows detailed API documentation and an llms.txt machine-readable docs index, but there is no mention of an OpenAPI/Swagger spec or any downloadable machine-readable API specification file. missing for 10: OpenAPI/Swagger spec file, documented spec download endpoint, any equivalent machine-readable API schema.",
-    "evidenceIds": [
-      "bvnk-probe-1",
-      "bvnk-docs-1"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains API endpoint references and docs but no mention of a downloadable OpenAPI spec, Swagger file, or machine-readable schema; only an llms.txt (documentation-for-LLMs file, not an API spec) is present.",
+    "evidenceIds": []
   },
   {
     "productId": "bvnk",
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "BVNK docs explicitly describe a dedicated sandbox environment with a payment simulation API to test pay-ins/payouts safely before going live, without touching production data. Missing for 10: independent/hands-on developer confirmation of sandbox fidelity and coverage of all product areas (e.g., crypto vs fiat parity) beyond first-party docs.",
+    "confidence": "high",
+    "rationale": "BVNK documents a dedicated sandbox environment that mirrors production with test data, allowing integration testing without financial risk, and provides simulation endpoints (payins/payouts) plus explicit guidance to use sandbox before going live. Missing for 10: independent/hands-on confirmation beyond vendor docs and details on sandbox-to-production parity limits.",
     "evidenceIds": [
       "bvnk-docs-3",
       "bvnk-docs-22",
-      "bvnk-docs-28"
+      "bvnk-docs-28",
+      "bvnk-docs-31"
     ]
   },
   {
@@ -238,13 +252,10 @@
     "storyId": "api-versioning-policy",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "BVNK's docs show real API versioning in practice (payment/v1/rules, payment/v2/payins, and a Transfers v3 API that formally replaces the legacy Quote API with a migration guide), evidencing that versioning and deprecation happen. However, there is no explicit documented deprecation policy (e.g., sunset timelines, notice periods, version support windows) for AI-native users to rely on. Missing for 10: a formal deprecation/versioning policy document, sunset dates or support windows, and any independent confirmation that deprecated versions remain stable during transition.",
+    "confidence": "low",
+    "rationale": "Docs show versioned endpoints (e.g., payment/v1/rules, payment/v2/payins/simulation, and a distinct 'Transfers v.3 API' that explicitly replaces the legacy Quote API), indicating real API versioning and a migration path. However, there is no explicit documented deprecation policy (timelines, sunset dates, notice periods) — only a migration guide for one specific transition. Missing for 10: a formal deprecation/versioning policy page, sunset timelines for older API versions, and independent confirmation of adherence to such a policy.",
     "evidenceIds": [
-      "bvnk-docs-6",
-      "bvnk-docs-5",
-      "bvnk-docs-23",
-      "bvnk-docs-22"
+      "bvnk-docs-6"
     ]
   },
   {
@@ -253,7 +264,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers single-item API operations (wallets, payouts, quotes, rules) but no documentation of batch/bulk endpoints or multi-item processing in one call. Missing for 10: bulk create/update endpoints, batch payout/transfer APIs, pagination-based bulk export, or any mention of processing many items in a single request.",
+    "rationale": "No evidence of any bulk/batch API endpoints, batch payout creation, or CSV/bulk upload operations in BVNK's documentation; all endpoints described are single-item (single wallet, single payout, single rule) operations.",
     "evidenceIds": []
   },
   {
@@ -262,11 +273,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BVNK docs show a dedicated Rules API (`POST /payment/v1/rules`) that automatically links a fiat virtual account to a crypto blockchain address, and webhooks that fire automated notifications on account events, both matching the 'rules trigger actions on events' pattern. However this is scoped narrowly to one payment-linking use case rather than a general-purpose rule engine covering arbitrary triggers/conditions/actions across the platform. Missing for 10: broader/generalized rule definitions beyond fiat-crypto linking, conditional logic support, and independent/hands-on corroboration of the rules feature working as described.",
+    "rationale": "BVNK supports a concrete rules API (POST /payment/v1/rules) that automatically links fiat virtual accounts to crypto blockchain addresses, and webhooks provide event-driven notifications that can trigger downstream automated actions. However, this is limited to a narrow, specific use case (fiat-to-crypto linking) rather than a general-purpose rules engine for arbitrary event-triggered actions across the platform. Missing for 10: a broader/generalized rules engine covering multiple event types and actions, and independent/hands-on confirmation of automation-depth beyond docs.",
     "evidenceIds": [
       "bvnk-docs-5",
       "bvnk-docs-23",
-      "bvnk-docs-2"
+      "bvnk-docs-2",
+      "bvnk-docs-32"
     ]
   },
   {
@@ -275,7 +287,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of scheduling, recurring jobs, or cron-like automation; BVNK offers event-driven webhooks and rule-based payment automation but nothing about recurring/scheduled workflows.",
+    "rationale": "The evidence shows webhook-based automation and payment 'rules' that link accounts to blockchain addresses (event-triggered, not time-based), but there is no mention of scheduling recurring jobs, cron-like automation, or recurring workflow execution anywhere in the docs or product pages.",
     "evidenceIds": []
   },
   {
@@ -293,12 +305,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs cover single fiat/crypto payouts, wallet-to-wallet transfers, and virtual account rules, but there is no mention of a batch/bulk payout endpoint or per-item status reporting for mass disbursements anywhere in the evidence pack.",
+    "rationale": "BVNK's docs describe single payout creation (first-party/third-party), fiat/crypto sends, and wallet-to-wallet transfers, but no evidence of a batch/bulk payout API, CSV upload, or per-item status reporting for mass disbursements.",
     "evidenceIds": [
       "bvnk-docs-11",
-      "bvnk-docs-24",
       "bvnk-docs-13",
-      "bvnk-docs-6"
+      "bvnk-docs-24"
     ]
   },
   {
@@ -322,13 +333,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BVNK documents API-driven fiat-to-crypto automation (linking a fiat virtual account to a blockchain address, auto on-ramping to crypto) and 'Embedded Wallets' that let partners offer wallet/payment functionality under their own branding, which supports an onramp-style integration. However, evidence shows bank-transfer/virtual-account based conversion rather than a documented card-payment option, and there is no explicit mention of a pre-built embeddable 'buy' widget for end users—only API/portal-based wallet and rule creation. Missing for 10: a documented UI widget/checkout component, explicit card-payment support for onramp, and end-user-facing purchase flow documentation.",
+    "rationale": "BVNK documents an API-driven fiat-to-crypto onramp (linking a fiat virtual account funded via bank transfer to a blockchain address, docs-5/23/14) and 'Embedded Wallets' that let partners offer payment/fund management inside their own branded platform (docs-8, docs-15), which covers bank-transfer-based onramp and embeddability. However there is no documented card-based purchase flow or a pre-built checkout/onramp widget UI for end users to 'buy stablecoins with cards' — missing for 10: card-payment onramp widget/checkout UI, explicit end-user 'buy stablecoin' flow, evidence of a drop-in embeddable onramp component.",
     "evidenceIds": [
       "bvnk-docs-5",
-      "bvnk-docs-14",
       "bvnk-docs-8",
-      "bvnk-docs-9",
-      "bvnk-docs-26"
+      "bvnk-docs-14",
+      "bvnk-docs-15",
+      "bvnk-docs-23",
+      "bvnk-docs-33"
     ]
   },
   {
@@ -337,13 +349,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "BVNK explicitly documents accepting stablecoin payments and receiving fiat currency in the account (bvnk-docs-9), with marketing and docs confirming 'Accept payments globally in stablecoins. Settle in fiat' and 'fund in stablecoins and pay out in fiat' (bvnk-docs-18, bvnk-docs-19), plus payout mechanisms to bank accounts (bvnk-docs-11) and fiat virtual accounts in major currencies (bvnk-docs-12). missing for 10: independent/hands-on confirmation of the auto-conversion accounting flow beyond vendor docs.",
+    "rationale": "BVNK documents accepting stablecoin payments with automatic conversion and settlement to fiat accounts/bank payouts, explicitly stating BVNK manages conversion and settlement so merchants receive fiat rather than crypto, plus payout-to-bank-account APIs. This directly matches the finance-lead's need for fiat settlement of crypto receipts. Missing for 10: independent/hands-on verification beyond vendor docs confirming books never touch crypto in practice.",
     "evidenceIds": [
       "bvnk-docs-9",
-      "bvnk-docs-18",
       "bvnk-docs-19",
+      "bvnk-docs-33",
+      "bvnk-docs-18",
       "bvnk-docs-11",
-      "bvnk-docs-12"
+      "bvnk-docs-24"
     ]
   },
   {
@@ -352,13 +365,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BVNK documents a dedicated conversion/quote API (Transfers v3 replacing the legacy Quote API for wallet-to-wallet conversion) plus live quotes generated per payment and rules linking fiat accounts to crypto addresses for on/off-ramp automation, indicating conversion is a core, documented API capability. However, the evidence does not show explicit documentation of conversion fee schedules or settlement-time guarantees beyond a generic partner markup-fee mention. Missing for 10: documented conversion fee/rate schedules, explicit settlement-time SLAs, and independent corroboration of quote accuracy/execution reliability.",
+    "rationale": "BVNK's docs show a real conversion API surface: the Transfers v3 API for wallet-to-wallet currency conversion, live quotes generated for stablecoin-to-fiat payments, and rules linking fiat virtual accounts to crypto addresses for automated on/off-ramp. However, the evidence pack does not show documented fee schedules or settlement-time guarantees as first-class API fields/docs, only general mentions of markup fees for partners. Missing for 10: explicit documented conversion fee structure, explicit settlement time SLAs/fields in the API docs, and independent/hands-on corroboration of quote accuracy.",
     "evidenceIds": [
       "bvnk-docs-6",
       "bvnk-docs-26",
-      "bvnk-docs-5",
       "bvnk-docs-23",
-      "bvnk-docs-7"
+      "bvnk-docs-7",
+      "bvnk-docs-33"
     ]
   },
   {
@@ -367,14 +380,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "BVNK documents fiat payout APIs (first- and third-party bank payouts), virtual accounts in USD/EUR/GBP, and broad reach claims of sending/receiving/converting across 130+ countries, directly supporting stablecoin-to-fiat off-ramp for recipients. Missing for 10: a single published, granular table mapping supported countries to specific payout currencies/rails (only USD/EUR/GBP virtual accounts and a generic '130+ countries' claim are given), and independent/hands-on verification of real-world payout success across those geographies.",
+    "rationale": "BVNK docs describe stablecoin-to-fiat conversion with payouts to first- or third-party bank accounts, virtual accounts in USD/EUR/GBP, and claim coverage across '130+ countries', matching the off-ramp story's core (docs-9, docs-11, docs-12, docs-18, docs-19, docs-24, docs-27, docs-33). missing for 10: a fully itemized published list of supported currencies/countries beyond USD/EUR/GBP and a 130+ figure, and independent/hands-on confirmation that bank-transfer settlement actually works as documented.",
     "evidenceIds": [
+      "bvnk-docs-9",
       "bvnk-docs-11",
-      "bvnk-docs-24",
       "bvnk-docs-12",
-      "bvnk-docs-27",
+      "bvnk-docs-18",
       "bvnk-docs-19",
-      "bvnk-docs-18"
+      "bvnk-docs-24",
+      "bvnk-docs-27",
+      "bvnk-docs-33"
     ]
   },
   {
@@ -383,7 +398,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers wallets, payments, webhooks, and sandbox simulation, but no documented KYC/KYB endpoints, onboarding/verification flows, or counterparty clearance APIs are mentioned anywhere.",
+    "rationale": "Evidence covers wallets, payments, webhooks, sandbox, and embedded partner customer creation, but there is no documented KYC/KYB endpoint, verification flow, or counterparty clearance process for onboarding customers/recipients before money moves.",
     "evidenceIds": []
   },
   {
@@ -392,22 +407,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No mention anywhere in the evidence pack of x402, ACP, MPP, AP2, or any named machine-payment/agent protocol; BVNK's documented APIs cover standard fiat/crypto wallet, payout, and webhook operations only.",
-    "evidenceIds": []
+    "rationale": "No evidence of named machine-payment protocols (x402, ACP, MPP, AP2) anywhere in the docs pack; BVNK documents Hawk auth, webhooks, wallets, payouts, and sandbox testing but nothing referencing these specific agent-payment protocol standards.",
+    "evidenceIds": [
+      "bvnk-docs-1",
+      "bvnk-docs-29",
+      "bvnk-probe-1"
+    ]
   },
   {
     "productId": "bvnk",
     "storyId": "multi-chain-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows BVNK broadly supports 'stablecoins' and 'blockchain addresses' generically, but no citation names specific stablecoins (e.g., USDC, USDT) or specific supported blockchain networks/chains. Missing for 10: an explicit supported-assets/network list, named stablecoin tickers, and named chains (e.g., Ethereum, Tron, Solana).",
-    "evidenceIds": [
-      "bvnk-docs-9",
-      "bvnk-docs-10",
-      "bvnk-docs-13",
-      "bvnk-docs-19"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence repeatedly mentions generic 'stablecoins' and blockchain addresses but never names specific stablecoins (e.g., USDC, USDT) or specific supported blockchain networks (e.g., Ethereum, Tron, Polygon), so there's no documented coin/chain matrix for a developer to consult.",
+    "evidenceIds": []
   },
   {
     "productId": "bvnk",
@@ -415,14 +429,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm BVNK exposes wallet, payment, quote, and transfer operations entirely through REST endpoints (e.g. POST /payment/v1/rules, /payment/v2/payins/simulation, wallet creation) with Hawk-based auth and webhooks, so chain mechanics like gas and nodes are abstracted behind conventional HTTP calls and unique blockchain addresses are auto-generated per payment. However, there is no evidence of official client libraries/SDKs in specific languages — only a mention of a CLI tool (agent-wallet-cli), not multi-language SDKs. missing for 10: documented client libraries/SDKs in multiple languages, explicit statement that gas/node management is never developer-facing.",
+    "rationale": "Docs show BVNK abstracts blockchain complexity via a REST API — wallets, quotes, payment rules, and blockchain addresses are all managed through endpoints (bvnk-docs-4, -5, -23, -26) with Hawk-based auth (bvnk-docs-29) and a sandbox for safe testing (bvnk-docs-31), so developers never touch nodes or gas directly. However, evidence only shows one CLI tool (bvnk-probe-2) rather than client libraries across multiple languages, so the 'client libraries in my language' part of the story is unconfirmed. Missing for 10: multi-language SDKs/client libraries, explicit statement of gas/node abstraction.",
     "evidenceIds": [
+      "bvnk-docs-4",
       "bvnk-docs-5",
       "bvnk-docs-23",
-      "bvnk-docs-25",
       "bvnk-docs-26",
-      "bvnk-docs-20",
-      "bvnk-docs-2",
+      "bvnk-docs-29",
+      "bvnk-docs-31",
       "bvnk-probe-2"
     ]
   },
@@ -446,9 +460,11 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of any data export or open-format data portability feature; BVNK's docs cover payments, wallets, and API access but nothing about exporting account data or account closure/data takeout.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows BVNK offers webhooks, reports-ready notifications, and API access to transactions/wallets, but nothing documents a bulk data export in open formats or an account closure/data portability workflow for users to 'leave' with their data. Absence of evidence for this applicable capability yields 'none'.",
+    "evidenceIds": [
+      "bvnk-docs-32"
+    ]
   },
   {
     "productId": "bvnk",
@@ -465,19 +481,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BVNK is a hosted payments/fintech API platform (SaaS), not a product designed to be self-hosted; self-hosting is a category error for this kind of managed financial infrastructure service.",
+    "rationale": "BVNK is a hosted fintech/payments infrastructure platform (wallets, payments, crypto/fiat rails); self-hosting the core product is not a meaningful axis for this kind of regulated financial SaaS service, akin to asking a payment processor to be self-hostable.",
     "evidenceIds": []
   },
   {
     "productId": "bvnk",
     "storyId": "payment-webhooks",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "BVNK documents webhooks for real-time notifications of account changes and provides a client-side signature validator, indicating signed webhooks exist for tracking payment/payout state. However, evidence doesn't explicitly confirm specific event types like 'conversion executed' or detail the full signing scheme/retry semantics. Missing for 10: explicit list of webhook event types (payment confirmed, payout settled, conversion executed), details on signature algorithm/retry/delivery guarantees, and independent developer corroboration of reliability.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "BVNK provides real-time webhooks for account/payment state changes (bvnk-docs-2), including specific events like ledger report readiness (bvnk-docs-32), and offers signed webhook validation via Hawk-based signatures and a dedicated client-side validator tool (bvnk-docs-21, bvnk-docs-30, bvnk-docs-29). This directly covers payment/payout/conversion state notifications without polling. Missing for 10: explicit enumerated list of all event types (payment confirmed, payout settled, conversion executed) and independent/hands-on corroboration of webhook reliability.",
     "evidenceIds": [
       "bvnk-docs-2",
-      "bvnk-docs-21"
+      "bvnk-docs-21",
+      "bvnk-docs-30",
+      "bvnk-docs-29",
+      "bvnk-docs-32"
     ]
   },
   {
@@ -485,8 +504,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack about data residency, regional storage options, or configurable data location for BVNK's platform; documentation focuses on payments, wallets, and API mechanics only.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency, regional storage choice, or data sovereignty controls for BVNK's payment/crypto platform; the axis is plausible for a fintech handling customer data, but nothing is documented.",
     "evidenceIds": []
   },
   {
@@ -495,7 +514,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BVNK is a crypto/fiat payments infrastructure platform, not an AI model or AI service that trains on user data; the story about preventing data use for AI training is not a fair axis for this product category.",
+    "rationale": "BVNK is a payments/crypto infrastructure product, not an AI model or data-processing tool; preventing data from being used for AI model training is not a relevant axis for this category of product.",
     "evidenceIds": []
   },
   {
@@ -504,7 +523,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BVNK is a crypto/fiat payments infrastructure product; no evidence pack item discusses data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users.",
+    "rationale": "BVNK is a payments/crypto infrastructure API; the evidence pack contains no mention of data retention policies, deletion controls, or user-facing privacy/data lifecycle management. This is an applicable axis (any API handling customer data could document retention/deletion controls) but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -522,7 +541,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item discloses BVNK's licensed/registered legal entities, regulatory registrations, or jurisdictional coverage; documentation covers API/product features only, and the one community item is about a failed acquisition, not entity disclosure.",
+    "rationale": "No evidence pack item names BVNK's licensed/registered legal entities, regulators, or jurisdictional coverage; the docs are purely API/product-feature documentation with no legal/entity disclosure page cited.",
     "evidenceIds": []
   },
   {
@@ -542,21 +561,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API auth, wallets, payments, webhooks, and sandbox tooling, but nowhere names sanctions screening, wallet risk scoring, or travel-rule handling as specific compliance mechanisms — compliance is not documented at the named-machinery level required by the story.",
+    "rationale": "The evidence pack covers API auth, wallets, sandbox, webhooks, and payment flows but contains no mention of sanctions screening, wallet risk scoring, or travel-rule compliance mechanisms specifically named or documented.",
     "evidenceIds": []
   },
   {
     "productId": "bvnk",
     "storyId": "settlement-transparency",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows wallets, payouts, webhooks, and quote/transfer APIs, but nothing documents settlement timing SLAs (payment to available balance), a published fee schedule per rail, or exportable statements/reports for accounting reconciliation.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "BVNK documents a reconciliation webhook event (`bvnk:ledger:report:ready`) for receiving transaction reports, which supports accounting consumption, and mentions partner markup fees, but there is no documented timing from payment to available balance nor a published fee schedule per settlement rail. missing for 10: settlement timing documentation (payment-to-available-balance SLAs), published per-rail fee schedules, and detailed statement/report format specs for accounting.",
     "evidenceIds": [
-      "bvnk-docs-11",
-      "bvnk-docs-24",
-      "bvnk-docs-26",
-      "bvnk-docs-2"
+      "bvnk-docs-32",
+      "bvnk-docs-7",
+      "bvnk-docs-33"
     ]
   },
   {
@@ -565,8 +583,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BVNK's documented product is stablecoin *payments/acceptance/settlement* infrastructure (wallets, on/off-ramp, embedded wallets, virtual accounts) — not a white-label stablecoin issuance product covering minting, redemption, and reserve management for a founder to launch their own branded token. No evidence describes issuing a new stablecoin, reserve attestation, or redemption mechanics.",
-    "evidenceIds": []
+    "rationale": "BVNK's evidence covers stablecoin payments, wallets, on/off-ramp, and payouts, but nowhere documents a branded stablecoin issuance product (minting, redemption, reserve management) for founders — it is a payments/wallet infrastructure platform, not an issuer-enablement platform.",
+    "evidenceIds": [
+      "bvnk-docs-9",
+      "bvnk-docs-33",
+      "bvnk-docs-19"
+    ]
   },
   {
     "productId": "bvnk",
@@ -574,30 +596,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm API-driven stablecoin sending to blockchain addresses (bvnk-docs-13, bvnk-docs-14, bvnk-docs-18), wallet creation for customers via API (bvnk-docs-4, bvnk-docs-25), and webhook-based status notifications (bvnk-docs-2, bvnk-docs-21) which together cover payout initiation and event tracking. However, there is no dedicated documentation of a 'stored recipient' payout object or a clear end-to-end status/settlement lifecycle specific to stablecoin payouts (only fiat payout overview details reconciliation/bank-account flows). Missing for 10: explicit stored-recipient/payee management API, detailed stablecoin payout status states through to on-chain settlement confirmation, and independent/hands-on verification of the payout flow.",
+    "rationale": "BVNK docs confirm an API to send stablecoins/crypto to blockchain addresses (bvnk-docs-13, bvnk-docs-14, bvnk-docs-23) and webhooks for real-time status notifications (bvnk-docs-2, bvnk-docs-32), with a sandbox for testing (bvnk-docs-3, bvnk-docs-31). However, the docs do not clearly describe a 'stored recipient' object for payouts or an explicit payout status lifecycle (e.g., pending/processing/settled) specific to stablecoin sends — the closest status/lifecycle detail is for fiat bank payouts (bvnk-docs-11, bvnk-docs-24), not crypto wallet payouts. Missing for 10: explicit stored-recipient/beneficiary API for crypto payouts, and documented status-code lifecycle from initiation to on-chain settlement.",
     "evidenceIds": [
       "bvnk-docs-13",
       "bvnk-docs-14",
-      "bvnk-docs-18",
-      "bvnk-docs-4",
-      "bvnk-docs-25",
+      "bvnk-docs-23",
       "bvnk-docs-2",
-      "bvnk-docs-21",
-      "bvnk-docs-11",
-      "bvnk-docs-24"
+      "bvnk-docs-32",
+      "bvnk-docs-3",
+      "bvnk-docs-31"
     ]
   },
   {
     "productId": "bvnk",
     "storyId": "testnet-sandbox",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "BVNK documents a dedicated sandbox environment explicitly for pre-production testing, including a payment simulation endpoint that supports pay-ins across multiple currencies/methods and mentions payouts as covered by the same 'consistent simulation experience' (bvnk-docs-3, bvnk-docs-22, bvnk-docs-28). However, there's no explicit documentation of simulating currency conversions/transfers (Transfers v3) in sandbox, nor confirmation of deterministic test values or a testnet mode for crypto rails. Missing for 10: explicit conversion/transfer simulation docs, deterministic test-value specification, and independent/hands-on confirmation of sandbox behavior.",
+    "rationale": "BVNK documents a sandbox environment that mirrors production with test data and lets developers simulate pay-ins/payouts (POST /payment/v2/payins/simulation) safely before going live, directly supporting rehearsal without real funds. However, evidence only covers pay-ins/payouts simulation explicitly; conversions/quotes simulation and deterministic test-value behavior are not documented, and there's no independent/hands-on corroboration of sandbox reliability. missing for 10: documented simulation of conversions/transfers, explicit deterministic test-value guarantees, independent developer confirmation of sandbox behavior.",
     "evidenceIds": [
       "bvnk-docs-3",
       "bvnk-docs-22",
-      "bvnk-docs-28"
+      "bvnk-docs-28",
+      "bvnk-docs-31"
     ]
   },
   {
@@ -605,16 +626,15 @@
     "storyId": "treasury-rebalancing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "BVNK docs describe wallet-to-wallet conversion via the Transfers v3 API, rules linking fiat virtual accounts to crypto addresses, and explicit stablecoin-to-fiat and fiat-to-stablecoin rebalancing flows, plus wallet creation/management through both Portal and API. This covers the core finance-lead use case of moving value between fiat and stablecoin balances end to end. Missing for 10: independent/hands-on corroboration of dashboard rebalancing workflows and a single unified end-to-end tutorial combining dashboard and API paths.",
+    "confidence": "high",
+    "rationale": "BVNK documents wallet creation for both crypto and fiat via Portal or API, a Transfers v3 API for wallet-to-wallet currency conversion, rules linking fiat virtual accounts to crypto addresses for automated fiat-to-crypto transfers, and dashboard/website features like 'use your fiat balance to send stablecoins, or fund in stablecoins and pay out in fiat.' This covers internal rebalancing between fiat and stablecoin balances end-to-end via API and Portal. Missing for 10: a dedicated finance-lead-facing reconciliation/reporting walkthrough tying transfers to treasury workflows, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "bvnk-docs-4",
       "bvnk-docs-6",
+      "bvnk-docs-5",
       "bvnk-docs-18",
-      "bvnk-docs-23",
       "bvnk-docs-25",
-      "bvnk-docs-12",
-      "bvnk-docs-13"
+      "bvnk-docs-23"
     ]
   },
   {
@@ -622,15 +642,15 @@
     "storyId": "virtual-accounts-addressing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "BVNK supports named virtual accounts per customer (USD/EUR/GBP) and unique repeated-use blockchain addresses/channels per customer for crypto/stablecoin receipt, plus per-payment unique addresses and quotes, enabling attribution without manual matching; webhooks notify on payment events for reconciliation. missing for 10: independent/hands-on confirmation of reconciliation accuracy at scale and clearer documentation on uniqueness guarantees/collision handling for dedicated addresses across high transaction volumes.",
+    "confidence": "high",
+    "rationale": "BVNK explicitly supports per-customer virtual accounts (USD/EUR/GBP) and dedicated, unique blockchain addresses ('channels') per payment/customer, both creatable via API with customer ID/reference for attribution, plus webhook and ledger-report events for reconciliation automation. Missing for 10: independent/hands-on confirmation of reconciliation accuracy at scale and explicit documentation of automatic matching logic beyond address/account uniqueness.",
     "evidenceIds": [
-      "bvnk-docs-10",
       "bvnk-docs-12",
+      "bvnk-docs-10",
       "bvnk-docs-25",
       "bvnk-docs-26",
-      "bvnk-docs-2",
-      "bvnk-docs-9"
+      "bvnk-docs-32",
+      "bvnk-docs-31"
     ]
   },
   {
@@ -639,13 +659,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BVNK docs confirm programmatic wallet creation for crypto and fiat via API, including per-customer provisioning (customer ID/reference) and unique, repeat-use blockchain deposit addresses ('channels') per customer. However, there is no documented explanation of key custody semantics (e.g., who holds private keys, custodial model details, key management/security architecture) beyond generic Hawk auth for API access. Missing for 10: explicit key custody/ownership documentation, technical detail on wallet key management, and independent corroboration of these claims.",
+    "rationale": "Docs confirm programmatic wallet creation per customer/account (docs-4, docs-25) and deposit-address provisioning via 'channels' (docs-10, docs-26) plus virtual accounts (docs-12), covering the core per-customer wallet/address story. However, there is no documented explanation of key custody semantics (who controls private keys, custodial vs. non-custodial model) anywhere in the pack. Missing for 10: explicit key custody/ownership documentation, independent/hands-on confirmation of wallet provisioning behavior.",
     "evidenceIds": [
       "bvnk-docs-4",
       "bvnk-docs-25",
       "bvnk-docs-10",
       "bvnk-docs-26",
-      "bvnk-docs-15"
+      "bvnk-docs-12"
     ]
   },
   {
