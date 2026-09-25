@@ -190,6 +190,7 @@ export const CHAIN_ICONS: Record<string, string> = {
   'set-up-the-office-stack': '🏢', // same concept as ops_004 (the office)
   'raise-a-seed-round': '🌱', // same concept as fund_001 (the seed)
   'ship-v1': '🚢', // same concept as sw_001 (ship it)
+  'mcp-native-stack': '🔌', // same concept as vendor_010 (the MCP connection)
   'launch-website': '🌐',
   'launch-on-product-hunt': '😺', // the Product Hunt cat
   'ship-it-right': '🛳️', // the shipping lane — sw_001's 🚢 run as a discipline (releases, pager, postmortems)
@@ -201,6 +202,7 @@ export const CHAIN_ICONS: Record<string, string> = {
   'build-the-team': '👥', // the team, plural — beyond first-hire's 🤝
   'go-global': '🌍', // same concept as hr_003 (work across the globe)
   'month-end-close': '📒',
+  'agent-run-back-office': '🦾', // the mechanical arm — agents run the money loop
   'board-and-governance-rhythm': '👔', // same concept as scale_005 (the boardroom suit)
   'tax-season': '📆', // same concept as qs_047 (the annual-filing calendar)
   'set-up-compliance': '🛡️', // same concept as comp_001 (SOC 2 shield)
