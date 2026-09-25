@@ -5,7 +5,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence documents an MCP server for connecting to Claude, Cursor, or Windsurf, and a Python library for custom code, but there is no mention of documented adapters for Claude Agent SDK, Vercel AI SDK, LangChain, or CrewAI specifically.",
+    "rationale": "Evidence shows Browser Use offers an MCP server for coding assistants (Claude, Cursor, Windsurf) and a Python open-source library, but there is no documentation of adapters for the Claude Agent SDK, Vercel AI SDK, LangChain, or CrewAI specifically named in the story.",
     "evidenceIds": [
       "browser-use-docs-12",
       "browser-use-probe-3",
@@ -40,14 +40,15 @@
     "productId": "browser-use",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Browser Use Cloud lets users kick off agent runs via API (client.runs.create) that execute asynchronously in a hosted browser, with session reuse and event polling to monitor progress without keeping a local process open, which supports a form of unattended background execution. However there is no documented scheduling, cron-like triggers, or webhook-based automation setup for recurring/background jobs, so it's unclear whether truly hands-off recurring automations are supported. Missing for 10: explicit scheduling/trigger mechanism, evidence of long-running unattended jobs beyond single API-invoked runs, and independent confirmation of background reliability.",
+    "rationale": "The Cloud API supports creating runs programmatically (client.runs.create) that execute asynchronously with session persistence and event polling, meaning tasks can run without a human driving the browser live — a core building block for background automation. However there is no documented native scheduling/trigger/cron mechanism for kicking off runs on a timer or event, so 'autonomous background automation' requires external orchestration. missing for 10: built-in scheduler/trigger feature, evidence of long-running unattended jobs, independent confirmation of background reliability.",
     "evidenceIds": [
       "browser-use-docs-1",
       "browser-use-docs-4",
       "browser-use-docs-5",
-      "browser-use-docs-14"
+      "browser-use-docs-14",
+      "browser-use-docs-20"
     ]
   },
   {
@@ -56,21 +57,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Browser Use is itself an agent/automation product (the AI acting inside the browser), not a host application that delegates to a separate built-in assistant — this is the agent-role exception where the axis does not apply. It ships as a library/cloud API/MCP server for developers to build agents with, not as an end-user app containing an embedded assistant.",
+    "rationale": "Browser Use is itself an AI agent/automation tool (an agent that browses the web), not a product with a separate embedded assistant persona for users to delegate to — this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "browser-use",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Browser Use ships both an open-source Python library and a cloud API (client.runs.create) that are inherently script/automatable, implying headless/CI use, and gh-3 explicitly pitches automating the web 'from your own code, and with any LLM.' However, there is no explicit documentation of headless mode flags, Docker images, or CI pipeline examples/integration guides. Missing for 10: explicit headless-mode configuration docs, CI/CD pipeline examples (e.g., GitHub Actions), and independent confirmation of running unattended in CI.",
+    "rationale": "The open-source library is explicitly positioned for automating the web 'from your own code, and with any LLM' (browser-use-gh-3, docs-19), and the Cloud API supports fully programmatic, headless task execution via client.runs.create with pollable events for monitoring (docs-1, docs-5, docs-14) — both suit CI/automation use. Missing for 10: independent hands-on CI-pipeline example/case study confirming headless run in an actual CI system, and explicit headless-mode configuration documentation for the OSS library.",
     "evidenceIds": [
-      "browser-use-docs-1",
       "browser-use-gh-3",
       "browser-use-docs-19",
-      "browser-use-docs-2"
+      "browser-use-docs-1",
+      "browser-use-docs-20",
+      "browser-use-docs-5",
+      "browser-use-docs-14"
     ]
   },
   {
@@ -91,7 +94,7 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs describe an official MCP server enabling Claude, Cursor, Windsurf or any MCP client to run Browser Use tasks (browser-use-docs-12, browser-use-probe-3), but a hands-on community report says the author had to switch tools because Browser Use 'doesn't support MCP integration' in Cursor (browser-use-comm-4), directly contradicting the documented claim. Missing for 10: independent corroboration that MCP connection actually works end-to-end, and resolution of the conflicting user report.",
+    "rationale": "Official docs explicitly describe an MCP server enabling connection from Claude, Cursor, Windsurf, or any MCP client, and a probe confirms the MCP-server doc page exists (browser-use-docs-12, browser-use-probe-3). However, a community/hands-on report states the product 'doesn't support MCP integration' when trying to use it with Cursor (browser-use-comm-4), directly contradicting the documented capability. missing for 10: independent corroboration that the MCP server works end-to-end, resolution of the conflicting community report.",
     "evidenceIds": [
       "browser-use-docs-12",
       "browser-use-probe-3",
@@ -104,11 +107,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Browser Use is fundamentally natural-language driven: tasks are issued as plain-English strings like \"Find the top Hacker News story\" or \"Fill in this job application with my resume and information\", with the agent interpreting and executing them autonomously, corroborated by GitHub examples and community hands-on use for LinkedIn automation. missing for 10: independent benchmark of instruction-following accuracy, and clearer docs on limits/failure modes of natural-language parsing.",
+    "rationale": "Browser Use is explicitly designed around natural-language task input (e.g. 'Find the top Hacker News story', 'Fill in this job application with my resume and information'), with both cloud API and open-source library accepting plain-English goals and returning results, corroborated by community hands-on use. missing for 10: independent third-party benchmarking of NL command reliability/accuracy across diverse tasks, and more detail on limits of NL command complexity.",
     "evidenceIds": [
       "browser-use-docs-1",
+      "browser-use-docs-20",
       "browser-use-gh-1",
       "browser-use-gh-2",
+      "browser-use-comm-1",
       "browser-use-comm-5"
     ]
   },
@@ -118,7 +123,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents a Python SDK, cloud API, MCP server, and web dashboard, but never mentions an official standalone CLI tool for Browser Use. Since a browser-automation product could plausibly ship a CLI, absence of any such evidence means this axis is unmet.",
+    "rationale": "Evidence shows a Python library, Cloud API/SDK, and MCP server, but no documented official CLI tool is mentioned anywhere in the docs, GitHub description, or community posts.",
     "evidenceIds": []
   },
   {
@@ -127,14 +132,15 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Browser Use documents a public Cloud API (client.runs.create, sessions, events polling, structured output, CDP connection) across multiple docs pages, indicating a real programmatic interface beyond the UI. However, probes for a formal OpenAPI/swagger spec returned 404s, so there's no machine-readable API contract, only prose docs and SDK examples. Missing for 10: a published OpenAPI/spec artifact, independent third-party confirmation of API usage beyond vendor docs.",
+    "rationale": "Browser Use documents a public Cloud API (client.runs.create, sessions, events polling, structured output) and an open-source Python library, showing a documented programmatic interface usable by AI-native developers. However, no OpenAPI/Swagger spec was found (404s across candidate paths), so full machine-readable API discoverability is unconfirmed, and evidence is entirely vendor docs without independent hands-on API corroboration. missing for 10: public OpenAPI/swagger spec, independent developer corroboration of the API beyond vendor docs.",
     "evidenceIds": [
       "browser-use-docs-1",
       "browser-use-docs-4",
       "browser-use-docs-5",
       "browser-use-docs-14",
-      "browser-use-probe-2",
-      "browser-use-probe-1"
+      "browser-use-gh-3",
+      "browser-use-probe-1",
+      "browser-use-probe-2"
     ]
   },
   {
@@ -143,8 +149,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of scoped or least-privilege API key/credential issuance (e.g., role-based tokens, permission scopes) for agents; docs mention API keys implicitly via client usage but no mention of scoping, restricted permissions, or credential management features. Community/GitHub evidence also silent on this.",
-    "evidenceIds": []
+    "rationale": "No evidence of scoped or least-privilege API credential issuance (e.g., API key permission scoping, role-based tokens); docs mention API usage, sessions, and profiles but nothing about credential scoping/least-privilege controls, and OpenAPI probes 404 with no auth/permissions docs found.",
+    "evidenceIds": [
+      "browser-use-probe-2"
+    ]
   },
   {
     "productId": "browser-use",
@@ -152,14 +160,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Browser Use ships an official open-source Python library (github, docs-19) and a cloud client SDK with documented usage patterns (client.runs.create, sessions, events polling) shown in docs-1/4/5/14, giving AI-native devs a concrete first-party SDK to build against. Missing for 10: evidence of SDKs beyond Python (e.g. JS/TS), and no OpenAPI spec was found (probe-2 all 404) or independent third-party corroboration of SDK usage.",
+    "rationale": "Browser Use ships an official Python SDK/client (`client.runs.create`) plus an open-source library, with docs covering sessions, structured output, events polling, and authentication that developers can build against, and the GitHub repo shows widespread adoption confirming real-world SDK use. missing for 10: evidence of SDKs in other languages, and a public OpenAPI/API reference (probe found all OpenAPI endpoints 404).",
     "evidenceIds": [
       "browser-use-docs-1",
+      "browser-use-docs-3",
       "browser-use-docs-4",
       "browser-use-docs-5",
-      "browser-use-docs-19",
       "browser-use-gh-3",
-      "browser-use-probe-2"
+      "browser-use-probe-2",
+      "browser-use-probe-1"
     ]
   },
   {
@@ -168,7 +177,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs describe an event system based on polling `runs.events()` with a cursor, not webhook subscriptions; no evidence anywhere in the pack mentions webhooks, callback URLs, or push notifications.",
+    "rationale": "Evidence only shows polling-based event observability (runs.events() with cursor) rather than webhook subscriptions; no docs mention webhook endpoints, event subscriptions, or push notifications for run/session events.",
     "evidenceIds": [
       "browser-use-docs-5",
       "browser-use-docs-14"
@@ -180,7 +189,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs show static code snippets (e.g., client.runs.create examples) but no evidence of an interactive, runnable API console/reference; explicit probes for OpenAPI/Swagger specs at standard paths all returned 404, indicating no interactive API explorer exists.",
+    "rationale": "Docs contain code snippets (e.g. client.runs.create) but there's no evidence of an interactive, runnable API reference/playground; the probe explicitly found no OpenAPI/Swagger spec (404s on all candidate paths), suggesting no interactive explorer exists.",
     "evidenceIds": [
       "browser-use-probe-2",
       "browser-use-docs-1",
@@ -193,7 +202,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/swagger spec files returned 404 on all candidate paths, and no documentation references a downloadable machine-readable API spec despite having a REST/cloud API.",
+    "rationale": "A direct probe for OpenAPI/Swagger spec files at all common paths returned 404s, and no evidence pack item shows a downloadable machine-readable API spec despite Browser Use having a REST/client API.",
     "evidenceIds": [
       "browser-use-probe-2"
     ]
@@ -217,10 +226,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an API version label (\"V4\") in docs, but there is no documented deprecation policy, versioning changelog, or API stability guarantees anywhere in the pack; the OpenAPI spec probe also 404s, indicating no formal API contract is published.",
+    "rationale": "Docs reference an API version (\"V4\") implying some versioning exists, but there is no documented deprecation policy, changelog, versioning guarantees, or OpenAPI spec (openapi probe returned 404s across all candidate paths), so reliability of the API contract over time is unevidenced.",
     "evidenceIds": [
       "browser-use-docs-3",
-      "browser-use-docs-15",
       "browser-use-probe-2"
     ]
   },
@@ -243,12 +251,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Browser Use's evidence covers on-demand task runs, sessions, observability polling, CAPTCHA/stealth, and MCP integration, but nothing describes user-defined rules or triggers that fire actions automatically on external events (e.g., webhooks, schedules, conditional triggers). The product is presented as an agent you invoke to perform a task, not an event-driven automation/rules engine.",
+    "rationale": "Browser Use's docs and community evidence show on-demand task execution (agent runs given a goal), session/run polling, and CDP integration, but nothing about defining persistent rules that automatically trigger actions on external events (e.g., webhooks, schedules, event-based automation). The 'events' referenced are just run-progress polling, not user-defined triggers.",
     "evidenceIds": [
       "browser-use-docs-1",
-      "browser-use-docs-4",
       "browser-use-docs-5",
-      "browser-use-docs-12",
+      "browser-use-docs-14",
       "browser-use-gh-3"
     ]
   },
@@ -258,7 +265,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers runs, sessions, observability, stealth/proxy/CAPTCHA handling, auth profiles, and MCP integration, but nowhere mentions cron-like scheduling, recurring triggers, or workflow automation over time. No docs or community evidence describe a scheduler or recurring-job feature.",
+    "rationale": "The evidence pack covers runs, sessions, observability, stealth, CAPTCHA solving, authentication profiles, and MCP integration, but nowhere mentions scheduling, cron-like triggers, or recurring/repeated execution of workflows. Scheduling recurring jobs is a plausible capability for an automation/agent platform, so the axis applies, but no supporting evidence exists.",
     "evidenceIds": []
   },
   {
@@ -267,37 +274,34 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Browser Use documents runs, sessions, event polling, and observability, but there is no evidence of versioning automation definitions, reviewing changes, or rolling back to prior versions of a task/automation. Missing for 10: version history/diffing of automations, review/approval workflow, rollback mechanism.",
-    "evidenceIds": [
-      "browser-use-docs-4",
-      "browser-use-docs-5",
-      "browser-use-docs-14"
-    ]
+    "rationale": "No evidence of any versioning, review, diff, or rollback mechanism for automations; the evidence only covers running, monitoring, and session/profile management, none of which addresses version control of automations.",
+    "evidenceIds": []
   },
   {
     "productId": "browser-use",
     "storyId": "captcha-handling",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Browser Use documents a clear captcha stance: automatic CAPTCHA solving is enabled by default for cloud Agent runs and standalone Cloud Browser sessions, with an explicit human-fallback path via the live preview if the challenge persists. This directly matches the story's requirement of a documented stance rather than silent failure. Missing for 10: independent/hands-on verification of captcha-solving success rates and explicit behavior/limits for the self-hosted open-source library (docs focus on Cloud).",
+    "confidence": "medium",
+    "rationale": "Docs explicitly state automatic CAPTCHA solving is enabled by default for cloud browsers/agent runs, and explicitly document a human-fallback path (live preview) if the challenge persists, satisfying the documented-stance requirement. Missing for 10: independent/hands-on verification that captcha solving works reliably in practice (no community corroboration found) and no explicit list of unsupported captcha types.",
     "evidenceIds": [
       "browser-use-docs-8",
       "browser-use-docs-9",
-      "browser-use-docs-15"
+      "browser-use-docs-15",
+      "browser-use-docs-23"
     ]
   },
   {
     "productId": "browser-use",
     "storyId": "cdp-connect-existing-stack",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe connecting existing Playwright/Puppeteer/CDP code to Browser Use's browsers via CDP URL, with a documented choice between Browser Use driving or the developer's own code connecting directly over CDP (docs-2, docs-18), and community reports confirm connecting to a real local Chrome profile via CDP for existing automation. missing for 10: independent hands-on validation specifically with Playwright/Puppeteer libraries (not just CDP raw), and more detail on session/auth persistence when using external code.",
+    "rationale": "Docs explicitly state you can launch a Browser Use cloud/local browser and connect via its CDP URL, letting your own Playwright/Puppeteer/CDP code drive it instead of rewriting automation (browser-use-docs-2, docs-18, docs-26), and community evidence confirms local CDP/profile connection works in practice (browser-use-comm-5). missing for 10: dedicated Playwright/Puppeteer code sample walkthrough, independent hands-on confirmation specifically for the cloud CDP endpoint (not just local).",
     "evidenceIds": [
       "browser-use-docs-2",
       "browser-use-docs-18",
-      "browser-use-docs-4",
+      "browser-use-docs-26",
       "browser-use-comm-5"
     ]
   },
@@ -307,11 +311,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Browser Use supports saved/reused login profiles (docs-10) and a documented 2FA workflow where the run pauses at the challenge and a human enters the code via live view (docs-11/16), but there is no vault/secrets-manager integration for storing credentials and injecting them without model exposure, and TOTP is handled via human-in-the-loop rather than automated secret injection. missing for 10: a credential vault/secrets-manager integration, evidence that passwords/TOTP secrets are injected without ever passing through the model context, fully automated TOTP handling without human intervention, independent confirmation of the 2FA flow working in practice.",
+    "rationale": "Docs describe saved-profile login persistence and a 2FA workflow where the first run pauses at the 2FA screen and a human enters the code via live view, plus a human-checkpoint fallback — but there is no vault/secrets-manager integration for storing credentials separately from the model, nor automated TOTP handling; the model/agent still interacts with the login flow directly rather than credentials being injected without exposure. missing for 10: dedicated credential vault integration, secret-injection so raw credentials/TOTP seeds are never seen by the model, automated TOTP generation, independent/hands-on confirmation of the 2FA workflow working reliably.",
     "evidenceIds": [
       "browser-use-docs-10",
       "browser-use-docs-11",
-      "browser-use-docs-16"
+      "browser-use-docs-16",
+      "browser-use-docs-24",
+      "browser-use-docs-25"
     ]
   },
   {
@@ -320,21 +326,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of caching resolved actions or generated code for deterministic, lower-cost replay; the product is LLM-driven agent automation with sessions/runs but nothing about caching or replay without re-invoking the model. missing for 10: any mention of action/code caching, deterministic replay mechanism, or cost/latency savings from skipping re-prompting.",
+    "rationale": "No evidence of any caching mechanism for resolved actions or generated code enabling deterministic, lower-cost replay; the docs cover sessions, profiles, structured output, and observability but never mention caching or replay to avoid re-prompting the LLM.",
     "evidenceIds": []
   },
   {
     "productId": "browser-use",
     "storyId": "dom-action-primitives",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Browser Use's core agent is built around natural-language task instructions (e.g. \"Find the top Hacker News story\", \"Fill in this job application\") executed via an LLM-driven agent that perceives the DOM/page state and decides actions, which is the essence of DOM-understanding, layout-resilient automation — this is corroborated by GitHub task examples and community hands-on use (LinkedIn automation, resume filling). However, the evidence pack lacks explicit documentation of discrete act/click/type primitives with described-element targeting or any stated guarantee/mechanism for surviving selector/layout changes; it's inferred from the agent's general design rather than directly documented. missing for 10: explicit API/primitive-level documentation of click/type/act-on-described-element functions, and direct evidence/testing showing resilience to selector or layout changes rather than just general LLM-driven task completion.",
+    "rationale": "Evidence shows Browser Use operates as a goal-driven agent that completes tasks like filling forms or extracting data (browser-use-gh-1, browser-use-gh-2, browser-use-docs-20), implying underlying DOM-understanding navigation rather than brittle selectors, and community reports confirm it works against real logged-in sites (browser-use-comm-5). However the evidence never documents explicit low-level 'act/click/type on described element' primitives as a developer-facing API, nor any explicit claim/testing of selector-change resilience. missing for 10: explicit action-primitive API docs (click/type functions), documented resilience to selector/layout changes, independent benchmark of primitive-level robustness.",
     "evidenceIds": [
       "browser-use-gh-1",
       "browser-use-gh-2",
-      "browser-use-comm-5",
-      "browser-use-docs-1"
+      "browser-use-docs-20",
+      "browser-use-comm-5"
     ]
   },
   {
@@ -343,8 +349,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents stealth, proxy, and CAPTCHA-solving features in detail, but there is no published acceptable-use policy, terms of service, or anti-abuse statement governing what these stealth/automation features may or may not be used for; community discussion even raises security/abuse concerns without any vendor policy response cited.",
-    "evidenceIds": []
+    "rationale": "Evidence shows extensive marketing of stealth/proxy/CAPTCHA-solving features but no published acceptable-use policy, terms restricting misuse, or anti-abuse posture governing what these stealth features may be used for; community discussion even raises unresolved security/abuse concerns without a vendor policy response.",
+    "evidenceIds": [
+      "browser-use-docs-6",
+      "browser-use-docs-7",
+      "browser-use-docs-8",
+      "browser-use-comm-2",
+      "browser-use-comm-3"
+    ]
   },
   {
     "productId": "browser-use",
@@ -364,31 +376,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs show a hosted Cloud API (client.runs.create) that creates runs, supports polling via runs.events() with cursors, and returns structured results without the caller managing browser infrastructure (stealth, proxies, CAPTCHA solving handled server-side). Missing for 10: no explicit webhook callback mechanism is documented (only polling is shown), and no public OpenAPI spec was found to confirm full REST surface.",
+    "rationale": "Docs show a hosted Cloud Agent API (client.runs.create) that runs tasks without local browser management, with polling via runs.events() and cursor support for incremental updates; sessions/runs are managed server-side. Webhook support isn't explicitly confirmed and no official OpenAPI spec was found (404s), so missing for 10: explicit webhook delivery documentation, published OpenAPI spec, independent hands-on confirmation of the hosted API workflow.",
     "evidenceIds": [
       "browser-use-docs-1",
-      "browser-use-docs-3",
       "browser-use-docs-5",
       "browser-use-docs-14",
-      "browser-use-docs-6",
-      "browser-use-docs-7",
-      "browser-use-docs-8",
+      "browser-use-docs-20",
       "browser-use-probe-2"
     ]
   },
   {
     "productId": "browser-use",
     "storyId": "live-view-human-takeover",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe a live_view_url/live preview that lets a human take control mid-run for cases like CAPTCHAs or 2FA, and events can be polled to monitor a run, which supports live-watch-and-intervene workflows. However, this is scoped to specific triggers (CAPTCHA/2FA) rather than a general 'agent gets stuck, operator takes over anytime' workflow, and there's no independent/hands-on evidence confirming smooth mid-run handoff in practice. missing for 10: general-purpose stuck-detection/handoff beyond CAPTCHA/2FA scenarios, independent hands-on confirmation of live takeover working reliably, clear UI/replay-debugging tooling details.",
+    "rationale": "Docs describe a `live_view_url`/live preview that lets a human take control mid-run at CAPTCHA or 2FA checkpoints, explicitly framed as 'human control' and 'human checkpoint' fallback, and sessions can continue after human intervention. This directly matches watching live and taking control when the agent is stuck, though evidence is limited to specific stuck scenarios (captcha/2FA) rather than arbitrary stuck states, and there's no independent/hands-on confirmation of the live-view UI itself. Missing for 10: independent/hands-on verification of the live-view UI, evidence of general (non-captcha/2FA) stuck-state handoff, and a demo of resuming full agent control after human takeover.",
     "evidenceIds": [
       "browser-use-docs-9",
       "browser-use-docs-11",
       "browser-use-docs-16",
-      "browser-use-docs-14",
-      "browser-use-docs-5"
+      "browser-use-docs-25",
+      "browser-use-docs-15"
     ]
   },
   {
@@ -397,12 +406,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Browser Use ships an open-source Python library explicitly positioned for local, code-driven automation ('For a local agent, use the open-source library'; 'automate the web at scale, from your own code, and with any LLM'), and community reports confirm running it locally against a real local Chrome browser/profile without a cloud account. missing for 10: no explicit walkthrough showing zero network/account calls during local runs, and no independent benchmark of purely offline/local operation.",
+    "rationale": "Docs explicitly point developers to the open-source Python library for local agent use ('For a local agent, use the open-source library') and GitHub confirms running the agent from your own code with any LLM, with community reports confirming local runs against a real local Chrome profile without a cloud account. missing for 10: no explicit statement that no cloud account/API key is ever required, and community evidence raises security caveats (unauthenticated CDP debugging port) about local setup robustness.",
     "evidenceIds": [
       "browser-use-docs-19",
       "browser-use-gh-3",
       "browser-use-comm-5",
-      "browser-use-docs-2"
+      "browser-use-comm-3"
     ]
   },
   {
@@ -411,11 +420,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe saving a login profile once and reusing it to start future browsers already logged in, plus a 2FA guide for handling the initial login flow, and community evidence confirms local profile reuse works for logged-in automation (e.g., LinkedIn). missing for 10: independent/hands-on corroboration specifically of the cloud profile-reuse feature (only local profile reuse is community-validated) and no detail on profile storage/security guarantees.",
+    "rationale": "Docs explicitly describe saving a browser profile that persists cookies/local storage/login state and reusing it so future runs start already logged in, including using this alongside 2FA checkpoints (browser-use-docs-10, -24, -25). Community evidence corroborates the underlying pattern of reusing a logged-in browser profile for automation (browser-use-comm-5), though that comment refers to the local library rather than the cloud profile feature specifically. Missing for 10: independent/hands-on verification of the cloud profile-reuse feature itself (only local-profile reuse is community-confirmed), and no detail on profile expiry/rotation limits.",
     "evidenceIds": [
       "browser-use-docs-10",
-      "browser-use-docs-11",
-      "browser-use-docs-16",
+      "browser-use-docs-24",
+      "browser-use-docs-25",
       "browser-use-comm-5"
     ]
   },
@@ -437,16 +446,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs and GitHub examples show natural-language goals (e.g., \"Find the top Hacker News story\", \"Fill in this job application\") driving an agent that navigates, logs in, handles 2FA/CAPTCHA, and completes multi-step flows end-to-end via both cloud API and open-source library; community reports corroborate real-world use (e.g., LinkedIn automation). Missing for 10: independent third-party benchmark of complex multi-step task success rates and more robust evidence of reliability at scale beyond anecdotal community reports.",
+    "rationale": "Core product function: docs and quickstart show giving a natural-language goal ('Find the top Hacker News story') and getting a completed run, with GitHub examples of multi-step flows like filling a job application form or scraping a followers list into CSV. Community hands-on report (comm-5) confirms it working for real login/session-based tasks like LinkedIn automation, and comm-1 confirms it functioning well in casual testing. Missing for 10: independent benchmark data on end-to-end success rate across varied complex flows, and no resolution of raised reliability/security concerns beyond anecdote.",
     "evidenceIds": [
       "browser-use-docs-1",
+      "browser-use-docs-20",
       "browser-use-gh-1",
       "browser-use-gh-2",
-      "browser-use-docs-10",
-      "browser-use-docs-11",
-      "browser-use-docs-8",
-      "browser-use-comm-5",
-      "browser-use-gh-3"
+      "browser-use-comm-1",
+      "browser-use-comm-5"
     ]
   },
   {
@@ -455,12 +462,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows live-preview URLs for human intervention during CAPTCHA/2FA and event polling for observability, but nothing about an explicit preview/plan step where candidate actions are surfaced for developer review before the agent commits to acting.",
+    "rationale": "Evidence shows live-preview/human-checkpoint features used mid-run for CAPTCHA/2FA handoff, but nothing describing a mode where candidate actions are proposed/observed and reviewed before the agent commits to executing them on the page.",
     "evidenceIds": [
       "browser-use-docs-9",
       "browser-use-docs-11",
-      "browser-use-docs-14",
-      "browser-use-docs-16"
+      "browser-use-docs-25"
     ]
   },
   {
@@ -469,16 +475,18 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show the API (client.runs.create, sessions, events polling, structured output, live_view_url for 2FA/CAPTCHA handoff, stealth/proxy defaults) mirrors most cloud UI capabilities, and there's an official MCP server for coding-agent access, suggesting broad but not explicitly confirmed feature parity with the dashboard/UI. However there's no discoverable OpenAPI/formal API spec (404s on all candidate paths) and no explicit vendor statement that 100% of UI functionality is API-reachable; missing for 10: a canonical API reference/OpenAPI spec, and explicit parity documentation confirming every UI action (e.g., live preview manual takeover) is independently scriptable via API rather than requiring the UI.",
+    "rationale": "Browser Use's Cloud API exposes runs, sessions, structured output, observability events, browser stealth/CAPTCHA handling, profiles, and 2FA flows that mirror UI capabilities, and docs explicitly frame the API as the way to automate what the UI shows. However, a live preview/human-checkpoint fallback for CAPTCHAs and 2FA is UI-only (no API equivalent for manual intervention), and no OpenAPI spec was found (404s across all candidate paths), suggesting the API surface isn't fully self-documented or verifiably complete relative to the UI. missing for 10: OpenAPI/spec confirming full API-UI parity, an API-only path for human-in-the-loop CAPTCHA/2FA steps that currently require the live preview UI, independent hands-on confirmation that all UI actions are API-reachable.",
     "evidenceIds": [
       "browser-use-docs-1",
       "browser-use-docs-4",
       "browser-use-docs-5",
+      "browser-use-docs-6",
+      "browser-use-docs-8",
       "browser-use-docs-9",
       "browser-use-docs-11",
-      "browser-use-docs-12",
-      "browser-use-probe-2",
-      "browser-use-probe-3"
+      "browser-use-docs-24",
+      "browser-use-docs-25",
+      "browser-use-probe-2"
     ]
   },
   {
@@ -486,9 +494,13 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack describes agent runs, sessions, CAPTCHA handling, and pricing, but nothing documents an account/data export feature (e.g., downloading all run history, sessions, or stored data in an open format) that would let a user leave the platform with their data intact; the open-source library allows self-hosting but that's a separate capability from exporting existing cloud account data.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "No evidence of any account/data export mechanism (e.g., exporting run history, session data, or profiles in open formats) for Browser Use Cloud users; docs only describe running tasks that produce CSV/JSON as task outputs, not exporting the platform's own stored user data. The existence of a separate open-source library (browser-use-docs-19) is a different product path, not a data-export feature of the cloud service.",
+    "evidenceIds": [
+      "browser-use-docs-4",
+      "browser-use-docs-24",
+      "browser-use-docs-19"
+    ]
   },
   {
     "productId": "browser-use",
@@ -509,7 +521,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Browser Use ships an open-source Python library (github.com/browser-use/browser-use) that runs locally and independently of the Cloud API, explicitly positioned as the option for self-hosted/local agents (\"For a local agent, use the open-source library\"), and community reports confirm running it locally connected to a real browser/profile. missing for 10: no first-party self-hosting guide covering infra/deployment (e.g. Docker, scaling), and no independent audit of parity between self-hosted and cloud feature sets (stealth, CAPTCHA solving, proxies are cloud-only per docs).",
+    "rationale": "The core agent logic ships as an open-source Python library on GitHub, which docs explicitly point to for local/self-hosted use ('For a local agent, use the open-source library'), and community members confirm running it locally with their own browser/profile. Missing for 10: dedicated self-hosting/deployment docs (e.g., Docker, server setup) and independent verification of feature parity with the cloud offering.",
     "evidenceIds": [
       "browser-use-docs-19",
       "browser-use-gh-3",
@@ -523,12 +535,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs show programmatic session/run creation (client.runs.create, session IDs holding multiple runs) and event polling for observability, implying some ability to manage sessions programmatically, but there is no documented concurrency limit, no fleet/parallel-session guidance, and no scaling architecture described. missing for 10: documented concurrency limits, guidance/examples for running multiple concurrent sessions at scale, rate-limit or quota specs, and independent evidence of parallel session management working in practice.",
+    "rationale": "Docs show programmatic session/run creation and a claim of automating 'at scale', with session objects that can hold multiple runs, but there is no documented concurrency limit, quota, or explicit fleet-management API for running many sessions in parallel. missing for 10: documented concurrency limits/quotas, explicit multi-session parallel orchestration API, and independent evidence of running a fleet of concurrent sessions.",
     "evidenceIds": [
       "browser-use-docs-1",
       "browser-use-docs-4",
-      "browser-use-docs-5",
-      "browser-use-docs-14",
       "browser-use-gh-3"
     ]
   },
@@ -538,7 +548,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack material addresses data residency, region selection, or storage location controls for cloud runs/sessions; the open-source library option avoids the cloud entirely but that's not the same as choosable region/residency within the product. missing for 10: any mention of data center regions, residency options, or storage location controls.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, regional storage options, or compliance controls for where cloud data is stored; the open-source library route bypasses this but doesn't constitute a data-residency choice.",
     "evidenceIds": []
   },
   {
@@ -547,7 +557,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out policies, or privacy/data-retention commitments for Browser Use Cloud or the open-source library.",
+    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out settings, or any privacy policy statement on this topic; only pricing, features, and automation docs are present.",
     "evidenceIds": []
   },
   {
@@ -556,7 +566,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of data retention controls, deletion APIs, or privacy/data-lifecycle policy documentation anywhere in the pack; only session/profile reuse and credit pricing are mentioned. missing for 10: retention policy documentation, data deletion API/UI, export/erasure controls, any privacy compliance statement.",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data-handling settings for sessions, profiles, or run history; documentation covers sessions, profiles, and authentication but not retention/deletion mechanisms.",
     "evidenceIds": []
   },
   {
@@ -565,7 +575,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage data collection, or any opt-out/privacy setting for Browser Use; the documentation and community items cover unrelated features like stealth browsing, CAPTCHA solving, and MCP integration.",
+    "rationale": "No evidence pack item mentions telemetry, analytics, usage tracking, or an opt-out setting/environment variable for Browser Use; the docs and community items cover unrelated features like stealth, CAPTCHA, sessions, and MCP.",
     "evidenceIds": []
   },
   {
@@ -574,9 +584,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs mention structured output but V4 returns `run.result` as a plain string with a recommendation to 'ask for JSON only, then validate it client-side' — there's no native Zod/Pydantic schema binding or first-party typed-schema extraction feature shown. This is a workaround rather than a built-in schema-validated extraction pipeline. missing for 10: no evidence of a documented schema/type-binding API (e.g., passing a Pydantic/Zod schema directly to the agent), no SDK-level validation helpers, no independent/hands-on confirmation that structured JSON output reliably conforms to a given schema.",
+    "rationale": "Docs confirm the agent can produce JSON output (docs-3, docs-21) and GitHub examples show structured extraction tasks (gh-2), but the Cloud API explicitly returns `run.result` as a raw string with instructions to 'Ask for JSON only, then validate it client-side' — there's no built-in Zod/Pydantic schema enforcement, just a convention plus manual client-side validation. missing for 10: native schema-typed extraction API (e.g. passing a Pydantic/Zod model to constrain output), automatic validation/retry on schema mismatch, and independent confirmation this works reliably in practice.",
     "evidenceIds": [
       "browser-use-docs-3",
+      "browser-use-docs-21",
       "browser-use-gh-2"
     ]
   },
@@ -585,11 +596,12 @@
     "storyId": "session-replay-recordings",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs describe an observability/events stream (runs.events()) for monitoring a run and a live_view_url for real-time human intervention, which could support building a step timeline, but there is no explicit mention of recorded video or screenshot capture for post-hoc replay debugging of failed runs. Missing for 10: documented video recording of sessions, screenshot capture per action, and a dedicated replay/timeline UI for past runs.",
+    "confidence": "medium",
+    "rationale": "Docs show a run-events polling API (`runs.events()`) that can build a step-by-step action timeline for monitoring/debugging, plus a live-preview URL for human intervention during a run, but there is no evidence of recorded video or screenshot capture for post-hoc replay debugging of failed runs. missing for 10: video recording of runs, screenshot capture per step, and any documented replay/playback UI for failed runs.",
     "evidenceIds": [
       "browser-use-docs-5",
       "browser-use-docs-14",
+      "browser-use-docs-9",
       "browser-use-docs-11",
       "browser-use-docs-16"
     ]
@@ -598,14 +610,13 @@
     "productId": "browser-use",
     "storyId": "stealth-fingerprint-proxies",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state cloud browsers run in a hardened Chromium fork with stealth enabled by default and residential proxies across 195+ countries, directly matching the story's stealth+proxy ask, with automatic CAPTCHA solving as a complementary layer. Missing for 10: explicit control/documentation for selecting a specific geo-target rather than automatic 195+ country rotation, and independent/hands-on evidence confirming bot-detection evasion actually works in practice.",
+    "rationale": "Docs explicitly document stealth Chromium enabled by default and residential proxies across 195+ countries enabled by default, directly matching the story's stealth/proxy needs. missing for 10: independent/hands-on corroboration of proxy geo-targeting or stealth effectiveness, and no explicit control to select/customize specific geo-targeted proxy locations beyond 'default across 195+ countries'.",
     "evidenceIds": [
       "browser-use-docs-6",
       "browser-use-docs-7",
-      "browser-use-docs-8",
-      "browser-use-docs-15"
+      "browser-use-docs-22"
     ]
   },
   {
@@ -614,7 +625,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe polling patterns for run status (runs.events() with cursor, polling ordered V4 events) but no webhook or callback-based notification mechanism is mentioned anywhere in the evidence pack.",
+    "rationale": "The evidence explicitly documents polling-based mechanisms for run/session status (events cursor polling in observability docs) but no mention of webhooks or push notifications for task/session completion; developers must poll instead.",
     "evidenceIds": [
       "browser-use-docs-5",
       "browser-use-docs-14"
@@ -638,7 +649,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Browser Use's docs describe DOM-based agent actions, live preview/human handoff for CAPTCHA/2FA, and CDP-based control, but there is no evidence of a dedicated vision or computer-use mode that acts directly on screenshots for canvas/UI elements the DOM can't reach.",
+    "rationale": "No evidence in the pack describes a vision/screenshot-based or computer-use action mode for handling canvases or non-DOM UI elements; all cited docs cover agent runs, sessions, stealth, CAPTCHA, auth/2FA, and MCP integration but never mention screenshot-driven action selection.",
     "evidenceIds": []
   },
   {
@@ -647,11 +658,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Browser Use runs are essentially single natural-language task strings within a session/run model (create run, poll events, reuse session) with no documented constructs for loops, conditionals, or parameterized workflow templates; the Python library is described as scriptable but no workflow-composition API (branching, iteration, variables) is shown.",
+    "rationale": "Evidence shows Browser Use is built around one-shot natural-language task prompts (\"Give a high-accuracy browser agent a goal and get the result\") and simple session/run models, with no documented workflow DSL, loop/conditional constructs, or parameterized workflow templates. The Python library allows arbitrary code orchestration, but that's generic scripting, not a product feature for composing repeatable multi-step workflows.",
     "evidenceIds": [
+      "browser-use-docs-20",
       "browser-use-docs-1",
       "browser-use-docs-4",
-      "browser-use-docs-5",
       "browser-use-gh-3"
     ]
   },
