@@ -211,4 +211,42 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // metorial.com publishes a site llms.txt (text/plain) that self-describes the MCP
+      // integration platform and indexes the whole docs tree, noting every docs page mirrors
+      // as markdown at URL + .mdx. Added at the 2026-09-25 YC F25 coverage-queue bring-up.
+      probeId: 'llms-site-index',
+      productId: 'metorial',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://metorial.com/llms.txt | head -4'],
+      displayCommand: 'curl -s https://metorial.com/llms.txt | head -4',
+      expect: /# Metorial[\s\S]*connects AI agents and MCP clients/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Every docs page serves clean markdown at URL + .mdx (the llms.txt documents the
+      // convention) — verified keylessly on the developer quickstart.
+      probeId: 'docs-md-endpoint',
+      productId: 'metorial',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://metorial.com/docs/build/quickstart.mdx | head -6'],
+      displayCommand: 'curl -s https://metorial.com/docs/build/quickstart.mdx | head -6',
+      expect: /# Developer quickstart[\s\S]*under 5 minutes/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The public REST API is live and key-gated exactly as the docs describe: a keyless
+      // GET /providers answers 401 unauthorized with a machine-readable error object that
+      // names the Bearer-token header contract (glama registry-api-authgate pattern).
+      probeId: 'registry-api-authgate',
+      productId: 'metorial',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', "curl -s --max-time 20 'https://api.metorial.com/providers' -H 'Accept: application/json' | head -c 400"],
+      displayCommand: "curl -s 'https://api.metorial.com/providers' | head -c 400",
+      expect: /"code":"unauthorized"[\s\S]*Missing Authorization header/,
+      timeoutMs: 30_000,
+    },
 ]

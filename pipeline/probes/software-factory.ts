@@ -1,4 +1,4 @@
-import type { LocalProbe } from './types'
+import { CURL_MCP_INIT, type LocalProbe } from './types'
 
 export const probes: LocalProbe[] = [
     {
@@ -86,6 +86,50 @@ export const probes: LocalProbe[] = [
       argv: ['sh', '-c', "curl -s --max-time 20 https://docs.humanlayer.com/guide/github-integration | grep -o -m 2 -E 'Create Tasks from Issues|artifact links' | head -4"],
       displayCommand: "curl -s https://docs.humanlayer.com/guide/github-integration | grep -oE 'Create Tasks from Issues|artifact links'",
       expect: /Create Tasks from Issues/,
+      timeoutMs: 30_000,
+    },
+    {
+      // superset.sh publishes a product llms.txt (text/plain) that self-describes the
+      // agent-orchestration workspace and indexes its whole machine-readable surface (MCP
+      // servers, OpenAPI spec, well-known agent/server cards, auth.md/agents.md). Added at the
+      // 2026-09-25 YC X26 coverage-queue bring-up.
+      probeId: 'llms-docs-index',
+      productId: 'superset',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://superset.sh/llms.txt | head -4'],
+      displayCommand: 'curl -s https://superset.sh/llms.txt | head -4',
+      expect: /# Superset[\s\S]*Bring any coding agent\. Orchestrate them all\./,
+      timeoutMs: 30_000,
+    },
+    {
+      // The hosted MCP server answers a keyless JSON-RPC initialize with its OAuth challenge:
+      // HTTP 401 + WWW-Authenticate Bearer whose resource_metadata points at the RFC 9728
+      // protected-resource document — the documented agent front door is live.
+      probeId: 'mcp-remote-handshake',
+      productId: 'superset',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.superset.sh/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.superset.sh/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // api.superset.sh serves its OpenAPI 3.1 spec keylessly — the machine-readable schema
+      // of the tasks/workspaces/agents/automations surface the MCP server fronts.
+      probeId: 'openapi-spec-fetch',
+      productId: 'superset',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://api.superset.sh/openapi.json | head -c 200'],
+      displayCommand: 'curl -s https://api.superset.sh/openapi.json | head -c 200',
+      expect: /"openapi":"3\.1[\s\S]*Superset API/,
       timeoutMs: 30_000,
     },
 ]
