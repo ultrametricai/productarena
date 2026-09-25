@@ -44,18 +44,21 @@ export default function HomeModes({
     setMode(m)
     setParams({ view: m === 'companies' ? null : m, all: null })
   }
-  const tab = (m: HomeMode, label: string, title: string) => (
+  // Founder 2026-09-24 (mobile): all four tabs on ONE line — emoji and roomy padding are
+  // desktop-only; phones get tight text-only pills.
+  const tab = (m: HomeMode, icon: string, label: string, title: string) => (
     <button
       type="button"
       onClick={() => pick(m)}
       title={title}
       aria-pressed={mode === m}
-      className={`rounded-full px-3.5 py-1 text-sm transition ${
+      className={`whitespace-nowrap rounded-full px-2 py-1 text-xs transition sm:px-3.5 sm:text-sm ${
         mode === m
           ? 'bg-emerald-400/15 font-medium text-emerald-300 ring-1 ring-emerald-400/50'
           : 'text-zinc-400 hover:text-zinc-200'
       }`}
     >
+      <span aria-hidden className="hidden sm:inline">{icon} </span>
       {label}
     </button>
   )
@@ -63,11 +66,11 @@ export default function HomeModes({
   return (
     <HomeModeContext.Provider value={mode}>
       <div>
-        <div className="mb-4 inline-flex flex-wrap items-center gap-1 rounded-full border border-zinc-800 p-1">
-          {tab('companies', '🏢 Companies', 'One row per company — a multi-product family (Stripe, Adyen…) shows only its parent')}
-          {tab('products', '📦 Products', 'Every judged product line ranked separately, as it does inside its own arena')}
-          {tab('processes', '🔁 Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
-          {arenas !== undefined && tab('arenas', '🏟 Arenas', 'Every judged market — visual navigation, grouped by section')}
+        <div className="mb-4 inline-flex flex-nowrap items-center gap-0.5 rounded-full border border-zinc-800 p-1 sm:gap-1">
+          {tab('companies', '🏢', 'Companies', 'One row per company — a multi-product family (Stripe, Adyen…) shows only its parent')}
+          {tab('products', '📦', 'Products', 'Every judged product line ranked separately, as it does inside its own arena')}
+          {tab('processes', '🔁', 'Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
+          {arenas !== undefined && tab('arenas', '🏟', 'Arenas', 'Every judged market — visual navigation, grouped by section')}
         </div>
         <div className={mode === 'companies' || mode === 'products' ? '' : 'hidden'}>{companies}</div>
         <div className={mode === 'processes' ? '' : 'hidden'}>{processes}</div>

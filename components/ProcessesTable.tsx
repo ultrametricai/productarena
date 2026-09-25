@@ -241,7 +241,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
           setParams({ pq: value.trim() === '' ? null : value })
         }}
       />
-      <div className="overflow-x-auto rounded-2xl border border-zinc-800 md:overflow-x-visible">
+      <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-2xl sm:border md:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">

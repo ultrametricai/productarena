@@ -10,9 +10,8 @@ import { useEffect, useRef } from 'react'
 // the brief hover window. Mounted once in app/layout.tsx; zero per-callsite changes, and new
 // tooltips added anywhere pick this up automatically.
 //
-// Touch devices get the same tooltip on tap (shown ~2.5s), which native titles never provided.
+// Touch devices never see these (founder 2026-09-24): a tap means activate, not hover.
 const SHOW_DELAY_MS = 80 // near-instant but ignores drive-by cursor passes
-const TOUCH_HIDE_MS = 2500
 
 export default function InstantTooltip() {
   const ref = useRef<HTMLDivElement>(null)
@@ -77,26 +76,33 @@ export default function InstantTooltip() {
       hide()
     }
 
-    function onTouch(e: TouchEvent) {
-      const target = (e.target as HTMLElement | null)?.closest?.('[title]') as HTMLElement | null
-      clearTimeout(touchTimer)
-      if (!target) {
-        hide()
-        return
-      }
+    // Founder 2026-09-24: NO tooltips on touch taps — on mobile a tap means "activate", and a
+    // tooltip popping over the tap target was noise. Touch devices simply never see these
+    // (the underlying title text stays in the DOM for a11y/agents). A touchstart flag also
+    // guards against the synthetic mouseover some mobile browsers fire after a tap.
+    let touching = false
+    function onTouchStart() {
+      touching = true
       hide()
-      show(target)
-      touchTimer = setTimeout(hide, TOUCH_HIDE_MS)
+      clearTimeout(touchTimer)
+      touchTimer = setTimeout(() => {
+        touching = false
+      }, 700)
     }
 
-    document.addEventListener('mouseover', onOver, true)
+    function onOverGuarded(e: MouseEvent) {
+      if (touching) return
+      onOver(e)
+    }
+
+    document.addEventListener('mouseover', onOverGuarded, true)
     document.addEventListener('mouseout', onOut, true)
-    document.addEventListener('touchstart', onTouch, { passive: true, capture: true })
+    document.addEventListener('touchstart', onTouchStart, { passive: true, capture: true })
     document.addEventListener('scroll', hide, true)
     return () => {
-      document.removeEventListener('mouseover', onOver, true)
+      document.removeEventListener('mouseover', onOverGuarded, true)
       document.removeEventListener('mouseout', onOut, true)
-      document.removeEventListener('touchstart', onTouch, true)
+      document.removeEventListener('touchstart', onTouchStart, true)
       document.removeEventListener('scroll', hide, true)
       hide()
     }

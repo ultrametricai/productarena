@@ -63,7 +63,7 @@ export default function ProcessesPage() {
           </span>
         </p>
         {/* Founder 2026-09-23: a table like the all-processes one below, not a card grid. */}
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-zinc-800">
+        <div className="mt-4 -mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-2xl sm:border">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">

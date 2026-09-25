@@ -5,6 +5,7 @@ import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
+import MobileNav from "@/components/MobileNav";
 import PostHogInit from "@/components/PostHogInit";
 import { GLOBAL_RANKINGS, PROCESS_RANKINGS } from "@/components/RankingsNav";
 import { loadArenaSections } from "@/lib/arenaSections";
@@ -292,11 +293,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 Processes, Compare), GitHub, and search. One menu for all secondary destinations
                 instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
             <nav className="flex flex-nowrap items-center gap-1.5 text-sm text-zinc-400 sm:flex-wrap sm:gap-3">
-              {/* Founder 2026-09-23: Arenas sits LEFT of Processes. */}
-              <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
+              {/* Founder 2026-09-23: Arenas sits LEFT of Processes. Founder 2026-09-24: the
+                  dropdowns and buttons are desktop-only — mobile gets the ☰ MobileNav. */}
+              <span className="hidden sm:block">
+                <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
+              </span>
               <Link
                 href="/processes"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
@@ -317,6 +321,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   lists are the single sources of truth in components/RankingsNav.tsx — the
                   header menu, the /rankings/* cross-link footer, and each page's GeoMark all
                   derive from them. */}
+              <span className="hidden sm:block">
               <ArenaMenu
                 title="Explore"
                 triggerIcon={<GeoMark seed="explore" title="Explore — global rankings, lenses, docs" size={13} className="hidden text-zinc-500 sm:inline-flex" />}
@@ -353,6 +358,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   },
                 ]}
               />
+              </span>
               {/* The three tools + the power view each wear their GeoMark (same seed as their
                   page headers/sections), hidden on the smallest screens to keep the row tight. */}
               <Link
@@ -392,6 +398,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 )}
               </a>
               <CommandPalette entries={searchEntries} />
+              <MobileNav />
               {/* Account corner (components/AccountMenu.tsx): a quiet "Log in" link for
                   anonymous readers, an initial chip (menu: Watchlist + Log out) once a WorkOS
                   session exists. The Watchlist link lives inside the chip menu, so the header
