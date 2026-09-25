@@ -137,4 +137,31 @@ export const probes: LocalProbe[] = [
     expect: /# Introduction[\s\S]*personal assistant|Documentation Index[\s\S]*# Introduction/,
     timeoutMs: 60_000,
   },
+  {
+    // askjo.ai publishes a canonical llms.txt (text/plain) that self-describes the personal
+    // agent — surfaces, integrations, per-user cloud-machine architecture, ZDR model routing,
+    // and pricing — and tells agents to prefer it over scraping the marketing site. Added at
+    // the 2026-09-25 YC X26 coverage-queue bring-up.
+    probeId: 'llms-docs-index',
+    productId: 'jo',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://askjo.ai/llms.txt | head -4'],
+    displayCommand: 'curl -s https://askjo.ai/llms.txt | head -4',
+    expect: /# jo[\s\S]*personal agent for real life/,
+    timeoutMs: 60_000,
+  },
+  {
+    // jo's backend serves its OpenAPI 3.1 spec keylessly at /openapi.json (FastAPI, with the
+    // Swagger UI at /docs) — a machine-readable description of the API surface the apps and
+    // bridges drive, fetched without any credential (glama openapi-spec-fetch pattern).
+    probeId: 'openapi-spec-fetch',
+    productId: 'jo',
+    storyIds: ['agentic-public-api'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://askjo.ai/openapi.json | head -c 160'],
+    displayCommand: 'curl -s https://askjo.ai/openapi.json | head -c 160',
+    expect: /"openapi":"3\.1/,
+    timeoutMs: 60_000,
+  },
 ]
