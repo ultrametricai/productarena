@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
+import FatProcessSearch from '@/components/FatProcessSearch'
 import IconChip from '@/components/IconChip'
 import ProcessesTable from '@/components/ProcessesTable'
 import { chainIcon, processIcon } from '@/lib/processIcons'
@@ -8,7 +9,7 @@ import { buildProcessRows } from '@/lib/processRows'
 import { chainTasks, computeCeiling, loadChains } from '@/lib/processes'
 
 export const metadata: Metadata = {
-  title: 'Processes — ProductArena',
+  title: 'Going agentic with company processes — ProductArena',
   description:
     'Startup operations in the open — every founder process, the software that runs it, and the best an agent can do today. Agent ceilings, human/manual gaps, and simulated dry runs over real market options.',
 }
@@ -29,14 +30,15 @@ export default function ProcessesPage() {
 
   return (
     <div className="space-y-12">
+      {/* Founder 2026-09-25: retitled + the intro paragraph replaced by a fat search bar —
+          the routing/honesty story lives on /methodology and in the per-step tooltips. */}
       <section className="mx-auto max-w-3xl text-center">
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Processes</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
-          Startup operations in the open — every process, the software that runs it, and the best
-          an agent can do today. Each step is routed: agent-runnable via a recorded API
-          call, a manual form with no API path, or human-or-computer-use work — with the legally
-          required signatures flagged as the true human floor. The gaps are the finding.
-        </p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
+          Going agentic with company processes
+        </h1>
+        <FatProcessSearch
+          rows={tableRows.map((r) => ({ slug: r.slug, title: r.title, icon: r.icon, phase: r.phase, pct: r.pct }))}
+        />
       </section>
 
       {/* Curated playbooks — several processes run back to back as one walkthrough */}
@@ -131,7 +133,7 @@ export default function ProcessesPage() {
           href="/virtual-startup"
           className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/50 hover:bg-emerald-400/5"
         >
-          <span className="font-medium text-zinc-200">🐣 Virtual Startup</span>
+          <span className="font-medium text-zinc-200">🐣 Virtual Startup Simulator</span>
           <span className="text-sm text-zinc-400">
             pick the starting decisions — entity, team, funding, business model — and watch a
             simulated company run these real playbooks day by day
