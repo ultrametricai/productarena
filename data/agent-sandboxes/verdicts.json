@@ -3367,31 +3367,31 @@
     "productId": "modal",
     "storyId": "agent-self-provisions",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal Sandboxes are explicitly designed for programmatic, API-driven provisioning, code execution, log/result retrieval, and teardown, with SDK examples (Python/JS/Go) showing sandbox creation, exec, file access, and logs, plus a documented agent-code-execution example. missing for 10: independent hands-on report showing a fully autonomous agent loop (provision->execute->read->teardown) with no human intervention, and clearer documentation of teardown/termination API specifics.",
+    "rationale": "Modal Sandboxes provides a programmatic SDK (Python/JS/Go) to create sandboxes, execute commands, read output/logs, and terminate them, explicitly marketed for autonomous agents running untrusted code; the agent.md example demonstrates an LLM agent generating and executing code inside a Sandbox end-to-end, and community builders (MCP-JS, self-hosted runners) corroborate real agent-driven provisioning/teardown. Missing for 10: independent third-party audit of full lifecycle automation without any human-in-the-loop step, and more detail on automated teardown/cleanup semantics.",
     "evidenceIds": [
-      "modal-docs-2",
       "modal-docs-3",
-      "modal-docs-13",
       "modal-docs-19",
-      "modal-docs-21",
       "modal-docs-22",
+      "modal-docs-30",
+      "modal-docs-25",
       "modal-docs-23",
-      "modal-probe-2",
-      "modal-comm-2"
+      "modal-comm-2",
+      "modal-probe-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal has a working llms.txt (HTTP 200) with a documentation summary, and docs pages are also served as markdown (.md suffix) confirming agent-oriented doc access. missing for 10: no independent confirmation that agents actually consume this llms.txt successfully in practice, and no dedicated agent-docs index beyond the generic llms.txt.",
+    "rationale": "Modal has a working llms.txt endpoint returning HTTP 200 with structured documentation summary, plus docs pages served as markdown (.md suffix) that agents can fetch directly, confirming agent-oriented docs are in place. missing for 10: no explicit third-party report of an agent successfully consuming llms.txt to complete a task.",
     "evidenceIds": [
       "modal-probe-1",
-      "modal-probe-2"
+      "modal-probe-2",
+      "modal-docs-30"
     ]
   },
   {
@@ -3400,7 +3400,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is compute/sandbox infrastructure for running untrusted or agent code, not a data product that ingests user data and surfaces AI-generated insights/suggestions from it — this axis is a category error for this product type.",
+    "rationale": "Modal Sandboxes is infrastructure for running untrusted/agent code in isolated environments, not a data product with built-in analytics or insight-generation UI; 'AI-generated insights from my data' is a category error for a sandboxing/compute platform.",
     "evidenceIds": []
   },
   {
@@ -3409,13 +3409,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes explicitly supports running autonomous agent code in isolated environments at scale (docs-3, docs-4, docs-22), and community evidence shows real-world use for background automation (self-hosted CI runners on modal-comm-1, agent runtimes on modal-comm-2). However, the evidence pack lacks explicit documentation of scheduling/cron triggers or persistent background job orchestration—sandboxes are framed as on-demand execution environments rather than a native 'set it and forget it' automation scheduler. Missing for 10: native scheduling/cron trigger docs, first-party persistent orchestration for long-running background automations.",
+    "rationale": "Modal Sandboxes provide ephemeral, isolated environments explicitly designed to run autonomous agents and untrusted code with tools/credentials preconfigured (modal-docs-3, modal-docs-22, modal-docs-30), and community evidence shows real-world autonomous background automation built on Sandboxes (self-hosted CI runners, agent runtimes) (modal-comm-1, modal-comm-2). However, the evidence pack lacks first-class scheduling/trigger primitives (cron, webhooks, event-driven wake-up) specific to Sandboxes for hands-off background operation — automation orchestration appears to be left to the user's own code/CI setup. Missing for 10: native scheduling/trigger mechanism for sandboxes, first-party docs on long-running background job patterns, more independent case studies beyond two HN posts.",
     "evidenceIds": [
       "modal-docs-3",
-      "modal-docs-4",
       "modal-docs-22",
+      "modal-docs-30",
       "modal-comm-1",
-      "modal-comm-2"
+      "modal-comm-2",
+      "modal-docs-6"
     ]
   },
   {
@@ -3424,7 +3425,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is an infrastructure platform for running untrusted/agent code, not itself an AI assistant or agent product; it provides no built-in assistant to delegate tasks to — this is a wrong-axis question for this product category.",
+    "rationale": "Modal Sandboxes is infrastructure for running untrusted/agent code in isolated environments, not a product with a built-in AI assistant persona to delegate tasks to; this axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -3433,16 +3434,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is built for programmatic/headless use via Python, JS/Go SDKs and a CLI, with sandboxes created and controlled entirely through code (modal-docs-2, modal-docs-19, modal-docs-20, modal-gh-1). Community evidence confirms real-world CI/automation usage — a developer built GitHub Actions self-hosted runners on Modal Sandboxes explicitly for scalable, pay-per-use automation (modal-comm-1), and another wired gRPC control for an agent runtime (modal-comm-2). Missing for 10: no first-party CI/CD integration guide (e.g., official GitHub Actions/Jenkins docs) or dedicated 'headless CI' documentation section beyond community projects.",
+    "rationale": "Modal Sandboxes are designed to be created and controlled entirely programmatically via Python/JS/Go SDKs and a CLI, with no interactive/GUI dependency, making headless/CI use natural (modal-docs-19, modal-docs-25, modal-probe-4). Community evidence corroborates real-world CI/automation use: a developer built GitHub Actions self-hosted runners on Modal Sandboxes and another built a gRPC-driven agent runtime to control sandboxes (modal-comm-1, modal-comm-2). Missing for 10: an official CI/CD integration guide (e.g., GitHub Actions template) or first-party CI pipeline docs from Modal itself.",
     "evidenceIds": [
-      "modal-docs-2",
       "modal-docs-19",
-      "modal-docs-20",
-      "modal-gh-1",
-      "modal-comm-1",
-      "modal-comm-2",
+      "modal-docs-25",
       "modal-docs-15",
-      "modal-probe-4"
+      "modal-probe-4",
+      "modal-comm-1",
+      "modal-comm-2"
     ]
   },
   {
@@ -3483,7 +3482,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal ships an official CLI (documented at modal.com/docs/reference/cli) supporting sandbox-related operations like running commands/shells and managing/connecting to containers, confirmed by probe access to the CLI reference page. This CLI is core to Modal's agentic/AI-native workflows (creating and interacting with sandboxes for untrusted/agent code). missing for 10: independent hands-on user reports specifically praising/using the CLI (vs. SDK), and more detail on CLI coverage of full sandbox lifecycle (snapshots, networking) beyond the two documented subcommands.",
+    "rationale": "Modal ships an official CLI (documented at modal.com/docs/reference/cli) with commands for running commands/shells inside containers and managing/connecting to running containers, directly supporting sandbox and agentic workflows alongside SDKs used for AI agents. Missing for 10: no independent hands-on review of the CLI itself (community evidence focuses on SDK/gRPC usage rather than CLI specifically) and no deeper documentation of CLI's AI-native-specific features beyond basic container/sandbox management.",
     "evidenceIds": [
       "modal-docs-15",
       "modal-docs-18",
@@ -3497,17 +3496,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal exposes documented Python, JS, and Go SDKs plus a CLI for programmatically creating, controlling, and interacting with Sandboxes (exec, filesystem, snapshots, networking, logs), and community developers confirm driving it via gRPC/SDK for agent runtimes. missing for 10: no public OpenAPI/REST spec (probe found only 404s), so the 'documented public API' is SDK/CLI-based rather than a formal API contract, and there's no independent audit of API stability/versioning.",
+    "rationale": "Modal documents an extensive public API surface for Sandboxes across Python, JS/Go SDKs, and a CLI reference (modal-docs-13,15,18,19,20,21,25), with independent community developers confirming they drove Sandboxes programmatically via gRPC/SDK for real projects (modal-comm-1, modal-comm-2). Missing for 10: a discoverable formal REST/OpenAPI spec (probe-3 shows all openapi.json candidates 404) and broader third-party API-client corroboration beyond a couple of HN posts.",
     "evidenceIds": [
+      "modal-docs-13",
+      "modal-docs-15",
+      "modal-docs-18",
       "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
+      "modal-docs-25",
       "modal-gh-1",
-      "modal-docs-15",
-      "modal-docs-18",
-      "modal-docs-23",
+      "modal-comm-1",
       "modal-comm-2",
-      "modal-probe-2",
       "modal-probe-3"
     ]
   },
@@ -3516,11 +3516,9 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes secure sandboxed execution environments and general platform features, but there is no concrete evidence of a mechanism for issuing scoped/least-privilege API credentials specifically to agents—only a vague marketing line about 'credentials already in place' (modal-docs-3) with no documentation of credential scoping, token permissions, or per-agent access control. Missing for 10: any documented API/credential-scoping mechanism, permission granularity docs, or examples of issuing least-privilege tokens to agents.",
-    "evidenceIds": [
-      "modal-docs-3"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence shows sandbox isolation, network allowlisting, and resource limits, but there is no mention of scoped/least-privilege API credential issuance for agents (e.g., token minting, permission scoping, or credential management) — Modal's security model is container/network isolation, not credential-based access control. Missing for 10: any API/CLI for issuing scoped tokens, credential scoping mechanisms, or least-privilege API key management for agents.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3528,15 +3526,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal ships official Python SDK plus JS/Go SDKs for Sandboxes with documented APIs (exec, filesystem, snapshots, networking, logs) and community developers confirm building against them (GitHub Actions runners, gRPC-based JS agent runtime). missing for 10: independent third-party SDK reference/benchmarks beyond Modal's own docs and one community mention, and no evidence of broader language SDK coverage (e.g. Rust, Java).",
+    "rationale": "Modal ships official Python, JS, and Go SDKs for Sandboxes with detailed API references (Sandbox, SandboxSnapshot, Probe classes), CLI tooling, and documented examples of building AI agents on top of them, plus community developers independently confirming they built agent runtimes (MCP-JS, gRPC) against these SDKs. missing for 10: no evidence of official SDKs beyond Python/JS/Go (e.g. no broader language coverage confirmation) and no independent third-party audit of SDK completeness/stability.",
     "evidenceIds": [
       "modal-gh-1",
       "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
-      "modal-docs-23",
+      "modal-docs-25",
+      "modal-docs-27",
+      "modal-docs-30",
       "modal-comm-2",
-      "modal-comm-1"
+      "modal-probe-4"
     ]
   },
   {
@@ -3545,20 +3545,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a webhook subscription mechanism or event-driven notification system for Modal Sandboxes; the docs focus on programmatic spin-up, execution, logging, and filesystem access, not outbound event/webhook subscriptions.",
+    "rationale": "No evidence of any webhook subscription or event-notification mechanism for Modal Sandboxes; docs cover logs, snapshots, networking, CLI, and SDKs but nothing about webhooks or event callbacks.",
     "evidenceIds": []
   },
   {
     "productId": "modal",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows standard docs pages, CLI reference, and SDK code snippets, but no interactive API reference or runnable-example playground; the openapi probe returned 404s and no docs mention an in-browser code runner or live API explorer.",
+    "rationale": "Modal ships a fairly thorough API reference (Sandbox, SandboxSnapshot, Probe classes) plus SDK guides with concrete code snippets (Python/JS/Go) that a developer can copy and run, and example docs like the agent.md walkthrough show end-to-end usage. However, there is no evidence of an actually interactive/runnable reference (e.g., embedded live code execution or API explorer) — the openapi/swagger probe returned 404s, indicating no structured interactive API browser exists.  missing for 10: an in-browser runnable sandbox/playground tied to the reference docs, evidence of interactivity beyond static markdown code blocks, independent confirmation of a live API explorer.",
     "evidenceIds": [
-      "modal-probe-3",
-      "modal-docs-15",
-      "modal-docs-21"
+      "modal-docs-25",
+      "modal-docs-27",
+      "modal-docs-26",
+      "modal-docs-19",
+      "modal-docs-21",
+      "modal-docs-30",
+      "modal-probe-3"
     ]
   },
   {
@@ -3567,7 +3571,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The probe explicitly found all candidate OpenAPI/swagger endpoints return 404, and no other evidence pack item mentions a machine-readable API spec being published; Modal's public interface is SDK/CLI-based rather than a REST API with a spec.",
+    "rationale": "A direct probe for OpenAPI/swagger specs at Modal's standard endpoints returned 404 for all candidates, and no documentation references a machine-readable API spec; Modal instead exposes Python/JS/Go SDKs and a CLI.",
     "evidenceIds": [
       "modal-probe-3"
     ]
@@ -3578,17 +3582,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes are explicitly designed as ephemeral, isolated containers for running untrusted or agent code, with filesystem, networking/security, and snapshot controls documented (modal-docs-2, modal-docs-8, modal-docs-9, modal-docs-10, modal-probe-2), and community examples show real usage isolating workloads from production infra (modal-comm-1, modal-comm-2). This satisfies the 'test without touching production' need since each sandbox is a fresh, isolated environment rather than shared prod state. Missing for 10: explicit documentation or case study framing isolation specifically in terms of 'production data' separation (e.g., no prod DB/staging parity guidance), and no independent audit confirming true isolation guarantees.",
+    "rationale": "Modal Sandboxes are explicitly documented as ephemeral, isolated containers for running untrusted/agent code, with filesystem isolation, network controls (block_network, CIDR/domain allowlists), and snapshotting — all of which support safe testing separate from any production system, and community builders confirm using them for isolated agent/runner workloads. Missing for 10: explicit mention of connecting to or masking production datasets, and no independent third-party audit specifically validating data isolation from production systems.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-8",
-      "modal-docs-9",
       "modal-docs-10",
       "modal-docs-19",
-      "modal-docs-22",
+      "modal-docs-31",
+      "modal-probe-2",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
@@ -3597,13 +3600,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows release notes and beta/alpha labels for some sandbox features, but no documentation of API versioning scheme or a deprecation policy; OpenAPI spec probes also 404. missing for 10: explicit versioning scheme documentation, deprecation policy page, changelog with deprecation notices, stability guarantees for GA vs beta APIs.",
+    "rationale": "Evidence shows release notes and beta/alpha-labeled features (e.g., 'VM Sandboxes Beta', 'Sidecars Alpha', experimental snapshot API), but there is no documented versioning scheme or deprecation policy for the API; the OpenAPI spec probe also 404'd, showing no formal API contract surfaced. No mention of semantic versioning, deprecation timelines, or backward-compatibility guarantees anywhere in the pack.",
     "evidenceIds": [
       "modal-docs-11",
       "modal-docs-12",
-      "modal-docs-23",
-      "modal-docs-24",
-      "modal-probe-3"
+      "modal-docs-27",
+      "modal-probe-3",
+      "modal-docs-23"
     ]
   },
   {
@@ -3612,8 +3615,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only mentions general pay-per-second billing and bursty scaling, but never documents an explicit sandbox timeout or idle-shutdown parameter/config. No citation confirms configurable timeouts that auto-terminate sandboxes when idle or complete.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Modal Sandboxes are billed per-second and lists Sandbox creation parameters (e.g., gpu, cloud, region, cpu, memory) but never mentions a timeout/idle-shutdown parameter or automatic termination behavior for sandboxes. Without explicit documentation of a timeout mechanism, this applicable provisioning-lifecycle axis is unsupported by the evidence provided.",
+    "evidenceIds": [
+      "modal-docs-32",
+      "modal-docs-7",
+      "modal-docs-17"
+    ]
   },
   {
     "productId": "modal",
@@ -3621,13 +3628,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal supports spinning up hundreds of thousands of concurrent sandboxes/rollout environments programmatically, which is strong evidence of bulk/parallel scaling (modal-docs-4, modal-docs-14, modal-docs-5), and this is corroborated by community builds using it for scaled runner fleets (modal-comm-1). However, this is infrastructure-level bulk provisioning, not a documented 'bulk operations' API/pattern for operating across many existing items (e.g., batch file ops, batch snapshot management, or a dedicated batch API) — missing for 10: a first-party batch/bulk-operation API or workflow example (vs just scaling raw sandbox count), independent benchmarks confirming claimed concurrency at scale, and documentation of bulk management operations (e.g., bulk terminate/list/update) rather than just creation.",
+    "rationale": "Modal Sandboxes supports spinning up hundreds of thousands of concurrent sandboxes/rollout environments programmatically, which enables bulk parallel operations (spawning many isolated environments at once) — a form of scale-oriented automation relevant to AI-native bulk workflows. However, the evidence is about scaling sandbox instances/compute, not about a native 'bulk operations across many items' API (e.g., batch file processing, bulk data transforms, or a queue/map-reduce primitive for arbitrary item sets); this is inferred capability from raw concurrency rather than a documented bulk-operation feature. missing for 10: explicit bulk/batch-operation APIs or examples (e.g., map over N items, batch job orchestration primitives), independent benchmarks validating claimed 100k+ concurrency at scale, and community confirmation of bulk-item workflows beyond scaling sandboxes themselves.",
     "evidenceIds": [
       "modal-docs-4",
       "modal-docs-14",
       "modal-docs-5",
-      "modal-comm-1",
-      "modal-docs-6"
+      "modal-docs-16",
+      "modal-docs-24",
+      "modal-docs-29"
     ]
   },
   {
@@ -3645,12 +3653,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers ephemeral sandbox creation, execution, networking, snapshots, and SDKs, but there is no mention of cron-like scheduling, recurring triggers, or persistent workflow orchestration for Modal Sandboxes. missing for 10: any scheduling/cron API, recurring job trigger mechanism, or workflow orchestration documentation tied to Sandboxes.",
-    "evidenceIds": [
-      "modal-docs-11",
-      "modal-docs-13",
-      "modal-docs-9"
-    ]
+    "rationale": "The evidence pack covers Modal Sandboxes' ephemeral, programmatic execution model (spinning up isolated containers, filesystem, networking, snapshots) but contains no mention of scheduling, cron jobs, or recurring workflow triggers for Sandboxes specifically. Nothing indicates a built-in mechanism for recurring or scheduled sandbox jobs.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3667,7 +3671,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes Modal Sandboxes as isolated containers/VMs for running arbitrary code, agents, filesystem access, networking, and command execution, but nowhere mentions headless browser or full desktop/GUI environment support (e.g., Xvfb, VNC, browser automation tooling). No docs or community reports reference browser or desktop environments running inside sandboxes.",
+    "rationale": "Evidence covers Modal Sandboxes as secure containers for running untrusted code/commands, filesystem access, networking, GPUs, and snapshots, but there is no mention of headless browser support, display/X11 forwarding, or full desktop environment capability inside a sandbox.",
     "evidenceIds": []
   },
   {
@@ -3676,14 +3680,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Modal markets very high concurrency ('hundreds of thousands of concurrent rollout environments', 'scale to thousands of concurrent runs') and even documents a backend upgrade for higher creation rates/concurrency, plus community reports of building scalable runner fleets on Sandboxes, showing the capability is real and used at scale. However there is no evidence of documented hard limits, quotas, or per-account/per-plan concurrency ceilings that a platform engineer could plan capacity against. Missing for 10: explicit documented concurrency/rate limits or quotas, benchmark/load-test data, and any per-tier scaling caps.",
+    "rationale": "Modal's docs make strong scale claims (hundreds of thousands of concurrent rollout environments, thousands of concurrent runs, opt-in higher-performance backend for higher creation rates/concurrency) and community reports (self-hosted CI runners, MCP-JS agent runtime) show real-world fleet usage, but there is no documented table of concrete concurrency limits, quotas, or per-account/workspace caps — just marketing-level throughput claims. missing for 10: explicit numeric concurrency/quota documentation, official benchmarks or SLAs for large fleets, third-party validation of stated 'hundreds of thousands' figure.",
     "evidenceIds": [
       "modal-docs-4",
-      "modal-docs-5",
       "modal-docs-14",
+      "modal-docs-5",
       "modal-docs-16",
       "modal-docs-24",
-      "modal-comm-1"
+      "modal-docs-29",
+      "modal-comm-1",
+      "modal-comm-2"
     ]
   },
   {
@@ -3691,27 +3697,27 @@
     "storyId": "custom-images-templates",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Modal explicitly supports creating Sandboxes with custom Images ('Custom images, any dependency' and 'Create a Sandbox with the specified Image, and mount a Volume'), and community projects (GitHub Actions runners, MCP-JS) confirm developers configuring custom sandbox environments in practice. Missing for 10: explicit documentation of importing arbitrary Docker/OCI registry images or a dedicated 'bring your own container' guide beyond the Image API reference.",
+    "confidence": "high",
+    "rationale": "Modal Sandboxes explicitly supports creating a Sandbox with a custom Image ('Create a Sandbox with the specified Image'), custom dependencies ('Custom images, any dependency'), and configurable resources (gpu, cpu, memory, region), fully enabling bring-your-own-container-image workflows. missing for 10: no independent hands-on confirmation of custom image builds/Dockerfile import specifics, and no detail on image registry integration or template reuse patterns.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-20",
-      "modal-docs-19",
-      "modal-comm-1",
-      "modal-comm-2"
+      "modal-docs-25",
+      "modal-docs-32",
+      "modal-probe-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "expose-public-url",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The docs pack includes a 'Networking and security' guide for sandboxes (modal-docs-10) which is the likely location for tunnel/port-exposure features, but no evidence text actually describes exposing a port to a public preview URL, tunnel URLs, or reachability details. missing for 10: explicit documentation or example showing sandbox.tunnels()/port forwarding, a public URL format, and independent confirmation of accessing services inside a sandbox via that URL.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Modal Sandboxes support networking configuration (block_network, CIDR/domain allowlists) and TCP port readiness checks, but nothing in the pack describes exposing a sandbox port on a public preview/tunnel URL reachable from outside Modal's network.",
     "evidenceIds": [
       "modal-docs-10",
-      "modal-docs-11",
-      "modal-probe-2"
+      "modal-docs-26",
+      "modal-docs-31"
     ]
   },
   {
@@ -3720,12 +3726,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows general speed/scale claims (\"spin up hundreds of thousands of concurrent rollout environments in seconds,\" faster backend for higher creation rates) but no explicit documented cold-start latency benchmark (e.g., sub-second or few-second startup time) for sandboxes specifically. Missing for 10: a concrete cold-start time benchmark/number, independent performance verification, and comparison across sandbox sizes/images.",
+    "rationale": "Modal's docs emphasize speed and scale ('spin up hundreds of thousands of concurrent rollout environments in seconds', 'more performant Sandbox backend') and community evidence confirms sandboxes are used for scalable, on-demand workloads, but no evidence pack item gives concrete documented cold-start latency numbers (sub-second or few-second) for starting an individual sandbox. missing for 10: explicit documented cold-start benchmark numbers (e.g., 'X ms/sec to start'), independent latency measurements/hands-on timing tests, and any SLA or performance guarantee specifically about sandbox startup time rather than aggregate concurrency claims.",
     "evidenceIds": [
       "modal-docs-4",
       "modal-docs-14",
       "modal-docs-24",
-      "modal-docs-2"
+      "modal-docs-29",
+      "modal-comm-1"
     ]
   },
   {
@@ -3734,12 +3741,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal explicitly documents a dedicated 'Filesystem Access' guide for sandboxes (modal-docs-8) alongside SDK examples showing file read/write via mounted volumes and exec commands (modal-docs-20, modal-docs-21), confirming read/write/upload/download-style operations through the SDK. missing for 10: no independent/hands-on community confirmation specifically of file upload/download methods (only exec/volume examples), and no explicit code snippet showing a dedicated upload/download API method distinct from volume mounting.",
+    "rationale": "Modal's docs explicitly document a dedicated 'Filesystem Access' guide for sandboxes (modal-docs-8) alongside SDK examples showing file operations via exec (e.g., cat commands reading mounted volume files in modal-docs-21) and volume mounting for sandboxes (modal-docs-20), confirming read/write/upload/download-style file interactions through the SDK. missing for 10: direct code snippets showing explicit upload/download API calls (e.g., sb.open, put/get file methods) and independent/community verification of file I/O usage beyond volume mounting.",
     "evidenceIds": [
       "modal-docs-8",
-      "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
+      "modal-docs-19",
       "modal-probe-2"
     ]
   },
@@ -3748,20 +3755,21 @@
     "storyId": "free-tier-start",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes pricing-related docs (pay-per-use, burst capacity) but no mention of a free tier, free credits, or self-serve signup without contacting sales; nothing confirms developers can start building without sales contact.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains extensive technical/pricing docs (pay-per-second, no reserved capacity) but no mention of a free tier, free credits, or self-serve signup without sales contact; nothing confirms a developer can start building without talking to sales.",
     "evidenceIds": []
   },
   {
     "productId": "modal",
     "storyId": "gpu-access",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal docs explicitly state GPUs (H100s, A100s, A10Gs) can be attached to any sandbox on demand with per-second billing, and community evidence (HN runner project) confirms real-world GPU-backed sandbox usage. missing for 10: independent hands-on benchmark of GPU attach performance/reliability, and explicit code example showing GPU parameter in sandbox creation API.",
+    "rationale": "Docs explicitly state H100s/A100s/A10Gs can be attached to any sandbox on demand, and the Sandbox Python SDK reference shows a `gpu=` parameter directly on the constructor, plus community evidence of a developer building GPU-enabled self-hosted runners on Modal Sandboxes. missing for 10: no independent benchmark of GPU sandbox performance/latency at scale beyond marketing claims.",
     "evidenceIds": [
       "modal-docs-5",
       "modal-docs-16",
+      "modal-docs-32",
       "modal-comm-1"
     ]
   },
@@ -3770,13 +3778,14 @@
     "storyId": "hard-isolation-boundary",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal repeatedly describes Sandboxes as 'secure,' 'isolated' containers for untrusted code, and references a 'VM Sandboxes Beta' page implying microVM-based isolation, but no evidence pack item actually documents the underlying isolation technology (e.g., Firecracker/gVisor specifics, threat model, or security boundary guarantees) that a platform engineer would need to rely on.  Missing for 10: explicit technical documentation of the isolation mechanism (hypervisor/kernel boundary), any third-party security audit or independent verification of the boundary's robustness.",
+    "confidence": "medium",
+    "rationale": "Modal repeatedly markets Sandboxes as 'secure, isolated' environments for running untrusted/agent code, and has dedicated docs on 'Networking and security' and a 'VM Sandboxes' feature, plus network-allowlist controls (block_network, outbound/inbound CIDR) suggesting real isolation controls. However, the pack shows only a 'Beta' VM Sandboxes label without technical detail on the isolation mechanism (e.g., no explicit microVM/Firecracker/gVisor documentation), and default sandboxes are described as 'secure containers' rather than a clearly documented hard boundary. Missing for 10: explicit technical documentation naming the isolation technology (microVM/gVisor/etc.) as the default guarantee, independent security audit or hands-on validation of the boundary, and clarity on whether VM-level isolation is standard vs. beta-only.",
     "evidenceIds": [
-      "modal-docs-11",
       "modal-probe-2",
-      "modal-docs-19",
-      "modal-docs-22"
+      "modal-docs-11",
+      "modal-docs-10",
+      "modal-docs-31",
+      "modal-docs-19"
     ]
   },
   {
@@ -3785,39 +3794,41 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Modal docs describe sandboxes as isolated, scalable execution environments with snapshotting, filesystem, and networking support, and a community project (self-hosted GitHub Actions runners) demonstrates sandboxes being kept alive for extended, real workloads. However, no evidence pack item states explicit maximum session duration, timeout configuration, or guarantees for multi-day persistence, so long-running-session support is inferred rather than directly documented. Missing for 10: explicit docs on configurable/no timeout limits, guidance for multi-day sandbox lifecycles, and independent confirmation of hours/days-long sessions beyond one community anecdote.",
+    "rationale": "Modal documents Sandboxes as long-lived containers with running commands, snapshots, logs, and filesystem/networking access (modal-docs-8,9,13,23), and community builders report using Sandboxes for continuously running GitHub Actions runners and agent runtimes (modal-comm-1, modal-comm-2), suggesting extended-duration viability. However, there is no explicit documentation of maximum sandbox lifetime, timeout configuration, or guarantees for multi-hour/day sessions. Missing for 10: explicit docs on max/adjustable sandbox timeout, first-party guidance or examples for hours/days-long agent sessions, and independent benchmarks confirming stability over long durations.",
     "evidenceIds": [
+      "modal-docs-8",
       "modal-docs-9",
-      "modal-docs-11",
+      "modal-docs-13",
+      "modal-docs-23",
       "modal-comm-1",
-      "modal-docs-6",
-      "modal-docs-23"
+      "modal-comm-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "multi-language-runtimes",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes let you run arbitrary commands/code in isolated containers with custom images (any dependency, any language stack), including SDK examples for JS/Go exec and Python examples of running agent code (modal-docs-2, modal-docs-13, modal-docs-19-21). However, evidence never shows explicit multi-language runtime presets (Python vs JS vs others) or structured/rich result payloads (e.g., images, dataframes, mime-typed outputs) — outputs shown are plain stdout/exec results. missing for 10: explicit built-in multi-language runtime templates, documented rich/structured result formats beyond raw stdout.",
+    "rationale": "Modal Sandboxes clearly support executing arbitrary code/commands via custom images and have SDKs for Python, JS, and Go, letting developers run 'any dependency' language (modal-docs-2, modal-docs-19, modal-gh-1, modal-docs-21). However, the exec API returns subprocess-style stdout/stderr (like asyncio.subprocess.Process, modal-docs-25) rather than documented 'rich results' (e.g., images, dataframes, structured outputs) as in dedicated code-interpreter products. Missing for 10: evidence of rich/structured result formatting (images, plots, dataframes) rather than raw text streams, and broader language runtime examples beyond Python/JS/Go.",
     "evidenceIds": [
       "modal-docs-2",
-      "modal-docs-13",
       "modal-docs-19",
-      "modal-docs-20",
       "modal-docs-21",
-      "modal-docs-22"
+      "modal-docs-25",
+      "modal-gh-1",
+      "modal-docs-30"
     ]
   },
   {
     "productId": "modal",
     "storyId": "network-egress-policy",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Modal has a dedicated 'Networking and security' guide for Sandboxes, confirming the platform documents network controls for sandboxes, but the evidence pack only shows the page title without excerpts detailing how egress allow/deny policies are configured. missing for 10: actual policy syntax/examples (e.g. allowlist/blocklist configuration), confirmation of default-deny behavior, independent/hands-on verification that egress restrictions work as documented.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Modal's Sandbox docs explicitly expose network egress controls via parameters like block_network, outbound_cidr_allowlist, and outbound_domain_allowlist, plus inbound_cidr_allowlist, and there is a dedicated 'Networking and security' guide page describing this policy surface. This directly matches the platform-engineer story of restricting or allowing egress with explicit policy. Missing for 10: independent/hands-on verification of these controls in practice and more detail on domain-allowlist enforcement mechanics beyond the parameter list.",
     "evidenceIds": [
+      "modal-docs-31",
       "modal-docs-10",
       "modal-probe-2"
     ]
@@ -3828,7 +3839,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes is fundamentally API/SDK-driven (Python, JS/Go) with a full CLI for running commands and managing containers, and docs describe programmatic control over image building, execution, filesystem, networking, snapshots, and logs — suggesting the API is the primary and most complete interface. However, there's no explicit documentation stating full UI/API parity or listing any UI-exclusive features, and no OpenAPI spec is discoverable (probe found 404s), making it hard to confirm completeness of a public REST API surface beyond the SDKs/CLI. Missing for 10: explicit parity statement between dashboard UI and API/CLI capabilities, and a public API reference/spec confirming no UI-only actions.",
+    "rationale": "Modal's Sandboxes are fundamentally API/SDK-driven (Python, JS/Go) with broad coverage — creation, exec, filesystem, snapshots, networking, GPU attachment, logs — plus a CLI for running commands and managing containers, suggesting near-complete programmatic control mirroring dashboard views. However, there's no explicit vendor statement guaranteeing UI/API feature parity, and no public REST/OpenAPI spec was found (probe shows 404s), leaving some potential UI-only features (e.g., billing/usage dashboards) unconfirmed as API-accessible. Missing for 10: explicit parity documentation between dashboard UI and API/CLI, a public OpenAPI/REST spec, and independent verification that all UI actions are scriptable.",
     "evidenceIds": [
       "modal-docs-8",
       "modal-docs-9",
@@ -3836,8 +3847,8 @@
       "modal-docs-13",
       "modal-docs-15",
       "modal-docs-18",
-      "modal-gh-1",
       "modal-docs-19",
+      "modal-docs-25",
       "modal-probe-3",
       "modal-probe-4"
     ]
@@ -3848,7 +3859,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Modal Sandboxes offers filesystem access, snapshots, and logs APIs, but there is no evidence of a data export/portability feature or open-format export mechanism for users to take their data and leave the platform; snapshots and filesystem access are operational features tied to running sandboxes, not an account-level data export capability.",
     "evidenceIds": []
   },
   {
@@ -3856,11 +3867,9 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only shows a GitHub repo for the client SDK (modal-client) used to invoke Modal Sandboxes, not the underlying sandbox/runtime platform itself, and no license terms are mentioned. There is no evidence that Modal Sandboxes' core product source is published under an open license.",
-    "evidenceIds": [
-      "modal-gh-1"
-    ]
+    "confidence": "high",
+    "rationale": "Modal Sandboxes is a closed commercial platform; the evidence pack shows only client SDKs (modal-client on GitHub) with no mention of the core platform/server source being available under an open license.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3868,8 +3877,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal is a fully-managed cloud platform for running Sandboxes; there is no evidence of any self-hostable/on-prem version of the core product, and everything described (pay-per-second billing, GPU access, hosted CLI) implies a proprietary SaaS deployment model only.",
-    "evidenceIds": []
+    "rationale": "Modal Sandboxes is a fully managed cloud platform; nothing in the evidence pack indicates any self-hosted/on-prem deployment option — all docs describe a hosted SaaS with pay-per-second cloud pricing, GPUs on demand, and managed infrastructure.",
+    "evidenceIds": [
+      "modal-docs-1",
+      "modal-docs-7",
+      "modal-docs-5",
+      "modal-probe-1"
+    ]
   },
   {
     "productId": "modal",
@@ -3877,10 +3891,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Modal has a dedicated 'Snapshots' doc for sandboxes suggesting some pause/resume-with-state capability, but the evidence pack only gives the page title with no detail on what state (filesystem/memory) is preserved or how resume works. Missing for 10: documented mechanics of snapshot/resume (filesystem+memory fidelity), explicit confirmation memory state is preserved, independent/hands-on validation of the feature working as described.",
+    "rationale": "Modal docs reference a `SandboxSnapshot` object created via `._experimental_snapshot()`, confirming some pause/resume-with-state capability exists, and a dedicated 'Snapshots' guide page is listed. However, the API is explicitly marked experimental (underscore-prefixed method), there's no detailed documentation of how memory/filesystem state is restored, no resume-time guarantees, and no independent/hands-on confirmation that filesystem+memory state survives a pause/resume cycle. Missing for 10: stable (non-experimental) snapshot/resume API, documented guarantees on memory+filesystem fidelity, and community or hands-on validation of the feature working as described.",
     "evidenceIds": [
       "modal-docs-9",
-      "modal-docs-8"
+      "modal-docs-27"
     ]
   },
   {
@@ -3888,9 +3902,10 @@
     "storyId": "per-second-billing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Modal's pricing docs and marketing explicitly state per-second billing with no reserved capacity ('pay by the second with no reserved capacity', 'only pay for what you use... burst up to what you need without over-allocating'), directly matching the story, and a community user corroborates paying only for resources actually consumed when building GPU runners on Sandboxes. Missing for 10: independent verification of exact billing granularity/metering mechanics and no first-party pricing breakdown showing per-second line items in the evidence pack.",
+    "confidence": "high",
+    "rationale": "Modal's pricing docs and marketing explicitly state per-second billing with no reserved capacity ('pay by the second with no reserved capacity', 'only pay for what you use', 'burst up to what you need without over-allocating'), and this is corroborated by a community user who built self-hosted runners specifically to 'pay for what you need only.' missing for 10: an independent/third-party billing audit or detailed rate-card breakdown showing exact second-level granularity in an invoice.",
     "evidenceIds": [
+      "modal-docs-5",
       "modal-docs-7",
       "modal-docs-16",
       "modal-docs-17",
@@ -3900,11 +3915,15 @@
   {
     "productId": "modal",
     "storyId": "privacy-data-residency",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions data residency, region selection, or geographic data storage controls for Modal Sandboxes; the pack covers execution, scaling, GPUs, filesystem, and networking but nothing about choosing storage region/residency.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The Sandbox API exposes a `region` parameter (modal-docs-32) alongside `cloud`/`gpu` options, implying some ability to select where compute (and by extension, sandbox data) runs, but there is no documentation framing this as a data residency/privacy compliance feature, no list of supported regions, and no statement about where persistent data/snapshots are stored. missing for 10: explicit data residency/compliance documentation, list of selectable regions, clarity on where snapshots/volumes/logs are stored relative to chosen region.",
+    "evidenceIds": [
+      "modal-docs-32",
+      "modal-docs-9",
+      "modal-docs-27"
+    ]
   },
   {
     "productId": "modal",
@@ -3920,8 +3939,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers sandbox ephemerality, filesystem access, snapshots, and networking/security, but nothing describes data retention policies, deletion controls, or compliance/data-handling settings that a user could configure. missing for 10: explicit data retention policy documentation, user-controllable deletion/purge mechanisms, compliance certifications (e.g., SOC2/GDPR data handling), retention period configuration.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, data residency, or privacy/compliance configuration for Sandboxes; the pack covers ephemeral execution, scaling, filesystem/snapshots/networking features but nothing about user-controllable retention or deletion of data/logs.",
     "evidenceIds": []
   },
   {
@@ -3930,7 +3949,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Modal Sandboxes; the docs cover sandboxing, GPUs, filesystem, and logging but not data-collection/privacy controls.",
+    "rationale": "No evidence anywhere in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out setting for Modal Sandboxes; the pack focuses entirely on sandbox execution, networking, GPUs, and SDK features. Since privacy/telemetry controls are a plausible and fair axis for any developer platform, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -3939,7 +3958,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Modal's docs show general support for running 'agents' and 'untrusted code' in Sandboxes (modal-docs-3, modal-docs-22, modal-docs-19), but no evidence pack item mentions a vendor recipe, tutorial, or example specifically for running Claude Code or Codex inside a Sandbox.",
+    "rationale": "Modal's docs describe running generic 'coding agents' and LLM agents in sandboxes (e.g. modal-docs-22, modal-docs-30, modal-docs-3), but no evidence pack item mentions a vendor recipe, tutorial, or example specifically for Claude Code or Codex running inside a Modal Sandbox.",
     "evidenceIds": []
   },
   {
@@ -3948,14 +3967,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is explicitly built for running untrusted/AI-generated code in isolated, ephemeral containers with networking/filesystem controls, resource limits, and logging, and community examples show real-world use (self-hosted CI runners, agent runtimes) confirming the isolation model works in practice. Missing for 10: independent security audit or adversarial escape-testing evidence, and clearer documentation of resource/network isolation guarantees beyond marketing copy.",
+    "rationale": "Modal Sandboxes is explicitly documented as secure, isolated containers/VMs for executing untrusted user or agent code, with network isolation controls, filesystem access, snapshots, and dedicated agent-code-execution examples showing arbitrary code run safely; community use (self-hosted runners, agent runtimes) corroborates real-world usage. missing for 10: independent third-party security audits or documented isolation-breakout testing, and clearer guarantees on infra-risk isolation beyond docs/examples.",
     "evidenceIds": [
       "modal-docs-1",
-      "modal-docs-2",
+      "modal-docs-3",
       "modal-docs-10",
-      "modal-docs-11",
       "modal-docs-19",
       "modal-docs-22",
+      "modal-docs-30",
+      "modal-docs-31",
       "modal-probe-2",
       "modal-comm-1",
       "modal-comm-2"
@@ -3965,14 +3985,12 @@
     "productId": "modal",
     "storyId": "secrets-stay-out",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal Sandboxes are documented as isolated, ephemeral containers for running untrusted/agent code with dedicated networking-and-security guides, supporting the general isolation story (modal-docs-1, modal-docs-2, modal-docs-10, modal-probe-2, modal-docs-19, modal-docs-22). However, no evidence explicitly states that host secrets/credentials are unreachable by default or describes the secrets-injection model that would confirm this — one doc even implies credentials are provisioned into the agent environment (modal-docs-3), which cuts against a strong 'unreachable unless granted' guarantee. Missing for 10: explicit secrets-isolation documentation, details of the opt-in secrets mechanism, and independent/hands-on confirmation that host credentials cannot leak into sandboxed code.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Modal Sandboxes are documented as isolated containers/VMs for running untrusted or agent code, with networking controls (block_network, CIDR/domain allowlists) that can restrict outbound access, which supports keeping host secrets/credentials unreachable. However, there is no explicit documentation describing secret-isolation guarantees or how host credentials are prevented from leaking into the sandbox (e.g., environment variable scoping, explicit secret injection controls) — the evidence focuses on general network/process isolation rather than credential-specific security claims. missing for 10: explicit documentation on how host secrets/credentials are excluded or scoped from sandbox environments, independent security audit or hands-on validation of secret isolation, and any first-party statement on credential handling policy.",
     "evidenceIds": [
-      "modal-docs-1",
-      "modal-docs-2",
-      "modal-docs-3",
       "modal-docs-10",
+      "modal-docs-31",
       "modal-docs-19",
       "modal-docs-22",
       "modal-probe-2"
@@ -3984,28 +4002,28 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Modal Sandboxes documentation explicitly covers running arbitrary shell commands (sb.exec, CLI 'run a command or interactive shell inside a Modal container'), custom images with any dependency installation, filesystem access, and community reports (HN self-hosted runners, JS agent runtime) corroborate real-world use for arbitrary command execution and untrusted code. Missing for 10: no independent benchmark of package installation limits or explicit documented apt/pip install examples beyond generic 'any dependency' claim.",
+    "rationale": "Modal Sandboxes explicitly document running arbitrary shell commands (sb.exec, CLI 'run a command or interactive shell', Sandbox.exec API) and support custom Images with any dependency installed, corroborated by community usage building CI runners and agent runtimes on top of it. Missing for 10: no independent hands-on benchmark of package installation reliability at scale.",
     "evidenceIds": [
       "modal-docs-13",
       "modal-docs-15",
       "modal-docs-19",
       "modal-docs-21",
-      "modal-docs-2",
+      "modal-docs-25",
+      "modal-docs-22",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "snapshot-restore-fork",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal explicitly documents a 'Sandbox Snapshots' feature (modal-docs-9), confirming snapshot capability exists, but the evidence pack gives no detail on the actual snapshot/restore/fork API mechanics, no confirmation that new independent sandboxes can be forked from a single snapshot, and no community/hands-on corroboration of this specific workflow. missing for 10: documented API details on restoring/forking multiple sandboxes from one snapshot, independent/hands-on confirmation of snapshot-restore-fork workflow, and clarity on any beta/experimental limitations.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Modal documents a dedicated Snapshots guide and a SandboxSnapshot API object created via `._experimental_snapshot()` that lets you interact with a stored snapshot, confirming the core snapshot/restore capability exists. However, the underscore-prefixed method name signals this is still an experimental feature, and there's no explicit documentation or example showing forking multiple new sandboxes from one snapshot, nor any independent/community corroboration of this specific workflow. Missing for 10: explicit fork-from-snapshot example/API details, clarity on experimental limitations, independent hands-on confirmation.",
     "evidenceIds": [
       "modal-docs-9",
-      "modal-docs-11"
+      "modal-docs-27"
     ]
   },
   {
@@ -4014,16 +4032,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs and SDK references (Python, JS/Go) show a single call (e.g. modal.Sandbox.create) spins up an isolated, ephemeral container/VM in seconds, with fast creation rates highlighted (hundreds of thousands of concurrent environments in seconds, faster backend for higher creation rates). Community builders (HN posts) independently confirm using Modal Sandboxes programmatically for real workloads like CI runners and agent runtimes. Missing for 10: independent benchmark of actual cold-start latency and a public OpenAPI spec (probe found 404s), so exact 'seconds' claim isn't third-party verified.",
+    "rationale": "Extensive first-party docs and SDK references (Python, JS/Go) show one-call sandbox creation (`Sandbox.create`), fast spin-up ('seconds', 'hundreds of thousands of concurrent rollout environments in seconds'), custom images, GPU attachment, and live command execution, corroborated by independent community builds using Modal Sandboxes for real workloads (CI runners, agent runtimes). Missing for 10: independent benchmark of actual cold-start latency and no formal API spec (OpenAPI 404) to verify single-call simplicity claims.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-4",
+      "modal-docs-14",
       "modal-docs-19",
       "modal-docs-20",
-      "modal-docs-24",
+      "modal-docs-25",
+      "modal-probe-2",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
@@ -4031,18 +4050,20 @@
     "storyId": "agent-self-provisions",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop's core product is programmatic sandbox (Devbox) provisioning, execution, and teardown via API/SDK/CLI, explicitly designed for AI agents — including an Agents API for creating/managing/deploying agents, blueprints for reusable environments, snapshots for state capture, and suspend/resume lifecycle, all achievable without human intervention (docs-1, docs-13, docs-22, docs-23, docs-2, docs-4, docs-27, docs-12). The quickstart shows a devbox spun up in ~1 minute and CLI/SDK access covers execution and result retrieval end-to-end.\nmissing for 10: independent/hands-on third-party verification of a full agent-driven provision→execute→teardown loop, and a concrete code example showing an agent reading execution results programmatically.",
+    "confidence": "high",
+    "rationale": "Runloop's API/SDK and CLI let an agent programmatically create a Devbox (sandbox), execute commands with streamed/logged results (execute-commands, execution-logs, PTY, named shells, file access), and then shut it down or suspend/resume — all documented as callable via SDKs without human interaction, and reinforced by an 'Agents API' and GitHub Action for automated deployment. Missing for 10: no independent/hands-on third-party confirmation of a fully autonomous end-to-end run (only first-party docs/tutorials), and no explicit example showing an agent autonomously deciding to tear down its own sandbox without a workflow script.",
     "evidenceIds": [
       "runloop-docs-1",
-      "runloop-docs-13",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-63",
+      "runloop-docs-64",
       "runloop-docs-22",
+      "runloop-docs-48",
       "runloop-docs-23",
-      "runloop-docs-2",
-      "runloop-docs-4",
-      "runloop-docs-27",
-      "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-8"
     ]
   },
   {
@@ -4051,11 +4072,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probe evidence confirms a working llms.txt file (HTTP 200) with a documentation index, plus docs-md endpoints explicitly pointing agents to fetch llms.txt for full documentation, and Cursor rules files further supporting agent-oriented consumption of docs. missing for 10: independent third-party confirmation that agents successfully use these docs in practice.",
+    "rationale": "Direct probe confirms llms.txt is live (HTTP 200) with structured agent-oriented content, and docs pages expose a .md variant plus an explicit documentation index pointing to llms.txt, showing deliberate agent-readable doc infrastructure. Docs also mention adding API context to LLMs and Cursor rule files for AI assistant context, reinforcing agent-native doc design. Missing for 10: no independent/third-party confirmation that agents actually consume it successfully in practice.",
     "evidenceIds": [
       "runloop-probe-1",
       "runloop-probe-2",
-      "runloop-docs-29"
+      "runloop-docs-36"
     ]
   },
   {
@@ -4064,21 +4085,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is sandbox/infrastructure tooling for running AI coding agents (Devboxes, blueprints, benchmarks, agent APIs) — it is not a data platform that ingests a user's data and surfaces AI-generated insights or suggestions. This story is a category error for this product type.",
+    "rationale": "Runloop is infrastructure for running sandboxed devboxes/agents, not a data product that surfaces AI-generated insights or suggestions from a user's own data; this story targets analytics/insight-generation features, which is a different axis for this kind of developer infrastructure tool.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop's Axons feature gives agents a persistent event stream letting them suspend when idle, wake on demand, recover state, and hand off between agents 'without you building the plumbing' (runloop-docs-17, runloop-docs-18), and devboxes support suspend/resume to preserve state across runs (runloop-docs-27). The GitHub Action for agent deployment (runloop-docs-24) supports triggering agent runs from CI workflows, enabling background automation setups. Missing for 10: no explicit cron/scheduler primitive, no independent/hands-on account of long-running unattended automations actually working in production, and no example of a full always-on autonomous pipeline beyond docs claims.",
+    "rationale": "Runloop provides infrastructure primitives (Axons with persistent event streams for suspend/wake/recover, Devbox suspend-resume, GitHub Action-triggered agent deployment, benchmark scheduling) that support autonomous background execution, but there's no evidence of a native cron/schedule-trigger system or dashboard for defining recurring/background 'automations' as a first-class user-facing feature. missing for 10: a documented scheduler/trigger UI for recurring automations, independent/hands-on evidence of long-running background jobs succeeding, and explicit 'automation' framing beyond agent lifecycle plumbing.",
     "evidenceIds": [
       "runloop-docs-17",
       "runloop-docs-18",
       "runloop-docs-27",
-      "runloop-docs-24"
+      "runloop-docs-24",
+      "runloop-docs-55",
+      "runloop-docs-6"
     ]
   },
   {
@@ -4087,7 +4110,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is a sandbox/infrastructure platform for running and orchestrating AI coding agents (Devboxes, Agents API, benchmarks), not an end-user product with its own embedded AI assistant to delegate tasks to. The evidence describes tools for building/hosting agents (and integrating with external assistants like Cursor), not a built-in assistant persona within Runloop itself.",
+    "rationale": "Runloop is infrastructure for building/running AI agents and sandboxes (Devboxes, Axons, Agents API, benchmarks) — it is a platform for developers to deploy their own agents, not a product with a built-in assistant that end-users delegate tasks to. This is a category mismatch: the story applies to end-user products with an embedded assistant, not to a sandbox/agent-hosting infrastructure platform.",
     "evidenceIds": []
   },
   {
@@ -4096,34 +4119,40 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop provides a CLI (rli), SDKs, an Agents API, GitHub Actions integration for deploying agents, and benchmark jobs runnable via CLI—all supporting headless/CI automation of sandboxes and agents. missing for 10: no independent/hands-on CI case study, and no explicit CI provider-specific guide beyond GitHub Actions example.",
+    "rationale": "Runloop offers a CLI (rli) and SDKs for scripting devbox lifecycle, an official GitHub Action (deploy-agent) for CI-driven agent deployment, a benchmarks CLI that provisions devboxes and runs agents/scoring end-to-end, and headless execution primitives (execute-commands, named shells, PTY, logs) suitable for automation pipelines. Missing for 10: no independent/hands-on report of a full CI pipeline in production, and no explicit 'headless mode' framing beyond CLI/API/GitHub Action usage.",
     "evidenceIds": [
-      "runloop-docs-6",
       "runloop-docs-8",
-      "runloop-docs-22",
       "runloop-docs-23",
-      "runloop-docs-24"
+      "runloop-docs-24",
+      "runloop-docs-6",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-45"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows Runloop publishes its own MCP server so external agents can call Runloop's tools (runloop-probe-4), but there is no evidence that Runloop itself can act as an MCP client and plug in third-party MCP servers to use their tools. missing for 10: any documentation of an MCP-client integration point, config for adding external MCP servers, or examples of Devboxes/agents consuming external MCP tool servers.",
+    "rationale": "Runloop documents an 'MCP Hub' feature explicitly giving agents access to MCP tool servers without exposing credentials, directly matching the story of plugging MCP servers in so the product's agents can use their tools. Missing for 10: no independent/hands-on corroboration of the MCP Hub in practice, and limited detail on configuration/setup breadth beyond the single doc line.",
     "evidenceIds": [
-      "runloop-probe-4"
+      "runloop-docs-66"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop is a sandbox/devbox platform (not itself an agent), so shipping an official MCP server is a valid axis, and the docs explicitly reference one at docs.runloop.ai/docs/tools/ai-tools. This confirms the capability exists, though the evidence pack lacks detail on the specific tools/resources exposed or independent hands-on confirmation. Missing for 10: detailed documentation of MCP server tool surface, independent/community verification of usage.",
+    "rationale": "Runloop documents an official MCP server (ai-tools page, confirmed by probe) that lets LLMs/agents pull Runloop API context, and separately an 'MCP Hub' for giving agents access to MCP tool servers without exposing credentials. This shows a real, documented MCP server offering, but the evidence is thin—no detailed setup guide, transport details, or independent confirmation of hands-on connection success. Missing for 10: detailed MCP server documentation/setup steps, independent/hands-on verification of connecting an agent to it, and clarity on tool coverage.",
     "evidenceIds": [
+      "runloop-docs-36",
+      "runloop-docs-66",
       "runloop-probe-4"
     ]
   },
@@ -4131,13 +4160,15 @@
     "productId": "runloop",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop exposes an official MCP server and ships Cursor '.mdc' rule files that give AI assistants context on the SDK (devbox lifecycle, file ops, blueprints, snapshots, tunnels), enabling natural-language operation through AI coding assistants rather than a bespoke NL interface. There's no first-party chat/NL command surface of Runloop's own, and no independent evidence of how well the MCP/Cursor integration performs in practice. Missing for 10: dedicated natural-language interface docs, hands-on/independent validation of the MCP or Cursor integration actually working end-to-end.",
+    "rationale": "Runloop offers an official MCP server and Cursor `.mdc` rule files that give AI assistants context on the Runloop SDK, letting an AI-native user drive devbox creation/management via connected agents rather than only the CLI/dashboard. However, there is no evidence of a native built-in natural-language command interface for Runloop itself (the CLI is a traditional CLI/TUI, not NL-driven). Missing for 10: evidence of a first-party conversational/NL interface built into Runloop's own CLI or dashboard, and independent confirmation that MCP-based control reliably covers all platform actions.",
     "evidenceIds": [
-      "runloop-probe-4",
       "runloop-docs-29",
-      "runloop-docs-8"
+      "runloop-docs-36",
+      "runloop-docs-44",
+      "runloop-probe-4",
+      "runloop-docs-66"
     ]
   },
   {
@@ -4146,12 +4177,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop ships an official CLI (`rli`) with both interactive TUI and traditional commands for managing devboxes, blueprints, SSH sessions, and benchmarks, documented directly in first-party docs and confirmed by probe. This is clearly built for AI-native/agentic workflows (blueprint creation, benchmark submission, devbox lifecycle management). Missing for 10: independent/hands-on community corroboration beyond vendor docs, and no changelog/version history showing active CLI maintenance cadence.",
+    "rationale": "Runloop documents an official CLI (`rli`) offering both an interactive terminal UI and traditional CLI commands for managing devboxes, blueprints, SSH, and more, confirmed by both docs and probe evidence. missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and no full command reference shown.",
     "evidenceIds": [
       "runloop-docs-8",
       "runloop-docs-9",
       "runloop-docs-2",
-      "runloop-docs-6",
       "runloop-probe-5"
     ]
   },
@@ -4161,14 +4191,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop documents a full public API surface: Devboxes API, Agents API, SDKs in common languages, CLI (rli), and GitHub Action integration, all callable programmatically for agent-driven workflows. This is strong first-party documentation of a public API, though probes show no discoverable OpenAPI spec, slightly weakening independent verification. Missing for 10: a published OpenAPI/swagger spec and independent third-party corroboration of API usage.",
+    "rationale": "Runloop exposes a full REST API surface (Agents API, Devboxes, Storage Objects, Secrets, etc.) plus official SDKs in multiple languages, a CLI (rli), and llms.txt/markdown docs explicitly designed for AI-native consumption, all clearly documented for programmatic use. This strongly supports driving the product entirely through documented public APIs rather than only a UI. Missing for 10: a discoverable machine-readable OpenAPI spec (probe found 404s on standard OpenAPI paths) and independent third-party corroboration of API completeness/stability.",
     "evidenceIds": [
       "runloop-docs-22",
       "runloop-docs-23",
       "runloop-docs-8",
-      "runloop-docs-24",
+      "runloop-probe-1",
+      "runloop-probe-2",
       "runloop-probe-3",
-      "runloop-probe-5"
+      "runloop-probe-5",
+      "runloop-docs-36"
     ]
   },
   {
@@ -4177,23 +4209,31 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop's Agent Gateways let agents call LLM APIs like Anthropic/OpenAI 'without ever seeing your API keys,' which is a direct least-privilege credentialing mechanism for agents. However, the docs give only a single brief mention with no detail on fine-grained scopes, per-agent permission levels, revocation, or audit logging. Missing for 10: detailed scoping/permission model documentation, credential rotation/revocation controls, and independent verification of the gateway's isolation guarantees.",
+    "rationale": "Runloop documents mechanisms consistent with least-privilege credential handling for agents: Agent Gateways let agents call LLM APIs 'without ever seeing your API keys' (runloop-docs-10), account-level Secrets are encrypted and injected as env vars rather than exposed directly (runloop-docs-21/42), MCP Hub gives agents access to tool servers 'without exposing credentials' (runloop-docs-66), and network policies let you control egress (runloop-docs-58). However, there's no explicit documentation of issuing scoped/permission-limited Runloop platform API keys (e.g., role-based or read-only API tokens) for agents themselves. Missing for 10: explicit scoped API-key/token issuance with configurable permission levels for Runloop's own API, and independent confirmation of least-privilege enforcement.",
     "evidenceIds": [
       "runloop-docs-10",
-      "runloop-docs-21"
+      "runloop-docs-21",
+      "runloop-docs-42",
+      "runloop-docs-66",
+      "runloop-docs-58"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents official SDKs in common languages for interacting with its API, plus tutorials integrating with SDKs like OpenAI Agents SDK, supporting an AI-native builder workflow. However, evidence lacks specifics on which languages are covered, versioning/maturity, or independent developer corroboration. Missing for 10: enumerated language list/maturity details, independent hands-on confirmation, changelog/versioning evidence.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop explicitly documents official SDKs 'in common languages to interact with the Runloop API' plus a CLI (rli), Cursor IDE rule files for SDK-aware assistance, and multiple tutorials showing SDK usage (OpenAI Agents SDK integration, Browserbase, Kernel, OpenCode) demonstrating real-world SDK-based builds. Missing for 10: no explicit list of supported languages/versions, no independent third-party corroboration of SDK quality, and no public OpenAPI spec was found (probe shows 404s) which would strengthen SDK completeness claims.",
     "evidenceIds": [
       "runloop-docs-23",
-      "runloop-docs-27",
-      "runloop-docs-29"
+      "runloop-docs-8",
+      "runloop-docs-29",
+      "runloop-docs-49",
+      "runloop-docs-50",
+      "runloop-docs-51",
+      "runloop-probe-3",
+      "runloop-probe-5"
     ]
   },
   {
@@ -4201,8 +4241,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence mentions webhooks or event subscription mechanisms; Runloop's docs describe devbox lifecycle events via Axons event streams but nothing about webhook subscriptions for external systems. Missing for 10: any documentation of a webhooks API, subscription/callback URLs, or event delivery mechanism to external endpoints.",
+    "confidence": "medium",
+    "rationale": "Runloop's docs describe persistent event streams via Axons for agent lifecycle management, but there is no evidence of a webhook subscription mechanism (HTTP callback registration) for external event notifications, which is a plausible capability for a platform with an API/SDK.",
     "evidenceIds": []
   },
   {
@@ -4211,7 +4251,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; the explicit probe for OpenAPI/swagger specs returned 404s across all candidate paths, and docs mention SDKs/CLI but not a runnable API explorer.",
+    "rationale": "The evidence pack shows an explicit probe for an interactive API reference (OpenAPI/Swagger spec) that returned 404 on all candidate paths, and no other citation describes a runnable, interactive API explorer—only static SDK docs, CLI docs, and tutorials are present.",
     "evidenceIds": [
       "runloop-probe-3"
     ]
@@ -4221,8 +4261,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Runloop offers SDKs and a CLI but there is no evidence of a downloadable OpenAPI/Swagger spec; explicit probes to common OpenAPI paths (openapi.json, swagger.json, etc.) all returned 404, confirming absence rather than just lack of mention.",
+    "confidence": "medium",
+    "rationale": "Runloop offers SDKs and a documented API, but a direct probe for a machine-readable OpenAPI/Swagger spec at all standard locations (openapi.json, swagger.json, api/openapi.json, .well-known/openapi.json) returned 404, and no evidence pack item links to a downloadable API spec.",
     "evidenceIds": [
       "runloop-probe-3",
       "runloop-docs-23"
@@ -4233,15 +4273,15 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop's Devboxes are isolated sandbox execution environments (secure, snapshot/blueprint-based, no production data by default) explicitly designed for testing AI agents, fully separate from any production system. missing for 10: no independent/hands-on corroboration beyond vendor docs, no explicit statement contrasting sandbox vs production data isolation guarantees.",
+    "confidence": "high",
+    "rationale": "Runloop's core product is isolated Devbox sandboxes for AI agents, explicitly separate from any production environment, with network egress controls, secrets management, snapshots, and no shared state with production systems by design. Docs emphasize secure, isolated execution ('secure sandboxed execution environments'), egress network policy control, and secrets scoped to the sandbox, directly supporting safe testing without touching production data. Missing for 10: no explicit case study or independent hands-on account confirming production-data isolation in a real deployment, and no direct statement contrasting sandbox vs production data access.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
+      "runloop-docs-58",
+      "runloop-docs-21",
       "runloop-docs-4",
-      "runloop-docs-15",
-      "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-19"
     ]
   },
   {
@@ -4250,7 +4290,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probe returned 404s and no changelog/versioning docs are cited.",
+    "rationale": "No evidence in the pack mentions API versioning scheme or a documented deprecation policy; the OpenAPI spec probe even returned 404s across candidate paths, and no changelog/versioning docs are cited.",
     "evidenceIds": [
       "runloop-probe-3"
     ]
@@ -4258,14 +4298,14 @@
   {
     "productId": "runloop",
     "storyId": "auto-teardown-timeouts",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop documents suspend/resume to \"save state and costs\" and Axons that let agents \"suspend when idle, wake on demand,\" indicating some idle-triggered lifecycle management, but there is no explicit documentation of a developer-configurable timeout parameter that auto-shuts-down a Devbox and stops billing after inactivity or completion. missing for 10: explicit timeout/idle-shutdown configuration API or CLI flag, confirmation that suspension halts billing automatically without agent action.",
+    "rationale": "Runloop docs explicitly document controlling automatic shutdown and idle behaviors for Devboxes (start-stop) plus suspend/resume workflows to save state and costs when idle, directly matching the timeout/idle-shutdown story. Missing for 10: independent/hands-on confirmation of billing stopping exactly on timeout and granular configuration examples (e.g. exact timeout parameters) beyond doc titles.",
     "evidenceIds": [
-      "runloop-docs-17",
+      "runloop-docs-64",
       "runloop-docs-27",
-      "runloop-docs-18"
+      "runloop-docs-55"
     ]
   },
   {
@@ -4274,12 +4314,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop supports running 10k+ parallel sandboxes, benchmark jobs that provision devboxes/run agents/aggregate outputs 'with a single command,' and snapshots for fan-out across multiple approaches — evidence of bulk/parallel operation across many devboxes. However, there's no explicit documentation of a generic bulk-operation API/CLI verb (e.g., bulk delete, bulk update, batch create) for arbitrary resources beyond devboxes/benchmarks. missing for 10: explicit bulk CRUD operations across resources like snapshots/storage objects/secrets, documented batch API endpoints, and independent evidence of large-scale bulk usage beyond vendor docs.",
+    "rationale": "Runloop supports scale-oriented bulk operations: 10k+ parallel sandboxes, benchmark runs comparing multiple agents side-by-side with a single command, and blueprints/snapshots reused across many devboxes for fan-out workflows. However, this is scale/parallelism at the sandbox-provisioning level rather than a documented generic 'bulk operation' API for arbitrary items (e.g., batch file ops, bulk resource updates via a single call). missing for 10: explicit bulk/batch API endpoints for managing many resources (devboxes, secrets, storage objects) in one call, and independent evidence validating claimed 10k+ parallel scale in practice.",
     "evidenceIds": [
-      "runloop-docs-12",
       "runloop-docs-6",
+      "runloop-docs-12",
       "runloop-docs-15",
-      "runloop-docs-7"
+      "runloop-docs-16"
     ]
   },
   {
@@ -4288,10 +4328,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Runloop's Axons give agents a persistent event stream that can suspend on idle, wake on demand, recover state, and hand off between agents, which is a form of automatic event-driven behavior, and the Broker component sits between Axon and agent process to manage this. However, there's no documentation of a general user-facing rules engine where arbitrary conditions map to arbitrary actions across the platform (e.g., webhooks, triggers on Devbox/snapshot events, custom rule definitions). Missing for 10: a documented rules/trigger definition interface, examples of custom event-to-action mappings beyond agent suspend/wake, and evidence of triggers on other platform events (snapshots, storage, secrets).",
+    "rationale": "Runloop's Axons/Broker system provides an event stream for agent lifecycle (suspend on idle, wake on demand, recover state, hand off) and devbox start/stop offers idle-based automatic shutdown, which are event-driven primitives an AI-native user could build on. However, there is no documented rule-definition mechanism (e.g., a conditional 'on event X do action Y' API/UI) — the evidence shows infrastructure for event streaming and lifecycle state, not a general-purpose automation rules engine.  Missing for 10: explicit user-defined trigger/rule syntax or API, examples of arbitrary custom actions bound to events, and any UI for rule management.",
     "evidenceIds": [
       "runloop-docs-17",
-      "runloop-docs-18"
+      "runloop-docs-38",
+      "runloop-docs-39",
+      "runloop-docs-64"
     ]
   },
   {
@@ -4300,20 +4342,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Devboxes, snapshots, benchmarks, and Axons for event-driven suspend/resume, but nothing about scheduling recurring jobs or cron-like recurring workflows. Absence of evidence for this applicable automation capability yields 'none'.",
+    "rationale": "The evidence pack covers Devbox lifecycle (start/stop, suspend/resume), benchmarks, GitHub Actions deployment, and event-stream/Axon workflows, but nowhere documents a scheduler, cron-like trigger, or recurring job/workflow capability. Scheduling recurring automation is a fair capability to expect from an agent sandbox platform, so its total absence from docs means this axis is unmet.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop's Snapshots explicitly support rolling back Devbox state to a known good point, and Blueprints let you version/reuse startup configurations, giving a rudimentary rollback mechanism for agent environments. However, there is no evidence of a review workflow (diffs, approvals, audit trail) or of 'automations' as a first-class versioned object distinct from raw disk/environment snapshots. Missing for 10: explicit review/diff tooling for automations, first-class automation versioning (not just devbox/environment snapshots), audit/history UI for changes.",
+    "rationale": "Runloop's Snapshots let users save a Devbox's disk state and explicitly 'roll back to a known good point in time' or branch from prior states, and Blueprints let you version/reuse environment setup steps — covering rollback and some versioning of the automation's execution environment. However there's no evidence of a review/audit trail or diff view for agent automations themselves (only environment state), and 'review' is only loosely covered by the general Dashboard monitoring feature. Missing for 10: explicit version history/diffing of agent automation logic (not just environment snapshots), a dedicated review/audit UI for automation changes, and independent corroboration of rollback in practice.",
     "evidenceIds": [
+      "runloop-docs-4",
       "runloop-docs-15",
+      "runloop-docs-32",
+      "runloop-docs-2",
       "runloop-docs-14",
-      "runloop-docs-4"
+      "runloop-docs-57"
     ]
   },
   {
@@ -4322,9 +4367,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence Runloop supports running a headless browser or desktop GUI inside its Devbox sandboxes; the only browser-related tutorial explicitly states the architecture avoids this, running Chromium externally via Browserbase and connecting over CDP so 'no Chromium ever runs in the devbox.' Blueprints/docs never mention GUI, X11, VNC, or bundled browser binaries as a supported environment type.",
+    "rationale": "Runloop's own docs explicitly describe browser automation as running externally (via Browserbase or Kernel) with Playwright connecting over CDP, stating 'no Chromium ever runs in the devbox' — the opposite of running a headless browser inside the sandbox. There is no mention anywhere in the docs of a full desktop/GUI environment running inside a Devbox either. Since all evidence comes from a single tier (claimed-docs/probe), this cannot be marked 'disputed', but the applicable capability is not delivered as described in the story.",
     "evidenceIds": [
-      "runloop-docs-28"
+      "runloop-docs-28",
+      "runloop-docs-51",
+      "runloop-docs-52"
     ]
   },
   {
@@ -4333,9 +4380,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Runloop's marketing site claims support for 10k+ parallel sandboxes and sub-2s startup for 10GB images, showing scale is a design goal, but there is no documented concurrency limit, quota tiering, or rate-limit table a platform engineer could plan capacity around. Missing for 10: explicit documented per-account/org concurrency limits, guidance on requesting increases, and independent benchmarks validating the 10k+ claim at sustained load.",
+    "rationale": "Runloop's marketing page claims support for '10k+ parallel sandboxes' with fast image startup, and docs mention running benchmarks 'at scale' in secure environments, suggesting fleet-scale concurrency is a designed capability. However, there is no dedicated documentation page specifying concrete concurrency limits, quota tiers, or how limits scale with plan/account, nor any independent benchmark verifying the 10k figure. missing for 10: a documented concurrency-limits/quota page, per-plan limit specifics, and independent verification of the scale claim.",
     "evidenceIds": [
-      "runloop-docs-12"
+      "runloop-docs-12",
+      "runloop-docs-16",
+      "runloop-docs-6"
     ]
   },
   {
@@ -4344,24 +4393,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Runloop's Blueprints support building custom sandbox images from a Dockerfile (`rli blueprint from-dockerfile`), plus reusable prebuilt blueprints and snapshotting of custom states, directly enabling developers to bring their own container image or define custom templates. Missing for 10: independent/hands-on verification of Dockerfile-based blueprint builds and more detail on supported image registries or base image constraints.",
+    "rationale": "Runloop explicitly supports custom Blueprints built via 'rli blueprint from-dockerfile', letting developers bring their own container image, plus prebuilt public blueprints and reusable startup-action templates for customizing Devbox environments. missing for 10: independent/hands-on verification beyond first-party docs, and no explicit mention of pulling arbitrary existing registry images vs Dockerfile-based builds.",
     "evidenceIds": [
       "runloop-docs-2",
       "runloop-docs-3",
       "runloop-docs-14",
-      "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-31"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "expose-public-url",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents devbox tunnels for securely accessing ports on a devbox over a simple URL, directly matching the story's requirement to expose a service port publicly. Missing for 10: independent/hands-on confirmation of tunnel reliability and details on URL persistence/security controls beyond the doc snippet.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly describe devbox tunnels for securely exposing ports over a URL, with a dedicated tutorial for sharing a live preview link in pull requests using devbox tunnels—directly matching the story's provisioning-lifecycle need. missing for 10: no independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
-      "runloop-docs-5"
+      "runloop-docs-5",
+      "runloop-docs-33",
+      "runloop-docs-54"
     ]
   },
   {
@@ -4369,23 +4419,25 @@
     "storyId": "fast-cold-starts",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "Runloop's marketing site documents '10GB image startup time in <2s' and a 1-minute quickstart, supporting sub-second-to-few-second cold starts, but this is a single first-party marketing claim without detailed benchmarks, methodology, or independent corroboration. missing for 10: independent/third-party benchmark confirmation, documentation of cold start times across varying image sizes/configurations, and reproducible performance data beyond the single homepage claim.",
+    "confidence": "low",
+    "rationale": "Runloop's marketing site explicitly claims a documented cold-start metric (\"10GB image startup time in <2s\", supporting 10k+ parallel sandboxes), and docs also describe quickstart getting a devbox running in ~1 minute and suspend/resume for fast state recovery. However, this is a single marketing-page claim rather than a detailed benchmark methodology, and there's no independent or hands-on corroboration of actual cold-start latency across image sizes. Missing for 10: reproducible benchmark methodology/independent verification, breakdown of cold-start times across different image sizes/configs, third-party performance reports.",
     "evidenceIds": [
       "runloop-docs-12",
-      "runloop-docs-26"
+      "runloop-docs-26",
+      "runloop-docs-47",
+      "runloop-docs-27"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "filesystem-io",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm the SDK/CLI supports 'file operations' as part of Devbox management (mentioned alongside lifecycle, command execution, etc. in the Cursor rules integration), implying read/write file capability, but no dedicated documentation page or code sample specifically shows upload/download or read/write file APIs. Missing for 10: explicit SDK method docs for file read/write, and explicit upload/download examples or independent corroboration.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly cover a dedicated 'Give your AI agent access to modify and interact with files on your devbox' file operations feature, and Cursor rule files mention SDK 'file operations' as a core covered capability alongside SDKs in common languages to interact with the API. This strongly implies read/write/upload/download file support via the SDK, though the evidence lacks explicit upload/download method names or code snippets. Missing for 10: explicit SDK code examples showing read/write/upload/download calls and independent hands-on confirmation.",
     "evidenceIds": [
+      "runloop-docs-63",
       "runloop-docs-29",
-      "runloop-docs-13",
       "runloop-docs-23"
     ]
   },
@@ -4394,11 +4446,13 @@
     "storyId": "free-tier-start",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Runloop's trial includes $50 free credits with no credit card required, and a quickstart lets a developer spin up a first devbox in about a minute, both without any sales contact. Missing for 10: independent/community confirmation of the free-tier signup experience and clarity on long-term free-tier limits beyond trial credits.",
+    "confidence": "high",
+    "rationale": "Runloop's docs explicitly state new accounts get a Pro Trial with $50 in free credits and no credit card required to sign up, and the quickstart shows a developer can create a devbox in under a minute without any sales contact. Missing for 10: independent/third-party confirmation of the self-serve signup flow and any explicit mention of ongoing free-tier limits beyond the trial credits.",
     "evidenceIds": [
       "runloop-docs-25",
-      "runloop-docs-26"
+      "runloop-docs-46",
+      "runloop-docs-26",
+      "runloop-docs-47"
     ]
   },
   {
@@ -4406,22 +4460,27 @@
     "storyId": "gpu-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Devboxes, blueprints, snapshots, mounts, storage, and networking features but never mentions GPU support or GPU-attached compute for sandboxed workloads; nothing indicates hardware acceleration is available.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "The evidence covers Devbox sizes, mounts, storage, secrets, networking, and execution features, but there is no mention of GPU support or GPU-attached compute in any documented Devbox configuration (e.g. runloop-docs-65 on 'predefined sizes' lists no GPU option). No evidence anywhere confirms GPU attachment is possible for sandboxed workloads.",
+    "evidenceIds": [
+      "runloop-docs-65",
+      "runloop-docs-19",
+      "runloop-docs-40"
+    ]
   },
   {
     "productId": "runloop",
     "storyId": "hard-isolation-boundary",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Runloop repeatedly describes Devboxes as \"secure sandboxed execution environments\" and \"isolated Linux sandbox environments,\" implying some isolation boundary, but the evidence never names or documents the actual isolation mechanism (e.g., microVM, Firecracker, gVisor, container-only) or any architecture diagram/security whitepaper explaining the boundary. missing for 10: explicit documentation of the underlying isolation technology (microVM/hypervisor-level or equivalent), any security architecture doc or third-party audit confirming hard isolation guarantees.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Runloop repeatedly markets Devboxes as 'secure sandboxed execution environments' and documents adjacent security controls (network egress policies, encrypted secrets, SSH end-to-end encryption), but none of the evidence specifies the actual isolation mechanism — no mention of microVMs, Firecracker, gVisor, hypervisor-level isolation, or any technical architecture describing a hard boundary between sandboxes and host/tenant systems. Missing for 10: explicit documentation of the isolation technology (microVM or equivalent), any architecture diagram or security whitepaper describing tenant separation, and independent verification of the isolation boundary's strength.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
-      "runloop-docs-16",
-      "runloop-probe-1"
+      "runloop-docs-30",
+      "runloop-docs-58",
+      "runloop-docs-67"
     ]
   },
   {
@@ -4430,13 +4489,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop Devboxes explicitly support long-running persistence via snapshots (save/restore disk state), suspend/resume to pause and continue exactly where left off, and Axons providing a persistent event stream that lets agents suspend when idle and wake on demand/recover state — directly addressing multi-hour/multi-day agent sessions without losing progress. Combined with SSH/tunnel access and mounts/secrets for long tasks, this covers the core story well. Missing for 10: independent/hands-on evidence (e.g., a third-party report) confirming multi-day session stability at scale, and explicit documented max session duration/limits.",
+    "rationale": "Runloop docs explicitly support long-running sessions: suspend/resume to pause and later resume a devbox exactly where it left off, idle/shutdown controls, persistent event streams (Axons) for suspend-on-idle/wake-on-demand/state recovery, and snapshotting for state persistence across sessions — all aimed at long agent workflows spanning hours/days. Missing for 10: no independent/hands-on evidence (e.g., a third-party report) confirming multi-day session stability at scale, and no explicit stated max session duration/SLA.",
     "evidenceIds": [
-      "runloop-docs-4",
-      "runloop-docs-15",
       "runloop-docs-27",
       "runloop-docs-17",
-      "runloop-docs-18"
+      "runloop-docs-55",
+      "runloop-docs-64",
+      "runloop-docs-4",
+      "runloop-docs-38"
     ]
   },
   {
@@ -4445,23 +4505,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Runloop's Devboxes are described as full-featured secure sandboxed execution environments that can run arbitrary commands (via blueprints, SSH, CLI) which implies multi-language support, but there is no explicit documentation of a code-execution API returning 'rich results' (e.g., structured outputs, images, dataframes) as in dedicated code-interpreter products. missing for 10: explicit multi-language runtime examples (Python/JS/etc.), rich/structured result formatting (e.g., stdout+images+tables), and independent confirmation of these capabilities.",
+    "rationale": "Runloop's Devboxes are full sandboxed Linux environments where you can execute commands/code (docs-59, docs-61, docs-62) and blueprints can be built from Dockerfiles to support any language runtime (docs-2, docs-3), implying multi-language support. However, the evidence never explicitly documents Python/JavaScript-specific execution APIs or 'rich' structured result formats (e.g., images, dataframes) as in a code-interpreter product — execution is framed generically around shell commands, logs, and PTYs rather than language-aware rich outputs. Missing for 10: explicit multi-language runtime docs (Python/JS SDK code-exec examples), evidence of rich/structured result payloads (images, tables, exceptions) beyond raw logs/stdout.",
     "evidenceIds": [
-      "runloop-docs-1",
-      "runloop-docs-13",
+      "runloop-docs-59",
+      "runloop-docs-60",
+      "runloop-docs-61",
+      "runloop-docs-62",
       "runloop-docs-2",
-      "runloop-docs-8",
-      "runloop-docs-23"
+      "runloop-docs-13"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "network-egress-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item describes network egress controls, firewall rules, or allow/deny policies for Devbox sandboxes; tunnels and secrets features are documented but network egress policy configuration is never mentioned.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Runloop has a dedicated network-policies doc explicitly stating 'Control egress network access for your Devboxes,' directly matching the platform-engineer story of restricting/allowing sandbox egress. However, the evidence is a single thin doc snippet with no detail on policy granularity (allow/deny lists, protocols) and no independent/hands-on corroboration. Missing for 10: detailed policy configuration examples, verification that granular rules work in practice, independent confirmation.",
+    "evidenceIds": [
+      "runloop-docs-58"
+    ]
   },
   {
     "productId": "runloop",
@@ -4469,13 +4532,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop is API-first: the CLI (rli) wraps SDKs/API for devboxes, blueprints, snapshots, benchmarks, agents, secrets, etc., suggesting broad API/CLI parity with any dashboard functionality. However there is no explicit statement claiming full UI/API feature parity, no documented OpenAPI spec (404s on all probed paths), and no direct dashboard-vs-API comparison. Missing for 10: explicit parity claim between web dashboard and API, published OpenAPI/reference spec, confirmation that all dashboard-only actions (e.g., billing, org settings) are also API-accessible.",
+    "rationale": "Runloop is API-first: Devboxes, blueprints, snapshots, benchmarks, agents, secrets, and mounts are all documented as API/CLI/SDK operations, and the Dashboard is described as a management/monitoring UI layered on top of that same API (runloop-docs-57, runloop-docs-8). This strongly suggests API-UI parity for a developer-tool product, but there is no explicit statement or independent confirmation that literally every dashboard action has an API equivalent (or vice versa), and the OpenAPI spec probe failed, leaving the full surface unverifiable. missing for 10: explicit documentation or independent confirmation of full UI/API parity, a discoverable OpenAPI spec, and any hands-on account of dashboard-only or API-only features.",
     "evidenceIds": [
+      "runloop-docs-57",
       "runloop-docs-8",
-      "runloop-docs-22",
       "runloop-docs-23",
-      "runloop-docs-6",
-      "runloop-probe-3"
+      "runloop-probe-3",
+      "runloop-docs-9"
     ]
   },
   {
@@ -4496,8 +4559,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence indicates Runloop's core source (the sandbox platform, Devboxes, Axons, etc.) is released under an open license; the evidence pack shows only docs, CLI, and SDK references without any license or open-source repository disclosure.",
+    "confidence": "high",
+    "rationale": "Runloop is a closed, commercial cloud platform; the evidence pack contains no mention of an open-source license or publicly available source code for the core product—only docs, SDKs, and CLI tooling. missing for 10: any evidence of an open-source license, public source repository, or licensing terms for the core Runloop platform.",
     "evidenceIds": []
   },
   {
@@ -4506,20 +4569,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Runloop is presented entirely as a hosted cloud platform (Devboxes, Agents API, benchmarks) with no evidence of an on-premises or self-hostable deployment option, open-source core, or self-hosting documentation.",
-    "evidenceIds": []
+    "rationale": "Runloop is presented entirely as a hosted cloud platform (Devboxes, Axons, Storage Objects, dashboard) with no mention of a self-hostable/on-prem deployment option, open-source core, or Docker/Helm packaging for running the platform yourself; all evidence points to a managed SaaS with trial credits and cloud sandboxes.",
+    "evidenceIds": [
+      "runloop-docs-1",
+      "runloop-docs-12",
+      "runloop-docs-25",
+      "runloop-docs-57"
+    ]
   },
   {
     "productId": "runloop",
     "storyId": "pause-resume-state",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Runloop explicitly documents 'Suspend and resume' functionality that pauses sandboxes to save state and resume exactly where left off, plus snapshot capability that saves disk state and can recreate Devboxes from that state. This directly matches the story's pause/resume with filesystem+memory state intact. Missing for 10: no independent/hands-on corroboration of memory-state fidelity across suspend/resume, and no detailed technical explanation of how memory state (not just disk) is preserved.",
+    "confidence": "high",
+    "rationale": "Runloop explicitly documents suspend/resume of Devboxes with state preservation ('Suspend and resume: Pause sandboxes to save state and costs, then resume exactly where you left off') and provides a dedicated tutorial workflow demonstrating suspending a devbox to preserve state and resuming to continue work, plus underlying snapshot mechanics that save disk state for later restoration. missing for 10: independent/hands-on third-party confirmation that memory (not just filesystem/disk) state is fully preserved across suspend/resume, and explicit detail on process/memory state handling beyond disk snapshots.",
     "evidenceIds": [
       "runloop-docs-27",
+      "runloop-docs-55",
       "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-32",
+      "runloop-docs-64"
     ]
   },
   {
@@ -4527,9 +4597,13 @@
     "storyId": "per-second-billing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item states an explicit per-second or usage-based billing model; the only tangential mention is that suspend/resume can 'save costs' (runloop-docs-27), which doesn't establish a per-second pricing mechanism.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Runloop docs mention suspend/resume to 'save costs' and idle-shutdown controls, but there is no evidence of a per-second (or any granular) billing model for sandbox compute usage — no pricing page, billing docs, or cost-per-second claims appear in the evidence pack.",
+    "evidenceIds": [
+      "runloop-docs-27",
+      "runloop-docs-55",
+      "runloop-docs-64"
+    ]
   },
   {
     "productId": "runloop",
@@ -4537,7 +4611,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls anywhere in Runloop's docs; the pack covers sandboxes, blueprints, snapshots, secrets, and tooling but never data-location choice.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls anywhere in Runloop's docs; the evidence covers execution sandboxes, snapshots, networking, and agent tooling but never data location choices. Missing for 10: any mention of region/residency options, data center locations, or compliance certifications tied to geography.",
     "evidenceIds": []
   },
   {
@@ -4546,7 +4620,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses AI training data usage, opt-out policies, or data-retention commitments for model training; the docs focus on sandbox infrastructure (Devboxes, secrets, gateways) but never mention training-data policy.",
+    "rationale": "Runloop is a sandbox/devbox infrastructure platform for AI agents; there is no evidence of any policy, opt-out, or data-training statement addressing whether user data/code is used to train AI models. No privacy-posture or data-usage terms are documented in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -4555,12 +4629,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers sandboxing, blueprints, snapshots, secrets encryption, and tooling, but contains no documentation of data retention policies, data deletion controls, or user-facing privacy/compliance settings for Devboxes, snapshots, or storage objects. missing for 10: explicit data retention policy docs, user-initiated deletion/purge APIs, compliance/privacy documentation.",
-    "evidenceIds": [
-      "runloop-docs-21",
-      "runloop-docs-4",
-      "runloop-docs-20"
-    ]
+    "rationale": "Runloop's docs cover secrets encryption, snapshots, storage objects, and network egress policies, but there is no evidence of any explicit data retention policy, data deletion controls/APIs, or user-facing settings for purging stored data, secrets, snapshots, or logs. No mention of retention periods, deletion endpoints, or compliance/privacy controls addressing this axis.",
+    "evidenceIds": []
   },
   {
     "productId": "runloop",
@@ -4568,23 +4638,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, analytics opt-out, or usage-tracking controls for Runloop; the docs cover sandboxing, blueprints, snapshots, secrets, etc., but nothing about a privacy/telemetry toggle.",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism; the docs cover sandboxing, devboxes, benchmarks, secrets, and networking but never address telemetry/privacy opt-out controls.",
     "evidenceIds": []
   },
   {
     "productId": "runloop",
     "storyId": "run-coding-agents-inside",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Runloop documents running AI coding agents generally inside Devboxes (blueprints, benchmarks, Agents API, OpenAI Agents SDK tutorial) but no specific vendor recipe or tutorial naming Claude Code or Codex is present in the evidence. missing for 10: explicit Claude Code/Codex quickstart or blueprint, named integration guide for these specific agents.",
+    "rationale": "Runloop provides devbox sandboxes with explicit vendor tutorials for running coding agents (e.g. OpenAI Agents SDK, OpenCode, Browserbase/Kernel browser agents) plus generic 'running agents on sandboxes' guides, agent mounts, and a deploy-agent GitHub Action, showing a real recipe-based workflow for agent execution inside sandboxes. However, no vendor documentation specifically names Claude Code or Codex as supported agents with a dedicated recipe/tutorial.\nmissing for 10: explicit Claude Code and/or Codex integration tutorial, independent hands-on confirmation of running those specific agents.",
     "evidenceIds": [
-      "runloop-docs-6",
-      "runloop-docs-7",
-      "runloop-docs-22",
-      "runloop-docs-27",
-      "runloop-docs-2",
-      "runloop-docs-3"
+      "runloop-docs-48",
+      "runloop-docs-50",
+      "runloop-docs-49",
+      "runloop-docs-68",
+      "runloop-docs-45",
+      "runloop-docs-22"
     ]
   },
   {
@@ -4593,28 +4663,31 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop's core product is Devboxes, secure sandboxed execution environments purpose-built to run AI agent/code workloads isolated from user infrastructure, with snapshots, tunnels, secrets isolation, and scaling to 10k+ parallel sandboxes. This directly matches the story of executing untrusted AI-generated code without risking one's own infra. Missing for 10: independent/third-party hands-on validation of isolation guarantees, and explicit documentation of the underlying sandboxing/virtualization technology or security boundary details.",
+    "rationale": "Runloop's core offering is Devboxes—isolated Linux sandboxes explicitly designed to run AI-agent-generated code without touching user infrastructure, with supporting isolation features like network egress policies, encrypted secrets, SSH access, and execute/run APIs. Extensive first-party docs cover the full lifecycle (create, execute, snapshot, suspend/resume, tunnel) reinforcing safe untrusted-code execution. Missing for 10: independent/hands-on third-party validation of isolation/security guarantees and any incident-based evidence of sandbox escape resistance.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-13",
-      "runloop-docs-12",
-      "runloop-docs-4",
-      "runloop-docs-5",
+      "runloop-docs-58",
+      "runloop-docs-59",
       "runloop-docs-21",
+      "runloop-docs-67",
+      "runloop-docs-27",
       "runloop-probe-1"
     ]
   },
   {
     "productId": "runloop",
     "storyId": "secrets-stay-out",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Runloop's Devboxes are documented as sandboxed execution environments with encrypted secrets and, notably, Agent Gateways that let agents call LLM APIs 'without ever seeing your API keys' — directly supporting the isolation-of-credentials use case. However, secrets are also stated to be 'automatically made available as environment variables' inside Devboxes, which is somewhat in tension with 'unreachable by code' and isn't clarified as scoped/restricted; there's no independent/hands-on verification of secret unreachability or a security audit. missing for 10: independent verification of secret isolation, clarity on env-var secret exposure vs true unreachability, and details on network/filesystem-level credential isolation guarantees.",
+    "rationale": "Runloop's Devboxes are documented as secure sandboxed execution environments with explicit mechanisms to keep secrets isolated from agent code: Agent Gateways let agents call LLM APIs 'without ever seeing your API keys', MCP Hub gives agents access to tool servers 'without exposing credentials', account secrets are encrypted at rest and injected only as env vars, and network egress can be controlled via network policies. This directly matches the story of isolating host credentials from agent-run code. Missing for 10: independent/hands-on security audits or third-party penetration testing corroborating these isolation claims beyond first-party docs.",
     "evidenceIds": [
       "runloop-docs-10",
+      "runloop-docs-66",
       "runloop-docs-21",
-      "runloop-docs-1",
+      "runloop-docs-42",
+      "runloop-docs-58",
       "runloop-docs-13"
     ]
   },
@@ -4622,14 +4695,17 @@
     "productId": "runloop",
     "storyId": "shell-and-packages",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Runloop Devboxes are full Linux execution environments with SSH access via the CLI (runloop-docs-9) and blueprints built from Dockerfiles that install packages/dependencies at startup (runloop-docs-2, runloop-docs-14), implying arbitrary shell command execution and package installation. However, the evidence pack lacks a direct hands-on example of running an explicit shell command or apt/pip install inside a Devbox. missing for 10: explicit example/output of running an arbitrary shell command and installing a package inside a Devbox, independent third-party confirmation.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Runloop Devboxes explicitly support executing arbitrary shell commands (execute-commands, named-shells, PTY, SSH access) and blueprints/Dockerfiles allow installing packages/custom environments, with quickstart docs confirming ease of setup. Missing for 10: independent/hands-on verification beyond first-party docs and explicit example of arbitrary package install commands (e.g., apt/pip) in action.",
     "evidenceIds": [
-      "runloop-docs-9",
+      "runloop-docs-59",
+      "runloop-docs-61",
+      "runloop-docs-62",
+      "runloop-docs-67",
       "runloop-docs-2",
-      "runloop-docs-14",
-      "runloop-docs-13"
+      "runloop-docs-9",
+      "runloop-docs-26"
     ]
   },
   {
@@ -4637,11 +4713,12 @@
     "storyId": "snapshot-restore-fork",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Runloop's docs explicitly describe snapshotting a Devbox's disk state and creating new Devboxes from that saved state, including fan-out use cases (multiple approaches from one snapshot) and rollback scenarios, directly matching the snapshot/restore/fork story. missing for 10: independent/hands-on corroboration beyond first-party docs, and no explicit code example showing the fork API call in the evidence pack.",
+    "confidence": "medium",
+    "rationale": "Runloop's docs explicitly describe Snapshots as saving disk state of a Devbox and creating new Devboxes from that saved state, including use cases like rollback and fan-out (branching) to attempt multiple approaches — directly matching snapshot/restore/fork. Missing for 10: independent/hands-on verification of fork behavior and no explicit CLI/SDK code example shown in evidence pack.",
     "evidenceIds": [
       "runloop-docs-4",
-      "runloop-docs-15"
+      "runloop-docs-15",
+      "runloop-docs-32"
     ]
   },
   {
@@ -4650,14 +4727,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs describe Devbox creation via SDK/CLI/API, quickstart claiming ~1 minute to a running devbox, blueprints/prebuilt images for fast startup, and marketing claims of 10k+ parallel sandboxes with <2s startup for a 10GB image, matching the one-call, seconds-to-live-environment story. missing for 10: independent/hands-on benchmark confirming real-world provisioning latency beyond vendor claims.",
+    "rationale": "Runloop's Devboxes are explicitly documented as isolated sandboxed execution environments provisioned via SDK/API or CLI, with quickstart docs claiming a first devbox in under a minute and site marketing claiming <2s startup for 10GB images and 10k+ parallel sandboxes. SDKs, CLI, blueprints/prebuilt images, and a free trial all support quick one-call provisioning; missing for 10: independent/hands-on benchmark confirming actual startup latency claims beyond vendor docs.",
     "evidenceIds": [
       "runloop-docs-1",
       "runloop-docs-12",
-      "runloop-docs-13",
-      "runloop-docs-26",
       "runloop-docs-23",
-      "runloop-docs-3"
+      "runloop-docs-26",
+      "runloop-docs-47",
+      "runloop-docs-25"
     ]
   },
   {

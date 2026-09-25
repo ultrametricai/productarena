@@ -5,10 +5,9 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL docs confirm automatic 2-way sync with QuickBooks Enterprise, NetSuite, Sage Intacct, and other accounting systems, and reference building an organization structure via the API, but Xero is not named among the sync targets and there is no explicit documentation of finance-lead-controlled GL account/class/department mapping rules. missing for 10: explicit Xero sync confirmation, documented GL account/class/department mapping controls, independent corroboration of mapping accuracy.",
+    "rationale": "Docs confirm automatic 2-way sync with QuickBooks Enterprise, NetSuite, and other accounting platforms, plus manual CSV fallback, indicating transaction sync is supported; however, there is no explicit evidence for Xero support, and no documentation detailing finance-lead control over GL account, class, or department-level mapping configuration. missing for 10: explicit Xero sync support, documented GL account/class/department mapping controls, independent/hands-on confirmation of mapping accuracy.",
     "evidenceIds": [
       "bill-spend-expense-docs-12",
-      "bill-spend-expense-docs-5",
       "bill-spend-expense-docs-13"
     ]
   },
@@ -17,13 +16,14 @@
     "storyId": "agent-closes-the-books",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "BILL's v3 API supports transaction/expense management and webhooks, and there's an internal 'Invoice Coding Agent' for AI-based coding, but the only MCP server documented is for browsing API docs (not transaction data), and no endpoint/workflow is documented for pulling specifically 'uncoded' transactions, proposing categorizations, or pushing coding back for human review via API or MCP. Missing for 10: MCP data-access server (not just doc server), explicit uncoded-transaction query endpoint, API-exposed categorization/policy-flag proposal workflow, and a documented review/approval push-back API flow.",
+    "confidence": "low",
+    "rationale": "The BILL v3 API exposes S&E transaction/card management endpoints and webhooks (docs-2, docs-3, docs-9), and BILL's own 'Invoice Coding Agent' does AI-driven coding (docs-8), suggesting some data plumbing exists for coding transactions. However, the only MCP server documented is for browsing API documentation in coding tools like Cursor/Claude Desktop (docs-18), not for pulling live uncoded transactions or pushing coding decisions back into BILL, and there's no explicit endpoint or workflow described for an external agent to fetch 'uncoded' transactions, propose categorizations/policy flags, and submit them for human review. Missing for 10: a transactional MCP server (not just docs) or explicit API endpoints/recipes for uncoded-transaction retrieval and coding submission, and evidence of a review/approval loop for agent-proposed coding.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-8",
+      "bill-spend-expense-docs-9",
       "bill-spend-expense-docs-18",
-      "bill-spend-expense-docs-3"
+      "bill-spend-expense-docs-23"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a live, HTTP 200 llms.txt file at developer.bill.com/llms.txt with structured documentation index, and BILL also documents an official MCP server for its API docs enabling agents like Cursor, Windsurf, and Claude Desktop to interact directly with the documentation. Missing for 10: independent/community confirmation of agent usage beyond BILL's own docs.",
+    "rationale": "BILL has a live llms.txt at developer.bill.com/llms.txt (HTTP 200, confirmed by probe) and additionally documents an official MCP server for AI code editors/agents to interact with its API docs, plus dedicated ai-agent-resources docs. This directly satisfies the story of pointing an agent at agent-oriented docs. Missing for 10: no independent third-party corroboration of agent usage in practice.",
     "evidenceIds": [
       "bill-spend-expense-probe-1",
       "bill-spend-expense-docs-18"
@@ -44,10 +44,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows AI-powered automation like automatic transaction categorization/compliance and an 'Invoice Coding Agent' for multi-line bill coding, but there's no documentation of AI-generated insights, recommendations, or proactive suggestions surfaced to users from their spend data. Missing for 10: explicit AI insight/analytics dashboards, natural-language querying of data, proactive spend recommendations, and independent corroboration of any such feature.",
+    "rationale": "Marketing copy claims 'AI-powered spend management' that automatically categorizes and controls transactions, and an 'Invoice Coding Agent' for automatic bill coding, which implies some AI-generated categorization/suggestions. However, there is no evidence of an actual insights dashboard, natural-language querying, anomaly detection, or proactive AI-generated suggestions surfaced to the end user within the product. Missing for 10: dedicated AI insights/analytics UI, examples of suggestion generation, independent/hands-on confirmation of these features working.",
     "evidenceIds": [
-      "bill-spend-expense-docs-8",
-      "bill-spend-expense-docs-9"
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-8"
     ]
   },
   {
@@ -56,11 +56,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL offers background automation primitives — vendor autopay that automatically pays bills when created, an AI Invoice Coding Agent that auto-codes multi-line bills, custom approval policies, and webhook-driven event subscriptions — all of which run without manual intervention once configured. However, there's no evidence of a general-purpose, AI-native automation/agent builder that lets users define arbitrary autonomous workflows; these are fixed, pre-built automation features rather than a configurable agentic automation layer. Missing for 10: a documented no-code/AI automation builder for custom autonomous workflows, evidence of user-defined multi-step agentic automations, and independent confirmation these run reliably unattended.",
+    "rationale": "BILL provides several autonomous background automations (Invoice Coding Agent for automatic bill coding, vendor autopay triggered by bill creation, automatic vendor matching, real-time webhook event notifications that can drive downstream automations) which support background, event-driven processing. However there is no evidence of a dedicated automation/workflow builder for AI-native users to configure custom autonomous background tasks beyond these fixed features. Missing for 10: a general-purpose automation/agent builder UI, documentation of persistent scheduled/triggered custom automations, and independent corroboration of autonomous execution reliability.",
     "evidenceIds": [
       "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-21",
-      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-4",
       "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-9"
     ]
@@ -71,24 +71,27 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "BILL advertises an 'Invoice Coding Agent' that automatically performs AI multi-line bill coding and general 'AI-powered spend management,' showing some built-in AI capability, but this is an automated background feature rather than a conversational assistant the user can actively delegate arbitrary tasks to. Missing for 10: evidence of a user-facing chat/assistant interface, examples of delegating varied tasks (not just bill coding), and independent confirmation of how the agent is invoked or controlled.",
+    "rationale": "The evidence only mentions an \"Invoice Coding Agent\" that automatically codes bill line-items with AI, which is a narrow, single-purpose automation rather than a general-purpose in-app AI assistant users can delegate arbitrary tasks to. Missing for 10: evidence of a conversational or task-delegation AI assistant embedded in the product UI, examples of users assigning varied tasks to it, and any first-party documentation describing assistant capabilities beyond bill coding.",
     "evidenceIds": [
-      "bill-spend-expense-docs-8",
-      "bill-spend-expense-docs-9"
+      "bill-spend-expense-docs-8"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL exposes a full v3 REST API with webhooks and a sandbox environment that let developers script and automate AP/AR/S&E workflows programmatically, which supports headless/automated use cases like CI pipelines. However, there is no explicit CLI, GitHub Action, or documented CI-specific integration pattern in the evidence. Missing for 10: a dedicated CLI/automation tool, explicit CI/CD examples, and independent confirmation of headless operation in production pipelines.",
+    "rationale": "BILL exposes a full v3 REST API, webhooks, bulk/mass payment endpoints, and a sandbox environment, which together allow programmatic, non-interactive automation of Spend & Expense workflows suitable for CI/headless use (docs-1,2,3,15,40,41,16). However, there is no explicit CLI, SDK, or documented CI/CD integration pattern, and the probe found no accessible OpenAPI/swagger spec, limiting easy machine-driven tooling. Missing for 10: dedicated CLI or SDK for automation, explicit CI/CD usage examples, and a publicly reachable OpenAPI spec for tooling generation.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-22"
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
+      "bill-spend-expense-probe-2"
     ]
   },
   {
@@ -97,7 +100,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows BILL publishing an MCP server that exposes its own API documentation to external AI tools (server role), not any capability for BILL Spend & Expense itself to consume/plug in external MCP servers to extend its own agentic features (client role). No evidence of an MCP client integration point, plugin system, or tool-calling framework within the product.",
+    "rationale": "The evidence only shows BILL exposing its own documentation as an MCP server for external AI tools (Cursor, Windsurf, Claude Desktop) to consume — the reverse of what this story asks. There is no evidence that BILL Spend & Expense itself can accept and use external MCP servers' tools.",
     "evidenceIds": [
       "bill-spend-expense-docs-18"
     ]
@@ -108,7 +111,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL provides an official MCP server for developer documentation, letting tools like Cursor, Windsurf, and Claude Desktop interact with BILL API docs, which is a genuine first-party MCP offering. However, it is scoped only to documentation lookup, not to actually invoking BILL API actions (payments, bills, expense data) via MCP, so it's a limited agentic bridge rather than a full action-capable MCP server. Missing for 10: an MCP server exposing live API/data operations (not just docs), independent/community confirmation of usage, and details on scope/auth for agent actions.",
+    "rationale": "BILL provides an official MCP server, but it is explicitly scoped to API documentation interaction for AI coding tools (Cursor, Windsurf, Claude Desktop), not a full-featured MCP server exposing BILL's actual AP/AR/S&E operations or data to agents. Missing for 10: an official MCP server that exposes live BILL functionality/actions (not just docs), independent hands-on confirmation of it working, and clarity on scope/coverage of exposed endpoints.",
     "evidenceIds": [
       "bill-spend-expense-docs-18"
     ]
@@ -119,7 +122,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a documentation MCP server for developers (docs-18) and an AI-based invoice coding agent, neither of which lets an end user operate the product itself via natural-language commands (e.g., 'pay this vendor' or 'approve this expense' via chat). No evidence of a conversational/agentic interface for actually performing S&E actions in natural language.",
+    "rationale": "Evidence shows an MCP server for AI coding tools to query BILL's API documentation and an 'Invoice Coding Agent' for automated bill coding, but nothing indicates a user can issue natural-language commands to operate the product itself (e.g., create bills, approve expenses, manage cards via chat).",
     "evidenceIds": [
       "bill-spend-expense-docs-18",
       "bill-spend-expense-docs-8"
@@ -131,7 +134,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack details a REST API, webhooks, UI Elements SDK, and an MCP server for documentation access, but nowhere mentions an official CLI tool for interacting with BILL Spend & Expense. Since BILL offers a developer platform, a CLI is a plausible axis, but there is no evidence one exists.",
+    "rationale": "No evidence of an official CLI tool for BILL Spend & Expense; the product only offers a REST API, webhooks, UI Elements, and an MCP documentation server, none of which constitute a CLI.",
     "evidenceIds": []
   },
   {
@@ -140,14 +143,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BILL publishes a documented v3 API covering AP/AR/S&E, webhooks, sandbox environment, and even an MCP server for AI-agent access to docs, indicating a genuinely documented public API surface usable programmatically. Missing for 10: a discoverable OpenAPI/swagger spec (probe found all candidate paths 404) and independent third-party corroboration of API robustness.",
+    "rationale": "BILL provides a well-documented public v3 REST API (developer.bill.com) covering AP/AR/S&E resources, with concrete endpoints (POST /v3/vendors, PATCH /v3/vendors/{id}, bulk/mass payments), webhooks, sandbox environment, and even an llms.txt for AI discoverability. Missing for 10: no publicly discoverable OpenAPI/swagger spec file was found (all probed paths 404), and no independent third-party corroboration beyond vendor docs.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-15",
-      "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-18",
+      "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
       "bill-spend-expense-probe-1",
       "bill-spend-expense-probe-2"
     ]
@@ -158,25 +161,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows BILL has a v3 API, webhooks, and an apiToken concept, but there is no documentation of scoped or least-privilege credential issuance (e.g., role-based API keys, granular permission scopes for agents). Missing for 10: any mention of API key scopes, granular permission levels, or agent-specific credential issuance mechanisms.",
+    "rationale": "Evidence shows BILL has a general v3 API with tokens and webhook security keys, but nothing describes issuing scoped or least-privilege API credentials specifically for AI agents; the MCP server mentioned is only for querying documentation, not credential-scoped agent access.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
-      "bill-spend-expense-docs-19"
+      "bill-spend-expense-docs-19",
+      "bill-spend-expense-docs-18"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL provides an official v3 API and developer docs covering AP/AR/S&E, webhooks, sandbox environment, and even an MCP server for AI code editors, giving AI-native developers a real SDK/API surface to build against. However, evidence lacks explicit language-specific SDK libraries (e.g., Python/Node client packages) and OpenAPI spec discovery failed (404s), leaving some doubt about full programmatic tooling maturity. missing for 10: explicit official client SDK libraries in multiple languages, publicly discoverable OpenAPI/swagger spec, independent developer corroboration of SDK quality.",
+    "rationale": "BILL has a public developer platform (v3 API, webhooks, sandbox, recipes, Elements) that AI-native builders could use, and it even documents an MCP docs server for AI coding tools, but there is no evidence of official language-specific SDKs (e.g., Python/JS/Node client libraries) — only REST API docs and a discoverable OpenAPI attempt that 404s. missing for 10: official SDKs/client libraries in specific languages, published OpenAPI spec, independent confirmation of SDK usage.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-18",
-      "bill-spend-expense-probe-1",
+      "bill-spend-expense-docs-23",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -186,14 +190,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BILL's developer platform explicitly documents webhook subscriptions for real-time event notifications, including S&E events, HMAC-SHA256 signing for security, subscription limits (up to 10 per org), and error handling docs, indicating a mature, well-documented webhook system. missing for 10: independent/hands-on third-party corroboration beyond first-party docs, and more detail on the breadth of subscribable event types for Spend & Expense specifically.",
+    "rationale": "BILL's developer docs explicitly document webhook subscriptions for AP/AR/S&E events, including setup, HMAC-SHA256 signature verification, subscription limits (up to 10 per org), and error handling, showing a mature webhook system usable by any integration including AI-native agents. missing for 10: no independent/hands-on corroboration of webhook reliability or agent-specific usage examples beyond generic API docs.",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-17",
-      "bill-spend-expense-docs-19",
-      "bill-spend-expense-docs-22"
+      "bill-spend-expense-docs-22",
+      "bill-spend-expense-docs-24",
+      "bill-spend-expense-docs-19"
     ]
   },
   {
@@ -201,8 +205,8 @@
     "storyId": "ai-expense-coding",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "BILL Spend & Expense is explicitly marketed as 'AI-powered spend management' that automatically categorizes and ensures compliance for every transaction (docs-9), and BILL's platform includes an 'Invoice Coding Agent' for automatic AI bill coding (docs-8), suggesting some automated categorization/coding capability. However, there is no evidence of receipt OCR/reading, memo suggestion, or duplicate/fraud detection specifically for expense transactions. Missing for 10: explicit receipt-reading/OCR evidence, memo-suggestion detail, and duplicate or fraud detection functionality for Spend & Expense.",
+    "confidence": "low",
+    "rationale": "BILL claims 'AI-powered spend management' that automatically categorizes and keeps transactions compliant, and separately touts an 'Invoice Coding Agent' for AI bill coding, showing some AI-driven categorization capability. However, there is no evidence of receipt OCR/reading, AI-generated memos, or explicit duplicate/fraud detection specifically within the Spend & Expense product. Missing for 10: receipt scanning/OCR evidence, memo-suggestion feature, duplicate/fraud detection capability, and any hands-on or independent corroboration of these AI behaviors.",
     "evidenceIds": [
       "bill-spend-expense-docs-9",
       "bill-spend-expense-docs-8"
@@ -213,24 +217,26 @@
     "storyId": "ai-policy-copilot",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows AI-powered categorization/coding agents and custom approval policy configuration, but nothing describes a conversational assistant that chases missing receipts, explains declines, or answers pre-spend 'can I expense this?' queries. Missing for 10: any conversational interface, proactive receipt-chasing behavior, decline explanations, or pre-purchase policy Q&A capability.",
+    "confidence": "medium",
+    "rationale": "Evidence shows AI-powered categorization/compliance and an Invoice Coding Agent, plus custom approval policies and webhooks, but nothing describes a conversational assistant that proactively chases missing receipts, explains declines, or answers 'can I expense this?' before spend occurs. The MCP server referenced is for developers querying API docs, not an end-user policy-enforcement chat experience.",
     "evidenceIds": [
       "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-7"
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-18"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence confirms BILL has API docs, a sandbox test environment, and an MCP server for AI tools to query documentation, but nothing describes an interactive API reference with runnable/try-it-out examples; a probe for standard OpenAPI/Swagger specs returned 404s across all checked paths, suggesting no such interactive reference is exposed.",
+    "rationale": "Docs mention a sandbox environment for testing workflows and code recipes/endpoint examples (e.g., POST /v3/vendors), which supports experimentation, but there is no evidence of an interactive, runnable API reference (like a Swagger/OpenAPI explorer) — probes for openapi.json/swagger.json all 404. Missing for 10: interactive try-it console, discoverable OpenAPI spec, in-browser runnable code examples.",
     "evidenceIds": [
       "bill-spend-expense-docs-15",
-      "bill-spend-expense-docs-18",
+      "bill-spend-expense-docs-23",
+      "bill-spend-expense-docs-28",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -240,10 +246,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "BILL has a developer API portal and docs, but a direct probe for standard OpenAPI/Swagger spec locations (openapi.json, swagger.json, etc.) returned 404 across all candidates, and no evidence pack item links to a downloadable machine-readable spec file.",
+    "rationale": "While BILL has an extensive v3 API and developer portal, a direct probe for standard OpenAPI/Swagger spec paths (openapi.json, swagger.json, etc.) all returned 404, and no documentation excerpt references a downloadable OpenAPI/Swagger file or spec.",
     "evidenceIds": [
       "bill-spend-expense-probe-2",
-      "bill-spend-expense-probe-1",
       "bill-spend-expense-docs-1"
     ]
   },
@@ -251,37 +256,38 @@
     "productId": "bill-spend-expense",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "BILL's developer docs explicitly state a comprehensive sandbox environment exists for testing AP/S&E workflows without moving real money, directly matching the story. missing for 10: independent/hands-on confirmation of sandbox parity with production and details on how sandbox data isolation works for Spend & Expense specifically.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "BILL's developer docs explicitly state a comprehensive sandbox environment exists for testing workflows (bills, AP payments, S&E) without moving real money, directly matching the story. This is first-party documentation without independent hands-on corroboration. Missing for 10: independent/third-party verification of sandbox fidelity and details on how S&E-specific sandbox data isolation works.",
     "evidenceIds": [
       "bill-spend-expense-docs-15",
-      "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows BILL has a versioned v3 API and a changelog for tracking changes, but there is no mention of a documented deprecation policy, versioning strategy, or sunset timeline for API versions. missing for 10: explicit deprecation policy documentation, version lifecycle/sunset timeline, migration guidance between versions.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "BILL clearly ships a versioned API (v3) with a dedicated 'why upgrade to v3' migration doc and changelog entries (e.g., webhook subscription limits), showing some version-lifecycle documentation, but there is no explicit deprecation policy, sunset timeline, or versioning-support commitment in the evidence. Missing for 10: explicit deprecation/sunset policy documentation, version support timelines, and any communicated end-of-life process for older API versions.",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
-      "bill-spend-expense-docs-22"
+      "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-22",
+      "bill-spend-expense-docs-1"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "approval-workflows",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only shows a bare pricing-page bullet 'Set custom approval policies' repeated twice, with no documentation of multi-step chains (manager/budget owner/finance), delegation, or escalation logic. missing for 10: documentation of multi-step approval chain configuration, delegation of approvals, escalation on stalled requests, and any hands-on or independent corroboration.",
+    "rationale": "BILL's docs confirm configurable approval policies (\"Set custom approval policies\", and AP bill approval policies that control who must approve and when), which is the closest evidence to approval chains, but this is scoped to AP bills rather than explicitly to Spend & Expense card/expense workflows. Missing for 10: explicit multi-step chain configuration (manager → budget owner → finance), delegation of approval authority, and escalation logic when an approver fails to act.",
     "evidenceIds": [
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
@@ -290,20 +296,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers API/developer platform features (webhooks, sandbox, vendor network, accounting sync) but contains no mention of receipt-to-transaction auto-matching, e-receipt pulls from integrations, or smart nudges for missing receipts — capabilities central to this employee expense-capture story. Axis clearly applies to an expense/card management product, but no supporting evidence exists in the pack.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers BILL's developer API, webhooks, AP/AR workflows, vendor network, and payment features, but contains no specific documentation of receipt-to-card-transaction auto-matching, e-receipt pull from email/integrations, or smart nudge logic that only fires for genuinely missing receipts. The closest mention (docs-9) is a generic marketing line about 'AI-powered spend management' with no detail on receipt matching or nudging mechanics.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-9"
+    ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The BILL v3 API exposes programmatic access to transactions, budgets, users, and virtual cards, which could in principle be used to script bulk operations, but there is no explicit documentation of batch/bulk endpoints, bulk import/export of records, or any dedicated bulk-action tooling for AI-native use. Missing for 10: explicit bulk/batch API endpoints, documented bulk create/update/delete operations, and any first-party or independent evidence of large-scale batch processing.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "BILL's platform API documents explicit bulk endpoints (POST /v3/payments/bulk for up to 50 bills, POST /v3/payments/mass for up to 2000 bills) and bulk record export, showing genuine multi-item automation support at the API/platform level. However, these bulk endpoints are documented for AP (bills) rather than shown specifically for Spend & Expense transactions/cards, and there's no evidence of bulk expense categorization, bulk card management, or bulk approval actions specific to the S&E product. Missing for 10: dedicated bulk operation endpoints for S&E-specific objects (transactions, cards, expense reports), independent/hands-on confirmation of bulk usage at scale.",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
-      "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-5"
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
+      "bill-spend-expense-docs-37",
+      "bill-spend-expense-docs-1"
     ]
   },
   {
@@ -312,13 +321,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL supports webhooks for real-time event notifications and custom approval policies/tolerance rules, which enable some automated reactions to events, but there is no evidence of a native rules engine where users define arbitrary if-this-then-that automation triggering actions — webhooks require external code to consume and act on events. missing for 10: a documented no-code/low-code rule builder that lets users define trigger-condition-action automations natively within the product, evidence of arbitrary action-taking (not just notification) on events, and independent confirmation of this workflow in practice.",
+    "rationale": "BILL supports custom approval policies, vendor autopay triggers, and webhook event subscriptions that notify external systems on events (e.g., bill created, vendor autopay), which enable rule-like automation, but this is largely policy-based (approvals, autopay) rather than a general user-defined 'if event then action' rules engine natively in the product; true automation requires building via API/webhooks rather than a no-code rules UI. missing for 10: a native no-code rule builder for arbitrary trigger-action automation, evidence of end-to-end automation without custom development, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
-      "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-21",
+      "bill-spend-expense-docs-39",
       "bill-spend-expense-docs-22"
     ]
   },
@@ -328,12 +336,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "BILL's developer platform offers webhooks and an API for event-driven notifications and vendor autopay, but there is no evidence of a scheduler, cron-like job, or recurring workflow automation feature that an AI-native user could configure. Missing for 10: any scheduling/recurring-job API, workflow orchestration tooling, or documentation describing recurring automated tasks beyond vendor autopay's one-off trigger.",
-    "evidenceIds": [
-      "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-21",
-      "bill-spend-expense-docs-1"
-    ]
+    "rationale": "The evidence pack covers webhooks (event-driven notifications), API endpoints, bulk/mass payments, and an MCP docs server, but nothing about scheduling recurring jobs or workflows (e.g., cron-like automation, scheduled triggers). Webhooks react to events rather than allowing scheduled recurring execution, so this axis is unaddressed.",
+    "evidenceIds": []
   },
   {
     "productId": "bill-spend-expense",
@@ -341,38 +345,41 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of versioning, review, or rollback of automations/approval policies/workflows; evidence covers API, webhooks, sandbox testing, and approval policy setup but nothing about tracking changes or reverting configurations.",
+    "rationale": "The evidence covers approval policies, audit trails for vendor changes, webhooks, and API access, but there is no mention of versioning, reviewing, or rolling back automations/workflows themselves (e.g., no automation version history or rollback mechanism for rules/policies/integrations).",
     "evidenceIds": []
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "bill-pay-ap",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "The evidence pack (mostly from the shared bill.com/pricing and developer.bill.com pages) shows AP-adjacent capabilities such as custom approval policies, AI invoice coding, purchase orders/2-way matching, vendor network connectivity, and vendor autopay, suggesting AP functionality exists somewhere in the BILL platform. However, none of the evidence explicitly confirms these AP features (invoice capture, approval routing, ACH/check/wire payments) are part of the core Spend & Expense product itself rather than BILL's separate AP product/bundle, and no citation names ACH, check, or wire payment rails at all. Missing for 10: explicit confirmation that invoice capture/approval/payment (ACH, check, wire) run natively inside Spend & Expense rather than a separate BILL AP SKU, and any mention of specific payment rail support.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Extensive first-party docs show BILL supports invoice/bill capture and coding, custom multi-step approval policies, vendor network connectivity, and disbursement via ACH, virtual card, check, and international payments, plus bulk/mass payment APIs. missing for 10: independent/hands-on corroboration beyond vendor docs, and clearer detail on wire transfer support specifically (evidence focuses on ACH/check/virtual card).",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
-      "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-8",
-      "bill-spend-expense-docs-10",
+      "bill-spend-expense-docs-39",
+      "bill-spend-expense-docs-33",
+      "bill-spend-expense-docs-36",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
+      "bill-spend-expense-docs-42",
       "bill-spend-expense-docs-11",
-      "bill-spend-expense-docs-21"
+      "bill-spend-expense-docs-30"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "budgets-enforcement",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm core building blocks: setting up budgets, virtual cards, and custom approval policies, plus org-structure configuration and per-transaction control language, which together map to budget allocation with enforced card limits/approvals. However, evidence is vendor-only marketing/docs with no independent or hands-on confirmation that limits/approvals actually block out-of-policy spend in practice, and no explicit project-level (vs team-level) allocation detail. Missing for 10: independent/hands-on verification of real-time enforcement, explicit project-based budget allocation evidence, and detail on how approvals interact with card limits at transaction time.",
+    "rationale": "BILL Spend & Expense docs confirm budgets, virtual cards, custom approval policies, and card/expense controls tied to AI-powered spend management, supporting budget allocation and enforcement via cards and approvals. However, evidence lacks detail on project-level budget allocation granularity, real-time overspend blocking mechanics, or hands-on/independent verification that limits actually hard-block transactions in practice. missing for 10: independent/hands-on confirmation of real-time enforcement, project-level (not just team/org) budget breakdown, and detail on how approval policies interact with card limits at transaction time.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-5",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
@@ -381,37 +388,40 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Marketing copy claims cards are 'controlled, categorized, and automatically compliant' via AI-powered spend management, implying policy-based restrictions, but there is no documentation detailing category/merchant/amount-level card controls or confirming real-time auto-lock/decline at the point of sale. Missing for 10: specific docs on setting category/merchant/amount limits per card, technical description of point-of-sale enforcement, and independent/hands-on confirmation that out-of-policy transactions are actually declined in real time.",
+    "rationale": "The product page states cards are 'smart, flexible' with AI-powered spend management so 'every transaction is controlled, categorized, and automatically compliant,' implying some card-level spend controls, but no evidence details specific category/merchant/amount restriction mechanisms or a point-of-sale auto-lock/decline enforcement flow. Missing for 10: documentation of granular category/merchant/amount rule configuration, evidence of real-time point-of-sale decline/lock behavior, and independent/hands-on confirmation of these controls working as described.",
     "evidenceIds": [
-      "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-2"
+      "bill-spend-expense-docs-9"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "continuous-close-coding",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs claim that BILL Spend & Expense cards make every transaction 'controlled, categorized, and automatically compliant' and pair with AI-driven bill coding (docs-8, docs-9), plus automatic 2-way sync to major accounting systems (docs-12), which supports real-time coding for close. However, there is no explicit documentation of automatic merchant/memo capture or receipt-matching workflows, and no independent/hands-on evidence corroborating that categorization actually eliminates manual review at month-end. Missing for 10: explicit receipt-capture/matching evidence, memo-field automation detail, and independent verification of coding accuracy.",
+    "rationale": "BILL Spend & Expense's core product marketing and docs describe real-time transaction categorization ('every transaction is controlled, categorized, and automatically compliant'), receipt/coding automation via AI (Invoice Coding Agent, multi-line coding), custom approval policies, and automatic 2-way sync to accounting systems (QuickBooks, NetSuite, Sage Intacct, Dynamics) — directly supporting spend being coded in real time so month-end close is a review not reconstruction. Webhooks and audit trail APIs further support continuous, real-time reconciliation rather than after-the-fact archaeology. Missing for 10: no independent/hands-on evidence (e.g., customer reviews or case studies) confirming receipt capture and memo/category coding accuracy in practice, and no explicit mention of receipt-matching workflow details in this specific evidence pack.",
     "evidenceIds": [
-      "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-12"
+      "bill-spend-expense-docs-8",
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-12",
+      "bill-spend-expense-docs-37",
+      "bill-spend-expense-docs-38"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "expense-audit-trail",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence shows custom approval policies and automatic compliance/categorization plus real-time webhook event notifications for S&E events, which could support an audit trail, but there is no explicit documentation of a persistent, exportable audit log covering edits, approvals, and policy checks suitable for external audit. Missing for 10: explicit audit-log/history feature, immutable record retention, export-for-audit functionality, and independent confirmation that this trail survives external audits.",
+    "rationale": "Docs confirm approval-policy configuration (docs-7, docs-20, docs-39) and an audit-trail API endpoint (docs-38), but the only documented audit-trail endpoint is scoped to vendor objects, not expense/card transactions specifically, and there's no evidence of a full edit/approval/policy-check history log for S&E expenses suitable for external audit review. Missing for 10: expense-transaction-level audit trail endpoint/UI, evidence of policy-check logging on card transactions, and independent/third-party confirmation of audit completeness.",
     "evidenceIds": [
+      "bill-spend-expense-docs-38",
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-39",
+      "bill-spend-expense-docs-9"
     ]
   },
   {
@@ -420,27 +430,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL markets 'custom approval policies', budgets/tolerance rules, and 'automatically compliant' spend controls (docs-7, docs-9, docs-10, docs-20), which supports rule-based policy codification and in-policy auto-handling. However, the evidence is mostly marketing copy from the pricing page rather than detailed documentation on how limits are defined by category/role/context or how exceptions are specifically routed to a human approver. Missing for 10: granular documentation of category/role/context-based limit configuration, explicit auto-approve logic, and evidence of exception-routing workflow to humans.",
+    "rationale": "BILL supports custom approval policies and budget/card limits per user, and markets S&E transactions as 'automatically compliant,' which maps to policy-based auto-approval; there's also a defined 'approval policy' concept controlling who must approve and when. However, the detailed approval-policy documentation (docs-39) is scoped to AP bill approvals rather than S&E card/expense transactions specifically, and no evidence describes granular rule-building by category+role+context or explicit exception-routing logic for expenses. Missing for 10: S&E-specific policy configuration docs (category/role/context rule builder), explicit auto-approve vs. exception-routing mechanics, and independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
       "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-20",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-10",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "expenses-api-read",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "BILL's v3 API is documented and explicitly covers Spend & Expense transactions, cards, budgets, and reimbursements, with webhooks, sandbox, and changelog evidence showing an active, versioned REST platform (docs-1,2,3,15,16,22). However, the evidence never confirms OAuth or scoped token authentication—only an 'apiToken' concept appears (docs-19)—and there's no explicit mention of receipt retrieval endpoints or OAuth scope definitions, and openapi spec probes 404 (probe-2). Missing for 10: explicit OAuth 2.0/scoped-token auth documentation, dedicated receipts endpoint evidence, and a discoverable OpenAPI spec.",
+    "rationale": "BILL's v3 API is documented as covering AP, AR, and S&E data (transactions, expenses, vendors, payments) with a sandbox, webhooks, and endpoints like vendor CRUD and audit trails, indicating a real developer-facing REST API. However, the pack never explicitly documents OAuth flows or scoped token grants — only an 'apiToken' error reference — so token-based auth exists but OAuth/scopes are unconfirmed, and there's no explicit receipt-retrieval endpoint shown. Missing for 10: explicit OAuth 2.0 flow documentation, scope definitions, dedicated receipt-pull endpoint evidence, and independent/hands-on confirmation of auth behavior.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-19",
-      "bill-spend-expense-probe-2"
+      "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-37"
     ]
   },
   {
@@ -460,8 +472,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers BILL's API platform, webhooks, vendor network, accounting sync, and card/expense management, but contains no mention of international/multi-currency reimbursement or foreign employee payout capability for BILL Spend & Expense. This is a plausible axis for a spend/expense product, but absence of any supporting documentation means it cannot be credited.",
-    "evidenceIds": []
+    "rationale": "Evidence shows only AP international vendor payments (doc-42) where vendors receive funds in local currency, not employee expense reimbursements; the S&E reimbursement docs (doc-2) mention 'reimbursements' generically but never local-currency/international reimbursement for employees abroad. Missing for 10: any documentation of employee reimbursement disbursement in local currency, any mention of multi-currency support within Spend & Expense card/reimbursement workflows, and confirmation this avoids a separate international payments process.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-42"
+    ]
   },
   {
     "productId": "bill-spend-expense",
@@ -469,7 +484,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm virtual card issuance and spend/budget management (doc-2, doc-9) as part of the S&E product, implying per-card spend controls, but no explicit mention of physical card issuance, onboarding speed ('minutes'), or per-card individual limits is provided. Missing for 10: explicit physical card issuance details, quick setup/time-to-issue claims, and explicit per-card spend limit configuration evidence.",
+    "rationale": "Docs confirm virtual card issuance tied to budgets/users (docs-2, docs-9), supporting quick setup of cards with spend controls, but there is no explicit evidence of physical card issuance, per-card spend limit configuration UI, or issuance speed ('in minutes') claims. Missing for 10: physical card issuance evidence, explicit per-card spend limit mechanics, timing/speed claims, and independent/hands-on corroboration.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-9"
@@ -481,7 +496,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions mileage tracking, map-based distance calculation, or per-diem rate claims; the evidence focuses on AP/AR, cards, webhooks, and API platform capabilities unrelated to this employee expense-entry workflow.",
+    "rationale": "The evidence pack covers AP/AR/card/spend management, webhooks, vendor payments, and API/embedding features, but contains no mention of mileage tracking, map-based distance calculation, or per-diem rate claims anywhere in the docs or pricing pages.",
     "evidenceIds": []
   },
   {
@@ -490,21 +505,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack addresses multi-entity management, multi-currency consolidation, or per-entity books/reporting; documentation focuses on API access, vendor payments, webhooks, and accounting sync only.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows organization structure APIs, international vendor payments, and accounting sync, but no mention of multi-entity/subsidiary management, per-entity books, or consolidated cross-entity reporting — a fair ask for a finance/spend platform used by growing SMBs. Nothing in the docs addresses running multiple legal entities or multi-currency consolidated reporting.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-5",
+      "bill-spend-expense-docs-42",
+      "bill-spend-expense-docs-37"
+    ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "BILL exposes a broad v3 API covering AP/AR/S&E, card & expense management, budgets, virtual cards, org structure, and webhooks, suggesting substantial UI-parity coverage. However, there is no evidence confirming full parity — e.g., no explicit statement that every UI action (like custom approval policy setup or AI invoice coding features) is API-accessible, and no public OpenAPI spec was found (404s on standard paths). missing for 10: explicit UI-API parity statement, discoverable OpenAPI/swagger schema, confirmation that AI-powered features (Invoice Coding Agent) are API-exposed.",
+    "rationale": "Docs show broad API coverage for card/expense management, budgets, virtual cards, transactions, reimbursements, org structure, approvals, and vendor management (docs-2,5,7,9,39), suggesting strong UI/API parity, but there's no explicit claim of full feature parity and the OpenAPI spec is not discoverable (probe-2 shows 404s across standard paths), raising doubt about completeness/documentation of every endpoint. missing for 10: explicit 1:1 parity statement covering every S&E UI feature, a discoverable machine-readable OpenAPI spec, and independent/hands-on corroboration that all UI actions are API-reachable.",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-5",
-      "bill-spend-expense-docs-14",
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-39",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -512,12 +532,12 @@
     "productId": "bill-spend-expense",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The only relevant evidence is manual CSV import/export for accounting sync, not a comprehensive data-export/account-portability feature; the API exists but is aimed at integration, not bulk self-service export for leaving the platform. Missing for 10: a documented full data export tool, open-format bulk export of all transactions/records, and any account closure/data portability workflow.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm data export via API and CSV for core entities (vendors, customers, bills, invoices, AP/AR payments), supporting portability in reasonably open formats. However, there's no explicit statement of full account/data export for platform migration or an all-encompassing 'leave the platform' export bundle. missing for 10: complete account-level export/backup guarantee, explicit open-standard (e.g., JSON/CSV schema) documentation for all data types, independent confirmation of unrestricted data portability.",
     "evidenceIds": [
       "bill-spend-expense-docs-13",
-      "bill-spend-expense-docs-1"
+      "bill-spend-expense-docs-37"
     ]
   },
   {
@@ -526,7 +546,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BILL Spend & Expense is a closed-source commercial SaaS product; source-code openness is not an applicable axis for this category of product.",
+    "rationale": "BILL Spend & Expense is a closed commercial SaaS financial product; there is no indication its source code is open-sourced or that an open license applies. Source availability is not a fair axis for a proprietary fintech SaaS platform, so this is a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -535,7 +555,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BILL Spend & Expense is a proprietary SaaS financial platform with no self-hosted deployment option; self-hosting is not a coherent axis for this category of cloud-only fintech product.",
+    "rationale": "BILL Spend & Expense is a SaaS financial platform, not self-hostable software; self-hosting is a category error for this type of cloud service product.",
     "evidenceIds": []
   },
   {
@@ -543,8 +563,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic controls for where BILL Spend & Expense data is stored; the evidence covers API features, webhooks, integrations, and sandbox testing only.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack addresses data residency, regional storage options, or data localization controls for BILL Spend & Expense; the documentation focuses on API integration, payments, and UI embedding, not data residency choice.",
     "evidenceIds": []
   },
   {
@@ -552,8 +572,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data opt-out or any privacy controls regarding AI model training; the pack only covers API, webhooks, and product features unrelated to this axis.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack about AI training data opt-out, data usage policies for model training, or privacy controls related to AI training; the evidence focuses on API features, payments, and integrations.",
     "evidenceIds": []
   },
   {
@@ -561,8 +581,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users; the evidence focuses on API integration, webhooks, and workflow automation.",
+    "confidence": "high",
+    "rationale": "Evidence covers API, webhooks, UI elements, payments, and network features, but there is no mention of data retention policies, data deletion controls, or export/erasure mechanisms an AI-native user could invoke to manage their data lifecycle.",
     "evidenceIds": []
   },
   {
@@ -570,8 +590,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI features or otherwise; the documentation covers API integration, webhooks, and product features but never mentions data collection controls or opt-out mechanisms.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out controls for BILL Spend & Expense; all documentation covers API, payments, webhooks, and UI elements. This is a fair privacy-posture question for a SaaS financial product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -580,11 +600,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs confirm a card & expense management API surface (\"virtual cards\", budgets, users, transactions) and webhook notifications, implying some programmatic card management, but there is no explicit documentation of endpoints for creating a card with a limit, locking a card, or updating card controls. missing for 10: explicit API reference/endpoints for card creation with limits, card lock/unlock actions, control updates, and any hands-on or independent confirmation these operations work as described.",
+    "rationale": "Docs confirm the BILL v3 API platform explicitly covers Spend & Expense (S&E) including 'card & expense management services' and 'virtual cards' setup, and other object types (vendors) show concrete POST/PATCH endpoint patterns, suggesting similar CRUD exists for cards — but no endpoint, payload, or example specifically for creating a card with a limit, locking a card, or updating card controls is shown. Missing for 10: explicit card creation/lock/control-update endpoint documentation, example requests/responses, and independent confirmation of programmatic card lifecycle management.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-16"
+      "bill-spend-expense-docs-1",
+      "bill-spend-expense-docs-28"
     ]
   },
   {
@@ -593,11 +613,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL Spend & Expense markets 'AI-powered spend management' where transactions are automatically categorized and controlled, and it supports real-time event webhooks for S&E events, suggesting near-instant visibility into spend as it happens. However, there is no explicit documentation of a founder-facing dashboard breaking down spend by team, category, and merchant in real time — the webhook/API evidence is developer-facing, not a described reporting UI. Missing for 10: explicit product documentation of a real-time spend dashboard with team/category/merchant breakdowns, and independent/hands-on confirmation of same-day visibility in the actual UI.",
+    "rationale": "BILL Spend & Expense markets AI-powered spend management that categorizes transactions automatically and 'controls' spend as it happens (doc-9), plus real-time webhook event notifications for S&E events (docs-3, docs-16) and organization structure APIs that could map to teams (docs-5). However, there is no direct evidence of a founder-facing real-time dashboard or report broken down explicitly by team, category, and merchant — most evidence is developer/API-platform oriented rather than describing the actual spend-visibility UI. Missing for 10: explicit documentation/screenshots of a real-time spend dashboard segmented by team/category/merchant, and independent/user corroboration of same-day visibility.",
     "evidenceIds": [
       "bill-spend-expense-docs-9",
       "bill-spend-expense-docs-3",
-      "bill-spend-expense-docs-16"
+      "bill-spend-expense-docs-16",
+      "bill-spend-expense-docs-5"
     ]
   },
   {
@@ -606,8 +627,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers APIs, webhooks, vendor network, accounting sync, and AI bill coding, but contains no mention of receipt photo capture, email-forward ingestion, or OCR matching to transactions for the Spend & Expense product.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains only developer/API and pricing docs about AP/AR workflows, vendor payments, and general 'AI-powered spend management' language, but never mentions receipt photo capture, OCR of receipts, or email-forwarding of receipts to auto-file against transactions. Missing for 10: any mention of mobile receipt photo capture, OCR extraction, email-forward-to-receipt ingestion, or auto-matching of scanned receipts to transactions.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-9"
+    ]
   },
   {
     "productId": "bill-spend-expense",
@@ -615,31 +638,33 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of in-platform flight/hotel booking or travel policy enforcement at time of booking; evidence only covers card/expense management, AP/AR, budgets, and accounting sync, not a travel booking module.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows BILL Spend & Expense provides card issuance, budgets, approval policies, and expense categorization, but nothing about in-platform flight/hotel booking with policy enforcement at time of booking. Missing for 10: any travel booking integration, itinerary management, or policy-at-booking-time enforcement evidence.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-20"
+    ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "trip-expenses-autocollect",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers card issuance, AI-powered spend categorization, vendor network payments, and accounting sync, but there is no mention of travel bookings, itineraries, or automatic linking of trip-related expenses into a single itinerary-based report. Missing for full credit: any travel-booking integration, itinerary data model, or automatic trip-expense aggregation feature.",
-    "evidenceIds": [
-      "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-2"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence covers general card/expense management, vendor payments, and API/webhook capabilities but contains no mention of travel bookings, itineraries, or automatic linking of trip-related expenses (cards, bookings, receipts) into a single itinerary-linked report. This is a plausible capability for an expense-management product, so the axis applies, but nothing in the pack evidences it.",
+    "evidenceIds": []
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "vendor-virtual-cards",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs confirm BILL Spend & Expense supports creating virtual cards and card/expense management (budgets, users, virtual cards) via its API and product, which aligns with issuing per-vendor cards for SaaS/procurement. However, no evidence explicitly shows merchant-locking or single-vendor restriction controls that would guarantee a card is usable only with one vendor. missing for 10: explicit documentation of vendor/merchant-lock restrictions on virtual cards, and independent confirmation of single-vendor isolation.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Evidence confirms BILL Spend & Expense supports creating and managing virtual cards (\"Set up budgets, users, & virtual cards\", \"smart, flexible cards paired with AI-powered spend management\") and controlled/categorized transactions, which implies vendor-level card issuance, but none of the docs explicitly describe locking a virtual card to a single vendor/merchant to contain compromise blast radius. Missing for 10: explicit documentation of single-vendor/merchant-lock controls on virtual cards, and any independent/hands-on confirmation of this specific control.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-9"
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-33"
     ]
   },
   {
@@ -1406,7 +1431,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm real integrations with QuickBooks Online (export sync) and NetSuite (expense syncing/reporting/accounting), plus a 'multi-level GL coding' feature suggesting GL account/class/department mapping control, but there's no explicit mention of Xero or of finance-lead-controlled class/department field mapping specifically. Missing for 10: explicit Xero integration evidence, detailed documentation of user-controlled class/department mapping configuration, and independent/hands-on confirmation that mappings work as configured.",
+    "rationale": "Docs confirm QuickBooks Online and NetSuite accounting connections plus multi-level GL coding, supporting core sync-with-mapping capability, but Xero is never mentioned and class/department-specific mapping controls are not detailed beyond generic GL coding language. missing for 10: Xero integration evidence, explicit class/department mapping documentation, independent corroboration of mapping accuracy.",
     "evidenceIds": [
       "expensify-docs-7",
       "expensify-docs-13",
@@ -1418,14 +1443,18 @@
     "productId": "expensify",
     "storyId": "agent-closes-the-books",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Expensify documents a general API with OAuth2 credential-based access (expensify-docs-1/2) and an AI assistant that can categorize/approve expenses via plain language (expensify-docs-3/4), suggesting some machinery exists for pulling and coding transactions, but there is no documentation of an MCP server, no specific 'uncoded transactions' API endpoint, and no described workflow for pushing proposed codings back for human review. Community reports also raise concerns about categorization accuracy historically (expensify-comm-1/4), casting doubt on the 'propose categorizations' reliability. missing for 10: MCP server/connector evidence, explicit API support for uncoded-transaction retrieval and coding-review push-back, verified categorization accuracy at scale.",
+    "rationale": "Expensify offers a general API with OAuth2 credentials (expensify-docs-1,2,12,19,20) and conversational AI features that can categorize/approve/reject expenses via plain language (expensify-docs-3,4,22), which could underpin an agent-driven coding workflow, but there is no documentation of an MCP server, no endpoint specifically for pulling 'uncoded' transactions, and no described push-back-for-review flow for agent-proposed coding. Missing for 10: MCP server support, a dedicated uncoded-transactions/coding API endpoint, explicit agent review-and-push workflow, and independent validation of categorization accuracy (community reports flag frequent categorization errors, expensify-comm-1, expensify-comm-4).",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
       "expensify-docs-3",
       "expensify-docs-4",
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20",
+      "expensify-docs-22",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1436,19 +1465,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation, or any machine-readable docs endpoint; the docs-md probe returned a 404, and no other citation mentions such a resource.",
+    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any indication Expensify publishes docs designed for AI agents to consume; the probe for a machine-readable docs endpoint returned a 404. Standard human-oriented API docs exist but nothing addresses agent-discoverable documentation.",
     "evidenceIds": [
-      "expensify-probe-1"
+      "expensify-probe-1",
+      "expensify-docs-1"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-ai-insights",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify markets an 'Ask Expensify AI' feature that lets users create/categorize/approve expenses and even fix workspace configuration via plain-language requests, which matches the AI-insights/suggestions story (expensify-docs-3, expensify-docs-4). However, independent community reports say Expensify's automated categorization (the core AI-driven suggestion mechanism) is wrong roughly 70% of the time unless obvious, undercutting the reliability of these AI suggestions (expensify-comm-1, expensify-comm-4). Missing for 10: independent hands-on validation of the newer 'Ask Expensify AI' feature specifically (not just older SmartScan categorization), and evidence of proactive 'insights' beyond conversational commands.",
+    "rationale": "First-party docs describe an 'Ask Expensify AI' feature that gives instant answers, charts, and quarterly flux analysis, and can act on data via plain language (expensify-docs-22, expensify-docs-3, expensify-docs-4), matching the story of AI-generated insights inside the product. However there is no independent or hands-on corroboration of this specific insights feature's quality, and unrelated community reports point to inaccuracies in Expensify's other automated data-extraction (SmartScan/categorization), raising some doubt about overall AI reliability even though not directly about the insights feature. Missing for 10: independent/hands-on validation of the Ask Expensify AI insights feature specifically, and details on accuracy/limits of its generated suggestions.",
     "evidenceIds": [
+      "expensify-docs-22",
       "expensify-docs-3",
       "expensify-docs-4",
       "expensify-comm-1",
@@ -1476,23 +1507,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify's own blog documents 'Ask Expensify AI Anything,' a built-in assistant that can create/categorize/approve expenses and even configure workspaces via plain language, matching the delegation story. However, this is first-party marketing copy with no independent hands-on corroboration, and community feedback in the pack focuses only on SmartScan's older categorization/data-handling issues rather than validating the AI assistant itself. Missing for 10: independent/hands-on verification of the AI assistant's task delegation, details on scope/limits of what it can autonomously do, and any user reports specifically about this AI feature.",
+    "rationale": "Expensify's own docs describe an 'Ask Expensify AI Anything' assistant that can create/categorize/approve expenses, configure workspaces, and answer spend questions via plain language, directly matching the story of delegating tasks to a built-in AI assistant. However, all evidence is vendor-authored marketing copy with no independent or hands-on verification of the AI assistant's actual behavior or reliability. Missing for 10: independent/hands-on confirmation that the AI assistant works as described, details on scope/limits of delegation, and any user reviews specifically of the AI feature (existing community feedback concerns older SmartScan/categorization issues, not the AI assistant itself).",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-22"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Expensify exposes an Integration Server API with OAuth2 token-based programmatic access, which could technically be scripted into a CI pipeline, but there is no documentation, CLI, SDK, or example showing headless/CI usage specifically. Missing for 10: explicit CI/automation documentation, a headless CLI or SDK, and any hands-on evidence of running Expensify unattended in a pipeline.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Expensify exposes an Integration Server API with generated credentials and an OAuth2 client-credentials/authorization flow, which enables scripted, non-interactive (headless) calls that could be invoked from CI pipelines. However, there is no documentation of a CLI, SDK, or explicit CI/automation examples, and the GitHub references only cover running the front-end app locally, not headless automation of expense workflows. Missing for 10: explicit CI/CD integration guides, a documented CLI or automation SDK, and evidence of headless usage in real pipelines.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1501,7 +1535,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Expensify is an expense management SaaS product, not an AI agent; the evidence shows only its own API/integration server and AI-assistant features, with no mention of MCP server support for plugging in external tool servers. This axis (agent-role MCP client capability) does not apply to a SaaS platform's own product surface.",
+    "rationale": "Expensify is an expense-management SaaS product, not an AI agent; evidence shows only its own REST/OAuth API and an internal 'Ask Expensify AI' feature, with no mention of MCP server support for plugging in external tools.",
     "evidenceIds": []
   },
   {
@@ -1510,23 +1544,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Expensify offers a REST API with OAuth2 credentials, but there is no evidence of an official MCP server for agent connectivity; the AI features described (Ask Expensify) are first-party assistant features, not an MCP integration point.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-3"
-    ]
+    "rationale": "Expensify is not itself an agent, so the axis applies (it's a fair question whether the SaaS ships an official MCP server), but no evidence pack item mentions MCP, an MCP server, or agent-connection protocol — only REST/OAuth2 API credentials and an in-app 'Ask Expensify AI' chat feature are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "First-party blog claims 'Ask Expensify AI' lets users create/categorize/tag/approve/reject expenses and configure workspaces via plain language, directly matching the story, but this is vendor marketing copy with no independent/hands-on verification of the natural-language feature itself. Community evidence discusses categorization accuracy and UX issues but doesn't specifically test or contradict the AI natural-language assistant. Missing for 10: independent hands-on confirmation that the AI chat actually executes commands reliably, details on scope/limits of supported natural-language operations, and evidence it's broadly available rather than a beta/blog announcement.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Expensify markets an 'Ask Expensify AI' feature allowing users to create/categorize/approve expenses, fix workspace setup, and get instant financial insights via plain language commands, which directly matches the natural-language operation story. However, this is vendor-claimed blog content with no independent hands-on verification of accuracy or reliability, and community evidence highlights general accuracy/categorization issues in other AI-adjacent features (SmartScan), raising doubts about robustness. Missing for 10: independent corroboration of the natural-language AI feature's real-world reliability, technical documentation/API details for the NL interface itself, and evidence of broad command coverage beyond the blog's examples.",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-22",
+      "expensify-comm-1"
     ]
   },
   {
@@ -1534,34 +1566,38 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows an API/Integration Server with OAuth2, and a GitHub repo for the app itself, but no official CLI tool for AI-native workflows is documented anywhere in the pack.",
+    "confidence": "high",
+    "rationale": "Evidence shows an Integration Server API with OAuth2 and a GitHub repo for the app itself, but no evidence of an official CLI tool for AI-native workflows.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify documents a public Integration Server API with credential generation and OAuth2 authorization-code flow for acting on behalf of users, indicating programmatic access beyond the UI. Missing for 10: independent/hands-on developer corroboration of the API's completeness, rate limits, or breadth of endpoints, and no evidence of SDKs or community usage confirming real-world API-driven workflows.",
+    "rationale": "Expensify has a documented public Integration Server API with credential generation and OAuth2 authorization code flow for acting on behalf of users, enabling programmatic access. However, evidence lacks detail on API endpoint coverage/breadth, rate limits, SDKs, or independent developer corroboration of usability. Missing for 10: broader endpoint documentation, independent/hands-on developer validation, and SDK/tooling support.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Expensify's API docs describe generating general API credentials and using OAuth2 to obtain short-lived tokens on behalf of a user, but there's no evidence of scoped/least-privilege credential issuance specifically designed for agent use cases (e.g., granular permission scopes, agent-specific role restrictions). Missing for 10: scoped/permissioned API key or token creation, agent-specific credential controls, documentation of least-privilege design.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Expensify's docs show API credential issuance (partnerUserID/partnerUserSecret) and an OAuth2 authorization-code flow yielding short-lived access tokens, plus manual secret rotation — some least-privilege elements (time-limited tokens, credential regeneration) exist. However, there's no evidence of granular scopes, role-based permissions, or agent-specific credential restrictions (e.g., read-only vs. write, limited resource access) that would constitute true scoped/least-privilege credentials for an AI agent. Missing for 10: documented permission scopes/roles, agent-specific credential templates, and any explicit least-privilege API key configuration.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1570,12 +1606,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a proprietary Integration Server REST API with API credentials/OAuth2, not an official SDK (client library) for building AI-native integrations; no mention of SDKs in any language, and a probe attempt to find developer docs even returned a 404. Missing for 10: any official SDK/client library, language-specific packages, or AI-agent oriented developer kit.",
+    "rationale": "Evidence shows only a raw REST-style Integration Server API with credential generation and OAuth2 flow, not any official SDKs or client libraries for developers to build against; the GitHub repo referenced is Expensify's own app, not a published SDK.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12",
-      "expensify-probe-1"
+      "expensify-docs-19",
+      "expensify-docs-20",
+      "expensify-gh-1"
     ]
   },
   {
@@ -1583,8 +1620,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Expensify has an API with OAuth2 auth and credential generation, but nothing describes a webhook/event subscription mechanism for AI agents to consume. Missing for 10: any documentation of webhook endpoints, event types, subscription setup, or push-notification callback support.",
+    "confidence": "high",
+    "rationale": "Evidence shows OAuth2/API credential setup for Expensify's REST API but no mention of webhooks, event subscriptions, or push notifications for AI agents to consume.",
     "evidenceIds": []
   },
   {
@@ -1593,16 +1630,15 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Expensify markets 'Ask Expensify AI' for categorizing, tagging, and approving expenses via plain language, and SmartScan for reading receipt data (expensify-docs-3, expensify-docs-4, expensify-docs-6, expensify-docs-18), but hands-on community reports directly contradict the accuracy claims: users report ~70% mis-categorization rates and note SmartScan historically relied on human mechanical-turk workers (with resulting PII exposure) rather than pure AI (expensify-comm-1, expensify-comm-2, expensify-comm-3, expensify-comm-4). No evidence at all addresses duplicate or fraud detection. Missing for 10: verified fraud/duplicate-catching capability, independent confirmation that categorization/audit is now AI-driven and accurate, and resolution of the human-labor/accuracy concerns.",
+    "rationale": "Expensify markets an AI feature that reads receipts (SmartScan) and can categorize, tag, and create expenses via plain language (expensify-docs-3, expensify-docs-6, expensify-docs-18), but there is no evidence of AI-driven duplicate or fraud detection. Community hands-on reports directly contradict the categorization-quality claim, stating Expensify 'does pretty horrible categorization' and gets it wrong ~70% of the time (expensify-comm-1, expensify-comm-4), and also raise concerns about human (mechanical turk) processing of receipt data rather than pure AI (expensify-comm-2, expensify-comm-3). Missing for 10: explicit fraud/duplicate detection capability, independent verification of the newer 'Expensify AI' feature's accuracy, and resolution of the categorization-accuracy complaints.",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4",
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-comm-1",
+      "expensify-comm-4",
       "expensify-comm-2",
-      "expensify-comm-3",
-      "expensify-comm-4"
+      "expensify-comm-3"
     ]
   },
   {
@@ -1610,11 +1646,12 @@
     "storyId": "ai-policy-copilot",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Expensify's 'Ask Expensify AI Anything' assistant supports plain-language creation, categorization, approval/rejection of expenses and workspace rule configuration, which is conversational policy interaction, but the evidence never shows it proactively chasing missing receipts, explaining specific declines, or answering pre-spend 'can I expense this?' queries. Community reports also flag poor categorization accuracy (~70% error rate), undermining confidence in the conversational engine's reliability. Missing for 10: explicit documentation of proactive receipt-chasing, decline explanations, and pre-spend eligibility checks, plus independent verification of these specific behaviors.",
+    "confidence": "low",
+    "rationale": "Expensify's 'Ask Expensify AI' lets users approve/reject/categorize expenses and get instant spend answers conversationally, showing some conversational-policy capability, but there's no evidence of it proactively chasing missing receipts, explaining declines, or answering 'can I expense this?' before spend occurs. Community evidence also flags inconsistent categorization accuracy, raising doubts about reliability of any automated policy judgments. Missing for 10: proactive receipt-chasing workflow, decline-explanation feature, pre-spend policy Q&A, and independent verification of AI accuracy on these tasks.",
     "evidenceIds": [
       "expensify-docs-3",
       "expensify-docs-4",
+      "expensify-docs-22",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1625,10 +1662,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a basic API doc requiring credentials and OAuth2 setup, with no mention of an interactive reference, runnable examples, or sandbox/console; a probe for a machine-readable docs endpoint returned 404.",
+    "rationale": "Evidence shows only a static API doc page describing credential setup and OAuth flow, with no mention of an interactive reference, runnable code examples, or sandbox/playground; a probe for a machine-readable/interactive doc endpoint returned 404.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
+      "expensify-docs-19",
       "expensify-probe-1"
     ]
   },
@@ -1638,11 +1676,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Expensify has an API with OAuth2 credentials but no mention of a downloadable machine-readable spec like OpenAPI/Swagger; the docs page is only HTML documentation, not a spec file.",
+    "rationale": "Evidence shows Expensify has an Integration Server API with OAuth2 credentials, but there is no mention of a downloadable machine-readable spec like OpenAPI/Swagger; the docs-md probe even returned a 404, suggesting no machine-readable doc format is exposed.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-19",
+      "expensify-probe-1"
     ]
   },
   {
@@ -1651,7 +1690,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox or test environment for Expensify's API/integration platform; docs only cover OAuth2 credentials and production-oriented integrations (QuickBooks, NetSuite). This is a fair axis for an API-driven product, but nothing in the evidence pack mentions sandbox, staging, or test-mode accounts.",
+    "rationale": "No evidence of any sandbox/test environment, staging API, or mock data mode for Expensify's API or integrations — only production API credential setup is documented.",
     "evidenceIds": []
   },
   {
@@ -1659,35 +1698,31 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Expensify has an Integration Server API with OAuth2 credentials, but nothing about API versioning, version numbers, or a documented deprecation/sunset policy is present anywhere in the pack. Missing for 10: any mention of API version numbers, changelog, breaking-change policy, or deprecation timeline/notice process.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-12"
-    ]
+    "confidence": "high",
+    "rationale": "There is API documentation and credential/token guidance, but no evidence of API versioning scheme or any documented deprecation policy anywhere in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "approval-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items describe multi-step approval chains (manager/budget owner/finance), delegation, or escalation logic; documentation covers API auth, SmartScan, integrations, invoicing, and pricing but nothing on approval workflow configuration.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack describes multi-step approval chains, delegation, or escalation logic in Expensify's workflow configuration; evidence only covers API auth, receipt scanning, accounting integrations, and unrelated community complaints.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "auto-receipt-matching",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Expensify documents SmartScan for automatic receipt data extraction (docs-6, docs-18) and supports bringing your own corporate cards (docs-5, docs-10), which implies some card-transaction integration, but there is no direct evidence describing automatic receipt-to-transaction matching, e-receipt pulling from vendor integrations, or a 'nudge only when missing' notification flow. Community reports also flag categorization/accuracy issues that could undercut a fully automated match (comm-1, comm-4). Missing for 10: explicit documentation of automatic receipt-card matching logic, e-receipt integration pulls, and a missing-receipt notification/nudge feature.",
+    "rationale": "Expensify docs show SmartScan auto-reading receipt data and card import/BYOC, which implies some receipt-to-transaction linkage, but there is no explicit evidence of automatic e-receipt pulling from partner integrations or of a nudge system that only fires when a receipt is genuinely missing. Community reports also flag inconsistent categorization and slow processing, undercutting confidence in the 'smart' matching claim. Missing for 10: explicit e-receipt integration sourcing, documented auto-match-to-card-transaction logic, and evidence of a targeted 'missing receipt' nudge feature.",
     "evidenceIds": [
       "expensify-docs-6",
       "expensify-docs-18",
+      "expensify-docs-21",
       "expensify-docs-5",
-      "expensify-docs-10",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1695,14 +1730,16 @@
   {
     "productId": "expensify",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows an API/OAuth integration and a natural-language AI assistant for single-item actions (create/categorize/approve expenses), but nothing describes bulk or batch operations across many items at once via API or AI. Missing for 10: documented bulk endpoints, batch API calls, or AI commands operating on multiple items simultaneously, plus any independent confirmation of such bulk capability.",
+    "rationale": "Expensify offers an API (with OAuth2 auth) and an AI assistant that can create/categorize/tag/approve/reject expenses via plain language, which implies some programmatic/automation capability, but no evidence explicitly describes bulk operations across many items at once (e.g., batch endpoints, mass-approve, multi-item processing in one call).  missing for 10: explicit bulk/batch API endpoints or documented multi-item automation examples, independent verification of bulk-operation reliability.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-3"
+      "expensify-docs-3",
+      "expensify-docs-4",
+      "expensify-docs-19"
     ]
   },
   {
@@ -1724,13 +1761,9 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Expensify's API/integration docs describe authentication and one-off actions but no evidence of scheduling recurring jobs or automated workflows on a timer; automatic exports (e.g., QuickBooks) are triggered by report finalization, not user-defined recurring schedules exposed to AI-native automation.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-7"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence shows an API with OAuth credentials and export automation (e.g., auto-export to QuickBooks) but no scheduler, cron-like job runner, or workflow automation engine for recurring AI-native jobs is documented.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1747,36 +1780,38 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers expense reporting, receipt scanning, corporate cards, travel, and outbound client invoicing (AR), plus accounting syncs to QuickBooks/NetSuite, but contains no mention of vendor bill/invoice capture for payables, AP-specific approval routing, or vendor payment via ACH, check, or wire. This is a distinct AP workflow not evidenced here.",
+    "rationale": "Evidence shows only outbound client invoicing (branded invoice templates, payment notifications) and expense/spend management (corporate cards), not accounts-payable bill capture, approval routing for vendor invoices, or vendor payment via ACH/check/wire. No evidence Expensify supports receiving and paying vendor bills.",
     "evidenceIds": [
       "expensify-docs-9",
       "expensify-docs-17",
-      "expensify-docs-7",
-      "expensify-docs-13",
-      "expensify-docs-14"
+      "expensify-docs-15",
+      "expensify-docs-10"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "budgets-enforcement",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only shows generic 'Smart Limits on cards' and 'multi-level GL coding' features, with no documentation of allocating budgets specifically to teams/projects or details on how approvals/card limits enforce those budgets end-to-end. Missing for 10: team/project-level budget allocation workflows, approval-chain enforcement mechanics, and any independent verification that limits actually block overspend.",
+    "rationale": "Expensify docs mention 'Smart Limits on cards' and 'multi-level GL coding' which suggest some card-limit and budget-tracking capability, but there is no evidence of a feature to allocate budgets specifically to teams/projects or of approval workflows that enforce those allocations. missing for 10: team/project-level budget allocation, documented approval-workflow enforcement tied to budgets, independent verification that Smart Limits actually block overspend in practice.",
     "evidenceIds": [
       "expensify-docs-10",
-      "expensify-docs-15"
+      "expensify-docs-15",
+      "expensify-docs-21"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "card-policy-controls",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Expensify markets 'Smart Limits on cards' as a feature, suggesting some spend-control capability, but the evidence pack gives no detail on restricting by category/merchant/amount or on real-time auto-lock/decline at point of sale. Missing for 10: documentation of category/merchant-based restriction rules, confirmation of real-time POS decline/lock behavior, and any independent corroboration of these controls working as described.",
+    "rationale": "Expensify offers 'Smart Limits on cards' and mentions bringing your own corporate cards, suggesting some card-level spend controls exist, but there is no evidence of restricting by specific merchant, or real-time point-of-sale auto-lock/decline enforcement for out-of-policy spend. Missing for 10: documentation of category/merchant-specific restriction rules, real-time point-of-sale decline mechanics, and any hands-on or independent confirmation that these controls actually block transactions at swipe time.",
     "evidenceIds": [
-      "expensify-docs-10"
+      "expensify-docs-10",
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
@@ -1785,16 +1820,16 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify's docs promise automatic merchant/date/total capture (SmartScan), AI-driven categorization, multi-level GL coding, and syncing to QuickBooks/NetSuite so reports are close-ready, but hands-on community reports directly contradict the categorization claim, citing ~70% miscategorization and slow, human-mediated (mechanical turk) receipt processing that undermines 'real-time coding'. Missing for 10: independent verification that categorization accuracy has improved, more recent (post-mturk-era) hands-on accounts confirming reliable real-time coding, and evidence of memo/note fields being auto-populated.",
+    "rationale": "Expensify's docs describe a full real-time coding pipeline — SmartScan auto-extracts merchant/date/total, AI auto-categorizes and tags expenses, multi-level GL coding, and automatic export to QuickBooks/NetSuite — which is exactly the 'code as it happens' close-readiness story. However, hands-on community reports concretely contradict the categorization claim, citing ~70% miscategorization rates and slow/manual processing, meaning finance teams still have real cleanup work at month-end rather than pure review. Missing for 10: independent verification that categorization/AI accuracy has materially improved since these reports, and evidence of end-to-end audit showing memo/receipt completeness at scale without manual correction.",
     "evidenceIds": [
-      "expensify-docs-3",
       "expensify-docs-6",
-      "expensify-docs-15",
       "expensify-docs-18",
+      "expensify-docs-3",
+      "expensify-docs-15",
       "expensify-docs-7",
+      "expensify-docs-14",
       "expensify-comm-1",
-      "expensify-comm-4",
-      "expensify-comm-5"
+      "expensify-comm-4"
     ]
   },
   {
@@ -1803,7 +1838,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows approval workflows (AI-driven approve/reject) and accounting sync (QuickBooks, NetSuite) but no documentation of an immutable audit trail, edit/approval history log, or audit-ready reporting that would survive external audit scrutiny. Community evidence focuses on categorization accuracy and billing complaints, not audit-trail integrity.",
+    "rationale": "The evidence pack covers API auth, SmartScan, integrations, pricing, and travel/invoicing features, but contains no documentation of an audit trail, edit/approval history log, or policy-check logging that would satisfy an external audit. No mention of immutable logs, approval chains being recorded, or compliance/audit certifications.",
     "evidenceIds": []
   },
   {
@@ -1812,24 +1847,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows some policy-adjacent features (Smart Limits on cards, multi-level GL coding, and 'build rules' via AI assistant) but no explicit documentation of a full policy engine enforcing limits by category/role/context with automatic in-policy approval and exception routing to a human approver. missing for 10: documented approval workflow/exception routing, role-based limit configuration, and evidence of auto-approval logic actually functioning as described.",
+    "rationale": "Evidence shows some policy-adjacent features — Smart Limits on cards, multi-level GL coding, and workspace 'rules' configurable via AI assistant — suggesting the platform supports policy codification, but there's no direct documentation of category/role/context-based approval limits or an explicit auto-approve-vs-exception-routing workflow. Missing for 10: dedicated approval-workflow/policy-engine documentation, evidence of role-based spending limits, evidence of automatic approval routing only exceptions to humans, and independent corroboration that this works as described.",
     "evidenceIds": [
       "expensify-docs-10",
       "expensify-docs-15",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-3"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "expenses-api-read",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify documents an Integration Server API with API credentials and OAuth2 authorization code flow for short-lived access tokens, which supports scoped-token access on behalf of users. However, there is no clear evidence of granular scoped tokens, comprehensive REST endpoint documentation for pulling transactions/expenses/receipts specifically, or independent developer corroboration of the API's usability. missing for 10: detailed REST endpoint reference for transactions/receipts, explicit scope definitions, independent developer confirmation of working OAuth flow.",
+    "rationale": "Expensify documents a REST-style Integration Server API with OAuth2 authorization code flow and scoped/short-lived access tokens, plus API credential generation (partnerUserID/partnerUserSecret, client secret rotation), which supports pulling expense/report data programmatically. However, there's no explicit evidence of dedicated endpoints for pulling receipts specifically, no independent/hands-on developer corroboration of the API's reliability or completeness, and no mention of rate limits, SDKs, or scope granularity beyond basic OAuth. missing for 10: independent developer corroboration, explicit receipt-pull endpoint documentation, detail on scope granularity/rate limits.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1837,8 +1875,8 @@
     "storyId": "fast-reimbursements",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers receipt scanning, categorization, accounting integrations, and pricing, but contains no documentation of the direct-deposit reimbursement flow, payout timing, or tracking from submission to payout. Community items focus on categorization accuracy and billing complaints, not reimbursement speed or tracking. missing for 10: reimbursement/payout documentation, direct deposit setup details, submission-to-payout tracking evidence.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Expensify's receipt scanning, categorization, workspace, card, and accounting-sync features but contains no documentation or community evidence about direct-deposit reimbursement mechanics, payout timing, or end-to-end submission-to-payout tracking. Since reimbursement is a core, plausible capability for an expense platform, its complete absence from the evidence means the story is unsupported.",
     "evidenceIds": []
   },
   {
@@ -1847,18 +1885,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of multi-currency reimbursement or international payment processing to employees abroad; it covers receipt scanning, accounting integrations, invoicing, and API auth, but nothing about local-currency reimbursement or cross-border payouts.",
+    "rationale": "The evidence covers multi-currency expense capture (SmartScan currency detection, multi-currency invoicing) but contains no mention of an actual reimbursement/payout mechanism that pays employees abroad in local currency without a separate international payments process. Missing for 10: any documentation of Expensify's global reimbursement/payout rails, local-currency disbursement, or FX handling for employee reimbursements.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "issue-cards-limits",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Expensify's spend-management page mentions 'Smart Limits on cards' and the product supports 'bring your own cards,' implying corporate card issuance with limit controls, but there is no documentation of physical vs. virtual card issuance speed, per-card limit setup workflow, or any concrete 'minutes to issue' claim. missing for 10: evidence of physical card issuance process, virtual card creation flow, time-to-issue claims, and per-card individual limit configuration details.",
+    "rationale": "Expensify offers corporate cards with Smart Limits and supports importing existing card programs, implying spend-limit controls, but the evidence emphasizes BYOC (bring your own cards) rather than instantly issuing new physical/virtual cards, and there's no documentation of an actual 'minutes to issue' workflow or virtual card issuance process. missing for 10: concrete documentation of issuing new physical/virtual cards in minutes, virtual card issuance flow, per-card limit-setting UI, and independent confirmation of speed/ease of issuance.",
     "evidenceIds": [
       "expensify-docs-10",
+      "expensify-docs-21",
       "expensify-docs-5"
     ]
   },
@@ -1867,8 +1906,8 @@
     "storyId": "mileage-per-diem",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers SmartScan receipt capture, categorization, integrations (QuickBooks, NetSuite), travel booking, and invoicing, but contains no mention of mileage tracking, map-based distance calculation, or per-diem rate claims. This is a fair axis for an expense management product like Expensify, but no supporting evidence exists in the pack. Missing for 10: any documentation or community mention of mileage/distance logging or per-diem rate automation.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions mileage tracking, map-based distance calculation, or per-diem rate claiming — the evidence covers receipt SmartScan, card management, invoicing, travel booking, and accounting integrations, but never mileage/per-diem features.",
     "evidenceIds": []
   },
   {
@@ -1876,13 +1915,9 @@
     "storyId": "multi-entity-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes multi-entity account structures, per-entity books, or consolidated multi-entity reporting; only generic multi-currency invoicing and single ERP connections (QuickBooks/NetSuite) are mentioned, which is not the same as multi-entity consolidation.",
-    "evidenceIds": [
-      "expensify-docs-9",
-      "expensify-docs-13",
-      "expensify-docs-14"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence pack covers receipt scanning, invoicing, accounting connections (QuickBooks, NetSuite), spend management, and AI features, but contains no mention of multi-entity/multi-subsidiary management, per-entity books, or consolidated cross-entity reporting for a finance lead managing multiple legal entities and currencies at the account level.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1890,11 +1925,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence confirms Expensify has an API with OAuth2 credential/token flow for acting on behalf of users, but there is no documentation or claim that the API exposes the full breadth of UI capabilities (workspace configuration, travel booking, invoicing, card limits, SmartScan review, etc.) — the probe also shows a broken docs endpoint. missing for 10: evidence of API endpoints covering workspace/rule configuration, travel, invoicing, card management, and any independent confirmation of full UI/API parity.",
+    "rationale": "Expensify does document an API (Integration Server) with OAuth2/credential-based auth for building integrations, showing openness in principle, but the evidence pack gives no indication of feature parity — no documented API endpoints for actions like approvals, invoicing, travel booking, or workspace configuration that mirror UI capabilities. missing for 10: comprehensive API endpoint documentation, evidence of parity for approvals/invoicing/travel/config actions, independent confirmation that AI-native workflows can fully replace UI usage via API.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-probe-1"
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1903,18 +1939,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a bulk/open-format data export or account-portability feature; Expensify offers accounting-system connections (QuickBooks, NetSuite) and an API requiring OAuth credentials, but nothing about exporting all user data in open formats for departure from the platform.",
+    "rationale": "There is API access and QuickBooks/NetSuite sync, but no evidence of a general open-format bulk data export mechanism for users to leave with all their data (e.g., CSV/JSON export of full account history for portability). The APIs described are for integration/automation, not user-initiated full data export for departure.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "openness-open-license",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "While a public GitHub repo (Expensify/App) with build instructions exists, none of the evidence specifies any open-source license or terms governing that code, so we cannot confirm the source is available under an open license. missing for 10: explicit license file/terms, confirmation of open-source licensing, any documentation asserting open licensing.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "The GitHub repo Expensify/App is publicly documented with build instructions (npm install, npm run <platform>), indicating the source code is publicly readable, but no evidence pack item states an explicit open-source license (e.g., MIT, Apache) governing that code. missing for 10: explicit license text/file citation, confirmation that the full product (not just the app) is open-sourced, and any independent corroboration of license terms.",
     "evidenceIds": [
-      "expensify-gh-1"
+      "expensify-gh-1",
+      "expensify-gh-2"
     ]
   },
   {
@@ -1923,9 +1960,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Expensify is a hosted SaaS product; while its App repo is open source on GitHub, there is no evidence of a self-hostable backend/server deployment for the core expense-management product—only a client app install step (npm install) is shown, not a full self-host path.",
+    "rationale": "Evidence shows only an open-source client app repo with npm install/run instructions (expensify-gh-1, expensify-gh-2), but no evidence that the core backend/service can be self-hosted independent of Expensify's SaaS infrastructure. Missing for 10: any backend/server self-hosting docs, deployment guides, or independent confirmation of running the full product outside Expensify's cloud.",
     "evidenceIds": [
-      "expensify-gh-1"
+      "expensify-gh-1",
+      "expensify-gh-2"
     ]
   },
   {
@@ -1934,7 +1972,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or any data-location controls for Expensify; all citations concern API auth, product features, integrations, or general community complaints unrelated to data residency.",
+    "rationale": "No evidence anywhere in the pack of data residency/region selection options for Expensify; nothing about EU/US data storage choices or compliance controls for data location.",
     "evidenceIds": []
   },
   {
@@ -1942,13 +1980,9 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any AI-training opt-out, data-use control, or privacy settings related to AI model training; in fact community evidence shows receipt data was historically routed to third-party human contractors (MTurk) without confidentiality protections, suggesting weak data-handling controls generally.",
-    "evidenceIds": [
-      "expensify-comm-2",
-      "expensify-comm-3",
-      "expensify-comm-4"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training opt-out or data-use controls for Expensify; the only AI-related mentions describe Expensify's own AI features, not user control over data being used to train models. There is also concrete evidence Expensify has historically sent user receipt data to third-party human contractors (MTurk) without confidentiality safeguards, which undercuts any implicit privacy assurance, but no explicit AI-training opt-out mechanism is documented either way.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1956,7 +1990,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack of any user-facing controls to set data retention periods or delete data/AI interaction history; only community reports raise privacy concerns around SmartScan's use of contractor-based data extraction, which is unrelated to retention/deletion controls.",
+    "rationale": "The evidence pack contains no documentation of data retention policies, deletion controls, or export/delete APIs for user data; only unrelated privacy concerns about third-party SmartScan data handling are present, which don't address retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -1965,7 +1999,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any telemetry opt-out or AI usage-tracking control; evidence pack covers unrelated features (API, integrations, expense management) and community complaints about accuracy/billing, none addressing privacy/telemetry controls for AI-native usage.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, or opt-out controls for AI-native or any users; the evidence covers unrelated product features, integrations, and community complaints.",
     "evidenceIds": []
   },
   {
@@ -1973,27 +2007,30 @@
     "storyId": "programmatic-card-issuance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a general Expensify API exists for expense/report operations with OAuth2 credentials, and mentions Smart Limits on cards as a product feature, but there is no documentation of API endpoints for programmatically creating, locking, or updating card controls/limits. missing for 10: card-issuing API endpoints, card lock/unlock API calls, programmatic control update examples, any developer reference for card management via API.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows Expensify's public API supports OAuth2 authentication and general expense/report actions, and mentions 'Smart Limits' and 'Bring your own cards' as UI features, but there is no documented API endpoint for programmatically creating, locking, or updating card controls/limits — card management is only described as a manual/UI feature.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-10"
+      "expensify-docs-10",
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "realtime-spend-visibility",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify claims real-time capture via SmartScan (data extracted 'in realtime, no batch processing') and offers categorization/workspaces, which would support real-time spend visibility by merchant and category, but independent user reports directly contradict the categorization accuracy claim — one reports ~70% miscategorization and use of outsourced human labor (MTurk) rather than reliable automated categorization, undermining the 'by category' promise. Missing for 10: evidence of a real-time company-wide spend dashboard broken down by team/department, and any rebuttal or fix to the categorization accuracy complaints.",
+    "rationale": "Expensify offers real-time capture (SmartScan reads receipts instantly, no batch delays) and AI-driven analytics for 'monthly spend' and 'quarterly flux analysis,' plus GL coding for categorization — suggesting near-real-time spend visibility by category/merchant. However, hands-on community reports say Expensify's categorization is wrong ~70% of the time and relies on outsourced manual data entry, directly undermining the 'by category' accuracy claim; other users cite slow processing (20 min per receipt) contradicting 'real time.' Missing for 10: a dedicated team/department spend dashboard, documented real-time merchant/category breakdowns, and independent verification of AI analytics accuracy.",
     "evidenceIds": [
       "expensify-docs-18",
-      "expensify-docs-6",
+      "expensify-docs-22",
+      "expensify-docs-15",
       "expensify-comm-1",
       "expensify-comm-4",
-      "expensify-comm-2"
+      "expensify-comm-5"
     ]
   },
   {
@@ -2002,11 +2039,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify's SmartScan is documented to OCR receipts in real time (merchant, date, total, currency) via camera capture, but hands-on community reports contradict the polish of this claim: users report categorization is wrong ~70% of the time unless obvious, that scans took ~20 minutes to process, and that outsourced (MTurk) human review was used behind the scenes with data accuracy not guaranteed. There is also no evidence in the pack for the 'forward an email' capture path. missing for 10: evidence of email-forward receipt capture, independent verification of categorization/filing accuracy against transactions, resolution of the community-reported OCR/categorization failures.",
+    "rationale": "Expensify's docs claim SmartScan reads merchant, date, total, and currency in real time from a photographed receipt (expensify-docs-6, expensify-docs-18), which covers the photo-capture and OCR-to-transaction-filing part of the story. However, hands-on community reports concretely contradict the 'automatic' framing: users report ~70% mis-categorization, reliance on mechanical-turk human workers (raising accuracy and privacy issues) rather than pure OCR, and slow processing that led one user to enter data manually instead (expensify-comm-1, expensify-comm-2, expensify-comm-4, expensify-comm-5). No evidence at all addresses the 'forward an email' capture path. Missing for 10: evidence of email-forwarded receipt capture, and independent verification that categorization/filing accuracy matches vendor claims.",
     "evidenceIds": [
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-comm-1",
+      "expensify-comm-2",
       "expensify-comm-4",
       "expensify-comm-5"
     ]
@@ -2026,19 +2064,18 @@
   {
     "productId": "expensify",
     "storyId": "trip-expenses-autocollect",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify documents travel booking (flights/hotels/cars/rail) alongside SmartScan receipt capture and BYOC card support, which together could populate a trip report, but there's no explicit documentation of itinerary-linked auto-consolidation tying bookings+card charges+receipts into one report. Community evidence directly contradicts the 'automatic, accurate' framing of SmartScan: users report ~70% miscategorization and that receipt data was processed by low-paid, unvetted Mechanical Turk workers who could see PII, undermining the 'collect themselves' promise. Missing for 10: explicit itinerary-report linking mechanism, and resolution of the accuracy/privacy contradiction in receipt processing.",
+    "rationale": "Expensify Travel supports booking flights/hotels/cars/rail (expensify-docs-16) and claims trips 'don't end in a pile of receipts' (expensify-docs-8), while SmartScan auto-captures receipt data (expensify-docs-6, expensify-docs-18) and BYOC lets any card's spend flow in (expensify-docs-5, expensify-docs-21). However, no evidence explicitly shows these three streams (bookings, card transactions, receipts) auto-merging into one itinerary-linked report, and community feedback flags real categorization/accuracy issues with receipt processing (expensify-comm-1, expensify-comm-4). Missing for 10: explicit documentation of automatic itinerary-to-report linkage, evidence of card-transaction matching to trip itineraries, and independent confirmation the unified report actually works end-to-end.",
     "evidenceIds": [
       "expensify-docs-8",
       "expensify-docs-16",
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-docs-5",
+      "expensify-docs-21",
       "expensify-comm-1",
-      "expensify-comm-2",
-      "expensify-comm-3",
       "expensify-comm-4"
     ]
   },
@@ -2048,10 +2085,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Expensify Card with 'Smart Limits' and general spend management, but nothing about issuing single-vendor-locked virtual cards for SaaS/procurement use cases. Missing for 10: any documentation of virtual card issuance, vendor-locking/merchant-locking controls, or single-use card workflows for subscriptions.",
+    "rationale": "The evidence only shows generic card features like 'Smart Limits' and BYOC support, with no documentation of creating single-vendor virtual cards restricted to one merchant for SaaS/procurement spend. Missing for 10: explicit virtual-card issuance feature, vendor-lock/merchant-restriction controls, and any hands-on confirmation of this specific capability.",
     "evidenceIds": [
       "expensify-docs-10",
-      "expensify-docs-11"
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
@@ -2060,7 +2098,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of QuickBooks, NetSuite, Xero, or any accounting-system sync, nor GL account/class/department mapping controls — it only covers Navan's API/MCP for expense querying, travel booking, and rewards. This is a plausible and expected axis for a T&E platform, but nothing in the evidence demonstrates it.",
+    "rationale": "No evidence in the pack mentions QuickBooks, NetSuite, Xero, or any accounting-system sync, nor GL account/class/department mapping controls. The evidence covers MCP/API for expense data, travel booking, and pricing tiers but never accounting-close integrations.",
     "evidenceIds": []
   },
   {
@@ -2086,12 +2124,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A live llms.txt file is confirmed at developer.navan.com/llms.txt (HTTP 200) describing MCP-based agent access, and the developer portal has dedicated agent-oriented docs (/mcp/, /api/) with example natural-language queries. Missing for 10: independent third-party confirmation that agents successfully consume this llms.txt in practice.",
+    "rationale": "Navan hosts a live, agent-oriented llms.txt (confirmed via probe returning HTTP 200 with structured content pointing to MCP docs) plus a full developer portal describing MCP integration for AI assistants like Claude, Cursor, ChatGPT. This directly satisfies pointing an agent at agent-native docs. Missing for 10: independent third-party confirmation that agents successfully parse/use the llms.txt in practice.",
     "evidenceIds": [
       "navan-probe-1",
+      "navan-probe-2",
       "navan-docs-1",
-      "navan-docs-3",
-      "navan-probe-2"
+      "navan-docs-3"
     ]
   },
   {
@@ -2099,17 +2137,18 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Navan's Ava AI and MCP integration provide AI-generated insights such as analyzing travel/spend data, summarizing by category, comparing to policy, predicting future spend, and flagging policy violations, all directly from Navan data. missing for 10: independent/hands-on verification of insight quality beyond vendor blog and docs, and details on how proactive/unprompted these suggestions are versus query-driven.",
+    "confidence": "high",
+    "rationale": "Navan documents Ava AI which analyzes spend/travel data, summarizes and predicts spend, compares against policy, and surfaces proactive savings suggestions; the MCP server also enables natural-language querying of spend/policy data for insights. missing for 10: independent/hands-on validation of insight quality and no evidence of broader cross-domain (non-travel/expense) insight generation.",
     "evidenceIds": [
       "navan-docs-17",
       "navan-docs-18",
       "navan-docs-19",
       "navan-docs-20",
-      "navan-docs-21",
-      "navan-docs-22",
+      "navan-docs-31",
       "navan-docs-5",
-      "navan-docs-6"
+      "navan-docs-6",
+      "navan-docs-21",
+      "navan-docs-22"
     ]
   },
   {
@@ -2118,13 +2157,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Navan's AI features (MCP, Ava) are query/chat-based tools that answer questions or analyze spend on request, and Navan Edge explicitly states it 'will always ask for your explicit confirmation before booking, changing, or canceling any trip,' which is the opposite of autonomous background automation. No workflow, trigger, or scheduling mechanism for unattended background automations is documented anywhere in the pack.",
+    "rationale": "Evidence shows Navan's AI features (MCP, Ava) are query/chat-based assistants for retrieving and analyzing spend/travel data, not autonomous background automations; Navan Edge explicitly requires explicit human confirmation before any action, and no scheduled/triggered background automation capability is documented.",
     "evidenceIds": [
+      "navan-docs-3",
       "navan-docs-16",
       "navan-docs-26",
-      "navan-docs-3",
-      "navan-docs-21",
-      "navan-docs-25"
+      "navan-docs-31"
     ]
   },
   {
@@ -2133,15 +2171,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Navan documents built-in AI assistants (Ava for analyzing/summarizing/predicting travel spend, and Navan Edge for booking/changing/canceling trips with confirmation) that users can delegate expense and travel tasks to. Missing for 10: independent/hands-on verification of these assistants in action and detail on broader task types beyond travel/expense.",
+    "rationale": "Navan has a built-in AI assistant (Ava/Navan Edge) that users can delegate tasks to — analyzing travel/expense spend, summarizing spend by category, comparing to policy, predicting future spend, and even booking/changing/cancelling trips with confirmation. This is a native in-product assistant, not just an external MCP integration. missing for 10: independent/hands-on verification of Ava's task delegation beyond vendor blog/marketing copy, and clearer detail on the breadth of actionable tasks (vs. just Q&A/analysis) it can perform autonomously.",
     "evidenceIds": [
+      "navan-docs-14",
+      "navan-docs-15",
+      "navan-docs-16",
       "navan-docs-17",
       "navan-docs-18",
       "navan-docs-19",
       "navan-docs-20",
-      "navan-docs-14",
-      "navan-docs-16",
-      "navan-docs-15"
+      "navan-docs-31"
     ]
   },
   {
@@ -2149,12 +2188,14 @@
     "storyId": "agentic-headless",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Navan's API documents an OAuth 2.0 client-credentials flow (machine-to-machine auth with no interactive login), which is the kind of mechanism needed to call Navan programmatically from a CI/automation pipeline, and its REST/webhook endpoints could be scripted headlessly. However, there is no explicit CI documentation, CLI, or example of running Navan (or its MCP server) unattended in a pipeline — missing for 10: explicit CI/automation guide, headless MCP server deployment instructions, and any hands-on evidence of it being run in CI.",
+    "confidence": "medium",
+    "rationale": "Navan's developer API supports OAuth 2.0 client-credentials (machine-to-machine, non-interactive) auth, CRUD endpoints, webhooks, and async job polling, which enables headless/automated integration with expense and travel data — a reasonable basis for CI-style automation. However there is no explicit CI/CD example, SDK, or headless test harness documentation, and the MCP server is framed for interactive AI-assistant use rather than unattended pipelines. Missing for 10: explicit CI/automation examples or guides, SDK/CLI for scripted pipelines, and independent confirmation of headless reliability.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
-      "navan-docs-23"
+      "navan-docs-23",
+      "navan-probe-1",
+      "navan-probe-2"
     ]
   },
   {
@@ -2163,7 +2204,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence describes Navan exposing its own MCP server so external AI assistants (Claude, Cursor, ChatGPT) can query Navan's travel/expense data — this is Navan acting as the MCP server/provider, not as a client consuming external MCP servers' tools. There is no evidence Navan (or its Ava assistant) can plug in and use tools from third-party MCP servers. Missing for 10: any documentation of Navan's AI features connecting to external MCP servers, any tool/plugin ecosystem for consuming outside MCP tools, and any hands-on confirmation of such client-side behavior.",
+    "rationale": "All evidence describes Navan exposing its own MCP server so external AI assistants (Claude, Cursor, ChatGPT) can query Navan data — this is Navan acting as an MCP server/provider, not as a client that plugs in outside MCP servers to use their tools. There is no evidence that Navan or its AI assistant (Ava) can connect to and consume third-party MCP servers itself.",
     "evidenceIds": [
       "navan-docs-1",
       "navan-docs-3",
@@ -2177,31 +2218,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Navan publishes an official MCP server (developer.navan.com/mcp/) explicitly for connecting AI assistants like Claude, Cursor, ChatGPT to Navan spend/travel data, with documented natural-language query examples and OAuth-secured API endpoints backing it. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice beyond vendor docs.",
+    "rationale": "Navan documents an official MCP server (developer.navan.com/mcp) enabling AI assistants like Claude, Cursor, ChatGPT to query spend/travel data via natural language, confirmed by both docs and a probe hit. Missing for 10: independent/hands-on third-party corroboration of the MCP server actually working, beyond vendor docs.",
     "evidenceIds": [
       "navan-docs-1",
       "navan-docs-3",
       "navan-probe-1",
-      "navan-probe-2",
-      "navan-docs-5",
-      "navan-docs-6"
+      "navan-probe-2"
     ]
   },
   {
     "productId": "navan",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Navan's MCP server and Ava assistant let users query spend, travel, policy, and card data with natural-language commands (e.g. flagged expenses, rideshare policy violations), and Navan Edge/Ava support conversational trip booking with confirmation steps. missing for 10: independent/hands-on verification of natural-language accuracy and breadth beyond vendor docs, and no evidence of NL commands for arbitrary in-app actions beyond travel/expense domains.",
+    "rationale": "Navan supports natural-language operation via its MCP server (query spend/policy data, flagged expenses, card details) and via the Ava assistant (summarize spend, compare to policy) and Navan Edge chat for travel changes with explicit confirmation before booking. This covers querying, analysis, and even action-taking (with confirmation) through natural language across multiple product surfaces. Missing for 10: independent/hands-on verification of NL command reliability and broader action coverage beyond travel/expense queries.",
     "evidenceIds": [
-      "navan-docs-1",
       "navan-docs-3",
       "navan-docs-5",
       "navan-docs-6",
       "navan-docs-21",
       "navan-docs-22",
       "navan-docs-17",
+      "navan-docs-31",
       "navan-docs-16",
       "navan-probe-2"
     ]
@@ -2212,7 +2251,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "The evidence pack documents Navan's MCP server, REST API, and OAuth flows but contains no mention of an official CLI tool for AI-native workflows. As a SaaS platform, a CLI is a plausible offering, so the axis applies, but no evidence supports it. Missing for 10: any documentation of a Navan CLI, installation/usage instructions, or CLI-specific AI-native workflow support.",
     "evidenceIds": []
   },
   {
@@ -2221,14 +2260,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Navan provides a documented public API (developer.navan.com) with OAuth 2.0 client-credentials auth, retrieval/update endpoints across expense, card, payroll, custom fields, and webhooks, plus a first-party MCP server for natural-language AI access — corroborated by a live llms.txt probe. Missing for 10: independent third-party developer accounts of building against the API and clearer rate-limit/versioning documentation.",
+    "rationale": "Navan documents a public developer API with OAuth 2.0 client-credentials auth, retrieval/update endpoints across expense, cards, receipts, webhooks, and async job status (navan-docs-2, navan-docs-4, navan-docs-23), confirmed by a live probe of the docs portal. This is a genuine public API for driving the product programmatically, not just an MCP wrapper. Missing for 10: independent/hands-on developer reports validating the API in production, and more detail on rate limits/SDKs.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
       "navan-docs-23",
       "navan-probe-1",
-      "navan-probe-2",
-      "navan-docs-1"
+      "navan-probe-2"
     ]
   },
   {
@@ -2237,11 +2275,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Navan's developer docs mention an OAuth 2.0 client-credentials flow for API access (navan-docs-2), which implies some credential-based authentication, but there is no explicit documentation of scoped permissions, granular access levels, or least-privilege controls specifically for AI agents connecting via MCP or API. missing for 10: explicit scope/permission definitions, least-privilege role configuration, agent-specific credential restrictions, and any documentation or independent verification of access-control granularity.",
+    "rationale": "Navan's developer docs mention an OAuth 2.0 client-credentials flow for API access, which could in principle support scoped tokens, but there is no explicit documentation of granular, least-privilege scopes or role-based credential issuance specifically for AI agents. Missing for 10: documented scope/permission granularity, agent-specific credential policies, and any independent verification of least-privilege enforcement.",
     "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-1",
-      "navan-probe-2"
+      "navan-docs-2"
     ]
   },
   {
@@ -2250,12 +2286,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Navan documents an official REST API (OAuth2 client-credentials, expense/card/travel endpoints, webhooks) and an MCP server for AI assistants, which developers can build against, but there is no evidence of language-specific official SDKs (e.g., Python/JS client libraries) — only raw API/MCP documentation. missing for 10: explicit SDK packages/libraries, code samples in multiple languages, independent developer corroboration of SDK usage.",
+    "rationale": "Navan exposes a well-documented REST API with OAuth2 client-credentials flow, expense/card/travel endpoints, and an MCP server for AI assistants, which supports API-native and agentic development. However, the evidence never mentions actual official SDKs (e.g., Python, Node.js, Java client libraries) — only raw API/MCP documentation. missing for 10: named official language SDKs/client libraries, code samples in SDK form, versioned SDK release notes.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
       "navan-docs-23",
-      "navan-probe-1",
       "navan-probe-2"
     ]
   },
@@ -2276,14 +2311,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Navan's MCP/API and Ava AI assistant let AI query flagged expenses, analyze spend, and check policy violations (navan-docs-5, navan-docs-6, navan-docs-22), plus native receipt scanning (navan-docs-24) — covering audit/flagging aspects. However there's no explicit evidence of AI auto-suggesting categories/memos or specifically detecting duplicate/fraudulent transactions. Missing for 10: automated category/memo suggestion, explicit duplicate-detection or fraud-catching functionality, and independent verification of these AI audit claims.",
+    "rationale": "Navan documents receipt scanning, AI (Ava/MCP) querying flagged expenses over policy thresholds, and identifying policy violations, which covers spend auditing and fraud/policy flagging. However there is no explicit documentation of AI auto-suggesting expense categories/memos or specifically detecting duplicate transactions. missing for 10: explicit auto-categorization/memo suggestion feature, explicit duplicate-detection capability, independent hands-on validation of receipt-reading accuracy.",
     "evidenceIds": [
+      "navan-docs-24",
       "navan-docs-5",
       "navan-docs-6",
       "navan-docs-22",
-      "navan-docs-24",
       "navan-docs-21",
-      "navan-probe-2"
+      "navan-docs-31"
     ]
   },
   {
@@ -2292,13 +2327,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The Navan MCP explicitly supports conversational policy Q&A — asking about policy, approval flows, and why a transaction was flagged/declined (navan-docs-22, navan-docs-6) — and Ava can compare travel spend to policy after the fact (navan-docs-19). However there is no evidence of proactive 'chasing missing receipts' workflows or a pre-spend 'can I expense this?' check before the transaction occurs; the examples shown are retrospective queries on past transactions/spend. Missing for 10: proactive missing-receipt nudges/reminders, and evidence of a pre-purchase 'is this expensable' conversational check.",
+    "rationale": "Navan's MCP/AI assistant (Ava) can answer natural-language questions about policy, flag/decline reasons, and spend analysis (navan-docs-5, navan-docs-6, navan-docs-22, navan-docs-31), which covers the 'explaining declines' and policy Q&A parts of the story. However, there is no evidence of proactive conversational chasing of missing receipts or a pre-spend 'can I expense this?' check before the transaction occurs — the examples shown are post-hoc queries about existing flagged/violating transactions rather than pre-spend guidance. missing for 10: proactive receipt-chasing workflow, pre-purchase expense-eligibility check, evidence of conversational nudges before spend happens.",
     "evidenceIds": [
-      "navan-docs-22",
-      "navan-docs-6",
-      "navan-docs-19",
       "navan-docs-5",
-      "navan-docs-2"
+      "navan-docs-6",
+      "navan-docs-22",
+      "navan-docs-31",
+      "navan-docs-24"
     ]
   },
   {
@@ -2307,7 +2342,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a developer portal describing API endpoints (OAuth, expense/card endpoints, webhooks) and an MCP server for natural-language queries, but nothing indicates an interactive API reference with runnable/try-it-now code examples (e.g., Swagger/OpenAPI explorer or live sandbox).",
+    "rationale": "Evidence confirms Navan has a developer API and docs (endpoints, OAuth, MCP), but nothing indicates an interactive reference with runnable/try-it examples (e.g., embedded console, live code execution). Missing for 10: any mention of an interactive API explorer, live code samples, or runnable request builder.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
@@ -2320,12 +2355,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Navan's developer docs describe REST API endpoints, OAuth 2.0 flows, and an MCP server, but no evidence pack item mentions a downloadable OpenAPI/Swagger spec or any machine-readable API definition file. missing for 10: explicit OpenAPI/Swagger spec file, API reference generated from a spec, or a documented download link.",
-    "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-4",
-      "navan-docs-23"
-    ]
+    "rationale": "The developer portal documents API endpoints, OAuth flows, and an MCP server, but none of the evidence mentions a downloadable OpenAPI/Swagger spec or any machine-readable API definition file. missing for 10: explicit OpenAPI/Swagger spec file, download link or reference to a machine-readable API definition.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2341,13 +2372,9 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack documents Navan's API/MCP endpoints and OAuth flow but contains no mention of API versioning scheme or a documented deprecation policy for consumers to rely on.",
-    "evidenceIds": [
-      "navan-docs-2",
-      "navan-docs-4",
-      "navan-docs-23"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Navan's API and MCP capabilities but contains no mention of API versioning scheme or a documented deprecation policy anywhere in the developer docs.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2403,8 +2430,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Navan's evidence covers MCP-based querying, expense/travel management, webhooks, and async job polling, but there is no mention of scheduling recurring jobs, cron-like automation, or persistent workflow triggers for AI-native users. Absence of evidence for this applicable automation-depth capability yields none.",
+    "confidence": "high",
+    "rationale": "Evidence shows Navan's MCP/API/Ava assistant support querying, analyzing, and managing expense/travel data on-demand, but nothing describes scheduling recurring jobs, workflows, or automated recurring triggers.",
     "evidenceIds": []
   },
   {
@@ -2422,7 +2449,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Navan's travel and expense management (card transactions, reimbursements, receipts, policy approvals) but contains no mention of invoice capture, vendor bill management, or paying vendors via ACH, check, or wire — the core AP capabilities the story requires.",
+    "rationale": "Evidence covers expense management, corporate cards, receipts, and travel booking, but nothing about invoice capture, approval routing for vendor bills, or ACH/check/wire vendor payments — the core AP capability described in the story is absent from the pack.",
     "evidenceIds": []
   },
   {
@@ -2431,12 +2458,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Navan documents general 'unlimited policy and approval workflows' and card management/policy-limit features, and MCP queries can surface policy violations and approval status, implying some enforcement infrastructure exists. However, there is no direct evidence of budget allocation to specific teams/projects or of card limits being tied to those budgets and automatically enforced. Missing for 10: explicit budget-allocation-to-team/project feature docs, evidence that card limits are dynamically tied to allocated budgets, and any hands-on confirmation that approvals actually block over-budget spend.",
+    "rationale": "Navan documents card management and 'unlimited policy and approval workflows' (docs-7, docs-25) plus expense/policy-violation detection (docs-6, docs-22), implying some enforcement mechanism, but there is no explicit evidence of budget allocation to teams/projects or that card limits are tied to and enforce those allocations. missing for 10: dedicated budget-allocation-by-team/project feature, evidence that card limits are dynamically enforced against allocated budgets, and any hands-on/independent confirmation this works in practice.",
     "evidenceIds": [
-      "navan-docs-25",
       "navan-docs-7",
-      "navan-docs-22",
-      "navan-docs-5"
+      "navan-docs-25",
+      "navan-docs-22"
     ]
   },
   {
@@ -2445,13 +2471,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows general card management (active/inactive status), policy workflows, and MCP queries about flagged/violating transactions, but nothing documents configurable restrictions by category, merchant, or amount, nor automatic point-of-sale locking/declining of out-of-policy spend. missing for 10: explicit documentation of category/merchant/amount-based card controls, missing for 10: evidence of real-time auto-lock or point-of-sale decline enforcement.",
-    "evidenceIds": [
-      "navan-docs-7",
-      "navan-docs-9",
-      "navan-docs-25",
-      "navan-docs-22"
-    ]
+    "rationale": "Evidence covers Navan's MCP/API for querying expenses, policy violation detection, and general card management (viewing active/inactive cards), plus generic 'unlimited policy workflows' pricing bullets, but nothing describes configurable card controls by category/merchant/amount or real-time auto-lock/decline at point of sale.",
+    "evidenceIds": []
   },
   {
     "productId": "navan",
@@ -2476,11 +2497,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Navan documents policy/approval workflows and the ability to query why a transaction was flagged or who must approve it, which implies some traceability, but there is no explicit documentation of an immutable audit log, edit history, or audit-survivability guarantees. Missing for 10: explicit audit-trail/version-history documentation, evidence of edit logging, and any mention of external-audit compliance or SOC/ISO controls.",
+    "rationale": "Docs confirm policy and approval workflows exist and can be queried (e.g., 'Unlimited policy and approval workflows', 'Ask questions about policies, approval flows, and flag/decline reasons') and the API can retrieve/update expense records, implying some traceability. However there is no explicit evidence of an immutable audit log, edit-history tracking, or audit-export/compliance certification that would let a finance lead demonstrate a full trail to an external auditor. Missing for 10: dedicated audit-log/history feature, evidence of edit tracking, and any audit-export or compliance certification documentation.",
     "evidenceIds": [
-      "navan-docs-22",
       "navan-docs-25",
-      "navan-docs-2"
+      "navan-docs-22",
+      "navan-docs-4",
+      "navan-docs-21"
     ]
   },
   {
@@ -2504,7 +2526,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Navan's developer portal documents a REST API with OAuth 2.0 client-credentials flow, and endpoints covering transactions, expenses, receipts, custom fields, and webhooks. Missing for 10: explicit mention of scoped/permissioned tokens (vs just client-credentials) and independent third-party corroboration of the API's documented behavior beyond vendor docs.",
+    "rationale": "Navan's developer portal documents an OAuth 2.0 client-credentials flow with scoped tokens and REST endpoints for retrieving/updating card transactions, manual expenses, receipts, and custom fields — directly matching the story. Missing for 10: independent/hands-on developer confirmation of the API working in practice and detail on token scoping granularity beyond the docs claim.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
@@ -2518,11 +2540,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Navan pricing page mentions it can 'manage expenses and issue reimbursements' and includes receipt scanning, but there is no evidence describing direct-deposit payout, a specific reimbursement timeline (days), or end-to-end tracking from submission to payout. missing for 10: direct deposit mechanism, reimbursement speed/SLA, submission-to-payout tracking/status visibility.",
+    "rationale": "Navan's pricing page mentions it can 'manage expenses and issue reimbursements' and supports receipt scanning for expense capture, implying an out-of-pocket expense workflow exists, but there is no evidence describing direct deposit specifics, reimbursement speed ('days'), or a submission-to-payout tracking view. missing for 10: direct deposit payout mechanism, reimbursement timeline/SLA details, status-tracking UI from submission to payout.",
     "evidenceIds": [
       "navan-docs-8",
-      "navan-docs-24",
-      "navan-docs-25"
+      "navan-docs-24"
     ]
   },
   {
@@ -2530,10 +2551,11 @@
     "storyId": "global-reimbursements",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows generic reimbursement management (docs-8) with no mention of local-currency payouts, multi-currency support, or eliminating a separate international payment process for reimbursing employees abroad.",
+    "confidence": "medium",
+    "rationale": "Evidence confirms Navan supports general expense management and reimbursements, but nothing describes multi-currency payout capability, local-currency disbursement, or elimination of a separate international payments process for reimbursing employees abroad.",
     "evidenceIds": [
-      "navan-docs-8"
+      "navan-docs-8",
+      "navan-docs-25"
     ]
   },
   {
@@ -2542,7 +2564,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows querying/viewing existing card status via MCP (navan-docs-7) and connecting existing cards (navan-docs-9), but nothing about issuing new physical or virtual cards, setting per-card spend limits, or speed of issuance ('minutes'). Missing for 10: any documentation of card issuance workflow, virtual card creation, spend-limit configuration, or time-to-issue claims.",
+    "rationale": "Evidence only mentions card management (viewing active/inactive cards) and connecting existing corporate cards, but nothing about issuing new physical/virtual cards with per-card spend limits in minutes. Missing for 10: card issuance workflow, spend-limit configuration, physical vs virtual card creation evidence.",
     "evidenceIds": [
       "navan-docs-7",
       "navan-docs-9"
@@ -2554,7 +2576,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers Navan's MCP/API integrations, travel booking rewards, and generic 'receipt scanning' and 'manage expenses' pricing bullets, but nothing describes mileage tracking, map-based distance calculation, or automated per-diem rate application. Missing for 10: mileage logging with GPS/map distance capture, per-diem rate lookup/auto-application, any auto-build-expense-from-mileage workflow.",
+    "rationale": "No evidence describes mileage tracking with map-based distance calculation or automated per-diem claim generation; only generic 'receipt scanning' and 'manage expenses' mentions appear, with nothing specific to mileage or per-diem automation.",
     "evidenceIds": []
   },
   {
@@ -2562,8 +2584,8 @@
     "storyId": "multi-entity-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers Navan's MCP/API for expense and travel data, card management, and pricing/rewards, but contains no mention of multi-entity or multi-currency account structures, consolidated reporting, or per-entity books — core requirements for finance-lead accounting-close workflows.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses multi-entity, multi-currency support, or consolidated/per-entity financial reporting; the pack focuses entirely on expense/travel management, MCP/API integrations, and rewards features.",
     "evidenceIds": []
   },
   {
@@ -2572,14 +2594,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Navan's API/MCP covers expense retrieval/update, transactions, custom fields, receipts, webhooks, and read-style spend/policy queries, but there is no evidence of API parity for travel booking, rewards, or other core UI workflows (e.g., booking trips, managing 'price to beat', Navan Edge concierge features) — those remain UI/chat-only per docs. missing for 10: API endpoints for travel booking/itinerary management, evidence of full UI-to-API parity beyond expense/finance domain, independent confirmation of completeness.",
+    "rationale": "Navan's developer API covers a substantial slice of the expense domain (transactions, custom fields, receipts, webhooks) and an MCP server lets AI assistants query spend/policy data, but there's no evidence of API/MCP coverage for travel booking, Navan Edge concierge actions, or rewards management — core UI capabilities that appear to remain UI-only or human-agent-mediated. missing for 10: API/MCP parity for travel booking and itinerary changes, Navan Edge concierge actions via API, rewards/loyalty management via API.",
     "evidenceIds": [
       "navan-docs-2",
       "navan-docs-4",
-      "navan-docs-23",
-      "navan-docs-10",
+      "navan-docs-21",
+      "navan-docs-22",
       "navan-docs-14",
-      "navan-probe-2"
+      "navan-docs-16"
     ]
   },
   {
@@ -2587,8 +2609,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows API/MCP access for querying and updating expense/travel data, but nothing about bulk data export in open/portable formats or any documented account-closure/data-portability process for leaving the platform. Missing for 10: bulk export functionality, open-format data dumps, documented data portability/exit process.",
+    "confidence": "low",
+    "rationale": "Evidence shows API and MCP access to query/update data, but nothing about bulk data export in open/portable formats or account-closure data portability guarantees, so the specific 'export all data and leave' story is unevidenced.",
     "evidenceIds": []
   },
   {
@@ -2597,7 +2619,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Navan is a closed-source SaaS travel/expense platform; open-sourcing its source code is not a fair expectation for this product category, and no evidence pack item discusses source licensing.",
+    "rationale": "Navan is a closed-source SaaS travel/expense platform; there is no indication its source code is open or licensed for inspection, and open-sourcing core product code is not a plausible axis for this kind of commercial SaaS product.",
     "evidenceIds": []
   },
   {
@@ -2606,7 +2628,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Navan is a SaaS travel/expense management product with no self-hosted deployment option; self-hosting the core product is a category error for this type of cloud SaaS offering.",
+    "rationale": "Navan is a SaaS travel/expense platform, not open-source or self-hostable software; self-hosting the core product is a category error for this kind of SaaS service.",
     "evidenceIds": []
   },
   {
@@ -2615,7 +2637,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack about data residency, region selection, or data storage location controls for Navan's data or its AI/MCP features; the pack only covers MCP capabilities, API endpoints, pricing features, and travel booking experience.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or data storage location controls for Navan; the pack focuses on MCP/API integration, expense/travel features, and pricing.",
     "evidenceIds": []
   },
   {
@@ -2624,7 +2646,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or data privacy policy regarding model training; all evidence covers MCP integrations, expense/travel features, and unrelated community complaints. Missing for 10: any explicit statement on AI/model training data usage, opt-out settings, or data retention/privacy commitments.",
+    "rationale": "No evidence pack item addresses AI-training data usage, opt-out controls, or any data-privacy policy regarding model training; all evidence concerns MCP/API integration, travel/expense features, and pricing.",
     "evidenceIds": []
   },
   {
@@ -2633,7 +2655,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user/admin ability to manage how long AI/assistant data is stored or how to delete it — the pack covers MCP querying, API surfaces, pricing features, and travel booking, but nothing on retention/deletion controls.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user/admin ability to configure or delete data retained by Navan or its AI features (MCP, Ava). This is a fair axis for an AI-native SaaS product, but nothing in the docs, API surface, or community sources speaks to retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -2642,7 +2664,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Navan or its AI/MCP features; all evidence covers MCP data access, expense/travel features, and pricing.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Navan or its MCP/AI integrations; all documentation covers MCP features, API endpoints, and travel/expense functionality without privacy controls.",
     "evidenceIds": []
   },
   {
@@ -2651,7 +2673,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The API docs mention retrieving/updating card transactions and MCP tools let you view card status (active/inactive, count), but there is no evidence of creating a new card, setting a spending limit, locking a card, or updating card controls programmatically via the public API — missing for 10: card creation endpoint, limit-setting endpoint, lock/freeze endpoint, control-update endpoint documentation.",
+    "rationale": "Evidence covers retrieving/updating card transactions and viewing card status (active/inactive, counts) via API/MCP, but nothing documents creating a card with a limit, locking a card, or updating card controls programmatically. missing for 10: card creation endpoint, limit-setting API, lock/unlock endpoint, control-update endpoint.",
     "evidenceIds": [
       "navan-docs-4",
       "navan-docs-7",
@@ -2664,13 +2686,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Navan's docs show spend can be queried by department, vendor/merchant, and category via MCP/API, and card transactions (including Navan-issued cards) are retrievable directly rather than waiting for statements, supporting near real-time visibility for founders. Missing for 10: explicit same-day latency claims for card feeds, a dedicated real-time dashboard description, and independent/hands-on corroboration of update speed.",
+    "rationale": "Navan's API/MCP surface explicitly supports querying real-time card transaction data broken down by department, vendor/merchant, and category, and Ava is described as slicing 'real-time spend data' for T&E insights. missing for 10: independent/hands-on corroboration of same-day transaction visibility and no explicit dashboard UI screenshots showing real-time posting.",
     "evidenceIds": [
       "navan-docs-4",
       "navan-docs-21",
-      "navan-docs-5",
-      "navan-docs-22",
-      "navan-docs-2"
+      "navan-docs-31",
+      "navan-docs-5"
     ]
   },
   {
@@ -2679,10 +2700,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs mention 'Receipt scanning for on-the-go expenses' as a pricing-page feature bullet and API docs mention a 'receipts' surface, implying photo capture and filing against transactions, but there's no detail on OCR accuracy, email-forwarding capture, or automatic matching logic. Missing for 10: technical documentation of the OCR/email-forwarding pipeline, evidence of automatic transaction matching, and independent/hands-on confirmation of accuracy.",
+    "rationale": "Docs mention 'Receipt scanning for on-the-go expenses' as a pricing feature bullet, implying photo capture and processing, but there's no detail on OCR accuracy, email-forwarding intake, or automatic matching against the right card transaction. missing for 10: technical detail on OCR/email-forward ingestion, evidence of auto-matching logic to transactions, independent/hands-on confirmation of accuracy.",
     "evidenceIds": [
       "navan-docs-24",
-      "navan-docs-2"
+      "navan-docs-8"
     ]
   },
   {
@@ -2724,7 +2745,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Navan's MCP/API integrations, travel booking, rewards, and pricing highlights, but contains no mention of virtual card creation, single-vendor card controls, or SaaS/procurement card issuance. Card-related evidence only covers connecting existing corporate cards and viewing/managing card transaction data, not creating new single-vendor virtual cards.",
+    "rationale": "The evidence pack only shows general card management (viewing active/inactive cards) and connecting existing corporate cards, with no mention of issuing new single-vendor/merchant-locked virtual cards for SaaS or procurement spend control.",
     "evidenceIds": [
       "navan-docs-7",
       "navan-docs-9",
