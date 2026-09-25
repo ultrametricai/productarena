@@ -5,13 +5,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Anrok exposes REST endpoints for customers, transactions, filings, tax IDs and address resolution, and explicitly markets 'Headless Tax' and 'AI Atlas' for agents to query tax data and act via API (anrok-docs-12,15,16,30). However there is no evidence of an MCP server/surface, no documented scoped/limited-permission API keys (only generic key generation, anrok-docs-27), and no explicit endpoint surfacing nexus status or accrued liability as first-class fields; probes for llms.txt/openapi discovery also 404 (anrok-probe-1,2), suggesting limited agent-native discoverability. missing for 10: MCP server/tool surface, scoped/restricted API credentials, explicit nexus-status/accrued-liability read endpoints, independent confirmation of agent use in production.",
+    "rationale": "Anrok exposes a REST API (customers, transactions, filings, registrations, tax IDs) and markets 'Headless Tax' explicitly for agent use, plus an AI Atlas Q&A feature that reasons over registrations, filings, and certificates — but there is no evidence of a dedicated MCP server, scoped/agent-specific credentials, or a unified read surface combining nexus status, registrations, accrued liability, and filings in one call. missing for 10: documented MCP server or agent-scoped API keys, a single 'tax posture' read endpoint, and independent confirmation that agents can act (not just query) via these surfaces.",
     "evidenceIds": [
       "anrok-docs-12",
       "anrok-docs-15",
       "anrok-docs-16",
-      "anrok-docs-27",
       "anrok-docs-30",
+      "anrok-docs-3",
+      "anrok-docs-41",
       "anrok-probe-1",
       "anrok-probe-2"
     ]
@@ -22,7 +23,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for llms.txt returned 404, and no evidence shows agent-oriented documentation or a machine-readable docs index; mentions of 'agents' refer to product features (Headless Tax, AI Atlas) rather than documentation formatted for agent consumption.",
+    "rationale": "A direct probe for llms.txt returned 404, and no other evidence indicates agent-oriented documentation exists; while there is an AI-related product page (AI Atlas) and 'hand it to your agents' marketing language, these are not the same as machine-readable docs formatted for agent consumption.",
     "evidenceIds": [
       "anrok-probe-1",
       "anrok-probe-2"
@@ -44,15 +45,17 @@
     "productId": "anrok",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Anrok's 'Headless Tax' framing ('hand it to your agents') and automatic filing/registration completion imply some background automation of tax jobs, but there's no evidence of a user-configurable automation builder or scheduler for autonomous agent workflows—these are built-in backend processes, not user-set-up automations. missing for 10: explicit UI/API for defining custom autonomous triggers, evidence of independent/hands-on confirmation that agents can run unattended jobs.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Anrok markets autonomous background processes such as automatic registration, hands-off filing/payments, and proactive threshold alerts, and its Headless Tax API explicitly says tax logic can be 'handed to your agents' — evidence of background automation beyond manual UI use ([anrok-docs-28],[anrok-docs-41],[anrok-docs-20],[anrok-docs-30]). However, there's no detail on how a user actually configures/schedules these automations, no independent/hands-on confirmation of autonomous operation, and API docs endpoints (openapi/llms.txt) return 404 in probes, limiting verification. Missing for 10: user-facing automation setup/configuration workflow, independent verification of unattended operation, working public API reference.",
     "evidenceIds": [
-      "anrok-docs-16",
-      "anrok-docs-30",
       "anrok-docs-28",
-      "anrok-docs-18",
-      "anrok-docs-20"
+      "anrok-docs-41",
+      "anrok-docs-20",
+      "anrok-docs-30",
+      "anrok-docs-16",
+      "anrok-probe-1",
+      "anrok-probe-2"
     ]
   },
   {
@@ -71,16 +74,16 @@
   {
     "productId": "anrok",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Anrok offers a full API (customer, transaction, product, filing endpoints) explicitly marketed as 'Headless Tax' — 'Run tax through Anrok's APIs, or hand it to your agents' — supporting automated, non-UI usage suitable for CI/agentic workflows. However, there's no explicit CI/CD example, SDK for scripting, or documented openapi spec (probe shows 404s on openapi.json/llms.txt), and no independent hands-on confirmation of automation reliability. missing for 10: a discoverable machine-readable OpenAPI/llms.txt spec, explicit CI/pipeline usage examples, and independent verification of headless automation in practice.",
+    "rationale": "Anrok ships a dedicated 'Headless Tax' product explicitly designed to be run via APIs or handed to agents, with a documented REST API (curl examples, bearer-token auth, rate limiting) enabling fully programmatic/CI-driven tax calculation and filing workflows. Missing for 10: explicit CI/CD pipeline examples or SDKs, and independent hands-on corroboration of headless automation in production.",
     "evidenceIds": [
       "anrok-docs-16",
       "anrok-docs-30",
-      "anrok-docs-27",
-      "anrok-probe-1",
-      "anrok-probe-2"
+      "anrok-docs-40",
+      "anrok-docs-39",
+      "anrok-docs-27"
     ]
   },
   {
@@ -89,9 +92,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anrok is a tax compliance SaaS product, not an AI agent/assistant; the story asks about the product acting as an MCP client plugging in external tool servers, which is not a fair axis for this type of product. Evidence only shows Anrok exposing its own API/agent-accessible endpoints (headless tax, AI Atlas), not consuming MCP servers.",
+    "rationale": "Anrok is a tax compliance SaaS platform, not an AI agent/assistant; the story asks whether Anrok itself can consume MCP tools as a client, which is a category error for this product type. Evidence shows Anrok exposes its own API/agent-facing 'Headless Tax' capability but nothing about it plugging into external MCP servers as a client.",
     "evidenceIds": [
-      "anrok-docs-15",
       "anrok-docs-16",
       "anrok-docs-30"
     ]
@@ -101,8 +103,8 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Anrok offers a REST API and mentions 'hand it to your agents' but there is no evidence of an official MCP server for agent connectivity; probes for standard MCP/llms.txt/openapi discovery endpoints returned 404s.",
+    "confidence": "medium",
+    "rationale": "Anrok is a SaaS tax-compliance platform, so an official MCP server is a plausible axis, but the evidence pack only shows REST/OpenAPI-style APIs and mentions of 'agents' consuming Anrok's tax engine (anrok-docs-16, anrok-docs-30) without any documented MCP server, protocol, or endpoint. Probes for llms.txt and openapi.json also 404, further indicating no discoverable agent-native interface.",
     "evidenceIds": [
       "anrok-docs-16",
       "anrok-docs-30",
@@ -116,13 +118,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Anrok's AI Atlas product lets users 'ask it anything about your sales tax and get an answer with the reasoning shown' (natural-language Q&A), and Headless Tax messaging references handing tax jobs 'to your agents,' suggesting some agentic/NL surface. However, there's no detailed documentation of a natural-language command interface for actually performing actions (filing, registration, transaction management), and the openapi/llms.txt probes show no machine-readable spec for agent integration. Missing for 10: concrete documentation of NL command execution (not just querying), evidence of agent/API action orchestration via natural language, independent corroboration.",
+    "rationale": "Anrok's AI-Atlas product explicitly lets users 'ask it anything about your sales tax and get an answer with reasoning shown,' which is a natural-language interface, and Headless Tax mentions handing tax jobs 'to your agents.' However, these are marketing blurbs with no documented command syntax, examples of NL commands, or evidence of a chat/agent interface actually executing operations. missing for 10: hands-on examples of NL commands driving actions, documentation of the AI-Atlas interface/API, independent corroboration of agentic operation beyond a product page.",
     "evidenceIds": [
       "anrok-docs-15",
       "anrok-docs-16",
-      "anrok-docs-30",
-      "anrok-probe-1",
-      "anrok-probe-2"
+      "anrok-docs-30"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official CLI tool anywhere in the pack; Anrok offers only a REST API and dashboard, and probes for llms.txt/openapi discovery return 404s. This axis applies to a tax API platform, but no CLI is documented.",
+    "rationale": "Anrok's evidence pack describes a REST API and dashboard, plus an 'AI Atlas' Q&A feature and 'Headless Tax' for agent access, but there is no mention of an official CLI tool for AI-native workflows. Probes for common CLI/tooling discovery files (llms.txt, openapi.json) returned 404s, further indicating no CLI is documented.",
     "evidenceIds": [
       "anrok-probe-1",
       "anrok-probe-2"
@@ -143,16 +143,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Anrok publishes a comprehensive public API (apidocs.anrok.com) with an OpenAPI spec (openapi.yaml) covering customers, certificates, transactions, tax calculation, filings, product mappings, and address resolution, plus a getting-started tutorial with API keys. It explicitly markets 'Headless Tax' as API-driven and agent-friendly ('Run tax through Anrok's APIs, or hand it to your agents'). Missing for 10: independent/third-party corroboration of real-world API integration, and a machine-discoverable spec (llms.txt and openapi.json probes both 404, though the yaml variant is documented as valid).",
+    "rationale": "Anrok publishes an extensive documented public REST API (apidocs.anrok.com) with endpoints for customers, transactions, certificates, filings, products, address resolution, tax IDs, ephemeral tax previews, rate limiting, and auth via API keys, plus curl examples and an openapi.yaml spec, and explicitly markets 'Run tax through Anrok's APIs' for agentic use. Missing for 10: independent third-party corroboration of API robustness/usage beyond vendor docs, and the probes show llms.txt/openapi.json endpoints returning 404 at expected canonical locations, suggesting some machine-readability gaps.",
     "evidenceIds": [
       "anrok-docs-2",
       "anrok-docs-3",
       "anrok-docs-4",
-      "anrok-docs-5",
-      "anrok-docs-10",
-      "anrok-docs-11",
-      "anrok-docs-13",
-      "anrok-docs-27",
+      "anrok-docs-33",
+      "anrok-docs-36",
+      "anrok-docs-39",
+      "anrok-docs-40",
+      "anrok-docs-16",
       "anrok-docs-30",
       "anrok-probe-1",
       "anrok-probe-2"
@@ -163,9 +163,10 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of scoped or least-privilege API key/credential issuance for agents; docs mention generating an API key generically but nothing about scoping permissions or agent-specific credentials.",
+    "confidence": "medium",
+    "rationale": "Evidence shows only a single bearer API key model (anrok_api_key) with no mention of scoped, least-privilege, or agent-specific credential issuance; no OAuth scopes, role-based keys, or per-agent token controls are documented.",
     "evidenceIds": [
+      "anrok-docs-40",
       "anrok-docs-27"
     ]
   },
@@ -175,11 +176,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Anrok has a REST API with OpenAPI spec and detailed endpoint docs, but nothing indicates official client SDKs (e.g., Python, Node, Java libraries) exist — only raw API/OpenAPI references are cited, and probes for openapi.json/llms.txt returned 404s.",
+    "rationale": "Evidence documents Anrok's REST API, OpenAPI spec, and curl-based integration examples, but nowhere mentions an official client SDK (e.g., Python, Node, Java libraries) that AI-native developers could build against — only raw HTTP endpoints and API keys. Probes even show openapi.json/swagger.json endpoints returning 404, further indicating no packaged SDK tooling is surfaced.",
     "evidenceIds": [
-      "anrok-docs-4",
-      "anrok-docs-10",
-      "anrok-docs-11",
+      "anrok-docs-33",
+      "anrok-docs-40",
       "anrok-probe-1",
       "anrok-probe-2"
     ]
@@ -189,8 +189,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a webhook subscription mechanism for Anrok events; the API docs cover customers, transactions, filings, tax calc, but nothing about outbound event notifications or webhooks.",
+    "confidence": "medium",
+    "rationale": "No evidence of any webhook or event-subscription mechanism in Anrok's API docs; the API is described purely in request/response terms (customers, transactions, filings) with no mention of push notifications or webhook subscriptions.",
     "evidenceIds": []
   },
   {
@@ -209,13 +209,14 @@
   {
     "productId": "anrok",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence shows a standard API reference (apidocs.anrok.com, openapi.yaml) describing endpoints, but nothing indicates an interactive console or runnable code examples; probes for openapi.json/llms.txt at expected interactive-doc endpoints returned 404, suggesting no such tooling.",
+    "rationale": "Anrok publishes detailed API docs (apidocs.anrok.com) with an OpenAPI spec, endpoint descriptions, and sample curl requests (e.g., anrok-docs-40), showing a real reference exists. However, there is no evidence of an interactive, runnable 'try it now' console or sandbox environment — probes for standard OpenAPI/llms.txt discovery endpoints returned 404s, and nothing in the pack describes live code execution within the docs. Missing for 10: evidence of an in-browser interactive API console/sandbox, confirmation of llms.txt/OpenAPI discoverability, and any AI-native tooling (e.g., copy-as-curl, live request builder) beyond static text examples.",
     "evidenceIds": [
-      "anrok-docs-2",
-      "anrok-docs-4",
+      "anrok-docs-40",
+      "anrok-docs-27",
+      "anrok-docs-33",
       "anrok-probe-1",
       "anrok-probe-2"
     ]
@@ -224,9 +225,9 @@
     "productId": "anrok",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Multiple documentation citations point directly to a machine-readable OpenAPI YAML spec at https://apidocs.anrok.com/openapi.yaml, which underlies the developer docs (customer, product, tax ID, filing endpoints etc.), indicating a downloadable OpenAPI spec exists. Missing for 10: independent probe confirmation that the .yaml file resolves (only .json/.well-known variants were tested and 404'd), and no explicit 'download spec' UI mention.",
+    "rationale": "Anrok's documentation itself is sourced from a machine-readable OpenAPI spec file (openapi.yaml), directly cited across many doc entries (e.g. anrok-docs-4, -10, -11, -12, -13, -25, -26, -33, -34, -37, -38), indicating a downloadable, machine-readable API spec exists at apidocs.anrok.com/openapi.yaml. Missing for 10: explicit first-party 'download the spec' instructions/page, independent confirmation the file is publicly fetchable (probes only tested .json variants, not .yaml itself), and no llms.txt equivalent (404 confirmed).",
     "evidenceIds": [
       "anrok-docs-4",
       "anrok-docs-10",
@@ -235,6 +236,10 @@
       "anrok-docs-13",
       "anrok-docs-25",
       "anrok-docs-26",
+      "anrok-docs-33",
+      "anrok-docs-34",
+      "anrok-docs-37",
+      "anrok-docs-38",
       "anrok-probe-2"
     ]
   },
@@ -244,7 +249,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a sandbox/test environment distinct from production; docs mention ephemeral tax estimate endpoint but nothing about a full sandbox for testing without touching production data. missing for 10: sandbox environment docs, test/live mode separation, test API keys.",
+    "rationale": "The evidence pack has no mention of a sandbox, test mode, or staging environment for isolating test transactions from production tax/filing data; the createEphemeral endpoint is for tax previews, not a sandbox account. This is a fair axis for a tax API product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -253,7 +258,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a general API and OpenAPI spec reference, but there is no mention of API versioning scheme or a documented deprecation policy anywhere in the docs; probes for openapi.json and llms.txt returned 404s, further indicating no discoverable versioning/deprecation documentation.",
+    "rationale": "The evidence pack details Anrok's API endpoints (transactions, customers, certificates, filings) but contains no mention of API versioning scheme or a documented deprecation policy; probes for openapi.json and llms.txt both returned 404, suggesting no machine-readable spec is exposed either.",
     "evidenceIds": [
       "anrok-probe-1",
       "anrok-probe-2"
@@ -265,27 +270,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's docs and pricing page claim 'Filing and payments, done for you' along with registration threshold tracking, exposure dashboards, and automatic registration completion in multiple jurisdictions, which supports automated filing and remittance. However, there is no explicit mention of a late-filing penalty guarantee, SLA, or on-time filing commitment anywhere in the evidence pack, and no independent/hands-on corroboration of filing accuracy or timeliness. Missing for 10: explicit guarantee/SLA language covering penalties for late filing, independent verification of filing reliability, and detail on remittance mechanics beyond marketing copy.",
+    "rationale": "Anrok's docs and marketing pages claim end-to-end automated filing and remittance ('Filing and payments, done for you', 'Registration handled in every jurisdiction') and expose a filings API endpoint, showing the core filing-remittance automation is delivered. However, no evidence in the pack mentions a specific vendor guarantee covering penalties for late filings, nor independent confirmation of on-time performance. Missing for 10: explicit penalty/late-filing guarantee language, and third-party/hands-on verification of filing accuracy or timeliness.",
     "evidenceIds": [
       "anrok-docs-28",
-      "anrok-docs-17",
-      "anrok-docs-18",
-      "anrok-docs-20",
-      "anrok-docs-29",
-      "anrok-docs-12"
+      "anrok-docs-41",
+      "anrok-docs-12",
+      "anrok-docs-18"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Anrok's API supports listing customers and creating many-to-1 product mappings across a catalog, which implies some bulk-style operations, but there is no explicit documentation of batch create/update/delete endpoints or bulk transaction processing across many items at once. missing for 10: dedicated bulk/batch API endpoints, evidence of bulk certificate or transaction processing, and independent confirmation of scale handling.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Anrok's API docs describe per-item endpoints (createOrUpdate, void, createNegation, createEphemeral) and list/retrieve endpoints, plus rate-limiting (429) responses, but no batch/bulk endpoint or documented mechanism for processing many transactions or customers in a single call is evidenced.",
     "evidenceIds": [
+      "anrok-docs-33",
+      "anrok-docs-39",
       "anrok-docs-3",
-      "anrok-docs-13",
-      "anrok-docs-14"
+      "anrok-docs-13"
     ]
   },
   {
@@ -294,13 +298,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Anrok's evidence shows built-in automations (nexus tracking, early alerts, automatic registration, filing) and API endpoints for tax calculation, but nothing describing a user-configurable rules/trigger engine where AI-native users can define custom event-based automations. The headless tax API and AI Atlas Q&A tool are for querying/calling tax logic, not for authoring 'if event then action' rules.",
+    "rationale": "Anrok's evidence shows built-in automated processes (nexus threshold tracking, early alerts, automatic registration, filing) but no capability for users to define custom rules or triggers that fire actions on arbitrary events. There is no mention of a rules engine, webhooks, or event-trigger-action configuration anywhere in the docs or product pages.",
     "evidenceIds": [
-      "anrok-docs-16",
-      "anrok-docs-18",
       "anrok-docs-20",
-      "anrok-docs-28",
-      "anrok-docs-29"
+      "anrok-docs-29",
+      "anrok-docs-41",
+      "anrok-docs-18"
     ]
   },
   {
@@ -308,8 +311,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Anrok is a tax compliance/API platform; no evidence describes any scheduling of recurring jobs or workflows (cron-like automation, scheduled syncs, recurring filings automation via API). Filings, registrations, and calculations are described as on-demand API calls or automatic processes, not user-schedulable recurring jobs.",
+    "confidence": "low",
+    "rationale": "Anrok is a tax calculation/compliance API/platform; there is no evidence of scheduling recurring jobs or workflows (e.g., cron-like automation, recurring task scheduler) for AI-native users. Filing automation and API access are mentioned, but nothing about user-defined scheduled/recurring workflow execution.",
     "evidenceIds": []
   },
   {
@@ -318,23 +321,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anrok is a sales tax calculation/compliance platform, not an automation/workflow builder; there is no concept of 'automations' with version history, review, or rollback in its product surface. This story applies to workflow-automation tools, not a tax engine API/product.",
+    "rationale": "Anrok is a sales tax calculation/compliance platform, not an automation-authoring or agentic workflow tool; there is no concept of versioning, reviewing, or rolling back 'automations' in its product surface—this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "anrok",
     "storyId": "billing-stack-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok documents a Shopify integration (verifying Shopify's own tax calc) and a general API for transactions, customers, and product mappings, but the mapping endpoint (many-to-1 product mapping) and createOrUpdate/negation flows show developers still must build the plumbing to sync billing-system data rather than plugging into a pre-built connector library covering multiple billing/payment/commerce platforms. Missing for 10: a documented catalog of maintained native integrations (e.g., Stripe, Chargebee, Recurly, other commerce platforms) beyond Shopify, and evidence that these connectors sync automatically without developer-built API glue.",
+    "rationale": "Anrok documents a maintained Stripe integration for subscription/checkout billing and Shopify tax recalculation, plus general 'billing system' transaction sync via API — but beyond these two named platforms, there's no confirmed roster of maintained connectors for other major billing/payment/commerce platforms (e.g., Chargebee, NetSuite, QuickBooks) that HN community commentary flags as necessary for enterprise SaaS. Missing for 10: documented pre-built integrations for non-Stripe/Shopify billing systems, payment processors beyond Stripe, and independent confirmation these integrations require no custom plumbing.",
     "evidenceIds": [
       "anrok-docs-19",
-      "anrok-docs-13",
-      "anrok-docs-6",
-      "anrok-docs-8",
-      "anrok-docs-9",
-      "anrok-docs-16"
+      "anrok-docs-34",
+      "anrok-docs-33",
+      "anrok-comm-1"
     ]
   },
   {
@@ -343,7 +344,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any accuracy guarantee, warranty, indemnification, or audit-support commitment from Anrok; documentation focuses on API functionality, product features, and pricing, with nothing addressing liability or backing of calculation accuracy in the event of an error.",
+    "rationale": "No evidence of any accuracy guarantee, indemnification, warranty, or audit-support commitment for calculation errors; documentation covers API mechanics, filings, and product features only.",
     "evidenceIds": []
   },
   {
@@ -352,14 +353,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Anrok's API returns the tax amount, valid tax ID lists per jurisdiction, and normalized addresses (anrok-docs-10, anrok-docs-11, anrok-docs-25), and it tracks registrations/thresholds across jurisdictions (anrok-docs-17, anrok-docs-18), which are the raw inputs needed for compliant invoices. However, there is no direct evidence that Anrok itself generates invoices with locale-specific required fields (e.g., seller VAT/registration number placement, invoice numbering rules, language/format requirements) or that it pushes a full compliant invoice template to the billing system — it appears to supply tax data for the billing system to render into invoices rather than producing compliant invoices itself. Missing for 10: explicit documentation of invoice field templates/locale formatting rules, confirmation that registration numbers are auto-populated on generated invoices, and independent/hands-on validation of invoice compliance across jurisdictions.",
+    "rationale": "Anrok's API calculates tax per jurisdiction, resolves addresses to taxable jurisdictions, returns valid customer tax IDs to collect, and manages registrations across jurisdictions, all of which can feed compliant invoice data into a billing system (anrok-docs-10,11,25,38,41). However there is no evidence of Anrok itself generating an invoice with required locale-specific fields (seller VAT/registration number formatting, invoice numbering rules, etc.) or explicit documentation of invoice-field mapping beyond tax amount and tax-ID data. Missing for 10: explicit invoice template/field generation, documented locale-specific invoice compliance rules, and confirmation that seller registration numbers are pushed onto the invoice itself.",
     "evidenceIds": [
       "anrok-docs-10",
       "anrok-docs-11",
-      "anrok-docs-17",
-      "anrok-docs-18",
       "anrok-docs-25",
-      "anrok-docs-26"
+      "anrok-docs-38",
+      "anrok-docs-41",
+      "anrok-docs-17"
     ]
   },
   {
@@ -381,7 +382,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Anrok documents certificate upload via UI and API and pre-creating customers so certificates are searchable before billing, plus a marketing line 'Certificates collected, verified, and stored.' However there is no evidence of expiry tracking or of certificates being automatically applied at calculation time (the calc/transaction endpoints described don't mention certificate-based exemption logic). Missing for 10: expiry/renewal tracking, explicit automatic exemption application in the calculation API, and customer-facing self-serve collection workflow.",
+    "rationale": "Anrok documents certificate upload via UI/API and searchable customer records (anrok-docs-1, anrok-docs-4, anrok-docs-22) plus a marketing claim that certificates are 'collected, verified, and stored' (anrok-docs-21), showing collection and storage support. However there is no evidence of expiry tracking or of certificates being automatically applied to exempt transactions at tax-calculation time. Missing for 10: expiry/renewal tracking, explicit linkage of stored certificates to automatic exemption application during calculateTax/createEphemeral calls, and any customer-facing collection workflow (e.g., self-serve upload portal).",
     "evidenceIds": [
       "anrok-docs-1",
       "anrok-docs-4",
@@ -395,27 +396,29 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Anrok has a filings API endpoint to fetch filings and marketing claims of dashboards showing tax obligations and 'filing and payments, done for you,' suggesting some filing visibility exists, but there is no evidence of a calendar view of upcoming returns, explicit per-filing status tracking, remitted amounts, or downloadable confirmations for submitted returns. missing for 10: calendar of upcoming returns, explicit per-filing status labels, remitted amount tracking, downloadable filing confirmations.",
+    "rationale": "There's evidence of a filings-fetch API endpoint and marketing claims like 'Filing and payments, done for you' and a dashboard with exposure maps, suggesting some filing visibility exists, but no concrete evidence of a calendar of upcoming returns, per-filing status views, remitted amounts, or downloadable confirmations for each return. Missing for 10: calendar UI for upcoming filing due dates, per-filing status detail, remittance amount tracking, downloadable filing confirmations/receipts.",
     "evidenceIds": [
       "anrok-docs-12",
       "anrok-docs-28",
-      "anrok-docs-18",
-      "anrok-docs-17"
+      "anrok-docs-17",
+      "anrok-docs-41"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "global-vat-gst",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Evidence shows Anrok tracks foreign registration thresholds and obligations across multiple countries (world exposure map, UK registration threshold tracker, tax obligations in 13 countries, automatic registration in 13 jurisdictions) and supports filings/payments generally. However, there is no explicit mention of EU OSS/IOSS mechanisms, VAT/GST-specific handling, or explicit coverage of Canada/Australia GST beyond generic 'beyond' claims — the evidence is US-sales-tax-centric with only vague international dashboard mentions. Missing for 10: explicit OSS/IOSS scheme support, named VAT/GST jurisdictions (EU, UK, Canada, Australia) with filing mechanics, and independent corroboration of international filing accuracy.",
+    "rationale": "Anrok explicitly markets global coverage — dashboard showing tax obligations across 13 countries with UK registration threshold tracking, automatic registration completion in 13 jurisdictions, worldwide exposure map, and pricing page listing 'Registration handled in every jurisdiction,' 'Filing and payments, done for you,' and 'Physical nexus tracking,' plus certificate/exemption handling that applies across regimes. Missing for 10: explicit named confirmation of EU OSS/IOSS or Canada/Australia GST mechanics, and independent (non-vendor) corroboration of filing accuracy in non-US jurisdictions.",
     "evidenceIds": [
       "anrok-docs-17",
       "anrok-docs-18",
-      "anrok-docs-28",
       "anrok-docs-20",
-      "anrok-docs-29"
+      "anrok-docs-28",
+      "anrok-docs-29",
+      "anrok-docs-41",
+      "anrok-docs-21"
     ]
   },
   {
@@ -424,12 +427,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows forward-looking nexus/exposure monitoring (world exposure map, registration threshold tracking, early alerts) but nothing about importing historical transactions to produce a backdated exposure analysis with estimated liability, penalties, and interest per jurisdiction. Missing for 10: historical transaction import capability, backdated liability calculation, penalty/interest estimation per jurisdiction.",
-    "evidenceIds": [
-      "anrok-docs-17",
-      "anrok-docs-20",
-      "anrok-docs-29"
-    ]
+    "rationale": "Evidence shows Anrok's nexus monitoring covers forward-looking tracking (exposure map, early alerts, registration thresholds) and real-time/ongoing transaction tax calculation via API, but nothing describes importing historical transactions to retroactively compute backdated exposure with estimated liability, penalties, and interest per jurisdiction.",
+    "evidenceIds": []
   },
   {
     "productId": "anrok",
@@ -437,13 +436,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's dashboard shows a world exposure map and jurisdiction-level tax obligations, filings can be fetched via API, and the product emphasizes filing-ready detail and done-for-you filings, supporting jurisdiction-level liability visibility. However, evidence does not explicitly confirm a real-time 'collected vs owed' accrued liability view or detail GL/accountant-consumable export formats. missing for 10: explicit accrued liability (collected vs owed) reporting view, documented GL/accountant export formats (e.g., CSV/QBO/NetSuite journal entries), and independent confirmation of real-time accuracy.",
+    "rationale": "Anrok's dashboard shows exposure/obligations by jurisdiction, filings can be fetched via API, and certificates/registrations are tracked, supporting jurisdiction-level liability visibility and filing-ready detail. However, there is no explicit evidence of a real-time 'collected vs owed' accrual view, nor documented GL/accountant-consumable export formats. missing for 10: explicit collected-vs-owed accrual reporting, documented GL/accounting export formats (e.g., CSV/QuickBooks/NetSuite journal exports), and independent confirmation of finance-lead usability.",
     "evidenceIds": [
+      "anrok-docs-12",
       "anrok-docs-17",
       "anrok-docs-18",
-      "anrok-docs-12",
+      "anrok-docs-21",
       "anrok-docs-28",
-      "anrok-docs-20"
+      "anrok-docs-41"
     ]
   },
   {
@@ -452,7 +452,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes marketplace-facilitator handling, marketplace nexus tracking, or preventing double-remittance for facilitator-collected tax; docs cover transaction creation, void/refund, certificates, filings, and product taxability but not marketplace-facilitator-specific logic. Missing for 10: any documentation of marketplace facilitator tax collection detection, exclusion from remittance, or nexus attribution for facilitator-collected sales.",
+    "rationale": "No evidence pack item addresses marketplace/facilitator-collected tax (e.g., Amazon, app stores) or nexus tracking for facilitator-remitted transactions to avoid double-remittance; docs cover general transaction sync, void/refund, physical nexus, and Shopify tax verification but never marketplace facilitator handling.",
     "evidenceIds": []
   },
   {
@@ -461,12 +461,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's marketing explicitly promises exposure monitoring (world exposure map, UK registration threshold tracker, 'Early alerts before you owe anywhere', physical nexus tracking), matching the founder story's core ask. However, evidence lacks detail on how thresholds are tracked per state/country, transaction-count vs revenue thresholds, or the alerting mechanism/timing, and there's no independent/hands-on corroboration of alert accuracy or timeliness. Missing for 10: detailed docs on threshold-by-jurisdiction logic and transaction-count tracking, evidence of alert delivery mechanism (email/dashboard/API), and third-party confirmation that alerts fire before crossing thresholds.",
+    "rationale": "Anrok's marketing pages explicitly reference exposure tracking and pre-emptive alerts ('Early alerts before you owe anywhere', 'Physical nexus tracking', a world exposure map with jurisdiction sales data and a UK registration threshold tracker), directly supporting the founder story of proactive nexus monitoring. However, there is no detailed documentation on how thresholds are calculated per state/country, transaction-count tracking specifics, or alert timing/mechanics, and no independent/hands-on corroboration of alert accuracy or timeliness. missing for 10: detailed docs on per-jurisdiction threshold methodology, transaction-count vs revenue tracking specifics, alert delivery/timing mechanics, and independent verification of alerting before crossing thresholds.",
     "evidenceIds": [
       "anrok-docs-17",
       "anrok-docs-20",
-      "anrok-docs-29",
-      "anrok-docs-18"
+      "anrok-docs-29"
     ]
   },
   {
@@ -475,14 +474,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's API clearly supports transaction ingestion (createOrUpdate, void, refund/negation endpoints) and product mapping across billing systems (anrok-docs-6,7,8,9,13), and it explicitly recalculates/verifies Shopify tax data (anrok-docs-19), showing at least one storefront connector beyond the core API. However, evidence does not show a broader library of connectors to other processors/storefronts (e.g., Stripe, other marketplaces) or explicit historical-data backfill tooling. missing for 10: documented connectors to multiple processors/storefronts beyond Shopify, explicit bulk/historical backfill API or import tool, independent confirmation of multi-source coverage.",
+    "rationale": "Anrok's Transactions API (createOrUpdate, createEphemeral, void, createNegation) lets any billing system or storefront sync/backfill transactions via API, and docs explicitly mention native Stripe and Shopify integrations feeding the same tax engine so filings aren't siloed. However, evidence only names two connectors (Stripe, Shopify) and a community comment flags that broader connector coverage (QuickBooks, NetSuite, Chargebee, Salesforce) is needed for multi-processor businesses without confirming Anrok ships those. Missing for 10: documented connectors beyond Stripe/Shopify, explicit historical/bulk backfill tooling, and independent confirmation that filings aggregate correctly across mixed channels.",
     "evidenceIds": [
-      "anrok-docs-6",
-      "anrok-docs-7",
-      "anrok-docs-8",
-      "anrok-docs-9",
-      "anrok-docs-13",
-      "anrok-docs-19"
+      "anrok-docs-33",
+      "anrok-docs-34",
+      "anrok-docs-19",
+      "anrok-docs-40",
+      "anrok-comm-1"
     ]
   },
   {
@@ -491,14 +489,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's API covers core tax workflows (customers, certificates, tax calculation, filings, transactions, product mapping) and is positioned as 'headless tax' powering the same engine as the UI, suggesting broad parity. However, some UI-highlighted features (registration threshold tracking, world exposure dashboard, automatic filing/payment execution) are only described as UI/dashboard features without explicit corresponding API endpoints in the evidence, and openapi.json/llms.txt probes 404, weakening confidence in full machine-readable API completeness. missing for 10: explicit API endpoints for registration automation and filing/payment execution, working openapi.json/llms.txt spec discoverable, independent confirmation of full UI/API parity.",
+    "rationale": "Anrok exposes a broad, well-documented API surface (customers, transactions, certificates, tax IDs, address resolution, filings, product mappings) that covers most core tax-calculation and compliance workflows, and explicitly markets 'Headless Tax' as a way to run everything through APIs instead of the UI. However, some UI-highlighted features (e.g. dashboard exposure map, registration threshold tracker, automatic registration completion, filing/payment workflows) are not clearly confirmed as API-accessible, and no independent verification (e.g. discoverable OpenAPI spec) was found—probe attempts for openapi.json and llms.txt returned 404s. Missing for 10: confirmed API parity for registration/filing/dashboard analytics features, and independent corroboration beyond vendor docs.",
     "evidenceIds": [
       "anrok-docs-16",
       "anrok-docs-30",
-      "anrok-docs-17",
-      "anrok-docs-18",
-      "anrok-docs-28",
-      "anrok-docs-29",
+      "anrok-docs-33",
+      "anrok-docs-4",
+      "anrok-docs-12",
+      "anrok-docs-37",
       "anrok-probe-1",
       "anrok-probe-2"
     ]
@@ -508,8 +506,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a bulk data export feature or open-format export/leave capability; API docs cover retrieving individual customers/transactions via GET endpoints but nothing about full data export or data portability for leaving the platform. Probes for llms.txt and openapi.json also returned 404s.",
+    "confidence": "medium",
+    "rationale": "There is no evidence of a data export feature in open formats or any account portability/data-deletion capability; the API is designed for tax calculation and filing workflows, not bulk data export for leaving the platform, and probes for llms.txt/openapi specs even 404.",
     "evidenceIds": [
       "anrok-probe-1",
       "anrok-probe-2"
@@ -530,7 +528,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anrok is a SaaS tax compliance platform delivered as a hosted API/product, not open-source infrastructure; self-hosting is a category error for this kind of product.",
+    "rationale": "Anrok is a cloud-hosted SaaS tax compliance platform (API + dashboard); self-hosting the core product is not an offering type this category ships, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -539,7 +537,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional data storage options, or compliance certifications addressing data location for Anrok; this is a sales tax automation product and the pack contains nothing about where customer data is stored or region selection.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data location controls for Anrok; the evidence is entirely about tax calculation, filing, and API functionality.",
     "evidenceIds": []
   },
   {
@@ -556,8 +554,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence pack covers Anrok's tax API, product catalog, filings, and AI Atlas features, but there is no mention of data retention controls, deletion policies, or privacy/data-lifecycle management for AI-native or any users.",
+    "confidence": "low",
+    "rationale": "The evidence pack is entirely about tax calculation, filing, registration, and API integration; there is no mention of data retention policies, deletion controls, or privacy/data lifecycle management for AI-native users. This is an applicable axis (a SaaS platform could document retention/deletion controls) but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -575,54 +573,58 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm each product gets an external ID and a product tax category (PTC) that determines taxability by jurisdiction, and that sellers only need one product ID per unique tax category rather than mapping every SKU, with many-to-1 mapping endpoints to associate billing-system products to Anrok product categories. However, the evidence never enumerates or names the actual taxonomy of categories (SaaS, digital goods, services, physical products) or shows a UI/workflow for developers to browse and assign categories. Missing for 10: an explicit list/definition of the standard tax category taxonomy, developer-facing documentation showing the category selection UI or catalog mapping workflow end-to-end, and independent confirmation that jurisdiction-specific taxability rules are automatically applied per category.",
+    "rationale": "Docs confirm each product is assigned a Product Tax Category (PTC) that determines taxability per jurisdiction, and that sellers only need to create IDs per unique tax category, with many-to-1 mapping support to map catalog SKUs to Anrok product IDs. However, the evidence never enumerates the specific standard categories (SaaS, digital goods, services, physical products) or shows a UI/API workflow for selecting among them, so the exact mapping experience described in the story is not fully evidenced. Missing for 10: explicit list/taxonomy of vendor tax categories, documentation of how a developer selects/assigns a category per product, and independent/hands-on confirmation of category coverage across jurisdictions.",
     "evidenceIds": [
-      "anrok-docs-13",
-      "anrok-docs-14",
       "anrok-docs-26",
-      "anrok-docs-27"
+      "anrok-docs-14",
+      "anrok-docs-13",
+      "anrok-docs-37"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "rate-rule-currency",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Anrok's docs describe it as a single hosted tax engine reachable via API/agents (anrok-docs-16, anrok-docs-30), which implies rate/rule logic lives server-side rather than in the customer's code, but the evidence pack never explicitly states that jurisdiction rate/rule changes are pushed automatically, when they take effect, or that no redeploy is ever required. Missing for 10: an explicit changelog or rate-update documentation, an SLA/guarantee of automatic rule updates, and confirmation that no client-side redeploy is ever needed for rate changes.",
+    "rationale": "Anrok's positioning as a managed tax engine (product tax categories, jurisdiction-aware calculation, automatic registration/filing) implies rates/rules are maintained centrally without customer redeployment, and pricing page mentions 'early alerts before you owe anywhere' and 'registration handled in every jurisdiction,' but there is no explicit documentation about how often rate/rule updates occur, whether they are versioned/changelogged, or any guarantee that changes never require re-integration. Missing for 10: a changelog or release notes for rate/rule updates, explicit statement of update cadence, and confirmation that API contracts/behavior remain stable across jurisdiction rule changes.",
     "evidenceIds": [
-      "anrok-docs-16",
-      "anrok-docs-30",
-      "anrok-docs-19"
+      "anrok-docs-14",
+      "anrok-docs-26",
+      "anrok-docs-20",
+      "anrok-docs-41",
+      "anrok-docs-17"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "realtime-tax-calculation",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's API docs describe a createEphemeral endpoint explicitly built to estimate tax at checkout in real time, plus a dedicated Address Resolution endpoint that normalizes addresses to determine taxable jurisdictions (rooftop-level, not ZIP-based) for accurate calculation. Missing for 10: explicit latency/performance benchmarks proving checkout-speed response times, and independent/hands-on verification of address-level accuracy claims.",
+    "rationale": "Anrok's API supports real-time tax calculation via createEphemeral for checkout previews and address resolution/normalization for rooftop-level accuracy, with rate-limit docs suggesting production readiness. missing for 10: explicit performance/latency benchmarks proving speed suitable for checkout, independent verification of rooftop-level (vs jurisdiction-level) address accuracy, and third-party/hands-on confirmation of real-time API behavior beyond vendor docs.",
     "evidenceIds": [
       "anrok-docs-5",
-      "anrok-docs-23",
       "anrok-docs-11",
-      "anrok-docs-6"
+      "anrok-docs-23",
+      "anrok-docs-36",
+      "anrok-docs-38",
+      "anrok-docs-39"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "refund-adjustment-handling",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's docs explicitly describe handling refunds and credit notes via negative transactions (createOrUpdate for full refunds, createNegation + createOrUpdate for partial refunds), voiding transactions to remove them from a tax return, and each transaction is tied to the appropriate filing/tax return automatically, avoiding manual journal fixes. This covers the liability, reporting, and filing flow-through described in the story. Missing for 10: independent/hands-on confirmation that these adjustments reconcile correctly in reporting dashboards and actual filed returns, beyond first-party docs.",
+    "rationale": "Docs clearly cover negative/refund flows (createOrUpdate for negative transactions, createNegation for full negation, and re-creating partial refunds) and state these tie into 'the appropriate tax return', implying liability/filing flow-through without manual journal entries. However, there is no explicit evidence of end-to-end reporting/dashboard reconciliation of negative amounts or independent confirmation that filings reflect refunds automatically without manual fixes. Missing for 10: explicit reporting/dashboard evidence showing negative amounts reflected in liability reports, independent/hands-on confirmation of refund-to-filing flow, and detail on multi-period refund adjustments.",
     "evidenceIds": [
-      "anrok-docs-6",
-      "anrok-docs-7",
       "anrok-docs-8",
       "anrok-docs-9",
-      "anrok-docs-24"
+      "anrok-docs-6",
+      "anrok-docs-24",
+      "anrok-docs-35"
     ]
   },
   {
@@ -631,12 +633,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anrok's product tax category (PTC) system explicitly ties taxability determinations to jurisdiction rules (anrok-docs-26, anrok-docs-14), and AI Atlas lets users ask about sales tax and see the reasoning grounded in their own transactions/registrations/filings/certificates (anrok-docs-15), which directly supports the 'research visible' requirement. However, the evidence pack lacks concrete examples of state-by-state SaaS taxability differences or bundled-offering-specific handling, and there's no independent/hands-on validation that Anrok correctly resolves the hardest edge cases — the HN comment focuses on multi-platform integration, not taxability accuracy. Missing for 10: explicit bundled-offering taxability logic, documented state-by-state SaaS divergence examples, and independent verification of correctness on hard cases.",
+    "rationale": "Anrok's product tax category (PTC) system determines taxability per jurisdiction for each product (docs-14, docs-26), and the AI Atlas feature explicitly surfaces reasoning grounded in the seller's own tax data (docs-15), matching the 'research visible' ask. However, there is no explicit documentation addressing bundled-offering taxability specifically, and no independent/hands-on evidence validating accuracy on genuinely hard SaaS-by-state or digital-goods edge cases. Missing for 10: bundled-offering taxability handling documentation, independent verification of correctness on hard cases, and richer per-determination research artifacts beyond the AI Atlas chat description.",
     "evidenceIds": [
-      "anrok-docs-15",
-      "anrok-docs-26",
       "anrok-docs-14",
-      "anrok-comm-1"
+      "anrok-docs-26",
+      "anrok-docs-15"
     ]
   },
   {
@@ -645,11 +646,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Marketing pages mention 'automatic registration completion in 13 jurisdictions' and a UK registration threshold tracker, implying Anrok handles state/local registrations on the customer's behalf, but there's no documentation of per-registration pricing transparency or a dedicated status-tracking UI for registrations. missing for 10: explicit per-registration pricing details, a documented registration status/tracking workflow, and independent confirmation the vendor actually files registrations rather than just alerting/tracking thresholds.",
+    "rationale": "Anrok's pricing page claims 'Registration handled in every jurisdiction' and 'Filing and payments, done for you,' plus a dashboard screenshot showing 'automatic registration completion in 13 jurisdictions,' indicating registration filing is a marketed capability. However, there is no evidence of per-registration transparent pricing or a status-tracking UI/API for individual registrations — only high-level marketing claims without documented workflow, cost breakdown, or tracking detail. Missing for 10: per-registration pricing transparency, detailed status-tracking documentation/UI, and independent/hands-on confirmation that filings are actually completed by the vendor.",
     "evidenceIds": [
-      "anrok-docs-18",
-      "anrok-docs-17",
+      "anrok-docs-41",
       "anrok-docs-28",
+      "anrok-docs-18",
       "anrok-docs-20"
     ]
   },
@@ -659,25 +660,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show core building blocks that would let ops reconstruct a transaction — address normalization/jurisdiction resolution (anrok-docs-11), product tax category assignment (anrok-docs-26), transaction storage tied to a specific tax return (anrok-docs-6), and filings retrieval (anrok-docs-12) — plus AI Atlas answering questions 'grounded in your own transactions, registrations, filings, and certificates' with reasoning shown (anrok-docs-15). However there is no explicit documentation of a per-transaction audit trail or export feature that packages the rate, rule citation, address resolution, and category together for audit purposes. Missing for 10: dedicated audit-log/export endpoint or UI feature, explicit rate/rule justification retention, independent/customer confirmation of audit reconstructability.",
+    "rationale": "Docs show that each transaction is saved with its calculated tax and linked to a return, that customer addresses are resolved and normalized, and that products carry a defined tax category (PTC), and filings can be fetched via API — together covering address resolution, product category, and calculation persistence. However, there's no explicit documentation of a per-transaction audit trail exposing the exact rate and rule logic applied, or a dedicated 'reconstruct/export calculation details' feature for audit purposes. missing for 10: explicit rate/rule audit trail per transaction, dedicated export/reconstruction feature for auditors, independent corroboration of audit usability.",
     "evidenceIds": [
+      "anrok-docs-6",
       "anrok-docs-11",
       "anrok-docs-26",
-      "anrok-docs-6",
       "anrok-docs-12",
-      "anrok-docs-15"
+      "anrok-docs-33"
     ]
   },
   {
     "productId": "anrok",
     "storyId": "vat-id-validation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Anrok's evidence covers tax ID collection (a list of 'valid tax IDs' per jurisdiction) and general VAT/sales-tax handling, but nothing describes real-time validation against official government registries (e.g., VIES) or automatic reverse-charge application for B2B cross-border sales.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Anrok's docs confirm it collects and validates customer tax IDs per jurisdiction and resolves addresses for tax jurisdiction determination (anrok-docs-10, anrok-docs-25, anrok-docs-38, anrok-docs-11), which supports B2B tax ID handling, but there is no explicit documentation of real-time validation against official VAT registries (e.g., VIES) or of reverse-charge logic being automatically applied for cross-border B2B transactions. missing for 10: explicit registry-validation (e.g., VIES) integration, explicit reverse-charge mechanism/documentation, independent/hands-on confirmation of cross-border B2B correctness.",
     "evidenceIds": [
       "anrok-docs-10",
-      "anrok-docs-25"
+      "anrok-docs-25",
+      "anrok-docs-38",
+      "anrok-docs-11"
     ]
   },
   {
@@ -686,16 +689,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers registration tracking, exposure dashboards, filing automation, and certificate management, but there is no mention of voluntary disclosure agreements (VDAs), back-filing services, or any remediation path for past-due/uncollected tax exposure.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Anrok provides exposure monitoring, early alerts, and forward-looking registration handling, but nothing addresses voluntary disclosure agreements or back-filing to remediate past periods where tax should have been collected — a distinct remediation service. Missing for 10: any mention of VDA support, back-filing, or historical-exposure cleanup services.",
+    "evidenceIds": [
+      "anrok-docs-17",
+      "anrok-docs-20",
+      "anrok-docs-41",
+      "anrok-docs-29"
+    ]
   },
   {
     "productId": "avalara",
     "storyId": "agent-reads-tax-state",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Avalara documents an official MCP server exposing tax calculation, transaction retrieval/creation, and nexus definition lookups (avalara-docs-6,7,8,13,17,18, probe-3), which lets an agent read nexus status and transaction data and act via structured tools. However, there is no evidence covering registrations, accrued liability summaries, or upcoming filing schedules as MCP/API objects, nor any mention of scoped/limited credentials for the MCP surface (only general API access via SDKs). Missing for 10: registration status endpoints, accrued liability/filing calendar data, and scoped-credential/permission model for the MCP or API surface.",
+    "rationale": "Avalara ships an official MCP server exposing nexus definitions, transaction retrieval/creation, and tax calculation tools (avalara-docs-6,7,8,13,17,18), plus REST APIs for nexus and transactions (avalara-docs-5,15,16,23), giving an agent read/act access to nexus status and transaction/liability data. However, the pack shows no explicit MCP/API surface for 'registrations' status or 'upcoming filings' (filing lives in a separate Managed Returns API product, avalara-docs-31, not shown integrated into MCP), and no documentation of scoped-credential/permission model for the MCP surface. missing for 10: upcoming filings and registration-status endpoints exposed via MCP/API, documented scoped-credential/auth model for agent access.",
     "evidenceIds": [
       "avalara-docs-6",
       "avalara-docs-7",
@@ -703,6 +711,8 @@
       "avalara-docs-13",
       "avalara-docs-17",
       "avalara-docs-18",
+      "avalara-docs-5",
+      "avalara-docs-31",
       "avalara-probe-3"
     ]
   },
@@ -724,55 +734,63 @@
     "productId": "avalara",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs mention AI-powered tax code recommendations with confidence levels (avalara-docs-7) and conversational-query analytics for spotting transaction patterns/anomalies (avalara-docs-12), which are AI-generated insight/suggestion features embedded in the product. However, these are narrow (tax-code classification, basic query analytics) rather than broad, proactive insight generation across the product's data, and there's no independent/hands-on evidence validating quality or scope. Missing for 10: evidence of broader analytical dashboards or proactive anomaly/insight surfacing beyond tax-code suggestions, and independent corroboration of the conversational analytics feature's real-world performance.",
+    "rationale": "Avalara documents several AI-generated insight/suggestion features: AI-powered tax code recommendations with confidence levels, AI-assisted explanations of jurisdiction/tax calculation breakdowns, discrepancy detection with correction recommendations, and conversational transaction analysis to spot patterns/anomalies. These directly match 'AI-generated insights and suggestions from data' for an AI-native user. Missing for 10: independent/hands-on corroboration of these AI features actually working, clarity on whether these are surfaced natively in a UI versus only via MCP/API tool calls for external agents, and depth beyond brief doc snippets.",
     "evidenceIds": [
       "avalara-docs-7",
       "avalara-docs-12",
+      "avalara-docs-28",
+      "avalara-docs-29",
       "avalara-docs-6"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "AvaTax exposes APIs, SDKs, and an MCP server for on-demand tax calculations and data retrieval, but there is no evidence of scheduled jobs, triggers, or autonomous background automations that run without a human or agent invoking each call. The axis is plausible for a compliance platform (e.g., automated filing schedules), but no such capability is documented.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "AvaTax exposes MCP-server tools (transaction creation, nexus retrieval, tax-code recommendations, rate lookups) that let an AI agent invoke tax operations programmatically, and Managed Returns API embeds filing into partner workflows — both are building blocks for agent-driven automation, but there is no documented feature for scheduling, triggering, or running these operations autonomously in the background without an external orchestrator. Missing for 10: evidence of built-in scheduling/triggers, webhook-driven autonomous jobs, or a first-party 'set it and forget it' automation/agent runtime rather than just callable API/MCP tools.",
     "evidenceIds": [
       "avalara-docs-6",
       "avalara-docs-7",
       "avalara-docs-8",
       "avalara-docs-13",
       "avalara-docs-17",
-      "avalara-docs-18"
+      "avalara-docs-18",
+      "avalara-docs-31",
+      "avalara-probe-3"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "AvaTax's docs mention AI-powered tax-code recommendations and a vague reference to 'conversational queries' for analyzing accounts, hinting at some embedded AI assistant capability, but the primary AI-related evidence (the MCP server) is about exposing AvaTax as tools for external agents to call, not a built-in assistant inside the product that a user delegates tasks to. Missing for 10: clear documentation of an actual in-product chat/assistant UI, examples of task delegation, and independent confirmation that this conversational feature exists and works.",
+    "rationale": "Avalara references a named 'Avalara Avi Agent' and AI-assisted conversational analysis/explanation features (jurisdiction breakdowns, discrepancy detection, tax code recommendations), suggesting some built-in AI assistant capability, but documentation is thin and mostly a single passing mention with no detail on how a user delegates tasks to it. Missing for 10: dedicated docs on Avi Agent's capabilities/scope, concrete task-delegation examples, and independent/hands-on corroboration of the assistant's behavior.",
     "evidenceIds": [
+      "avalara-docs-25",
       "avalara-docs-12",
-      "avalara-docs-7",
-      "avalara-docs-6"
+      "avalara-docs-28",
+      "avalara-docs-29",
+      "avalara-docs-7"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "AvaTax exposes a REST API and SDKs (C#, Java, JS, Python, PHP, Ruby) that can be scripted and called headlessly for tax calculation, transaction recording, and nexus management, which supports CI/automation use cases. However, there is no explicit documentation of a CLI, CI/CD pipeline examples, or automated testing/headless workflow guidance, and no independent confirmation of headless CI usage. Missing for 10: explicit CI/headless automation guides or examples, a documented CLI tool, and independent evidence of running the API in CI pipelines.",
+    "rationale": "AvaTax is fundamentally a REST API/SDK product (C#, Java, JS, Python, PHP, Ruby) with documented endpoints like CreateTransaction and CreateNexus that can be called headlessly from scripts or CI pipelines, and a free trial explicitly supports API/SDK testing at scale (1,000 transactions). Missing for 10: explicit CI/CD pipeline examples, automated testing guides, or documentation calling out headless/CI usage patterns specifically.",
     "evidenceIds": [
       "avalara-docs-3",
       "avalara-docs-4",
-      "avalara-docs-5",
+      "avalara-docs-15",
+      "avalara-docs-19",
+      "avalara-docs-27",
       "avalara-docs-9"
     ]
   },
@@ -797,7 +815,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Avalara documents an official MCP server (mcp.md, mcp-servers.md) exposing AvaTax capabilities like tax calculation, transaction retrieval, nexus lookup, and AI-powered tax code recommendations as tools an agent can call. This is first-party documentation but lacks independent/hands-on corroboration of real-world agent connections. Missing for 10: independent verification of MCP server usage in practice, details on authentication/setup friction for agents.",
+    "rationale": "Avalara publishes an official MCP server (developer.avalara.com/mcp-servers.md) exposing AvaTax capabilities like tax calculation, transaction retrieval/creation, nexus lookup, and AI tax-code suggestions, confirmed by direct docs and a probe hit. Missing for 10: independent/hands-on corroboration outside Avalara's own docs and details on authentication/setup for connecting third-party agents.",
     "evidenceIds": [
       "avalara-docs-6",
       "avalara-docs-7",
@@ -806,6 +824,7 @@
       "avalara-docs-17",
       "avalara-docs-18",
       "avalara-docs-21",
+      "avalara-docs-25",
       "avalara-probe-3"
     ]
   },
@@ -815,12 +834,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "AvaTax has an official MCP server exposing tax calculation, transaction lookup, nexus data, and AI-powered tax code recommendations, enabling natural-language/agentic interaction via MCP-compatible clients (e.g., 'Calculate tax for a $100 sale...' as a natural-language-style example). However, this is an API/MCP layer for developers rather than a native conversational UI for end users, and there's no independent/hands-on evidence confirming robustness of natural-language command handling. missing for 10: independent or hands-on validation of natural-language command execution, evidence of a first-party conversational interface beyond MCP tool calls, and confirmation of reliability/accuracy of the AI-powered recommendations in practice.",
+    "rationale": "AvaTax exposes an MCP server and an 'Avi Agent' with natural-language-friendly tools (e.g., AI tax code recommendations, conversational queries, example prompts like 'Calculate tax for a $100 sale...'), which supports natural-language operation for AI agents. However, this is mediated through MCP/agent tooling rather than a native NL interface in the core product, and there's no independent/hands-on evidence confirming real-world reliability of these NL commands. missing for 10: independent corroboration of NL command accuracy, broader coverage of natural-language support outside MCP/Avi Agent context, first-party detail on the full range of NL capabilities beyond a few examples.",
     "evidenceIds": [
       "avalara-docs-6",
       "avalara-docs-7",
-      "avalara-docs-17",
       "avalara-docs-12",
+      "avalara-docs-17",
+      "avalara-docs-25",
+      "avalara-docs-28",
       "avalara-probe-3"
     ]
   },
@@ -830,7 +851,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows SDKs, REST API, and an MCP server, but no mention of an official CLI tool for AvaTax. This is a fair axis for a developer platform, but no CLI evidence exists.",
+    "rationale": "Evidence shows SDKs, REST APIs, and an MCP server, but no mention of an official CLI tool for AvaTax. Missing for 10: any documented CLI product, install instructions, or command-line usage examples.",
     "evidenceIds": []
   },
   {
@@ -839,17 +860,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "AvaTax exposes a fully documented public REST v2 API with SDKs across six languages, detailed method-level docs (CreateTransaction, CreateNexus, etc.), a free trial for API access, and even a first-party MCP server enabling AI-agent-native access to tax calculation, transactions, and nexus data. Missing for 10: no publicly discoverable machine-readable OpenAPI spec at standard paths (probe returned 404s) and no independent third-party corroboration beyond vendor docs.",
+    "rationale": "AvaTax offers a well-documented public REST v2 API with detailed method docs (CreateTransaction, CreateNexus), SDKs in six languages, interactive API Explorer with sample payloads, and a free trial for testing—clearly a documented, programmatically drivable API. Missing for 10: a discoverable OpenAPI/swagger spec (probe found 404s) which would strengthen machine-readability for AI-native consumption.",
     "evidenceIds": [
       "avalara-docs-3",
       "avalara-docs-4",
       "avalara-docs-5",
-      "avalara-docs-6",
       "avalara-docs-9",
-      "avalara-docs-19",
-      "avalara-probe-1",
-      "avalara-probe-2",
-      "avalara-probe-3"
+      "avalara-docs-27",
+      "avalara-probe-2"
     ]
   },
   {
@@ -858,7 +876,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents; Avalara docs describe general API/SDK/MCP access and account creation but nothing about granular or restricted credential scoping for AI agents.",
+    "rationale": "No evidence of scoped or least-privilege API credential/token issuance for agents (e.g., OAuth scopes, restricted API keys, per-agent permission controls) anywhere in the docs, MCP server description, or free trial materials—only general API access, SDKs, and account creation are mentioned.",
     "evidenceIds": []
   },
   {
@@ -867,12 +885,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Avalara officially documents SDKs for REST v2 APIs across six mainstream languages (C#, Java, JavaScript, Python, PHP, Ruby), backed by concrete API method docs and a free trial for hands-on SDK access. Missing for 10: independent/hands-on developer corroboration beyond official docs, and no public OpenAPI spec found via probe to confirm auto-generation/currency of SDKs.",
+    "rationale": "Avalara officially provides SDKs for REST v2 APIs across six major languages (C#, Java, JavaScript, Python, PHP, Ruby), backed by interactive API Explorer docs, sample payloads, and a free trial explicitly covering APIs and SDKs. This gives AI-native developers concrete, documented, official SDK access to build against. Missing for 10: independent/hands-on developer corroboration of SDK quality, and no public OpenAPI spec file found (probe returned 404s) which slightly limits automated/agentic SDK generation tooling.",
     "evidenceIds": [
       "avalara-docs-3",
-      "avalara-docs-4",
+      "avalara-docs-24",
       "avalara-docs-9",
       "avalara-docs-19",
+      "avalara-docs-27",
       "avalara-probe-2"
     ]
   },
@@ -881,36 +900,37 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of webhook subscription or event-driven notification capabilities anywhere in the evidence pack; AvaTax's API/MCP surface is described as request/response (transactions, nexus, tax calc) with no mention of webhooks or event subscriptions.",
+    "confidence": "high",
+    "rationale": "No evidence of any webhook/event-subscription mechanism in AvaTax's docs, API methods, or MCP server tools — the evidence only covers request/response APIs (transactions, nexus, tax calc) and MCP tool calls, none of which describe push-based event subscriptions.",
     "evidenceIds": []
   },
   {
     "productId": "avalara",
     "storyId": "ai-taxability-answers",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "AvaTax exposes AI-powered tax code recommendations (ranked suggestions with confidence levels) and an MCP server enabling conversational queries over transactions and nexus data, which is a step toward answering 'why did this invoice tax this way' type questions. However, there is no evidence of a dedicated tax-question chatbot that cites specific rule-base entries or statutes when explaining taxability determinations — the AI features shown are narrower (product tax-code classification, transaction lookup) rather than a general Q&A system with citations. Missing for 10: a documented conversational tax-Q&A assistant that answers 'is this taxable in state X' with rule citations, evidence of citation-backed explanations for specific tax calculations, and independent confirmation of accuracy/usefulness of any such AI feature.",
+    "rationale": "Avalara documents first-party AI capabilities (Avi Agent, AI-assisted tax code recommendations, and AI-assisted analysis that can 'explain how and why tax was calculated' via jurisdiction breakdowns, sourcing decisions, exemption status, and compliance rules) drawn from its own rule base rather than a generic chatbot. missing for 10: explicit citation of specific statute/rule sources in AI answers, and a documented worked example answering 'is this taxable in this state'",
     "evidenceIds": [
       "avalara-docs-7",
+      "avalara-docs-28",
       "avalara-docs-12",
-      "avalara-docs-6",
-      "avalara-docs-13",
-      "avalara-docs-17"
+      "avalara-docs-25",
+      "avalara-docs-29"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows extensive API method documentation (e.g., CreateTransaction, CreateNexus) and a free trial for testing, but no mention of an interactive API console, 'try it' runnable examples, or embedded sandboxed code execution in the docs. A probe for OpenAPI/Swagger specs (which typically power interactive references) returned 404s, suggesting no such interactive reference is exposed.",
+    "rationale": "Avalara's developer portal explicitly offers an 'API Explorer' with interactive documentation, sample payloads, response examples, endpoint/parameter/auth details, backed by concrete method docs (CreateTransaction, CreateNexus) and SDKs. However, probes show no discoverable OpenAPI/swagger spec, and there's no independent/hands-on confirmation that examples are actually runnable in-browser. Missing for 10: verified runnable/interactive execution (not just static examples), independent corroboration, and a public machine-readable OpenAPI spec.",
     "evidenceIds": [
+      "avalara-docs-27",
       "avalara-docs-4",
-      "avalara-docs-5",
-      "avalara-docs-9",
+      "avalara-docs-22",
+      "avalara-docs-3",
       "avalara-probe-2"
     ]
   },
@@ -919,24 +939,25 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows detailed API method docs and SDKs but a direct probe for standard OpenAPI/Swagger spec URLs (openapi.json, swagger.json, etc.) returned 404 on all paths, and no other evidence links to a downloadable machine-readable spec.",
+    "confidence": "high",
+    "rationale": "Docs mention an interactive 'API Explorer' but never provide a downloadable OpenAPI/Swagger spec, and a direct probe for standard OpenAPI spec paths (openapi.json, swagger.json, etc.) returned 404s, indicating no machine-readable spec is publicly exposed.",
     "evidenceIds": [
-      "avalara-probe-2",
-      "avalara-docs-4",
-      "avalara-docs-3"
+      "avalara-docs-27",
+      "avalara-probe-2"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "api-sandbox",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Avalara offers a 90-day free trial with dedicated API/SDK access and no credit card required, implying a separate test account distinct from production billing, but the evidence never explicitly documents a distinct 'sandbox' base URL/environment or transaction-commit flags for safe testing. missing for 10: explicit sandbox environment documentation (e.g., sandbox.avatax.com), guidance on non-committing test transactions, and confirmation that MCP/agent tools can target the trial/sandbox rather than production.",
+    "rationale": "Avalara offers a 90-day free trial sandbox with full API/SDK/MCP access explicitly for testing and validating tax scenarios without production data ('Integrate, test, and scale compliance... using the 90-day AvaTax free trial' and 'Validate new markets and products by testing sales and use tax handling across multiple jurisdictions'). This directly supports AI-native testing workflows via MCP tools against a non-production trial account. Missing for 10: explicit documentation distinguishing a dedicated sandbox environment/API endpoint from the trial account, and independent/hands-on confirmation that trial usage is fully isolated from production data.",
     "evidenceIds": [
       "avalara-docs-9",
       "avalara-docs-19",
+      "avalara-docs-25",
+      "avalara-docs-26",
       "avalara-docs-6"
     ]
   },
@@ -946,23 +967,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows AvaTax has a versioned REST v2 API and SDKs, but nothing in the pack documents a formal deprecation policy, version-sunset timeline, or changelog process. Missing for 10: explicit deprecation/versioning policy documentation, sunset timelines, migration guides between API versions.",
+    "rationale": "Evidence shows AvaTax uses a 'REST v2' API and SDKs, implying some versioning, but there is no documented deprecation policy, version lifecycle, or changelog/migration guidance anywhere in the pack. missing for 10: explicit versioning scheme documentation, deprecation/sunset policy, changelog or migration guides for breaking changes.",
     "evidenceIds": [
       "avalara-docs-3",
-      "avalara-docs-4",
-      "avalara-docs-15"
+      "avalara-docs-24",
+      "avalara-probe-2"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "autofiling-remittance",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence pack covers tax calculation, transaction recording, and nexus determination, but contains no documentation of automated returns preparation, filing, remittance, or any late-filing penalty guarantee — the actual Avalara Returns/managed-filing service is not mentioned. A community source explicitly notes that products like AvaTax handle calculation only and still require separately handling jurisdiction registration and filing, reinforcing that this axis is unaddressed in the pack.",
+    "rationale": "Avalara's Managed Returns API is documented to let partners embed 'tax return preparation and filing' into workflows (avalara-docs-31), but there is no vendor evidence of a filing-guarantee/penalty-coverage commitment, and a first-hand community account explicitly states that even with Avalara, per-jurisdiction tax registration and filing still has to be handled separately (avalara-comm-1) — directly contradicting the 'fully automatic, on time, in every jurisdiction' claim. missing for 10: explicit on-time guarantee/penalty indemnification language, evidence of automatic filing across ALL registered jurisdictions without manual intervention, and corroboration that the guarantee is honored in practice.",
     "evidenceIds": [
-      "avalara-docs-5",
-      "avalara-docs-13",
+      "avalara-docs-31",
       "avalara-comm-1"
     ]
   },
@@ -985,11 +1005,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "AvaTax's docs describe tax calculation, nexus, transactions, and an MCP server exposing tools, but none of the evidence shows a user-configurable rules/automation engine that triggers actions on events (e.g., webhooks, conditional workflows). avalara-docs-14 explicitly notes it handles taxability logic 'without building custom rule engines,' implying no exposed automation-rule capability for users.",
+    "rationale": "AvaTax's docs describe API-driven tax calculation, transaction recording, and nexus lookups, but there is no evidence of a user-configurable rules/automation engine that lets a user define 'on event X trigger action Y' logic; in fact docs explicitly state AvaTax handles tax scenarios 'without building custom rule engines' (avalara-docs-14), implying no exposed rule-authoring capability. No evidence of webhooks, triggers, or conditional automation workflows exists in the pack.",
     "evidenceIds": [
       "avalara-docs-14",
-      "avalara-docs-6",
-      "avalara-docs-5"
+      "avalara-docs-4",
+      "avalara-docs-6"
     ]
   },
   {
@@ -997,8 +1017,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers tax calculation, transaction APIs, nexus, SDKs, and an MCP server, but nothing describes scheduling recurring jobs/workflows or any automation/orchestration scheduler capability. Missing for 10: any documentation of recurring job scheduling, workflow automation triggers, or cron-like execution features.",
+    "confidence": "high",
+    "rationale": "AvaTax's evidence covers tax calculation, transaction/nexus APIs, MCP tools, and SDKs, but nothing describes scheduling, cron-like recurring jobs, or workflow orchestration for AI-native automation. Returns filing and compliance are periodic but no evidence of user-configurable recurring job scheduling exists.",
     "evidenceIds": []
   },
   {
@@ -1014,14 +1034,15 @@
     "productId": "avalara",
     "storyId": "billing-stack-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Docs claim AvaTax applies consistent tax logic across ecommerce, marketplace, POS, and ERP systems (avalara-docs-20) and provide REST/SDKs for common languages, implying broad platform compatibility, but the evidence pack contains no list of maintained, pre-built connectors for specific billing systems, payment processors, or commerce platforms (e.g., Stripe, Shopify, QuickBooks) — only generic language SDKs and raw transaction APIs that a developer must wire up themselves. missing for 10: named/maintained platform-specific integrations, evidence of a partner/integrations marketplace, independent confirmation these connectors are actively maintained.",
+    "rationale": "Docs claim AvaTax applies consistent tax logic across ecommerce, marketplace, POS, and ERP systems (avalara-docs-20, avalara-docs-30) and provides SDKs/APIs for building integrations (avalara-docs-3, avalara-docs-24), implying broad compatibility, but the evidence pack contains no list of specific maintained connectors/plugins for named billing systems, payment processors, or commerce platforms (e.g., Shopify, Stripe, NetSuite) that a developer could just plug in without building integration code. Missing for 10: named pre-built connector/plugin documentation for specific platforms, evidence of maintenance/update cadence for such integrations, and independent confirmation that these integrations work out-of-the-box.",
     "evidenceIds": [
       "avalara-docs-20",
+      "avalara-docs-30",
       "avalara-docs-3",
-      "avalara-docs-4",
-      "avalara-docs-14"
+      "avalara-docs-24",
+      "avalara-docs-6"
     ]
   },
   {
@@ -1029,49 +1050,50 @@
     "storyId": "calculation-accuracy-guarantee",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers API/SDK functionality, MCP tooling, and free-trial details but contains no mention of an accuracy guarantee, indemnification, audit support commitment, or any documented promise to stand behind calculation results if they turn out wrong.",
+    "confidence": "medium",
+    "rationale": "No evidence of any accuracy guarantee, warranty, indemnification, or audit-support commitment covering incorrect tax calculations; the pack shows product features (calculation, nexus, exemption certs, explainability of results) but nothing about liability or financial backing if AvaTax's number is wrong.",
     "evidenceIds": []
   },
   {
     "productId": "avalara",
     "storyId": "compliant-invoice-fields",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "AvaTax computes jurisdiction-aware tax, tracks nexus, and supports 200+ countries, which feeds correct tax data into invoicing systems, but the evidence pack shows no explicit invoice-document generation with mandated VAT fields (VAT ID display, invoice sequencing, locale-specific legal text) — it's tax calculation/reporting API, not an invoicing engine itself. missing for 10: evidence of actual invoice template/field generation (VAT registration number printing, locale-specific invoice legal requirements), and independent/hands-on confirmation that generated data satisfies specific country e-invoicing mandates.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Avalara offers a dedicated E-Invoicing and Live Reporting (ELR) product that explicitly targets country-specific invoice formats, validations, and submission requirements, plus VAT Reporting for aggregating VAT obligations across jurisdictions — directly relevant to compliant invoice generation. But evidence is thin: no detail on which specific fields (VAT numbers, registration IDs, locale-specific formats) are populated, no example of an actual generated invoice, and no independent/hands-on confirmation that invoices produced via ELR meet local mandates end-to-end. Missing for 10: concrete field-level documentation of VAT/registration number handling, example compliant invoice output, and independent validation of e-invoicing mandate coverage across specific countries.",
     "evidenceIds": [
-      "avalara-docs-1",
-      "avalara-docs-10",
-      "avalara-docs-5",
-      "avalara-docs-20",
-      "avalara-docs-14"
+      "avalara-docs-37",
+      "avalara-docs-39",
+      "avalara-docs-14",
+      "avalara-docs-10"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "exempt-customer-api",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm AvaTax supports 'exemption logic' generally (avalara-docs-14) and CreateTransaction is the core API for recording taxable/exempt transactions (avalara-docs-4/15), and ECM/CertCapture manages exemption certificates (avalara-docs-11), but no evidence pack item shows a concrete API field (e.g., entity/exemption code) for marking a transaction exempt, nor confirms that the exemption reason is carried through into reporting or the filed return. Missing for 10: explicit exemption-code/entity-use-code API parameter documentation, evidence the reason propagates to tax reports, and evidence it appears on filed returns.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm AvaTax supports exemption logic in tax calculation (avalara-docs-14) and can explain exemption status during calculation breakdowns (avalara-docs-28), plus Exemption Certificate Management/CertCapture for storing certificate data (avalara-docs-11, avalara-docs-32) and Managed Returns API for filing (avalara-docs-31). However no evidence explicitly shows an API field/parameter for marking a transaction/customer exempt with a reason code, nor that this reason is threaded through into the filed return output. missing for 10: explicit API parameter for exemption reason on CreateTransaction, documented linkage from exemption flag through to filed-return line items, and independent/hands-on confirmation of end-to-end reporting.",
     "evidenceIds": [
       "avalara-docs-14",
-      "avalara-docs-4",
-      "avalara-docs-11"
+      "avalara-docs-28",
+      "avalara-docs-11",
+      "avalara-docs-32",
+      "avalara-docs-31"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "exemption-certificate-management",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Avalara's Exemption Certificate Management (ECM/CertCapture) is documented to collect, validate, and store exemption certificates in one place, and AvaTax separately supports 'exemption logic' at calculation time, suggesting the pieces exist. However, the evidence never explicitly documents expiry tracking or the automatic linkage/application of a stored certificate during a live tax calculation call. missing for 10: explicit expiry-tracking documentation, explicit description of automatic certificate application at transaction/calc time linking ECM to AvaTax calculation.",
+    "rationale": "Avalara's ECM/CertCapture product explicitly collects, validates, and stores exemption/resale certificates, and AvaTax calculation engine references exemption logic at calc time, indicating integration exists. However, evidence does not detail expiry tracking, renewal workflows, or the precise automatic application mechanism linking ECM records to AvaTax calculation in real time. missing for 10: documentation of expiry/renewal tracking, explicit description of automatic application at calculation time, and independent/hands-on confirmation of end-to-end flow.",
     "evidenceIds": [
       "avalara-docs-11",
-      "avalara-docs-14",
-      "avalara-docs-1"
+      "avalara-docs-32",
+      "avalara-docs-14"
     ]
   },
   {
@@ -1079,9 +1101,11 @@
     "storyId": "filing-calendar-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers AvaTax's tax calculation, transaction recording, nexus management, and MCP tooling, but contains no mention of a filing calendar, per-filing status tracking, remitted amounts, or downloadable filing confirmations — capabilities that belong to Avalara's Returns/filing management functionality. Since the filing-remittance theme is a legitimate axis for a tax compliance product, absence of evidence here means 'none' rather than 'na'.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows only a brief mention of a Managed Returns API for embedding tax return preparation/filing into partner workflows, with no mention of a filing calendar, per-filing status tracking, remitted amounts, or downloadable filing confirmations for ops users. No dashboard or reporting UI evidence is provided for this filing-visibility capability.",
+    "evidenceIds": [
+      "avalara-docs-31"
+    ]
   },
   {
     "productId": "avalara",
@@ -1089,12 +1113,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Avalara's docs confirm global coverage (200+ countries/jurisdictions) and jurisdiction-aware tax calculation, nexus tracking, and transaction management APIs, which supports VAT/GST scenarios beyond US sales tax. However, the evidence pack doesn't explicitly confirm EU OSS/IOSS scheme support, UK-specific VAT filing, or automated foreign registration threshold monitoring/alerts, and a community source notes that registration and filing remain separate manual work even when tax calculation is handled. missing for 10: explicit EU OSS/IOSS scheme documentation, UK/Canada/Australia-specific filing support details, automated foreign registration threshold tracking/alerts, and independent confirmation that filings are actually supported end-to-end rather than requiring separate manual registration/filing work.",
+    "rationale": "Avalara documents 200+ country tax-rate/rule coverage, a dedicated VAT Reporting product for cross-jurisdiction VAT filing, AvaTax Cross-Border for duties/import tax, and E-Invoicing for global mandates, plus nexus APIs for tracking tax obligations — showing broad international VAT/GST support beyond just US sales tax. However, there's no explicit mention of EU OSS/IOSS scheme handling, foreign registration threshold monitoring, or country-specific filing workflows for UK/Canada/Australia, and a community source notes that registration and filing still require separate handling per jurisdiction even when using Avalara for calculation. Missing for 10: explicit OSS/IOSS scheme support, automated foreign registration threshold alerts, and independent confirmation that filings for UK/Canada/Australia are fully automated end-to-end.",
     "evidenceIds": [
-      "avalara-docs-1",
-      "avalara-docs-5",
       "avalara-docs-10",
-      "avalara-docs-13",
+      "avalara-docs-39",
+      "avalara-docs-33",
+      "avalara-docs-37",
+      "avalara-docs-31",
+      "avalara-docs-5",
       "avalara-comm-1"
     ]
   },
@@ -1104,27 +1130,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows AvaTax handles real-time/current transaction tax calculation, nexus declarations, and transaction recording, but nothing indicates a feature to import historical transactions and generate a backdated exposure analysis with estimated liability, penalties, and interest per jurisdiction. missing for 10: historical transaction import/bulk upload for retroactive analysis, exposure/liability estimation engine, penalty and interest calculation, jurisdiction-level backdated exposure reporting.",
+    "rationale": "AvaTax's evidence covers real-time tax calculation, nexus declaration APIs, transaction recording, and AI-assisted explanations, but there is no evidence of a backdated exposure analysis feature that imports historical transactions to compute estimated liability, penalties, and interest per jurisdiction. Nexus API only lets a company declare nexus, not retroactively analyze exposure or quantify penalties/interest.",
     "evidenceIds": [
-      "avalara-docs-4",
       "avalara-docs-5",
       "avalara-docs-13",
-      "avalara-docs-8"
+      "avalara-docs-4",
+      "avalara-docs-28"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "liability-reporting",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "AvaTax exposes transaction records, nexus definitions, and jurisdiction-level tax calculation data via API/MCP, which are building blocks for a liability view, and community evidence confirms tax collection is handled distinctly from filing/remittance workflows. However, there is no evidence of a dedicated 'accrued liability by jurisdiction' report, a collected-vs-owed reconciliation view, or filing-ready/GL-consumable exports. missing for 10: jurisdiction liability summary report, collected-vs-owed reconciliation, filing-ready export formats, GL/accounting-system export integration.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AvaTax provides transaction, nexus, and returns/VAT-reporting APIs that could underpin jurisdiction-level liability tracking (e.g., retrieving transactions and nexus data, Managed Returns API, VAT Reporting), but no evidence explicitly describes a 'collected vs owed' liability view, filing-ready summary reports, or GL/accountant-consumable export formats. missing for 10: explicit accrued-liability-by-jurisdiction report, collected-vs-owed breakdown, GL/accounting export formats, and independent confirmation these views exist in the product UI.",
     "evidenceIds": [
-      "avalara-docs-5",
       "avalara-docs-8",
       "avalara-docs-13",
       "avalara-docs-18",
-      "avalara-comm-1"
+      "avalara-docs-31",
+      "avalara-docs-39",
+      "avalara-docs-4"
     ]
   },
   {
@@ -1133,8 +1160,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers generic transaction creation and nexus declaration APIs, but nothing addresses marketplace-facilitator-specific handling (e.g., flagging facilitator-collected tax so it's tracked for nexus/reporting without being re-remitted). This is a well-known real AvaTax feature area, but no citation here documents it. missing for 10: marketplace facilitator transaction flagging/parameters, nexus tracking that excludes facilitator-collected tax from remittance, any documentation of Amazon/app-store facilitator scenarios.",
-    "evidenceIds": []
+    "rationale": "The evidence only shows generic mentions that AvaTax applies 'consistent tax logic across ecommerce, marketplace, POS, and ERP systems' (avalara-docs-20/30) but nothing about a specific mechanism for flagging marketplace-facilitator-collected transactions, excluding them from remittance, or tracking them toward nexus thresholds without double-remitting. No transaction type, exemption reason, or nexus-threshold feature specific to marketplace facilitator scenarios is documented.",
+    "evidenceIds": [
+      "avalara-docs-20",
+      "avalara-docs-30",
+      "avalara-docs-4",
+      "avalara-docs-5"
+    ]
   },
   {
     "productId": "avalara",
@@ -1142,45 +1174,48 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows AvaTax lets you declare and retrieve nexus records (CreateNexus, nexus definitions) and calculate tax/transactions, but nothing describes proactive tracking of sales/transaction counts against state/country economic nexus thresholds or alerting before a threshold is crossed — nexus here is a manually created declaration, not a monitored exposure metric.",
+    "rationale": "AvaTax's docs show only manual nexus declaration (CreateNexus/ListNexus) and transaction/tax calculation APIs, not a system that tracks sales/transaction counts against state or country economic nexus thresholds and proactively alerts before a threshold is crossed. No evidence pack item mentions automated threshold monitoring or pre-crossing alerts.",
     "evidenceIds": [
       "avalara-docs-5",
       "avalara-docs-13",
-      "avalara-docs-16"
+      "avalara-docs-16",
+      "avalara-docs-23"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "omnichannel-import",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "AvaTax’s API lets you create/import transactions programmatically (avalara-docs-4/15) and the docs claim consistent tax logic 'across ecommerce, marketplace, POS, and ERP systems' (avalara-docs-20), implying multi-channel coverage, but the evidence never names or documents actual prebuilt connectors/syncs for specific processors or storefronts (e.g., Shopify, Amazon, NetSuite) that a developer could just enable. missing for 10: explicit connector/integration catalog or sync documentation for third-party storefronts/processors, evidence of bulk/batch backfill tooling.",
+    "rationale": "AvaTax has a REST API and multi-language SDKs to record transactions (CreateTransaction) from any source, and explicitly touts applying consistent tax logic across ecommerce, marketplace, POS, and ERP systems, implying multi-channel ingestion. However, evidence does not show pre-built connectors/plugins for specific storefronts or processors (e.g., Shopify, Stripe) or documented bulk backfill/import tooling beyond single-transaction API calls. missing for 10: documented prebuilt connectors for named storefronts/processors, bulk historical backfill/import endpoints or ETL tooling, and independent confirmation of multi-source aggregation working in practice.",
     "evidenceIds": [
-      "avalara-docs-20",
       "avalara-docs-4",
-      "avalara-docs-15",
-      "avalara-docs-3"
+      "avalara-docs-20",
+      "avalara-docs-30",
+      "avalara-docs-3",
+      "avalara-docs-8"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "AvaTax exposes broad API/SDK coverage for core functions (tax calculation, transactions, nexus, exemption certs) and even an MCP server with AI-oriented tools like tax code recommendations, suggesting most UI functionality is API-accessible. However, there's no evidence confirming full parity with the UI (e.g., account administration, reporting/dashboards, user management) and no public OpenAPI spec was found via probe, limiting verifiable completeness. missing for 10: explicit UI-to-API parity confirmation, published OpenAPI/spec for full endpoint coverage, evidence covering admin/reporting UI features, independent verification of parity claims.",
+    "rationale": "AvaTax exposes an extensive REST API and SDK set covering core admin-console functions—transaction creation, nexus declarations, exemption certificate management, cross-border, excise, item classification, 1099/W-9, and e-invoicing—suggesting broad functional parity between the API and the AvaTax UI. However, there is no explicit vendor statement guaranteeing full UI/API parity, and no OpenAPI spec was found at expected locations (probe returned 404s), weakening verifiability of complete coverage. Missing for 10: an explicit parity claim/documentation, a public OpenAPI/swagger spec confirming full endpoint coverage, and independent evidence (e.g., user reports) confirming no UI-only features exist.",
     "evidenceIds": [
-      "avalara-docs-3",
       "avalara-docs-4",
       "avalara-docs-5",
-      "avalara-docs-6",
-      "avalara-docs-7",
-      "avalara-docs-8",
       "avalara-docs-11",
-      "avalara-docs-13",
-      "avalara-probe-2",
-      "avalara-probe-3"
+      "avalara-docs-33",
+      "avalara-docs-34",
+      "avalara-docs-35",
+      "avalara-docs-36",
+      "avalara-docs-37",
+      "avalara-docs-39",
+      "avalara-docs-27",
+      "avalara-probe-2"
     ]
   },
   {
@@ -1189,13 +1224,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "AvaTax stores substantial customer data (transactions, nexus declarations, exemption certificates) via its API, so data-export/portability is a fair axis for this SaaS, but the evidence pack contains no mention of bulk export tools, open-format data dumps, or account portability/closure workflows — only APIs to create/query records via Avalara's own API, not a documented export-and-leave capability.",
-    "evidenceIds": [
-      "avalara-docs-4",
-      "avalara-docs-8",
-      "avalara-docs-11",
-      "avalara-docs-18"
-    ]
+    "rationale": "The evidence pack covers tax calculation, transaction/nexus APIs, SDKs, and MCP tooling, but nothing addresses bulk data export, open-format data dumps, or a documented path for a customer to extract all their stored tax/transaction data and migrate away. No mention of export tooling, data portability policy, or open-format (CSV/JSON) full-account export exists in the docs.",
+    "evidenceIds": []
   },
   {
     "productId": "avalara",
@@ -1212,7 +1242,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "AvaTax is a cloud-only SaaS tax-calculation service delivered via hosted APIs; self-hosting the core product is a category error for this kind of managed compliance service, not an applicable axis.",
+    "rationale": "AvaTax is a cloud SaaS tax-calculation service with no evidence of a self-hostable core product; self-hosting is a category error for this type of hosted API/compliance service, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1220,8 +1250,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data locality controls for AvaTax; the documentation focuses on tax calculation, transactions, nexus, and SDKs. missing for 10: any mention of data residency/region selection, data center location choices, or compliance certifications (e.g., GDPR region options) that would let a user pick where their data is stored.",
+    "confidence": "low",
+    "rationale": "No evidence pack material addresses data residency, regional data center choice, or storage location controls for AvaTax; all citations focus on tax calculation, APIs, and product features unrelated to data residency configuration.",
     "evidenceIds": []
   },
   {
@@ -1230,7 +1260,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "AvaTax is a tax-calculation/compliance API/service, not an AI model provider or consumer-facing AI product handling user-generated content for training purposes; the axis of preventing data from being used for AI model training does not apply to this category of product.",
+    "rationale": "AvaTax is a tax-calculation/compliance API/product, not a consumer-facing AI model or chat interface; the notion of 'preventing my data from being used to train AI models' is a data/privacy-policy axis for AI assistant products, not applicable to this type of B2B tax engine.",
     "evidenceIds": []
   },
   {
@@ -1238,8 +1268,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/data-governance settings for AI-native usage; the evidence covers tax calculation, transaction management, nexus, SDKs, and MCP tooling only. missing for 10: any documentation of data retention periods, deletion/erasure APIs or controls, or privacy posture statements relevant to AI-native data handling.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers AvaTax's tax calculation, transaction, nexus, and MCP capabilities but contains no mention of data retention policies, deletion controls, or privacy/data lifecycle management features that an AI-native user could configure or invoke.",
     "evidenceIds": []
   },
   {
@@ -1248,7 +1278,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out controls for AvaTax or its MCP server; the evidence covers only tax calculation, APIs, SDKs, and MCP tooling. Missing for 10: any documentation of telemetry collection, data usage disclosure, or an opt-out mechanism.",
+    "rationale": "No evidence pack content addresses telemetry, usage tracking, or opt-out settings for AvaTax or its MCP server/API tooling; this is an applicable privacy-posture axis for an API/SDK product but no documentation covers it.",
     "evidenceIds": []
   },
   {
@@ -1257,13 +1287,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "AvaTax's docs describe assigning tax codes to items (with AI-powered tax code recommendation based on product description/category/UPC) and explicitly support 'product taxability differences' so line items are taxed according to what they are, combined with global jurisdiction coverage (200+ countries) and nexus-aware jurisdiction logic. This covers the core of mapping a catalog to tax categories across jurisdictions, though the evidence doesn't show a full taxonomy list or worked example distinguishing SaaS vs. digital goods vs. services. Missing for 10: explicit enumerated taxability category taxonomy (SaaS/digital/services/physical), independent hands-on validation of correct jurisdiction-specific outcomes for each category type.",
+    "rationale": "AvaTax explicitly supports assigning tax codes to line items and even offers AI-powered tax code recommendations based on product description/category/UPC, plus docs claim built-in handling of 'product taxability differences' across jurisdictions without custom rule engines — directly matching the story's need to categorize catalog items for correct per-jurisdiction taxation. Missing for 10: an explicit published taxonomy of category types (SaaS/digital goods/services/physical), a code sample showing the taxCode field in CreateTransaction payloads, and independent/hands-on corroboration of mapping accuracy.",
     "evidenceIds": [
       "avalara-docs-7",
       "avalara-docs-14",
-      "avalara-docs-10",
       "avalara-docs-4",
-      "avalara-docs-13"
+      "avalara-docs-22",
+      "avalara-docs-30"
     ]
   },
   {
@@ -1286,43 +1316,41 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm real-time transaction tax calculation via API/SDKs (multiple languages), address validation and jurisdiction mapping for rooftop-level accuracy, and support for checkout/order-processing use cases with 200+ country coverage. Missing for 10: independent benchmarks on latency/performance suitable for checkout, and no direct third-party confirmation of rooftop-level address accuracy vs ZIP approximation beyond vendor docs.",
+    "rationale": "AvaTax documents real-time transaction-level tax calculation with address validation/jurisdiction mapping (not ZIP-only), REST API with SDKs in multiple languages, a CreateTransaction endpoint for checkout-time calls, and global coverage across 200+ countries; a free trial and API explorer support developer integration. Missing for 10: no explicit latency/performance benchmarks for checkout-speed claims and no independent/hands-on corroboration of address-level rooftop accuracy versus ZIP approximation.",
     "evidenceIds": [
       "avalara-docs-1",
       "avalara-docs-2",
       "avalara-docs-3",
       "avalara-docs-4",
       "avalara-docs-10",
-      "avalara-docs-14",
       "avalara-docs-17",
-      "avalara-docs-20"
+      "avalara-docs-27"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "refund-adjustment-handling",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents general transaction creation, nexus, and tax calculation APIs but contains no mention of refund transactions, credit notes, negative-amount adjustments, or how such adjustments flow into liability reporting or filings. This is a fair axis for a tax engine, but nothing in the pack demonstrates the specific refund/credit-note reconciliation behavior described in the story.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "AvaTax's CreateTransaction API lists 'returns' as a supported transaction type alongside sales/purchases (avalara-docs-22), implying refund transactions are recorded and taxed, and Managed Returns API links transaction data to filings (avalara-docs-31). But there's no documentation specifically describing credit-note/negative-amount handling flowing correctly through liability reports or the next filing without manual journal adjustments. Missing for 10: explicit docs on refund/credit-note transaction types (e.g. Return/ReturnInvoice document types), evidence negative amounts net correctly in liability worksheets, and confirmation no manual journal fixes are needed before filing.",
     "evidenceIds": [
-      "avalara-docs-4",
-      "avalara-docs-15",
-      "avalara-docs-8",
-      "avalara-docs-18"
+      "avalara-docs-22",
+      "avalara-docs-31",
+      "avalara-docs-4"
     ]
   },
   {
     "productId": "avalara",
     "storyId": "saas-digital-taxability",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm AvaTax handles product-taxability differences, exemption logic, and jurisdiction-specific rules without custom rule engines, and its AI tax-code recommender returns ranked suggestions with confidence levels — but there's no evidence of a visible 'research trail' (e.g., cited statutes, rule explanations, or bundled-offering breakdowns) behind each determination. missing for 10: documented case studies of bundled/SaaS taxability edge cases, evidence of exposing underlying legal/rule citations per determination, independent verification of accuracy on hard cases.",
+    "rationale": "AvaTax explicitly supports product taxability differences, exemption logic, and jurisdiction-specific rules (avalara-docs-14), offers AI-powered tax code recommendations (avalara-docs-7), and can explain 'how and why tax was calculated' with jurisdiction/sourcing/exemption breakdowns (avalara-docs-28), which speaks to the 'research visible' requirement. However, bundled-offering taxability (mixed digital/physical or service bundles) is never explicitly addressed, and there's no independent/hands-on evidence confirming accuracy on hard SaaS taxability edge cases. Missing for 10: explicit bundled-offering taxability handling, independent verification of correctness on hard SaaS/digital-goods edge cases, deeper detail on how research/citations are surfaced beyond a general AI explain feature.",
     "evidenceIds": [
       "avalara-docs-14",
       "avalara-docs-7",
-      "avalara-docs-10",
+      "avalara-docs-28",
       "avalara-docs-6"
     ]
   },
@@ -1331,12 +1359,12 @@
     "storyId": "state-registrations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows AvaTax's nexus API only lets a company record/declare nexus data internally (avalara-docs-5/13/16), not actual state/local permit registration filing with pricing or status tracking. Community evidence explicitly states that tools like Avalara still require separately handling per-jurisdiction tax registration and filing (avalara-comm-1), confirming this capability is not delivered in-product.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows AvaTax's nexus API only lets a company *declare* where it has nexus, and separate products (Managed Returns, ECM) handle filing returns and certificates — none of the docs describe Avalara actually filing state/local sales tax permit registrations on the customer's behalf, nor any per-registration pricing or registration status tracking. A community comment explicitly states that using AvaTax still requires handling per-jurisdiction tax registration separately, reinforcing that this is not an in-product capability.",
     "evidenceIds": [
       "avalara-docs-5",
-      "avalara-docs-13",
       "avalara-docs-16",
+      "avalara-docs-31",
       "avalara-comm-1"
     ]
   },
@@ -1346,15 +1374,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "AvaTax's API/MCP docs show transaction records capturing calculated tax, addresses (address validation), nexus/jurisdiction data, and AI-suggested tax codes, and provide methods to retrieve/list past transactions by code or company (avalara-docs-4,8,15,18,13,2,7), which together support reconstructing the rate, jurisdiction, and product-category basis for a given calculation. However, there is no explicit documentation of a dedicated audit-trail/report or bulk export feature framed for compliance/audit retention. Missing for 10: explicit audit-log/export-for-audit documentation, retention-policy details, and independent verification that stored data suffices for external audit requirements.",
+    "rationale": "Docs show each transaction is recorded and retrievable (CreateTransaction, GetTransactions, transaction detail lookup) and that AvaTax can explain jurisdiction breakdowns, sourcing decisions, exemption status, and compliance rules (avalara-docs-28, -18, -8, -4/15/22), plus address validation (avalara-docs-2) and tax-code/category suggestions (avalara-docs-7). However, no explicit documentation of a dedicated audit-export feature, retention/immutability guarantees, or a bundled report that ties rate+rules+address+category together in one exportable audit record. Missing for 10: explicit audit-export or compliance-report API, documented retention policy, independent/hands-on confirmation of audit usability.",
     "evidenceIds": [
-      "avalara-docs-4",
-      "avalara-docs-8",
-      "avalara-docs-15",
       "avalara-docs-18",
-      "avalara-docs-13",
+      "avalara-docs-8",
+      "avalara-docs-28",
+      "avalara-docs-4",
       "avalara-docs-2",
-      "avalara-docs-7"
+      "avalara-docs-7",
+      "avalara-docs-32"
     ]
   },
   {
@@ -1363,12 +1391,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows general tax calculation, nexus, and jurisdiction handling across 200+ countries, but nothing about validating VAT/tax IDs against official registries (e.g., VIES) or applying reverse-charge treatment for B2B cross-border transactions — the specific mechanics this story asks about are absent from the pack.",
+    "rationale": "Evidence shows AvaTax computes cross-border duties/landed cost, global tax rates, and VAT reporting/filing across jurisdictions, but nothing documents real-time validation of VAT/tax IDs against official registries (e.g., VIES) or explicit reverse-charge logic for B2B cross-border sales.",
     "evidenceIds": [
+      "avalara-docs-33",
+      "avalara-docs-39",
       "avalara-docs-10",
-      "avalara-docs-14",
-      "avalara-docs-1",
-      "avalara-docs-5"
+      "avalara-docs-14"
     ]
   },
   {
@@ -1377,10 +1405,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers AvaTax's calculation, nexus declaration, transaction, and exemption-certificate APIs, but contains no mention of voluntary disclosure agreements, back-filing, or remediation services for past-due tax exposure. Community evidence (avalara-comm-1) explicitly notes that AvaTax handles tax collection but registration/filing for jurisdictions must be handled separately, reinforcing the absence of a remediation path in this product.",
+    "rationale": "The evidence pack covers nexus tracking, tax calculation, returns filing, and exemption certificate management, but contains no mention of voluntary disclosure agreements (VDAs), back-filing remediation, or any structured path to resolve past-due/prior-period tax exposure. A community source even notes that beyond calculating tax, per-jurisdiction registration and filing must be handled separately, reinforcing the absence of this remediation capability in the documented product.",
     "evidenceIds": [
       "avalara-docs-5",
-      "avalara-docs-13",
+      "avalara-docs-31",
       "avalara-comm-1"
     ]
   },
@@ -1389,17 +1417,19 @@
     "storyId": "agent-reads-tax-state",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "The REST API clearly exposes tax-posture data and actions an agent could use — nexus list, registrations, filings, exemptions endpoints — and API keys support expiration and multi-key rotation (kintsugi-docs-11,12,13,14,24,5,17). However, the documented MCP server is explicitly scoped to serving API documentation/OpenAPI spec to coding assistants for writing integration code, not to reading or acting on a customer's actual tax posture (kintsugi-docs-6, kintsugi-docs-18); no evidence shows an MCP tool that queries nexus/registrations/filings or scoped read/write credential tiers beyond simple key expiry. Missing for 10: an MCP surface (or any agent-facing surface) that actually reads/acts on live nexus, registration, liability, or filing data, and evidence of fine-grained scoped permissions (e.g., read-only vs. filing-write) rather than just key expiration.",
+    "confidence": "high",
+    "rationale": "The REST API genuinely exposes nexus status, registrations, filings, and exemption records (kintsugi-docs-11/12/13/14/35/38) and can be reached with an org-scoped, expiring API key (kintsugi-docs-5/17/27/28), so an agent can read and act on tax posture via the API. But the official MCP surface explicitly does not provide this access: Kintsugi's own docs state the MCP server 'doesn't need your API key... never proxies calls to the API and never sees your credentials' and only serves public docs/OpenAPI content (kintsugi-docs-30), directly narrowing the broader 'AI assistants can understand Kintsugi's endpoints... provide context-aware help' framing (kintsugi-docs-6/29). So the MCP-with-scoped-credentials half of the story is unsupported/contradicted by Kintsugi's own documentation. Missing for 10: an MCP or agent-facing surface that actually reads/acts on live nexus, registration, liability and filing data with scoped credentials (today MCP is docs-only), and any fine-grained (vs. org-wide) credential scoping.",
     "evidenceIds": [
-      "kintsugi-docs-6",
-      "kintsugi-docs-18",
       "kintsugi-docs-11",
       "kintsugi-docs-12",
       "kintsugi-docs-13",
       "kintsugi-docs-14",
+      "kintsugi-docs-27",
+      "kintsugi-docs-28",
       "kintsugi-docs-5",
-      "kintsugi-docs-17"
+      "kintsugi-docs-6",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30"
     ]
   },
   {
@@ -1408,11 +1438,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at https://docs.trykintsugi.com/llms.txt returning HTTP 200 with descriptive content, and Kintsugi also documents a first-party MCP server that lets AI assistants query docs and live OpenAPI spec directly. Missing for 10: independent third-party confirmation of an agent successfully consuming llms.txt in practice.",
+    "rationale": "Probe confirms llms.txt exists and returns 200 with real content (kintsugi-probe-1), and docs additionally document an official MCP server that lets AI assistants read Kintsugi's docs and OpenAPI spec directly (kintsugi-docs-6, kintsugi-docs-18, kintsugi-docs-29, kintsugi-probe-3), directly matching the story of pointing an agent at agent-oriented docs. Missing for 10: independent third-party confirmation beyond the vendor docs/probe.",
     "evidenceIds": [
       "kintsugi-probe-1",
       "kintsugi-docs-6",
       "kintsugi-docs-18",
+      "kintsugi-docs-29",
       "kintsugi-probe-3"
     ]
   },
@@ -1421,27 +1452,26 @@
     "storyId": "agentic-ai-insights",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Kintsugi's evidence covers tax data sync, APIs, SDKs, and an MCP server for developers to build integrations with accurate API docs — but nothing indicates the product itself surfaces AI-generated insights or suggestions about a user's own tax/transaction data within the app. The MCP server is for coding assistants writing integration code, not for delivering data-driven insights to end users.",
+    "confidence": "high",
+    "rationale": "Kintsugi is a tax-compliance API/platform; the evidence covers nexus tracking, tax calculation, filings, and an MCP server that helps developers write integration code — but nothing shows the product itself surfacing AI-generated insights or suggestions from a user's own tax/transaction data inside the product UI. The MCP server explicitly only reads docs/OpenAPI spec, not customer data, so it cannot generate data-driven insights.",
     "evidenceIds": [
-      "kintsugi-docs-6",
-      "kintsugi-docs-18",
-      "kintsugi-probe-3"
+      "kintsugi-docs-29",
+      "kintsugi-docs-30",
+      "kintsugi-docs-6"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kintsugi's core product does run background automation once configured — continuous transaction sync, nexus tracking, and autonomous filing across jurisdictions (kintsugi-docs-1, kintsugi-docs-3, kintsugi-docs-15) — but this is built-in SaaS automation, not something an AI-native user configures via agents or triggers. The only AI-facing feature, the MCP server, is scoped to serving API docs/code examples to coding assistants, not to setting up or running autonomous background automations (kintsugi-docs-6, kintsugi-docs-18). Missing for 10: evidence of user-configurable agentic workflows/triggers, scheduling or webhook-driven automation setup, and any AI-agent capability beyond documentation lookup.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Kintsugi's core service is described as autonomous background automation once connected — it syncs transactions continuously, monitors nexus, registers, and files/remits taxes 'on schedule' without further manual intervention (docs-1, docs-25). However, this is a fixed, product-specific automation pipeline (tax sync/filing) rather than a general agentic automation framework a user can configure arbitrary triggers/actions for, and the MCP server explicitly does not execute actions or proxy API calls (docs-30), so it can't be used to build custom autonomous agent workflows. Missing for 10: evidence of a configurable automation/workflow builder, scheduling of arbitrary user-defined tasks, or agent-triggered actions beyond the built-in tax pipeline.",
     "evidenceIds": [
       "kintsugi-docs-1",
-      "kintsugi-docs-3",
-      "kintsugi-docs-15",
-      "kintsugi-docs-6",
-      "kintsugi-docs-18"
+      "kintsugi-docs-25",
+      "kintsugi-docs-19",
+      "kintsugi-docs-30"
     ]
   },
   {
@@ -1462,13 +1492,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi is API-first: full REST API, five official SDKs, and manageable API keys (with expiry/rotation) all support running the product programmatically/headlessly outside a UI, which is the core requirement for CI-style automation. However, there is no explicit CI/CD documentation, pipeline examples, or automation-specific guidance (e.g., GitHub Actions, scheduled batch jobs) confirming this use case is officially supported. missing for 10: explicit CI/pipeline integration docs or examples, confirmation of non-interactive auth flows suited to CI (e.g., service accounts), independent verification of headless automation in production.",
+    "rationale": "Kintsugi is API-first with simple non-interactive auth (static API key + org ID headers, no OAuth/session per kintsugi-docs-28) and official SDKs in five languages plus CSV import (kintsugi-docs-10, kintsugi-docs-22), which are well-suited to scripted/automated or CI-driven workflows. However, there is no explicit documentation of running Kintsugi in a CI pipeline, scheduled jobs, or a 'headless mode' concept — it's inferred from the API design rather than directly evidenced. Missing for 10: explicit CI/CD or automation pipeline examples, documented headless/batch execution guidance, and any independent report of CI usage.",
     "evidenceIds": [
-      "kintsugi-docs-2",
-      "kintsugi-docs-5",
+      "kintsugi-docs-28",
+      "kintsugi-docs-27",
       "kintsugi-docs-10",
-      "kintsugi-docs-17",
-      "kintsugi-probe-1"
+      "kintsugi-docs-22",
+      "kintsugi-docs-2"
     ]
   },
   {
@@ -1476,24 +1506,26 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Kintsugi is a tax-compliance API/SaaS platform, not an AI agent or assistant runtime that would itself consume tools via MCP. The only MCP-related evidence shows Kintsugi exposing an MCP *server* so external AI coding assistants can query its docs/API (kintsugi-docs-6, kintsugi-docs-18, kintsugi-probe-3) — the opposite direction from 'plugging MCP servers into this product so it can use their tools.' There is no agentic component in Kintsugi that would act as an MCP client, so this axis does not apply.",
+    "confidence": "high",
+    "rationale": "Kintsugi is a tax-compliance API/SaaS platform, not an AI agent or assistant runtime that itself consumes external tools. The evidence shows the reverse relationship — Kintsugi publishes its own MCP server so external AI assistants (e.g., coding copilots) can query its docs — but there is no indication Kintsugi itself acts as an MCP client plugging in outside MCP servers to gain new tool capabilities, so this client-role story is a category mismatch for this kind of product.",
     "evidenceIds": [
       "kintsugi-docs-6",
-      "kintsugi-docs-18",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30",
       "kintsugi-probe-3"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi documents an official MCP server that gives AI assistants direct access to its API docs and live OpenAPI spec for building integrations, confirmed by both docs and a probe. Missing for 10: independent/hands-on corroboration of the MCP server working, and detail on transport/connection setup beyond docs pages.",
+    "rationale": "Kintsugi documents an official MCP server that lets AI assistants query its docs and live OpenAPI spec for accurate code generation, which is a real, first-party MCP integration point. However, it explicitly does not proxy API calls or expose credentials, so an agent connecting via this MCP server can only get documentation context, not perform actual tax actions—falling short of full agentic tool use. Missing for 10: evidence of the MCP server exposing callable API actions/tools (not just docs), and independent/hands-on confirmation of agent usage.",
     "evidenceIds": [
       "kintsugi-docs-6",
-      "kintsugi-docs-18",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30",
       "kintsugi-probe-3"
     ]
   },
@@ -1503,11 +1535,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kintsugi's MCP server only exposes API documentation and OpenAPI specs so AI coding assistants can write integration code more accurately; there is no evidence of an end-user natural-language interface for actually operating the product (e.g., creating exemptions, filing, syncing transactions) via conversational commands.",
+    "rationale": "Kintsugi ships an MCP server, but it is explicitly documented as read-only access to public docs/OpenAPI spec for code-generation help — 'it never proxies calls to the API and never sees your credentials' — so it cannot be used to actually operate Kintsugi (create registrations, sync transactions, file taxes) via natural-language commands. No evidence of any chat/NL interface for operating the product itself.",
     "evidenceIds": [
-      "kintsugi-docs-6",
-      "kintsugi-docs-18",
-      "kintsugi-probe-3"
+      "kintsugi-docs-29",
+      "kintsugi-docs-30",
+      "kintsugi-docs-18"
     ]
   },
   {
@@ -1516,25 +1548,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kintsugi is a tax-compliance API/SaaS product with REST API, SDKs (Python, TypeScript, Java, PHP, Ruby), and an MCP server for docs access, but no evidence of an official CLI tool being offered for interacting with the product or its API.",
+    "rationale": "Kintsugi is a tax-compliance API with SDKs (Python, TypeScript, Java, PHP, Ruby) and an MCP server for docs access, but no evidence of an official CLI tool for interacting with the product's API or workflows.",
     "evidenceIds": []
   },
   {
     "productId": "kintsugi",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Kintsugi documents a full REST API with official SDKs in five languages, API key management, an llms.txt endpoint, and specific reference endpoints (nexus, registrations, filings, exemptions, tax estimate), giving AI-native users a well-documented public API surface to drive the product programmatically. missing for 10: a directly reachable OpenAPI/swagger spec (probe found candidate paths 404) and independent third-party corroboration beyond vendor docs.",
+    "rationale": "Kintsugi ships a documented REST API with authentication, official SDKs in five languages generated from an OpenAPI spec, and extensive per-endpoint reference docs (tax estimate, nexus, registrations, filings, exemptions, transactions), plus an llms.txt for AI discoverability. Missing for 10: a publicly resolvable OpenAPI/swagger file at the probed standard paths (404s), so machine-readable spec access isn't independently confirmed.",
     "evidenceIds": [
       "kintsugi-docs-2",
       "kintsugi-docs-9",
       "kintsugi-docs-10",
+      "kintsugi-docs-27",
+      "kintsugi-docs-28",
       "kintsugi-docs-11",
-      "kintsugi-docs-12",
       "kintsugi-docs-13",
-      "kintsugi-docs-14",
-      "kintsugi-docs-5",
       "kintsugi-probe-1",
       "kintsugi-probe-2"
     ]
@@ -1545,10 +1576,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Kintsugi supports API key expiration windows and holding multiple concurrent keys for rotation, which is a basic form of credential lifecycle control, but there's no evidence of granular scopes/permissions (e.g., read-only, resource-restricted) needed for true least-privilege access, nor any agent-specific credential issuance. missing for 10: evidence of permission/scope-based key restrictions, agent-specific credential provisioning, and role-based access control.",
+    "rationale": "Kintsugi lets users create API keys with configurable expirations (never/1 month/6 months/1 year) and hold multiple keys simultaneously for rotation, giving some credential lifecycle control that could apply to an agent's key. However, there is no evidence of actual scope/permission restriction (e.g., read-only, endpoint-limited, or role-based keys) — every key appears to carry full account access via the same x-api-key/x-organization-id headers, and the MCP server explicitly avoids using API keys at all rather than issuing scoped ones. Missing for 10: granular permission/role-based scoping, agent-specific restricted keys, and any least-privilege access-control model beyond expiration.",
     "evidenceIds": [
       "kintsugi-docs-5",
-      "kintsugi-docs-17"
+      "kintsugi-docs-17",
+      "kintsugi-docs-27",
+      "kintsugi-docs-28",
+      "kintsugi-docs-30"
     ]
   },
   {
@@ -1556,11 +1590,12 @@
     "storyId": "agentic-sdks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Kintsugi documents five official SDKs (Python, TypeScript, Java, PHP, Ruby) generated from a shared OpenAPI spec and published to language package registries, with docs guiding developers on how to build against them or the REST API directly. missing for 10: independent third-party corroboration (e.g. GitHub repo stars/activity, community usage reports) of SDK quality/maintenance, and a live discoverable OpenAPI spec (probe found openapi.json paths 404).",
+    "confidence": "medium",
+    "rationale": "Kintsugi documents five official SDKs (Python, TypeScript, Java, PHP, Ruby) generated from a shared OpenAPI spec and published to language package registries, plus a full REST API reference for building integrations. Missing for 10: independent/hands-on corroboration of SDK quality and no direct public OpenAPI file accessible (probe 404s) to verify spec freshness.",
     "evidenceIds": [
       "kintsugi-docs-10",
       "kintsugi-docs-2",
+      "kintsugi-docs-26",
       "kintsugi-probe-2"
     ]
   },
@@ -1569,8 +1604,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions webhooks, event subscriptions, or push notifications from Kintsugi; the API is described only in terms of REST endpoints, SDKs, and MCP docs access, with no webhook subscription mechanism documented.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack mentions webhooks or event subscriptions; Kintsugi's docs cover REST API, SDKs, MCP server for docs access, and API key auth, but nothing about outbound event notifications or webhook subscriptions for filing status, sync completion, or nexus changes.",
     "evidenceIds": []
   },
   {
@@ -1579,11 +1614,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Kintsugi's MCP server and docs are aimed at developers integrating the tax API (accurate code examples, live OpenAPI spec), not a founder-facing AI Q&A tool that answers tax-rate or invoice-taxation questions with citations to a rule base. No feature described resembles a generic-chatbot alternative for tax reasoning.",
+    "rationale": "Evidence shows Kintsugi's MCP server is a developer tool that lets AI coding assistants query API docs/OpenAPI spec to write integration code (kintsugi-docs-6, -18, -29, -30) — it explicitly never touches tax data or answers substantive tax questions. There is no evidence of a founder-facing AI assistant that answers 'is this taxable in this state' or explains invoice tax treatment with citations from a rule base.",
     "evidenceIds": [
       "kintsugi-docs-6",
       "kintsugi-docs-18",
-      "kintsugi-probe-3"
+      "kintsugi-docs-29",
+      "kintsugi-docs-30"
     ]
   },
   {
@@ -1592,38 +1628,41 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Kintsugi has a public API reference (e.g. Create Registration, Get Filings, Create Exemption pages) and ties code examples to it via SDKs and an MCP server that gives AI assistants 'accurate, up-to-date code examples,' but there is no evidence of an interactive 'try it' console or runnable examples in the docs, and the openapi.json probe returned 404s. missing for 10: explicit interactive/try-it execution UI, confirmation of a public OpenAPI spec, evidence of examples actually being runnable rather than just displayed code snippets.",
+    "rationale": "The docs include structured API reference pages (e.g. reference/get-filings, reference/create-exemption) and note that reference docs are generated from the same OpenAPI spec used for the SDKs, which is consistent with an interactive reference, but no evidence explicitly confirms a 'try it' / runnable-example console, and a probe for the OpenAPI spec at standard paths returned 404s, undermining confidence in live interactivity. missing for 10: explicit documentation of an in-browser 'try it now' or runnable code execution feature, confirmation of a publicly accessible OpenAPI spec powering that experience.",
     "evidenceIds": [
+      "kintsugi-docs-10",
       "kintsugi-docs-11",
-      "kintsugi-docs-12",
       "kintsugi-docs-13",
       "kintsugi-docs-14",
-      "kintsugi-docs-10",
-      "kintsugi-docs-18",
       "kintsugi-probe-2"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "api-machine-spec",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "disputed",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs state SDKs are generated from an OpenAPI spec and that the MCP integration lets AI assistants query the 'live OpenAPI spec' directly (kintsugi-docs-10, kintsugi-docs-18), implying a machine-readable spec exists, but a direct probe for standard OpenAPI/Swagger file locations returned 404 everywhere (kintsugi-probe-2), so there's no confirmed public download endpoint. Missing for 10: a verifiable direct download link/endpoint for the OpenAPI file and independent confirmation it's accessible outside the MCP/SDK tooling.",
+    "rationale": "Docs claim SDKs and even the MCP server are generated from/read a 'live OpenAPI spec' (kintsugi-docs-10, kintsugi-docs-18, kintsugi-docs-30), implying a machine-readable spec exists, but a hands-on probe found all standard OpenAPI spec download paths (openapi.json, swagger.json, etc.) return 404, meaning no publicly downloadable spec file was found. missing for 10: a documented public URL or download link for the OpenAPI/Swagger file itself, confirmation that the spec is accessible outside the MCP server's internal use.",
     "evidenceIds": [
       "kintsugi-docs-10",
       "kintsugi-docs-18",
+      "kintsugi-docs-30",
       "kintsugi-probe-2"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence pack covers API keys, SDKs, connectors, and an MCP server for docs, but nowhere mentions a sandbox/test environment or test-mode API keys distinct from production. For an API-first tax compliance product, a sandbox is a reasonable and applicable capability, but no evidence confirms it exists.",
-    "evidenceIds": []
+    "rationale": "The tax estimate endpoint is documented as idempotent and non-record-creating, explicitly 'perfect for testing tax calculations during checkout flows' without touching production data, but this covers only one endpoint rather than a full sandbox environment for transaction sync, filings, or registrations. Missing for 10: a documented dedicated sandbox/test mode with separate test API keys, and confirmation that other flows (transaction sync, credit notes, filings) can be exercised without affecting production records.",
+    "evidenceIds": [
+      "kintsugi-docs-32",
+      "kintsugi-docs-9",
+      "kintsugi-docs-26"
+    ]
   },
   {
     "productId": "kintsugi",
@@ -1631,12 +1670,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes API keys, SDKs, and endpoints, but nowhere mentions API versioning schemes or a documented deprecation policy; the OpenAPI spec probe even 404s, suggesting no discoverable versioned spec. missing for 10: any mention of API version numbers, changelog, or deprecation/sunset policy.",
-    "evidenceIds": [
-      "kintsugi-docs-5",
-      "kintsugi-docs-10",
-      "kintsugi-probe-2"
-    ]
+    "rationale": "The evidence pack shows REST API, SDKs generated from an OpenAPI spec, and authentication details, but nowhere documents API versioning scheme or a deprecation policy for breaking changes. No mention of version numbers (v1/v2), sunset timelines, or deprecation notices.",
+    "evidenceIds": []
   },
   {
     "productId": "kintsugi",
@@ -1644,11 +1679,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs and marketing show automated registration creation, filing tracking (Get/Create Filings, Create Registration APIs) and a broad claim that Kintsugi 'files everywhere you sell,' supporting core filing/remittance automation across jurisdictions. However, there is no evidence of an explicit on-time guarantee or penalty-coverage commitment, nor details on remittance mechanics or SLA terms. Missing for 10: explicit late-filing penalty guarantee, remittance process documentation, and independent verification of on-time filing performance.",
+    "rationale": "Kintsugi's docs describe automatic registration, filing, and remittance across jurisdictions ('registers you... and files and remits on schedule') with API objects for registrations and filings, but nowhere in the evidence is a late-filing penalty guarantee mentioned or described. missing for 10: explicit guarantee/indemnification terms for late filings, SLA on filing timeliness, and independent verification of the filing/remittance process.",
     "evidenceIds": [
+      "kintsugi-docs-25",
+      "kintsugi-docs-15",
       "kintsugi-docs-12",
       "kintsugi-docs-13",
-      "kintsugi-docs-15",
+      "kintsugi-docs-38",
       "kintsugi-docs-23"
     ]
   },
@@ -1672,8 +1709,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kintsugi is a tax-compliance API/platform; the evidence shows connectors, sync, nexus tracking, and an MCP server for docs access, but nothing describes a rules engine or event-triggered automation (e.g., 'if nexus threshold crossed, then auto-register' or webhooks/triggers configurable by users). No evidence of user-defined conditional rules or automated action triggers.",
-    "evidenceIds": []
+    "rationale": "Kintsugi's docs describe fixed, built-in automation (e.g., nexus detection triggers filing/remittance on a schedule) but there is no evidence of a user-configurable rules engine, webhooks, or custom event-trigger system that an AI-native user could define themselves. The MCP server only exposes documentation/OpenAPI spec to assistants, it does not let users author rules for automatic actions.",
+    "evidenceIds": [
+      "kintsugi-docs-25",
+      "kintsugi-docs-26",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30"
+    ]
   },
   {
     "productId": "kintsugi",
@@ -1681,11 +1723,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kintsugi's docs describe automatic background transaction syncing and filing, but there is no evidence of an API, SDK, or MCP capability that lets an AI-native user explicitly schedule or configure recurring jobs/workflows (e.g., cron-like triggers, webhook-based automation, or workflow orchestration). The MCP server only exposes documentation access, not job scheduling. Missing for 10: any documented scheduling/automation API, recurring job configuration options, or workflow-orchestration tooling for AI agents.",
+    "rationale": "Kintsugi's docs describe built-in automatic recurring processes (e.g., 'files and remits on schedule') but there is no evidence of an API, SDK, or MCP capability letting an AI-native user define or schedule their own recurring jobs/workflows. The MCP server is explicitly read-only documentation access (docs-30), not a workflow/job scheduler.",
     "evidenceIds": [
-      "kintsugi-docs-1",
-      "kintsugi-docs-6",
-      "kintsugi-probe-3"
+      "kintsugi-docs-25",
+      "kintsugi-docs-30",
+      "kintsugi-docs-6"
     ]
   },
   {
@@ -1694,7 +1736,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a sales tax compliance/API product, not an automation-building platform with workflows or automations that could be versioned, reviewed, or rolled back; this axis is a category error for its product type.",
+    "rationale": "Kintsugi is a tax-compliance API/service, not an automation-building platform with workflows to version, review, or roll back; no evidence pack content addresses automation versioning or rollback of any kind, and this axis is a category mismatch for the product type.",
     "evidenceIds": []
   },
   {
@@ -1703,13 +1745,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi documents dozens of prebuilt connectors for shopping carts, billing systems, and accounting platforms with a one-time authorize-and-sync flow, plus a 'Data Sources' connect flow, REST API, and official SDKs in five languages for custom integrations. However, the evidence pack never names specific maintained integrations (e.g. Stripe, Shopify, specific billing/payment processors) or confirms which platforms are actually first-party vs third-party, and the OpenAPI spec probe returned 404s, weakening confidence in build-your-own routes. Missing for 10: named/specific commerce and payment-processor integrations, independent confirmation of integration maintenance/reliability, working OpenAPI spec discovery.",
+    "rationale": "Kintsugi documents prebuilt connectors for shopping carts, billing systems, ERPs, and accounting platforms, plus a REST API/SDKs and CSV upload as fallback (kintsugi-docs-1, kintsugi-docs-16, kintsugi-docs-22), which supports the 'no plumbing needed' claim for common revenue-stack tools. However, the evidence never names specific maintained integrations (e.g., Stripe, Shopify, QuickBooks) or shows a marketplace/list of supported connectors, so the breadth and maintenance status of these integrations is unverified. Missing for 10: named/listed specific billing, payment, and commerce platform integrations, evidence of ongoing maintenance/versioning of connectors, and independent confirmation of connector reliability beyond first-party docs.",
     "evidenceIds": [
       "kintsugi-docs-1",
       "kintsugi-docs-16",
-      "kintsugi-docs-19",
-      "kintsugi-docs-10",
-      "kintsugi-probe-2"
+      "kintsugi-docs-22",
+      "kintsugi-docs-2",
+      "kintsugi-docs-19"
     ]
   },
   {
@@ -1717,8 +1759,8 @@
     "storyId": "calculation-accuracy-guarantee",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions an accuracy guarantee, indemnification, audit defense/support commitment, or any warranty backing Kintsugi's tax calculations if they prove wrong. The evidence covers integration, API, nexus tracking, and filings, but nothing addresses financial accountability for calculation errors.",
+    "confidence": "high",
+    "rationale": "No evidence of an accuracy guarantee, warranty, indemnification, or audit-support commitment tied to Kintsugi's tax calculations; docs only cover API mechanics, nexus tracking, and product features.",
     "evidenceIds": []
   },
   {
@@ -1727,52 +1769,55 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers US-style nexus tracking, registrations, filings, exemptions, and transaction sync/tax calculation APIs, but nothing describes generating VAT-compliant invoices, populating required VAT fields, or embedding registration numbers per locale rules on invoices. The product's registration/filing features are adjacent but the specific invoice-compliance capability is unevidenced.",
+    "rationale": "The evidence pack describes Kintsugi as a US-style sales tax compliance engine (nexus tracking, tax calculation, registrations, filings, credit notes) but contains no mention of VAT-specific invoice fields, registration numbers appearing on invoices, locale invoice formatting rules, or actual invoice document generation/passthrough. Nothing in the docs addresses compliant invoicing (VAT ID display, sequential numbering, reverse-charge text, etc.).",
     "evidenceIds": [
+      "kintsugi-docs-25",
+      "kintsugi-docs-9",
+      "kintsugi-docs-31",
       "kintsugi-docs-12",
-      "kintsugi-docs-11",
-      "kintsugi-docs-19",
-      "kintsugi-docs-9"
+      "kintsugi-docs-13"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "exempt-customer-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi's Create Exemption API lets developers create exemption records with type, jurisdiction, country/state, and validity dates, which supports customer/transaction-level exemption via API. However, there is no explicit documentation showing that the exemption reason is then carried through tax calculation, reporting, and the filed return end-to-end. Missing for 10: evidence that exemption data flows into tax estimate/calculation endpoints, appears in reporting/filings output, and is reflected on the actual filed return.",
+    "rationale": "Kintsugi's docs show a Create Exemption API supporting exemption type, jurisdiction, and validity dates, an Upload Exemption Certificate endpoint, and the tax estimate endpoint explicitly stating rates reflect the customer's exemptions — covering exemption creation and its effect on calculation. However, there is no documented evidence that the exemption reason/type is explicitly surfaced in filing reports or the filed return itself. Missing for 10: explicit documentation of exemption reason appearing in reporting outputs or on the filed return, and confirmation the reason field is queryable/traceable end-to-end.",
     "evidenceIds": [
       "kintsugi-docs-14",
       "kintsugi-docs-24",
-      "kintsugi-docs-13",
-      "kintsugi-docs-9"
+      "kintsugi-docs-37",
+      "kintsugi-docs-31"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "exemption-certificate-management",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kintsugi's API supports creating exemption records with type, jurisdiction, and validity dates (docs-14, docs-24), implying some storage and expiry-date tracking, but there is no evidence of a customer-facing collection/validation workflow or documentation confirming exemptions are automatically applied at tax-calculation time. missing for 10: customer certificate collection/upload flow, validation logic, expiry alerting, and explicit linkage to the tax calculation endpoint honoring exemptions.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kintsugi exposes Create Exemption and Upload Exemption Certificate APIs with fields for exemption type, jurisdiction, and validity dates, and the tax estimate endpoint explicitly factors in customer exemptions at calculation time (kintsugi-docs-14, kintsugi-docs-24, kintsugi-docs-37, kintsugi-docs-31). However there is no evidence of a customer-facing collection flow, certificate validation logic, or automated expiry-tracking/alerting beyond storing validity dates. Missing for 10: customer self-service certificate submission, validation workflow, expiry alerting/renewal automation.",
     "evidenceIds": [
       "kintsugi-docs-14",
       "kintsugi-docs-24",
-      "kintsugi-docs-9"
+      "kintsugi-docs-37",
+      "kintsugi-docs-31"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "filing-calendar-visibility",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Kintsugi's API exposes a Get Filings endpoint that lists filings with status/date/jurisdiction filters, implying some per-filing status visibility, but there is no evidence of a calendar view of upcoming returns, remitted amounts tracking, or downloadable filing confirmations for ops users. Missing for 10: calendar UI for upcoming returns, remitted-amount reporting, downloadable confirmation documents, and any ops-facing dashboard screenshots or independent corroboration.",
+    "rationale": "Kintsugi exposes filing APIs (Get Filings, Get Filings By Registration ID) with status/date/jurisdiction filters and a general claim of filing/remitting on schedule, giving ops some per-filing status visibility, but there's no evidence of a calendar view of upcoming returns, remitted amount fields, or downloadable filing confirmations. Missing for 10: upcoming-returns calendar UI, explicit remitted-amount reporting, downloadable confirmation documents.",
     "evidenceIds": [
       "kintsugi-docs-13",
-      "kintsugi-docs-12",
-      "kintsugi-docs-15"
+      "kintsugi-docs-38",
+      "kintsugi-docs-25",
+      "kintsugi-docs-12"
     ]
   },
   {
@@ -1780,14 +1825,16 @@
     "storyId": "global-vat-gst",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Kintsugi's nexus tracking, registrations, filings, and exemptions entirely in the context of what reads as US-style sales tax compliance (physical/economic nexus, state jurisdictions) with no mention of VAT, GST, EU OSS/IOSS schemes, or foreign country registration thresholds for UK/Canada/Australia. Since a sales-tax compliance platform could plausibly extend to international VAT/GST, the axis applies, but nothing in the evidence confirms this capability.",
+    "confidence": "high",
+    "rationale": "All evidence describes US sales-tax concepts only (nexus, sales tax estimate endpoint, physical nexus, exemption certificates, US-style registrations/filings). Nothing in the pack mentions VAT, GST, EU OSS/IOSS, UK, Canada, Australia, or foreign registration thresholds, so there is no evidence Kintsugi extends beyond US sales tax.",
     "evidenceIds": [
+      "kintsugi-docs-3",
+      "kintsugi-docs-4",
+      "kintsugi-docs-9",
       "kintsugi-docs-11",
       "kintsugi-docs-12",
-      "kintsugi-docs-13",
       "kintsugi-docs-23",
-      "kintsugi-docs-15"
+      "kintsugi-docs-35"
     ]
   },
   {
@@ -1796,29 +1843,30 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kintsugi supports importing historical transactions via CSV upload or API sync covering the prior full calendar year, and explicitly determines nexus/exposure retroactively to identify when a filing obligation began and where a business owes tax. However, no evidence describes computing estimated penalties or interest per jurisdiction — only nexus determination and a forward-looking tax estimate endpoint are documented. Missing for 10: explicit penalty/interest calculation, a consolidated 'exposure report' output format, and independent/hands-on confirmation of backdated liability figures.",
+    "rationale": "Kintsugi supports importing historical transactions (CSV upload or API sync covering the prior full calendar year through today) and determining nexus/threshold crossing dates from that data, which addresses backdated exposure detection. However, there is no evidence of a consolidated liability, penalty, and interest estimate per jurisdiction — the docs describe nexus lookback, registrations, and filings but not a computed exposure/penalty/interest report. missing for 10: per-jurisdiction estimated liability amount, penalty calculation, interest calculation, and a consolidated backdated exposure report/dashboard.",
     "evidenceIds": [
       "kintsugi-docs-3",
       "kintsugi-docs-22",
-      "kintsugi-docs-15",
       "kintsugi-docs-11",
-      "kintsugi-docs-9"
+      "kintsugi-docs-35",
+      "kintsugi-docs-15"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "liability-reporting",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Kintsugi provides nexus tracking, filings, registrations, and exemption APIs (get-filings, create-registration, get-nexus-for-org) that could surface liability by jurisdiction, and product categorization determines taxability, but there's no explicit documentation of a 'collected vs owed' liability dashboard or accountant/GL-ready export format. missing for 10: explicit accrued-liability-by-jurisdiction view/report, collected-vs-owed reconciliation feature, documented GL/accountant export formats (e.g. CSV/QBO/NetSuite journal entries), independent confirmation of filing-ready detail accuracy.",
+    "rationale": "Kintsugi's API surfaces the underlying data a finance lead would need — nexus by jurisdiction, filings, registrations, transaction sync and credit notes/refund adjustments — via endpoints like get-nexus-for-org, get-filings, and syncing-transaction-records, which could in principle be assembled into a liability view. However, there is no evidence of a purpose-built 'accrued liability by jurisdiction' report, a collected-vs-owed dashboard, or filing-ready GL export formats for accountants; everything shown is raw API/CSV plumbing rather than a finance-facing report. Missing for 10: a dedicated liability/collected-vs-owed report UI, documented GL/accountant export formats (e.g. journal entry exports), and any evidence of accountant-consumable output beyond raw API objects.",
     "evidenceIds": [
       "kintsugi-docs-11",
-      "kintsugi-docs-12",
       "kintsugi-docs-13",
-      "kintsugi-docs-14",
-      "kintsugi-docs-8",
-      "kintsugi-docs-3"
+      "kintsugi-docs-12",
+      "kintsugi-docs-35",
+      "kintsugi-docs-20",
+      "kintsugi-docs-19",
+      "kintsugi-docs-38"
     ]
   },
   {
@@ -1827,7 +1875,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers general transaction sync, nexus determination, registrations, and filings, but nothing addresses marketplace-facilitator-collected transactions specifically (e.g., a flag or field to mark facilitator-collected sales so they count toward nexus without being double-remitted). This is a standard, well-known sales-tax compliance concern (marketplace facilitator laws) that a product like Kintsugi could plausibly support, but no documentation mentions it.",
+    "rationale": "The evidence pack details nexus tracking, transaction sync, credit notes, and exemptions, but nowhere mentions marketplace facilitator transactions, a way to flag facilitator-collected tax, or logic to exclude such sales from remittance while still counting them toward nexus. This is a standard, well-known feature area for sales tax platforms (marketplace facilitator laws), so the axis applies, but no supporting evidence exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -1836,38 +1884,40 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kintsugi tracks transactions against nexus thresholds and can list nexuses and back-calculate when a threshold was crossed (kintsugi-docs-3, kintsugi-docs-11, kintsugi-docs-15), but the evidence describes retrospective detection ('finds the exposure you didn't know you had,' 'tells you when you crossed a threshold') rather than proactive, pre-crossing alerts across every state/country threshold as the story requires. missing for 10: explicit alerting/notification mechanism before a threshold is crossed, real-time dashboard or push-alert feature, evidence of country-level (vs. US state) threshold monitoring.",
+    "rationale": "Kintsugi tracks transactions and computes nexus by analyzing a rolling window of sales, and exposes nexus/registration APIs (kintsugi-docs-3, kintsugi-docs-11, kintsugi-docs-35), and markets itself as finding 'exposure you didn't know you had' (kintsugi-docs-15). However, the docs describe this as determining when you *already crossed* a threshold, not a proactive alert before crossing — there's no evidence of a notification/alert mechanism triggered ahead of threshold breach. Missing for 10: explicit pre-crossing alert/notification feature, real-time threshold-warning UI, and per-state/country threshold visualization.",
     "evidenceIds": [
       "kintsugi-docs-3",
       "kintsugi-docs-11",
       "kintsugi-docs-15",
-      "kintsugi-docs-23"
+      "kintsugi-docs-35",
+      "kintsugi-docs-25"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "omnichannel-import",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kintsugi documents multiple import paths covering the whole business: prebuilt connectors for carts/billing/ERPs/accounting platforms (docs-1, docs-16), REST API/SDK-based transaction sync for custom integrations (docs-2, docs-10, docs-19), CSV file upload for backfilling history (docs-22), and explicit guidance to backfill a full prior calendar year plus current data so nexus detection covers the whole business (docs-3). This directly matches the story's requirement of API backfills plus connector syncs from other processors/storefronts. Missing for 10: independent/hands-on verification that specific named processors (e.g., Shopify, Stripe) actually sync reliably, and a public OpenAPI spec was not reachable via probe, slightly weakening confidence in API completeness.",
+    "rationale": "Docs describe both prebuilt connectors for shopping carts, billing systems, ERPs, and accounting platforms (docs-1, docs-16) and explicit API-based backfill methods — sync full-year history via API (docs-3, docs-19), CSV file upload for backfilling (docs-22), and a migration guide with transaction mapping when switching from Avalara/TaxJar (docs-7, docs-21) — collectively covering multi-channel import for complete filing coverage.  Missing for 10: no named list of specific connector platforms, no independent/hands-on confirmation that connector syncs work reliably in practice, and no evidence on how conflicting/duplicate transactions across channels are reconciled.",
     "evidenceIds": [
       "kintsugi-docs-1",
-      "kintsugi-docs-2",
-      "kintsugi-docs-3",
       "kintsugi-docs-16",
+      "kintsugi-docs-3",
       "kintsugi-docs-19",
       "kintsugi-docs-22",
-      "kintsugi-docs-10"
+      "kintsugi-docs-7",
+      "kintsugi-docs-21",
+      "kintsugi-docs-26"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kintsugi exposes a broad REST API and five SDKs covering core workflows—transaction sync, nexus, registrations, filings, exemptions, tax estimation, refunds/credit notes—suggesting most UI functionality (data sources, filings, exemptions, registrations) is API-accessible. However there's no explicit statement that 100% of UI actions are API-parity, and the OpenAPI spec is not publicly resolvable (404s across candidate paths), making it hard to verify full coverage. Missing for 10: an explicit API/UI parity statement, a working public OpenAPI spec, and independent confirmation that all UI-only features (e.g. connector setup wizards) have API equivalents.",
+    "rationale": "The docs show a broad REST API (and 5 SDKs) covering nexus, registrations, filings, exemptions, transaction sync, credit notes, product categorization, and tax estimation, suggesting the API is the primary interface, and an MCP server further aids AI-native workflows by exposing docs/OpenAPI to assistants. However, there is no explicit statement confirming full UI/API parity or listing any UI-only features (e.g., dashboard analytics, connector setup UI) not exposed via API. Missing for 10: an explicit parity statement or audit showing every UI action has an API equivalent, and confirmation that connector/dashboard-only features are also API-accessible.",
     "evidenceIds": [
       "kintsugi-docs-2",
       "kintsugi-docs-9",
@@ -1876,22 +1926,24 @@
       "kintsugi-docs-13",
       "kintsugi-docs-14",
       "kintsugi-docs-19",
-      "kintsugi-docs-20",
-      "kintsugi-docs-10",
-      "kintsugi-probe-2"
+      "kintsugi-docs-26",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only inbound sync (transaction/CSV import) and narrow read endpoints like Get Filings or Get Nexus, but no documented bulk export feature or open-format data portability for leaving the platform. Missing for 10: an explicit data-export/portability feature, documentation of open export formats, and any statement about retaining ownership/exit of data.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kintsugi exposes REST endpoints to retrieve filings, nexus, exemptions, and transaction records (e.g. Get Filings, Get Nexus, Create Exemption) which technically let a user pull their data in JSON via the API, but there is no documented bulk 'export all data' feature, no explicit open-format export tool, and no guidance on closing/exiting the platform with a full data dump. Missing for 10: a dedicated data-export/download feature, documentation of a full-account export format, and any mention of an offboarding/exit data process.",
     "evidenceIds": [
-      "kintsugi-docs-11",
       "kintsugi-docs-13",
-      "kintsugi-docs-22"
+      "kintsugi-docs-11",
+      "kintsugi-docs-14",
+      "kintsugi-docs-38",
+      "kintsugi-docs-19"
     ]
   },
   {
@@ -1900,7 +1952,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a closed SaaS tax-compliance API product, not an open-source project; no evidence pack item mentions any open-source license or public source repository. Source-code openness is a category error for this kind of hosted commercial API service.",
+    "rationale": "Kintsugi is a proprietary SaaS tax-compliance API product, not an open-source project; source-license availability is not a relevant axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1909,7 +1961,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a SaaS sales-tax compliance API/service, not open-source infrastructure intended to be self-hosted; the evidence pack shows only cloud API, SDKs, and MCP docs, with no mention of self-hosting as a concept. Self-hosting is a category error for this kind of hosted compliance platform, so the axis does not apply.",
+    "rationale": "Kintsugi is a hosted SaaS tax-compliance API/service (transaction sync, nexus tracking, filing, remittance) that inherently depends on centralized infrastructure and live government filing pipelines; self-hosting the core product is not a coherent capability for this category of product, unlike infrastructure or open-source software.",
     "evidenceIds": []
   },
   {
@@ -1918,7 +1970,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a sales-tax compliance/API product, not a data-storage platform; data residency/region selection is not a relevant axis for this product category, and no evidence discusses storage location choices.",
+    "rationale": "Kintsugi is a sales-tax compliance API/product; data residency/region storage choice is not a documented or plausible axis for this product category based on the evidence, which focuses entirely on tax calculation, filings, and integration.",
     "evidenceIds": []
   },
   {
@@ -1936,7 +1988,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a tax-compliance API/platform; evidence covers transaction sync, API keys, nexus/registration/filing APIs, and MCP docs access, but nothing addresses data retention policies, deletion controls, or privacy/data-lifecycle management for AI-native users. No evidence of retention settings or deletion endpoints.",
+    "rationale": "Kintsugi is a sales-tax compliance API; the evidence covers transaction sync, nexus, filings, API keys, and MCP docs access, but nothing addresses user data retention policies or deletion controls for stored transaction/customer data.",
     "evidenceIds": []
   },
   {
@@ -1945,73 +1997,76 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kintsugi is a sales-tax compliance/API product; telemetry opt-out for AI-native usage tracking is not a relevant axis for this category of tool, and no evidence pack items address privacy/telemetry controls at all.",
+    "rationale": "Kintsugi is a sales-tax compliance API/SaaS product, not an AI agent or developer tool with telemetry that a user configures; the evidence pack contains no mention of telemetry or usage-tracking opt-out at all, and this axis is designed for AI-native tools/agents collecting usage data on the user's behalf rather than a tax compliance backend. This story is a category mismatch for the product type.",
     "evidenceIds": []
   },
   {
     "productId": "kintsugi",
     "storyId": "product-tax-codes",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi docs explicitly describe classifying every product into a category and subcategory that determine jurisdictional taxation (kintsugi-docs-8), backed by tax estimate and transaction sync APIs that carry per-line-item product classification (kintsugi-docs-9, kintsugi-docs-19). This directly matches the story of mapping catalog items to tax categories for correct per-jurisdiction taxation. Missing for 10: explicit enumeration of category types like SaaS/digital goods/services/physical goods, and independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Kintsugi documents a product classification system where every item gets a category and subcategory that together determine tax treatment across jurisdictions, and the tax estimate endpoint explicitly factors in 'your product taxability.' However, the evidence never names or enumerates the actual taxonomy (e.g., SaaS vs. digital goods vs. services vs. physical products) or shows the API/schema for assigning categories to catalog items. Missing for 10: the concrete category/subcategory taxonomy list, API fields/endpoints for setting a product's category on a line item, and worked examples showing differing tax treatment (e.g., SaaS vs. physical goods) across jurisdictions.",
     "evidenceIds": [
       "kintsugi-docs-8",
-      "kintsugi-docs-9",
-      "kintsugi-docs-19"
+      "kintsugi-docs-33",
+      "kintsugi-docs-31"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "rate-rule-currency",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kintsugi is a hosted tax-calculation API (tax estimate, nexus, product categorization endpoints), which by nature means rate/rule logic lives server-side and calling clients never redeploy for tax-table changes — this is implied by the architecture (kintsugi-docs-9, kintsugi-docs-8, kintsugi-docs-11). However, there is no explicit documentation of a rate/rule update cadence, changelog, or notification mechanism confirming when jurisdictional changes 'take effect.' Missing for 10: explicit changelog or release notes for rate/rule changes, documented update cadence, and confirmation that no customer action is ever required when rules change.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kintsugi is a hosted tax API/service where rate calculation happens server-side per request (kintsugi-docs-9, kintsugi-docs-31, kintsugi-docs-25), so by architecture customers never redeploy code to get new rates — the API just returns current rates reflecting nexus, taxability, exemptions and address. But there is no explicit documentation of a changelog, release notes, or 'effective date' disclosure process for rate/rule changes across jurisdictions. Missing for 10: documented changelog or notification process for rate/rule updates, explicit statement of update cadence/effective dates, and independent confirmation that rates stay current without any customer-side action.",
     "evidenceIds": [
       "kintsugi-docs-9",
-      "kintsugi-docs-8",
-      "kintsugi-docs-11",
-      "kintsugi-docs-3"
+      "kintsugi-docs-31",
+      "kintsugi-docs-25",
+      "kintsugi-docs-33"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "realtime-tax-calculation",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm a REST API (tax estimate endpoint POST /v1/tax/estimate) plus SDKs for real-time tax pricing before payment, and product categorization drives jurisdiction-specific taxation — supporting the core 'calculate tax via API' story. However, there is no explicit evidence of address-level (rooftop) precision versus ZIP-level approximation, and no documented latency/performance benchmarks confirming it's fast enough for checkout. missing for 10: explicit rooftop/address-level accuracy claims, latency/performance guarantees for checkout-speed use, independent verification of calculation accuracy.",
+    "rationale": "Kintsugi documents a real-time tax estimate endpoint (POST /v1/tax/estimate) that factors in nexus, product taxability, exemptions, and shipping address, explicitly built for checkout flows and idempotent for testing, plus an address suggestion/validation endpoint supporting rooftop-level accuracy. However there's no independent benchmark or hands-on evidence of latency/performance suitable for checkout, and no explicit confirmation the address validation feeds precise rooftop coordinates versus jurisdiction-level lookup. missing for 10: independent latency/performance benchmarks, explicit confirmation of rooftop (not just jurisdiction) geocoding precision, third-party corroboration of accuracy claims.",
     "evidenceIds": [
       "kintsugi-docs-9",
-      "kintsugi-docs-8",
-      "kintsugi-docs-10",
-      "kintsugi-probe-1"
+      "kintsugi-docs-31",
+      "kintsugi-docs-32",
+      "kintsugi-docs-36",
+      "kintsugi-docs-26"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "refund-adjustment-handling",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Kintsugi docs explicitly define credit notes as refund/return/adjustment records against original sales, with a dedicated API guide for handling refund transactions, implying these flow into liability and filings via the same transaction-sync pipeline used for nexus/filing determination. Missing for 10: explicit documentation showing negative amounts reducing liability totals or appearing in filing reports, and independent/hands-on confirmation that no manual journal adjustments are needed.",
+    "rationale": "Docs explicitly describe credit notes as refund/return/adjustment records against original sales that flow into filings ('filings that reflect what you actually kept'), directly covering negative amounts through liability and reporting without manual journal fixes [kintsugi-docs-20][kintsugi-docs-34]. This is reinforced by the broader tax lifecycle (nexus, filings, registrations) and transaction sync model. missing for 10: independent/hands-on verification of a refund actually reducing a specific filing's liability, and detail on how partial refunds/negative amounts are represented in the API payload.",
     "evidenceIds": [
       "kintsugi-docs-20",
+      "kintsugi-docs-34",
       "kintsugi-docs-19",
-      "kintsugi-docs-13",
-      "kintsugi-docs-9"
+      "kintsugi-docs-13"
     ]
   },
   {
     "productId": "kintsugi",
     "storyId": "saas-digital-taxability",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Kintsugi documents product category/subcategory classification that drives taxability across jurisdictions and a tax-estimate endpoint, which implies some handling of digital-goods/SaaS rules, but there is no evidence of state-by-state SaaS taxability rules, bundled-offering logic, or any visible research/rationale behind determinations. missing for 10: SaaS-specific state variance documentation, bundled-offering tax logic, visible audit trail or research citations for each determination.",
+    "rationale": "Kintsugi documents that it classifies products into categories/subcategories that determine cross-jurisdiction taxability and that tax estimates factor in product taxability, nexus, and exemptions, but there is no visible research trail, citation of state-specific statutes/rulings, or discussion of digital-goods/bundled-offering edge cases showing 'how' determinations were made. missing for 10: visible per-determination research/citations, explicit handling of digital-goods and bundled-product taxability edge cases, independent verification of accuracy on hard cases.",
     "evidenceIds": [
       "kintsugi-docs-8",
+      "kintsugi-docs-33",
+      "kintsugi-docs-31",
       "kintsugi-docs-9"
     ]
   },
@@ -2019,15 +2074,17 @@
     "productId": "kintsugi",
     "storyId": "state-registrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kintsugi markets full-service registration ('registers you, and files everywhere you sell') and exposes a Create Registration API plus Get Filings API for status tracking, and a nexus-detection workflow to trigger registrations. However, there is no evidence of transparent per-registration pricing, and no detail on how state/local filing execution is handled operationally beyond API objects. Missing for 10: explicit per-registration pricing disclosure, concrete proof of state-by-state filing execution (not just API scaffolding), and independent/customer confirmation of the service being fully white-glove.",
+    "rationale": "Kintsugi's marketing and API docs describe the vendor finding exposure and registering/filing on the customer's behalf, with a Create Registration API, nexus/registration recipes, and filing-status endpoints (Get Filings, Get Filings By Registration ID) that support status tracking. However, there is no evidence of transparent per-registration pricing or a pricing breakdown for registrations, and no independent/customer confirmation that registrations are actually filed by Kintsugi staff rather than just tracked via API. Missing for 10: documented per-registration pricing/transparency, independent evidence of vendor-filed registrations, and detail on how registration status is surfaced in-app beyond API endpoints.",
     "evidenceIds": [
-      "kintsugi-docs-12",
-      "kintsugi-docs-13",
       "kintsugi-docs-15",
+      "kintsugi-docs-25",
+      "kintsugi-docs-12",
       "kintsugi-docs-23",
-      "kintsugi-docs-11"
+      "kintsugi-docs-35",
+      "kintsugi-docs-13",
+      "kintsugi-docs-38"
     ]
   },
   {
@@ -2036,12 +2093,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kintsugi documents that it classifies every product into a category (docs-8), computes tax via a rate/estimate endpoint (docs-9), and creates a 'permanent record' of each synced transaction (docs-19), plus APIs to list nexuses (docs-11) and filings (docs-13). However there is no explicit documentation of a per-transaction audit trail that retains and exposes the specific rate, rule citation, and address-resolution logic used, nor an explicit export/report feature for audit purposes. Missing for 10: documented per-transaction breakdown of applied rate/rule/jurisdiction resolution, and a dedicated audit-export or compliance-report endpoint/UI.",
+    "rationale": "Docs show the underlying calculation inputs — nexus-based rate determination, product category/subcategory taxability, and address validation (kintsugi-docs-31, kintsugi-docs-33, kintsugi-docs-36) — and confirm transaction sync creates a 'permanent record' (kintsugi-docs-19) with filings retrievable via API (kintsugi-docs-13). However, there is no documented per-transaction audit report or endpoint that surfaces the specific rate/rule/address-resolution breakdown that produced a given transaction's tax, nor an explicit 'export for audit' feature. Missing for 10: a documented per-transaction calculation detail/audit endpoint, explicit exportable audit trail, and evidence tying product category + address resolution + rules back to an individual retained transaction record.",
     "evidenceIds": [
-      "kintsugi-docs-8",
-      "kintsugi-docs-9",
       "kintsugi-docs-19",
-      "kintsugi-docs-11",
+      "kintsugi-docs-31",
+      "kintsugi-docs-33",
+      "kintsugi-docs-36",
       "kintsugi-docs-13"
     ]
   },
@@ -2051,27 +2108,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Kintsugi is built around US-style sales tax concepts (nexus, registrations, filings, tax estimate), with no mention of VAT/tax-ID validation against official registries (e.g., VIES) or reverse-charge mechanics for B2B cross-border sales. Since a tax-compliance API could plausibly support VAT/reverse charge, this axis applies, but there is no evidence it is delivered.",
-    "evidenceIds": [
-      "kintsugi-docs-9",
-      "kintsugi-docs-11",
-      "kintsugi-docs-12",
-      "kintsugi-docs-23"
-    ]
+    "rationale": "The evidence pack describes Kintsugi as a US-style sales-tax/nexus compliance API (nexus tracking, product taxability, exemptions, filings) with no mention of VAT, VAT ID validation against registries like VIES, or reverse-charge mechanics for B2B cross-border EU sales. Since tax compliance APIs could plausibly support VAT validation and reverse charge, this axis applies, but there is no evidence Kintsugi delivers it.",
+    "evidenceIds": []
   },
   {
     "productId": "kintsugi",
     "storyId": "vda-remediation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Kintsugi markets finding exposure, registering, and filing (kintsugi-docs-15) and can backfill historical transaction data via CSV upload (kintsugi-docs-22) plus create registrations across jurisdictions (kintsugi-docs-12, kintsugi-docs-23), which addresses part of the remediation need. However, there is no explicit mention of voluntary disclosure agreements (VDAs) or a formal back-filing/catch-up program for past tax liabilities — only forward-looking nexus determination and registration/filing APIs. Missing for 10: explicit VDA program details, back-filing of historical tax periods/liabilities, and any documentation of negotiating reduced-lookback settlements with states.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kintsugi's marketing docs claim it 'finds the exposure you didn't know you had, registers you, and files everywhere you sell' and its nexus engine looks back across a full calendar year to detect when a filing obligation began, which gestures at a remediation path, but there is no explicit mention of voluntary disclosure agreements (VDAs) or structured back-filing of prior-period tax returns to limit look-back liability. Missing for 10: explicit VDA program/process, documentation of back-filing past-due returns, any guidance on negotiating reduced look-back exposure with states.",
     "evidenceIds": [
       "kintsugi-docs-15",
-      "kintsugi-docs-22",
-      "kintsugi-docs-12",
+      "kintsugi-docs-25",
+      "kintsugi-docs-3",
       "kintsugi-docs-23",
-      "kintsugi-docs-3"
+      "kintsugi-docs-22"
     ]
   },
   {
