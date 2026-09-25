@@ -1,19 +1,21 @@
 {
-  "hash": "0cefc233fc734c112a437449163911a3f8360334a6b8b6d212411e366d256e19",
+  "hash": "d3fb63c2ed86d2a01eeebfa7cd09e4cd9136abd2f5c172e06f7d8c5b33dced7d",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "The REST API clearly exposes tax-posture data and actions an agent could use — nexus list, registrations, filings, exemptions endpoints — and API keys support expiration and multi-key rotation (kintsugi-docs-11,12,13,14,24,5,17). However, the documented MCP server is explicitly scoped to serving API documentation/OpenAPI spec to coding assistants for writing integration code, not to reading or acting on a customer's actual tax posture (kintsugi-docs-6, kintsugi-docs-18); no evidence shows an MCP tool that queries nexus/registrations/filings or scoped read/write credential tiers beyond simple key expiry. Missing for 10: an MCP surface (or any agent-facing surface) that actually reads/acts on live nexus, registration, liability, or filing data, and evidence of fine-grained scoped permissions (e.g., read-only vs. filing-write) rather than just key expiration.",
+    "confidence": "high",
+    "rationale": "The REST API genuinely exposes nexus status, registrations, filings, and exemption records (kintsugi-docs-11/12/13/14/35/38) and can be reached with an org-scoped, expiring API key (kintsugi-docs-5/17/27/28), so an agent can read and act on tax posture via the API. But the official MCP surface explicitly does not provide this access: Kintsugi's own docs state the MCP server 'doesn't need your API key... never proxies calls to the API and never sees your credentials' and only serves public docs/OpenAPI content (kintsugi-docs-30), directly narrowing the broader 'AI assistants can understand Kintsugi's endpoints... provide context-aware help' framing (kintsugi-docs-6/29). So the MCP-with-scoped-credentials half of the story is unsupported/contradicted by Kintsugi's own documentation. Missing for 10: an MCP or agent-facing surface that actually reads/acts on live nexus, registration, liability and filing data with scoped credentials (today MCP is docs-only), and any fine-grained (vs. org-wide) credential scoping.",
     "evidenceIds": [
-      "kintsugi-docs-6",
-      "kintsugi-docs-18",
       "kintsugi-docs-11",
       "kintsugi-docs-12",
       "kintsugi-docs-13",
       "kintsugi-docs-14",
+      "kintsugi-docs-27",
+      "kintsugi-docs-28",
       "kintsugi-docs-5",
-      "kintsugi-docs-17"
+      "kintsugi-docs-6",
+      "kintsugi-docs-29",
+      "kintsugi-docs-30"
     ],
     "productId": "kintsugi",
     "storyId": "agent-reads-tax-state"
