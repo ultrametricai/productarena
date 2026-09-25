@@ -7959,44 +7959,57 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ScrapingBee's docs describe single-page scraping, AI-based extraction (ai_query), and cost-optimizing 'auto' mode, but there is no evidence of adaptive multi-step crawling that dynamically decides when enough information has been gathered to stop. No crawling/agentic loop or stopping-criteria feature is documented.",
+    "rationale": "ScrapingBee offers scraping, extraction, crawling, and cost-ladder auto-escalation, but no evidence describes an adaptive crawl that dynamically stops once 'enough information' is gathered to answer a query — its crawl feature is a same-domain/sitemap/spider crawler, not query-driven stopping logic.",
     "evidenceIds": [
-      "scrapingbee-docs-9",
-      "scrapingbee-docs-14"
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-18"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "ScrapingBee has a confirmed live llms.txt at the documented URL (HTTP 200) serving an index of its documentation, directly satisfying the story of pointing an agent at agent-oriented docs; it also has an official MCP server further supporting agentic access. Missing for 10: a per-page markdown/docs.md mirror (probe shows 404) and an OpenAPI spec discoverable at standard paths, which would round out machine-readable doc coverage.",
+    "rationale": "ScrapingBee hosts a live, verified llms.txt index (HTTP 200) plus a whole family of dedicated agent-oriented .txt docs (html-api, data-extraction, js-scenario, proxy-mode, search/ecommerce/AI APIs, CLI), giving an agent a structured, machine-readable entry point exactly as the story describes. Missing for 10: no OpenAPI/machine schema (404s) and no independent third-party confirmation of agents actually consuming these files.",
     "evidenceIds": [
       "scrapingbee-probe-1",
+      "scrapingbee-docs-16",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-21",
+      "scrapingbee-docs-23",
+      "scrapingbee-docs-38",
       "scrapingbee-probe-2",
-      "scrapingbee-probe-4"
+      "scrapingbee-probe-3"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "ScrapingBee's `ai_query` parameter lets users ask AI to extract specific information from scraped pages, which is a limited AI capability applied to data the product handles, but it's user-directed extraction rather than proactive AI-generated insights or suggestions surfaced inside the product. Missing for 10: evidence of automated insight generation, trend/anomaly detection, or suggestion features beyond on-demand query-based extraction.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "ScrapingBee offers AI-powered extraction (`ai_query`/`ai_extract_rules`) that lets AI derive semantic information from scraped pages, plus ChatGPT/Gemini API pass-through, which is the closest analog to 'AI-generated insights from data' in this product. However, there is no evidence of the product itself surfacing proactive insights/suggestions about a user's own account or usage data (e.g., a dashboard with AI recommendations) — the AI capability is scoped to extracting fields from target webpages, not analyzing the user's collected data set. Missing for 10: dashboard/account-level AI insight generation, proactive suggestions about the user's own stored data, evidence of AI summarizing trends across a user's scraped datasets.",
     "evidenceIds": [
-      "scrapingbee-docs-9"
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
+      "scrapingbee-docs-27",
+      "scrapingbee-docs-28"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "ScrapingBee is an on-demand scraping API/CLI/MCP server; evidence shows only synchronous request-response scraping calls, with no scheduling, triggers, or background job/automation orchestration features documented.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "ScrapingBee's official CLI includes a `schedule` command for cron-based scheduled jobs and a `crawl` command for autonomous same-domain/sitemap crawling, indicating support for background automations beyond one-off API calls. However, scheduling is noted as a 'gated advanced feature' with no independent evidence of reliability or monitoring for long-running unattended jobs.\n\nmissing for 10: independent/hands-on confirmation that scheduled jobs run reliably unattended, details on monitoring/alerting/retry for background automations, clarity on gating restrictions.",
+    "evidenceIds": [
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8004,19 +8017,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "ScrapingBee offers AI-powered extraction (ai_query) and pass-through chat APIs (ChatGPT/Gemini), but these are per-request API parameters, not a built-in assistant inside the product that a user can delegate broader tasks to (e.g., configuring scrapes, managing jobs via conversation). No evidence of any in-product assistant/copilot UI for task delegation.",
+    "evidenceIds": [
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-27",
+      "scrapingbee-docs-28"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "agentic-headless",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee is a pure API service (API key + HTTP calls) designed for programmatic use, and it ships an official CLI (scrapingbee-cli) enabling scripted/headless invocation suitable for CI pipelines. Missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions), and no independent hands-on confirmation of CLI use in automation contexts.",
+    "rationale": "ScrapingBee is fundamentally an API service (API key based, docs-1) with an official CLI supporting scraping, crawling, exports, and cron-based scheduled jobs (docs-38, docs-39, docs-40), all of which are naturally scriptable/automatable in CI or headless environments. However, there is no explicit documentation of CI/CD integration, Docker usage, GitHub Actions examples, or exit-code/automation-specific guidance confirming headless CI behavior. missing for 10: explicit CI/CD pipeline examples, containerized/headless deployment docs, automation-specific exit-code or error-handling guidance for scripted use.",
     "evidenceIds": [
       "scrapingbee-docs-1",
-      "scrapingbee-probe-5"
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-40"
     ]
   },
   {
@@ -8025,7 +8045,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ScrapingBee is a web-scraping API/SaaS product, not an agent or orchestration platform that would itself consume other MCP servers' tools; evidence only shows it exposes its own MCP server (mcp.scrapingbee.com), i.e., it is the tool provider, not a tool consumer. Plugging external MCP servers into ScrapingBee to gain their tools is a category error for this kind of product.",
+    "rationale": "ScrapingBee is a scraping/data-extraction API service, not an agentic platform or assistant that itself consumes external tools; the only MCP-related evidence shows ScrapingBee exposing an MCP server for others to call (probe-4), not ScrapingBee acting as an MCP client that plugs in other servers' tools.",
     "evidenceIds": [
       "scrapingbee-probe-4"
     ]
@@ -8047,9 +8067,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "ScrapingBee's `ai_query` parameter lets users specify what to extract from a page using natural language, and there is a documented official MCP server (mcp.scrapingbee.com) that would let AI agents invoke ScrapingBee via natural-language tool calls. However, the core product interface remains a structured REST API with many typed parameters, not a natural-language command interface itself. Missing for 10: evidence of a chat/NL interface for configuring scrapes beyond ai_query, and independent confirmation the MCP server supports full natural-language operation.",
+    "rationale": "ScrapingBee exposes natural-language-driven extraction via `ai_query`/`ai_extract_rules` and NL-based Q&A through its ChatGPT/Gemini ask endpoints, plus an official MCP server that would let an AI agent invoke these capabilities conversationally. However, core operation (scraping config, proxies, JS scenarios, scheduling, CLI) still requires structured parameters/commands rather than free-form natural language, so full NL control of the product is not demonstrated. Missing for 10: evidence of a chat-style interface or NL command parser covering the full API surface (not just extraction/QA), and independent confirmation the MCP server supports conversational operation.",
     "evidenceIds": [
       "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
+      "scrapingbee-docs-27",
+      "scrapingbee-docs-28",
       "scrapingbee-probe-4"
     ]
   },
@@ -8057,10 +8081,13 @@
     "productId": "scrapingbee",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Evidence shows an official CLI repo published by ScrapingBee (scrapingbee-cli on GitHub), directly satisfying the story. However, there's no documentation excerpt describing CLI features, installation, or usage details, nor independent community corroboration of its use. Missing for 10: detailed CLI documentation/usage examples, independent/hands-on validation, and confirmation of active maintenance.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "ScrapingBee documents an official CLI (scrapingbee-cli) covering scraping, crawling, exports, schedules, and dedicated APIs, corroborated by a GitHub repo probe. Missing for 10: independent/hands-on community usage reports of the CLI and more detail on installation/distribution channels.",
     "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-40",
       "scrapingbee-probe-5"
     ]
   },
@@ -8070,15 +8097,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ScrapingBee's entire product is a documented public REST API with extensive parameter documentation (docs-1 to docs-15) and an llms.txt index for AI discoverability (probe-1), plus official CLI and MCP server (probe-4, probe-5) enabling agentic access. Missing for 10: a machine-readable OpenAPI/Swagger spec (probe-2 and probe-3 both 404) and independent hands-on confirmation of API integration ease.",
+    "rationale": "ScrapingBee ships an extensively documented REST API (parameters, extraction rules, JS scenarios, proxy modes, dedicated APIs) plus llms.txt machine-readable docs, an official CLI, and an MCP server, making it highly accessible for programmatic/agentic use. missing for 10: no discoverable OpenAPI/swagger spec, and no independent/hands-on corroboration of API reliability from developers.",
     "evidenceIds": [
       "scrapingbee-docs-1",
       "scrapingbee-docs-8",
       "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-38",
       "scrapingbee-probe-1",
+      "scrapingbee-probe-3",
       "scrapingbee-probe-4",
-      "scrapingbee-probe-5",
-      "scrapingbee-probe-3"
+      "scrapingbee-probe-5"
     ]
   },
   {
@@ -8086,11 +8115,10 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows a single API key model for authentication with no mention of scoped, restricted-permission, or per-agent credential issuance; the community note about using two API keys does not indicate least-privilege scoping. Missing for 10: any documentation of scoped/restricted API keys, role-based permissions, or credential issuance mechanisms for agents.",
+    "confidence": "high",
+    "rationale": "No evidence of scoped or least-privilege API key/credential issuance (e.g., per-agent keys, permission scoping, or role-based restrictions); docs only mention a single API key used for all requests.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
-      "scrapingbee-comm-4"
+      "scrapingbee-docs-1"
     ]
   },
   {
@@ -8099,8 +8127,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents ScrapingBee's REST API parameters, an official CLI, and an MCP server, but contains no mention of official SDKs (e.g., Python, Node.js, PHP client libraries) that AI-native developers could build against. Absence of evidence for this applicable capability warrants a 'none' verdict.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows extensive API documentation, a CLI, and an MCP server, but contains no mention of official client SDKs/libraries (e.g., Python, Node, PHP) that an AI-native developer could import and build against. Missing for 10: any explicit official SDK/library references, package manager listings, or SDK-specific docs.",
+    "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-probe-5",
+      "scrapingbee-probe-3"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8108,7 +8140,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook subscription or event notification system in ScrapingBee's documentation; all evidence covers synchronous scraping API parameters, proxies, and rendering options with no mention of webhooks or event-driven callbacks.",
+    "rationale": "No evidence in the pack mentions webhooks or event subscriptions of any kind; ScrapingBee's docs describe synchronous scraping APIs, scheduled crawls, and CLI/MCP tooling but nothing about webhook-based event notifications.",
     "evidenceIds": []
   },
   {
@@ -8117,10 +8149,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee's ai_query parameter lets developers specify in natural language the information they want extracted from a webpage, avoiding manual CSS/XPath selectors, as an alternative to the selector-based extract_rules feature. missing for 10: independent/hands-on validation of AI extraction accuracy, and details on structured output schema/reliability beyond the docs blurb.",
+    "rationale": "ScrapingBee's ai_query/ai_extract_rules parameter lets developers specify natural-language extraction instructions instead of CSS/XPath selectors, explicitly documented as an alternative to extract_rules for semantic or irregular data. missing for 10: no independent/hands-on validation of extraction accuracy, and no worked example showing a full ai_query request/response.",
     "evidenceIds": [
       "scrapingbee-docs-9",
-      "scrapingbee-docs-8"
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20"
     ]
   },
   {
@@ -8129,11 +8162,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows only static parameter documentation and no mention of an interactive API reference, live 'try it' console, or runnable code examples; probes even show no OpenAPI/swagger spec and a 404 on a machine-readable docs endpoint, suggesting no interactive explorer exists.",
+    "rationale": "Evidence shows extensive parameter documentation but no mention of an interactive reference (e.g., Swagger/OpenAPI console) or runnable code examples; probes for OpenAPI/swagger specs at scrapingbee.com return 404, indicating no such interactive reference exists.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
-      "scrapingbee-probe-2",
-      "scrapingbee-probe-3"
+      "scrapingbee-probe-3",
+      "scrapingbee-probe-2"
     ]
   },
   {
@@ -8142,10 +8174,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for an OpenAPI/Swagger spec at all standard locations returned 404, and no evidence pack item shows a downloadable machine-readable API spec being offered elsewhere; only an llms.txt index and human-readable docs exist.",
+    "rationale": "A direct probe for OpenAPI/Swagger spec files at all standard candidate paths returned 404, and no evidence pack item shows a downloadable machine-readable API spec; llms.txt exists but that's a documentation index, not an OpenAPI spec.",
     "evidenceIds": [
+      "scrapingbee-probe-3",
       "scrapingbee-probe-2",
-      "scrapingbee-probe-3"
+      "scrapingbee-probe-1"
     ]
   },
   {
@@ -8163,10 +8196,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probes 404 and docs don't mention versioning/deprecation terms at all.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the docs, CLI, or probes; OpenAPI spec probes returned 404s and no changelog or version policy is mentioned.",
     "evidenceIds": [
-      "scrapingbee-probe-3",
-      "scrapingbee-probe-2"
+      "scrapingbee-probe-3"
     ]
   },
   {
@@ -8175,11 +8207,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "ScrapingBee provides premium proxies to bypass hard-to-scrape sites and JS 'scenario' scripting to interact with pages (e.g., click/fill forms), which could support login flows, but there is no explicit claim or evidence of automatic CAPTCHA solving or a documented login-automation workflow that removes manual intervention entirely. missing for 10: explicit CAPTCHA-solving mechanism, documented login/form-wall bypass workflow, and independent evidence of successful autonomous bypass.",
+    "rationale": "ScrapingBee's JS-scenario feature supports scripted form fills, clicks, and waits (e.g. clicking accept buttons, filling search fields) and premium/stealth proxies claim to bypass 'difficult to scrape websites,' plus cookie passing enables session/login persistence — these together partially satisfy the login/form-wall portion of the story. However there is no explicit documentation of automatic CAPTCHA-solving, and stealth_proxy is noted to be incompatible with some features (infinite_scroll), suggesting limits on its bypass robustness. Missing for 10: explicit CAPTCHA-solving mechanism/claims, documented login-flow examples, and independent evidence confirming these bypass mechanisms work in practice.",
     "evidenceIds": [
-      "scrapingbee-docs-3",
+      "scrapingbee-docs-21",
       "scrapingbee-docs-10",
-      "scrapingbee-docs-12"
+      "scrapingbee-docs-43",
+      "scrapingbee-docs-22",
+      "scrapingbee-docs-3"
     ]
   },
   {
@@ -8187,51 +8221,66 @@
     "storyId": "auto-cheapest-config",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "ScrapingBee's docs explicitly describe a `mode=auto` parameter that lets the API pick the cheapest configuration that still succeeds, directly matching the story. This is first-party documented evidence, though there's no independent/hands-on corroboration of its effectiveness. Missing for 10: independent verification that auto mode reliably picks the cheapest successful config in practice.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe a `mode=auto` parameter that lets ScrapingBee automatically escalate through configurations and only charge for the one that succeeds, with total failures costing 0 credits — directly matching the story. Missing for 10: independent/hands-on verification of cost-optimal behavior and more detail on which configurations are tried in what order.",
     "evidenceIds": [
-      "scrapingbee-docs-14"
+      "scrapingbee-docs-14",
+      "scrapingbee-docs-18"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "auto-retry-proxy-chain",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "ScrapingBee offers premium_proxy and country_code parameters and an 'auto' mode that picks the cheapest configuration that succeeds, implying some automatic fallback/retry logic, but there's no explicit documentation of a chained multi-proxy retry mechanism specifically triggered by anti-bot detection. missing for 10: explicit documentation of automatic retry chains across multiple proxies upon anti-bot block detection, and independent verification of this retry behavior.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "ScrapingBee documents automatic escalation through a 'cost ladder' of configurations (including premium/stealth proxy tiers) that retries until a request succeeds, charging only for the successful attempt, with an 'auto' mode to let it pick the cheapest working configuration — directly matching the anti-bot retry-through-proxies story. missing for 10: explicit documentation naming the exact proxy types cycled through in the ladder, and independent/hands-on confirmation of this failover behavior in practice.",
     "evidenceIds": [
+      "scrapingbee-docs-18",
+      "scrapingbee-docs-14",
       "scrapingbee-docs-10",
-      "scrapingbee-docs-11",
-      "scrapingbee-docs-14"
+      "scrapingbee-docs-24"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack documents single-page scraping parameters (JS scenarios, extraction rules, proxies, screenshots) but never mentions a batch/bulk API endpoint, concurrent job submission, or a mechanism to process many URLs/items in one call.",
-    "evidenceIds": []
+    "rationale": "The CLI documents a `crawl` command for same-domain, sitemap, or Scrapy-project crawling and a `schedule` command for recurring jobs, which support scraping many items in one operation, and `session_id` allows routing multiple requests through the same IP for consistency. However, there is no first-party documentation of a dedicated batch/bulk API endpoint for submitting many URLs in a single call, no stated concurrency/rate limits for bulk jobs, and no independent hands-on evidence of large-scale bulk runs. missing for 10: dedicated batch API endpoint, documented concurrency/throughput limits for bulk jobs, independent verification of bulk-scale performance.",
+    "evidenceIds": [
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-12",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "automation-rules-engine",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "ScrapingBee's CLI offers cron-based scheduled jobs (`scrapingbee schedule`), which is a form of automated triggering, but this is time-based scheduling rather than a genuine event-driven rules engine (e.g., webhooks or conditional triggers on scrape results). Missing for 10: event-based trigger definitions, conditional rule logic, and any documented webhook/event listener system.",
+    "evidenceIds": [
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's evidence pack covers API scraping parameters, JS rendering, proxies, and extraction, but contains no mention of scheduling, recurring jobs, cron-like triggers, or workflow orchestration features.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "The official CLI documents a `scrapingbee schedule` command for cron-based recurring jobs, plus `crawl` for repeated crawling workflows, showing real scheduling capability. However it's explicitly noted as a 'gated advanced feature' with no further detail on configuration, retries, or workflow chaining, and no independent/hands-on confirmation exists. Missing for 10: detailed docs on schedule configuration options, evidence of reliability/monitoring, independent user confirmation of the feature working.",
+    "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-40",
+      "scrapingbee-probe-5"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8245,21 +8294,27 @@
   {
     "productId": "scrapingbee",
     "storyId": "batch-scrape-async",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack only documents single-URL synchronous scraping API parameters (JS rendering, extraction rules, proxies, screenshots) with no mention of batch job submission, async processing, concurrency limits, or a queue/webhook system for handling thousands of URLs at scale.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "ScrapingBee's CLI includes a 'crawl' command for same-domain/sitemap crawling and a concurrency/usage API, which imply some capacity for scraping multiple URLs at scale, but there is no explicit documentation of a batch job submission endpoint, async job status/webhook mechanism, or guidance for processing thousands of URLs asynchronously. missing for 10: explicit batch/async job API documentation, job status or webhook callbacks, and any stated throughput/queue guarantees for large-scale URL lists.",
+    "evidenceIds": [
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-29",
+      "scrapingbee-docs-12",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "block-ads-for-speed",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Official docs explicitly document the `block_ads=true` parameter to prevent ad loading and speed up scraping requests, directly matching the story. Missing for 10: independent/hands-on corroboration of the speed benefit and no third-party benchmark confirming the claim.",
+    "rationale": "Official docs explicitly document a `block_ads=true` parameter to block ads on the target page specifically to speed up requests, directly matching the story. missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
-      "scrapingbee-docs-5"
+      "scrapingbee-docs-5",
+      "scrapingbee-docs-41"
     ]
   },
   {
@@ -8268,7 +8323,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Official docs explicitly state ScrapingBee blocks all images and CSS by default to speed up requests, with an opt-out via block_resources=false, directly matching the story. Missing for 10: independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Docs explicitly state that by default ScrapingBee blocks all images and CSS on scraped pages to speed up requests, with an opt-out via `block_resources=false`, directly matching the story. Missing for 10: independent/hands-on verification beyond vendor docs.",
     "evidenceIds": [
       "scrapingbee-docs-6"
     ]
@@ -8278,21 +8333,23 @@
     "storyId": "concurrency-cap-by-plan",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack specifies concurrent session/request limits per pricing tier or the cost to increase that cap; documentation snippets cover feature parameters (JS scenario, proxies, extraction) but not concurrency caps or upgrade pricing.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows a usage API that reports real-time concurrency usage (scrapingbee-docs-29) but nothing documents the actual concurrency caps per pricing tier or the cost to increase that cap; no pricing page details are present in the evidence pack. missing for 10: tier-specific concurrency limits, pricing page showing cost to raise the cap.",
+    "evidenceIds": [
+      "scrapingbee-docs-29"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "concurrent-sessions-at-scale",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "ScrapingBee is inherently an API you can call many times, and docs mention session_id for routing multiple requests through the same IP, but the evidence pack contains no explicit documentation of concurrency limits, parallel-request quotas, or scaling architecture for high-volume data-engineering workloads. Missing for 10: explicit concurrency/rate-limit specs, documented plan-based concurrent request caps, and independent evidence of successful large-scale concurrent scraping.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "ScrapingBee's API is inherently designed for parallel HTTP calls, and docs mention a `session_id` parameter to maintain consistent IPs across multiple requests plus a dedicated usage-API that reports 'real-time credit and concurrency usage,' implying concurrency is a first-class, monitored resource. However there's no explicit documentation of concurrency limits, guidance on scaling to many simultaneous sessions, or third-party confirmation of successful large-scale concurrent use. Missing for 10: explicit concurrency-limit documentation, scaling/best-practices guide for high-volume concurrent scraping, and independent evidence of large-scale concurrent usage in production.",
     "evidenceIds": [
       "scrapingbee-docs-12",
-      "scrapingbee-docs-10",
-      "scrapingbee-docs-1"
+      "scrapingbee-docs-29",
+      "scrapingbee-docs-38"
     ]
   },
   {
@@ -8300,9 +8357,12 @@
     "storyId": "content-change-monitoring",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee is an on-demand scraping API (fetch a page, extract data, render JS) with no evidence of scheduled monitoring, change-detection, diffing, or notification/webhook features for tracking content changes over time. The evidence pack only covers single-request scraping parameters, proxies, and rendering options, not continuous monitoring or alerting.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "ScrapingBee's CLI offers cron-based scheduled jobs (scrapingbee schedule) which could run periodic scrapes, but there is no evidence of built-in change detection/diffing between scrape results or a notification/alerting mechanism (webhook, email, etc.) when content changes.",
+    "evidenceIds": [
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8320,8 +8380,8 @@
     "storyId": "crawl-respects-robots-and-rate-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence that ScrapingBee offers robots.txt compliance settings or automatic rate-limit throttling per target site; docs cover proxies, JS rendering, extraction, and viewport settings but nothing about robots.txt or rate-limiting configuration.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack shows ScrapingBee offers robots.txt compliance or automatic rate-limit throttling; docs cover proxies, JS rendering, extraction, and a CLI crawl command, but none mention robots.txt or target-site rate-limit handling.",
     "evidenceIds": []
   },
   {
@@ -8330,19 +8390,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses billing behavior when exceeding plan credits/requests—no mention of overage charges, hard cutoffs, or quota enforcement policy.",
+    "rationale": "No evidence in the pack addresses what happens when a plan's monthly credit or request quota is exceeded—no mention of overage billing, hard cutoffs, or throttling behavior. Community comments discuss cost/expense generally but not quota enforcement mechanics.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "css-xpath-extraction",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly document extract_rules for CSS-based field extraction and confirm the headless browser waits on CSS/XPath selectors, directly supporting structured field extraction. missing for 10: no independent/hands-on corroboration of extraction accuracy or XPath-specific examples.",
+    "rationale": "Docs explicitly support extract_rules for CSS-selector-based data extraction, with waits for CSS/XPath selectors before returning HTML, and separate guidance to use extract_rules for CSS/XPath extraction vs ai_query for semantic extraction. missing for 10: independent hands-on corroboration of extraction accuracy on real sites.",
     "evidenceIds": [
+      "scrapingbee-docs-4",
       "scrapingbee-docs-8",
-      "scrapingbee-docs-4"
+      "scrapingbee-docs-19"
     ]
   },
   {
@@ -8351,11 +8412,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "ScrapingBee is a managed scraping API (no infrastructure to manage) and supports JS 'scenarios' for custom page interaction plus extraction rules, which is a lightweight form of custom scraping logic. However, there is no evidence of a true serverless scripting/deployment platform (e.g., custom code upload, scheduled jobs, or a scripting runtime) — the story's 'build and deploy custom scripts' aspect is only partially matched by parameterized API calls. Missing for 10: evidence of a script/job deployment mechanism, scheduling, or custom code execution beyond JS scenario snippets, and independent developer confirmation of this workflow.",
+    "rationale": "ScrapingBee lets developers avoid managing scraping infrastructure (headless browsers, proxies) and offers a JS-scenario DSL, extraction rules, and CLI scheduling/crawling — but this is a constrained instruction/DSL model, not a platform for deploying arbitrary custom serverless scripts (no code upload, actor/function deployment, or custom runtime evidenced). missing for 10: evidence of deploying arbitrary custom code/scripts on the platform (vs. fixed API parameters/DSL), a serverless script hosting/runtime model, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
       "scrapingbee-docs-3",
-      "scrapingbee-docs-8"
+      "scrapingbee-docs-21",
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-1"
     ]
   },
   {
@@ -8364,28 +8428,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of any export/migration tooling for scraped data or job configs in a portable format; the docs cover API parameters and scraping features but nothing about data portability or provider migration. missing for 10: export format documentation, job/config export mechanism, migration guides or tooling, any mention of avoiding vendor lock-in.",
+    "rationale": "Evidence covers scraping parameters, extraction rules, AI queries, CLI commands for crawling/scheduling, but nothing addresses exporting scraped data or job configurations in a portable format for provider migration; no mention of export formats, data portability, or config export/import.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "data-quality-monitoring-alerts",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers scraping features (JS rendering, extraction, proxies) but nothing about job monitoring dashboards, data quality validation, or failure alerting mechanisms; community comments focus on cost/alternatives, not reliability tooling.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "ScrapingBee exposes a usage API for real-time credit/concurrency monitoring and a CLI with scheduling/cron jobs, giving some operational visibility, but there is no documented alerting mechanism for job failures nor any data-quality validation tooling. missing for 10: failure alerting/notifications, data quality validation checks, job performance dashboards beyond raw credit usage.",
+    "evidenceIds": [
+      "scrapingbee-docs-29",
+      "scrapingbee-docs-39",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "deep-crawl-bfs-with-limit",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's documented API is per-page scraping (single URL requests with rendering, extraction, proxy options) with no evidence of a crawl orchestration feature supporting breadth-first traversal or a configurable max-page limit for multi-page crawls.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The CLI docs confirm a `scrapingbee crawl` command supporting same-domain crawl, sitemap crawl, or Scrapy-project spider, showing some multi-page crawling capability, but there is no mention of a breadth-first traversal strategy or a configurable maximum page limit parameter. missing for 10: explicit breadth-first crawl strategy documentation, configurable max-page-limit parameter, independent verification of crawl behavior.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
-      "scrapingbee-docs-8"
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-40"
     ]
   },
   {
@@ -8403,28 +8471,31 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions a documented rate limit (requests per second/minute) or throttling behavior for API keys; documentation excerpts cover scraping parameters and features but not concurrency/rate-limit thresholds.",
+    "rationale": "No evidence pack item mentions a documented rate limit (requests per second/minute) or throttling behavior for API keys; usage-api reference only covers credit/concurrency tracking, not rate limits.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "failed-request-billing",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or discussion of billing behavior for failed, blocked, or empty-result requests—no mention of credit refunds, only-charge-on-success policies, or how failed/blocked scrapes affect quota consumption. Community comments discuss cost/pricing generally but not this specific billing mechanic.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm the cost-ladder billing model where a total failure costs 0 and only the successful configuration is charged, directly addressing whether failed requests consume quota. However, there's no explicit statement on blocked/CAPTCHA responses or empty-result scrapes (e.g., successful HTTP 200 but no matching data) and how those are billed. missing for 10: explicit documentation on billing treatment of blocked/CAPTCHA responses, empty-result extractions, and independent/community confirmation of this billing behavior.",
+    "evidenceIds": [
+      "scrapingbee-docs-18",
+      "scrapingbee-docs-23"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "full-site-crawl",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "ScrapingBee's API is designed for single-page scraping requests (one URL per call); the evidence shows no crawler feature that follows links across a domain or aggregates content from multiple pages in one request. No mention of a 'crawl' endpoint, sitemap traversal, or multi-page job in a single API call.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "ScrapingBee's core product is a single-page scraping API; the only evidence of whole-site crawling is a CLI subcommand (`scrapingbee crawl`) that does 'same-domain crawl, sitemap crawl, or Scrapy-project spider', which is a separate tool invocation rather than 'one request' to the scraping API itself. missing for 10: a documented single API call/endpoint that crawls an entire site, details on crawl configuration/limits, and independent/hands-on evidence the CLI crawl works reliably at scale.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
-      "scrapingbee-docs-2"
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-38"
     ]
   },
   {
@@ -8433,10 +8504,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ScrapingBee's docs explicitly document a `country_code` parameter for premium proxy geolocation, directly enabling country-specific proxy requests, alongside `premium_proxy` to enable this feature. missing for 10: independent/hands-on confirmation of geolocation accuracy and no list of supported countries in the evidence.",
+    "rationale": "Docs explicitly document a `country_code` parameter used with `premium_proxy=true` to target a specific country for geolocation-appropriate content, directly matching the story. missing for 10: independent/hands-on corroboration confirming geolocation accuracy in practice.",
     "evidenceIds": [
-      "scrapingbee-docs-10",
-      "scrapingbee-docs-11"
+      "scrapingbee-docs-11",
+      "scrapingbee-docs-24",
+      "scrapingbee-docs-10"
     ]
   },
   {
@@ -8444,11 +8516,13 @@
     "storyId": "image-captioning-for-text-llm",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an image-captioning or alt-text generation feature; ScrapingBee's AI features (ai_query) extract structured data from page text/HTML, not image captions for visual content, and by default it blocks images entirely. Missing for 10: any documented image captioning/vision-to-text capability, alt-text generation, or multimodal image description output.",
+    "confidence": "high",
+    "rationale": "ScrapingBee's docs show AI-assisted extraction (ai_query, ai_extract_rules) and screenshot capture, but nothing about generating captions/descriptions of images so a text-only model can reason about visual content. This is a plausible extraction-quality feature for a scraping API, but no evidence supports it.",
     "evidenceIds": [
-      "scrapingbee-docs-6",
-      "scrapingbee-docs-9"
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
+      "scrapingbee-docs-17"
     ]
   },
   {
@@ -8468,25 +8542,28 @@
     "productId": "scrapingbee",
     "storyId": "js-rendering-spa",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "ScrapingBee's docs explicitly describe headless-browser rendering of JS-heavy SPAs built with React/Angular/Vue/JQuery, with support for waiting on selectors and running JS scenarios before returning fully rendered HTML. This directly matches the story's core capability, though evidence lacks independent hands-on corroboration of rendering fidelity. Missing for 10: independent/hands-on verification of rendered output quality, benchmarks against specific SPA frameworks.",
+    "rationale": "ScrapingBee's docs explicitly state JavaScript rendering is enabled by default via headless browsers, supports SPA frameworks (React, Angular, Vue, jQuery), can wait for CSS/XPath selectors before returning HTML, and supports JS scenarios for interacting with pages before extracting rendered HTML. This directly delivers the core story of rendering JS-heavy SPAs and returning fully rendered HTML. Missing for 10: independent/hands-on third-party verification of rendering fidelity beyond vendor docs.",
     "evidenceIds": [
       "scrapingbee-docs-2",
       "scrapingbee-docs-3",
       "scrapingbee-docs-4",
-      "scrapingbee-docs-1"
+      "scrapingbee-docs-16",
+      "scrapingbee-docs-21"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "json-schema-extraction",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee offers extract_rules (CSS-selector based structured extraction) and ai_query (AI-driven extraction), which let developers get structured data, but there is no evidence of accepting a formal JSON Schema definition that the API validates/conforms output to — extract_rules is a custom stringified JSON of selectors, not a schema spec. missing for 10: explicit JSON Schema input support, schema validation/conformance guarantee, examples of schema-driven structured output.",
+    "rationale": "ScrapingBee documents `extract_rules` (stringified JSON defining CSS/XPath-based extraction structure) and `ai_extract_rules` for semantic extraction, both letting developers define a JSON structure and get back data matching that structure, plus `ai_query` for natural-language extraction. This directly matches the JSON-schema-driven structured extraction story, though ScrapingBee's own terminology is 'extract_rules' rather than 'JSON schema' per se. Missing for 10: independent/hands-on corroboration of extraction accuracy, and explicit confirmation of strict schema validation/enforcement rather than best-effort field mapping.",
     "evidenceIds": [
       "scrapingbee-docs-8",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
       "scrapingbee-docs-9"
     ]
   },
@@ -8495,9 +8572,14 @@
     "storyId": "large-table-chunked-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's evidence covers web scraping features (JS rendering, proxies, extraction rules, AI queries) but nothing addresses handling very large tables, chunking data to fit processing/token limits, or pagination strategies for oversized datasets. Missing for 10: any mention of table extraction, chunking mechanism, size-limit handling, or pagination/splitting of large data outputs.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "ScrapingBee's docs cover extraction via CSS selectors (extract_rules) and AI-based extraction (ai_query/ai_extract_rules), but there is no evidence of any intelligent chunking mechanism for handling very large tables that exceed processing/size limits.",
+    "evidenceIds": [
+      "scrapingbee-docs-8",
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8505,48 +8587,56 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "ScrapingBee lets developers control timing/completeness tradeoffs via wait-for-selector, JS scenarios, block_ads/block_resources flags, and an 'auto' mode that picks the cheapest successful configuration, giving direct levers over latency vs. completeness. However, this is all documented capability with no independent benchmarking or hands-on confirmation of actual latency impact. Missing for 10: independent/hands-on verification of latency-completeness tradeoffs, explicit 'wait' or timeout parameter documentation, and real-world performance data beyond vendor docs.",
+    "rationale": "ScrapingBee exposes several controls that let a developer tune when/how much content is returned: wait_for CSS/XPath selector before returning HTML, JS scenarios with explicit wait/click/scroll steps, block_ads/block_resources to speed up requests, and a cost-ladder 'auto' mode that escalates configuration only as needed. These give real latency/completeness tradeoffs, but there's no explicit timeout or partial-content-streaming parameter, and no independent/hands-on evidence validating actual latency behavior. missing for 10: documented explicit timeout/wait-time cap parameter, evidence of streaming or partial-return behavior, independent benchmarks confirming latency tradeoffs work as documented.",
     "evidenceIds": [
       "scrapingbee-docs-3",
       "scrapingbee-docs-4",
       "scrapingbee-docs-5",
       "scrapingbee-docs-6",
-      "scrapingbee-docs-14"
+      "scrapingbee-docs-14",
+      "scrapingbee-docs-18",
+      "scrapingbee-docs-21"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "live-system-dashboard",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers API parameters, docs, and community discussion but contains no mention of a real-time dashboard for monitoring system metrics or worker/browser pool status; ScrapingBee's dashboard (if any) is not documented here.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "ScrapingBee exposes a Usage API returning real-time credit and concurrency usage for the account, which is adjacent to the story's monitoring need, but there is no evidence of an actual real-time dashboard UI or worker/browser pool status visibility. missing for 10: dedicated dashboard UI, worker/browser pool metrics, hands-on confirmation of real-time monitoring experience.",
+    "evidenceIds": [
+      "scrapingbee-docs-29"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "llm-driven-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee has an ai_query parameter that lets an LLM extract requested information from a page without pre-written CSS/XPath selectors, directly matching the story's intent, but this is described only in a single doc line rather than deeply documented with examples of dynamic field discovery. missing for 10: no documentation showing the AI deciding on its own what structured fields/schema to output (vs. a user-specified query), no independent/hands-on evidence of extraction quality or reliability, and no example of full structured JSON field inference without any query guidance.",
+    "rationale": "ScrapingBee documents an `ai_query`/`ai_extract_rules` feature explicitly for semantic extraction, letting an LLM identify and extract fields based on natural-language intent rather than CSS/XPath selectors, distinct from the selector-based `extract_rules`. Docs explicitly recommend AI extraction 'when the desired field is semantic or the structure is irregular,' matching the story directly.\n\nmissing for 10: independent/hands-on evidence of extraction accuracy or reliability, and detail on how field schemas are specified/inferred without any selector input.",
     "evidenceIds": [
       "scrapingbee-docs-9",
-      "scrapingbee-docs-8"
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "llm-ready-text-instead-of-raw-html",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee offers return_page_markdown to get markdown output plus ai_query for AI-driven extraction and premium proxies/JS rendering to avoid blocking, directly addressing the LLM-ready text need. However, evidence doesn't show a dedicated 'clean text extraction' mode beyond markdown/extract_rules, and no independent benchmarks confirm output quality for LLM consumption. missing for 10: independent validation of markdown/text cleanliness, dedicated boilerplate-removal/reader-mode feature, hands-on confirmation from users of LLM-ready output.",
+    "rationale": "ScrapingBee directly offers `return_page_markdown` for clean LLM-ready markdown output, JS rendering enabled by default to handle SPA/dynamic blocking, premium proxies/auto-escalation to bypass anti-bot blocking, and `ai_query`/`ai_extract_rules` for semantic extraction — collectively addressing the blocking+rendering+messy-HTML pain points an AI-native user faces. Missing for 10: independent/hands-on verification that markdown output is genuinely clean and reliably strips boilerplate/ads, and no dedicated 'plain text extraction' mode beyond markdown/AI query.",
     "evidenceIds": [
       "scrapingbee-docs-15",
+      "scrapingbee-docs-16",
       "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
       "scrapingbee-docs-10",
-      "scrapingbee-docs-4"
+      "scrapingbee-docs-18"
     ]
   },
   {
@@ -8555,9 +8645,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ScrapingBee's AI extraction (ai_query) uses its own cloud-based AI backend with no documented option to plug in a local or self-hosted LLM; evidence shows only a fixed AI extraction parameter, not a configurable backend.",
+    "rationale": "ScrapingBee's AI extraction (ai_query, ai_extract_rules, ChatGPT/Gemini APIs) is a fixed cloud-hosted model integration; no evidence of any option to point extraction at a local or self-hosted LLM instead of ScrapingBee's cloud models.",
     "evidenceIds": [
-      "scrapingbee-docs-9"
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-27",
+      "scrapingbee-docs-28"
     ]
   },
   {
@@ -8566,7 +8659,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ScrapingBee's docs explicitly offer a `return_page_markdown` parameter to return page content as markdown instead of raw HTML, directly matching the story. Missing for 10: independent/hands-on confirmation of markdown output quality and any community corroboration of this specific feature.",
+    "rationale": "ScrapingBee documents a dedicated `return_page_markdown` parameter that returns page content as markdown instead of raw HTML, directly matching the story. Missing for 10: independent/hands-on corroboration of markdown output quality and no community confirmation of this specific feature working well.",
     "evidenceIds": [
       "scrapingbee-docs-15"
     ]
@@ -8586,11 +8679,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm HTML is the default output and a dedicated `return_page_markdown` parameter lets developers get markdown instead, but there's no documented option for a plain-text-only extraction or a frontmatter output format, and extract_rules/ai_query only allow custom JSON-style extraction, not those specific formats. Missing for 10: explicit plain-text output mode, frontmatter output support, independent confirmation of format switching.",
+    "rationale": "ScrapingBee documents a `return_page_markdown` parameter for markdown output and returns raw HTML by default, plus `extract_rules`/`ai_query` for structured JSON extraction — covering several concrete output-format choices. However there is no evidence of a plain-text or frontmatter output option, so the full range of formats named in the story is not confirmed. Missing for 10: dedicated plain-text output mode, frontmatter output mode, and any independent/hands-on confirmation of format switching beyond docs.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
       "scrapingbee-docs-15",
-      "scrapingbee-docs-8"
+      "scrapingbee-docs-8",
+      "scrapingbee-docs-9",
+      "scrapingbee-docs-19"
     ]
   },
   {
@@ -8599,31 +8693,37 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of a prebuilt n8n or Zapier connector; the docs cover API parameters, an MCP server, and a CLI, but nothing about no-code automation platform integrations.",
+    "rationale": "No evidence of any prebuilt n8n/Zapier connector or integration marketplace listing; documentation only covers the raw REST API, CLI, and MCP server, with nothing about no-code automation platform connectors.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "open-source-library-integration",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack describes ScrapingBee's own API parameters (JS scenario, screenshots, extraction rules, proxies) but contains no mention of official integrations, SDKs, or middleware for Playwright, Puppeteer, Selenium, or Scrapy. No documentation, probe, or community evidence shows developers can plug ScrapingBee into these specific open-source automation libraries.",
-    "evidenceIds": []
+    "rationale": "ScrapingBee offers a 'proxy mode' that can act as an alternate transport compatible with existing scraper code (e.g., Selenium/Puppeteer-style proxy configuration) and its CLI explicitly supports crawling 'Scrapy-project spiders', showing some real integration with these libraries rather than only its own headless-browser API. However, there is no explicit documentation, SDK, or example showing direct use with Playwright, Puppeteer, or Selenium beyond generic proxy compatibility, and most docs emphasize ScrapingBee's own JS-rendering/browser features as a replacement rather than a complement to these tools. Missing for 10: dedicated Playwright/Puppeteer/Selenium integration guides or SDK examples, explicit proxy-mode walkthroughs for each named library, and independent confirmation of these integrations working in practice.",
+    "evidenceIds": [
+      "scrapingbee-docs-23",
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "ScrapingBee is API-first, and the docs show an extensive, feature-rich API surface (JS rendering, screenshots, extraction rules, AI query, proxies, session control) covering essentially all scraping functionality (scrapingbee-docs-1 through 15). However, there is no explicit statement comparing the API's capabilities to what's available in ScrapingBee's dashboard/UI, so full parity can't be confirmed from evidence. Missing for 10: explicit UI-vs-API feature parity documentation, confirmation that dashboard-only tools (e.g. request builder, account settings) have no capabilities absent from the API.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "ScrapingBee's core functionality (scraping, JS rendering, screenshots, extraction, proxies, search, AI queries, usage stats) is exposed via a rich, well-documented API and even a CLI wrapper, suggesting near-total feature parity with any UI. However, no evidence covers account/billing management or other dashboard-only settings that might not have API equivalents. Missing for 10: explicit confirmation that account/billing/dashboard-only features are also API-accessible, and an official OpenAPI spec (probe shows 404s) that would formalize full API surface parity.",
     "evidenceIds": [
       "scrapingbee-docs-1",
-      "scrapingbee-docs-3",
       "scrapingbee-docs-8",
       "scrapingbee-docs-9",
-      "scrapingbee-docs-13"
+      "scrapingbee-docs-29",
+      "scrapingbee-docs-38",
+      "scrapingbee-probe-3",
+      "scrapingbee-probe-5"
     ]
   },
   {
@@ -8632,11 +8732,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "ScrapingBee returns scraped content in open formats such as raw HTML, JSON (extract_rules) and Markdown (return_page_markdown), so output data is not locked into a proprietary format. However, there is no evidence of account-level data export, no mention of stored user data portability, and no explicit 'leave anytime with your data' commitment—since it's a stateless scraping API, the 'export and leave' framing only partially applies. Missing for 10: account/usage data export tooling, explicit data-portability statement, independent confirmation of format openness beyond docs.",
+    "rationale": "ScrapingBee returns scraped data in open, non-proprietary formats (raw HTML, JSON via extract_rules/ai_query, and markdown via return_page_markdown), so output data is never locked into a proprietary format. However, there is no evidence of an account-level data export (e.g., stored schedules, usage history, session data) or an explicit 'export and leave' data-portability feature. missing for 10: account/config data export tooling, explicit data-portability/GDPR export statement, independent confirmation of format openness.",
     "evidenceIds": [
-      "scrapingbee-docs-8",
       "scrapingbee-docs-15",
-      "scrapingbee-docs-9"
+      "scrapingbee-docs-8",
+      "scrapingbee-docs-19"
     ]
   },
   {
@@ -8644,8 +8744,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence ScrapingBee's core product source is available under an open license; it is a closed, paid SaaS API. A community comment even asks whether the vendor plans to open source any part of their stack, implying it currently is not.",
+    "confidence": "high",
+    "rationale": "ScrapingBee is a closed commercial SaaS API; there's no evidence of an open-license source repository for the core product, and a community comment explicitly asks if any part of the stack will be open-sourced, implying it currently is not.",
     "evidenceIds": [
       "scrapingbee-comm-3"
     ]
@@ -8656,7 +8756,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ScrapingBee is a hosted SaaS API; no evidence of any self-hostable core product, on-premise deployment option, or open-source release. Community comment explicitly asks whether ScrapingBee plans to open-source its stack, with no vendor response indicating such an offering exists.",
+    "rationale": "ScrapingBee is a hosted SaaS API/proxy service with no evidence of a self-hostable core product; community comments explicitly ask about open-sourcing the stack, implying it is not self-hostable, and no docs mention on-prem or self-hosted deployment.",
     "evidenceIds": [
       "scrapingbee-comm-3",
       "scrapingbee-comm-2"
@@ -8665,11 +8765,15 @@
   {
     "productId": "scrapingbee",
     "storyId": "pass-session-cookies",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions passing custom cookies or headers for authenticated sessions; docs cover JS rendering, proxies, extraction, screenshots, but nothing about supplying session cookies for authenticated page fetches.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly document a `cookies` parameter to pass custom cookies to the target webpage, directly supporting authenticated scraping; JS rendering and session/proxy handling are also documented, reinforcing full-page fetch support. Missing for 10: independent/hands-on confirmation that cookie-based auth works in practice beyond first-party docs.",
+    "evidenceIds": [
+      "scrapingbee-docs-43",
+      "scrapingbee-docs-16",
+      "scrapingbee-docs-12"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8677,7 +8781,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "ScrapingBee's evidence pack is entirely about web scraping (HTML rendering, JS scenarios, extraction rules, screenshots, search APIs, ecommerce APIs) with no mention of ingesting or extracting text from PDF, Word, Excel, or PowerPoint files. This is a plausible and fair axis for a data-extraction SaaS, but there is no evidence it offers this capability.",
     "evidenceIds": []
   },
   {
@@ -8685,18 +8789,24 @@
     "storyId": "per-url-pattern-config",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's API is per-URL request based with configuration parameters set per call; there is no evidence of a 'batch job' concept or a way to define per-URL-pattern rules within a single job. The docs describe single-page scraping options (JS scenario, extract_rules, proxies, etc.) but nothing about batch jobs with pattern-based configuration.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The docs describe per-request parameters (JS rendering, extraction rules, proxies, etc.) and a CLI 'crawl' command for same-domain/sitemap/Scrapy crawls, but nothing shows a mechanism to apply different configurations to different URL patterns within a single batch/crawl job.",
+    "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-8",
+      "scrapingbee-docs-19"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "persistent-authenticated-session",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "ScrapingBee's docs mention session_id only for routing requests through the same IP address, not for persisting cookies or login state across requests; no evidence of a saved browser profile or session state reuse mechanism.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "ScrapingBee supports passing custom `cookies` per request and a `session_id` to route repeated requests through the same IP, which offers some session continuity, but there is no documented persistent browser profile that automatically stores and reuses login state/cookies across calls — cookies must be manually supplied each time. Missing for 10: explicit persistent profile/session storage feature, first-party docs on retaining login state across requests, and independent confirmation of session/cookie persistence working end-to-end.",
     "evidenceIds": [
+      "scrapingbee-docs-43",
       "scrapingbee-docs-12"
     ]
   },
@@ -8706,30 +8816,41 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any PII detection, redaction, or filtering feature in ScrapingBee's documentation or capabilities; the product offers extraction rules and AI query tools but nothing about identifying or stripping personal data before storage.",
+    "rationale": "No evidence of any PII detection, redaction, or filtering capability in ScrapingBee's documentation or feature set; the product offers scraping, rendering, extraction (CSS/AI), and proxy features but nothing about compliance or PII scrubbing before storage.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "post-render-behind-login",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "ScrapingBee's JS 'scenario' feature lets you script click/fill actions before the page HTML is returned, and session_id lets you reuse the same IP across multiple API calls to preserve login state — enabling a login-wall workflow. However, evidence shows only a stateless-per-request model (scenario executed once, then HTML returned) rather than a persistent, continuously interactive browser session across multiple later calls. Missing for 10: documentation of a true persistent/interactive session object you can repeatedly command, and any hands-on confirmation this pattern reliably defeats login walls.",
+    "rationale": "ScrapingBee's JavaScript scenario feature explicitly supports clicking (`wait_for_and_click`) and filling forms (`fill`) before returning HTML, and cookies can be passed to maintain sessions, which together enable interacting with a page to reach gated content. However, docs never explicitly address login-wall workflows or session persistence across multiple scrape calls, and there is no independent/hands-on evidence confirming this works for authenticated content. Missing for 10: explicit login-wall example/tutorial, evidence of session persistence across separate API calls, independent corroboration of successful login-gated scraping.",
     "evidenceIds": [
       "scrapingbee-docs-3",
       "scrapingbee-docs-4",
-      "scrapingbee-docs-12"
+      "scrapingbee-docs-21",
+      "scrapingbee-docs-43"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "prebuilt-scraper-marketplace",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows only API parameters/docs for building custom scraping requests; there is no marketplace of pre-built, ready-made scrapers a developer could pick and run instead of building their own.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "ScrapingBee ships several dedicated, ready-made scraper APIs (Amazon search/product/pricing, Walmart search/product, YouTube search/metadata/subtitles, Google search) that a developer can call directly instead of building a custom scraper, which partially satisfies the 'ready-made scraper' need. However, there is no evidence of an actual marketplace (e.g., community-contributed or third-party scraper listings) — these are first-party fixed endpoints, not a marketplace model. Missing for 10: a genuine marketplace of shareable/community scrapers, ability to browse/install third-party scrapers, and any independent confirmation of this workflow.",
+    "evidenceIds": [
+      "scrapingbee-docs-30",
+      "scrapingbee-docs-31",
+      "scrapingbee-docs-32",
+      "scrapingbee-docs-33",
+      "scrapingbee-docs-34",
+      "scrapingbee-docs-35",
+      "scrapingbee-docs-36",
+      "scrapingbee-docs-37",
+      "scrapingbee-docs-25"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8737,10 +8858,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly document `premium_proxy` for bypassing hard-to-scrape sites, plus `country_code` for geolocation and `session_id` for sticky IP sessions, directly matching the story. Missing for 10: explicit distinction/documentation of residential vs datacenter proxy types and independent third-party validation of bypass success rates.",
+    "rationale": "Docs explicitly document `premium_proxy` for bypassing hard-to-scrape sites, `country_code` for geolocation targeting, and `session_id` for sticky IP sessions, directly matching the story. Missing for 10: no explicit mention of separate 'residential vs datacenter' proxy tiers or independent third-party benchmarks confirming bypass success rates.",
     "evidenceIds": [
       "scrapingbee-docs-10",
       "scrapingbee-docs-11",
+      "scrapingbee-docs-24",
       "scrapingbee-docs-12"
     ]
   },
@@ -8750,10 +8872,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers proxy geolocation for scraping targets (country_code) but no mention of data residency or storage region controls for ScrapingBee's own data handling/storage; no privacy/compliance documentation is present. Missing for 10: any documentation of data storage regions, residency options, or compliance certifications (e.g., EU data hosting).",
-    "evidenceIds": [
-      "scrapingbee-docs-11"
-    ]
+    "rationale": "Evidence shows proxy geolocation (country_code) for scraping targets, but no evidence of data residency/region choice for where ScrapingBee itself stores or processes customer data.",
+    "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
@@ -8769,8 +8889,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/data lifecycle management for ScrapingBee; documentation excerpts focus solely on scraping features and API parameters. Missing for 10: any mention of data retention windows, deletion APIs/requests, privacy policy details, or compliance certifications.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data lifecycle management for scraped data or account data; documentation covers only scraping features, extraction, proxies, and APIs. This is a fair axis for a data-processing SaaS product, but nothing in the pack demonstrates retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -8779,7 +8899,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack mentions telemetry, usage tracking, or an opt-out mechanism for ScrapingBee's own product usage; documentation excerpts focus solely on scraping API parameters.",
+    "rationale": "No evidence pack items mention telemetry, usage tracking, analytics collection, or an opt-out mechanism for ScrapingBee's own product usage data; this is an applicable axis for a SaaS API product but no documentation addresses it.",
     "evidenceIds": []
   },
   {
@@ -8788,7 +8908,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the evidence pack; docs focus on API features and community items discuss cost/alternatives, not reliability transparency.",
+    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the docs, CLI, or community items provided.",
     "evidenceIds": []
   },
   {
@@ -8796,8 +8916,8 @@
     "storyId": "ready-made-templates",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of ready-made project templates or scaffolding to jumpstart development; documentation only covers API parameters and usage, not starter templates or boilerplate projects.",
+    "confidence": "medium",
+    "rationale": "Evidence shows API docs, parameters, a CLI, and various specialized scraping endpoints, but there is no mention of ready-made project templates or starter templates a developer could clone to bootstrap a project.",
     "evidenceIds": []
   },
   {
@@ -8813,14 +8933,14 @@
     "productId": "scrapingbee",
     "storyId": "research-agent-preset",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "ScrapingBee offers markdown output (return_page_markdown), AI-driven extraction (ai_query), and structured extraction (extract_rules) which can produce citable, structured output usable by research agents, plus an MCP server for agentic integration. However, there is no evidence of a dedicated 'preset configuration tuned for research agents' — no named research-agent mode, no citation metadata, and no documentation bundling these features into a single agent-oriented preset. missing for 10: a documented research-agent preset/mode, citation/source-attribution output, and evidence of agent-specific tuning beyond generic AI extraction params.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "ScrapingBee offers pieces relevant to research agents — markdown output for LLM-friendly text (return_page_markdown), semantic AI extraction (ai_query/ai_extract_rules), and a Gemini API that returns citation objects — but there is no single documented 'research agent' preset that bundles these into one structured, citable output mode. missing for 10: a named/dedicated research-agent preset, explicit citation metadata tied to scraped page content (not just the Gemini wrapper), and independent evidence of this workflow being used by agents.",
     "evidenceIds": [
-      "scrapingbee-docs-9",
       "scrapingbee-docs-15",
-      "scrapingbee-docs-8",
-      "scrapingbee-probe-4"
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
+      "scrapingbee-docs-28"
     ]
   },
   {
@@ -8828,9 +8948,12 @@
     "storyId": "resume-crashed-crawl",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any crawl checkpoint/resume feature; ScrapingBee's docs describe single-page API requests, sessions, and proxy parameters but nothing about deep crawl state persistence or resuming crashed crawls.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "ScrapingBee's CLI supports crawling (site/sitemap/Scrapy spider) and scheduling, but no evidence anywhere describes checkpointing crawl state or resuming a crashed deep crawl from a saved point.",
+    "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-40"
+    ]
   },
   {
     "productId": "scrapingbee",
@@ -8838,44 +8961,52 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs confirm premium/rotating proxy usage (premium_proxy, country_code) to bypass blocks, plus session_id to pin a single IP when needed, indicating an underlying rotating proxy pool by default with control options. Missing for 10: no independent/hands-on evidence confirming rotation effectiveness against real anti-bot defenses, and no explicit documentation describing pool size or rotation algorithm.",
+    "rationale": "ScrapingBee's docs explicitly document proxy rotation and control via `premium_proxy`, `country_code`, and `session_id` parameters, and a dedicated proxy-mode transport, directly enabling developers to route requests through rotating proxy pools to avoid blocks. missing for 10: independent/hands-on evidence confirming rotation effectiveness against real-world blocks, and more detail on pool size/rotation mechanics.",
     "evidenceIds": [
       "scrapingbee-docs-10",
       "scrapingbee-docs-11",
-      "scrapingbee-docs-12"
+      "scrapingbee-docs-12",
+      "scrapingbee-docs-23",
+      "scrapingbee-docs-24"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "scheduled-runs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's evidence describes only on-demand API scraping (parameters, JS rendering, proxies, extraction) with no mention of a scheduling feature, cron-like triggers, or job scheduler UI. No evidence supports automated, time-based recurring scraping jobs.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "The official CLI documents a `scrapingbee schedule` command for cron-based scheduled jobs, but it's explicitly noted as a 'gated advanced feature' with no further detail on setup, reliability, or independent confirmation it works as described. Missing for 10: hands-on/community verification of scheduling in practice, documentation detail on scheduling configuration and limits, and clarity on gating restrictions.",
+    "evidenceIds": [
+      "scrapingbee-docs-38",
+      "scrapingbee-docs-39",
+      "scrapingbee-probe-5"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "screenshot-capture",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs confirm a `screenshot_selector` parameter for capturing a specific CSS-selected area of a page, directly supporting selected-area screenshots. However, no evidence explicitly documents a full-page screenshot parameter or option, so only half the story is substantiated. Missing for 10: explicit full-page screenshot parameter/documentation, independent/hands-on confirmation of screenshot output quality.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Docs explicitly document `screenshot_selector` for capturing a specific CSS-scoped area and `screenshot_full_page=true` for full-page screenshots, directly matching the story. Missing for 10: independent/hands-on corroboration of screenshot output quality beyond first-party docs.",
     "evidenceIds": [
-      "scrapingbee-docs-13"
+      "scrapingbee-docs-13",
+      "scrapingbee-docs-17"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "scripted-page-interactions",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "ScrapingBee's docs explicitly describe a 'JavaScript scenario' feature to interact with pages (click, fill, scroll, etc.) before HTML is returned, plus wait-for-selector support to ensure content loads after interactions. This directly matches the story of scripting interactions before content is returned, though evidence lacks a full list of supported actions or independent hands-on confirmation. Missing for 10: detailed enumeration of supported interaction commands (click/fill/scroll) beyond generic 'JavaScript scenario' mention, and independent/community validation of this specific feature.",
+    "rationale": "ScrapingBee's JS Scenario feature explicitly supports scripted interactions like clicking (wait_for_and_click), filling inputs (fill), scrolling (scroll_y), and waiting, all before HTML is returned, as documented with a concrete JSON example. Missing for 10: independent/hands-on third-party verification of the scenario feature in practice.",
     "evidenceIds": [
       "scrapingbee-docs-3",
-      "scrapingbee-docs-4",
-      "scrapingbee-docs-2"
+      "scrapingbee-docs-21",
+      "scrapingbee-docs-22",
+      "scrapingbee-docs-4"
     ]
   },
   {
@@ -8884,23 +9015,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ScrapingBee is a hosted cloud scraping API with no evidence of an open-source, self-hostable version; community comments explicitly ask about open-sourcing the stack, confirming none exists.",
+    "rationale": "ScrapingBee is documented exclusively as a hosted cloud API/CLI/MCP service; no evidence of an open-source or self-hostable scraper. Community commenters explicitly ask about open-sourcing the stack, which further confirms no such option exists.",
     "evidenceIds": [
       "scrapingbee-comm-3",
-      "scrapingbee-comm-2"
+      "scrapingbee-comm-2",
+      "scrapingbee-docs-1"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "semantic-chunked-output",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "ScrapingBee offers markdown conversion, CSS-based extraction rules, and AI query extraction, but no evidence of semantic/chunked output splitting content into retrieval-ready segments. The docs list output options (HTML, markdown, screenshots, extract_rules) but never mention chunking or segmenting content for RAG pipelines.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "ScrapingBee offers markdown conversion (`return_page_markdown`) and semantic field extraction via `ai_query`/`ai_extract_rules`/`extract_rules`, which can produce cleaner, more structured output than raw HTML, but there is no documented feature for chunking content into discrete semantic segments sized for retrieval pipelines. missing for 10: explicit chunking/segmentation feature, chunk-size or chunk-boundary controls, retrieval-pipeline-specific output format, independent evidence of use in RAG workflows.",
     "evidenceIds": [
-      "scrapingbee-docs-8",
-      "scrapingbee-docs-9",
-      "scrapingbee-docs-15"
+      "scrapingbee-docs-15",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
+      "scrapingbee-docs-9"
     ]
   },
   {
@@ -8909,11 +9042,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs confirm a single API call with just an API key and target URL returns the page's HTML, with straightforward defaults (docs-1) and no complex setup required. Additional options (JS rendering, wait selectors, markdown/extract_rules) show this basic case is well-supported and flexible, though there's no independent hands-on confirmation of raw HTML fidelity. Missing for 10: independent/community verification of raw HTML output quality.",
+    "rationale": "Docs confirm a single API call (API key + URL) returns rendered HTML, with JavaScript rendering enabled by default, making raw HTML retrieval core to the product. Missing for 10: independent hands-on confirmation of raw HTML output quality beyond vendor docs.",
     "evidenceIds": [
       "scrapingbee-docs-1",
-      "scrapingbee-docs-3",
-      "scrapingbee-docs-4"
+      "scrapingbee-docs-16"
     ]
   },
   {
@@ -8921,10 +9053,10 @@
     "storyId": "spend-cap-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any spending cap, usage alert, or budget notification feature in ScrapingBee's docs or community reports; community comments even highlight cost as a pain point without mentioning any budget-control tooling.",
+    "confidence": "medium",
+    "rationale": "Evidence only shows a read-only Usage API to check current credit/concurrency consumption (scrapingbee-docs-29); there is no documented feature to set a spending cap, hard limit, or automated usage alert that would proactively stop or notify before budget is exceeded.",
     "evidenceIds": [
-      "scrapingbee-comm-1"
+      "scrapingbee-docs-29"
     ]
   },
   {
@@ -8941,13 +9073,15 @@
   {
     "productId": "scrapingbee",
     "storyId": "structured-json-output",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "ScrapingBee offers extract_rules for CSS-selector-based structured data extraction and ai_query for AI-driven extraction, plus return_page_markdown for markdown output, indicating structured output beyond raw HTML. However, there's no explicit documented 'return as JSON' toggle or example showing a full JSON schema response, and no independent/community confirmation of structured JSON output quality. Missing for 10: explicit JSON output examples/schema, independent verification of structured JSON extraction reliability.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "ScrapingBee supports extracting structured data via extract_rules (CSS/XPath) and AI-based ai_query/ai_extract_rules, both returning structured JSON, plus markdown output as an alternative format; docs explicitly recommend AI extraction for irregular structures. missing for 10: independent hands-on confirmation of JSON output quality/reliability and no explicit sample JSON schema shown in evidence.",
     "evidenceIds": [
       "scrapingbee-docs-8",
       "scrapingbee-docs-9",
+      "scrapingbee-docs-19",
+      "scrapingbee-docs-20",
       "scrapingbee-docs-15"
     ]
   },
@@ -8957,41 +9091,45 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses team/organization management, sharing scrapers, or role-based permissions; the documentation excerpts focus entirely on API scraping parameters (JS rendering, proxies, extraction rules), not collaboration or account administration features.",
+    "rationale": "ScrapingBee is a scraping API/CLI product; the evidence covers scraping parameters, extraction, proxies, and CLI commands, but nothing addresses team collaboration, organizations, or role-based access control for sharing scrapers among teammates.",
     "evidenceIds": []
   },
   {
     "productId": "scrapingbee",
     "storyId": "undetected-browser-mode",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "ScrapingBee's docs mention `premium_proxy` explicitly for bypassing 'difficult to scrape websites' and headless browser rendering with JS scenarios, which implies anti-bot capability, but the evidence never uses 'undetected browser' or 'stealth mode' terminology or details specific bot-detection bypass techniques (fingerprint spoofing, TLS/JA3 evasion, etc.). Missing for 10: explicit stealth/undetected-mode documentation, technical detail on fingerprint evasion, and independent verification that it defeats sophisticated bot detection.",
+    "rationale": "ScrapingBee documents premium_proxy and stealth_proxy-related features (e.g., infinite_scroll incompatibility with stealth_proxy implies a stealth mode exists) and premium proxies to bypass difficult-to-scrape sites, indicating anti-bot capability, but there is no explicit first-party description of a dedicated 'undetected browser' mode or fingerprint-evasion mechanism, and no independent/hands-on evidence confirming effectiveness against sophisticated bot detection. missing for 10: explicit documentation of an undetected/stealth browser mode's mechanics, independent hands-on verification of bypassing sophisticated bot detection systems.",
     "evidenceIds": [
       "scrapingbee-docs-10",
-      "scrapingbee-docs-3",
-      "scrapingbee-docs-4"
+      "scrapingbee-docs-22",
+      "scrapingbee-docs-24"
     ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "url-discovery-map",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "ScrapingBee's evidence covers page scraping, JS rendering, extraction rules, proxies, and AI queries, but nothing describes a sitemap/URL-discovery feature that lists all URLs on a site without crawling each page. No sitemap parsing, URL enumeration, or site-mapping endpoint is documented.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The CLI's `scrapingbee crawl` command lists a 'sitemap crawl' option alongside full same-domain crawl, implying it can pull URLs from a sitemap without crawling every page, but there is no dedicated 'list all URLs' or sitemap-discovery API/endpoint documented, and no example output or usage details are given. missing for 10: a dedicated URL-discovery/sitemap endpoint with documented output, usage examples, and independent verification that it avoids full crawling.",
+    "evidenceIds": [
+      "scrapingbee-docs-40",
+      "scrapingbee-docs-38"
+    ]
   },
   {
     "productId": "scrapingbee",
     "storyId": "wait-for-selector",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "ScrapingBee's docs explicitly state headless browsers wait for a CSS/XPath selector before returning HTML, directly matching the story. Missing for 10: independent/hands-on confirmation of this specific wait-for-selector behavior beyond vendor docs, and example code showing the parameter in use.",
+    "confidence": "high",
+    "rationale": "First-party docs explicitly state headless browsers wait for a CSS/XPath selector parameter before returning HTML, and the JS scenario feature further supports wait_for/wait_for_and_click instructions. missing for 10: independent/hands-on corroboration of this specific selector-wait behavior beyond vendor docs.",
     "evidenceIds": [
       "scrapingbee-docs-4",
-      "scrapingbee-docs-3"
+      "scrapingbee-docs-3",
+      "scrapingbee-docs-21"
     ]
   },
   {
@@ -9000,10 +9138,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows ScrapingBee scrapes a given URL (with JS rendering, markdown output, extract_rules, ai_query) but nothing indicates a single API call that performs a web search and returns full page content for each result — the llms.txt probe mentions 'search' only in passing with no supporting detail. Missing for 10: any documented search endpoint, example combining query+results with full page bodies, or independent confirmation of this workflow.",
+    "rationale": "ScrapingBee's Google/Fast Search APIs return structured SERP data (results, ads, images, maps) but no evidence shows they also fetch and return full page content of each result in the same call — that requires a separate HTML scraping request per URL.",
     "evidenceIds": [
-      "scrapingbee-docs-1",
-      "scrapingbee-probe-1"
+      "scrapingbee-docs-25",
+      "scrapingbee-docs-26"
     ]
   }
 ]
