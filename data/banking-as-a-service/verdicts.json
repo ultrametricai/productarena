@@ -3199,13 +3199,12 @@
     "storyId": "account-opening-api",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Unit's docs confirm API-driven creation of deposit/wallet accounts via FBO bank-partner structures (unit-docs-1, unit-docs-12, unit-docs-6, unit-docs-7), supporting the 'application to active account' programmatic flow, but the evidence never explicitly states the accounts are FDIC-insured nor describes a sandbox environment for pre-launch testing, and probes show no accessible API/OpenAPI docs (unit-probe-2, unit-probe-3) to verify sandbox parity. missing for 10: explicit insured-deposit language, sandbox/test-environment documentation, and confirmed public API reference for the account-creation flow.",
+    "confidence": "low",
+    "rationale": "Evidence confirms API-driven creation of deposit/wallet accounts under FBO structures (implying pass-through insurance) and unified infrastructure across sandbox-like environments, but there is no explicit mention of a sandbox environment, sandbox-to-production parity, or a documented end-to-end application-to-active-account flow. Probes also show no accessible API/OpenAPI docs to verify the programmatic flow. missing for 10: explicit sandbox environment/testing parity, explicit FDIC insurance disclosure, concrete API endpoint documentation for account provisioning flow.",
     "evidenceIds": [
       "unit-docs-1",
       "unit-docs-12",
       "unit-docs-6",
-      "unit-docs-7",
       "unit-probe-2",
       "unit-probe-3"
     ]
@@ -3216,10 +3215,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Unit's docs confirm ACH is part of its money-movement API alongside wires, RTP, and checks, but there is no evidence detailing credits/debits distinctions, same-day ACH windows, or first-class objects/webhooks for returns, NOCs, or reversals. Missing for 10: documentation of ACH return/NOC/reversal object models, webhook event types for ACH exceptions, and same-day ACH scheduling specifics.",
+    "rationale": "Unit's docs confirm ACH is supported as part of its money-movement capabilities, but there is no evidence of same-day ACH windows, or of returns/NOCs/reversals modeled as first-class objects with webhooks — the API/OpenAPI probes even 404, showing no detailed API reference was found. missing for 10: documented ACH return/NOC/reversal objects, same-day ACH windows, webhook event schemas, and any API reference confirming these as first-class objects.",
     "evidenceIds": [
       "unit-docs-2",
-      "unit-docs-14"
+      "unit-docs-14",
+      "unit-probe-2",
+      "unit-probe-3"
     ]
   },
   {
@@ -3228,7 +3229,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit's evidence pack covers general banking-as-a-service infrastructure (accounts, payments, cards, lending) but contains no mention of AI agents, scoped credentials, amount caps, counterparty allowlists, or any agent-specific policy controls named by the vendor.",
+    "rationale": "The evidence pack describes Unit as a general banking-as-a-service platform (accounts, payments, cards, lending) but contains no mention of AI agents, scoped credentials for agent use, amount caps, counterparty allowlists, or any agent-specific authorization framework named by the vendor.",
     "evidenceIds": []
   },
   {
@@ -3236,13 +3237,14 @@
     "storyId": "agent-reads-banking-state",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Unit's docs claim broad API access to accounts, balances, transactions, cards, and payments data (unit-docs-1,2,3,5), which covers much of the 'banking picture' via API rather than screen-scraping. However, there is no mention of an MCP surface, and probes show no discoverable OpenAPI/swagger spec or docs.md (unit-probe-2, unit-probe-3), and no evidence of document retrieval (e.g., statements) via API. Missing for 10: MCP server/tool surface, verifiable OpenAPI spec, document/statement API endpoints, and independent corroboration beyond vendor llms.txt claims.",
+    "confidence": "medium",
+    "rationale": "Unit's docs describe broad API access to accounts, transactions, cards, payments, and compliance data (unit-docs-1,2,3,5,9), which is the substance of a 'full banking picture,' but there is no evidence of an MCP surface or AI-agent-specific access, and probes for OpenAPI/API docs returned 404s, undercutting the claim of a clean, discoverable API for agents. Missing for 10: MCP server/tooling, a working public OpenAPI spec confirmed by probe, and explicit documentation of AI-agent consumption patterns.",
     "evidenceIds": [
       "unit-docs-1",
       "unit-docs-2",
       "unit-docs-3",
       "unit-docs-5",
+      "unit-docs-9",
       "unit-probe-2",
       "unit-probe-3"
     ]
@@ -3268,7 +3270,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service/financial infrastructure platform providing accounts, payments, cards, and lending APIs, but no evidence in the pack mentions any AI-generated insights, analytics, or suggestions derived from customer data.",
+    "rationale": "Unit is a banking-infrastructure/BaaS API platform for accounts, payments, cards, and lending; nothing in the evidence describes AI-generated insights or suggestions surfaced from customer data within the product or dashboard.",
     "evidenceIds": []
   },
   {
@@ -3286,7 +3288,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service/financial infrastructure platform, not an AI assistant or agentic product; the evidence pack describes accounts, payments, cards, and lending APIs with no mention of any built-in AI assistant. Delegating tasks to a built-in AI assistant is a category mismatch for this type of product.",
+    "rationale": "Unit is a banking-as-a-service infrastructure/API platform for building financial products, not an AI assistant or agentic product; there is no built-in AI assistant to delegate tasks to, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3294,12 +3296,9 @@
     "storyId": "agentic-headless",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Unit is a banking-as-a-service API platform; while APIs are inherently callable programmatically, there is no evidence of a CLI, SDK, sandbox/test-mode tooling, or CI-friendly automation support — probes even show 404s for OpenAPI/spec endpoints, indicating no discoverable programmatic integration artifacts.",
-    "evidenceIds": [
-      "unit-probe-2",
-      "unit-probe-3"
-    ]
+    "confidence": "low",
+    "rationale": "Unit is presented as an API-first banking infrastructure platform, so headless/API-driven automation is a plausible axis, but the evidence pack contains no mention of CLI tools, SDKs, sandbox/test environments, or CI integration patterns — only generic descriptions of accounts, payments, cards, and lending products.",
+    "evidenceIds": []
   },
   {
     "productId": "unit",
@@ -3316,7 +3315,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service platform (not itself an agent), so an official MCP server for connecting agents is a fair axis to expect, but the evidence pack contains no mention of MCP, agent connectivity, or any such server—only standard API/docs content and failed probes for API specs. Missing for 10: any documentation of an MCP server, agent integration tooling, or even an OpenAPI spec that could underpin one.",
+    "rationale": "Unit is a banking-as-a-service platform (BaaS) with APIs for deposits, cards, payments, and lending; no evidence of an official MCP server for connecting AI agents. Probes show no OpenAPI/docs endpoints even discoverable, let alone an MCP server.",
     "evidenceIds": [
       "unit-probe-2",
       "unit-probe-3"
@@ -3337,7 +3336,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official CLI tool for Unit; the evidence pack only covers banking-as-a-service API capabilities and probes fail to find CLI, OpenAPI, or docs.md endpoints.",
+    "rationale": "No evidence of an official CLI; evidence only covers banking-as-a-service APIs, dashboard, and product offerings. Probes for API/OpenAPI specs even returned 404s, and no CLI tool is mentioned anywhere in the pack.",
     "evidenceIds": [
       "unit-probe-2",
       "unit-probe-3"
@@ -3349,10 +3348,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Unit's marketing/docs pages repeatedly reference building 'directly on the Unit Platform using APIs' and link to 'Explore the API,' confirming it is fundamentally an API-first BaaS platform, but there is no evidence of an actual public API reference, OpenAPI/Swagger spec, or markdown-based docs — probes for openapi.json, swagger.json, and docs/api/.md all returned 404. missing for 10: a discoverable OpenAPI/spec file, concrete API reference documentation, and any AI-native tooling (SDKs, docs-as-markdown) confirming programmatic/agent-friendly access.",
+    "rationale": "Unit repeatedly markets itself as an API-first platform ('build directly on the Unit Platform using APIs and components', 'Explore the API') and references a dashboard/API for accounts, payments, cards, and lending data, indicating a public API exists. However, the probes found no discoverable OpenAPI/swagger spec or machine-readable docs (404s at openapi.json, docs/api/.md), and the evidence pack lacks any concrete endpoint references, schemas, or code samples. missing for 10: actual API reference/OpenAPI spec, concrete endpoint examples, authentication/usage docs beyond marketing copy.",
     "evidenceIds": [
       "unit-docs-11",
       "unit-docs-19",
+      "unit-docs-21",
+      "unit-probe-1",
       "unit-probe-2",
       "unit-probe-3"
     ]
@@ -3372,8 +3373,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers Unit's banking-as-a-service product capabilities (accounts, payments, cards, lending) but contains no mention of official SDKs (language-specific libraries) for developers; probes even show OpenAPI/spec endpoints returning 404, suggesting limited structured API discoverability.",
+    "rationale": "The evidence pack describes Unit's API and platform capabilities but never mentions official SDKs (e.g., language-specific client libraries) for building AI-native or general applications. Probes even show the OpenAPI spec and API docs endpoints returning 404, suggesting no readily discoverable machine-consumable API artifacts, let alone SDKs.",
     "evidenceIds": [
+      "unit-docs-19",
       "unit-probe-2",
       "unit-probe-3"
     ]
@@ -3383,8 +3385,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions webhooks, event subscriptions, or any notification mechanism; probes for API/OpenAPI docs even returned 404s, leaving nothing to confirm this capability.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Unit's banking/payments/card capabilities but contains no mention of webhooks or event subscription mechanisms, despite this being a plausible capability for a financial infrastructure API platform.",
     "evidenceIds": []
   },
   {
@@ -3393,7 +3395,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There's a vague 'Explore the API' link mentioned, but no evidence of an interactive API reference with runnable examples; probes for OpenAPI/docs endpoints returned 404s, indicating no discoverable interactive reference.",
+    "rationale": "There is only a vague 'Explore the API' link and no evidence of an interactive API reference or runnable examples; probes for OpenAPI/swagger specs and docs endpoints all returned 404, contradicting any interactive reference existing.",
     "evidenceIds": [
       "unit-docs-19",
       "unit-probe-2",
@@ -3405,11 +3407,12 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Probes explicitly show no OpenAPI/swagger spec found at common paths (404s across all candidates), and no evidence pack item points to a downloadable machine-readable API spec despite mentions of 'the API'.",
+    "confidence": "medium",
+    "rationale": "Unit is an API-first fintech platform, so a downloadable OpenAPI/machine-readable spec is a fair expectation, but the evidence pack shows explicit probes failing to find one—openapi.json, swagger.json, and related well-known paths all returned 404, and only a generic 'Explore the API' link exists with no spec file.",
     "evidenceIds": [
       "unit-probe-3",
-      "unit-probe-2"
+      "unit-probe-2",
+      "unit-docs-19"
     ]
   },
   {
@@ -3418,7 +3421,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions a sandbox/test environment, test API keys, or a way to develop against non-production data; the probes for API/docs even return 404s. Missing for 10: any mention of a sandbox environment, test mode, or separation from production data.",
+    "rationale": "No evidence pack items mention a sandbox, test environment, or non-production testing capability; docs focus on production banking features, and probes for API/OpenAPI docs returned 404s with no sandbox mention.",
     "evidenceIds": []
   },
   {
@@ -3427,21 +3430,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item discusses API versioning or a deprecation policy; probes for OpenAPI/spec even failed (404s), and none of the docs mention version numbers, changelogs, or deprecation timelines.",
-    "evidenceIds": []
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; probes for OpenAPI/spec and docs endpoints returned 404s, and none of the docs pages mention versioning or deprecation practices.",
+    "evidenceIds": [
+      "unit-probe-2",
+      "unit-probe-3"
+    ]
   },
   {
     "productId": "unit",
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes Unit's account, payment, card, and credit APIs but never mentions batch/bulk endpoints, multi-item operations, or automation-scale processing across many records at once. Missing for 10: any documentation of batch APIs, bulk create/update endpoints, or evidence of automation-depth features letting an AI agent act on many items in one call.",
-    "evidenceIds": [
-      "unit-docs-1",
-      "unit-docs-2",
-      "unit-docs-5"
-    ]
+    "confidence": "low",
+    "rationale": "Unit is a banking-as-a-service API platform for building financial products (accounts, cards, payments), not an AI-native tool with bulk-operation or batch-processing features; evidence describes account/card/payment infrastructure but nothing about performing bulk operations across many items for an AI-native user. No mention of batch APIs, bulk endpoints, or automation tooling for mass operations. Missing for 10: any evidence of batch/bulk API endpoints, bulk data operations, or automation tooling enabling operations across many items at once.",
+    "evidenceIds": []
   },
   {
     "productId": "unit",
@@ -3449,7 +3451,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Unit's evidence describes banking-as-a-service infrastructure (accounts, cards, payments, lending) and mentions webhooks/APIs generally, but there is no mention of a rules engine, event-trigger automation, or condition-based action configuration that a user could define. No evidence supports this specific automation-depth capability.",
+    "rationale": "Evidence covers Unit's banking-as-a-service capabilities (accounts, payments, cards, lending) but contains no mention of a rules engine, event triggers, webhooks-based automation configuration, or user-defined conditional logic for automatic actions on events. Missing for 10: any documentation of an event/trigger/rules system, webhook or automation configuration API, or examples of conditional automated actions.",
     "evidenceIds": []
   },
   {
@@ -3467,7 +3469,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service infrastructure platform for building financial products, not an automation/workflow tool with 'automations' that could be versioned, reviewed, or rolled back. This story applies to workflow-automation or agent-orchestration tools, which is a category error for Unit's product type.",
+    "rationale": "Unit is a banking-as-a-service/financial infrastructure API platform, not an automation/workflow tool with versionable automations to review or roll back; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3476,7 +3478,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Unit's banking-as-a-service infrastructure (accounts, cards, payments, lending, dashboard) but contains no mention of any built-in AI features such as natural-language transaction search, dispute response drafting, or anomaly summaries.",
+    "rationale": "Evidence shows Unit is a banking-as-a-service infrastructure platform (accounts, payments, cards, lending) with no mention of any built-in AI features such as natural-language transaction search, dispute/alert response drafting, or anomaly summaries.",
     "evidenceIds": []
   },
   {
@@ -3485,7 +3487,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers general card issuing, payments, and lending capabilities but contains no mention of dispute handling, Reg E investigation timelines, provisional credit mechanics, or documented operational responsibilities for chargebacks/disputes.",
+    "rationale": "Evidence mentions general card issuing, ACH, and compliance/operational data access, but nothing addresses dispute handling, Reg E investigation timelines, provisional credit mechanics, or ops responsibilities/tooling for disputes.",
     "evidenceIds": []
   },
   {
@@ -3494,7 +3496,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Unit's docs mention checks as one of several payment capabilities (ACH, wires, RTP, checks, international) but provide no detail on programmatic check issuance workflows or check deposit with image capture. missing for 10: check issuance API specifics, check deposit/image-capture endpoint or feature documentation, any hands-on or independent confirmation of check functionality.",
+    "rationale": "Unit's docs list \"checks\" among supported payment rails alongside ACH, wires, and RTP, indicating some check capability exists, but there is no detail on programmatic check issuance APIs or check deposit with image capture. missing for 10: documentation of check issuance API/endpoints, check deposit/image-capture (RDC) functionality, and any hands-on or independent confirmation.",
     "evidenceIds": [
       "unit-docs-2"
     ]
@@ -3504,9 +3506,12 @@
     "storyId": "compliance-program-tooling",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers accounts, payments, cards, lending, and general compliance/operational data access, but there is no mention of specific compliance tooling such as transaction monitoring, sanctions screening, alert case management, or SAR-filing workflows, nor any documented split of duties between ops, platform, and bank for these tasks.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence only mentions generic 'compliance data' access in the dashboard (unit-docs-5) and unrelated SOC2/PCI certifications (unit-docs-20); there is no mention of transaction monitoring, sanctions screening, alert case management, SAR-filing workflows, or a documented division of compliance duties between ops, platform, and bank.",
+    "evidenceIds": [
+      "unit-docs-5",
+      "unit-docs-20"
+    ]
   },
   {
     "productId": "unit",
@@ -3514,11 +3519,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm issuing both physical and virtual cards via API with configurable spend controls, real-time authorization, and lifecycle management, tied to accounts (unit-docs-3, unit-docs-13). However, no evidence explicitly confirms digital wallet (Apple Pay/Google Pay) provisioning support. missing for 10: explicit digital wallet tokenization/provisioning evidence, deeper API/spend-control documentation detail.",
+    "rationale": "Unit's docs confirm virtual and physical card issuance tied to accounts via API with configurable controls, real-time authorization, and lifecycle management (unit-docs-3, unit-docs-13), consistent with the story's core claim. However, no evidence explicitly confirms digital wallet (Apple Pay/Google Pay) tokenization support, and API/OpenAPI docs endpoints returned 404s, limiting independent verification. missing for 10: explicit digital wallet provisioning/tokenization evidence, independent/hands-on corroboration, accessible API reference confirming spend-control granularity.",
     "evidenceIds": [
       "unit-docs-3",
       "unit-docs-13",
-      "unit-docs-1"
+      "unit-docs-5",
+      "unit-probe-2",
+      "unit-probe-3"
     ]
   },
   {
@@ -3540,13 +3547,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Unit's docs confirm FBO deposit account structures, dashboard/API visibility into account and compliance data, and Federal Reserve connectivity, but there is no plain-language documentation of where FDIC insurance actually attaches, how ledger visibility/permissions are governed, or explicit distinction between FBO pooled vs individual account structures for compliance purposes. missing for 10: explicit FDIC pass-through insurance disclosure, ledger access/permission documentation, clear individual-vs-pooled account structure explanation.",
+    "rationale": "Unit's docs confirm deposit/wallet accounts are held in FBO structures and dashboard/API access exposes account and compliance data, but there is no explicit documentation of how FDIC insurance attaches (pass-through vs pooled) or granular ledger-visibility/permissions for finance stakeholders. Missing for 10: explicit FDIC insurance attachment details, ledger access-control/permission documentation, and independent confirmation of account-structure transparency.",
     "evidenceIds": [
       "unit-docs-1",
+      "unit-docs-12",
       "unit-docs-5",
-      "unit-docs-6",
-      "unit-docs-7",
-      "unit-docs-12"
+      "unit-docs-6"
     ]
   },
   {
@@ -3555,7 +3561,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Unit's platform capabilities (accounts, cards, payments, lending) and general compliance certifications, but nothing addresses fraud liability allocation for ACH returns, card disputes, or account takeover losses, nor documents who bears these losses alongside prevention tooling.",
+    "rationale": "The evidence pack covers general product capabilities (accounts, payments, cards, lending, compliance certifications) but contains no documentation of fraud liability allocation for ACH returns, card disputes, or account takeover losses, nor how prevention tooling maps to who bears the loss.",
     "evidenceIds": []
   },
   {
@@ -3575,11 +3581,9 @@
     "storyId": "kyc-kyb-onboarding",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers accounts, payments, cards, lending, and general compliance data access, but contains no mention of KYC/KYB workflows, document collection, watchlist/OFAC screening, or modeled application/customer states — the specific onboarding-verification capability described in the story is unevidenced. Missing for 10: any documentation of KYC/KYB endpoints, document upload/collection, watchlist screening, or application state machine.",
-    "evidenceIds": [
-      "unit-docs-5"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers accounts, payments, cards, lending, and general platform infrastructure, but contains no mention of KYC/KYB processes, document collection, watchlist/OFAC screening, or application state modeling — capabilities central to this story. This axis clearly applies to a banking-as-a-service platform like Unit, but no supporting evidence is present.",
+    "evidenceIds": []
   },
   {
     "productId": "unit",
@@ -3587,7 +3591,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any documented daily reconciliation process, ledger-to-bank-core matching, or reconciliation reporting mechanism; evidence only covers account/card/payment/lending product capabilities and compliance certifications, none addressing ledger reconciliation against bank-held balances.",
+    "rationale": "No evidence in the pack describes any documented daily reconciliation process between Unit's ledger/API and the bank partner's core records, nor any audit/reconciliation reporting artifact addressing the Synapse-style failure mode. Evidence only covers product capabilities (accounts, cards, payments, lending) and general compliance certifications, not reconciliation guarantees.",
     "evidenceIds": []
   },
   {
@@ -3596,11 +3600,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Unit's evidence covers account/card creation, payments, and general 'configurable controls' on cards, but nothing documents per-account/program transaction or velocity limits, suspicious-activity holds, or account freeze/reinstatement workflows. missing for 10: velocity/transaction limit configuration, hold/freeze mechanisms, documented reinstatement paths.",
-    "evidenceIds": [
-      "unit-docs-3",
-      "unit-docs-5"
-    ]
+    "rationale": "Evidence covers account creation, payments, card issuing, lending, and compliance certifications, but nothing describes configurable transaction/velocity limits, holds on suspicious activity, or account freeze/reinstatement workflows for ops users.",
+    "evidenceIds": []
   },
   {
     "productId": "unit",
@@ -3608,7 +3609,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers Unit's account, payments, card, and lending infrastructure APIs but contains no mention of an onboarding queue, application pending-status visibility, document collection workflow, or a clear delineation of ops-user vs. bank decision authority.",
+    "rationale": "Unit's evidence pack covers banking-as-a-service infrastructure (accounts, cards, payments, lending, dashboard) but contains no mention of an onboarding queue UI, pending-application reasons, document upload workflows, or a delineation of ops-vs-bank decision responsibility.",
     "evidenceIds": []
   },
   {
@@ -3642,7 +3643,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a proprietary fintech/banking-as-a-service platform, not open-source software; source code openness is not a fair axis for this category of closed commercial infrastructure product.",
+    "rationale": "Unit is a closed banking-as-a-service platform (BaaS) for building financial products, not a software project with distributable source code; open-source licensing is not a relevant axis for this type of proprietary financial infrastructure product.",
     "evidenceIds": []
   },
   {
@@ -3651,7 +3652,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service platform delivered as a hosted API/infrastructure service tied to regulated bank partners and Federal Reserve connectivity; self-hosting a core banking infrastructure product is a category error, not an applicable openness axis.",
+    "rationale": "Unit is a banking-as-a-service/BaaS SaaS platform providing regulated financial infrastructure via bank partnerships; self-hosting is a category error since the core value relies on Unit's regulated bank connectivity and hosted infrastructure, not deployable software.",
     "evidenceIds": []
   },
   {
@@ -3660,7 +3661,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service/fintech infrastructure platform for US banking products, not a data-storage or AI platform where region/residency selection is a meaningful buyer axis; no evidence pack item discusses data residency or region selection at all.",
+    "rationale": "Unit is a banking/financial infrastructure API platform, not an AI-native tool with configurable data residency options for AI workloads; data residency/region selection is not a relevant axis for this product category as evidenced.",
     "evidenceIds": []
   },
   {
@@ -3678,7 +3679,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking-as-a-service platform, and its documentation is entirely about financial products (accounts, cards, payments, lending) and compliance certifications; there is no mention of AI-native data retention/deletion controls or any user-facing data governance features. This axis applies to Unit as a data-handling platform, but no evidence supports it.",
+    "rationale": "Unit is a banking-as-a-service infrastructure platform (accounts, cards, payments, lending); no evidence addresses AI data retention/deletion controls, which isn't even a relevant concept for this product's data (regulated financial records typically must be retained, not deleted at user discretion). No documentation, API, or dashboard feature is cited that lets a user control data retention or trigger deletion.",
     "evidenceIds": []
   },
   {
@@ -3687,7 +3688,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Unit is a banking/financial infrastructure platform, not an AI agent or developer tool with telemetry collection relevant to AI-native usage; the story's axis (opting out of AI-tool telemetry/usage tracking) is a category error for this type of product.",
+    "rationale": "Unit is a banking/financial infrastructure API platform, not an AI agent or developer tool with telemetry collection relevant to AI-native users; opting out of telemetry/usage tracking is not a fair axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -3696,20 +3697,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Unit's product capabilities (accounts, payments, cards, lending, compliance) but contains no documentation of program-level limits, approval stages, underwriting thresholds, or a documented process for raising limits as a company scales — the exact concern in this founder story. No mention of risk-control tiers, growth ceilings, or escalation paths appears anywhere in the docs or probes.",
+    "rationale": "The evidence pack contains only marketing/product-capability descriptions (accounts, cards, payments, lending) and generic compliance certifications; nothing documents program-level limits, approval-stage thresholds, or a defined process/path for raising them as growth scales. No API docs, risk policy pages, or underwriting guidelines are cited that would let a founder discover these limits proactively rather than through a surprise bank communication.",
     "evidenceIds": []
   },
   {
     "productId": "unit",
     "storyId": "realtime-balances-events",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Unit's docs mention real-time balances and transaction data across accounts, payments, and cards (unit-docs-1, unit-docs-2, unit-docs-3), suggesting some real-time ledger visibility, but there is no mention of holds/pending balance mechanics or of webhooks for transaction state changes anywhere in the evidence pack. missing for 10: explicit documentation of webhook events per transaction state change, explicit handling of holds/pending balances in real-time reads, independent/hands-on confirmation of event-driven architecture.",
+    "rationale": "Docs claim real-time balances and settlement-level transaction visibility on a native ledger (unit-docs-1, unit-docs-12, unit-docs-24, unit-docs-2), supporting the 'real-time balance reflecting holds/pending' half of the story, but there is no evidence in the pack of webhooks or event notifications for transaction state changes, and no API/OpenAPI docs were retrievable to confirm event-driven mechanics (unit-probe-2, unit-probe-3). missing for 10: webhook/event documentation for transaction state changes, explicit mention of holds/pending balance semantics, independent corroboration of real-time ledger behavior.",
     "evidenceIds": [
       "unit-docs-1",
+      "unit-docs-12",
+      "unit-docs-24",
       "unit-docs-2",
-      "unit-docs-3"
+      "unit-probe-2",
+      "unit-probe-3"
     ]
   },
   {
@@ -3717,8 +3721,8 @@
     "storyId": "statements-tax-documents",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions monthly account statements or 1099-INT tax document generation/retrieval via API; the evidence covers accounts, payments, cards, lending, and compliance certifications but nothing about statement or tax-document automation.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions monthly account statements or 1099-INT tax document generation/retrieval via API; evidence only covers accounts, payments, cards, lending, and compliance certifications generally.",
     "evidenceIds": []
   },
   {
@@ -3738,15 +3742,14 @@
     "productId": "unit",
     "storyId": "virtual-account-numbers",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Unit's docs explicitly support creating deposit/wallet accounts under FBO structures for operating accounts, customer wallets, and sub-accounts, and note multi-party fund flows and real-time balances — directly matching the sub-account and per-customer account provisioning ask. However, there's no explicit mention of routing-number issuance mechanics, virtual-account-for-reconciliation patterns, or scale/bulk provisioning details, and API-level evidence (OpenAPI spec, docs endpoints) returned 404s, leaving the actual account/routing number API unverified. Missing for 10: explicit routing-number assignment details, reconciliation-specific virtual account documentation, bulk/scale provisioning evidence, and working API reference confirming account creation endpoints.",
+    "rationale": "Unit's docs confirm deposit/wallet accounts held in FBO structures with explicit sub-account, customer wallet, and multi-party fund flow support, which aligns with per-customer collection accounts and master/sub-account structures. However, none of the evidence explicitly mentions unique routing-number issuance, reconciliation-oriented virtual accounts, or bulk/at-scale account provisioning workflows via API. missing for 10: explicit mention of routing number generation per account, virtual-account reconciliation use case, API/bulk provisioning detail, and independent/hands-on confirmation.",
     "evidenceIds": [
       "unit-docs-1",
       "unit-docs-12",
-      "unit-docs-6",
-      "unit-probe-2",
-      "unit-probe-3"
+      "unit-docs-23",
+      "unit-docs-6"
     ]
   },
   {
@@ -3755,10 +3758,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Unit's docs confirm wires and real-time payments (RTP) as supported rails alongside ACH, checks, and international payments through one API, with account/transaction visibility. However, there is no mention of FedNow at all, and no per-rail documentation of specific capabilities (origination vs receipt, limits, cutoff times, rail-specific fields) — evidence is limited to generic marketing/docs snippets rather than API reference detail. missing for 10: FedNow support, per-rail capability documentation (origination/receipt distinctions, limits/cutoffs), and any API reference or independent corroboration beyond marketing pages.",
+    "rationale": "Unit's docs list wires and real-time payments (RTP) alongside ACH as supported payment rails through the same API (unit-docs-2, unit-docs-14), but FedNow is never mentioned anywhere in the evidence pack, and there is no per-rail documentation of capabilities (limits, timing, origination vs receipt) — probes even show the actual API docs/OpenAPI spec returning 404s. missing for 10: FedNow support, per-rail capability documentation (limits/cutoffs/return codes), accessible API reference confirming origination and receipt for each rail.",
     "evidenceIds": [
       "unit-docs-2",
-      "unit-docs-14"
+      "unit-docs-14",
+      "unit-probe-2",
+      "unit-probe-3"
     ]
   },
   {
@@ -3766,8 +3771,8 @@
     "storyId": "yield-interest-options",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers deposit accounts, payments, cards, and lending, but no item mentions interest-bearing accounts, sweep programs, yield rates, or spread/economics disclosure for idle balances.",
+    "confidence": "medium",
+    "rationale": "Evidence covers deposit accounts, wallets, payments, cards, and lending, but nowhere mentions interest-bearing accounts, sweep programs, yield rates, or how the interest spread is split between Unit, the bank partner, and the platform customer.",
     "evidenceIds": []
   }
 ]
