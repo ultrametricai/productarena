@@ -3,6 +3,7 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
+import { JURISDICTIONS, type Jurisdiction, type JurisdictionStepView } from './jurisdictions'
 import { isShutdown } from './shutdown'
 import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
 import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
@@ -97,6 +98,21 @@ export const DagNodeSchema = z.object({
   riskLevel: z.enum(['low', 'medium', 'high']).optional(),
   estimatedMinutes: z.number().min(0),
   async: z.boolean().optional(),
+  // Jurisdiction-conditional step (founder 2026-09-25: "allow more options for the processes —
+  // ie multi-state situations or California included"): this step only applies when the reader
+  // turns the named jurisdiction option on (['CA'] = operating in California, ['MULTI'] =
+  // operating in multiple states). Absence = the step applies everywhere (the Delaware-only
+  // default). loadProcesses() STRIPS conditional nodes at load time, so every static surface —
+  // ceilings, rankings, the simulator, the manifest, the DAG, derived/generated step data —
+  // keeps the byte-identical default view and no judged number moves; the steps only render
+  // client-side via components/JurisdictionToggle.tsx (jurisdictionStepViews below). Task-level
+  // totals (activeMinutes/totalEstimatedMinutes/hasAsyncSteps) describe the DEFAULT flow and
+  // deliberately exclude conditional nodes. Client-safe half in lib/jurisdictions.ts.
+  jurisdictions: z.enum(JURISDICTIONS).array().min(1).optional(),
+  // Internal pointer for a conditional step whose work already lives in its OWN corpus process
+  // (the sales-tax-nexus case — link it, never duplicate it): the canonical slug of that
+  // process. Display-only; integrity (resolves to a real process) is corpus-tested.
+  processRef: z.string().min(1).optional(),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -224,12 +240,34 @@ export function processSlug(title: string): string {
 }
 
 const processesCache = new Map<string, ProcessTask[]>()
+// Jurisdiction-conditional nodes stripped out of the default view at load time, keyed
+// taskId → nodes (in corpus order) — the raw material for jurisdictionStepViews below.
+const jurisdictionNodesCache = new Map<string, Map<string, DagNode[]>>()
 
 export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   const hit = processesCache.get(dir)
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(path.join(dir, 'processes.json'), 'utf8'))
-  const tasks = ProcessTaskSchema.array().parse(raw)
+  const parsed = ProcessTaskSchema.array().parse(raw)
+  // Split jurisdiction-conditional nodes OUT of the default corpus here, so every downstream
+  // consumer (ceilings, rankings, simulator, manifest, generators, tests) sees exactly the
+  // Delaware-only flow it always saw — conditional steps can never move a judged number. Edges
+  // never reference conditional nodes (corpus-tested in lib/__tests__/jurisdictions.test.ts),
+  // so the default DAG is untouched; the edge filter below is defense in depth.
+  const conditional = new Map<string, DagNode[]>()
+  const tasks = parsed.map((t) => {
+    const condNodes = t.dag.nodes.filter((n) => n.jurisdictions && n.jurisdictions.length > 0)
+    if (condNodes.length === 0) return t
+    conditional.set(t.id, condNodes)
+    const keep = new Set(t.dag.nodes.filter((n) => !condNodes.includes(n)).map((n) => n.id))
+    return {
+      ...t,
+      dag: {
+        nodes: t.dag.nodes.filter((n) => keep.has(n.id)),
+        edges: t.dag.edges?.filter((e) => keep.has(e.from) && keep.has(e.to)),
+      },
+    }
+  })
   const seen = new Map<string, string>()
   for (const t of tasks) {
     // Canonical slug and every alias share one namespace — /processes/[slug] routing stays
@@ -241,7 +279,35 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
     }
   }
   processesCache.set(dir, tasks)
+  jurisdictionNodesCache.set(dir, conditional)
   return tasks
+}
+
+// The jurisdiction-conditional nodes of one task (stripped from the default view by
+// loadProcesses), in corpus order — [] for the many tasks that have none.
+export function jurisdictionNodes(taskId: string, dir: string = DEFAULT_DIR()): DagNode[] {
+  loadProcesses(dir)
+  return jurisdictionNodesCache.get(dir)?.get(taskId) ?? []
+}
+
+// The serializable client props for one task's conditional steps — what /processes/[slug]
+// hands components/JurisdictionToggle.tsx. A processRef resolves to the referenced process's
+// live href + title (the link-it-never-duplicate-it rule for work that is its own process).
+export function jurisdictionStepViews(taskId: string, dir: string = DEFAULT_DIR()): JurisdictionStepView[] {
+  return jurisdictionNodes(taskId, dir).map((n) => {
+    const ref = n.processRef ? findProcessBySlug(n.processRef, dir) : null
+    return {
+      label: n.label,
+      route: n.route,
+      jurisdictions: (n.jurisdictions ?? []) as Jurisdiction[],
+      actionUrl: n.actionUrl ?? null,
+      actionLabel: n.actionLabel ?? null,
+      estimatedMinutes: n.estimatedMinutes,
+      async: n.async ?? false,
+      processHref: ref ? `/processes/${processSlug(ref.title)}` : null,
+      processTitle: ref?.title ?? null,
+    }
+  })
 }
 
 export function findProcessBySlug(slug: string, dir: string = DEFAULT_DIR()): ProcessTask | null {
