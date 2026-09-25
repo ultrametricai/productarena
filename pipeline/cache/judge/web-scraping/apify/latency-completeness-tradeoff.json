@@ -1,14 +1,16 @@
 {
-  "hash": "7405de028ab4cf1302e1bf5291611d21380f02171f776f260dac33c1b9cbfb08",
+  "hash": "ff79eafca2473ce1783c7ec9d51eb4a39bd91a1a3eabf8e831224c6335e31049",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Apify's client exposes both synchronous run-and-wait patterns (actor.call()) and asynchronous notification via webhooks when a run finishes, plus log streaming for partial visibility during a run, which together give some control over when results are retrieved. However there is no explicit documentation of a latency/completeness tradeoff mechanism (e.g., a wait-timeout or partial-dataset-return parameter) that lets a developer explicitly choose faster-but-incomplete vs slower-but-complete results. Missing for 10: explicit timeout/waitForFinish parameter documentation, partial-result/early-return API semantics, and independent confirmation of this tradeoff being used in practice.",
+    "rationale": "Apify's client offers mechanisms that let a developer influence latency/completeness trade-offs — e.g. synchronous 'call' that waits for actor completion (apify-docs-23), asynchronous run + webhook notification patterns (apify-docs-14, apify-docs-29), and result-limiting via the `limit`/`maxCrawlPages` parameters (apify-docs-28, apify-docs-15) — but there is no explicit documentation of a dedicated 'return immediately vs wait for full completeness' control (e.g. a documented timeout/waitForFinish knob for partial results) or first-party framing of this exact latency/completeness trade-off. missing for 10: explicit run-timeout/waitForFinish API docs, guidance on streaming partial dataset results while a run is still in progress, and independent/hands-on confirmation of this trade-off pattern.",
     "evidenceIds": [
+      "apify-docs-23",
       "apify-docs-14",
-      "apify-docs-15",
-      "apify-docs-19"
+      "apify-docs-29",
+      "apify-docs-28",
+      "apify-docs-15"
     ],
     "productId": "apify",
     "storyId": "latency-completeness-tradeoff"

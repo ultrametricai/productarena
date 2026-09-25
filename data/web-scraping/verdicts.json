@@ -4,11 +4,9 @@
     "storyId": "adaptive-stop-crawling",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only fixed limits like maxCrawlPages, not adaptive stopping tied to information sufficiency; no docs describe a crawler that dynamically halts once enough data is gathered to answer a query.",
-    "evidenceIds": [
-      "apify-docs-15"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence shows Apify's crawling uses fixed parameters like maxCrawlPages/limit and manual configuration rather than any adaptive stopping mechanism tied to query sufficiency; no docs mention query-aware or LLM-driven early termination of crawls.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -16,11 +14,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probe evidence confirms an llms.txt file is live at docs.apify.com/llms.txt (HTTP 200) describing Apify for AI agent consumption, plus agent-oriented docs like the MCP server integration page for LLM/agent discovery. missing for 10: no independent third-party confirmation that agents successfully consume/parse this llms.txt in practice.",
+    "rationale": "A probe confirms Apify serves a working llms.txt at docs.apify.com/llms.txt with agent-oriented content describing itself as a marketplace of tools for AI, and docs also cover an MCP server for AI agent discovery, plus OpenAPI spec for machine-readable access. Missing for 10: independent third-party confirmation that agents successfully consume the llms.txt in practice.",
     "evidenceIds": [
       "apify-probe-1",
+      "apify-docs-10",
       "apify-probe-3",
-      "apify-docs-10"
+      "apify-probe-2"
     ]
   },
   {
@@ -29,11 +28,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Apify is a web scraping/automation platform providing Actors, data extraction, and an MCP server so external AI agents can discover and use Actors, but there is no evidence of Apify itself generating AI insights, summaries, or suggestions from a user's scraped data inside the product. The MCP server (apify-docs-10, apify-probe-3) enables external LLMs to consume Apify's tools, which is a different capability from the product surfacing AI-generated analysis of the user's own data. Missing for 10: any built-in AI analysis/insight feature, in-product LLM summarization of datasets, or suggestion engine acting on stored data.",
-    "evidenceIds": [
-      "apify-docs-10",
-      "apify-probe-3"
-    ]
+    "rationale": "Apify is a web scraping/automation platform with data extraction, Actors, MCP server for agents to consume its tools, but there's no evidence of the product itself generating AI-driven insights, summaries, or suggestions from the scraped data inside the product interface. The MCP integration lets external AI agents use Apify tools, but that's the reverse of the story (AI insights generated for the user inside the product).",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -41,14 +37,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify supports scheduling Actors/tasks to run automatically at specific times, webhooks to chain Actor runs on completion/failure, monitoring/alerts on runs, and API/CLI/SDK control for building autonomous background automations — core building blocks for background, autonomous operation. missing for 10: no independent/hands-on evidence specifically validating unattended long-running autonomous schedules in production, and no explicit failure-recovery/retry documentation beyond alerts.",
+    "rationale": "Apify supports scheduling Actors/tasks at specific times (apify-docs-6, apify-docs-35), webhooks that trigger new Actor runs on completion/failure (apify-docs-14, apify-docs-29), monitoring/alerting for runs (apify-docs-7), and MCP/agent integration for autonomous use by AI agents (apify-docs-10, apify-probe-3) — together enabling background, autonomous automation pipelines. missing for 10: no independent/hands-on evidence specifically validating scheduled or webhook-triggered runs working reliably in production, and no explicit end-to-end example combining scheduling+webhooks+monitoring into one autonomous pipeline.",
     "evidenceIds": [
       "apify-docs-6",
+      "apify-docs-35",
       "apify-docs-14",
+      "apify-docs-29",
       "apify-docs-7",
-      "apify-docs-3",
-      "apify-docs-17",
-      "apify-probe-4"
+      "apify-docs-10",
+      "apify-probe-3"
     ]
   },
   {
@@ -67,17 +64,20 @@
     "productId": "apify",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Apify provides a CLI for terminal/shell scripting, JS/Python API clients for programmatic invocation, webhooks to chain runs, and scheduling for time-based headless runs—all core building blocks for CI/automation pipelines. Missing for 10: explicit CI/CD integration docs (e.g., GitHub Actions example) or third-party confirmation of CI usage.",
+    "rationale": "Apify offers a CLI (apify-docs-3, apify-probe-4), REST API with OpenAPI spec (apify-probe-2), JS/Python SDKs and API clients for scripted/programmatic runs (apify-docs-15, apify-docs-16, apify-docs-24), scheduling for automated runs (apify-docs-6), webhooks for chaining automation (apify-docs-14, apify-docs-29), and Docker base images enabling containerized/CI execution (apify-docs-30). This collectively demonstrates headless/CI-friendly operation. Missing for 10: explicit first-party CI/CD integration guide (e.g., GitHub Actions example) and independent hands-on confirmation of running Actors inside a CI pipeline.",
     "evidenceIds": [
       "apify-docs-3",
-      "apify-docs-6",
-      "apify-docs-14",
+      "apify-probe-4",
+      "apify-probe-2",
       "apify-docs-15",
       "apify-docs-16",
-      "apify-probe-4",
-      "apify-probe-2"
+      "apify-docs-24",
+      "apify-docs-6",
+      "apify-docs-14",
+      "apify-docs-29",
+      "apify-docs-30"
     ]
   },
   {
@@ -86,10 +86,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Apify exposing its own Actors as tools via an MCP server for external AI agents/LLMs to consume (apify-docs-10, apify-probe-3) — the reverse of the story, which asks whether Apify can plug in and consume external MCP servers' tools. No evidence shows Apify acting as an MCP client that ingests third-party MCP servers.",
+    "rationale": "Evidence only shows Apify publishing its own official MCP server so external AI agents/LLMs can call Apify's Actors as tools (apify-docs-10, apify-probe-3) — this is Apify acting as an MCP server, not as an MCP client consuming external MCP servers' tools. There is no evidence that a user can plug third-party MCP servers into Apify so its Actors/platform can use their tools.",
     "evidenceIds": [
       "apify-docs-10",
-      "apify-probe-3"
+      "apify-probe-3",
+      "apify-docs-36"
     ]
   },
   {
@@ -97,11 +98,12 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Apify documents an official MCP server allowing AI agents/LLMs to discover and use Actors (apify-docs-10), with a dedicated docs page confirmed live via probe (apify-probe-3). Missing for 10: independent hands-on third-party corroboration of the MCP server's functionality and depth of setup/config docs.",
+    "confidence": "medium",
+    "rationale": "Apify documents an official MCP server enabling AI agents/LLMs to discover and use Actors, confirmed both in docs and via a dedicated probe hit at docs.apify.com/platform/integrations/mcp. Apify's product role is a platform/marketplace (not itself an agent), so shipping an MCP server is a valid applicable axis and is fulfilled. Missing for 10: independent/hands-on community verification of the MCP server actually working with agents, and more detail on setup/auth specifics beyond the docs snippet.",
     "evidenceIds": [
       "apify-docs-10",
-      "apify-probe-3"
+      "apify-probe-3",
+      "apify-probe-1"
     ]
   },
   {
@@ -123,11 +125,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify ships an official CLI documented at docs.apify.com/cli, described as controlling the Apify platform from terminal or shell scripts, alongside SDKs/clients and an OpenAPI spec that support scripting/automation workflows suitable for AI-native usage. missing for 10: independent hands-on review of the CLI itself and explicit AI-agent-specific CLI workflows/examples.",
+    "rationale": "Apify has an official CLI documented at docs.apify.com/cli, with concrete usage shown (apify create my-first-actor) and CLI-focused docs describing controlling the platform from terminal/shell scripts. missing for 10: independent/hands-on community review specifically of the CLI (rather than the SDK/platform in general), and more depth on CLI command coverage.",
     "evidenceIds": [
       "apify-probe-4",
       "apify-docs-3",
-      "apify-probe-2"
+      "apify-docs-33"
     ]
   },
   {
@@ -136,13 +138,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Apify provides a documented public API with OpenAPI spec (probe confirms openapi.json), JS/Python client SDKs with code examples, CLI, and webhooks for automation, all clearly aimed at programmatic/AI-native access. Missing for 10: independent third-party developer corroboration specifically praising the API/SDK usability beyond vendor docs.",
+    "rationale": "Apify offers a well-documented public REST API (OpenAPI spec confirmed by probe), official JS and Python API clients with rich examples (auth, run actors, retrieve data, error handling, pagination), plus CLI and MCP server integrations for agentic use. missing for 10: independent third-party hands-on report specifically validating API robustness/completeness beyond docs.",
     "evidenceIds": [
       "apify-docs-3",
       "apify-docs-15",
       "apify-docs-16",
       "apify-docs-18",
-      "apify-docs-19",
+      "apify-docs-21",
+      "apify-docs-24",
       "apify-probe-2",
       "apify-probe-4"
     ]
@@ -153,10 +156,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Apify has organizations/permissions management (apify-docs-9) and an MCP server for agent integration (apify-probe-3), but nothing documents issuing scoped or least-privilege API tokens/credentials specifically for agent use. Missing for 10: documentation of API token scopes, permission granularity for tokens, or agent-specific credential issuance workflow.",
+    "rationale": "No evidence pack item mentions scoped or least-privilege API tokens, permission-limited keys, or credential-scoping features for agents; docs cover organizations/permissions ([apify-docs-9]) but nothing about issuing restricted-scope API credentials specifically for an AI agent. missing for 10: documentation of scoped/limited API token creation, granular permission scopes, or agent-specific credential issuance.",
     "evidenceIds": [
-      "apify-docs-9",
-      "apify-probe-3"
+      "apify-docs-9"
     ]
   },
   {
@@ -165,14 +167,17 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Apify provides official JS and Python SDKs/clients with documented usage examples (running actors, error handling, streaming logs, tasks), plus CLI and OpenAPI-based API access, giving AI-native developers robust official tooling to build against. Missing for 10: independent/hands-on developer corroboration specifically praising SDK quality beyond community goodwill comments.",
+    "rationale": "Apify offers official JS/Python SDKs and API clients with rich documented capabilities (running actors, error handling, retries, pagination, streaming logs, dataframe integration) plus an official CLI and OpenAPI spec, giving AI-native developers robust, well-documented SDKs to build against. missing for 10: independent third-party benchmarking or hands-on developer reviews specifically validating SDK quality beyond vendor docs.",
     "evidenceIds": [
+      "apify-docs-1",
       "apify-docs-2",
       "apify-docs-15",
       "apify-docs-16",
       "apify-docs-18",
       "apify-docs-19",
-      "apify-docs-21",
+      "apify-docs-24",
+      "apify-docs-26",
+      "apify-docs-27",
       "apify-probe-2",
       "apify-probe-4"
     ]
@@ -183,9 +188,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify's docs explicitly document webhooks that fire on Actor run events (finish/fail) and can trigger downstream actions like starting another Actor, confirming a native pub/sub-style webhook subscription mechanism. This is first-party documented core platform functionality, though the evidence lacks detail on webhook payload customization or independent hands-on validation. Missing for 10: independent/community confirmation of webhook reliability, and documentation of full event-type coverage beyond run finish/fail.",
+    "rationale": "Apify provides a documented webhooks system that triggers HTTP requests to external services on platform events (e.g., actor run finished/failed), enabling event-driven subscriptions suitable for AI-native/agentic workflows. This is first-party, well-documented core platform functionality. Missing for 10: independent/hands-on corroboration of webhook reliability and no explicit mention of webhook use specifically in agentic/AI-triggered contexts beyond general docs.",
     "evidenceIds": [
-      "apify-docs-14"
+      "apify-docs-14",
+      "apify-docs-29"
     ]
   },
   {
@@ -194,12 +200,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Apify's Actor marketplace, SDKs, CLI, and MCP integration for AI agents, but contains no documentation of a natural-language-to-structured-data extraction capability (e.g., prompt-based field extraction without selectors). Apify's tooling described here still relies on Actors/code (Playwright, Puppeteer, Selenium, Crawlee) rather than NL-driven extraction.",
-    "evidenceIds": [
-      "apify-docs-4",
-      "apify-docs-10",
-      "apify-probe-3"
-    ]
+    "rationale": "The evidence pack shows Apify's Actor/scraper marketplace, SDK, CLI, API clients, proxy management, and MCP integration, but nothing indicates a natural-language-to-extraction feature where a developer describes desired data and the system infers selectors/schema without code. All examples require pre-built Actors or explicit selector/config-based scraping.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -207,13 +209,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Apify has a documented OpenAPI spec (apify-probe-2) and extensive API client docs with runnable code examples in JS/Python (apify-docs-15, apify-docs-16, apify-docs-17, apify-docs-19), but there's no evidence of an interactive API explorer/console where examples can be executed in-browser (e.g. Swagger UI/Postman-style try-it-now). missing for 10: interactive in-browser API console/playground, evidence of live 'run this call' UI tied to the OpenAPI reference.",
+    "rationale": "Apify publishes a full OpenAPI spec (apify-probe-2) and extensive docs with runnable code snippets for JS/Python clients (apify-docs-15,16,21,24,26), showing API usage in practice. However, there is no direct evidence of an interactive 'try it out' console or live sandbox for API calls within the docs themselves. Missing for 10: confirmation of an interactive Swagger/Redoc-style API explorer, evidence of in-browser runnable code execution, and independent user reports of using such interactivity.",
     "evidenceIds": [
       "apify-probe-2",
       "apify-docs-15",
       "apify-docs-16",
-      "apify-docs-17",
-      "apify-docs-19"
+      "apify-docs-21",
+      "apify-docs-24"
     ]
   },
   {
@@ -222,10 +224,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a valid OpenAPI spec is directly downloadable at https://docs.apify.com/api/openapi.json (HTTP 200, contains 'openapi' key), and Apify also publishes an llms.txt for AI-native discovery. Missing for 10: independent third-party corroboration that agents successfully consume this spec in practice.",
+    "rationale": "A probe confirms Apify hosts a machine-readable OpenAPI spec at docs.apify.com/api/openapi.json returning valid OpenAPI JSON, and this is backed by extensive API client docs (JS/Python) generated from the same API surface. Missing for 10: no independent third-party confirmation of spec completeness/versioning beyond the probe hit.",
     "evidenceIds": [
       "apify-probe-2",
-      "apify-probe-1"
+      "apify-docs-24",
+      "apify-docs-16"
     ]
   },
   {
@@ -234,7 +237,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes a sandbox/staging environment isolated from production data for testing Apify Actors or API calls; documentation covers development, running, and monitoring Actors but not a dedicated sandbox mode.",
+    "rationale": "Apify is a web-scraping/actor platform; the evidence pack has no mention of a sandbox environment, test mode, staging data, or isolation from production data—actors run directly against live targets and production storage with no documented separate sandbox tier.",
     "evidenceIds": []
   },
   {
@@ -253,12 +256,14 @@
   {
     "productId": "apify",
     "storyId": "auto-captcha-unblock",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Apify offers IP rotation/proxy tools to avoid blocking (apify-docs-8) and general Actor automation, but there is no mention of automated CAPTCHA solving, login-wall bypass, or form-wall bypass capabilities without manual intervention. Missing for 10: any documentation or claim of CAPTCHA-solving, autonomous login handling, or form-wall bypass features.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Apify documents proxy rotation and session management (datacenter/residential IP rotation, cookie/session handling) that help avoid blocking, but there is no evidence of automatic CAPTCHA-solving, login-wall bypass, or form-wall circumvention capability being built into the platform or its Actors. missing for 10: explicit CAPTCHA-solving mechanism, documented login automation flow, evidence of autonomous form-wall bypass without user setup.",
     "evidenceIds": [
-      "apify-docs-8"
+      "apify-docs-8",
+      "apify-docs-31",
+      "apify-docs-34"
     ]
   },
   {
@@ -267,46 +272,51 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any automated cost-optimization feature that selects the cheapest configuration meeting a success criterion; docs cover Actor development, CLI, SDKs, scheduling, and MCP integration but nothing about automatic tier/config selection based on price-performance trade-offs.",
+    "rationale": "No evidence shows Apify offering automatic selection of the cheapest configuration that still succeeds; the docs only cover running Actors, tasks with fixed input configurations, retries, and pricing pages, none of which involve cost-optimizing configuration selection.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "auto-retry-proxy-chain",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Apify docs confirm proxy rotation (datacenter/residential IPs) to avoid blocking, which is foundational for anti-bot evasion, but the evidence pack lacks explicit documentation of automatic retry logic that chains through multiple proxies specifically upon detecting an anti-bot block (e.g., session retirement, retry-on-403 behavior in Crawlee/Apify Proxy). Missing for 10: explicit retry-chain mechanics tied to anti-bot detection, session pool rotation on failure, and independent/hands-on confirmation of this specific retry behavior.",
+    "rationale": "Apify provides SessionPool for rotating proxy IPs/cookies and general proxy management (own, third-party, or Apify Proxy) plus datacenter/residential IP rotation to avoid blocking, and retries are supported at the API client level for failed requests. However, there's no explicit documented mechanism for automatically detecting anti-bot blocks specifically and chaining/retrying through different proxy providers/configurations in response to that detection — the rotation is proactive (session-based) rather than a documented reactive retry-on-block chain across proxy tiers. Missing for 10: explicit anti-bot-detection-triggered retry logic, documented proxy chain/fallback across different proxy groups on block, and independent/hands-on confirmation of this exact workflow.",
     "evidenceIds": [
-      "apify-docs-8"
+      "apify-docs-8",
+      "apify-docs-31",
+      "apify-docs-34",
+      "apify-docs-27"
     ]
   },
   {
     "productId": "apify",
     "storyId": "automation-bulk-operations",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Apify's Actor model and client APIs support bulk data operations (e.g., startUrls lists with maxCrawlPages, tasks with multiple input schemas) and its CLI/API/webhooks enable orchestrating many item runs; docs show examples of batch input and chaining Actor runs. Missing for 10: explicit first-party documentation of a dedicated 'bulk operation' or batch-run API (e.g., running the same Actor against thousands of inputs in one call) and independent hands-on verification of large-scale batch throughput.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Apify's API/SDK clients support running Actors at scale, batching via tasks with multiple input configs, pagination/limit controls, merging datasets, and streaming/retrieving large result sets, and webhooks allow chaining bulk runs; the CLI and API also allow scripted bulk control. Missing for 10: explicit documented bulk/batch endpoint (e.g. a single call to run N items in parallel) and independent hands-on confirmation of large-scale batch reliability.",
     "evidenceIds": [
-      "apify-docs-15",
       "apify-docs-17",
+      "apify-docs-25",
+      "apify-docs-28",
+      "apify-docs-32",
       "apify-docs-14",
-      "apify-probe-4",
-      "apify-docs-6"
+      "apify-docs-3",
+      "apify-docs-24"
     ]
   },
   {
     "productId": "apify",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Apify supports event-driven automation via webhooks that trigger another Actor run when a run finishes or fails, plus scheduled/time-based automatic execution of Actors and tasks — together enabling rule-based triggering of actions on events. Missing for 10: richer conditional rule logic (e.g., data-based or multi-condition triggers beyond run status/schedule) and independent hands-on validation of webhook reliability.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Apify supports event-driven automation via webhooks that trigger actions (e.g., HTTP requests or starting another Actor) when platform events like run finish/fail occur, plus scheduled triggers (\"Automatically start Actors and saved tasks at specific times\"), covering rule-based automatic actions on events. Missing for 10: no evidence of more complex conditional rule logic (e.g., multi-condition triggers) or a visual rule-builder UI beyond webhooks/schedules, and no independent hands-on validation of webhook reliability.",
     "evidenceIds": [
       "apify-docs-14",
-      "apify-docs-6",
-      "apify-docs-17"
+      "apify-docs-29",
+      "apify-docs-6"
     ]
   },
   {
@@ -315,11 +325,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify docs explicitly describe scheduling to 'automatically start Actors and saved tasks at specific times,' plus tasks (persisted input configs runnable repeatedly) and webhooks to chain runs on completion/failure, covering recurring job scheduling and workflow chaining. missing for 10: independent hands-on confirmation of the scheduler's reliability/cron UI beyond first-party docs.",
+    "rationale": "Apify docs explicitly document scheduling to automatically start Actors and saved tasks at specific times, plus tasks with reusable input configs and webhooks to chain runs on completion/failure, giving a full recurring-job/workflow automation capability accessible via API/CLI/SDK. missing for 10: no independent hands-on report specifically validating the scheduler feature (community quotes are general product praise, not schedule-specific).",
     "evidenceIds": [
       "apify-docs-6",
+      "apify-docs-35",
+      "apify-docs-14",
+      "apify-docs-29",
       "apify-docs-17",
-      "apify-docs-14"
+      "apify-docs-25",
+      "apify-probe-4"
     ]
   },
   {
@@ -328,7 +342,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "While Apify's CLI and SDKs let users develop and run Actors (apify-docs-1, apify-docs-3), the evidence pack contains no mention of version history, review/approval workflows, or rollback of automation runs or Actor builds. Missing for 10: explicit versioning of Actor builds, review/approval flow, rollback mechanism for runs or code changes.",
+    "rationale": "The evidence pack covers Actor development, CLI, SDKs, scheduling, webhooks, and task configuration, but contains no mention of version history, review workflows, or rollback of Actor builds/runs. Apify's task and build mechanics are described only in terms of reuse and scheduling, not change tracking or reverting to prior states.",
     "evidenceIds": []
   },
   {
@@ -336,15 +350,18 @@
     "storyId": "batch-scrape-async",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Apify's Actor model supports passing large lists of startUrls with concurrency controls (e.g. maxCrawlPages), proxy rotation to avoid blocking at scale, and JS/Python clients with async/await and streaming support for handling long-running batch jobs, plus webhooks to chain runs. This directly matches asynchronous batch scraping of many URLs. Missing for 10: concrete benchmarks or documented concurrency/throughput limits for 'thousands of URLs', and independent hands-on confirmation of large-scale batch runs.",
+    "confidence": "high",
+    "rationale": "Apify's platform is built around running Actors (scrapers) at scale, with API clients supporting batch runs, tasks with multiple input configs, pagination, retries, dataset export, proxy/session rotation to avoid blocking, and async support (e.g. Python asyncio log streaming, JS client run/call methods) — all directly enabling asynchronous batch URL scraping. Missing for 10: no explicit benchmark/case-study showing thousands of concurrent URLs processed, and no independent third-party performance validation of scale claims.",
     "evidenceIds": [
-      "apify-docs-4",
-      "apify-docs-8",
       "apify-docs-15",
-      "apify-docs-16",
+      "apify-docs-17",
+      "apify-docs-25",
+      "apify-docs-27",
+      "apify-docs-28",
+      "apify-docs-31",
+      "apify-docs-34",
       "apify-docs-19",
-      "apify-docs-14"
+      "apify-docs-32"
     ]
   },
   {
@@ -353,7 +370,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions ad-blocking capability on target pages for scraping speed; only proxy/IP rotation for avoiding blocking is documented, which is a different feature.",
+    "rationale": "No evidence pack item mentions ad-blocking or blocking resource loading on target pages to speed up scraping; the closest relevant items concern proxy/IP rotation for avoiding blocks, not ad-blocking for performance. This axis applies to a scraping platform but is unevidenced here.",
     "evidenceIds": []
   },
   {
@@ -362,7 +379,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions blocking images/CSS resources or bandwidth-saving resource filtering features; this is a specific capability that could plausibly exist in a scraping platform, but nothing here documents it.",
+    "rationale": "No evidence in the pack mentions blocking images/CSS resources or resource-type filtering to reduce bandwidth; while Apify's Crawlee/Puppeteer/Playwright stack could plausibly support this, none of the cited docs describe such a feature or default behavior.",
     "evidenceIds": []
   },
   {
@@ -371,36 +388,43 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions concurrency/session limits per pricing tier or the cost to increase such limits; all evidence covers SDK, CLI, MCP, and general platform features rather than pricing-tier concurrency caps.",
+    "rationale": "No evidence pack item discusses pricing tiers, concurrency limits, or the cost to increase concurrent session/request caps; all docs cover unrelated features like Actors, CLI, SDKs, proxies, and MCP integration.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "concurrent-sessions-at-scale",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Apify's platform supports running Actors via API/SDK (apify-docs-15,16), scheduling and webhooks to chain runs (apify-docs-6,14), proxy rotation to avoid blocking at scale (apify-docs-8), and monitoring/alerting for performance (apify-docs-7) — all consistent with running many concurrent scraping jobs. However, there is no explicit documentation of concurrency limits, autoscaling behavior, or a customer case study demonstrating large-scale parallel runs. missing for 10: explicit concurrency/autoscaling docs, independent benchmark or case study of large-scale concurrent scraping.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Apify's platform is built around Actors that can be run concurrently via API/client (tasks, run(), webhooks) with proxy/session rotation (datacenter+residential IP rotation, SessionPool) to avoid blocking at scale, plus scheduling and monitoring for reliability, and community praise for its scraping-at-scale reputation. missing for 10: explicit documented concurrency limits/autoscaling guarantees and a hands-on benchmark showing large-scale concurrent runs.",
     "evidenceIds": [
+      "apify-docs-8",
+      "apify-docs-31",
+      "apify-docs-34",
+      "apify-docs-15",
+      "apify-docs-17",
+      "apify-docs-25",
       "apify-docs-6",
       "apify-docs-7",
-      "apify-docs-8",
-      "apify-docs-14",
-      "apify-docs-15",
-      "apify-docs-16"
+      "apify-comm-1",
+      "apify-comm-7"
     ]
   },
   {
     "productId": "apify",
     "storyId": "content-change-monitoring",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Apify provides scheduling to run Actors periodically (apify-docs-6) and webhooks to trigger notifications/downstream Actors on run completion or failure (apify-docs-14), which are the building blocks a data engineer could use to poll pages and get notified of changes. However, there is no direct evidence of a dedicated change-detection feature, diffing logic, or a documented 'content monitoring' Actor/notification workflow in the pack. Missing for 10: explicit change-detection/diffing capability, a documented monitoring Actor (e.g., content checker), and direct notification channel evidence (email/Slack alerts tied to content changes).",
+    "rationale": "Apify provides the building blocks for this workflow — scheduled Actor runs (apify-docs-6/35), webhooks to trigger notifications on run completion (apify-docs-14/29), and performance/data-quality alerting (apify-docs-7) — plus marketing language about tracking competitors and real-time data (apify-docs-36). However, there is no dedicated first-party 'content change detection' feature (e.g., automatic diffing of scraped content or built-in price/listing change alerts) documented; a data-engineer would need to assemble schedule+scrape+compare+webhook themselves. Missing for 10: a documented change-detection/diffing Actor or built-in alerting specifically for content changes, and independent evidence of this exact use case working end-to-end.",
     "evidenceIds": [
       "apify-docs-6",
+      "apify-docs-35",
       "apify-docs-14",
-      "apify-docs-7"
+      "apify-docs-29",
+      "apify-docs-7",
+      "apify-docs-36"
     ]
   },
   {
@@ -409,7 +433,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Apify supports Puppeteer/Playwright based Actors which could technically set viewport, but the evidence pack contains no documentation or example specifically about controlling browser viewport width/height during rendering.",
+    "rationale": "Apify supports Puppeteer/Playwright-based Actors which could allow viewport control, but no evidence pack item documents setting browser viewport width/height when rendering pages.",
     "evidenceIds": []
   },
   {
@@ -418,10 +442,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows IP rotation to avoid blocking (apify-docs-8) but contains no mention of robots.txt compliance or automatic rate-limit detection/respect features, which are core to this story. Missing for 10: any documentation of robots.txt parsing/adherence, configurable request throttling tied to target-site limits, or crawler settings enforcing politeness rules.",
-    "evidenceIds": [
-      "apify-docs-8"
-    ]
+    "rationale": "The evidence pack covers proxy rotation, session pooling, and general Actor/task configuration, but contains no mention of robots.txt compliance or configurable rate-limiting for target sites. Missing for 10: explicit robots.txt handling settings, rate-limit/delay configuration options, documentation showing automatic compliance with site crawl policies.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -429,62 +451,70 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item addresses what happens when a plan's monthly credit or request quota is exceeded—no mention of overage billing, pay-as-you-go charges, or hard cutoffs/throttling. Docs cover Actors, SDKs, CLI, MCP, and API usage but not billing/quota enforcement behavior.",
+    "rationale": "None of the evidence addresses billing behavior when a plan's monthly credit/request quota is exceeded — no mention of overage charges, pay-as-you-go beyond quota, or hard cutoffs/throttling. The evidence pack covers Actors, SDK, CLI, webhooks, and client libraries but nothing about pricing/quota enforcement mechanics.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "css-xpath-extraction",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Apify's toolkit list (Crawlee, Playwright, Puppeteer, Selenium, Scrapy) implies CSS/XPath selector capability since these libraries natively support selector-based extraction, but no evidence explicitly documents a CSS/XPath selector input or rule-based extraction feature within Apify Actors. Missing for 10: explicit docs/examples showing an Actor's input schema or extraction config using CSS/XPath selectors, and independent confirmation of this specific extraction workflow.",
+    "rationale": "Apify supports building custom Actors using Crawlee/Playwright/Puppeteer/Cheerio-based scrapers, which inherently allow CSS/XPath selector-based extraction, but the evidence pack contains no direct documentation or example showing CSS/XPath selector configuration for field extraction. missing for 10: explicit docs/example of defining CSS or XPath selector rules for field extraction, dedicated selector-based Actor templates, independent confirmation of selector extraction accuracy.",
     "evidenceIds": [
-      "apify-docs-2",
-      "apify-docs-4"
+      "apify-docs-4",
+      "apify-docs-13",
+      "apify-docs-30"
     ]
   },
   {
     "productId": "apify",
     "storyId": "custom-actor-development",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Apify's core product is the Actor model — developers build custom scraping scripts, package them as Actors, and deploy/run them on Apify's managed serverless infrastructure with scheduling, monitoring, proxies, CLI, and SDKs (Python/JS, Crawlee/Playwright/Puppeteer/Scrapy support), all without managing servers. Docs cover development, CLI deployment, scheduling, migration of existing projects, and running via API clients, and community feedback corroborates real-world usage and satisfaction. Missing for 10: independent hands-on benchmark of deployment ease/cold-start behavior and more detail on infra scaling limits.",
+    "rationale": "Apify's Actor model, CLI, SDKs (JS/Python), Docker base images, and platform docs clearly support developers building and deploying custom scraping scripts without managing servers (docs-1,2,4,13,30,33, probe-4). Community sentiment corroborates ease of building and deploying (comm-1,5,6). missing for 10: independent hands-on benchmarks of deployment friction/scaling limits, and clearer detail on infra auto-scaling guarantees.",
     "evidenceIds": [
       "apify-docs-1",
       "apify-docs-2",
-      "apify-docs-3",
       "apify-docs-4",
-      "apify-docs-6",
-      "apify-docs-11",
       "apify-docs-13",
+      "apify-docs-30",
+      "apify-docs-33",
       "apify-probe-4",
       "apify-comm-1",
-      "apify-comm-5"
+      "apify-comm-5",
+      "apify-comm-6"
     ]
   },
   {
     "productId": "apify",
     "storyId": "data-export-portability",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack shows APIs, CLI, and SDKs for running Actors within Apify, and even a guide for migrating INTO Apify (apify-docs-11), but nothing about exporting scraped datasets in portable formats or migrating Actor/job configurations OUT to another provider to avoid lock-in.",
-    "evidenceIds": []
+    "rationale": "Apify supports exporting scraped datasets in portable formats (CSV, JSON, XLSX, XML) via API/client, which addresses data portability, and Actors are code-based so job logic isn't locked into a proprietary format. However, there is no evidence of a bulk export/migration tool for job configurations (schedules, tasks, webhooks, proxy settings) or documented guidance for migrating away from Apify to another provider — docs only cover migrating projects INTO Apify. missing for 10: dedicated migration-out documentation, bulk config export tooling, evidence of task/schedule/webhook config portability, independent confirmation of lock-in-free migration.",
+    "evidenceIds": [
+      "apify-docs-32",
+      "apify-docs-17",
+      "apify-docs-25",
+      "apify-docs-11"
+    ]
   },
   {
     "productId": "apify",
     "storyId": "data-quality-monitoring-alerts",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Apify's docs explicitly state a feature to 'Check the performance of your Actors, validate data quality, and receive alerts' (apify-docs-7), and webhooks can trigger notifications or downstream actions when an Actor run finishes or fails (apify-docs-14), supported by log streaming and error-handling in the API clients (apify-docs-18, apify-docs-19). Missing for 10: independent/hands-on corroboration of the monitoring dashboard and alerting reliability, and more detail on what 'data quality validation' concretely covers.",
+    "rationale": "Apify's docs explicitly state you can 'Check the performance of your Actors, validate data quality, and receive alerts,' directly matching the story, and this is backed by concrete mechanisms like webhooks that trigger actions on run success/failure, log streaming, and error-handling subclasses in the client libraries. Missing for 10: no independent/hands-on evidence validating the monitoring/alerting UI or data-quality validation features in practice, and no detail on what 'alerts' channels (email/Slack/etc.) are supported.",
     "evidenceIds": [
       "apify-docs-7",
       "apify-docs-14",
+      "apify-docs-29",
+      "apify-docs-19",
       "apify-docs-18",
-      "apify-docs-19"
+      "apify-docs-27"
     ]
   },
   {
@@ -493,20 +523,23 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm Actors expose a configurable page cap (e.g., maxCrawlPages parameter in the web-scraper Actor), supporting the 'maximum page limit' part of the story, but no evidence explicitly documents a breadth-first crawl strategy option or toggle. missing for 10: explicit breadth-first vs depth-first crawl strategy configuration, independent confirmation of crawl behavior in practice.",
+    "rationale": "Evidence shows Apify's web-scraper Actor supports a configurable page cap via maxCrawlPages (apify-docs-15) and Crawlee/Apify SDK docs reference crawling capabilities, but there is no explicit documentation of a breadth-first vs depth-first strategy toggle. missing for 10: explicit breadth-first-strategy configuration option, independent/hands-on confirmation of BFS crawl behavior with page-limit enforcement.",
     "evidenceIds": [
       "apify-docs-15",
-      "apify-docs-4"
+      "apify-docs-4",
+      "apify-docs-30"
     ]
   },
   {
     "productId": "apify",
     "storyId": "docker-container-deploy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Actors, the SDK, CLI, and API clients, but none of the citations mention Docker or container-based deployment explicitly. Apify's Actor packaging could plausibly involve Docker, but this evidence pack provides no documentation or example confirming Docker container deployment for production use.",
-    "evidenceIds": []
+    "rationale": "Apify's docs confirm Actors are built on Docker base images used internally on the platform (apify-docs-30), implying containerized packaging, but there is no explicit production deployment guide, Dockerfile customization example, or CI/CD walkthrough for self-hosted Docker use. missing for 10: explicit Docker deployment/production guide, Dockerfile customization docs, independent hands-on confirmation of self-hosted Docker deployment.",
+    "evidenceIds": [
+      "apify-docs-30"
+    ]
   },
   {
     "productId": "apify",
@@ -514,7 +547,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item documents specific rate limits (requests per second/minute) for API keys or throttling thresholds; docs cover Actors, SDKs, CLI, MCP, webhooks, etc., but nothing about rate-limit numbers.",
+    "rationale": "No evidence pack item documents specific rate limits (requests per second/minute) for the Apify API or actor calls; only general docs, client retries, and pagination are mentioned, none specifying throttling thresholds.",
     "evidenceIds": []
   },
   {
@@ -523,7 +556,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses billing/quota consumption behavior for failed, blocked, or empty-result Actor runs; docs cover error handling, webhooks, and client SDKs but not billing implications of failed/empty runs.",
+    "rationale": "No evidence in the pack addresses whether failed, blocked, or empty-result Actor runs still consume compute-unit/billing quota; docs cover retries, webhooks, error handling, and pricing pages generically but never clarify billing behavior for failed/blocked/empty runs.",
     "evidenceIds": []
   },
   {
@@ -532,23 +565,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify's web-scraper Actor supports startUrls with maxCrawlPages, enabling full-site crawling from a single API call, and Actors like Crawlee-based scrapers are designed for whole-site crawling with recursive link following. The client examples show a single call('apify/web-scraper', {startUrls, maxCrawlPages}) request returning crawled results, matching the 'one request' story. Missing for 10: no independent/hands-on benchmark of crawl completeness or scale reliability across large sites, and no explicit doc excerpt describing link-following/pagination logic beyond maxCrawlPages parameter.",
+    "rationale": "Apify's web-scraper Actor supports startUrls plus maxCrawlPages, letting a single API call crawl a whole site and return page content, and Crawlee (Apify's crawling library) is built for full-site recursive crawling. Missing for 10: no independent hands-on benchmark of a full multi-page site crawl completing reliably, and no explicit documentation of link-following/depth config in the evidence pack beyond maxCrawlPages.",
     "evidenceIds": [
       "apify-docs-15",
       "apify-docs-4",
-      "apify-docs-21",
-      "apify-docs-16"
+      "apify-docs-23",
+      "apify-docs-21"
     ]
   },
   {
     "productId": "apify",
     "storyId": "geo-targeted-proxy",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Apify's docs mention proxy rotation to avoid blocking (datacenter and residential IPs) but the evidence pack does not explicitly confirm country-specific/geolocation targeting for proxies. missing for 10: explicit documentation of country-level proxy selection parameters, independent confirmation of geo-targeting accuracy.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Apify Proxy docs mention rotating datacenter/residential IPs and proxy management via SessionPool/third-party proxies, implying geolocation targeting is common in Apify Proxy, but no direct evidence in this pack shows a documented country-selection parameter (e.g., countryCode) or example of requesting a specific country's proxy. missing for 10: explicit documentation of per-country proxy selection parameter/API, hands-on confirmation that requested country actually routes traffic through that country.",
     "evidenceIds": [
-      "apify-docs-8"
+      "apify-docs-8",
+      "apify-docs-34",
+      "apify-docs-31"
     ]
   },
   {
@@ -557,7 +592,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions image captioning, vision-to-text conversion, or alt-text generation for images extracted during scraping; Apify's evidence covers Actors, crawling infrastructure, CLI/MCP integrations, and marketplace features but nothing about producing captions for images to feed text-only models.",
+    "rationale": "No evidence in the pack shows Apify generating image captions or alt-text descriptions for AI consumption; the docs cover Actors, scraping, proxies, and MCP integration but nothing about vision-to-text captioning of page images.",
     "evidenceIds": []
   },
   {
@@ -576,13 +611,13 @@
     "productId": "apify",
     "storyId": "js-rendering-spa",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Apify explicitly supports Playwright, Puppeteer, Selenium, and Crawlee for browser automation, which render JS-heavy SPAs and return fully rendered HTML/data via Actors like the Web Scraper. Community feedback confirms it's used as a headless-browser scraping platform replacing Selenium/PhantomJS setups. Missing for 10: no explicit first-party doc snippet showing full rendered HTML output extraction example, and no independent benchmark of SPA rendering fidelity.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Apify explicitly supports Playwright, Puppeteer, and Crawlee for browser automation, which render JS-heavy SPAs and produce full DOM/HTML output, and offers pre-built base Docker images for headless browser actors. missing for 10: no explicit docs snippet showing extracting fully-rendered HTML output from a headless-browser actor, and no independent/hands-on confirmation specific to SPA rendering.",
     "evidenceIds": [
       "apify-docs-4",
-      "apify-docs-15",
-      "apify-comm-4"
+      "apify-docs-30",
+      "apify-docs-31"
     ]
   },
   {
@@ -590,8 +625,8 @@
     "storyId": "json-schema-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows input schema validation (e.g., 'validateInput' method, multiple input schemas persisted in tasks) but nothing about specifying an output JSON schema that the API guarantees results will match. No documentation or examples show developers passing a schema to constrain returned structured data.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Actor input schemas, validation of inputs, and dataset export formats, but contains no mention of a mechanism to pass a JSON schema that constrains or validates the *output* structure returned by an Actor/API call. This is an applicable axis for a data-extraction platform, but no evidence shows it delivering structured output matching a supplied schema.",
     "evidenceIds": []
   },
   {
@@ -600,7 +635,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention intelligent chunking, pagination, or splitting large table extraction to fit processing/memory limits; the docs cover Actors, SDKs, clients, scheduling, and proxies but nothing about chunking large tables for data engineers.",
+    "rationale": "Evidence shows basic pagination (docs-28) and dataset export/merging (docs-32), but no documentation of 'intelligent chunking' of large tables to fit processing/context limits — the story's specific capability is unevidenced.",
     "evidenceIds": []
   },
   {
@@ -609,11 +644,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Apify's client exposes both synchronous run-and-wait patterns (actor.call()) and asynchronous notification via webhooks when a run finishes, plus log streaming for partial visibility during a run, which together give some control over when results are retrieved. However there is no explicit documentation of a latency/completeness tradeoff mechanism (e.g., a wait-timeout or partial-dataset-return parameter) that lets a developer explicitly choose faster-but-incomplete vs slower-but-complete results. Missing for 10: explicit timeout/waitForFinish parameter documentation, partial-result/early-return API semantics, and independent confirmation of this tradeoff being used in practice.",
+    "rationale": "Apify's client offers mechanisms that let a developer influence latency/completeness trade-offs — e.g. synchronous 'call' that waits for actor completion (apify-docs-23), asynchronous run + webhook notification patterns (apify-docs-14, apify-docs-29), and result-limiting via the `limit`/`maxCrawlPages` parameters (apify-docs-28, apify-docs-15) — but there is no explicit documentation of a dedicated 'return immediately vs wait for full completeness' control (e.g. a documented timeout/waitForFinish knob for partial results) or first-party framing of this exact latency/completeness trade-off. missing for 10: explicit run-timeout/waitForFinish API docs, guidance on streaming partial dataset results while a run is still in progress, and independent/hands-on confirmation of this trade-off pattern.",
     "evidenceIds": [
+      "apify-docs-23",
       "apify-docs-14",
-      "apify-docs-15",
-      "apify-docs-19"
+      "apify-docs-29",
+      "apify-docs-28",
+      "apify-docs-15"
     ]
   },
   {
@@ -643,12 +680,13 @@
     "productId": "apify",
     "storyId": "llm-ready-text-instead-of-raw-html",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Apify offers anti-blocking proxy rotation, an MCP server for LLM/agent consumption, and llms.txt documentation support, suggesting some LLM-ready output orientation, but the evidence never explicitly documents a 'clean text/markdown extraction' output mode analogous to dedicated LLM-ready scraping tools. Missing for 10: explicit documentation of automatic HTML-to-clean-text/markdown conversion output format, examples of LLM-ready output from Actors, and independent verification that scraped output is directly consumable without further parsing.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Apify positions itself as an AI/agent-friendly platform (MCP server, LLM integration, anti-blocking proxies) but never documents a specific clean-text/markdown extraction output for LLMs — no mention of features like a 'Website Content Crawler' or HTML-to-text conversion pipeline. Missing for 10: explicit documentation of a clean-text/markdown output actor, examples of LLM-ready formatted output, and independent confirmation that scraped content is de-noised for LLM consumption.",
     "evidenceIds": [
       "apify-docs-8",
       "apify-docs-10",
+      "apify-docs-36",
       "apify-probe-1",
       "apify-probe-3"
     ]
@@ -658,8 +696,8 @@
     "storyId": "local-llm-extraction-backend",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions configuring a local/self-hosted LLM as the extraction backend; Apify's docs reference MCP servers for connecting AI agents but nothing about swapping in self-hosted models for extraction, so this applicable capability is unevidenced.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack indicates Apify supports configuring a local or self-hosted LLM as the extraction backend; documentation covers Actors, CLI, proxies, MCP server for agent discovery, but nothing about swapping in custom LLM backends for extraction.",
     "evidenceIds": []
   },
   {
@@ -668,7 +706,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "None of the evidence mentions markdown output format or content cleaning/conversion from HTML to markdown; the pack covers Actors, CLI, clients, MCP, and marketplace stats but nothing about output data formats like markdown.",
+    "rationale": "No evidence pack item mentions markdown output format for scraped content; only generic export formats (CSV, JSON, XLSX, XML) are documented, with no mention of markdown conversion.",
     "evidenceIds": []
   },
   {
@@ -677,30 +715,33 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify explicitly documents publishing Actors (custom scrapers) to the Apify Store for passive income, backed by a large live marketplace (64,279 Actors) and sharing/permissions controls. missing for 10: independent developer testimonials specifically about earning revenue from published Actors, and detailed payout/monetization terms.",
+    "rationale": "Apify docs explicitly describe publishing Actors to Apify Store and earning passive income (apify-docs-5), backed by a large marketplace with 64,279 Actors (apify-docs-12), sharing/permissions controls (apify-docs-9), and developer tooling to build Actors (apify-docs-1, apify-docs-33). Missing for 10: independent/hands-on confirmation of actual revenue payouts or developer earnings testimonials.",
     "evidenceIds": [
       "apify-docs-5",
       "apify-docs-12",
       "apify-docs-9",
-      "apify-docs-13"
+      "apify-docs-1",
+      "apify-docs-33"
     ]
   },
   {
     "productId": "apify",
     "storyId": "multi-format-choice",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "No evidence pack items describe configurable output formats (markdown/HTML/text/frontmatter) for Apify's datasets or Actor outputs; the evidence covers Actors, SDKs, CLI, MCP, and general platform features but not output format selection.",
-    "evidenceIds": []
+    "rationale": "Apify supports exporting dataset results in multiple generic formats (CSV, JSON, XLSX, XML) via its client, but there is no evidence of developer-facing control over content-specific output formats like markdown, HTML, text, or frontmatter as would apply to a scraping/content tool. missing for 10: explicit markdown/HTML/text/frontmatter output options, documentation showing format selection for scraped content rather than just dataset export.",
+    "evidenceIds": [
+      "apify-docs-32"
+    ]
   },
   {
     "productId": "apify",
     "storyId": "nocode-automation-connector",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions n8n, Zapier, or any prebuilt no-code automation connector; the pack only covers webhooks, API clients, CLI, MCP server, and general integrations. Webhooks (apify-docs-14) could theoretically be used to build a custom integration but that is not a prebuilt connector as the story requires. Missing for 10: any documentation of official n8n/Zapier connectors, marketplace listing, or third-party integration guide.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows generic API/webhook/MCP integrations but contains no mention of a prebuilt n8n or Zapier connector for Apify, so this specific no-code automation integration is unevidenced.",
     "evidenceIds": []
   },
   {
@@ -709,47 +750,46 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify explicitly states it works with Playwright, Puppeteer, Selenium, and Scrapy (in addition to its own Crawlee library), and provides SDKs/toolkits, CLI, and migration guides for building Actors around these frameworks. Missing for 10: no hands-on independent tutorial confirming each specific library integration in depth, and no code examples for Selenium/Scrapy specifically in the pack.",
+    "rationale": "Apify explicitly documents support for building Actors with Playwright, Puppeteer, Selenium, Scrapy (and its own Crawlee), alongside Python/JS SDKs, base Docker images, and CLI scaffolding tools that support these libraries. missing for 10: independent hands-on tutorials/examples specifically demonstrating Selenium/Scrapy integration beyond the marketing mention, and community corroboration is thin on this specific point.",
     "evidenceIds": [
       "apify-docs-4",
-      "apify-docs-2",
-      "apify-docs-11",
-      "apify-probe-4"
+      "apify-docs-30",
+      "apify-docs-33",
+      "apify-docs-2"
     ]
   },
   {
     "productId": "apify",
     "storyId": "openness-api-parity",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Apify's platform is API-first: full OpenAPI spec, official JS/Python API clients, CLI, webhooks, and Actor management (run, schedule, publish, share, permissions) are all documented as programmatically accessible, mirroring UI capabilities like scheduling, monitoring, publishing to Store, and org management. Missing for 10: no explicit statement or audit confirming 100% UI-feature parity with the API, so some edge/admin UI features may lack independent confirmation.",
+    "rationale": "Apify exposes a full REST API with OpenAPI spec, official JS/Python API clients, and a CLI that together cover developing, running, scheduling, monitoring, and publishing Actors, tasks, webhooks, and datasets—mirroring UI capabilities (apify-docs-1,3,15,16,23,29,32; apify-probe-2,4). Docs explicitly frame Actors/tasks/webhooks as programmatically manageable equivalents of UI actions, and community feedback corroborates the API/SDK/CLI ecosystem as mature and heavily used. missing for 10: explicit 1:1 feature parity matrix confirming every UI-only setting (e.g., billing/org management, some Store publishing UI flows) is scriptable, and independent hands-on confirmation of full parity beyond docs.",
     "evidenceIds": [
       "apify-docs-1",
       "apify-docs-3",
-      "apify-docs-5",
-      "apify-docs-6",
-      "apify-docs-9",
-      "apify-docs-14",
       "apify-docs-15",
       "apify-docs-16",
-      "apify-docs-21",
+      "apify-docs-23",
+      "apify-docs-29",
+      "apify-docs-32",
       "apify-probe-2",
-      "apify-probe-4"
+      "apify-probe-4",
+      "apify-comm-5"
     ]
   },
   {
     "productId": "apify",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Apify provides API/CLI access to retrieve run results and manage data programmatically (apify-docs-15, apify-docs-16, apify-probe-4, apify-probe-2), which implies some data portability, but the evidence pack never explicitly documents dataset export in open formats like CSV/JSON/XML or a clear 'export and leave' workflow. missing for 10: explicit documentation of dataset export formats (CSV/JSON/XML/Excel), guidance on fully exporting all account data, and independent confirmation of a clean migration-out path.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Apify supports exporting dataset results in open formats (CSV, JSON, XLSX, XML) via API/client, and offers a CLI/API for programmatic data retrieval, which supports leaving with data. However, evidence covers only dataset exports, not full account/actor/config portability or bulk full-account export mechanisms. missing for 10: evidence of exporting Actors' source code/config/full account data, explicit 'data portability' or account-export documentation, independent confirmation of complete lock-in-free migration.",
     "evidenceIds": [
-      "apify-docs-15",
-      "apify-docs-16",
-      "apify-probe-2",
-      "apify-probe-4"
+      "apify-docs-32",
+      "apify-docs-26",
+      "apify-probe-4",
+      "apify-docs-24"
     ]
   },
   {
@@ -758,7 +798,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Apify is a commercial platform; while its SDKs/CLI clients may be open source, there is no evidence in this pack of an open license for the platform's own source code, only docs, API references, and community sentiment about product usability.",
+    "rationale": "The evidence pack covers docs, SDKs, CLI, API clients, and marketplace features, but contains no mention of Apify's core platform or Actor runtime being released under an open-source license or a public source repository being available for the product itself. Missing for 10: any reference to a GitHub repo/license file for the core platform, an OSI license grant, or independent confirmation that the product's source is publicly readable.",
     "evidenceIds": []
   },
   {
@@ -767,25 +807,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Apify is a cloud SaaS platform; evidence covers Actors, CLI, API clients, MCP integration, and marketplace, but there is no mention of a self-hostable core platform or open-source server component allowing users to run the Apify platform on their own infrastructure.",
+    "rationale": "Apify is presented throughout as a cloud platform (Actor Store, cloud proxy, scheduling, webhooks) with no documentation of an on-premises or self-hosted deployment option for the core platform itself; evidence only covers local development of Actors (SDK/CLI) which run against the cloud service, not self-hosting the platform.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "pass-session-cookies",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "No evidence in the pack discusses passing custom session cookies or authentication headers to Apify Actors/API for scraping authenticated pages; docs cited only cover general Actor development, SDKs, CLI, and marketplace features.",
-    "evidenceIds": []
+    "rationale": "Apify's SDK exposes a SessionPool that manages cookies and custom settings per session, implying some support for handling session state, but there is no explicit documentation showing a developer supplying their own authenticated session cookies to an Actor run via the API. missing for 10: explicit docs on passing custom cookies as Actor input, an API example showing cookie injection for authenticated fetches, and independent confirmation that this works in practice.",
+    "evidenceIds": [
+      "apify-docs-31",
+      "apify-docs-34"
+    ]
   },
   {
     "productId": "apify",
     "storyId": "pdf-office-doc-extraction",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention PDF, Word, Excel, or PowerPoint text extraction capabilities; the docs and probes only cover Actors, CLI, MCP server, and web scraping infrastructure, not document/file text extraction.",
+    "confidence": "medium",
+    "rationale": "Apify's evidence pack covers web scraping, Actor marketplace, proxies, API clients, and MCP integration, but nothing mentions extracting text from PDF, Word, Excel, or PowerPoint files—this is a distinct document-extraction capability with no supporting evidence.",
     "evidenceIds": []
   },
   {
@@ -793,18 +836,21 @@
     "storyId": "per-url-pattern-config",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows generic Actor run configuration (startUrls, maxCrawlPages) and task/schema features, but nothing about applying distinct crawl rules or configs per URL pattern within one batch/job run.",
+    "confidence": "low",
+    "rationale": "No evidence pack item shows Apify supporting per-URL-pattern crawl configuration within a single batch job; the closest evidence (apify-docs-17, apify-docs-25) describes creating separate tasks with different inputs, not a single job with mixed rules for different URL patterns.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "persistent-authenticated-session",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Apify's Actors, CLI, SDKs, and marketplace but contains no mention of persistent browser profiles, cookie/session storage, or reusable login state across requests. This is a fair capability to ask of a JS-rendering/browser-automation platform, but no supporting evidence is present.",
-    "evidenceIds": []
+    "rationale": "Apify's SDK documents SessionPool, which manages cookie and session persistence alongside proxy rotation, giving developers a mechanism to reuse login/session state across requests (apify-docs-31). However, there is no dedicated documentation on persisting full browser profiles (e.g., storage state files, saved browser contexts) across separate Actor runs, and no independent/hands-on confirmation of this workflow. Missing for 10: explicit browser-profile/storageState persistence docs across runs, cross-run profile reuse examples, independent corroboration.",
+    "evidenceIds": [
+      "apify-docs-31",
+      "apify-docs-34"
+    ]
   },
   {
     "productId": "apify",
@@ -812,7 +858,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any built-in PII detection or filtering capability in Apify's platform or Actor ecosystem; the evidence pack covers Actor development, scheduling, monitoring, proxies, and API clients but never mentions PII scrubbing or compliance filtering.",
+    "rationale": "No evidence pack items mention PII detection, redaction, or filtering capabilities in Apify's Actors, SDK, or platform features; the evidence covers general scraping, proxies, storage, and CLI/API tooling but nothing about compliance or data-sanitization before storage.",
     "evidenceIds": []
   },
   {
@@ -821,11 +867,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Apify supports Playwright/Puppeteer/Selenium/Crawlee for building Actors that could interact with pages (clicking, filling forms, navigating login walls) via browser automation, but the evidence pack contains no direct documentation or example describing session persistence, interactive multi-step navigation through login walls, or maintaining state across scraped pages. Missing for 10: explicit documentation/example of stateful interaction with an already-loaded page (form-fill, click-through, login-wall bypass), session/cookie persistence guidance, and independent confirmation of this workflow.",
+    "rationale": "Apify's docs confirm it supports Playwright/Puppeteer/Selenium/Crawlee for building custom Actors, and SessionPool manages cookies/proxies for persistent sessions, which together enable interactive, stateful browser control needed for clicking/filling forms behind a login wall. However, there is no concrete first-party or community example showing a login-wall workflow (session reuse across page interactions, form-fill after initial scrape) being demonstrated end-to-end. missing for 10: explicit login-wall/form-filling example, dedicated documentation on maintaining an already-open page/session across multiple interactive steps, independent corroboration of this specific use case.",
     "evidenceIds": [
       "apify-docs-4",
-      "apify-docs-1",
-      "apify-docs-2"
+      "apify-docs-31",
+      "apify-docs-34"
     ]
   },
   {
@@ -834,12 +880,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Apify Store offers 64,279 ready-made Actors (marketplace scrapers) that can be run directly via API/client without building from scratch, e.g. calling 'apify/web-scraper' with just input params, and docs explicitly note users can run both their own Actors and Store Actors. Specific pre-built scrapers like TikTok extractor further evidence ready-to-use tools, and community testimonials corroborate real-world usage. Missing for 10: independent hands-on review specifically confirming a marketplace-run workflow (vs. building) and quality/reliability benchmarking across marketplace Actors.",
+    "rationale": "Apify Store is documented as a marketplace of 64,279 ready-made Actors, with docs and client examples showing you can directly call/run existing Actors like 'apify/web-scraper' without building your own, and the quick-start guides explicitly note you can run both your own Actors and Actors from Apify Store. Community reviews corroborate real-world use of pre-built scrapers as a core value proposition. Missing for 10: independent hands-on report specifically about discovering/running a marketplace Actor end-to-end rather than official docs/examples only.",
     "evidenceIds": [
       "apify-docs-12",
       "apify-docs-21",
       "apify-docs-15",
-      "apify-docs-22",
       "apify-docs-13",
       "apify-comm-1"
     ]
@@ -850,10 +895,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Apify docs explicitly describe smart rotation of datacenter and residential IP addresses to avoid blocking, directly matching the anti-bot proxy use case, and the platform's marketplace/integration docs corroborate a mature proxy infrastructure. missing for 10: no independent hands-on benchmark or third-party report validating residential proxy success rates against specific hard-to-scrape sites.",
+    "rationale": "Apify docs explicitly describe smart rotation of datacenter and residential IP addresses to avoid blocking (apify-docs-8), plus SDK-level proxy management supporting Apify Proxy, third-party proxies, or self-hosted proxies (apify-docs-34) and session/IP rotation pooling (apify-docs-31). This directly matches the story of using premium residential/datacenter proxies to bypass anti-bot defenses. missing for 10: independent/hands-on benchmark evidence confirming real-world bypass success rates.",
     "evidenceIds": [
       "apify-docs-8",
-      "apify-docs-12"
+      "apify-docs-34",
+      "apify-docs-31"
     ]
   },
   {
@@ -862,7 +908,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data residency, region selection, or storage location controls for Apify; the docs focus on Actors, SDKs, CLI, and MCP integration but never address where data is stored or region choice.",
+    "rationale": "No evidence pack items mention data residency, regional storage options, or compliance controls letting users choose where data is stored; the documentation focuses on Actors, SDKs, proxies, and integrations only.",
     "evidenceIds": []
   },
   {
@@ -871,7 +917,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address AI-training data usage opt-out or any privacy controls specific to preventing AI model training on user data; nothing in the docs, community, or probes mentions this capability.",
+    "rationale": "No evidence in the pack addresses data-usage-for-AI-training opt-outs, privacy controls, or any policy statement about Apify not using customer data to train AI models; the documentation excerpts cover Actors, SDKs, CLI, proxies, and MCP integration but nothing on AI training data policy.",
     "evidenceIds": []
   },
   {
@@ -880,7 +926,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, storage TTLs, or deletion controls for datasets/key-value stores/logs; the docs items cover Actors, SDKs, CLI, MCP, and marketplace features but nothing about data lifecycle or deletion controls.",
+    "rationale": "No evidence in the pack addresses data retention policies, dataset/storage expiration, or user-initiated deletion controls for Apify datasets, key-value stores, or runs; the pack covers Actors, SDKs, proxies, scheduling, and MCP integration but nothing about retention/deletion settings.",
     "evidenceIds": []
   },
   {
@@ -889,7 +935,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism; the docs cover Actors, CLI, MCP, and other platform features but nothing about privacy/telemetry controls.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for Apify's CLI, SDK, or platform; the axis applies to any developer tool but no documentation or community source confirms such a control.",
     "evidenceIds": []
   },
   {
@@ -898,20 +944,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public status page, uptime history, or incident postmortems in the pack; all citations concern Actors, SDK, CLI, and API docs unrelated to reliability transparency.",
+    "rationale": "No evidence of a public status page, uptime history, or incident postmortems anywhere in the docs, community mentions, or probes.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "ready-made-templates",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Apify offers a marketplace of tens of thousands of pre-built Actors (apify-docs-12) and docs on developing new Actors (apify-docs-1, apify-docs-13) plus an official CLI (apify-probe-4) that developers can use to scaffold projects, suggesting a fast-start path. However, the pack lacks explicit evidence of a curated 'project template' gallery or scaffold command with named templates, so the claim is only partially substantiated. Missing for 10: explicit documentation of a template library/scaffolding command (e.g., 'apify create --template'), and independent hands-on confirmation of template usage.",
+    "rationale": "Apify provides a CLI scaffold (`apify create my-first-actor`), reusable base Docker images, toolkits for new Actors, and a large marketplace/Store of 64,279 ready-made Actors that can be run or forked immediately, closely matching the 'start building immediately' story. Missing for 10: explicit documentation of a curated template gallery UI and independent hands-on review confirming ease of starting from a template.",
     "evidenceIds": [
-      "apify-docs-1",
+      "apify-docs-33",
       "apify-docs-12",
-      "apify-docs-13",
+      "apify-docs-2",
+      "apify-docs-30",
+      "apify-docs-11",
       "apify-probe-4"
     ]
   },
@@ -921,7 +969,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack shows Apify exposing a reasoning-effort or agent 'thinking budget' control (low/medium/high) for data-gathering tasks; Apify's Actors are configurable via input schemas but nothing documents a reasoning-effort parameter or agent effort tuning.",
+    "rationale": "No evidence Apify exposes a configurable 'reasoning effort' setting (low/medium/high) for agents on data-gathering tasks; the platform's controls are around Actor runs, scheduling, proxies, and webhooks, not LLM reasoning budget.",
     "evidenceIds": []
   },
   {
@@ -930,12 +978,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Apify's general MCP server and Actor marketplace for AI/LLM integration, but nothing describes a preset configuration specifically tuned for research agents or guarantees structured, citable output — no Actor or MCP tool is documented as a 'research agent preset'.",
-    "evidenceIds": [
-      "apify-docs-10",
-      "apify-probe-3",
-      "apify-docs-12"
-    ]
+    "rationale": "No evidence of a preset/tuned configuration specifically for research agents that outputs structured, citable data—Apify offers general Actors, an MCP server, and generic scraping tools, but nothing pointing to a research-agent-specific preset or citation-formatted output.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -943,35 +987,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a checkpoint/resume mechanism for crashed deep crawls; the evidence pack covers Actors, tasks, webhooks, and CLI/SDK usage but nothing about persisting crawl state (e.g., request queues) and resuming after a crash. While Apify's request queue/dataset persistence could conceivably support this, no documentation or community report confirms a resume-from-checkpoint feature. Missing for 10: documentation of crawl state persistence, an explicit resume/checkpoint API or CLI flag, and any hands-on confirmation that a crashed run can be resumed rather than restarted.",
-    "evidenceIds": [
-      "apify-docs-14",
-      "apify-docs-17",
-      "apify-docs-6"
-    ]
+    "rationale": "The evidence pack contains no mention of checkpointing, run resurrection, or resuming a crashed crawl from saved state; it only covers general Actor execution, webhooks on run failure, and client retries, none of which address resuming a crashed deep crawl. missing for 10: documentation of checkpoint/state persistence for crawls, evidence of 'resurrect run' or resume-from-request-queue functionality, and any independent confirmation of successful crash recovery.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "rotating-proxy-pool",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Apify docs explicitly describe smart rotation of datacenter and residential IP addresses to avoid blocking, directly matching the story's proxy rotation/anti-bot theme. missing for 10: no independent/hands-on corroboration of proxy rotation performance or dedicated code example showing proxy configuration in use.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Apify Proxy explicitly rotates datacenter and residential IPs to avoid blocking, and the SDK offers SessionPool and proxy-management APIs to configure/rotate proxies (including third-party or custom proxy servers) within Actors. This is well-documented first-party functionality directly matching the anti-bot proxy-rotation story. Missing for 10: independent hands-on benchmark or third-party validation of block-avoidance effectiveness.",
     "evidenceIds": [
-      "apify-docs-8"
+      "apify-docs-8",
+      "apify-docs-31",
+      "apify-docs-34"
     ]
   },
   {
     "productId": "apify",
     "storyId": "scheduled-runs",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Apify docs explicitly describe scheduling: \"Automatically start Actors and saved tasks at specific times\" (apify-docs-6), and tasks can persist configurations to be run repeatedly (apify-docs-17), plus webhooks to chain runs (apify-docs-14). Missing for 10: independent/hands-on confirmation of the scheduler UI/cron syntax and edge-case reliability reporting.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Apify docs explicitly describe scheduling Actors and saved tasks to run automatically at specific times, plus supporting task-based reusable configurations and webhooks for chaining runs, giving developers robust scheduling capabilities. Missing for 10: independent hands-on confirmation of the scheduler UI/cron feature specifically (only first-party docs cited).",
     "evidenceIds": [
       "apify-docs-6",
+      "apify-docs-35",
       "apify-docs-17",
-      "apify-docs-14"
+      "apify-docs-25",
+      "apify-docs-29"
     ]
   },
   {
@@ -979,8 +1023,8 @@
     "storyId": "screenshot-capture",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items mention screenshot capture, full-page or selector-based screenshots, or any output-format capability specific to visual capture; while Apify supports Playwright/Puppeteer actors that could theoretically implement screenshots, none of the evidence documents this as a shipped feature or documented capability.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions screenshot capture functionality (full-page or selector-based) for Apify Actors or SDK; while Apify supports browser automation (Playwright/Puppeteer) which could enable screenshots, no documentation or example explicitly demonstrates this capability.",
     "evidenceIds": []
   },
   {
@@ -989,23 +1033,25 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Apify supports building Actors with Playwright, Puppeteer, Selenium, and Crawlee, which are libraries capable of scripting clicks, filling inputs, and scrolling before content extraction, but the evidence pack only asserts library compatibility rather than showing documented examples or tutorials of interaction scripting within Apify Actors. Missing for 10: dedicated docs/tutorials demonstrating click/fill/scroll interaction patterns within an Actor, and independent hands-on confirmation of this workflow.",
+    "rationale": "Apify's platform supports Playwright/Puppeteer/Selenium/Crawlee-based Actors (apify-docs-4), which are the underlying tools that enable scripted interactions like clicking, filling forms, and scrolling, and SDK docs cover session/proxy management for such crawls (apify-docs-31, apify-docs-34). However, the evidence pack lacks a direct code example or documentation page specifically demonstrating scripted page interactions (click/fill/scroll) prior to content extraction — missing for 10: a concrete interaction-scripting example/tutorial, explicit API for click/type/scroll actions, and independent hands-on confirmation of this specific workflow.",
     "evidenceIds": [
       "apify-docs-4",
-      "apify-docs-1",
-      "apify-docs-2"
+      "apify-docs-31",
+      "apify-docs-34"
     ]
   },
   {
     "productId": "apify",
     "storyId": "self-host-open-source",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Apify's evidence shows CLI tooling and local Actor development (apify-docs-3, apify-probe-4), but nothing indicates a fully self-hostable open-source version of the platform as an alternative to the hosted cloud service — Apify's core value proposition remains the managed cloud platform and marketplace. missing for 10: evidence of an open-source self-hosted runtime/platform replacing the cloud service, docs on self-hosting infrastructure, community confirmation of running Apify independently of apify.com.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Apify's Actor framework provides local development tooling (CLI, Docker base images) and the open-source Crawlee library, which can run scraping code without the hosted cloud, but there is no evidence of an open-source, self-hostable version of the Apify platform itself (Actor execution engine, storage, scheduling) as a substitute for the cloud service. Missing for 10: explicit self-hosting instructions/OSS release of the full platform, evidence of running Actors end-to-end outside Apify Cloud, and community confirmation of successful self-hosted deployments.",
     "evidenceIds": [
-      "apify-docs-3",
-      "apify-probe-4"
+      "apify-docs-4",
+      "apify-docs-30",
+      "apify-docs-33",
+      "apify-docs-2"
     ]
   },
   {
@@ -1014,7 +1060,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes semantic chunking of output for retrieval pipelines; the evidence pack only covers Actor development, SDKs, CLI, MCP integration, and general marketplace/community info, none of which mention chunked or segmented output formats.",
+    "rationale": "No evidence that Apify offers semantic chunking of scraped content for RAG pipelines; docs only cover dataset export formats (CSV/JSON/XLSX/XML), pagination, and general Actor/API mechanics, with no mention of chunking strategies for retrieval use cases.",
     "evidenceIds": []
   },
   {
@@ -1023,12 +1069,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Apify's client docs show a single API call pattern (client.actor('apify/web-scraper').call({...})) that runs a scraping Actor and retrieves results, and its marketplace includes many web-scraping Actors, supporting the core 'one API call to scrape' workflow. However, the evidence never confirms that the returned payload is raw HTML rather than structured/parsed data, and no example explicitly shows an HTML field in the response. missing for 10: explicit confirmation that the API response contains raw HTML, a documented single-purpose 'get HTML' endpoint/Actor, and independent hands-on validation of the raw-HTML use case.",
+    "rationale": "Apify supports running Actors (like the 'web-scraper' Actor) via a single API call and retrieving results/datasets, which can include raw HTML, as shown in the JS/Python client examples and Actor store. However, there's no direct evidence of a single dedicated 'scrape and return raw HTML' endpoint akin to a simple fetch API — the evidence emphasizes Actor-based workflows, webhooks, and SDKs rather than a minimal one-call raw HTML fetch. missing for 10: explicit single-call raw HTML retrieval endpoint/example, confirmation that Actor call output includes unprocessed HTML content, independent hands-on verification of raw HTML extraction quality.",
     "evidenceIds": [
       "apify-docs-15",
-      "apify-docs-16",
       "apify-docs-21",
-      "apify-docs-12"
+      "apify-docs-24",
+      "apify-docs-32",
+      "apify-probe-2"
     ]
   },
   {
@@ -1036,18 +1083,20 @@
     "storyId": "spend-cap-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions spending caps, budget limits, or usage alerts for credits/proxy consumption; docs mention performance/data-quality alerts (apify-docs-7) but not billing or spend caps, so the applicable axis is unaddressed.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention spending caps, budget limits, or usage alerts for proxy/credit consumption; the alert mention (apify-docs-7) is about Actor performance/data quality monitoring, not billing/spend limits.",
     "evidenceIds": []
   },
   {
     "productId": "apify",
     "storyId": "sticky-session-proxy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The evidence pack only shows general proxy rotation to avoid blocking (apify-docs-8) but contains no mention of session identifiers or sticky-session functionality for maintaining a consistent IP across multiple requests. Missing for 10: documentation of session pooling/session ID parameter, examples of reusing the same proxy IP across requests, any independent confirmation of sticky-session behavior.",
+    "rationale": "Apify's SessionPool class explicitly manages rotation of proxy IPs together with cookies and custom settings, enabling consistent identity across requests via session persistence, and proxy management docs confirm configurable proxy servers (Apify Proxy or third-party) that pair with this session system. missing for 10: explicit mention of a 'session identifier' parameter/string, independent/hands-on confirmation of sticky-session behavior in production.",
     "evidenceIds": [
+      "apify-docs-31",
+      "apify-docs-34",
       "apify-docs-8"
     ]
   },
@@ -1055,14 +1104,14 @@
     "productId": "apify",
     "storyId": "structured-json-output",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Apify's Actor execution and client APIs show developers running Actors and retrieving results programmatically (apify-docs-15, apify-docs-16), and its Actors extract structured fields like TikTok videos/hashtags/data (apify-docs-22), strongly implying structured JSON output which is core to Apify's dataset model. Missing for 10: explicit documentation of dataset/JSON export endpoints or dataset schema examples showing the JSON structure returned.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Apify's platform stores scraped results in Datasets that can be retrieved as structured JSON (and also CSV/XLSX/XML), with client libraries (JS/Python) demonstrating retrieval of Actor run results and loading into DataFrames, confirming structured JSON output is a core supported format. Missing for 10: no explicit first-party example showing a raw JSON schema/sample output snippet, and no independent third-party benchmark of output structure fidelity.",
     "evidenceIds": [
       "apify-docs-15",
       "apify-docs-16",
-      "apify-docs-22",
-      "apify-docs-21"
+      "apify-docs-26",
+      "apify-docs-32"
     ]
   },
   {
@@ -1070,8 +1119,8 @@
     "storyId": "team-permissions-management",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "apify-docs-9 directly claims sharing Actors and managing organizations/permissions, but the evidence pack lacks detailed docs on role granularity, invitation flows, or independent confirmation of how RBAC works in practice. missing for 10: detailed docs on role types/permission granularity, hands-on or community confirmation of team/org management, edge cases like access revocation.",
+    "confidence": "low",
+    "rationale": "Docs explicitly reference sharing Actors, managing organizations, and permissions (apify-docs-9), and Actors are described as designed to be shared/integrated/built upon (apify-docs-13), but the pack lacks detail on role granularity, invitation flows, or independent/hands-on confirmation of the org/permissions system. missing for 10: detailed RBAC documentation, screenshots/first-party walkthrough of org management, independent user corroboration of team collaboration features.",
     "evidenceIds": [
       "apify-docs-9",
       "apify-docs-13"
@@ -1082,12 +1131,9 @@
     "storyId": "undetected-browser-mode",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only mentions IP rotation for avoiding blocking (apify-docs-8), and general browser automation library support (Playwright/Puppeteer/Selenium/Crawlee), but no mention of an 'undetected browser mode', stealth fingerprinting, or specific anti-detection browser features to bypass sophisticated bot detection systems.",
-    "evidenceIds": [
-      "apify-docs-8",
-      "apify-docs-4"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence shows proxy rotation, session management, and IP rotation features but no mention of stealth/undetected browser mode, fingerprint spoofing, or bypassing sophisticated bot detection like Cloudflare/Datadome challenges.",
+    "evidenceIds": []
   },
   {
     "productId": "apify",
@@ -1095,7 +1141,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack shows Apify's general crawling/Actor capabilities (start URLs, maxCrawlPages, Crawlee) but no specific feature for instantly discovering all URLs on a site (e.g., sitemap-only extraction) without performing a full crawl.",
+    "rationale": "The evidence pack covers Actors, SDKs, proxies, scheduling, and general crawling/scraping tools, but nothing specifically describes a lightweight sitemap-based or URL-discovery mechanism that finds all site URLs without a full crawl. missing for 10: no mention of sitemap parsing, URL-only discovery mode, or an Actor dedicated to fast URL enumeration distinct from full page crawling.",
     "evidenceIds": []
   },
   {
@@ -1104,7 +1150,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items describe a wait-for-selector API parameter or feature for rendered-page retrieval; while Apify supports Playwright/Puppeteer/Crawlee (which internally support such waits), there's no documentation cited showing the Apify API itself exposes a selector-wait option before returning rendered HTML.",
+    "rationale": "No evidence in the pack references waiting for a CSS/XPath selector before returning rendered content; while Apify supports Playwright/Puppeteer-based Actors that could implement this, no docs, API, or client examples confirm such a wait-for-selector parameter or capability.",
     "evidenceIds": []
   },
   {
@@ -1112,8 +1158,8 @@
     "storyId": "web-search-with-content",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Apify's marketplace includes scraping Actors (e.g., web-scraper, TikTok scraper) and an MCP server for actor discovery, but no evidence pack item describes a single-call actor that performs a web search and returns full page content instead of just links/snippets.",
+    "confidence": "medium",
+    "rationale": "While Apify's marketplace conceivably could include a search+full-content actor, the evidence pack contains no mention of any Apify Actor or API that returns full page content directly from a search query in a single call — only general scraping, proxy, and platform features are documented.",
     "evidenceIds": []
   },
   {
