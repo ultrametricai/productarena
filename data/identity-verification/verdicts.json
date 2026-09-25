@@ -1350,17 +1350,17 @@
   {
     "productId": "plaid-idv",
     "storyId": "agent-onboarding-decisions",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Plaid IDV exposes structured webhooks (STEP_UPDATED, STATUS_UPDATED, RETRIED) and a retry API, and documents session status, risk scores, and granular risk-factor breakdowns, giving an automated flow real signals to branch on. However, the risk-score/failure-factor detail is repeatedly described as shown 'in the Dashboard' rather than confirmed as part of the API/webhook payload, and there's no documented enumerated failure-reason code list for programmatic branching. Missing for 10: explicit API/webhook schema confirming risk signals and failure reasons are returned as structured fields (not just Dashboard UI), and a documented failure-reason taxonomy/error codes.",
+    "rationale": "Plaid IDV exposes webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED), granular risk assessments and an overall risk score, documented common failure reasons, and a retry API endpoint — all of which give an automated flow structured signals and outcomes to branch on. Missing for 10: explicit JSON schema/example payloads for verification results and independent/hands-on confirmation that these fields are reliably machine-parseable in production.",
     "evidenceIds": [
       "plaid-idv-docs-3",
       "plaid-idv-docs-11",
-      "plaid-idv-docs-14",
-      "plaid-idv-docs-18",
       "plaid-idv-docs-20",
-      "plaid-idv-docs-19"
+      "plaid-idv-docs-26",
+      "plaid-idv-docs-18",
+      "plaid-idv-docs-14"
     ]
   },
   {
@@ -1396,7 +1396,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows risk scores, dashboard reporting, and webhooks, but nothing about AI-generated insights or suggestions surfaced to end users from their identity verification data. missing for 10: any AI-generated insight/summary feature, natural-language explanations of verification results, or suggestion engine within the product.",
+    "rationale": "Plaid Identity Verification provides risk scores and dashboards for verification sessions, but there is no evidence of AI-generated insights or suggestions surfaced to users from their own data within the product.",
     "evidenceIds": []
   },
   {
@@ -1404,13 +1404,14 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Plaid IDV supports background automation via webhooks (STEP_UPDATED, STATUS_UPDATED, RETRIED) and a no-code Workflow Management editor that can run conditional verification checks without manual intervention, which enables some autonomous background processing. However, there is no evidence of AI-agent-specific automation setup, natural-language automation configuration, or scheduling/triggering by an AI agent itself. Missing for 10: explicit AI-agent-driven automation setup, natural-language workflow configuration, evidence of autonomous agent-triggered verification chains beyond webhook/workflow primitives.",
+    "confidence": "medium",
+    "rationale": "Plaid IDV supports webhook-driven automation (STEP_UPDATED/STATUS_UPDATED/RETRIED events) and a workflow editor with conditional logic that can run checks automatically without manual intervention, and an official MCP server is documented, which would let AI agents trigger these flows autonomously. However there is no evidence of AI-agent-specific tooling, scheduling, or documentation describing autonomous background operation beyond webhook/event subscriptions and workflow conditionals. Missing for 10: explicit AI-agent orchestration examples, autonomous scheduling/triggers beyond webhooks, and independent confirmation that the MCP server enables full background automation.",
     "evidenceIds": [
       "plaid-idv-docs-2",
       "plaid-idv-docs-3",
-      "plaid-idv-docs-8",
-      "plaid-idv-docs-5"
+      "plaid-idv-docs-14",
+      "plaid-idv-docs-25",
+      "plaid-idv-probe-4"
     ]
   },
   {
@@ -1419,7 +1420,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Plaid Identity Verification is an identity-verification API/dashboard product, not an assistant-hosting product; there's no built-in AI assistant to delegate tasks to. This axis is a category error for this kind of product.",
+    "rationale": "Plaid Identity Verification is an identity-verification API/product, not an AI assistant platform; there is no evidence of a built-in AI assistant for task delegation, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1443,7 +1444,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Plaid Identity Verification is a SaaS/API product for identity verification, not an agentic runtime or AI client that consumes external tools via MCP servers. The evidence shows Plaid publishing its own MCP server (server role) rather than any capability to plug in third-party MCP servers as tools, so the 'client' axis is a category error for this product type.",
+    "rationale": "Plaid Identity Verification is a backend verification API/product, not an AI agent that consumes MCP tools; the story asks whether the product itself can plug in MCP servers as a client, which is a category error for this kind of product. Evidence shows Plaid publishes an MCP server (docs-resources) but that's the opposite role (server, not client).",
     "evidenceIds": [
       "plaid-idv-probe-4"
     ]
@@ -1453,8 +1454,8 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 6,
-    "confidence": "medium",
-    "rationale": "Plaid is a platform/service (not itself an agent), so the axis applies, and evidence confirms an official MCP server exists at plaid.com/docs/resources/mcp/. However, the pack only shows the existence of the page, not details on what tools/capabilities are exposed via MCP or independent corroboration of its use. Missing for 10: documentation of specific MCP tool/resource definitions, usage examples, and independent/hands-on confirmation of successful agent connection.",
+    "confidence": "low",
+    "rationale": "Plaid documents an official MCP server at plaid.com/docs/resources/mcp/, indicating agents can connect via Plaid's own MCP integration. However, the evidence pack gives no detail on what IDV-specific functionality the MCP server exposes, no independent/hands-on corroboration, and no specifics on setup or scope. missing for 10: details on IDV-specific MCP tool coverage, independent verification/hands-on testing of the MCP server.",
     "evidenceIds": [
       "plaid-idv-probe-4"
     ]
@@ -1476,23 +1477,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official CLI for Plaid Identity Verification; evidence only covers Dashboard, no-code editor, webhooks, Link SDK, and an MCP server, none of which constitute a CLI.",
+    "rationale": "No evidence of an official CLI tool for Plaid Identity Verification; documentation covers Dashboard, APIs, webhooks, and Link SDK but nothing about a command-line interface for AI-native/agentic workflows.",
     "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Plaid IDV exposes a documented REST API (e.g. /identity_verification/retry) with webhooks, Link SDK callbacks, and structured session/status endpoints, giving programmatic/agentic control over verification flows. However missing for 10: a discoverable OpenAPI/Swagger spec (probe found 404s), a plain-markdown docs endpoint, and independent hands-on developer corroboration of API-driven automation beyond docs.",
+    "rationale": "Plaid documents a public REST API for Identity Verification (e.g., /identity_verification/retry endpoint, webhook events, sandbox testing endpoints) that developers can call programmatically, and an official Plaid MCP server exists. However, automated probes found no discoverable OpenAPI/swagger spec, and the MCP server documentation is platform-wide rather than IDV-specific. Missing for 10: a machine-readable OpenAPI/swagger specification, and explicit IDV-scoped MCP/agent tooling.",
     "evidenceIds": [
-      "plaid-idv-docs-3",
-      "plaid-idv-docs-14",
-      "plaid-idv-docs-15",
       "plaid-idv-docs-18",
-      "plaid-idv-probe-2",
-      "plaid-idv-probe-3"
+      "plaid-idv-docs-3",
+      "plaid-idv-docs-16",
+      "plaid-idv-docs-25",
+      "plaid-idv-probe-3",
+      "plaid-idv-probe-4"
     ]
   },
   {
@@ -1507,14 +1508,15 @@
   {
     "productId": "plaid-idv",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents Plaid's IDV API endpoints, webhooks, and Link integration, but never mentions official SDKs, client libraries, or SDK documentation for building against Identity Verification; probes even show 404s for OpenAPI spec files. Missing for 10: any reference to official SDKs (language-specific libraries), SDK installation/quickstart docs, or independent confirmation that developers build against SDKs rather than raw REST/webhook APIs.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Plaid IDV exposes a documented API (e.g. /identity_verification/retry) and a client-side integration via Link with callbacks (onEvent, onSuccess), implying SDK-like tooling, but there is no explicit evidence pack mention of official language SDKs (Node/Python/Java/etc.) or a discoverable OpenAPI spec — the openapi.json probe returned 404s. missing for 10: explicit multi-language SDK documentation, publicly discoverable OpenAPI/schema, independent developer confirmation of SDK usage.",
     "evidenceIds": [
+      "plaid-idv-docs-15",
       "plaid-idv-docs-18",
-      "plaid-idv-probe-3",
-      "plaid-idv-probe-2"
+      "plaid-idv-docs-28",
+      "plaid-idv-probe-3"
     ]
   },
   {
@@ -1523,10 +1525,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Plaid IDV documents a clear webhook subscription model with selectable event types (STEP_UPDATED, STATUS_UPDATED, RETRIED), fulfilling the core ask of subscribing to events via webhooks. Missing for 10: no independent/hands-on corroboration of webhook reliability or delivery guarantees, and no detail on webhook payload schema, retries, or signature verification specifics.",
+    "rationale": "Plaid IDV docs clearly document a webhook subscription system with selectable event types (STEP_UPDATED, STATUS_UPDATED, RETRIED) delivering real-time alerts, matching the story's ask. Missing for 10: no independent/hands-on corroboration of webhook reliability or delivery guarantees, and no detail on subscription management (e.g., filtering, retries, or programmatic subscription API) beyond event type selection.",
     "evidenceIds": [
       "plaid-idv-docs-3",
-      "plaid-idv-docs-14"
+      "plaid-idv-docs-14",
+      "plaid-idv-docs-25"
     ]
   },
   {
@@ -1535,10 +1538,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Plaid docs confirm that Identity Verification integrates directly with Plaid Monitor to check users against watchlists and PEP lists as part of an 'end-to-end verification and KYC solution' (docs-10, docs-13), giving ops a single-vendor solution. However, this requires pairing two separate Plaid products (IDV + Monitor) rather than a single unified API call, and adverse-media screening is not explicitly mentioned alongside watchlist/PEP checks. Missing for 10: explicit adverse-media coverage, confirmation of a single unified API/session (vs. two integrated products), and independent/hands-on corroboration of the combined review surface.",
+    "rationale": "Plaid documents that Monitor integrates directly with Identity Verification for an 'end-to-end verification and KYC solution' allowing checks for watchlists and PEP lists, and risk results surface in the same Dashboard — satisfying the 'one vendor' aspect. However, this is explicitly a two-product integration (IDV + Monitor) rather than a single unified product/API, and adverse-media screening specifically is not mentioned. Missing for 10: explicit adverse-media watchlist coverage, confirmation of a single unified API call spanning both products, and independent/hands-on corroboration of the combined review surface.",
     "evidenceIds": [
       "plaid-idv-docs-10",
-      "plaid-idv-docs-13"
+      "plaid-idv-docs-13",
+      "plaid-idv-docs-29",
+      "plaid-idv-docs-11"
     ]
   },
   {
@@ -1547,10 +1552,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference or runnable-example explorer; probes for OpenAPI spec and doc markdown endpoints returned 404s, and docs items only describe features, not an interactive reference tool.",
+    "rationale": "Evidence shows API/docs pages and endpoint descriptions but no interactive API reference, runnable code examples, or sandbox console; probes explicitly show no OpenAPI spec exposed and docs-md probe 404s, suggesting no interactive reference tooling.",
     "evidenceIds": [
       "plaid-idv-probe-2",
-      "plaid-idv-probe-3"
+      "plaid-idv-probe-3",
+      "plaid-idv-docs-18"
     ]
   },
   {
@@ -1558,11 +1564,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Direct probes for OpenAPI/swagger spec files at standard locations all returned 404, and no evidence pack item shows a downloadable machine-readable API spec being offered for Identity Verification.",
+    "confidence": "high",
+    "rationale": "Probes explicitly show no OpenAPI/Swagger spec found at any standard candidate path, and no documented downloadable machine-readable spec is referenced in the docs pack.",
     "evidenceIds": [
-      "plaid-idv-probe-2",
-      "plaid-idv-probe-3"
+      "plaid-idv-probe-3",
+      "plaid-idv-probe-2"
     ]
   },
   {
@@ -1584,7 +1590,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Identity Verification features, testing, webhooks, and dashboard capabilities but contains no mention of API versioning scheme or a documented deprecation policy; probes for openapi spec return 404s, providing no confirmation of versioned API documentation.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the pack; probes for OpenAPI spec return 404s and docs don't mention versioning/deprecation practices.",
     "evidenceIds": [
       "plaid-idv-probe-3",
       "plaid-idv-probe-2"
@@ -1596,10 +1602,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Plaid IDV's docs describe per-session verification, webhooks, retry, and dashboard review, but no evidence of any batch/bulk API for creating, retrying, or checking many verification sessions at once — each cited endpoint (e.g. /identity_verification/retry) operates on a single user/session.",
+    "rationale": "No evidence of any bulk/batch API for creating, retrying, or managing multiple Identity Verification sessions at once — the docs describe single-session creation, retry, and Dashboard-based per-session review only. This is a fair capability to expect from a verification API (e.g., bulk re-verification or batch onboarding), but nothing in the evidence pack supports it.",
     "evidenceIds": [
       "plaid-idv-docs-18",
-      "plaid-idv-docs-19"
+      "plaid-idv-docs-19",
+      "plaid-idv-docs-7"
     ]
   },
   {
@@ -1608,12 +1615,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Plaid IDV supports conditional logic within verification templates (e.g., run a check only if another fails or based on risk/country) and emits distinct webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED) that downstream systems can act on, which together constitute a limited form of event-triggered automation confined to the verification flow itself. missing for 10: a general-purpose rule/automation builder outside the verification template, documented examples of webhook events triggering arbitrary external actions, and independent/hands-on evidence of this automation working end-to-end.",
+    "rationale": "Plaid IDV supports webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED) that let developers react to changes, and its Workflow Management editor allows conditional logic (e.g., run a check only if another fails or based on country) — both are event-driven automation building blocks. However, these are developer/admin-configured conditional workflows and webhook subscriptions, not a general-purpose rule engine where an AI-native user defines arbitrary 'on event X do action Y' automations. Missing for 10: a documented rules/automation engine for arbitrary triggered actions, evidence of natural-language or AI-native rule definition, and broader action types beyond conditional verification-check branching.",
     "evidenceIds": [
       "plaid-idv-docs-2",
       "plaid-idv-docs-3",
       "plaid-idv-docs-14",
-      "plaid-idv-docs-8"
+      "plaid-idv-docs-25"
     ]
   },
   {
@@ -1622,7 +1629,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Plaid Identity Verification is an identity/KYC verification API product, not a workflow/job scheduling or automation orchestration tool; scheduling recurring jobs is a category error for this axis, not an absent feature.",
+    "rationale": "Plaid Identity Verification is an identity/KYC verification API product, not a job/workflow scheduler; there is no concept of user-defined recurring jobs or automation scheduling in this product category. This axis is a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1631,7 +1638,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Plaid Identity Verification is an identity-verification/KYC API product, not an automation/workflow tool with user-facing 'automations' that would need versioning, review, and rollback in the sense described by this story. The workflow editor mentioned is for verification flow configuration, not an AI-native automation system with version history/rollback semantics.",
+    "rationale": "Plaid Identity Verification is a KYC/identity-verification API/platform, not an automation-building tool with workflows that a user creates, versions, and rolls back in the AI-native automation sense; this axis doesn't apply to this product category.",
     "evidenceIds": []
   },
   {
@@ -1640,20 +1647,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack describes IDV features (liveness checks, document verification, risk scoring, dashboard, webhooks) but contains no documentation addressing GDPR legal bases, BIPA or other US biometric statutes, or specific consent language for biometric data — nothing a legal team could review for lawful-basis compliance.",
+    "rationale": "The evidence pack describes Plaid IDV's verification features (liveness checks, document verification, risk scoring) but contains no documentation addressing GDPR legal bases, BIPA or other US biometric statutes, or consent language founders could hand to legal review. Since the product processes biometric facial-match data, this is a fair and applicable question, but nothing in the pack evidences such compliance documentation.",
     "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
     "storyId": "conversion-analytics",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Plaid's docs show a Dashboard with session status, a defined 'conversion rate' metric, and risk-factor breakdowns per session, indicating some verification-funnel reporting exists. However, there's no evidence of drop-off point analysis, completion-time metrics, or breakdowns by country or document type — the specific funnel analytics the story asks for. Missing for 10: drop-off/step-level funnel visualization, completion-time metrics, segmentation by country and document type, and any independent confirmation of these dashboard analytics in practice.",
+    "rationale": "Plaid's docs confirm a Dashboard with session status views, a defined 'conversion rate' (funnel completion) metric, and per-session risk-factor breakdowns, which are core building blocks for funnel analytics. However, there is no evidence of segmented analytics by country or document type, explicit drop-off point identification, or completion-time metrics. Missing for 10: country/document-type segmented pass rates, drop-off funnel visualization, completion-time analytics.",
     "evidenceIds": [
       "plaid-idv-docs-6",
       "plaid-idv-docs-19",
-      "plaid-idv-docs-20"
+      "plaid-idv-docs-20",
+      "plaid-idv-docs-27"
     ]
   },
   {
@@ -1662,10 +1670,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents retention windows, PII redaction, or a deletion API for Identity Verification data; the community comment even raises unaddressed concerns about data handling trust. Missing for 10: documented retention policy, redaction/deletion API reference, ops-facing data-lifecycle controls.",
-    "evidenceIds": [
-      "plaid-idv-comm-1"
-    ]
+    "rationale": "No evidence pack item documents retention windows or a redaction/deletion API for scrubbing PII; coverage focuses on verification flows, webhooks, risk checks, and dashboard features. Community comments raise general trust concerns but don't confirm or deny a deletion mechanism, so this is a lack of evidence rather than a contradiction.",
+    "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
@@ -1673,13 +1679,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Plaid's docs distinguish 'Data Source Verification' from 'Documentary Verification' and show checks (name, DOB, ID numbers, address, phone/email risk) that can run without a document scan, and workflows can be configured to skip document checks conditionally by country or risk level [plaid-idv-docs-4, plaid-idv-docs-2, plaid-idv-docs-11, plaid-idv-docs-1]. However, the evidence never explicitly names SSN verification, national registry lookups, or credit-header data as inputs, so the specific 'authoritative database' sources claimed in the story are not directly confirmed. Missing for 10: explicit mention of SSN-based verification, credit-header data checks, and named national registry integrations.",
+    "rationale": "Plaid IDV docs describe a distinct 'Data Source Verification' check (separate from 'Documentary Verification') that confirms identity info like name, DOB, ID numbers, address against regulated data sources in seconds, and workflows can be configured per-country/conditionally, implying a doc-free path is possible. However, the evidence never explicitly names SSN, national registry, or credit-header data as the specific data sources used, leaving the exact mechanism vague. Missing for 10: explicit mention of SSN-based checks, national registry/credit-header data sourcing, and independent/hands-on confirmation that document upload can be fully skipped.",
     "evidenceIds": [
-      "plaid-idv-docs-4",
-      "plaid-idv-docs-2",
-      "plaid-idv-docs-11",
+      "plaid-idv-docs-30",
       "plaid-idv-docs-1",
-      "plaid-idv-docs-16"
+      "plaid-idv-docs-16",
+      "plaid-idv-docs-2",
+      "plaid-idv-docs-24"
     ]
   },
   {
@@ -1688,9 +1694,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence only mentions generic 'Confirm liveness' (face matches ID) without any named defenses against AI-generated faces, deepfakes, or camera-injection attacks — no specific anti-spoofing technology, injection detection, or deepfake-detection capability is documented. This is a marketing-level mention of liveness, not the specific named detection capabilities the story requires.",
+    "rationale": "Evidence only mentions generic 'Confirm liveness' as ensuring a person is present and matches ID photo, with no named detection capabilities for AI-generated faces, deepfakes, or camera-injection attacks — this is marketing-level mention, not documented named defenses as the story requires.",
     "evidenceIds": [
-      "plaid-idv-docs-21"
+      "plaid-idv-docs-21",
+      "plaid-idv-docs-31"
     ]
   },
   {
@@ -1698,29 +1705,32 @@
     "storyId": "global-document-coverage",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Plaid documents that IDV can 'verify that global ID documents are authentic and valid' and lists ID document verification as a core capability, but the evidence pack contains no published breakdown of specific supported countries or document types (passports, national IDs, driver licenses, residence permits) as a discoverable list. missing for 10: a published country/document-type coverage list, document-type breakdown, and any independent corroboration of coverage breadth.",
+    "confidence": "low",
+    "rationale": "Plaid's docs mention verifying 'identification documents' and 'global ID documents' broadly (plaid-idv-docs-1, plaid-idv-docs-12), but there is no published breakdown of supported countries or specific document types (passports, national IDs, driver licenses, residence permits) as the story requires. missing for 10: a published country/document-type coverage list, explicit mention of residence permits or driver licenses, independent corroboration of document breadth.",
     "evidenceIds": [
-      "plaid-idv-docs-12",
       "plaid-idv-docs-1",
-      "plaid-idv-docs-21"
+      "plaid-idv-docs-12",
+      "plaid-idv-docs-24"
     ]
   },
   {
     "productId": "plaid-idv",
     "storyId": "hosted-verification-flow",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm server-side session creation, Link-based hosted/drop-in flow with client-side callbacks (onEvent), document authentication, selfie/liveness checks, and webhooks for status updates plus a retry endpoint — covering the full create/redirect/read-result lifecycle without building capture UI. missing for 10: no independent/hands-on developer corroboration of the integration experience, and no explicit code sample showing the server-side create-session call in this evidence pack.",
+    "rationale": "Plaid IDV explicitly provides a Link-based drop-in flow (onSuccess/onEvent callbacks) that verifies documents, phone, DOB, and includes liveness/selfie matching against the ID, plus webhooks and Dashboard/API (retry, status) to read results server-side — all without building custom capture UI (Plaid's own hosted capture is built-in). missing for 10: explicit first-party walkthrough of the server-side 'create session' API call and hosted-redirect (non-Link) flow, and independent/hands-on developer confirmation of the integration experience.",
     "evidenceIds": [
-      "plaid-idv-docs-1",
       "plaid-idv-docs-5",
-      "plaid-idv-docs-12",
       "plaid-idv-docs-15",
-      "plaid-idv-docs-18",
+      "plaid-idv-docs-28",
       "plaid-idv-docs-21",
-      "plaid-idv-docs-3"
+      "plaid-idv-docs-12",
+      "plaid-idv-docs-24",
+      "plaid-idv-docs-14",
+      "plaid-idv-docs-18",
+      "plaid-idv-docs-19",
+      "plaid-idv-docs-8"
     ]
   },
   {
@@ -1729,21 +1739,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence describes individual/person identity verification (documents, phone, liveness, risk scoring) — there is no mention anywhere of business registry lookups, UBO identification, or a documented KYB workflow chaining into KYC of owners. This is a fair axis for an IDV product to be judged on, but no supporting evidence exists in the pack.",
+    "rationale": "All evidence describes Plaid Identity Verification as a personal (KYC) identity verification product—document checks, liveness, phone/address risk, watchlist/PEP screening via Monitor—with no mention of business registry lookups, UBO (ultimate beneficial owner) identification, or any KYB workflow that chains into KYC on owners. This is a distinct capability set from Plaid's consumer-focused IDV, and no citation addresses business verification at all.",
     "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
     "storyId": "manual-review-queues",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show a Dashboard where each session's status, risk factors, and check results can be viewed, and reviewers can manually override a failed verification via an 'Override Result' button, implying a review workflow feeding back into the record (plaid-idv-docs-7, plaid-idv-docs-19, plaid-idv-docs-20, plaid-idv-docs-11). However, there is no explicit documentation of a dedicated 'manual review queue' for borderline cases, no mention of viewing raw document images/extracted fields inline for reviewers, and no described mechanism for how a reviewer's decision structurally updates the verification record beyond a binary override. Missing for 10: explicit review-queue UI for borderline sessions, display of document images/extracted fields to reviewers, and documented reviewer-decision audit trail feeding back into the record.",
+    "rationale": "Plaid's Dashboard shows per-session status, document/risk-check details and largest risk factors, and lets an ops user override a failed result — evidence of case-level visibility and manual intervention (plaid-idv-docs-19, plaid-idv-docs-20, plaid-idv-docs-7, plaid-idv-docs-11). However, there is no explicit description of a dedicated 'manual review queue' that routes borderline cases, nor documented reviewer-decision feedback loop updating the verification record beyond override/retry actions. Missing for 10: dedicated review-queue UI/workflow for borderline cases, explicit reviewer-decision audit trail feeding back into downstream record beyond override/retry.",
     "evidenceIds": [
-      "plaid-idv-docs-7",
       "plaid-idv-docs-19",
       "plaid-idv-docs-20",
-      "plaid-idv-docs-11"
+      "plaid-idv-docs-7",
+      "plaid-idv-docs-11",
+      "plaid-idv-docs-26",
+      "plaid-idv-docs-18"
     ]
   },
   {
@@ -1752,10 +1764,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence confirms Plaid IDV verifies ID documents and integrates via Link with client-side callbacks and onEvent progress updates, but there is no mention of native iOS/Android/web SDKs providing guided camera capture with glare, blur, or edge detection coaching. Missing for 10: any documentation of camera capture UX guidance, glare/blur detection, or edge-detection coaching in the SDK flow.",
+    "rationale": "The evidence pack confirms Plaid IDV uses a Link-based flow with client-side callbacks (onEvent, onSuccess) and documentary verification, but nowhere does it describe native iOS/Android/web SDK camera capture guidance features like glare, blur, or edge detection coaching. Missing for 10: any documentation of platform-specific SDKs, camera capture UI, or real-time image-quality coaching (glare/blur/edge detection).",
     "evidenceIds": [
       "plaid-idv-docs-12",
       "plaid-idv-docs-15",
+      "plaid-idv-docs-28",
       "plaid-idv-docs-5"
     ]
   },
@@ -1765,11 +1778,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Plaid's docs describe a no-code *editor* for configuring verification flows and an API/SDK-based Link integration, but there is no evidence of a mechanism for an ops person to generate a standalone verification link or QR code and send it directly to a one-off user without an engineering integration.",
-    "evidenceIds": [
-      "plaid-idv-docs-8",
-      "plaid-idv-docs-15"
-    ]
+    "rationale": "The evidence describes a no-code workflow editor for configuring verification flows and Link SDK integration, but nothing indicates an ops-facing feature to generate a one-off shareable verification link or QR code for a single customer/contractor without engineering involvement — Plaid IDV is documented as integrated via Link SDK/API, not a standalone dashboard-driven send-a-link tool.",
+    "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
@@ -1777,12 +1787,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Plaid IDV docs mention that Identity Verification integrates with Monitor for watchlist/PEP screening (docs-10, docs-13), implying some continuous watchlist capability exists as part of the broader Plaid ecosystem, but the IDV-specific webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED) are tied to a single verification session's completion, not ongoing re-screening of previously verified users against watchlist updates. Missing for 10: explicit documentation of continuous/periodic re-screening cadence for already-verified users, and dedicated event types signaling watchlist status changes post-verification (as opposed to session-progress events).",
+    "rationale": "Plaid IDV documents integrate with a separate 'Monitor' product that checks watchlists/PEP lists, implying some ongoing screening capability, and IDV does support webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED) for real-time alerts — but these events are scoped to the one-time verification flow, not to continuous re-screening of already-verified users against new watchlist hits. Missing for 10: explicit documentation of Monitor re-screening previously verified users over time, dedicated watchlist-change webhook/event types, and any independent confirmation that ongoing re-screening actually fires actionable events.",
     "evidenceIds": [
       "plaid-idv-docs-13",
       "plaid-idv-docs-10",
-      "plaid-idv-docs-3",
-      "plaid-idv-docs-14"
+      "plaid-idv-docs-25",
+      "plaid-idv-docs-3"
     ]
   },
   {
@@ -1807,8 +1817,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any data export/portability feature or open-format data download for end users in Plaid IDV's documentation; the evidence pack focuses on verification workflows, dashboards, and APIs for businesses, not user data export/exit capability.",
-    "evidenceIds": []
+    "rationale": "No evidence of any data export/portability feature or open-format data export for end users; Plaid IDV is a KYC/verification API with no documented data export or account-deletion/portability mechanism, and no openapi spec is even discoverable.",
+    "evidenceIds": [
+      "plaid-idv-probe-2",
+      "plaid-idv-probe-3"
+    ]
   },
   {
     "productId": "plaid-idv",
@@ -1825,21 +1838,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Plaid Identity Verification is a hosted SaaS/API compliance product, not open-source software; self-hosting is a category error for this type of product, not a missing feature.",
+    "rationale": "Plaid Identity Verification is a hosted SaaS/API service; self-hosting the core product is not a capability this category of product offers, making this a category-error axis rather than a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "plaid-idv",
     "storyId": "phone-email-risk-signals",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm phone/email risk checks (disposable, breach-compromised, registered accounts), granular risk assessments (email risk, phone risk) shown per session, and watchlist/PEP checks via Monitor integration, satisfying phone/email/device-style risk signals as documented check types. missing for 10: explicit carrier-check terminology, address-history-specific documentation, and independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Plaid docs confirm phone and email risk signals (new/disposable/breached, registered with external accounts) and per-session granular risk assessments (email risk, phone risk, etc.) shown in the Dashboard, which supports the phone/email risk-signal part of the story. However, there is no explicit documentation of carrier-lookup checks, address-history verification as a distinct check type, or device fingerprinting as a documented check type. missing for 10: explicit carrier check documentation, address-history check type, device fingerprint/device risk signal documentation.",
     "evidenceIds": [
       "plaid-idv-docs-11",
-      "plaid-idv-docs-20",
       "plaid-idv-docs-22",
-      "plaid-idv-docs-13"
+      "plaid-idv-docs-20",
+      "plaid-idv-docs-27"
     ]
   },
   {
@@ -1848,7 +1861,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or user/org control over where verification data is stored; the evidence covers verification checks, webhooks, dashboard features, and testing but never data residency controls. missing for 10: any mention of data region selection, residency compliance (e.g., EU/US data centers), or configurable storage location.",
+    "rationale": "No evidence in the pack mentions data residency/region selection or storage location controls for Identity Verification data; only general community distrust about data handling is present, which is off-topic sentiment, not a documented capability or contradiction.",
     "evidenceIds": []
   },
   {
@@ -1866,8 +1879,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers verification workflows, webhooks, testing, risk scoring, and dashboards, but contains no mention of data retention periods, deletion APIs, or user-initiated data removal controls for Identity Verification. The negative HN comment reflects general distrust, not a documented failure of a specific retention/deletion feature, so it cannot support a 'disputed' verdict either.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers verification checks, webhooks, dashboard, risk scoring, and testing, but contains no mention of data retention controls, deletion APIs, or user-controlled data lifecycle policies for Identity Verification. One community comment expresses distrust in Plaid's data handling but does not substantiate any concrete retention/deletion mechanism either way.",
+    "evidenceIds": [
+      "plaid-idv-comm-1"
+    ]
   },
   {
     "productId": "plaid-idv",
@@ -1884,10 +1899,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers liveness checks, document authentication, and risk scoring, but nothing describes detecting duplicate/repeat identities (same face or document reappearing under different names) across sessions — the 'verify once, verify everywhere' blog mention is about reuse convenience, not fraud/duplicate flagging.",
+    "rationale": "Evidence covers document/biometric verification, risk scoring, watchlist/PEP checks via Monitor, and a 'verify once, verify everywhere' vision, but nothing describes automated detection of duplicate/repeat identities (same face or document reappearing under different names) across verification sessions.",
     "evidenceIds": [
-      "plaid-idv-docs-21",
       "plaid-idv-docs-11",
+      "plaid-idv-docs-13",
+      "plaid-idv-docs-21",
       "plaid-idv-docs-23"
     ]
   },
@@ -1897,11 +1913,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Plaid's blog explicitly claims a 'verify once, verify everywhere' experience allowing reuse of a prior verification, but the evidence pack has no technical documentation (API fields, session reuse endpoints, or dashboard features) showing how a developer would actually implement recognition/reuse across sessions or products — the only mechanisms documented are retry (/identity_verification/retry) and dashboard override of failed checks, which are re-verification aids, not reuse-of-passed-check flows. missing for 10: API/webhook documentation describing how a passed verification is looked up/reused, concrete integration guide for cross-product reuse, and independent confirmation this feature works as advertised.",
+    "rationale": "Plaid's blog explicitly touts a 'verify once, verify everywhere' vision (plaid-idv-docs-23), suggesting a reuse capability, but the docs pack contains no concrete API, session/token mechanism, or dashboard feature describing how a prior passed check is recognized and reused instead of re-running verification — only retry (re-run) endpoints (plaid-idv-docs-18) and generic status/reporting features are documented. missing for 10: documented reuse API/session identifier, cross-product recognition mechanism, hands-on or independent confirmation that reuse works as described.",
     "evidenceIds": [
       "plaid-idv-docs-23",
       "plaid-idv-docs-18",
-      "plaid-idv-docs-7"
+      "plaid-idv-docs-19"
     ]
   },
   {
@@ -1924,7 +1940,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Plaid explicitly documents liveness/selfie-to-ID matching ('Confirm liveness — Ensure a person is present and their face matches the image on the provided ID') as part of Identity Verification, and risk scoring dashboards show granular checks. However, there is no documented detail on specific anti-spoofing defenses against printed photos, screen replays, or deepfake/video injection attacks, nor any independent certification or hands-on test of liveness robustness. missing for 10: documented defenses against photo/screen/video spoofing, third-party liveness certification (e.g. iBeta/NIST), independent hands-on verification of anti-spoofing efficacy.",
+    "rationale": "Plaid documents a liveness check that confirms a person is present and matches their ID photo (plaid-idv-docs-21), directly supporting the selfie-to-document liveness story, and risk-scoring features around it (plaid-idv-docs-11, plaid-idv-docs-20). However, there is no documentation detailing specific anti-spoofing defenses (printed photos, screen replay, video injection) or any independent test/benchmark validating liveness robustness. Missing for 10: technical detail on spoof-attack defenses, third-party/independent testing of liveness accuracy, and documentation of specific attack vectors covered.",
     "evidenceIds": [
       "plaid-idv-docs-21",
       "plaid-idv-docs-11",
@@ -1951,13 +1967,14 @@
     "storyId": "structured-data-extraction",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Plaid's docs confirm that Identity Verification checks and validates name, date of birth, ID numbers, and addresses (plaid-idv-docs-1, plaid-idv-docs-12), implying extraction of these fields, but no evidence explicitly shows the API returning these as structured retrievable fields (e.g., a documented response schema with document number, expiry, address, DOB) rather than risk/pass-fail indicators shown only in the Dashboard (plaid-idv-docs-11, plaid-idv-docs-20). Missing for 10: explicit API response/schema documentation exposing extracted document fields, and independent/hands-on confirmation of structured field retrieval.",
+    "confidence": "medium",
+    "rationale": "Plaid's docs confirm the product extracts and checks fields like name, date of birth, ID numbers, and address (docs-1, docs-24), and the Dashboard exposes risk factors and status per session (docs-11, docs-20, docs-27), implying underlying structured data exists. However, none of the evidence explicitly documents an API response schema or endpoint returning these extracted document fields as retrievable structured data to developers — it's only inferred from feature descriptions and dashboard UI mentions. Missing for 10: explicit API/webhook payload documentation showing field-level extracted data (name, DOB, document number, address, expiry) returned via API rather than just dashboard visualization or pass/fail status.",
     "evidenceIds": [
       "plaid-idv-docs-1",
-      "plaid-idv-docs-12",
+      "plaid-idv-docs-24",
       "plaid-idv-docs-11",
-      "plaid-idv-docs-20"
+      "plaid-idv-docs-20",
+      "plaid-idv-docs-19"
     ]
   },
   {
@@ -1966,12 +1983,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Plaid IDV webhooks exist and let developers react to status changes without polling (STEP_UPDATED, STATUS_UPDATED, RETRIED), and dashboard/session status tracking corroborates lifecycle visibility, but the docs describe different event names than the story's specific set (created/processing/verified/requires-input) and no evidence confirms webhook payloads are cryptographically signed. missing for 10: documentation of webhook signature verification, and alignment with the exact lifecycle event taxonomy named in the story.",
+    "rationale": "Plaid IDV documents webhook events (STEP_UPDATED, STATUS_UPDATED, RETRIED) that let developers subscribe for real-time updates instead of polling, matching the core 'react to lifecycle without polling' need. However, the evidence never shows the specific status names in the story (created/processing/verified/requires-input) nor confirms webhook payloads are cryptographically signed/verifiable. Missing for 10: documented signed-webhook verification mechanism, explicit mapping of STATUS_UPDATED values to the named lifecycle states, and independent confirmation of reliability.",
     "evidenceIds": [
       "plaid-idv-docs-3",
       "plaid-idv-docs-14",
-      "plaid-idv-docs-19",
-      "plaid-idv-docs-18"
+      "plaid-idv-docs-25"
     ]
   },
   {
@@ -1980,7 +1996,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe a no-code Workflow Management editor for combining checks into templates, running conditional checks (e.g., only if another fails or is high-risk) and country-based logic, directly matching the story's requirements. Missing for 10: independent/hands-on confirmation that template changes deploy without engineering involvement, and no detail on granular risk-based routing rules beyond examples given.",
+    "rationale": "Docs explicitly describe a no-code Workflow Management editor for building/changing templates, conditional steps (e.g., running checks only if another fails or is high-risk), and country-based branching, all without engineering deploys. Missing for 10: independent/hands-on corroboration beyond vendor docs, and explicit detail on granular risk-based routing rules beyond the conditional examples given.",
     "evidenceIds": [
       "plaid-idv-docs-2",
       "plaid-idv-docs-8",
