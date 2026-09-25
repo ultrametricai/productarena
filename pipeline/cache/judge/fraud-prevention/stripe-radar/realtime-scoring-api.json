@@ -1,15 +1,16 @@
 {
-  "hash": "4672a9c5cc89c88e8f7561faf6a94bbfdf4ae3497044aecdb02ed8adf61da60e",
+  "hash": "27492048412a37def29af2bbda32c71bb4cc7751fdf6cfcdc6b7542e85cbd83e",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show Radar assigns a risk_level (e.g., 'highest') synchronously to charges created via test cards, implying risk evaluation happens as part of the same API call used to create a charge/PaymentIntent, and Radar Standard is described as providing out-of-the-box real-time fraud protection. However, the evidence pack never explicitly documents the risk_score field, exact API response shape, or explicit timing relative to authorization completion. Missing for 10: explicit documentation of the outcome.risk_score attribute returned on Charge/PaymentIntent objects, and explicit confirmation that scoring occurs before authorization completes rather than just being attached to the resulting charge.",
+    "rationale": "Stripe Radar is documented to screen every payment attempt synchronously as part of the charge/PaymentIntent flow, producing a risk_level/risk_score that determines block/allow/review outcomes in real time, and test cards exist to simulate specific risk levels (docs-5, docs-20, docs-27, docs-6). However, the evidence pack never shows a standalone, explicitly synchronous 'get risk score before authorization' API call with a documented request/response schema exposing the numeric score directly to developers outside the charge object — it's implied via risk_level on the charge rather than a dedicated scoring endpoint. Community reports also note friction with programmatic control over outcomes (comm-2). Missing for 10: a dedicated synchronous risk-scoring endpoint/response schema independent of charge creation, clearer documentation of the exact score field and timing guarantee, and independent hands-on confirmation of real-time synchronous scoring latency.",
     "evidenceIds": [
       "stripe-radar-docs-5",
       "stripe-radar-docs-20",
+      "stripe-radar-docs-27",
       "stripe-radar-docs-6",
-      "stripe-radar-docs-22"
+      "stripe-radar-comm-2"
     ],
     "productId": "stripe-radar",
     "storyId": "realtime-scoring-api"

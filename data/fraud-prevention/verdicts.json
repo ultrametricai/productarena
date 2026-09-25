@@ -2483,12 +2483,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Radar Pro explicitly extends beyond checkout to detect multi-account, free-trial, and pay-as-you-go abuse (promo/policy abuse) within the same scoring system (docs-16, docs-6), and reviews/insights let analysts manage related-payment networks (docs-12, docs-19). However, there is no evidence Radar scores or manages account-takeover or fake-account-creation specifically as distinct fraud surfaces — its documented scope centers on payment/transaction risk rather than login or signup-time behavioral risk. missing for 10: explicit account-takeover detection, fake-account-creation scoring, and independent corroboration of these non-payment fraud surfaces.",
+    "rationale": "Radar Pro explicitly extends beyond checkout to detect 'multi-account, free trial, and pay-as-you-go abuse' (docs-16), and Radar Sessions can capture fraud signals outside pure payment tokenization (docs-15), showing some reach into account/promo abuse. However, there is no evidence of dedicated account-takeover scoring or that these abuse types are managed via the same rules/review/analytics workflow described for payments (docs-3, docs-11, docs-26) rather than a separate Radar Pro feature set. Missing for 10: explicit account-takeover detection capability, confirmation that abuse signals feed the same rule engine/review queue/analytics dashboard, and independent/community confirmation of these non-checkout use cases.",
     "evidenceIds": [
       "stripe-radar-docs-16",
-      "stripe-radar-docs-6",
-      "stripe-radar-docs-12",
-      "stripe-radar-docs-19"
+      "stripe-radar-docs-15",
+      "stripe-radar-docs-3",
+      "stripe-radar-docs-11",
+      "stripe-radar-docs-26"
     ]
   },
   {
@@ -2497,7 +2498,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar's documented capabilities cover general fraud rules, risk scoring, reviews, and abuse detection, but there is no mention anywhere of distinguishing AI/agentic buying agents from malicious bots, or any agent-specific allow-listing/signal to prevent blanket-blocking of agent-driven purchases.",
+    "rationale": "Stripe Radar's evidence covers general fraud rules, risk scoring, review queues, and allow/block lists, but nothing addresses distinguishing legitimate AI purchasing agents from malicious bots or agent-specific traffic signatures — this is an emerging agentic-commerce concern not covered in any doc or community item.",
     "evidenceIds": []
   },
   {
@@ -2506,16 +2507,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe exposes programmatic building blocks relevant to an agent workflow — a Value Lists API for managing blocklists/allowlists (stripe-radar-docs-10, stripe-radar-docs-14) and a Reviews API with an explicit approve endpoint that maps naturally to a human-approval gate (stripe-radar-docs-8, stripe-radar-docs-21) — plus a documented official MCP server (stripe-radar-probe-4) that could let an agent call these APIs. However, Radar rules (e.g. a velocity rule) are documented only as Dashboard-configurable via a rules reference of supported attributes (stripe-radar-docs-3), with no evidenced API endpoint for programmatically proposing/creating rules, and community commentary explicitly flags a lack of easy programmatic control over Radar decisions (stripe-radar-comm-2) and notes allow-rule changes require contacting support rather than self-serve API access (stripe-radar-comm-7). Missing for 10: a documented rules-creation/update API endpoint, evidence the MCP server actually surfaces rule/list-management tools, and confirmation that approval gating is agent-triggerable rather than dashboard-only.",
+    "rationale": "Stripe exposes APIs for reviews (approve/reject), value lists (blocklists/allowlists), and a documented MCP server that could let an agent read fraud posture and manage lists/rules programmatically, with review-approval endpoints acting as a human-gate mechanism. However, there's no first-class 'propose a velocity rule with approval workflow' API — rule creation/editing is Dashboard-centric, and community evidence shows manual support intervention is often needed for overrides, plus allow-rules require contacting support to enable, suggesting limited direct programmatic/agent control over rule creation. missing for 10: a documented API/MCP tool for creating or proposing custom Radar rules (not just reviews/lists), evidence of an explicit human-approval workflow for agent-proposed rule changes, and independent confirmation that programmatic rule/list management works smoothly for agents.",
     "evidenceIds": [
+      "stripe-radar-docs-8",
       "stripe-radar-docs-10",
       "stripe-radar-docs-14",
-      "stripe-radar-docs-8",
       "stripe-radar-docs-21",
-      "stripe-radar-docs-3",
       "stripe-radar-probe-4",
-      "stripe-radar-comm-2",
-      "stripe-radar-comm-7"
+      "stripe-radar-comm-7",
+      "stripe-radar-comm-2"
     ]
   },
   {
@@ -2524,14 +2524,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Radar's API exposes the building blocks an agent would need — listing/approving reviews (docs-8/21), risk insights and related-payment network context (docs-12/19), and an official MCP server for agent integration (probe-4) — so an agent could plausibly pull flagged cases, gather evidence, and act. However there's no documented feature for automated summarization or an explicit 'recommend, human confirms' workflow; approve/reject are direct actions rather than a recommend-then-confirm pattern.\n\nmissing for 10: an explicit AI-summarization/recommendation feature, evidence of a human-confirmation step distinct from direct approve/reject, and any hands-on demonstration of an agent working the queue end-to-end.",
+    "rationale": "Radar exposes a Reviews API (approve endpoint, implied list/retrieve) plus rich contextual data—risk insights, related-payment network, and an official MCP server—that an agent could use to pull flagged cases, gather evidence, and drive a human-confirmed action. However, there's no documented agent-native summarization or recommendation feature, no explicit 'list reviews with context' endpoint shown, and no decline/reject endpoint or workflow example. Missing for 10: explicit reviews-list/query API evidence, built-in evidence summarization, documented decline endpoint, and a concrete agent-driven review workflow example.",
     "evidenceIds": [
       "stripe-radar-docs-8",
       "stripe-radar-docs-21",
       "stripe-radar-docs-12",
       "stripe-radar-docs-19",
       "stripe-radar-docs-11",
-      "stripe-radar-docs-18",
       "stripe-radar-probe-4"
     ]
   },
@@ -2541,7 +2540,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Probes confirm llms.txt (HTTP 200) exists and docs are served as markdown (radar.md returns 200), enabling agents to consume agent-oriented docs directly; this is corroborated by direct probing rather than just claims. Missing for 10: no explicit documentation describing llms.txt's intended purpose/coverage scope for Radar specifically.",
+    "rationale": "Probes confirm llms.txt exists at docs.stripe.com/llms.txt (HTTP 200) and agent-oriented .md docs are served (e.g., radar.md, radar/rules.md), directly matching the story of pointing an agent at llms.txt or agent-oriented docs. Missing for 10: no independent/community confirmation of an agent actually consuming llms.txt successfully.",
     "evidenceIds": [
       "stripe-radar-probe-1",
       "stripe-radar-probe-2"
@@ -2551,14 +2550,14 @@
     "productId": "stripe-radar",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Radar surfaces ML-driven 'risk insights' explaining why a payment was flagged and 'fraud insights' analytics visualizing trends over time, which are data-derived insights from the product's own model, but there's no evidence of generative/LLM-style suggestions, natural-language explanations, or proactive recommendations beyond static risk-factor displays and dashboards. Missing for 10: generative/LLM-based insight summaries, proactive actionable suggestions (e.g., rule recommendations), and any independent corroboration of these insight features' usefulness.",
+    "rationale": "Radar's ML risk scoring surfaces 'risk insights' explaining which factors drove a score and fraud analytics that visualize trends and flag attribute combinations impacting fraud rates, which are automated data-driven insights, but there is no evidence of generative/natural-language suggestions or an AI assistant surfacing recommendations inside the product. Missing for 10: evidence of LLM-generated narrative insights, proactive suggested actions, or a chat/assistant interface layered on the risk data beyond static dashboards and rule-based scoring.",
     "evidenceIds": [
       "stripe-radar-docs-19",
       "stripe-radar-docs-12",
       "stripe-radar-docs-4",
-      "stripe-radar-docs-7"
+      "stripe-radar-docs-26"
     ]
   },
   {
@@ -2567,13 +2566,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Radar's rule engine, auto-pause payouts, and value-list based allow/block rules run autonomously in the background once configured (stripe-radar-docs-1, docs-2, docs-3, docs-14, docs-17), fitting the 'set up automations that run without manual intervention' story. However, this is a fraud-rules automation, not an AI-agent-oriented automation framework, and community evidence notes some automation behaviors (e.g., allow rules) are gated behind manual support enablement rather than fully self-serve (stripe-radar-comm-7). Missing for 10: no evidence of AI-agent-triggered or scheduled/programmatic automation setup beyond static rule definitions, no independent confirmation of unattended long-running automation reliability.",
+    "rationale": "Radar rules (e.g., auto-request 3DS, auto-pause payouts on high dispute rate, auto-block by country) run autonomously in the background once configured, and risk settings can auto-adjust thresholds, satisfying the 'runs autonomously' portion of the story. However, this is rule-based configuration via dashboard/API rather than agent-driven or AI-native automation setup, and community evidence notes limited programmatic control and manual support intervention needed for overrides (stripe-radar-comm-2, stripe-radar-comm-7). Missing for 10: evidence of AI/agent-configurable automation workflows, and independent corroboration that rules run reliably without manual oversight at scale.",
     "evidenceIds": [
       "stripe-radar-docs-1",
       "stripe-radar-docs-2",
-      "stripe-radar-docs-3",
-      "stripe-radar-docs-14",
       "stripe-radar-docs-17",
+      "stripe-radar-docs-25",
+      "stripe-radar-docs-27",
+      "stripe-radar-comm-2",
       "stripe-radar-comm-7"
     ]
   },
@@ -2592,13 +2592,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Radar is API-driven (review approve/reject endpoints, rules API, value lists) and has a documented CLI, plus sandbox test card numbers for reproducible testing, all of which support headless/CI use. However, there is no explicit documentation of CI pipelines, automated test suites, or non-interactive setup workflows tailored to CI. missing for 10: explicit CI/automation guides, documented non-interactive setup, and evidence of headless integration examples.",
+    "rationale": "Radar operates via Stripe's API (reviews approve/reject, value lists, early fraud warnings) and Stripe CLI, allowing rules and reviews to be managed programmatically/headlessly, and Radar itself runs automatically without human intervention on every charge. However, community feedback specifically flags a 'lack of easy programmatic control' for adjusting risk behavior, and rule changes/allow-listing often require Dashboard or support intervention rather than pure API/CI workflows. Missing for 10: dedicated CI/automation guide, evidence of full rule-management API (beyond value lists), and resolution of the documented programmatic-control gap.",
     "evidenceIds": [
       "stripe-radar-docs-8",
-      "stripe-radar-docs-21",
-      "stripe-radar-docs-20",
       "stripe-radar-docs-10",
-      "stripe-radar-probe-5"
+      "stripe-radar-docs-21",
+      "stripe-radar-probe-5",
+      "stripe-radar-comm-2",
+      "stripe-radar-comm-7"
     ]
   },
   {
@@ -2641,8 +2642,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Stripe provides an official CLI (Stripe CLI) documented at docs.stripe.com/stripe-cli, which is used across Stripe products including Radar for testing, webhooks, and API interactions. Missing for 10: Radar-specific CLI usage examples and independent hands-on validation of CLI workflows specifically for Radar tasks.",
+    "confidence": "medium",
+    "rationale": "Stripe provides an official CLI (documented at docs.stripe.com/stripe-cli) which can be used for Radar-related API operations like managing rules, reviews, and testing; this is a general Stripe platform capability applicable to Radar. Missing for 10: Radar-specific CLI command examples and independent hands-on corroboration of CLI usage with Radar features specifically.",
     "evidenceIds": [
       "stripe-radar-probe-5"
     ]
@@ -2671,7 +2672,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar is a fraud-detection/rules product, not an identity/credentialing system; issuing scoped API credentials for agents is outside its product category and belongs to Stripe's core API key/Connect permissions tooling, not Radar itself.",
+    "rationale": "Stripe Radar is a fraud-detection/rules product, not an identity/credential-issuance system; scoped API credential issuance for agents is outside its product category (this is an axis for Stripe's core API keys/Connect, not Radar specifically).",
     "evidenceIds": []
   },
   {
@@ -2694,8 +2695,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents Radar's rules, reviews, risk insights, and testing APIs but never mentions webhook event subscriptions (e.g., review.opened, review.closed, early_fraud_warning.created) or any event-driven integration mechanism for Radar activity. Since Stripe products generally support webhook-based event subscriptions, this axis applies, but no evidence in this pack demonstrates it for Radar specifically.",
-    "evidenceIds": []
+    "rationale": "The evidence pack describes Radar's rules, reviews, and analytics APIs (e.g., reviews approve endpoint, early fraud warnings) but never mentions webhooks or event subscription mechanisms for Radar events. Since webhook subscription is a plausible and expected capability for a payments/fraud API product, its absence in the evidence means this axis is unaddressed rather than inapplicable.",
+    "evidenceIds": [
+      "stripe-radar-docs-8",
+      "stripe-radar-docs-9",
+      "stripe-radar-docs-21"
+    ]
   },
   {
     "productId": "stripe-radar",
@@ -2703,7 +2708,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack shows rules, reviews, risk insights, analytics, and dashboards, but nothing describes a built-in natural-language AI assistant for querying fraud data, drafting rules, or generating investigation summaries within the Radar console.",
+    "rationale": "No evidence of a built-in AI assistant for natural-language queries, drafted rules, or investigation summaries in Radar's console; documentation covers rules engine, review queue, risk insights, and analytics but no conversational AI assistant feature.",
     "evidenceIds": []
   },
   {
@@ -2712,7 +2717,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows standard markdown API reference pages (reviews.md, early_fraud_warnings.md, value_lists.md) but no evidence of an interactive, runnable API explorer — the openapi spec probe returned 404 on all candidate paths, and no mention of a live code-runner or interactive console appears anywhere in the pack.",
+    "rationale": "The evidence pack lists API reference endpoints (e.g., POST /v1/reviews/:id/approve) and markdown docs, but nothing shows an interactive reference with runnable/try-it code examples; probes even show the OpenAPI spec paths returning 404, suggesting no accessible interactive spec was found. Axis applies since API reference tooling is a normal expectation for an API product, but no supporting evidence exists.",
     "evidenceIds": [
       "stripe-radar-docs-8",
       "stripe-radar-docs-21",
@@ -2725,7 +2730,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows explicit probe attempts for an OpenAPI/swagger spec at Stripe docs domains all returning 404, and no other citation references a downloadable machine-readable API spec for Radar or Stripe's API.",
+    "rationale": "The evidence pack only shows probes for an OpenAPI spec at common paths, all returning 404, with no other citation of a published machine-readable API spec (OpenAPI or equivalent) for Radar/Stripe endpoints in this pack.",
     "evidenceIds": [
       "stripe-radar-probe-3"
     ]
@@ -2736,7 +2741,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe Radar docs explicitly document test card numbers for creating payments with specific risk levels in a sandbox environment (test mode) without touching production data, and this is core to Stripe's overall testing workflow. missing for 10: no explicit mention of full sandbox parity for Radar-specific rules/analytics or independent hands-on confirmation of sandbox fidelity.",
+    "rationale": "Stripe docs explicitly provide a sandbox/testing environment with specific test card numbers to simulate different risk levels without touching production data (docs-5, docs-20), letting developers/AI agents validate Radar rules safely. Missing for 10: no independent/community confirmation of sandbox parity with production behavior or automated agentic test workflows.",
     "evidenceIds": [
       "stripe-radar-docs-5",
       "stripe-radar-docs-20"
@@ -2747,23 +2752,24 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains only Radar feature/API endpoint docs and community pricing/false-positive discussion; none of it references API versioning, dated API versions, or a documented deprecation policy for Stripe's APIs.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention API versioning, version headers, or a deprecation policy for Stripe's API; the OpenAPI spec probe even 404s. This is a fair and applicable axis for a well-documented API product like Stripe, but no supporting evidence is present.",
     "evidenceIds": []
   },
   {
     "productId": "stripe-radar",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Radar's rules and value lists let you apply an action (block, 3DS, allow) to many transactions matching criteria at once, and the review queue is designed to avoid per-payment manual review, which is a form of bulk automation (stripe-radar-docs-1, stripe-radar-docs-3, stripe-radar-docs-10, stripe-radar-docs-18). However, the API surface shown only exposes single-item operations (e.g. POST /v1/reviews/:id/approve) with no documented batch/bulk endpoint for approving, rejecting, or acting on multiple reviews or transactions simultaneously. missing for 10: a documented bulk/batch API (e.g. approve many reviews in one call), evidence of programmatic multi-item selection, and independent confirmation that rule-based automation scales to large volumes without manual tuning.",
+    "rationale": "Radar rules and value lists let a merchant apply one rule automatically across all matching transactions (e.g., 3DS for all new-customer payments, blocking all foreign-issued cards), which is a form of bulk automation, and the review queue lets you triage many flagged payments without opening each one individually. However there is no documented bulk/batch API (e.g., approving many reviews or updating many value-list entries in one call) — the API shown is single-item (POST /v1/reviews/:id/approve) — so true bulk operations for AI-native/programmatic workflows are only partially evidenced. Missing for 10: bulk/batch API endpoints, documented CLI batch commands, or SDK examples processing many items in one call.",
     "evidenceIds": [
-      "stripe-radar-docs-1",
       "stripe-radar-docs-3",
       "stripe-radar-docs-10",
       "stripe-radar-docs-18",
-      "stripe-radar-docs-21"
+      "stripe-radar-docs-24",
+      "stripe-radar-docs-8",
+      "stripe-radar-probe-5"
     ]
   },
   {
@@ -2772,15 +2778,19 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Radar's rules engine lets users define conditions (new customer, country, dispute rate, value lists) that trigger automatic actions like blocking, requesting 3DS, reviewing, or pausing payouts, and rules can reference custom attributes/value lists — a solid automation-on-events model. However, community evidence indicates real limits on programmatic control (comm-2 notes 'lack of easy programmatic control') and that Allow Rules aren't even enabled by default and require a manual support request to activate (comm-7), undercutting full AI-native/automated self-service rule deployment. Missing for 10: documented API endpoints for creating/updating rules programmatically (only review-approval API is shown), and evidence that rule changes can be deployed without dashboard/manual steps.",
+    "rationale": "Radar's rule engine lets users define custom rules (block, review, request 3DS, allow via value lists) that trigger automatically based on payment event attributes, backed by extensive docs (stripe-radar-docs-1,2,3,10,14,17,23) and review-action APIs (stripe-radar-docs-8,21). However, community feedback notes friction with programmatic control and false positives requiring manual support intervention (stripe-radar-comm-2, stripe-radar-comm-3, stripe-radar-comm-7), and rules are primarily configured via Dashboard rather than a full rules-management API. Missing for 10: a dedicated public API for creating/editing rules programmatically, and stronger evidence of seamless automated control without manual overrides.",
     "evidenceIds": [
       "stripe-radar-docs-1",
       "stripe-radar-docs-2",
       "stripe-radar-docs-3",
+      "stripe-radar-docs-10",
       "stripe-radar-docs-14",
       "stripe-radar-docs-17",
-      "stripe-radar-docs-10",
+      "stripe-radar-docs-23",
+      "stripe-radar-docs-8",
+      "stripe-radar-docs-21",
       "stripe-radar-comm-2",
+      "stripe-radar-comm-3",
       "stripe-radar-comm-7"
     ]
   },
@@ -2790,7 +2800,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar is a fraud-detection/rules engine for payments, not a workflow scheduler or automation-orchestration tool; scheduling recurring jobs is outside its product category and not a fair axis for it.",
+    "rationale": "Stripe Radar is a fraud-detection/rules engine for payments, not a workflow/job scheduling product; scheduling recurring jobs or automations is outside its category and this axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -2798,8 +2808,8 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Radar rules are a form of automation (fraud rules, value lists, risk settings) so version/rollback capability is a fair question, but the evidence pack contains no mention of rule version history, change review, or rollback functionality for Radar rules or lists.",
+    "confidence": "high",
+    "rationale": "No evidence of versioning, review workflows, or rollback for Radar rules/automations themselves; rules can be created/edited but there's no documented version history, diff/review process, or rollback mechanism.",
     "evidenceIds": []
   },
   {
@@ -2808,30 +2818,33 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Radar's fraud-scoring, rules, reviews, and analytics features but contains no mention of any liability-shift guarantee or reimbursement for approved-then-disputed orders; Stripe Radar is a risk-scoring/rules engine, not an underwritten chargeback guarantee product.",
+    "rationale": "Radar's evidence covers fraud detection, rules, reviews, 3DS, dispute rate monitoring and analytics, but nowhere is there a chargeback/fraud liability guarantee that reimburses approved-then-disputed orders — Radar explicitly frames itself as prevention/detection, not a financial guarantee product.",
     "evidenceIds": [
       "stripe-radar-docs-6",
       "stripe-radar-docs-7",
-      "stripe-radar-docs-13"
+      "stripe-radar-docs-9",
+      "stripe-radar-docs-22"
     ]
   },
   {
     "productId": "stripe-radar",
     "storyId": "custom-rules-authoring",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Stripe Radar's rules engine explicitly supports combining risk score thresholds, list matches (value lists, trusted customer lists), and transaction/attribute conditions into allow, block, and review outcomes, with documented rule reference and review queue workflow (docs-1, docs-3, docs-10, docs-14, docs-17, docs-11, docs-18). Community reports confirm real-world rule usage and rule-driven blocking/whitelisting, though allow rules are gated behind support approval for newer accounts (comm-7) and some report false positives needing manual override (comm-3). Missing for 10: a concrete first-party example combining velocity counters + model score + list match in one compound rule, and independent hands-on confirmation of full rule-builder expressiveness beyond docs.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs confirm a full custom-rules engine supporting risk score thresholds, transaction attributes, value/list matching, and allow/block/review outcomes (docs-3, docs-10, docs-14, docs-17, docs-23, docs-11/18/24), plus rule reference and risk-setting controls (docs-13, docs-25). However, explicit velocity-counter attributes aren't directly evidenced, and community reports note limited programmatic control and friction enabling Allow Rules (comm-2, comm-7). missing for 10: explicit velocity-counter rule attributes, independent hands-on confirmation of full rule flexibility beyond documented examples.",
     "evidenceIds": [
-      "stripe-radar-docs-1",
       "stripe-radar-docs-3",
       "stripe-radar-docs-10",
       "stripe-radar-docs-14",
       "stripe-radar-docs-17",
+      "stripe-radar-docs-23",
       "stripe-radar-docs-11",
       "stripe-radar-docs-18",
-      "stripe-radar-comm-7",
-      "stripe-radar-comm-3"
+      "stripe-radar-docs-13",
+      "stripe-radar-docs-25",
+      "stripe-radar-comm-2",
+      "stripe-radar-comm-7"
     ]
   },
   {
@@ -2840,13 +2853,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Radar lets developers write custom rules against 'supported attributes' and value lists (docs-3, docs-10, docs-14), and Radar Session captures device/browser signals for fraud evaluation without full tokenization (docs-15) — this shows some capacity to incorporate custom signals. However, there's no evidence that arbitrary custom metadata or behavioral data actually feeds into or retrains Radar's core ML risk score itself (rather than just triggering rule-based overrides), and community commentary notes a 'lack of easy programmatic control' over scoring (comm-2). missing for 10: explicit documentation that custom metadata/behavioral inputs alter the underlying risk score model, first-party guidance on feeding proprietary signals into scoring, and independent confirmation this works as intended.",
+    "rationale": "Radar lets developers use custom metadata, value lists, and business-specific attributes in rules (stripe-radar-docs-3, stripe-radar-docs-10, stripe-radar-docs-14), and Radar Sessions can capture additional fraud signals (stripe-radar-docs-15), but these largely feed a separate rules/allow-list layer rather than directly retraining or reweighting the underlying ML risk score with developer-supplied device fingerprints or behavioral data. Missing for 10: documented mechanism for custom signals to alter the core Radar score itself (not just trigger rules), first-party support for arbitrary device-fingerprint ingestion, and independent confirmation that custom metadata materially changes scoring outcomes.",
     "evidenceIds": [
       "stripe-radar-docs-3",
       "stripe-radar-docs-10",
       "stripe-radar-docs-14",
       "stripe-radar-docs-15",
-      "stripe-radar-comm-2"
+      "stripe-radar-docs-19"
     ]
   },
   {
@@ -2855,7 +2868,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency options, regional data storage, or retention/deletion controls for Radar's fraud data; the docs cover rules, reviews, testing, and pricing only.",
+    "rationale": "No evidence in the pack addresses regional data residency options or configurable retention periods for fraud data; documentation covers rules, reviews, testing, and analytics but nothing about where data is stored or how long it's retained for compliance/privacy review purposes.",
     "evidenceIds": []
   },
   {
@@ -2864,11 +2877,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar's evidence covers fraud detection, rules, reviews, and risk insights, but nothing describes automated compilation of order/delivery/session evidence or automatic submission of chargeback dispute responses to issuers — that is Stripe's separate Disputes evidence-submission workflow, not documented here as automated (no-manual-copy-paste).",
+    "rationale": "The evidence pack covers Radar's fraud-prevention features (rules, reviews, risk scoring, testing, analytics) and only tangentially touches disputes via a dispute-rate measurement page (docs-7). There is no evidence of automated compilation of order/delivery/session evidence or automatic submission of that evidence to the card issuer without manual intervention — this is a distinct Stripe Disputes capability not documented here for Radar.",
     "evidenceIds": [
-      "stripe-radar-docs-9",
-      "stripe-radar-docs-7",
-      "stripe-radar-docs-19"
+      "stripe-radar-docs-7"
     ]
   },
   {
@@ -2877,30 +2888,29 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm Stripe surfaces dispute-rate calculations and fraud/volume trend visualizations on the Radar dashboard (dispute measurement, fraud-insights charts) plus a review queue for workload tracking, but there is no evidence of a false-positive-rate metric, an approval-rate-lift metric, or a board-ready export/reporting feature. missing for 10: false-positive rate metric, approval-rate lift metric, explicit data export/reporting for finance/board consumption.",
+    "rationale": "Radar's dashboard shows dispute-rate calculations, fraud/volume trend analytics, and review-queue metrics (docs-4, docs-7, docs-19, docs-26), giving a finance lead visibility into dispute rate, review workload, and fraud trends. However, there's no explicit mention of false-positive rate tracking, approval-rate lift metrics, or a dedicated board-ready export/reporting feature. missing for 10: false-positive rate metric, approval-rate lift measurement, explicit export-to-board/CSV or reporting API for finance stakeholders, independent confirmation of dashboard analytics accuracy.",
     "evidenceIds": [
-      "stripe-radar-docs-7",
       "stripe-radar-docs-4",
-      "stripe-radar-docs-11",
-      "stripe-radar-docs-18",
-      "stripe-radar-docs-19"
+      "stripe-radar-docs-7",
+      "stripe-radar-docs-19",
+      "stripe-radar-docs-26",
+      "stripe-radar-docs-24"
     ]
   },
   {
     "productId": "stripe-radar",
     "storyId": "lists-velocity-management",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe documents value lists for allow/block lists (customers, cards, emails, IPs) manageable via API and dashboard (stripe-radar-docs-10, docs-14) plus rules for velocity/custom attributes (docs-3, docs-1), giving vendor-side coverage of the story. However hands-on community reports contradict smooth programmatic control: one user cites 'lack of easy programmatic control' causing false-positive grief, and another found the dashboard's block-override button non-functional, requiring a support email to whitelist transactions; Stripe itself confirms Allow Rules are gated behind manual support enablement for newer accounts, not self-serve. Missing for 10: clear documentation of dedicated device/IP allow-and-block management (only cards/customers/emails are explicit), and no evidence the programmatic control gap or override bug has been resolved.",
+    "rationale": "Docs show value lists (customer IDs, cards, IPs, emails) manageable via Dashboard and API (value_lists.md), plus custom Radar rules for blocking/allowing based on these attributes, satisfying most of the allow/block list requirement. However, velocity-limit rules are not explicitly documented, and community reports note Allow Rules aren't enabled by default and require contacting support to activate, plus limited programmatic override control for false positives — a real caveat to 'managed programmatically'. Missing for 10: explicit velocity-limit configuration docs, device-fingerprint list management, and confirmation that allow-list activation is self-service via API without support intervention.",
     "evidenceIds": [
       "stripe-radar-docs-10",
       "stripe-radar-docs-14",
       "stripe-radar-docs-3",
-      "stripe-radar-docs-1",
-      "stripe-radar-comm-2",
-      "stripe-radar-comm-3",
-      "stripe-radar-comm-7"
+      "stripe-radar-docs-23",
+      "stripe-radar-comm-7",
+      "stripe-radar-comm-2"
     ]
   },
   {
@@ -2909,15 +2919,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe a review queue for flagged payments (docs-11, docs-18) that surfaces risk insights/signals (docs-19) and a network of related payments by customer ID, IP, or card (docs-12), plus approve/reject actions via API (docs-8, docs-21) enabling quick, consistent decisions. Missing for 10: explicit dedicated 'customer history' panel documentation and independent/hands-on confirmation that the queue UI delivers this context smoothly (community feedback notes UI clarity issues around overriding blocks, comm-3).",
+    "rationale": "Docs describe a review queue (transaction-reviews) that lets analysts examine flagged payments without reviewing every payment individually, with Risk Insights showing risk factors and a network view of related payments (same customer ID, IP, or card) that provides customer-history and similar-case context, plus API endpoints to approve/reject reviews. Missing for 10: independent/hands-on validation that the queue UI actually surfaces this context well in practice, and no explicit 'similar cases' clustering feature beyond the related-payments network.",
     "evidenceIds": [
       "stripe-radar-docs-11",
+      "stripe-radar-docs-12",
       "stripe-radar-docs-18",
       "stripe-radar-docs-19",
-      "stripe-radar-docs-12",
       "stripe-radar-docs-8",
-      "stripe-radar-docs-21",
-      "stripe-radar-comm-3"
+      "stripe-radar-docs-24"
     ]
   },
   {
@@ -2953,15 +2962,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe exposes API endpoints for some Radar objects (reviews approve/list, value lists, early fraud warnings retrieval) but rules creation/editing, risk settings, and review-queue configuration are documented only as Dashboard features with no corresponding API endpoints in the evidence pack. A community report explicitly flags 'lack of easy programmatic control' for Radar rule behavior, corroborating that UI-only configuration paths exist. Missing for 10: documented API endpoints for creating/updating rules, risk settings, and review-queue criteria; independent confirmation that all UI actions have API parity.",
+    "rationale": "Reviews (approve/decline), value lists, and early fraud warnings all have documented API endpoints, but Radar's core rule-authoring and risk-settings configuration are repeatedly described as Dashboard-only actions ('you can also create custom rules in the Dashboard'), with no API endpoint evidenced for creating/editing rules or risk thresholds. Community comments also note a 'lack of easy programmatic control' for overriding blocks, reinforcing that key workflows require the UI or support tickets rather than the API. Missing for 10: documented API for rule creation/editing, API for risk-settings adjustment, and independent confirmation that all UI actions have API parity.",
     "evidenceIds": [
-      "stripe-radar-docs-8",
-      "stripe-radar-docs-21",
-      "stripe-radar-docs-10",
-      "stripe-radar-docs-9",
       "stripe-radar-docs-3",
+      "stripe-radar-docs-8",
+      "stripe-radar-docs-9",
+      "stripe-radar-docs-10",
       "stripe-radar-docs-13",
-      "stripe-radar-comm-2"
+      "stripe-radar-docs-23",
+      "stripe-radar-comm-2",
+      "stripe-radar-comm-7"
     ]
   },
   {
@@ -2969,8 +2979,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of bulk/open-format data export or account portability for Stripe Radar; evidence covers fraud rules, review APIs, and testing but nothing about exporting all data and leaving in open formats.",
+    "confidence": "high",
+    "rationale": "No evidence of any data export or portability feature in open formats, or ability to leave with data intact; Stripe Radar's API access lets you retrieve data programmatically but there's no documented bulk export/leave capability described in the evidence.",
     "evidenceIds": []
   },
   {
@@ -2979,7 +2989,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar is a closed, proprietary SaaS fraud service; no evidence of any open-source license or public source repository for Radar itself. Documentation, pricing, and CLI/MCP references exist, but nothing indicates the product's source is available under an open license.",
+    "rationale": "Stripe Radar is a closed, proprietary SaaS fraud-detection service; there is no evidence of any open-licensed source code being published for review.",
     "evidenceIds": []
   },
   {
@@ -3001,7 +3011,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence pack shows Radar's API, rules, dashboard, and pricing/testing details but contains no mention of maintained integrations with Shopify, Salesforce Commerce, BigCommerce, or PSPs — only Stripe's own API/dashboard/CLI/MCP surfaces are documented.",
+    "rationale": "Evidence pack is entirely about Radar's API, rules, dashboard, and testing capabilities; there is no mention of maintained integrations with Shopify, Salesforce Commerce, BigCommerce, or other PSPs — only raw API/dashboard features are documented.",
     "evidenceIds": []
   },
   {
@@ -3010,7 +3020,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data locality controls for Stripe Radar; the docs focus on fraud rules, reviews, and testing.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data sovereignty controls for Radar; the axis applies to any AI-native SaaS product but is entirely unaddressed here.",
     "evidenceIds": []
   },
   {
@@ -3019,7 +3029,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar is a fraud-detection tool for payments, not an AI model/data-training product; controlling AI training data usage is a wrong-axis question for this product category.",
+    "rationale": "Stripe Radar is a fraud-detection engine for payments, not an AI model or AI training data pipeline; the story about opting out of AI model training data usage is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3027,8 +3037,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, data deletion controls, or privacy/data lifecycle management for Radar; the documentation focuses on fraud rules, reviews, and testing rather than retention/deletion controls.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data-lifecycle management for Radar; all evidence covers fraud rules, reviews, analytics, and pricing/false-positive complaints unrelated to retention/deletion.",
     "evidenceIds": []
   },
   {
@@ -3037,18 +3047,19 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Radar is a fraud-detection service for payment processing, not an AI agent/tool with telemetry collection relevant to AI-native privacy posture; opting out of telemetry/usage tracking is a category mismatch for this product type.",
+    "rationale": "Stripe Radar is a fraud-detection service for payment processing, not an AI agent/tool with telemetry to opt out of; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "stripe-radar",
     "storyId": "psd2-sca-optimization",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Radar rules can trigger 3DS for risky/new-customer transactions (stripe-radar-docs-1) and geo-based rules exist (stripe-radar-docs-17), but the evidence pack has no mention of SCA exemption requests (low-value, TRA, whitelisting) being handled by Radar, which is core to the 'exemptions requested when safe' half of the story. missing for 10: exemption request logic, explicit SCA/3DS decisioning engine documentation, evidence of automatic compliance-vs-conversion balancing beyond manual rule authoring.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Radar rules explicitly support triggering 3DS for risky payments (e.g., new customers) and blocking based on location, showing conditional SCA-related risk logic, but the evidence never mentions automatic exemption requests (e.g., low-risk/TRA exemptions) for safe transactions — that logic is not documented as part of Radar. missing for 10: explicit SCA exemption-request mechanism, evidence of EU-specific compliance handling, independent confirmation of exemption behavior.",
     "evidenceIds": [
       "stripe-radar-docs-1",
+      "stripe-radar-docs-23",
       "stripe-radar-docs-17",
       "stripe-radar-docs-13"
     ]
@@ -3059,12 +3070,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence describes Radar as a fraud tool built directly into Stripe's own payments stack (rules, reviews, disputes, testing cards, risk settings) with no mention of supporting other PSPs, gateways, or platforms; Radar's functionality is documented as inherently tied to Stripe-processed transactions.",
+    "rationale": "All evidence shows Radar is deeply integrated into Stripe's own payment processing stack (Stripe charges, Stripe Dashboard, Stripe test cards) with no mention of support for other PSPs, gateways, or platforms; a community comment even notes 'there is no good competition,' implying lock-in rather than portability. No evidence supports multi-PSP or cross-platform use, so the story is unmet despite being a fair question for a fraud-detection product.",
     "evidenceIds": [
       "stripe-radar-docs-6",
-      "stripe-radar-docs-13",
-      "stripe-radar-docs-22",
-      "stripe-radar-probe-2"
+      "stripe-radar-docs-27",
+      "stripe-radar-comm-6"
     ]
   },
   {
@@ -3073,28 +3083,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show Radar assigns a risk_level (e.g., 'highest') synchronously to charges created via test cards, implying risk evaluation happens as part of the same API call used to create a charge/PaymentIntent, and Radar Standard is described as providing out-of-the-box real-time fraud protection. However, the evidence pack never explicitly documents the risk_score field, exact API response shape, or explicit timing relative to authorization completion. Missing for 10: explicit documentation of the outcome.risk_score attribute returned on Charge/PaymentIntent objects, and explicit confirmation that scoring occurs before authorization completes rather than just being attached to the resulting charge.",
+    "rationale": "Stripe Radar is documented to screen every payment attempt synchronously as part of the charge/PaymentIntent flow, producing a risk_level/risk_score that determines block/allow/review outcomes in real time, and test cards exist to simulate specific risk levels (docs-5, docs-20, docs-27, docs-6). However, the evidence pack never shows a standalone, explicitly synchronous 'get risk score before authorization' API call with a documented request/response schema exposing the numeric score directly to developers outside the charge object — it's implied via risk_level on the charge rather than a dedicated scoring endpoint. Community reports also note friction with programmatic control over outcomes (comm-2). Missing for 10: a dedicated synchronous risk-scoring endpoint/response schema independent of charge creation, clearer documentation of the exact score field and timing guarantee, and independent hands-on confirmation of real-time synchronous scoring latency.",
     "evidenceIds": [
       "stripe-radar-docs-5",
       "stripe-radar-docs-20",
+      "stripe-radar-docs-27",
       "stripe-radar-docs-6",
-      "stripe-radar-docs-22"
+      "stripe-radar-comm-2"
     ]
   },
   {
     "productId": "stripe-radar",
     "storyId": "review-outcomes-feedback",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Radar's docs describe a review queue with approve/decline actions, dispute-rate tracking, and fraud-rate analytics over time, implying that outcomes are captured and monitored, and Stripe's ML model is described as network-wide and adaptive. However, there is no explicit documentation stating that individual analyst review decisions or confirmed-fraud outcomes are fed back to retrain the model or to auto-tune rules — rules remain manually authored (docs-3, docs-17) rather than machine-updated. Missing for 10: explicit statement of a closed feedback loop from review/dispute outcomes into model retraining, and evidence that rules are automatically adjusted based on confirmed fraud results.",
+    "rationale": "Radar provides a review queue with approve/decline actions (docs-8, docs-21, docs-24) and allow/block value lists that analysts can edit (docs-10, docs-14), giving a manual mechanism for adjusting future screening. However, there is no documentation stating that individual analyst decisions or confirmed fraud outcomes automatically retrain Stripe's global ML model — the closed-loop 'system learns from every case' claim is unevidenced beyond static rule/list edits. Missing for 10: explicit documentation of automated model retraining from case outcomes, evidence that closing a review as fraud/not-fraud feeds back into Radar's risk scoring model rather than just rules/lists.",
     "evidenceIds": [
-      "stripe-radar-docs-4",
-      "stripe-radar-docs-7",
-      "stripe-radar-docs-9",
+      "stripe-radar-docs-8",
       "stripe-radar-docs-21",
-      "stripe-radar-docs-3",
-      "stripe-radar-docs-19"
+      "stripe-radar-docs-24",
+      "stripe-radar-docs-10",
+      "stripe-radar-docs-14",
+      "stripe-radar-docs-9"
     ]
   },
   {
@@ -3118,12 +3129,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a backtesting feature that simulates a rule against historical transaction data to preview blocks/flags/cost before deployment; docs cover rule creation, test card numbers for sandbox, review queues, and analytics dashboards, but none describe retroactive rule simulation against past traffic.",
+    "rationale": "Evidence shows rule creation, testing with sandbox card numbers, and analytics/fraud-insights dashboards, but nothing describes simulating or backtesting a new rule against historical transaction data to preview what it would have blocked/flagged/cost before deployment.",
     "evidenceIds": [
-      "stripe-radar-docs-1",
       "stripe-radar-docs-3",
       "stripe-radar-docs-4",
-      "stripe-radar-docs-20"
+      "stripe-radar-docs-20",
+      "stripe-radar-docs-26"
     ]
   },
   {
@@ -3143,17 +3154,18 @@
     "productId": "stripe-radar",
     "storyId": "score-thresholds-actions",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Radar's rules engine lets ops map outcomes (block, review, allow, request 3DS) to custom conditions including risk attributes, and 'risk settings' explicitly frame this as balancing authorization vs fraud risk appetite rather than a fixed cutoff (docs-1, docs-3, docs-13, docs-14, docs-17, docs-18). However, there's no explicit documentation snippet showing a 'risk score range -> action' mapping UI, and community reports note that Allow Rules aren't enabled by default and that Block rules were not overridable via the UI, causing false positives requiring manual support intervention — a real caveat on self-service threshold tuning (comm-3, comm-7). Missing for 10: explicit score-range-to-action mapping documentation, and independent confirmation that ops can freely tune/override thresholds without support intervention.",
+    "rationale": "Stripe docs show custom Radar rules can act on risk score and other attributes to allow, block, require 3DS, or route to review (docs-1,17,23,3), plus a review queue (docs-18/24) and adjustable risk-setting thresholds tied to business risk tolerance (docs-13,25). However, community feedback flags friction in tuning this to a business's own appetite — lack of easy programmatic control causing rising false positives (comm-2) and Allow Rules requiring manual support enablement rather than self-service tuning (comm-7). missing for 10: independent confirmation that score-range-to-action mapping and threshold tuning work smoothly/self-service without support intervention, and clearer first-party documentation of a numeric score-to-action matrix (vs. rule-based heuristics).",
     "evidenceIds": [
       "stripe-radar-docs-1",
-      "stripe-radar-docs-3",
-      "stripe-radar-docs-13",
-      "stripe-radar-docs-14",
       "stripe-radar-docs-17",
+      "stripe-radar-docs-23",
+      "stripe-radar-docs-13",
+      "stripe-radar-docs-25",
       "stripe-radar-docs-18",
-      "stripe-radar-comm-3",
+      "stripe-radar-docs-14",
+      "stripe-radar-comm-2",
       "stripe-radar-comm-7"
     ]
   },
@@ -3163,11 +3175,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence that Radar accepts verified agent identity, signed agent tokens, or delegated spending scopes as a risk signal; rules reference generic attributes (customer, card, IP) not agentic-payment protocol constructs.",
+    "rationale": "No evidence that Radar accepts verified agent identity, signed agent tokens, or delegated spending scopes as risk signals; Radar's documented inputs are custom rules, value lists, risk insights, and card/customer attributes with no mention of agentic-payment protocols or agent-specific tokens.",
     "evidenceIds": [
       "stripe-radar-docs-3",
       "stripe-radar-docs-10",
-      "stripe-radar-docs-13"
+      "stripe-radar-docs-19"
     ]
   }
 ]
