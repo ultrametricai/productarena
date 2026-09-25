@@ -14,6 +14,10 @@ export interface SwapOption {
   id: string
   name: string
   agentReady: number | null
+  // Resolved server-side (lib/logos.ts needs node:fs) so the simulator's client-side role
+  // picker can render real logo chips (ProductLogoView). Optional: older/leaner call sites
+  // that never resolve it fall back to the initial-letter chip.
+  hasLogo?: boolean
 }
 
 export interface VendorRole {
