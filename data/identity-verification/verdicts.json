@@ -650,17 +650,21 @@
     "productId": "persona",
     "storyId": "agent-onboarding-decisions",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Persona's API/webhooks return structured inquiry/verification statuses, decisioning, risk signals (watchlist, PEP, adverse media reports), and failure reasons, and workflows can auto-tag risk conditions for branching logic, with polling and webhook options for automated onboarding flows. missing for 10: no explicit documented schema/example of failure-reason codes or a worked agent-branching example, and no independent/hands-on corroboration beyond vendor docs.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Persona's API/webhooks expose structured, machine-readable verification data: real-time status updates (approved/declined/review) via webhooks and polling, verification-specific answers (e.g., 'does the ID support identity claim', 'is individual present'), and dedicated risk reports (Watchlist, PEP, Adverse Media) that agents could parse to branch decisions, plus Workflows for automating decisioning logic based on these signals. Missing for 10: explicit JSON schema/examples of failure-reason codes or risk-signal payload structure, and any independent/hands-on confirmation that agents actually consume these fields programmatically for branching logic.",
     "evidenceIds": [
+      "persona-docs-21",
+      "persona-docs-27",
+      "persona-docs-34",
       "persona-docs-6",
       "persona-docs-15",
-      "persona-docs-21",
+      "persona-docs-19",
+      "persona-docs-45",
+      "persona-docs-16",
+      "persona-docs-5",
       "persona-docs-23",
-      "persona-docs-27",
-      "persona-docs-25",
-      "persona-docs-19"
+      "persona-docs-41"
     ]
   },
   {
@@ -669,14 +673,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Persona's REST API supports pre-creating inquiries (sessions), polling inquiry/verification status, and retrieving report data via webhooks and API calls, which covers much of the 'agent operates the pipeline' story. However, there is no evidence of an MCP surface, no explicit mention of scoped/limited API credentials, and no clear API-level mechanism for an agent to trigger ad-hoc re-checks (only scheduled recurring reports via Workflows are mentioned). missing for 10: MCP server/tool surface, scoped credential/API-key model, explicit agent-triggered re-verification endpoint.",
+    "rationale": "Persona's API clearly supports agent-style automation: pre-creating inquiries (docs-18), polling status/fetching verification details (docs-27), webhooks for outcome updates (docs-21,34), and workflows that can trigger additional reports (docs-23,41). However there is no MCP server/surface mentioned anywhere in the evidence, no explicit 'trigger re-check' endpoint beyond workflow-triggered re-reports, and credential scoping is only weakly evidenced via IP allowlisting (docs-36) rather than fine-grained scoped API keys. Missing for 10: MCP surface, explicit re-check/retry API, granular scoped-credential mechanism (e.g., per-session tokens), independent confirmation of agent-driven orchestration.",
     "evidenceIds": [
       "persona-docs-18",
       "persona-docs-27",
       "persona-docs-21",
-      "persona-docs-19",
+      "persona-docs-34",
       "persona-docs-23",
-      "persona-docs-5"
+      "persona-docs-41",
+      "persona-docs-36",
+      "persona-docs-9"
     ]
   },
   {
@@ -685,11 +691,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A dedicated llms.txt file exists at a versioned URL (docs-17, docs-29) and is confirmed live via direct probe returning HTTP 200 with explicit 'Instructions for AI Agents' guidance on fetching clean Markdown docs (probe-1), showing Persona explicitly supports agent-oriented documentation consumption. Missing for 10: independent third-party corroboration of agents successfully using this in practice.",
+    "rationale": "Persona hosts a live llms.txt (persona-probe-1, HTTP 200) with explicit instructions for AI agents on how to fetch clean Markdown of any doc page, and the evidence pack also shows a versioned llms.txt (persona-docs-17, 29, 37-39) referencing detailed agent-oriented docs like webhook filters and headers. This directly matches the story of pointing an agent at llms.txt/agent-oriented docs. Missing for 10: no independent third-party report confirming an agent successfully consumed this llms.txt in practice.",
     "evidenceIds": [
       "persona-probe-1",
       "persona-docs-17",
-      "persona-docs-29"
+      "persona-docs-29",
+      "persona-docs-37",
+      "persona-docs-38",
+      "persona-docs-39"
     ]
   },
   {
@@ -697,9 +706,14 @@
     "storyId": "agentic-ai-insights",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Persona's evidence covers identity verification workflows, reports, webhooks, and rule-based automation (workflows to tag high-risk inquiries), but there is no mention of AI-generated insights or suggestions surfaced to users from their data — the automation described is rules/decisioning based, not generative AI insight delivery.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Persona's docs describe rules-based workflows, decisioning, and reports (risk assessment, watchlist/PEP checks) but never describe AI/ML-generated insights or suggestions surfaced to users from their data—automation here means configurable rule triggers, not generative or predictive AI outputs.",
+    "evidenceIds": [
+      "persona-docs-5",
+      "persona-docs-14",
+      "persona-docs-23",
+      "persona-docs-41"
+    ]
   },
   {
     "productId": "persona",
@@ -707,14 +721,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Persona's Workflows engine and scheduled Reports let users configure background automations (auto-tagging high-risk inquiries, running additional reports on conditions, recurring Watchlist/PEP checks) plus webhooks for async status updates — all running without manual intervention. However, this is rule-based workflow automation, not AI-agent-driven automation, and there's no evidence of natural-language/AI-native setup of these automations. Missing for 10: evidence of AI/LLM-driven automation configuration, and independent/hands-on confirmation that workflows run reliably autonomously at scale.",
+    "rationale": "Persona's Workflows feature lets users define triggers that automatically tag risk, run additional reports, or ingest third-party data without manual intervention, and Reports can be scheduled to run on recurring intervals — both are genuine background automations. However, these are docs-only enterprise workflow/report configurations, not automation aimed at 'AI-native' users or exposed as an agent-friendly automation API. Missing for 10: evidence of AI-agent-specific automation setup, independent/hands-on confirmation that workflows run unattended reliably, and any AI-native tooling around workflow creation.",
     "evidenceIds": [
       "persona-docs-5",
       "persona-docs-14",
       "persona-docs-23",
+      "persona-docs-41",
+      "persona-docs-42",
       "persona-docs-19",
       "persona-docs-28",
-      "persona-docs-21"
+      "persona-docs-43"
     ]
   },
   {
@@ -723,25 +739,24 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is an identity verification/compliance API platform, not a product with a built-in AI assistant for task delegation; this axis is a category error for this product type.",
+    "rationale": "Persona is an identity verification/compliance API platform, not a product with a built-in AI assistant UI for delegating tasks; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "persona",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Persona is fundamentally an API-first platform that can be operated fully headlessly, and it provides explicit integration-testing tooling (Simulate Actions, sandbox mode with force pass/fail toggles) designed to programmatically test inquiry/verification behavior without a UI, plus webhooks and workflows for automation-driven triggering — all strong signals for CI-style automation. However, there's no explicit CI/CD documentation, pipeline examples, or third-party confirmation of running it inside a CI system. Missing for 10: explicit CI/CD integration guides or examples, independent/hands-on confirmation of headless automation in a CI pipeline.",
+    "rationale": "Persona is API/webhook-driven with sandbox mode, simulate actions for programmatic testing, and pre-creation of inquiries via API, all of which support headless/CI-style automation of identity verification workflows. However, there is no explicit CLI, no documented CI/CD integration examples, and no first-class 'headless mode' framing — missing for 10: dedicated CLI or CI-pipeline documentation, explicit headless-mode guidance, and independent/hands-on evidence of running Persona in an automated pipeline.",
     "evidenceIds": [
       "persona-docs-9",
       "persona-docs-26",
-      "persona-docs-3",
       "persona-docs-13",
-      "persona-docs-22",
+      "persona-docs-35",
       "persona-docs-18",
-      "persona-docs-21",
-      "persona-docs-23"
+      "persona-docs-27",
+      "persona-docs-33"
     ]
   },
   {
@@ -750,7 +765,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is an identity verification/compliance API platform, not an AI agent or assistant; consuming MCP servers as tools is outside its product category, making this a category error rather than a missing capability.",
+    "rationale": "Persona is an identity-verification/compliance platform, not an AI agent; the evidence pack shows APIs, webhooks, workflows, and SDKs but no MCP client capability for plugging in external tool servers. This axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -758,13 +773,9 @@
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Persona is an identity verification platform, not an agent, so publishing an official MCP server is a plausible ecosystem offering, but the evidence pack only documents REST API, webhooks, and llms.txt agent-friendly docs — no MCP server is mentioned anywhere.",
-    "evidenceIds": [
-      "persona-docs-1",
-      "persona-docs-21",
-      "persona-probe-1"
-    ]
+    "confidence": "high",
+    "rationale": "Persona is an identity verification platform; evidence shows a REST API, webhooks, and an llms.txt for AI-agent doc navigation, but no evidence of an official MCP server exposing Persona's tools to AI agents.",
+    "evidenceIds": []
   },
   {
     "productId": "persona",
@@ -781,7 +792,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is an identity verification API/platform; evidence covers API, webhooks, workflows, and sandbox testing but no mention of an official CLI tool for AI-native workflows.",
+    "rationale": "No evidence of an official CLI tool for Persona; the docs cover API, SDKs, webhooks, and hosted flows but never mention a command-line interface.",
     "evidenceIds": []
   },
   {
@@ -790,14 +801,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Persona provides a well-documented public REST API for identity verification, reports, workflows, webhooks, sandbox testing, and inquiry pre-creation, allowing an AI-native user to drive the full lifecycle programmatically rather than only via hosted UI. Missing for 10: independent/hands-on developer corroboration beyond first-party docs, and explicit confirmation of official client SDKs or OpenAPI spec for agent tooling.",
+    "rationale": "Persona ships a well-documented REST API covering inquiries, verifications, reports, workflows, accounts, and webhooks, with a dedicated API reference, sandbox testing mode, and even an llms.txt AI-agent guidance file confirming programmatic/documented access. missing for 10: independent third-party developer accounts of API usage beyond Persona's own docs, and no explicit API versioning/rate-limit/authentication deep-dive in the pack.",
     "evidenceIds": [
       "persona-docs-1",
-      "persona-docs-18",
-      "persona-docs-21",
-      "persona-docs-27",
       "persona-docs-9",
-      "persona-docs-3",
+      "persona-docs-18",
+      "persona-docs-27",
+      "persona-docs-35",
       "persona-probe-1"
     ]
   },
@@ -806,20 +816,24 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Persona's docs mention API keys and IP allowlisting for security (persona-docs-36) but provide no evidence of scoped, least-privilege, or agent-specific API credential issuance (e.g., granular permission scopes, per-agent tokens, or role-based key generation). The axis is applicable since Persona exposes an API and could plausibly offer such controls, but no evidence supports the capability as described.",
+    "evidenceIds": [
+      "persona-docs-36"
+    ]
   },
   {
     "productId": "persona",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs mention 'Mobile SDKs' and an 'Embedded Flow' as the most comprehensive integration path, implying official SDKs exist, but no evidence pack items detail specific language/server SDKs, versioning, or SDK documentation depth needed for an AI-native builder. Missing for 10: explicit list of official SDKs (e.g., Node/Python/Ruby), SDK-specific docs or code samples, and any AI-agent-oriented SDK tooling beyond the generic llms.txt discovery mechanism.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm official Mobile SDKs (iOS, Android, React Native) and a REST API reference, giving developers real official building blocks, but there's no evidence of server-side language SDKs (e.g., Node, Python, Ruby) or any AI/agent-specific SDK tooling. missing for 10: official backend/server-side language SDKs, AI-agent-specific SDK or agent framework integration, independent developer corroboration of SDK quality",
     "evidenceIds": [
+      "persona-docs-32",
       "persona-docs-20",
-      "persona-probe-1"
+      "persona-docs-33",
+      "persona-docs-1"
     ]
   },
   {
@@ -828,11 +842,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Persona documents webhook subscriptions for events on any resource, real-time status updates, filtering to subsets of events, and OAuth 2.0 authenticated deliveries — a clear, well-documented webhook subscription capability. Missing for 10: independent/hands-on corroboration outside vendor docs and detail on payload/retry semantics.",
+    "rationale": "Persona documents webhooks with real-time event notifications, event filters (subsets of events), attribute blocklists, custom headers, and OAuth2 authenticated deliveries, covering subscription and configuration well. Missing for 10: no independent/hands-on corroboration of webhook reliability and no explicit list of subscribable event types in evidence.",
     "evidenceIds": [
       "persona-docs-2",
-      "persona-docs-17",
       "persona-docs-21",
+      "persona-docs-34",
+      "persona-docs-37",
+      "persona-docs-38",
+      "persona-docs-39",
       "persona-docs-29"
     ]
   },
@@ -841,15 +858,14 @@
     "storyId": "aml-watchlist-screening",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Persona's Reports API explicitly supports Watchlist, PEP, and Adverse Media screening (persona-docs-15), can be orchestrated silently alongside identity verification within the same integration (persona-docs-25), and can be scheduled to run periodically for continuous monitoring (persona-docs-19, persona-docs-28), with Workflows enabling automated tagging and decisioning across these checks (persona-docs-23) — all under one API/vendor and webhook-driven review surface (persona-docs-21). Missing for 10: independent/hands-on confirmation that the unified review UI actually surfaces all three screening types together in practice, rather than only documented API capability.",
+    "confidence": "high",
+    "rationale": "Persona natively supports Watchlist, PEP, and Adverse Media report types alongside identity verification within the same inquiry/account, with recurring monitoring and a unified Cases review surface — one vendor, one API. missing for 10: no independent/third-party corroboration of screening accuracy or coverage breadth, and no explicit description of a single combined 'review surface' UI screenshot showing ID + watchlist results together.",
     "evidenceIds": [
       "persona-docs-15",
       "persona-docs-25",
-      "persona-docs-19",
       "persona-docs-28",
-      "persona-docs-23",
-      "persona-docs-21"
+      "persona-docs-43",
+      "persona-docs-19"
     ]
   },
   {
@@ -858,8 +874,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a standard API reference and docs (with markdown/llms.txt access for agents) but no mention of an interactive explorer or runnable/executable code examples within the docs themselves.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Persona has extensive API reference docs and sandbox testing tools, but nothing describes an interactive API reference with runnable/executable examples (e.g., a try-it console). Missing for 10: interactive API explorer, in-browser runnable code samples, evidence of live request execution from docs.",
+    "evidenceIds": [
+      "persona-docs-1",
+      "persona-docs-9",
+      "persona-docs-26"
+    ]
   },
   {
     "productId": "persona",
@@ -867,8 +887,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes an extensive REST API reference and llms.txt for markdown docs, but nowhere does it mention a downloadable OpenAPI/Swagger spec or other machine-readable API schema file.",
-    "evidenceIds": []
+    "rationale": "The evidence pack describes Persona's API reference and llms.txt for AI agents, but nowhere mentions a downloadable OpenAPI/Swagger spec or other machine-readable API definition file. This is a fair axis for an API-first product like Persona, so absence of evidence means the story is unmet.",
+    "evidenceIds": [
+      "persona-docs-1",
+      "persona-probe-1"
+    ]
   },
   {
     "productId": "persona",
@@ -876,13 +899,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Persona explicitly documents a sandbox mode that avoids real verifications and usage charges, plus integration-testing 'Simulate Actions' and a force pass/fail toggle to exercise all states without touching production data. missing for 10: independent/hands-on developer corroboration of sandbox behavior and details on how sandbox data isolation is enforced across environments.",
+    "rationale": "Persona provides a documented sandbox mode that avoids real verifications and usage charges, plus Simulate Actions and force pass/fail toggles to test all integration states without touching production data. This directly satisfies the story with first-party docs covering setup, testing, and safety guarantees. Missing for 10: independent/hands-on developer confirmation beyond vendor docs, and no explicit mention of separate sandbox vs production API keys/environments workflow details.",
     "evidenceIds": [
       "persona-docs-3",
       "persona-docs-13",
-      "persona-docs-9",
       "persona-docs-22",
-      "persona-docs-26"
+      "persona-docs-9",
+      "persona-docs-26",
+      "persona-docs-35"
     ]
   },
   {
@@ -900,11 +924,17 @@
   {
     "productId": "persona",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Persona's API supports individual inquiry creation, polling, and workflow automation of repetitive decisions, but no documentation of a bulk/batch endpoint for operating on many items at once (e.g., batch verification submission, bulk report runs, or multi-item API calls).",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Persona's Workflows can automate decisions across many inquiries and Reports can be scheduled to run repeatedly against accounts, giving some automation-depth, but there is no documented bulk/batch API endpoint for creating, verifying, or processing many items in a single call. Missing for 10: explicit bulk-create/batch-verify endpoints, evidence of processing multiple accounts/inquiries in one request, and any bulk export or batch report generation across many items.",
+    "evidenceIds": [
+      "persona-docs-18",
+      "persona-docs-19",
+      "persona-docs-23",
+      "persona-docs-28",
+      "persona-docs-41"
+    ]
   },
   {
     "productId": "persona",
@@ -912,15 +942,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Persona's Workflows feature explicitly supports defining conditional automation ('automatically tag high-risk inquiries, run additional reports when specific conditions are met'), combined with webhooks for real-time event notifications and scheduled/recurring report triggers, directly matching the rule-based, event-triggered action story. missing for 10: independent/hands-on corroboration of workflow rule authoring and no detail on the rule-definition UI/DSL specifics.",
+    "rationale": "Persona's Workflows feature explicitly lets users define trigger-based automation rules — 'All workflows begin with a trigger' and can 'automatically tag high-risk inquiries, run additional reports when specific conditions are met, or ingest non-Persona, 3rd party data,' directly matching the story of automatic event-triggered actions. This is reinforced by webhook event support for reacting to state changes. Missing for 10: independent/hands-on corroboration of the workflow builder in practice and deeper documentation of conditional logic/rule complexity.",
     "evidenceIds": [
       "persona-docs-5",
       "persona-docs-14",
       "persona-docs-23",
-      "persona-docs-2",
+      "persona-docs-41",
+      "persona-docs-42",
       "persona-docs-21",
-      "persona-docs-19",
-      "persona-docs-28"
+      "persona-docs-34"
     ]
   },
   {
@@ -929,13 +959,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Persona's Workflows feature automates repetitive decisions on events, and Reports can explicitly be scheduled to run at regular intervals (e.g., monthly/yearly watchlist checks), which is a genuine recurring-job capability. However, this is narrowly scoped to identity/report re-checks rather than a general-purpose recurring workflow/job scheduler an AI-native user could apply broadly. Missing for 10: a generic cron-like scheduling API for arbitrary workflows, documentation of scheduling cadence/configuration options, and evidence of AI-agent-triggered or -managed recurring jobs.",
+    "rationale": "Persona documents recurring scheduled jobs in the form of Reports configured to run at regular intervals (e.g., monthly/yearly Watchlist Reports) and Workflows triggered automatically to automate repetitive decisions, which satisfies a narrow slice of 'recurring jobs' automation. However, this is compliance-report scheduling rather than a general-purpose recurring workflow/job scheduler for AI-native automation use cases. Missing for 10: explicit API/agent-facing scheduling controls (cron-like intervals, arbitrary job types), documentation of workflow trigger types beyond a passing mention, and any AI-native/agent-specific automation tooling.",
     "evidenceIds": [
-      "persona-docs-5",
-      "persona-docs-14",
       "persona-docs-19",
+      "persona-docs-28",
+      "persona-docs-42",
       "persona-docs-23",
-      "persona-docs-28"
+      "persona-docs-41"
     ]
   },
   {
@@ -944,20 +974,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Persona's docs describe building and running Workflows for automation (docs-5, docs-14, docs-23) but contain no mention of version history, review/approval processes, or rollback capabilities for those workflows or automations.",
-    "evidenceIds": [
-      "persona-docs-5",
-      "persona-docs-14",
-      "persona-docs-23"
-    ]
+    "rationale": "Persona's Workflows feature supports building automations (triggers, actions, tagging, decisioning) but no evidence pack item mentions versioning, review history, audit trails, or rollback capability for workflows/automations.",
+    "evidenceIds": []
   },
   {
     "productId": "persona",
     "storyId": "biometric-consent-compliance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Persona's product features (verifications, workflows, reports, webhooks, sandbox testing) but contains no documentation addressing legal bases for biometric processing (GDPR, BIPA), lawful consent language, or compliance guidance a founder's legal team could review.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains only product/integration documentation (APIs, webhooks, workflows, reports, sandbox testing) with no mention of GDPR legal bases, BIPA or other US biometric statutes, or model consent language for legal review. Missing for 10: GDPR lawful-basis documentation, BIPA/state biometric statute guidance, and sample consent/notice language.",
     "evidenceIds": []
   },
   {
@@ -966,8 +992,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers verification flows, workflows, reports, webhooks, and sandbox testing, but nothing describes funnel analytics dashboards, pass-rate/drop-off metrics, or completion-time-by-country/document-type reporting for founders.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers API integration, webhooks, workflows, reports, and testing tools, but contains no mention of a funnel analytics dashboard showing pass rates, drop-off points, or completion time broken out by country/document type. The closest item (persona-docs-43) describes 'Cases' analytics like SLAs and case resolution rates for ops teams, not verification funnel conversion metrics for founders.",
+    "evidenceIds": [
+      "persona-docs-43"
+    ]
   },
   {
     "productId": "persona",
@@ -975,7 +1003,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack describes retention windows, a redaction or deletion API, or any PII-scrubbing mechanism; the docs cover verification flows, workflows, reports, webhooks and sandbox testing but nothing about data lifecycle/deletion controls.",
+    "rationale": "The evidence pack covers webhooks, verification methods, workflows, and security features like IP allowlisting and webhook attribute blocklists, but contains no documentation of data retention windows or a redaction/deletion API for scrubbing collected PII on demand. This axis clearly applies to an identity verification platform handling sensitive PII, but no supporting evidence exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -984,12 +1012,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm Persona supports database-based verification methods (e.g., 'database lookups' in persona-docs-12) and various no-document report types like Address Lookup, Watchlist, PEP, and Adverse Media (persona-docs-15, 25, 28) that can run without a document scan. However, there is no explicit mention of SSN verification, national ID registry checks, or credit-header (bureau) based identity verification, which are the specific mechanisms named in the story. Missing for 10: explicit SSN verification flow, national registry lookup details, credit-header/bureau-based verification documentation, and independent confirmation these no-doc checks work end-to-end.",
+    "rationale": "Persona's docs mention 'database lookups' as an identity verification method and list document-free Reports (Address Lookup, Watchlist, PEP, Adverse Media) that verify against authoritative external data sources rather than a document scan. However, there is no explicit mention of SSN-specific verification, national ID registry checks, or credit-header/credit-bureau data as a distinct product capability. Missing for 10: explicit SSN verification method, named national registry integrations, credit-header data source, and any hands-on/independent confirmation of these document-free flows.",
     "evidenceIds": [
       "persona-docs-12",
       "persona-docs-15",
-      "persona-docs-25",
-      "persona-docs-28"
+      "persona-docs-6",
+      "persona-docs-19",
+      "persona-docs-25"
     ]
   },
   {
@@ -997,9 +1026,13 @@
     "storyId": "deepfake-injection-defense",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only mentions generic 'liveness checks' and Selfie Verification presence checks, with no named detection capabilities against AI-generated faces, deepfakes, or camera-injection attacks.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "The evidence mentions generic 'liveness checks' and 'Selfie Verification' but never names specific defenses against AI-generated faces, deepfakes, or camera-injection attacks — no documented detection capability by name is provided, only marketing-level references to identity verification and selfie/liveness checks.",
+    "evidenceIds": [
+      "persona-docs-12",
+      "persona-docs-16",
+      "persona-docs-24"
+    ]
   },
   {
     "productId": "persona",
@@ -1007,10 +1040,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Persona performs government ID verification and selfie/liveness checks (persona-docs-12, persona-docs-24), but there is no documentation of a published breadth list of supported countries or specific document types (passports, national IDs, driver licenses, residence permits) as the story requires.",
+    "rationale": "The evidence pack confirms Persona performs government ID verification generically (persona-docs-12, persona-docs-45) but contains no published list of supported countries or document types (passports, national IDs, driver licenses, residence permits) as the story requires.",
     "evidenceIds": [
       "persona-docs-12",
-      "persona-docs-24"
+      "persona-docs-45"
     ]
   },
   {
@@ -1019,86 +1052,93 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Persona documents pre-creating inquiries server-side via API, hosted flows requiring no frontend code, embedded/drop-in flows for web and mobile, combined government-ID plus selfie (liveness) verification within a single inquiry template, and webhooks/polling to read final results. This covers the full story: server-side session creation, redirect or embed, and result retrieval without building capture UI. missing for 10: no independent/hands-on developer report confirming the end-to-end flow works as documented, and no explicit code sample showing the exact API call sequence for creating a session and reading results.",
+    "rationale": "Docs confirm hosted flow (redirect, no frontend code), embedded flow (iframe/modal), server-side inquiry pre-creation via API, government-ID and selfie verifications, and webhook-based result retrieval — covering the full create-session/redirect-or-embed/read-result loop without building capture UI. missing for 10: independent/hands-on developer corroboration beyond vendor docs, and explicit end-to-end code sample tying session creation to webhook result read in one flow.",
     "evidenceIds": [
       "persona-docs-8",
       "persona-docs-11",
-      "persona-docs-18",
       "persona-docs-20",
+      "persona-docs-30",
+      "persona-docs-31",
+      "persona-docs-18",
+      "persona-docs-45",
       "persona-docs-16",
-      "persona-docs-24",
       "persona-docs-21",
-      "persona-docs-27"
+      "persona-docs-34"
     ]
   },
   {
     "productId": "persona",
     "storyId": "kyb-business-verification",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers only individual identity verification (government ID, selfie, watchlist/PEP/adverse-media reports) and generic workflow/webhook infrastructure — there is no mention of business registry lookups, UBO identification, or a documented KYB-to-KYC chaining flow for business owners. Since business verification is a plausible offering for an identity-verification platform, absence of evidence means this axis is unmet rather than inapplicable.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Persona documents that Accounts can represent an individual or a business and that Connect enables sharing of KYC/KYB data between organizations, and Reports (Watchlist, PEP, Adverse Media) can chain onto individuals — but the evidence never describes specific business registry lookups or UBO (ultimate beneficial owner) identification workflows tying owners back to KYC. missing for 10: explicit registry/company-lookup report type, UBO identification/ownership-graph documentation, and an end-to-end KYB→KYC chaining example.",
     "evidenceIds": [
+      "persona-docs-40",
+      "persona-docs-44",
       "persona-docs-15",
       "persona-docs-25",
-      "persona-docs-28",
-      "persona-docs-6"
+      "persona-docs-28"
     ]
   },
   {
     "productId": "persona",
     "storyId": "manual-review-queues",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Persona's docs confirm manual review exists and that workflows can automate/reduce manual review time, with webhooks signaling when a user 'requires further review' — implying an orchestration layer around borderline cases. However, there's no direct evidence describing a manual review queue UI showing document images, extracted fields, and check results, nor explicit documentation that reviewer decisions are written back into the verification record. missing for 10: documentation of the review queue interface with full evidence bundle (images, extracted fields, checks), explicit reviewer decision write-back into the inquiry/account record.",
+    "rationale": "Persona's Cases feature provides a configurable UI for operations teams with built-in analytics, SLAs, and automations, and Workflows explicitly reduce manual review time by automating decisions and tagging high-risk inquiries — together these support a manual-review-queue orchestration story. However, the evidence doesn't explicitly detail that the queue surfaces full evidence (document images, extracted fields, check results) or confirm that reviewer decisions are written back into the underlying record/account. Missing for 10: explicit documentation of evidence display within Cases, and explicit confirmation of reviewer decision write-back to the account/inquiry record.",
     "evidenceIds": [
+      "persona-docs-43",
       "persona-docs-5",
       "persona-docs-14",
-      "persona-docs-21",
-      "persona-docs-23"
+      "persona-docs-23",
+      "persona-docs-41",
+      "persona-docs-21"
     ]
   },
   {
     "productId": "persona",
     "storyId": "native-sdk-capture",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs confirm Persona offers native Mobile SDKs and an Embedded web Flow as the 'most comprehensive' integration option (persona-docs-20), implying camera-based document capture, but there is no evidence describing glare, blur, or edge-detection coaching features guiding users to a usable photo. missing for 10: specific documentation of in-SDK capture UX (glare/blur detection, edge detection, first-try guidance), any hands-on or independent corroboration of capture quality coaching.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm native iOS and Android Mobile SDKs plus Embedded Flow for web and Government ID Verification capture (persona-docs-32, persona-docs-20, persona-docs-31, persona-docs-45), supporting the core SDK claim, but there is no mention of specific guided-capture coaching features like glare detection, blur detection, or edge detection to help users get a usable photo on the first try. Missing for 10: explicit documentation of glare/blur/edge-detection coaching UI, first-try success metrics, or independent/hands-on corroboration of capture guidance quality.",
     "evidenceIds": [
+      "persona-docs-32",
       "persona-docs-20",
-      "persona-docs-12"
+      "persona-docs-31",
+      "persona-docs-45"
     ]
   },
   {
     "productId": "persona",
     "storyId": "no-code-verification-links",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Persona's Hosted Flow explicitly supports a no-code, redirect-based verification link ('fastest setup, no frontend code required' and 'fastest way without any code') which fits sending a link to a one-off individual without engineering. However, there is no explicit evidence of a QR-code generation feature, nor of an ops-lead-facing dashboard UI to generate/send one-off links without any engineering setup for template configuration. missing for 10: explicit QR code support, evidence of a self-serve ops dashboard for creating/sending one-off links without any initial engineering setup.",
+    "rationale": "Persona explicitly offers a Hosted Flow (\"redirect users to a Persona-hosted page... no frontend code required\") which supports the no-code link concept for one-off verifications (persona-docs-8, persona-docs-11, persona-docs-30). However, there is no evidence of a QR-code generation feature, nor of a dashboard workflow letting an ops lead self-serve create a one-off invite without any engineering/API involvement (pre-creating inquiries is described via the API, persona-docs-18). missing for 10: QR code support, ops-only dashboard link generation without any API/engineering step.",
     "evidenceIds": [
       "persona-docs-8",
       "persona-docs-11",
-      "persona-docs-20"
+      "persona-docs-30",
+      "persona-docs-18"
     ]
   },
   {
     "productId": "persona",
     "storyId": "ongoing-monitoring",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe scheduled/interval re-running of Watchlist Reports against existing accounts (monthly/yearly) rather than one-shot screening, and Persona's webhook system delivers real-time events for status changes that ops teams can act on. Missing for 10: independent/hands-on confirmation that watchlist-update events are reliably delivered via webhook and explicit documentation tying interval report changes directly to webhook event payloads.",
+    "rationale": "Docs explicitly state Watchlist Reports can be configured to run at regular intervals (e.g., monthly/yearly) against an account, providing continuous re-screening, and webhooks deliver real-time status update events that ops can act on. missing for 10: independent/hands-on corroboration that recurring watchlist reports actually re-trigger webhook events, and explicit documentation tying watchlist changes specifically to webhook payloads rather than general status webhooks.",
     "evidenceIds": [
       "persona-docs-19",
       "persona-docs-28",
       "persona-docs-15",
-      "persona-docs-25",
       "persona-docs-2",
       "persona-docs-21",
-      "persona-docs-29"
+      "persona-docs-34"
     ]
   },
   {
@@ -1107,17 +1147,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows a broad API surface — creating/pre-creating inquiries, running verifications and reports, webhooks, and sandbox/simulate testing — covering most runtime operations available in the UI (persona-docs-1, persona-docs-18, persona-docs-21, persona-docs-27, persona-docs-9). However, Inquiry Templates and Workflows, which define screens, decisioning, and theming, are described only as configuration concepts with no evidence that they can be created or edited via API rather than the Dashboard UI, and Hosted/Embedded Flows are explicitly positioned as UI-driven paths. Missing for 10: API-based creation/editing of inquiry templates and workflow logic, and confirmation that Dashboard-only configuration screens have full API parity.",
+    "rationale": "Persona's API clearly covers core end-user actions—pre-creating inquiries, retrieving verification/report data, webhooks, sandbox testing—that parallel what a user does via the Hosted/Embedded UI flows (persona-docs-18, persona-docs-27, persona-docs-33). However, higher-level configuration surfaces like Workflows, Inquiry Templates, and Cases are described as being built/managed through Persona's dashboard UI with no documented API for creating or editing them (persona-docs-5, persona-docs-43), suggesting parity is incomplete. missing for 10: API endpoints/docs for programmatically creating or editing Workflows, Inquiry Templates, and Cases; independent confirmation that all dashboard-configurable features have API equivalents.",
     "evidenceIds": [
-      "persona-docs-1",
-      "persona-docs-4",
-      "persona-docs-5",
-      "persona-docs-7",
       "persona-docs-18",
-      "persona-docs-21",
       "persona-docs-27",
-      "persona-docs-9",
-      "persona-docs-8"
+      "persona-docs-33",
+      "persona-docs-5",
+      "persona-docs-43",
+      "persona-docs-20"
     ]
   },
   {
@@ -1126,7 +1163,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is an identity-verification/compliance API platform, not a data-hosting product where an end user accumulates personal content to export and leave with; the 'export all my data and leave' data-portability story is a category error for this product type.",
+    "rationale": "Persona is an identity verification/compliance platform for businesses, not a personal data/AI-agent tool where an end-user would export their own account data and leave; this data-portability/exit story is a category mismatch for this product type.",
     "evidenceIds": []
   },
   {
@@ -1135,7 +1172,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is a closed-source identity verification SaaS/API product; there is no indication its source code is available under any license. Source availability is not a plausible axis for this category of hosted commercial API service.",
+    "rationale": "Persona is a closed-source identity verification SaaS/API platform; source code availability under an open license is not a relevant axis for this product category, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -1144,7 +1181,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is a hosted identity-verification SaaS/API platform, not open-source software; self-hosting the core product is a category error for this product type, and no evidence suggests otherwise.",
+    "rationale": "Persona is a cloud-hosted identity verification/compliance SaaS product with no evidence of any self-hostable core; self-hosting is a category error for this type of managed API/service product.",
     "evidenceIds": []
   },
   {
@@ -1152,14 +1189,13 @@
     "storyId": "phone-email-risk-signals",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Persona's Reports API documents Address Lookup as a report type (supporting address history checks) and lists other report types like Adverse Media, PEP, and Watchlist, showing a general framework for additional documented check types beyond core ID verification. However, the evidence never explicitly mentions phone/carrier checks or device fingerprinting as report/verification types — only Selfie Verification liveness is documented for device-adjacent presence checks. missing for 10: explicit documentation of carrier/phone risk checks, explicit device fingerprint checks, and email risk signal checks as configurable report types.",
+    "confidence": "low",
+    "rationale": "Persona's Reports feature does support additional risk data types like Address Lookup, Watchlist, PEP, and Adverse Media (persona-docs-15), and Mobile SDKs are noted for 'optimal device signals' (persona-docs-32), suggesting some device-related capability. However, there is no explicit documentation of phone/carrier checks, email risk verification, or device fingerprinting as named check types. missing for 10: explicit phone/carrier risk check documentation, explicit email risk verification documentation, explicit device fingerprint report type documentation.",
     "evidenceIds": [
       "persona-docs-15",
-      "persona-docs-19",
-      "persona-docs-28",
-      "persona-docs-24",
-      "persona-docs-6"
+      "persona-docs-32",
+      "persona-docs-6",
+      "persona-docs-28"
     ]
   },
   {
@@ -1167,8 +1203,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data controls; Persona's documentation covers identity verification workflows but is silent on data residency choices.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data residency, region selection, or data storage location controls; Persona's docs focus on identity verification, workflows, webhooks, and security features like IP allowlisting, but none mention geographic data residency choices.",
     "evidenceIds": []
   },
   {
@@ -1185,8 +1221,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers identity verification, workflows, reports, webhooks, and testing, but contains no mention of data retention policies, deletion controls, or user-initiated data removal/export mechanisms.",
+    "confidence": "medium",
+    "rationale": "Persona's evidence pack covers verification flows, workflows, webhooks, and security features like IP allowlisting and webhook attribute blocklists, but nothing describes account/data deletion APIs, retention policy controls, or configurable data expiry for end-user data — a reasonable expectation for an identity platform handling PII.",
     "evidenceIds": []
   },
   {
@@ -1195,7 +1231,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Persona is an identity verification/compliance API product, not an AI developer tool with telemetry from AI-native usage; opting out of telemetry/usage tracking is a category error for this kind of product and its evidence pack.",
+    "rationale": "Persona is an identity-verification/compliance SaaS product, not an AI agent/assistant tool with its own telemetry a user could opt out of; this axis is designed for AI-native developer tools tracking usage of the AI product itself, which is a category mismatch here.",
     "evidenceIds": []
   },
   {
@@ -1204,20 +1240,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers verifications, reports (Watchlist, PEP, Adverse Media), workflows, and reference IDs for linking inquiries to the same account, but nothing describes automated detection of repeat/duplicate identities (same face or document reappearing under a different name) across separate accounts or verifications.",
+    "rationale": "The evidence pack covers verifications, reports, workflows, and account grouping by reference ID, but there is no mention of automated cross-verification duplicate/repeat identity detection (e.g., same face or document surfacing under a different name being flagged). Docs on Accounts (persona-docs-40) only describe grouping data under a shared reference ID, not automatic biometric/document duplicate detection across separate identities. missing for 10: explicit duplicate-identity/face-matching detection feature, cross-account biometric comparison, and any documentation or case study showing automatic flagging of resurfacing identities under different names.",
     "evidenceIds": []
   },
   {
     "productId": "persona",
     "storyId": "reusable-verifications",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Persona documents linking multiple inquiries to the same underlying Account via a shared reference ID (persona-docs-10) and provides account-level status polling (persona-docs-27), which are building blocks for recognizing a previously verified person across sessions. However, there is no explicit documentation of a mechanism that reuses a prior passed verification result to skip or shortcut a new check — missing for 10: explicit 'reuse prior verification' or 'skip re-verification if already verified' feature, cross-product/tenant reuse guidance, and any workflow example demonstrating a bypass of re-verification based on account history.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Persona's Accounts feature aggregates all verifications for a user across sessions via reference ID (persona-docs-10, persona-docs-40), and Connect lets separate Persona organizations share KYC/KYB data via Share Tokens, enabling reuse of a prior verification across products (persona-docs-44). However, the docs describe data sharing/aggregation rather than an explicit documented mechanism for automatically recognizing and skipping a full re-verification run based on a prior passed check. missing for 10: explicit documented re-verification/skip-check workflow, independent/hands-on confirmation that a repeat verification is bypassed using Connect or Accounts.",
     "evidenceIds": [
       "persona-docs-10",
-      "persona-docs-27",
-      "persona-docs-5"
+      "persona-docs-40",
+      "persona-docs-44"
     ]
   },
   {
@@ -1226,41 +1262,42 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Persona documents a dedicated sandbox mode with no real verifications/charges, a toggle to force pass/fail states, and Simulate Actions to programmatically evoke inquiry/verification lifecycle outcomes (pass, fail, review) for deterministic integration testing. This directly matches the story's requirement of sandbox-driven deterministic outcome testing. Missing for 10: no independent/hands-on developer corroboration of the simulate actions working as documented, and no explicit mention of documented 'test document' artifacts beyond simulate actions/toggles.",
+    "rationale": "Persona's docs explicitly describe a sandbox mode with no real verifications/charges, plus a dedicated integration-testing guide with 'Simulate Actions' to programmatically produce pass/fail/review states, and a toggle to force pass/fail outcomes for testing all integration states. This directly matches the story's deterministic pass/fail/review testing requirement. Missing for 10: independent/hands-on developer corroboration of the simulate actions working as documented, and explicit mention of 'review' outcome simulation alongside pass/fail.",
     "evidenceIds": [
       "persona-docs-3",
-      "persona-docs-13",
-      "persona-docs-22",
       "persona-docs-9",
-      "persona-docs-26"
+      "persona-docs-22",
+      "persona-docs-26",
+      "persona-docs-35"
     ]
   },
   {
     "productId": "persona",
     "storyId": "selfie-match-liveness",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Persona's docs confirm Selfie Verification checks that the individual is present and can be combined with Government ID Verification, and the API reference generally mentions 'liveness checks' as part of identity verification. However, the evidence pack contains no specifics on documented anti-spoofing defenses against printed photos, screens, or replayed video attacks. missing for 10: explicit documentation of liveness detection defenses against printed photo/screen/replay attacks, technical detail on matching selfie to document portrait, independent test/audit corroboration.",
+    "rationale": "Persona documents Selfie Verification that confirms a live individual is present, often paired with Government ID Verification, and general identity verification includes 'liveness checks' (persona-docs-12, 16, 24, 45). However, no evidence details specific documented defenses against printed photos, screen replays, or video replay attacks. Missing for 10: explicit anti-spoofing/liveness defense documentation (printed photo detection, screen detection, video replay detection), and any independent/hands-on validation of liveness robustness.",
     "evidenceIds": [
+      "persona-docs-12",
       "persona-docs-16",
       "persona-docs-24",
-      "persona-docs-12"
+      "persona-docs-45"
     ]
   },
   {
     "productId": "persona",
     "storyId": "session-lifecycle-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show API-driven creation (pre-creating inquiries), status polling, and result/report retrieval (docs-18, docs-27, docs-21), but there is no explicit documentation of cancel or redact endpoints, nor of retrieving captured media artifacts directly. missing for 10: cancel endpoint documentation, redact/delete endpoint documentation, explicit media retrieval endpoint documentation.",
+    "rationale": "Docs confirm API-driven inquiry creation (pre-creating inquiries), status polling/data retrieval, and webhooks for real-time status updates, covering create/status/results. However, there is no explicit documentation of retrieving captured media via API, or of cancel/redact endpoints, so the full lifecycle isn't clearly evidenced. missing for 10: documented endpoints for retrieving captured media, and for cancel/redact of an inquiry/session.",
     "evidenceIds": [
       "persona-docs-18",
       "persona-docs-27",
       "persona-docs-21",
-      "persona-docs-6",
-      "persona-docs-15"
+      "persona-docs-34",
+      "persona-docs-40"
     ]
   },
   {
@@ -1269,11 +1306,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Persona's docs confirm government-ID verification and note that developers can 'fetch specific verification details' via the API rather than just a status, implying structured verification data is retrievable (persona-docs-12, persona-docs-27, persona-docs-24). However, no evidence explicitly enumerates extracted document fields (name, DOB, document number, address, expiry) as structured API response data. missing for 10: explicit API schema/field list for extracted ID data, sample response showing name/DOB/document number/address/expiry, confirmation these are queryable beyond a pass/fail decision.",
+    "rationale": "Persona's docs confirm government-ID verification checks and that verification details can be fetched via API beyond pass/fail status (persona-docs-27, persona-docs-45, persona-docs-12), implying structured data retrieval, but no evidence explicitly lists the extracted fields (name, DOB, document number, address, expiry) as retrievable API attributes. Missing for 10: explicit API schema/field reference showing extracted document fields, and confirmation these are returned per-session rather than just verification status.",
     "evidenceIds": [
-      "persona-docs-12",
       "persona-docs-27",
-      "persona-docs-24"
+      "persona-docs-45",
+      "persona-docs-12"
     ]
   },
   {
@@ -1282,28 +1319,32 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm webhooks fire on any Persona resource event and can notify on lifecycle changes like approved/declined/requires review, with signed/authenticated deliveries (OAuth 2.0 client credentials mentioned). However, no explicit evidence names the specific 'created', 'processing', 'verified', 'requires-input' event types or confirms HMAC/signature verification mechanics in detail, and docs also mention polling as an alternative pattern rather than exclusively event-driven. Missing for 10: explicit list of inquiry/verification lifecycle event names, concrete signature-verification (signing secret/HMAC) documentation, and independent/hands-on confirmation of delivery reliability.",
+    "rationale": "Docs confirm webhooks fire on Persona resource events and deliver real-time status updates (approved/declined/needs review) plus configurable filters, blocklists, and custom headers, and outbound deliveries can be authenticated via OAuth 2.0 client credentials — supporting event-driven, non-polling integration. However, the pack never explicitly documents payload signing/HMAC verification or enumerates the specific lifecycle states (created, processing, verified, requires-input) the story names. Missing for 10: explicit signature/HMAC verification mechanism, documented list of inquiry/verification lifecycle event types matching the story's named states.",
     "evidenceIds": [
       "persona-docs-2",
       "persona-docs-21",
+      "persona-docs-34",
       "persona-docs-29",
-      "persona-docs-17",
-      "persona-docs-27"
+      "persona-docs-37",
+      "persona-docs-38",
+      "persona-docs-39"
     ]
   },
   {
     "productId": "persona",
     "storyId": "workflow-rules-routing",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Persona's Workflows provide no-code conditional logic, risk-based routing, and automated decisioning (tag high-risk, run reports on conditions), while Inquiry Templates/Dynamic Flow Templates house configuration for verifications, screens, decisioning, and theming without engineering deploys. Country-specific requirements aren't explicitly documented but templates and dynamic flows imply configurable, condition-based data collection. Missing for 10: explicit mention of country-specific rule configuration, and independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Persona's Workflows support no-code conditional logic and risk-based routing (auto-tag high-risk inquiries, run additional reports on conditions, multiple trigger types), and Inquiry/Dynamic Flow Templates let ops configure screens, verifications, decisioning, and theming without engineering changes. However, evidence never explicitly addresses country-specific requirement configuration or confirms these changes deploy without engineering involvement. Missing for 10: explicit country/jurisdiction-based rule configuration, and confirmation that template/workflow edits go live without engineering deploys.",
     "evidenceIds": [
-      "persona-docs-4",
       "persona-docs-5",
-      "persona-docs-7",
       "persona-docs-14",
-      "persona-docs-23"
+      "persona-docs-23",
+      "persona-docs-41",
+      "persona-docs-42",
+      "persona-docs-4",
+      "persona-docs-7"
     ]
   },
   {
