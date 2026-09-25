@@ -185,16 +185,23 @@ export function processIcon(taskId: string): string {
 // ---------- Curated end-to-end playbooks (chains) ----------
 
 export const CHAIN_ICONS: Record<string, string> = {
-  'name-the-company': '💡', // same concept as brand_001 (the name idea)
+  'name-the-company': '💡', // the idea — validated (startup_001) and then named (brand_001)
   'company-launch': '🚀',
+  'set-up-the-office-stack': '🏢', // same concept as ops_004 (the office)
   'raise-a-seed-round': '🌱', // same concept as fund_001 (the seed)
   'ship-v1': '🚢', // same concept as sw_001 (ship it)
   'launch-website': '🌐',
   'launch-on-product-hunt': '😺', // the Product Hunt cat
+  'ship-it-right': '🛳️', // the shipping lane — sw_001's 🚢 run as a discipline (releases, pager, postmortems)
   'get-first-10-customers': '🧲', // pull the first customers in
   'get-paid': '🤑',
+  'price-and-monetize': '🪙', // same concept as growth_014 (the coin flips)
+  'run-support-and-keep-customers': '🛟', // same concept as growth_002 (save the customer)
   'first-hire': '🤝',
+  'build-the-team': '👥', // the team, plural — beyond first-hire's 🤝
+  'go-global': '🌍', // same concept as hr_003 (work across the globe)
   'month-end-close': '📒',
+  'board-and-governance-rhythm': '👔', // same concept as scale_005 (the boardroom suit)
   'tax-season': '📆', // same concept as qs_047 (the annual-filing calendar)
   'set-up-compliance': '🛡️', // same concept as comp_001 (SOC 2 shield)
   'land-the-enterprise-deal': '🏰', // the enterprise castle, finally opened

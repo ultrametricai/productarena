@@ -534,9 +534,28 @@ describe('chains', () => {
     expect(followOn.taskIds).toContain('fund_005') // Set up a data room
   })
 
+  it('the founder-2026-09-25 playbooks exist and compose the uncovered corpus', () => {
+    const ids = new Set(loadChains(DATA_DIR).map((c) => c.id))
+    for (const id of [
+      'set-up-the-office-stack', 'ship-it-right', 'price-and-monetize',
+      'run-support-and-keep-customers', 'build-the-team', 'go-global',
+      'board-and-governance-rhythm',
+    ]) {
+      expect(ids.has(id), `chain ${id} should exist`).toBe(true)
+    }
+  })
+
+  it('validate-the-idea opens the pre-formation playbook, which sorts first (founder 2026-09-25)', () => {
+    const chains = loadChains(DATA_DIR)
+    // Lifecycle ordering: the recomposed name-the-company chain stays the first playbook…
+    expect(chains[0].id).toBe('name-the-company')
+    // …and "Validate the idea" (startup_001) is its opening act.
+    expect(chains[0].taskIds[0]).toBe('startup_001')
+  })
+
   it('every chain taskId exists in the corpus and ids are unique kebab-case', () => {
     const chains = loadChains(DATA_DIR)
-    expect(chains.length).toBeGreaterThanOrEqual(11)
+    expect(chains.length).toBeGreaterThanOrEqual(22)
     const taskIds = new Set(loadProcesses(DATA_DIR).map((t) => t.id))
     const ids = new Set<string>()
     for (const chain of chains) {
