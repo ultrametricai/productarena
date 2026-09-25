@@ -5,8 +5,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention A/B testing of subject lines/content variants or automatic winner selection based on engagement; documentation covers broadcasts, flows, segments, and integrations but nothing about split-testing campaigns.",
-    "evidenceIds": []
+    "rationale": "Evidence covers broadcasts, sequences, segments, and workflows, but there is no mention of A/B testing subject lines or content variants, nor any automatic winner-selection based on engagement metrics anywhere in the docs pack.",
+    "evidenceIds": [
+      "bento-docs-34",
+      "bento-docs-38"
+    ]
   },
   {
     "productId": "bento",
@@ -14,44 +17,46 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Bento's MCP server and CLI let an AI assistant programmatically look up subscribers/audiences, track events, and build/manage automation flows (bento-docs-5, bento-docs-9, bento-docs-16, bento-docs-18), and Bento ties revenue back to specific emails/flows (bento-docs-6), which supports 'reporting on what's working.' However, the docs describe MCP as covering subscribers, broadcasts, and events with only 'and more' — there's no explicit documented endpoint/command for pulling structured campaign performance metrics, and no independent/hands-on confirmation of an agent actually generating a performance report end-to-end. Missing for 10: explicit analytics/reporting API or MCP tool documentation, independent verification that campaign-results reporting works via the agent surfaces.",
+    "rationale": "Bento exposes subscribers/segments/tags APIs, workflows/sequences, and broadcast history via API, CLI (50+ commands), and an official MCP server that can 'look up subscribers, create broadcasts, track events' in natural conversation, which together let an agent pull audiences and automations programmatically. However, campaign-results reporting is thinly evidenced — only a general claim of tying revenue to emails/flows, with no explicit analytics/metrics endpoint or independent hands-on report confirming an agent can synthesize 'what's working.' Missing for 10: a documented reporting/analytics API surface for opens/clicks/revenue per campaign, and independent/hands-on validation of an agent performing this full workflow end-to-end.",
     "evidenceIds": [
       "bento-docs-5",
-      "bento-docs-9",
-      "bento-docs-16",
-      "bento-docs-18",
+      "bento-docs-17",
+      "bento-docs-49",
+      "bento-docs-34",
+      "bento-docs-8",
+      "bento-docs-26",
       "bento-docs-6",
-      "bento-docs-8"
+      "bento-probe-4"
     ]
   },
   {
     "productId": "bento",
     "storyId": "agent-builds-segment",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Bento has a segment builder with filters/conditions (bento-docs-26, bento-docs-8) and separately advertises AI that builds from plain text (bento-docs-10), plus an MCP/CLI programmatic surface (bento-docs-5, bento-docs-16-18), but no documentation explicitly connects these—there's no evidence the MCP server or CLI exposes a 'create segment from plain-language description' action; MCP docs only mention subscriber lookup, broadcasts, and event tracking. missing for 10: explicit MCP/CLI command or API endpoint for segment creation, documented example of an agent converting plain-language audience descriptions into a saved segment.",
+    "rationale": "Bento defines Segments as saved filters (bento-docs-42) and advertises a 'describe what you want in plain text and let Bento's AI build it for you' feature (bento-docs-10) plus programmatic surfaces (MCP, CLI, API) that can access subscribers, tags, and broadcasts (bento-docs-5, bento-docs-49, bento-docs-34). However, no evidence explicitly ties the plain-text AI builder to segment creation via MCP/CLI/API, nor shows a documented segment-creation endpoint or agent workflow. Missing for 10: explicit documentation of a segment-creation API/MCP command, and a concrete example of an agent turning a plain-language description into a saved segment.",
     "evidenceIds": [
-      "bento-docs-26",
-      "bento-docs-8",
+      "bento-docs-42",
       "bento-docs-10",
       "bento-docs-5",
-      "bento-docs-16",
-      "bento-docs-18"
+      "bento-docs-26",
+      "bento-docs-34",
+      "bento-docs-49"
     ]
   },
   {
     "productId": "bento",
     "storyId": "agent-drives-campaign",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Bento's MCP server lets an AI assistant create broadcasts and target subscribers, and segment filtering exists (bento-docs-5, bento-docs-8, bento-docs-26), suggesting an agent could draft a campaign against a segment. However, there is no documentation describing a scheduled/queued draft state that requires explicit human approval before send — the evidence never mentions an approval gate or hold-for-review workflow. missing for 10: explicit human-approval/queue-before-send mechanism, confirmation that AI-created broadcasts default to draft rather than auto-send, independent verification of this workflow.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Bento's API/MCP/CLI let an agent create broadcasts targeted at a segment and 'schedule approved sends with explicit audience rules' (bento-docs-34, bento-docs-5/17), and Bento Skills includes safety guidance for live account operations suggesting human oversight is expected (bento-docs-29). However, there's no explicit documented 'approval queue' or draft-hold-for-human-review workflow feature—scheduling appears to be a direct send-scheduling action rather than a formal approval gate. Missing for 10: a documented draft/approval-state distinct from scheduled, UI or API concept of pending human sign-off, and hands-on confirmation this pattern works as described.",
     "evidenceIds": [
+      "bento-docs-34",
       "bento-docs-5",
       "bento-docs-17",
-      "bento-docs-8",
-      "bento-docs-26"
+      "bento-docs-29"
     ]
   },
   {
@@ -60,13 +65,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Bento has a confirmed live llms.txt (HTTP 200) with structured overview, plus a docs.md endpoint, and dedicated docs pages formatted in .md for agent consumption (mcp.md, cli.md, skills.md, webhooks.md). This directly enables pointing an agent at agent-oriented docs. Missing for 10: independent third-party confirmation that agents successfully consume/act on these docs in practice.",
+    "rationale": "Bento hosts a live llms.txt (confirmed via direct probe returning HTTP 200 with structured overview) and a docs.md endpoint, plus extensive agent-oriented docs (Skills, MCP, CLI) explicitly designed for AI agents to consume. Missing for 10: independent third-party confirmation that agents actually consume these files effectively in practice.",
     "evidenceIds": [
       "bento-probe-1",
       "bento-probe-2",
       "bento-docs-7",
-      "bento-docs-18",
-      "bento-docs-16"
+      "bento-docs-29",
+      "bento-docs-18"
     ]
   },
   {
@@ -75,12 +80,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Bento offers an AI-assisted builder (\"Describe what you want in plain text and let Bento's powerful AI build it for you\") and an MCP server letting an AI assistant query subscribers, broadcasts, and events through natural conversation, which could surface data-driven insights on request. However there is no explicit documentation of native AI-generated insights, analytics recommendations, or proactive suggestions surfaced inside the product dashboard itself. missing for 10: dedicated AI insights/analytics feature in-product, examples of AI-generated suggestions from user data, independent corroboration of this capability.",
+    "rationale": "Bento offers an AI-assisted builder that generates automations/segments from plain-text descriptions and an MCP server that lets an AI assistant look up subscriber data, create broadcasts, and track events conversationally, which touches on AI interacting with account data. However there is no evidence of dedicated AI-generated insights, trend analysis, or proactive suggestions surfaced from a user's data (e.g., analytics commentary, anomaly detection, recommendations dashboard). Missing for 10: explicit analytics/insight-generation features, evidence of AI proactively surfacing patterns or recommendations from stored subscriber/event data, and independent corroboration of these AI features working in practice.",
     "evidenceIds": [
       "bento-docs-10",
       "bento-docs-5",
       "bento-docs-17",
-      "bento-probe-4"
+      "bento-docs-29"
     ]
   },
   {
@@ -89,12 +94,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Bento's core product includes flow-based automations triggered by behavior, events, and tags that run without manual intervention ('Build flows from behavior, events, and tags. Check every branch before it runs.'), backed by an events API to track activity and trigger automations, plus webhook actions for external systems. This directly matches autonomous background automation for a marketing/automation platform. Missing for 10: independent/hands-on corroboration that flows execute reliably unattended, and more detail on scheduling/trigger conditions beyond marketing copy.",
+    "rationale": "Bento's Workflows are explicitly described as background automations triggered by behavior/events/tags that branch, delay, and execute steps autonomously (bento-docs-9, bento-docs-46), and these can be set up via AI-native surfaces like the MCP server, CLI, or natural-language builder (bento-docs-5, bento-docs-10, bento-docs-29). This directly supports an AI-native user configuring autonomous background automations. missing for 10: independent/hands-on verification that AI-configured workflows run reliably unattended, and more detail on monitoring/error-handling for long-running autonomous workflows.",
     "evidenceIds": [
       "bento-docs-9",
-      "bento-docs-1",
-      "bento-docs-15",
-      "bento-docs-5"
+      "bento-docs-46",
+      "bento-docs-5",
+      "bento-docs-10",
+      "bento-docs-29",
+      "bento-docs-18"
     ]
   },
   {
@@ -103,7 +110,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Bento's marketing copy mentions 'Bento's powerful AI' that lets users 'describe what you want in plain text' to build something (bento-docs-10), suggesting a built-in AI assistant feature, but there is no further documentation of scope, task types, or workflow for this built-in assistant. The MCP server evidence (bento-docs-5, bento-docs-17) is about external AI assistants connecting to Bento, not a built-in assistant inside the product, so it does not count here. Missing for 10: detailed docs on the built-in AI assistant's capabilities, UI screenshots/workflow, task types it handles, and independent corroboration.",
+    "rationale": "Bento's marketing copy claims a built-in AI feature ('Describe what you want in plain text and let Bento's powerful AI build it for you') suggesting an in-product assistant that can build flows/segments from natural language, but there is no documentation detailing what this assistant does, its scope, or how a user interacts with it — most AI-related evidence (MCP, CLI, Skills) describes external agents connecting to Bento rather than a built-in assistant delegated to by the user. Missing for 10: dedicated docs/UI walkthrough of the built-in assistant, examples of tasks it can perform, and independent/hands-on confirmation it works as described.",
     "evidenceIds": [
       "bento-docs-10"
     ]
@@ -112,13 +119,13 @@
     "productId": "bento",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Bento ships a CLI (50+ commands) and an HTTP API with Basic auth plus first-party SDKs, all of which are scriptable and could be run headlessly/in CI, and docs even mention 'script the job you run every week.' However there's no explicit CI/automation documentation, pipeline examples, or GitHub Actions integration shown. missing for 10: explicit CI/headless-mode documentation, example automation pipeline, non-interactive auth/token flow guidance for CI environments.",
+    "rationale": "Bento offers a CLI with 50+ commands for scripting account management (subscribers, tags, broadcasts, sequences, transactional emails) plus REST API with key-based auth, which supports headless/CI usage. However, there's no explicit documentation of CI/CD pipeline examples, exit codes, non-interactive flags, or containerized/headless deployment guidance. missing for 10: explicit CI/automation examples (e.g. GitHub Actions), documented non-interactive/headless mode flags, exit-code/error handling for scripted use, and independent hands-on confirmation of CLI running in CI environments.",
     "evidenceIds": [
       "bento-docs-16",
+      "bento-docs-49",
       "bento-docs-20",
-      "bento-docs-19",
       "bento-docs-4"
     ]
   },
@@ -140,12 +147,12 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Bento documents an official MCP server that gives AI assistants direct access to look up subscribers, create broadcasts, and track events via natural conversation, and this is corroborated by a dedicated probe confirming the docs page exists. Missing for 10: independent hands-on verification of the MCP server working with a real agent, and details on setup/auth scopes for the MCP connection.",
+    "confidence": "medium",
+    "rationale": "Bento is a SaaS email marketing platform (not itself an agent), and it documents an official MCP server that gives AI assistants direct access to subscribers, broadcasts, and events, corroborated by a dedicated docs page and probe confirming the endpoint exists. missing for 10: independent hands-on third-party confirmation of the MCP server working, and details on setup/auth for the MCP connection itself.",
     "evidenceIds": [
       "bento-docs-5",
       "bento-docs-17",
-      "bento-docs-18",
+      "bento-docs-29",
       "bento-probe-4"
     ]
   },
@@ -154,12 +161,13 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Bento ships a first-party MCP server explicitly enabling AI assistants to look up subscribers, create broadcasts, and track events \"all through natural conversation,\" and separately touts plain-text flow building (\"Describe what you want in plain text and let Bento's powerful AI build it for you\"). Missing for 10: independent/hands-on verification of natural-language command execution beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Bento ships a documented MCP server plus 'Skills' guidance that lets an AI assistant look up subscribers, create broadcasts, track events, and manage the account entirely through natural conversation, alongside CLI/SDK surfaces the agent can choose from. This directly matches the ai-native/natural-language operation story with first-party docs describing setup and safety guidance. Missing for 10: independent hands-on verification that natural-language commands work reliably in practice beyond vendor docs.",
     "evidenceIds": [
       "bento-docs-5",
       "bento-docs-17",
-      "bento-docs-10",
+      "bento-docs-29",
+      "bento-docs-18",
       "bento-probe-4"
     ]
   },
@@ -169,11 +177,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Bento documents an official CLI with 50+ commands for managing the entire account, and separately provides an MCP server and SDKs, positioning the CLI as one of several 'surfaces' for AI-native/agentic workflows. Missing for 10: independent hands-on verification of the CLI's actual command set/behavior and more detail on AI-specific CLI usage beyond the brief docs mention.",
+    "rationale": "Bento documents an official CLI with 50+ commands covering subscribers, tags, fields, events, broadcasts, sequences, transactional email, and templates, positioned as a first-class 'surface' alongside MCP/SDK/n8n for AI-native workflows. Missing for 10: independent/hands-on verification of the CLI's functionality and no community corroboration beyond vendor docs.",
     "evidenceIds": [
       "bento-docs-16",
+      "bento-docs-49",
       "bento-docs-18",
-      "bento-docs-5"
+      "bento-docs-29"
     ]
   },
   {
@@ -182,15 +191,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Bento documents a public API (Events API, Subscribers API) with explicit authentication conventions (HTTP Basic via publishable/secret keys), plus first-party SDKs, a 50+ command CLI, and an MCP server for AI-native access — collectively giving AI agents multiple documented ways to drive the product. Missing for 10: a discoverable OpenAPI/swagger spec (probe found only 404s) and independent third-party corroboration of the API's completeness.",
+    "rationale": "Bento documents a public API with authentication (HTTP Basic with pub/secret keys), endpoint reference, error-handling guide, and coverage across subscribers, events, broadcasts, transactional email, webhooks, data deletion, and chat support—plus SDKs, a 50+ command CLI, and an MCP server explicitly built for AI-native/agentic use. Missing for 10: a public OpenAPI/swagger spec (probe found all candidate paths 404) and independent third-party corroboration of API robustness beyond vendor docs.",
     "evidenceIds": [
-      "bento-docs-1",
-      "bento-docs-2",
-      "bento-docs-14",
       "bento-docs-20",
-      "bento-docs-19",
-      "bento-docs-16",
+      "bento-docs-31",
+      "bento-docs-32",
       "bento-docs-5",
+      "bento-docs-29",
+      "bento-docs-49",
+      "bento-docs-19",
       "bento-probe-3"
     ]
   },
@@ -199,12 +208,11 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Bento's API auth is a single publishable/secret key pair (HTTP Basic auth) with no documented scopes, roles, or least-privilege credential issuance for agents; the MCP/CLI integrations give full account access rather than scoped tokens.",
+    "confidence": "medium",
+    "rationale": "Bento's authentication model uses a single publishable/secret key pair via HTTP Basic auth (bento-docs-20), with no documented mechanism for issuing scoped, restricted, or least-privilege credentials specifically for an agent. The Skills docs mention general 'safety guidance for API keys' but not actual credential scoping (bento-docs-29). Missing for 10: any API/dashboard feature for creating restricted-scope keys, per-agent key issuance, or permission-limited tokens.",
     "evidenceIds": [
       "bento-docs-20",
-      "bento-docs-5",
-      "bento-docs-16"
+      "bento-docs-29"
     ]
   },
   {
@@ -213,13 +221,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Bento documents first-party SDKs for JavaScript, Ruby, PHP, Laravel, WordPress, WooCommerce, and Next.js, plus a CLI, MCP server, and API with clear authentication conventions—giving AI-native users multiple official, well-documented surfaces to build against. Missing for 10: independent/hands-on corroboration of SDK quality and no public OpenAPI spec found (probe returned 404s).",
+    "rationale": "Bento explicitly maintains first-party SDK packages for JavaScript, Ruby, PHP, Laravel, WordPress, WooCommerce, and Next.js, alongside documented HTTP Basic API auth conventions and error-handling docs, giving AI-native developers official, well-documented SDKs to build against. Missing for 10: independent/hands-on corroboration of SDK quality beyond vendor docs, and no OpenAPI spec found via probe.",
     "evidenceIds": [
       "bento-docs-19",
-      "bento-docs-16",
-      "bento-docs-5",
-      "bento-docs-18",
       "bento-docs-20",
+      "bento-docs-31",
+      "bento-docs-32",
       "bento-probe-3"
     ]
   },
@@ -227,11 +234,12 @@
     "productId": "bento",
     "storyId": "agentic-webhooks",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Bento supports outbound webhooks triggered from workflows ('Send webhook' action) per bento-docs-15, which lets automations notify external systems on events. However, there's no documentation of webhook subscription mechanics, event types, payload format, signing/verification, or retry behavior, and no independent corroboration. Missing for 10: webhook event catalog/payload schema, security/signing details, subscription management API, and third-party confirmation of reliability.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Bento supports outbound webhooks via a 'Send webhook' workflow action that fires when a trigger condition is met, letting external systems (CRM, fulfillment, support queue) be notified of events — this satisfies the core ask of subscribing to events via webhooks. However, evidence is limited to a single workflow-builder action page with no dedicated webhook subscription API, event-type catalog, signature/security verification, or retry/delivery guarantees documented. missing for 10: webhook management API docs, list of subscribable event types, payload signing/verification details, delivery retry semantics.",
     "evidenceIds": [
-      "bento-docs-15"
+      "bento-docs-15",
+      "bento-docs-30"
     ]
   },
   {
@@ -240,21 +248,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence mentions general AI features (MCP for account actions, a vague 'describe what you want and let Bento's AI build it' claim) but nothing describes AI drafting or refining subject lines/email copy inside the composer specifically. Missing for 10: any documentation of an in-composer AI copywriting/subject-line assistant, screenshots or examples of AI-generated email copy from a brief.",
+    "rationale": "The evidence shows Bento has general AI capabilities (natural-language building via docs-10, MCP/CLI for account management) but nothing documents an in-composer AI feature that drafts or refines email subject lines or body copy from a marketer's brief. Broadcasts, sequences, and templates docs (bento-docs-34, 37, 43) describe structure but never mention AI-assisted copywriting inside the email editor.",
     "evidenceIds": [
       "bento-docs-10",
-      "bento-docs-5"
+      "bento-docs-34",
+      "bento-docs-37",
+      "bento-docs-43"
     ]
   },
   {
     "productId": "bento",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only static docs and API conventions (auth headers, endpoints) with no mention of an interactive API explorer or runnable/try-it examples; a direct probe for an OpenAPI/Swagger spec that would power such a reference returned 404 on all candidate paths, indicating no such interactive reference exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Bento's docs describe an 'API reference browser' that lets users scan endpoints, request/response fields, and matching hand-written docs (bento-docs-32), which is a step toward an interactive reference, but there is no evidence of runnable/try-it-now code examples, and a probe found no discoverable OpenAPI/Swagger spec (bento-probe-3), undermining the 'runnable examples' claim. missing for 10: explicit runnable code examples in the reference, confirmed OpenAPI/interactive spec, independent hands-on confirmation of running requests from the docs.",
     "evidenceIds": [
-      "bento-docs-20",
+      "bento-docs-32",
       "bento-probe-3"
     ]
   },
@@ -264,20 +274,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for common OpenAPI/Swagger spec locations returned 404 on all candidates, and no documentation references a machine-readable API spec download; only human-readable API docs and conventions are documented.",
+    "rationale": "Probe explicitly checked common OpenAPI spec paths and all returned 404, and no docs reference a downloadable machine-readable API spec; only a human-browsable API reference exists.",
     "evidenceIds": [
       "bento-probe-3",
-      "bento-docs-20"
+      "bento-docs-32"
     ]
   },
   {
     "productId": "bento",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions a sandbox, staging, or test-mode environment for isolating test data from production; the docs cover subscribers, events, transactional email, MCP/CLI/SDK integrations, billing, and multi-brand structure but nothing about a dedicated test environment or test API keys.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Bento's docs describe using separate 'Sites' to isolate data, explicitly listing 'Production and testing' as a common reason to create multiple Sites, which lets an AI-native user exercise a test environment without touching production data. However, there is no dedicated sandbox mode, test API keys, or explicit sandbox environment documented beyond this Sites mechanism. missing for 10: dedicated sandbox/test-mode API keys, explicit sandbox environment docs, hands-on confirmation that test Sites fully isolate from production billing/limits.",
+    "evidenceIds": [
+      "bento-docs-44",
+      "bento-docs-23"
+    ]
   },
   {
     "productId": "bento",
@@ -285,9 +298,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an API, SDKs, CLI, and MCP server exist, but there is no mention of API versioning scheme or a documented deprecation policy anywhere in the docs; the OpenAPI spec probe even returned 404s. missing for 10: versioning scheme documentation, deprecation policy, changelog/EOL process.",
+    "rationale": "The evidence pack documents API conventions, errors, and reference docs but contains no mention of API versioning or any deprecation policy; OpenAPI spec probes even returned 404s. Missing for 10: any versioning scheme (e.g., v1/v2 endpoints), changelog of breaking changes, or documented deprecation timelines/policy.",
     "evidenceIds": [
       "bento-docs-20",
+      "bento-docs-31",
+      "bento-docs-32",
       "bento-probe-3"
     ]
   },
@@ -296,15 +311,15 @@
     "storyId": "automation-bulk-operations",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Bento's API and CLI explicitly support bulk operations (1-1000 subscribers per request, bulk create/update without triggering automations, filtering by tags/segments/date ranges, 50+ CLI commands for account management), and these surfaces are accessible to AI agents via MCP/CLI/SDK. Missing for 10: independent hands-on verification of bulk operation performance/limits at scale and no explicit mention of bulk operations being exposed through the MCP tool interface itself.",
+    "confidence": "high",
+    "rationale": "Bento explicitly supports bulk operations: batch subscriber creation/updates of 1-1000 per request without triggering automations, CLI commands for CSV import and bulk account management, and MCP/CLI/SDK surfaces for scripting recurring bulk jobs. Missing for 10: independent/hands-on verification of bulk operation performance at scale and no explicit bulk-delete or bulk-tagging endpoint details beyond subscriber create/update.",
     "evidenceIds": [
       "bento-docs-2",
       "bento-docs-14",
-      "bento-docs-8",
+      "bento-docs-4",
+      "bento-docs-49",
       "bento-docs-16",
-      "bento-docs-18",
-      "bento-docs-5"
+      "bento-docs-29"
     ]
   },
   {
@@ -313,24 +328,33 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Bento supports building automation flows triggered by behavior, events, and tags (bento-docs-9), webhook actions on workflow events (bento-docs-15), and an events API that tracks activity and triggers automations (bento-docs-1), directly matching the rules-trigger-actions story. missing for 10: independent/hands-on verification of automation reliability and more detail on conditional rule logic beyond marketing copy.",
+    "rationale": "Bento's Workflows are explicitly rule-based automations triggered by events, behavior, or tags (\"when this happens, do that\" with branching/delay logic), and Events API docs confirm events trigger automations directly, with webhooks extending actions to external systems. This is core, well-documented product functionality, not a bolt-on.\n\nmissing for 10: independent/hands-on verification of complex trigger logic in production, and more detail on conditional branching edge cases.",
     "evidenceIds": [
+      "bento-docs-46",
       "bento-docs-9",
+      "bento-docs-1",
+      "bento-docs-27",
       "bento-docs-15",
-      "bento-docs-1"
+      "bento-docs-30",
+      "bento-docs-39"
     ]
   },
   {
     "productId": "bento",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Bento supports automation flows triggered by behavior/events/tags (bento-docs-9) and mentions scripting a job run 'every week' via CLI/API (bento-docs-4, bento-docs-16), suggesting some recurring automation capability, but there is no explicit documentation of a native cron-like scheduler or recurring workflow trigger mechanism. Missing for 10: explicit scheduling/cron feature docs, examples of recurring job configuration, and independent confirmation that workflows can run on a time-based recurring schedule rather than only event-based triggers.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Bento's Workflows and Sequences provide event/time-delay based automations (bento-docs-43, bento-docs-46), and its CLI/MCP surfaces let an AI agent create broadcasts, sequences, and workflows via natural language or commands (bento-docs-49, bento-docs-5/17, bento-docs-16). However, these are trigger/delay-based automations rather than explicit cron-like recurring scheduled jobs, and only broadcasts show explicit 'schedule' semantics (bento-docs-34) which are one-time sends, not recurring. missing for 10: a documented recurring/cron-style job scheduler, explicit API/CLI support for setting recurring intervals, and independent confirmation that AI agents can set up such recurring schedules end-to-end.",
     "evidenceIds": [
-      "bento-docs-4",
-      "bento-docs-9",
-      "bento-docs-16"
+      "bento-docs-43",
+      "bento-docs-46",
+      "bento-docs-34",
+      "bento-docs-49",
+      "bento-docs-5",
+      "bento-docs-17",
+      "bento-docs-16",
+      "bento-docs-4"
     ]
   },
   {
@@ -339,108 +363,116 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Bento lets users build and check flows (bento-docs-9) but there is no mention of versioning, review workflows, change history, or rollback capability for automations anywhere in the docs pack. Missing for 10: version history UI, audit/review trail, rollback/undo mechanism for flows or automations.",
-    "evidenceIds": [
-      "bento-docs-9"
-    ]
+    "rationale": "Bento's docs describe workflows, sequences, and templates but there is no evidence of version history, review/approval, or rollback capabilities for automations—no changelog, diff, or revert feature is mentioned anywhere in the evidence pack.",
+    "evidenceIds": []
   },
   {
     "productId": "bento",
     "storyId": "campaign-performance-reporting",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows Bento tracks events, ties revenue to campaigns/flows, and lets you filter subscribers by tags/segments/dates, implying some analytics capability, but there is no documentation of a dedicated per-campaign or per-automation-step dashboard showing opens, clicks, unsubscribes, and conversions over time. missing for 10: explicit reporting/analytics documentation showing opens/clicks/unsubscribes/conversions broken out per campaign and per automation step over time, and any independent or hands-on confirmation of such reporting UI.",
+    "rationale": "Bento's docs mention revenue/conversion attribution back to an email or flow (bento-docs-6) and reviewing broadcast history via the API (bento-docs-34), implying some campaign-level reporting exists, but there is no documentation of opens, clicks, or unsubscribe metrics, nor any mention of per-automation-step analytics or time-series trending. missing for 10: explicit open/click/unsubscribe rate reporting, per-workflow-step breakdown, historical/time-series analytics views, and any dashboard or report screenshot evidence.",
     "evidenceIds": [
       "bento-docs-6",
-      "bento-docs-8",
-      "bento-docs-9",
-      "bento-docs-1"
+      "bento-docs-34",
+      "bento-docs-48"
     ]
   },
   {
     "productId": "bento",
     "storyId": "campaign-via-api",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Bento's docs mention creating broadcasts via its CLI and MCP surfaces (bento-docs-16, bento-docs-17, bento-docs-18), and the REST API is documented for events, subscribers, and transactional email (bento-docs-1, bento-docs-3), but no explicit documented REST endpoint for creating/scheduling a broadcast/campaign is shown, and probes found no OpenAPI spec (bento-probe-3). missing for 10: explicit public REST API endpoint/schema for broadcast creation and scheduling, independent confirmation that scheduling works end-to-end without dashboard interaction.",
+    "rationale": "Bento's broadcasts doc explicitly states the API can be used to review broadcast history, create campaigns, and schedule approved sends with explicit audience rules, and authentication uses simple HTTP Basic auth with publishable/secret keys, all documented publicly without needing the dashboard. The CLI and MCP integrations further confirm broadcast creation is exposed programmatically. Missing for 10: no independent/hands-on corroboration of a full end-to-end API call sequence (create+schedule) and no OpenAPI spec found to verify exact request/response shape.",
     "evidenceIds": [
-      "bento-docs-16",
-      "bento-docs-17",
-      "bento-docs-18",
-      "bento-docs-1",
-      "bento-docs-3",
-      "bento-probe-3"
+      "bento-docs-34",
+      "bento-docs-20",
+      "bento-docs-49",
+      "bento-docs-38"
     ]
   },
   {
     "productId": "bento",
     "storyId": "contacts-crud-api",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm a subscribers API supporting bulk create/update (1–1000 records per request) without triggering automations, and profile-field updates via the events API, plus filtering by tags/segments/dates. However, no explicit documentation of a 'suppress' endpoint or dedicated custom-properties schema is shown, and no independent benchmark of production-scale throughput is cited. Missing for 10: explicit suppress/unsubscribe API endpoint documentation, explicit custom-properties field API, and independent evidence of scale/performance under load.",
+    "rationale": "Bento's API documentation confirms creating/updating contacts (subscribers) with custom fields at scale (1-1000 per batch, bulk create/update), plus a data-deletion/anonymization endpoint for suppression, and custom fields as first-class data attributes. missing for 10: no explicit rate-limit or throughput benchmarks for 'production scale', no independent/hands-on developer corroboration of large-scale API usage beyond vendor docs.",
     "evidenceIds": [
       "bento-docs-2",
       "bento-docs-14",
-      "bento-docs-8",
-      "bento-docs-1",
-      "bento-docs-7"
+      "bento-docs-40",
+      "bento-docs-47",
+      "bento-docs-20",
+      "bento-docs-8"
     ]
   },
   {
     "productId": "bento",
     "storyId": "create-send-campaign",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence confirms core building blocks — audience targeting via tags/segments/date filters (bento-docs-8, bento-docs-26) and the ability to 'create broadcasts' via MCP/CLI (bento-docs-5, bento-docs-17) — implying campaign sending exists, but there's no direct documentation of the campaign composer UI or scheduling mechanics for a broadcast/campaign send. Missing for 10: explicit docs on the email campaign editor, audience picker UI, and scheduling/send-now workflow with independent confirmation it works end-to-end.",
+    "rationale": "Docs directly describe the core loop: broadcasts are one-time campaigns sent to a broad audience or saved segment, with segment/tag/date filtering for audience selection, and API/UI support to 'create campaigns, and schedule approved sends with explicit audience rules.' Supporting concepts (segments, tags, sequences) reinforce audience targeting and scheduling capabilities. Missing for 10: hands-on/independent verification of the actual compose/send UI experience and no evidence of send-time optimization or A/B testing for broadcasts.",
     "evidenceIds": [
-      "bento-docs-5",
-      "bento-docs-17",
+      "bento-docs-34",
+      "bento-docs-42",
       "bento-docs-8",
-      "bento-docs-26",
-      "bento-docs-9"
+      "bento-docs-38",
+      "bento-docs-45"
     ]
   },
   {
     "productId": "bento",
     "storyId": "custom-sending-domain",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention domain authentication, SPF/DKIM/DMARC setup, or DNS verification workflows; only dedicated IP mentions and unrelated deliverability features are present.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Bento has a dedicated DNS onboarding doc stating domain authentication records must be added to enable reliable sending on the sender's behalf, indicating guided DNS setup for domain authentication [bento-docs-33]. However, there is no explicit mention of SPF/DKIM/DMARC by name, no detail on a verification UI/status check flow, or troubleshooting for alignment issues. missing for 10: explicit SPF/DKIM/DMARC record naming, verification/status confirmation flow, independent hands-on corroboration.",
+    "evidenceIds": [
+      "bento-docs-33"
+    ]
   },
   {
     "productId": "bento",
     "storyId": "deliverability-visibility",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows no documentation of bounce/complaint/blocklist tracking, per-send deliverability signals, or actionable degradation guidance — only mentions of dedicated IPs, general subscriber management, and unrelated features like segments, webhooks, and MCP/CLI tooling.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Evidence covers DNS authentication setup and dedicated IPs for deliverability, but there is no documentation of per-send bounce, complaint, or blocklist signal reporting, nor any actionable guidance/alerting when deliverability degrades. Missing for 10: per-send bounce/complaint tracking, blocklist monitoring, and any automated deliverability degradation alerts or recommendations.",
+    "evidenceIds": [
+      "bento-docs-33",
+      "bento-docs-7"
+    ]
   },
   {
     "productId": "bento",
     "storyId": "email-template-editor",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Bento's API, subscriber management, automation flows, CLI/MCP/SDK integrations, and pricing, but contains no mention of a visual email editor, drag-and-drop template builder, personalization token rendering, or cross-client compatibility testing. As an email marketing platform this axis clearly applies, but there is simply no evidence it delivers this capability.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm reusable, centrally-updated email templates (bento-docs-37) used across sequences/workflows (bento-docs-38, 43, 46), but there is no evidence of a visual drag-and-drop editor, personalization/merge tokens, or cross-email-client rendering guarantees. missing for 10: visual editor documentation, personalization token support, cross-client rendering testing/QA evidence.",
+    "evidenceIds": [
+      "bento-docs-37",
+      "bento-docs-38",
+      "bento-docs-43",
+      "bento-docs-46"
+    ]
   },
   {
     "productId": "bento",
     "storyId": "engagement-data-api-read",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers Bento's Events API (tracking activity, updating fields, triggering automations) and Subscribers API filters (tags, segments, last-event/date ranges), but nothing documents a way to retrieve per-contact history of what was sent, opened, and clicked via the API. No endpoint or field for message-level engagement history is described.",
+    "confidence": "low",
+    "rationale": "Evidence shows Bento's API surfaces for events tracking, subscriber filtering (by tags/segment/last-event/unsubscribe date), and broadcast history, but nowhere documents an endpoint that returns a specific contact's full send/open/click engagement history. No probe or doc confirms this exact capability.",
     "evidenceIds": [
-      "bento-docs-1",
-      "bento-docs-8"
+      "bento-docs-8",
+      "bento-docs-27",
+      "bento-docs-34",
+      "bento-docs-1"
     ]
   },
   {
@@ -448,12 +480,14 @@
     "storyId": "event-triggered-flows",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Bento's Events API explicitly supports tracking custom events per subscriber, updating profile fields, and triggering automations tied to that person, and flows can be built from behavior/events/tags with branch checks. This directly matches firing a custom event to trigger a per-person automation. Missing for 10: independent/hands-on verification beyond vendor docs, and no explicit example showing event-to-single-person automation trigger end-to-end.",
+    "confidence": "high",
+    "rationale": "Bento's Events API lets developers track custom events per subscriber, and Workflows can trigger 'from behavior, events, and tags' with branching logic tied to that specific person, exactly matching the story. Docs explicitly show event examples ($purchase, $view) and confirm events trigger automations for the individual who fired them. Missing for 10: independent/hands-on verification (beyond first-party docs) that a fired custom event reliably triggers a workflow scoped to only that one subscriber in production use.",
     "evidenceIds": [
       "bento-docs-1",
       "bento-docs-9",
-      "bento-docs-20"
+      "bento-docs-27",
+      "bento-docs-39",
+      "bento-docs-46"
     ]
   },
   {
@@ -461,8 +495,8 @@
     "storyId": "flow-state-inspection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence documents building flows and segment filters (bento-docs-9, bento-docs-8, bento-docs-26) but no documentation of visualizing an individual subscriber's current position inside a running automation, nor of removing/re-entering a person from a flow without disrupting it — the specific lifecycle-management capability the story asks for is unevidenced.",
+    "confidence": "low",
+    "rationale": "While Bento documents Workflows, branching, and bulk subscriber updates (bento-docs-46, bento-docs-9, bento-docs-14), there is no evidence of a feature letting an ops user view a specific subscriber's current position inside a running automation or safely pull/re-enter them without disrupting the flow.",
     "evidenceIds": []
   },
   {
@@ -471,13 +505,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Bento's Subscribers API supports filtering by tags, segments, and date ranges (bento-docs-8) and bulk create/update (bento-docs-14), and the CLI/API could be scripted to pull subscriber data (bento-docs-4), implying some self-serve data-extraction capability. However, there is no explicit documentation of a one-click 'export all data' feature, no confirmation of CSV/open-format export, and no mention of exporting the suppression list or engagement history specifically — only 'migration help' is offered as a vendor-assisted service (bento-docs-11), not a self-serve export. missing for 10: explicit export/download feature documentation, confirmation of open format (CSV/JSON) output, explicit inclusion of suppression list and engagement history in export scope.",
+    "rationale": "Bento's Subscribers API supports paginated GET requests (1–1000 per call) filterable by tags, segment, and date ranges, and the CLI can 'search subscribers, import from CSV,' which together allow a founder to script a bulk pull of contact/tag/field data via API or CLI. However, there is no documented one-click or bulk 'export' command, no explicit mention of exporting engagement/event history or the suppression list, and no confirmed open-format (CSV/JSON) full-account export tool. Missing for 10: dedicated export endpoint/CLI command, explicit suppression-list export, engagement-history export, and confirmation of a single self-serve full-account export flow.",
     "evidenceIds": [
+      "bento-docs-2",
       "bento-docs-8",
       "bento-docs-14",
-      "bento-docs-4",
-      "bento-docs-16",
-      "bento-docs-11"
+      "bento-docs-49",
+      "bento-docs-4"
     ]
   },
   {
@@ -486,46 +520,45 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Bento documents subscriber import (bulk create/update, tags, custom fields via API) and explicitly offers 'migration help when you switch' plus community testimonials of switching from Mailchimp/Hubspot, but there is no documented guided import wizard or explicit statement that unsubscribe state is preserved during migration. missing for 10: a dedicated guided migration wizard/tool description, explicit documentation that unsubscribe status is preserved on import, and independent evidence of successful list-preserving migrations.",
+    "rationale": "Bento supports bulk subscriber import (CSV via CLI, API bulk create/update) that can include tags and custom fields, and pricing page mentions 'migration help when you switch,' with a community testimonial of switching from Mailchimp/Hubspot. However, there's no documented guided import wizard or explicit mechanism for preserving unsubscribe state from the prior platform during import. missing for 10: explicit guided migration wizard, documentation of unsubscribe-state preservation on import, and independent verification of successful full-fidelity migrations.",
     "evidenceIds": [
       "bento-docs-4",
-      "bento-docs-8",
       "bento-docs-11",
       "bento-docs-14",
-      "bento-docs-13",
-      "bento-comm-1"
+      "bento-docs-49",
+      "bento-docs-8",
+      "bento-comm-1",
+      "bento-docs-13"
     ]
   },
   {
     "productId": "bento",
     "storyId": "metrics-via-api",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence documents Bento's Events API, Subscribers API, webhooks, and SDKs, and even mentions tying revenue back to emails/flows, but nowhere is there a documented endpoint or report for pulling campaign/flow performance metrics (opens, clicks, conversion rates, etc.) into an external warehouse or dashboard. No OpenAPI spec or stats endpoint is evidenced (bento-probe-3 shows no OpenAPI spec found), so this specific capability is unevidenced.",
+    "rationale": "Bento's API supports reviewing broadcast history and creating campaigns (bento-docs-34), and highlights tying revenue back to emails/flows (bento-docs-6), suggesting some campaign performance data is retrievable via API, but there is no explicit documentation of dedicated analytics/metrics endpoints (open rates, click rates, flow performance stats) or guidance for exporting data into a warehouse/BI tool. Missing for 10: dedicated performance-metrics API endpoints for flows, explicit open/click/conversion stats via API, and documented warehouse/dashboard export patterns.",
     "evidenceIds": [
-      "bento-docs-1",
+      "bento-docs-34",
       "bento-docs-6",
-      "bento-docs-9",
-      "bento-probe-3"
+      "bento-docs-32"
     ]
   },
   {
     "productId": "bento",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Bento exposes broad API surface (events, subscribers, transactional email, webhooks) plus first-party SDKs, a 50+ command CLI, and an MCP server for natural-language account management, suggesting most UI actions have programmatic equivalents. However, there is no explicit documentation claiming full UI/API parity, and probes show no discoverable OpenAPI spec, leaving some ambiguity about complete coverage (e.g., billing, account transfer, or segment builder UI features via API). Missing for 10: an explicit parity statement or complete OpenAPI/schema confirming all UI actions are API-accessible, and independent verification of coverage gaps.",
+    "rationale": "Bento exposes broad API/CLI/SDK/MCP coverage for core objects—subscribers, tags, segments, broadcasts, sequences, events, webhooks, transactional email, data deletion—suggesting most UI actions have an API equivalent, and the CLI explicitly claims '50+ commands for managing your entire Bento account' (bento-docs-49). However, visual/no-code UI builders like the workflow automation editor and form builder are described only as UI concepts (bento-docs-46, bento-docs-41) without matching API endpoints to programmatically construct workflow logic or forms, and no OpenAPI spec was discoverable (bento-probe-3) to verify full parity. Missing for 10: documented API endpoints for building/editing workflows and forms, and a machine-readable spec confirming complete UI/API feature parity.",
     "evidenceIds": [
-      "bento-docs-1",
-      "bento-docs-2",
-      "bento-docs-3",
-      "bento-docs-14",
+      "bento-docs-49",
       "bento-docs-16",
-      "bento-docs-17",
-      "bento-docs-19",
-      "bento-docs-20",
+      "bento-docs-46",
+      "bento-docs-41",
+      "bento-docs-34",
+      "bento-docs-38",
+      "bento-docs-42",
       "bento-probe-3"
     ]
   },
@@ -533,14 +566,16 @@
     "productId": "bento",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Bento offers migration help when switching platforms, a CLI with 50+ account-management commands, and an API for subscribers/events data, which together suggest some data portability, but there is no explicit documentation of a full 'export all data' feature in open formats like CSV/JSON. Missing for 10: explicit data export/download feature documentation, confirmation of open standard formats (CSV/JSON), and evidence of exporting all data types (events, broadcasts, automations) not just subscribers.",
+    "rationale": "Bento offers API/CLI access to subscriber data (search, filter, bulk operations) and explicitly advertises 'migration help when you switch' (bento-docs-11), implying some data portability, but there is no documented bulk-export endpoint or explicit open-format (CSV/JSON) full-account export feature — only import functionality is clearly documented. missing for 10: explicit bulk data export endpoint/CLI command, documented open-format export (CSV/JSON) of all subscriber/event/campaign data, independent confirmation that migration assistance actually delivers a full data export.",
     "evidenceIds": [
       "bento-docs-11",
+      "bento-docs-2",
+      "bento-docs-8",
+      "bento-docs-49",
       "bento-docs-16",
-      "bento-docs-4",
-      "bento-docs-14"
+      "bento-docs-47"
     ]
   },
   {
@@ -549,7 +584,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of Bento's source code being open-licensed or publicly available; Bento is a closed SaaS email marketing platform with docs, SDKs, CLI, and MCP integrations but no mention of open-source licensing for its core product.",
+    "rationale": "Bento is a closed SaaS email marketing platform; there is no evidence of an open-source license for its source code (only SDKs/CLI docs, which are client tools, not the product's core source). No repository or license reference appears anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
@@ -565,11 +600,13 @@
     "productId": "bento",
     "storyId": "outbound-webhooks",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Bento documents a 'Send webhook' action that fires from automation workflows when an external system should act, showing outbound webhook capability exists, but there's no evidence of a dedicated webhook subscription system for specific delivery/engagement events (sends, opens, clicks, bounces, unsubscribes) nor any documentation of payload signing/verification. missing for 10: documented list of subscribable event types, signed payload/signature verification docs, dedicated webhook subscription endpoint or settings page.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Bento supports outbound webhooks as a workflow action ('Send webhook') that notifies external systems when a workflow reaches a certain point, which can be triggered by events like purchases, tags, or behaviors, but the evidence never documents specific engagement events (opens, clicks, bounces, unsubscribes) as native webhook triggers, nor any signed-payload/signature-verification mechanism. missing for 10: documented event catalog (sends/opens/clicks/bounces/unsubscribes) as webhook triggers, payload signing/verification scheme, independent confirmation of reliability.",
     "evidenceIds": [
-      "bento-docs-15"
+      "bento-docs-15",
+      "bento-docs-30",
+      "bento-docs-46"
     ]
   },
   {
@@ -577,8 +614,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Bento offers data residency/region selection options; nothing in docs mentions where data is stored or a choice of hosting region. Missing for 10: any mention of data residency, region selection, or storage location controls.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location options for Bento; only account/site data isolation between projects is mentioned, which is not the same as choosing storage region.",
     "evidenceIds": []
   },
   {
@@ -593,11 +630,13 @@
   {
     "productId": "bento",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items address data retention policies, subscriber deletion/erasure, or privacy/GDPR controls; only subscriber creation/update/import features are documented, not deletion or retention.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Bento documents a dedicated Data Deletion Requests API to queue anonymization of a subscriber's data per site, directly addressing deletion control for AI-native/API-driven users. However, there's no documented broader retention policy controls (e.g., configurable retention periods, bulk/batch deletion, export-before-delete, or confirmation/status tracking of deletion jobs). Missing for 10: retention period configuration, bulk deletion tooling, deletion confirmation/audit trail, and independent verification of the deletion process working as documented.",
+    "evidenceIds": [
+      "bento-docs-47"
+    ]
   },
   {
     "productId": "bento",
@@ -605,20 +644,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Bento is an email marketing/automation platform; the evidence pack covers subscribers, transactional email, MCP/CLI/SDK integrations, billing, and account structure, but nothing addresses telemetry/usage tracking opt-out for AI-native usage of its own tools (e.g., MCP server, CLI) or the product itself. No privacy or telemetry settings are documented anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Bento offers a data-deletion/anonymization endpoint for end-user subscriber data, but nothing addresses whether Bento's own CLI/MCP/SDK tooling collects usage telemetry from developers or whether such tracking can be disabled. No opt-out mechanism for product/tool telemetry is documented anywhere in the pack.",
+    "evidenceIds": [
+      "bento-docs-47"
+    ]
   },
   {
     "productId": "bento",
     "storyId": "revenue-attribution",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Bento's marketing explicitly claims revenue attribution to specific emails/flows (bento-docs-6) and supports event tracking (bento-docs-1) and flow building from events/behavior (bento-docs-9), which are prerequisites for such attribution. However, there is no documentation detail on how attribution reporting/dashboards actually work, no independent or hands-on confirmation of accuracy, and no mention of signup attribution specifically. missing for 10: detailed attribution reporting docs/UI evidence, signup-specific attribution mechanics, independent verification of revenue attribution accuracy.",
+    "rationale": "Bento explicitly documents tying revenue back to the email or flow that preceded it, purchase events with amount/product details, and unique-event deduplication to avoid double-counting revenue from reloads/retries — directly enabling revenue attribution beyond opens/clicks. Workflows/flows are built from behavior and events, supporting flow-level attribution.\n\nmissing for 10: a documented attribution report/dashboard UI showing per-email or per-flow revenue rollups, and independent/hands-on corroboration of attribution accuracy.",
     "evidenceIds": [
       "bento-docs-6",
-      "bento-docs-1",
-      "bento-docs-9"
+      "bento-docs-39",
+      "bento-docs-48",
+      "bento-docs-9",
+      "bento-docs-34"
     ]
   },
   {
@@ -627,23 +670,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Bento's documented auth model is a single HTTP Basic auth pair (publishable key as username, secret key as password) with no mention of scoped or read-only credential types, roles, or permission levels for API access. No evidence describes minting restricted-scope keys for agents/contractors.",
+    "rationale": "Bento's API auth is a single publishable/secret key pair (HTTP Basic auth) with no documented mechanism for scoped or read-only keys, roles, or permission tiers — evidence only shows one key pair granting full account access via API/CLI/MCP.",
     "evidenceIds": [
-      "bento-docs-20"
+      "bento-docs-20",
+      "bento-docs-29"
     ]
   },
   {
     "productId": "bento",
     "storyId": "segment-builder",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Docs show a custom segment builder with unlimited conditions/filters, filtering by tags, segments, and date ranges (creation, update, last event, unsubscribe), plus an events API that tracks behavior and updates profile fields, which together let marketers build segments from attributes, tags, and events. However, no explicit documentation confirms segments dynamically re-evaluate in real time as new data/events arrive versus being static snapshots. Missing for 10: explicit real-time/live segment refresh confirmation, independent/hands-on verification of segment behavior.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Bento's docs explicitly define Segments as saved filters combining tags, fields (profile attributes), and events/behavior, with dynamic live membership: \"When someone meets the criteria, they're automatically included. When they no longer match, they're automatically removed\" [bento-docs-42], backed by a custom segment builder with unlimited conditions/filters [bento-docs-26], filtering by tags/segment/date ranges [bento-docs-8], and event tracking to fuel behavioral segmentation [bento-docs-27, bento-docs-39]. Missing for 10: independent hands-on verification of segment update latency/live behavior beyond vendor docs.",
     "evidenceIds": [
-      "bento-docs-8",
-      "bento-docs-9",
+      "bento-docs-42",
       "bento-docs-26",
-      "bento-docs-1"
+      "bento-docs-8",
+      "bento-docs-27",
+      "bento-docs-39",
+      "bento-docs-45",
+      "bento-docs-40"
     ]
   },
   {
@@ -652,27 +699,28 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Bento's API/CLI docs show subscriber tagging, bulk create/update, and filtering by tags, segment, or date ranges (bento-docs-8, bento-docs-14, bento-docs-16), which supports programmatic tag management and membership lookups. However, segment creation is described as a 'custom segment builder' (bento-docs-26) with no documented API endpoint for creating/updating segments programmatically, and there's no explicit 'list' object or example of reading back exact segment/list membership via API. Missing for 10: documented API/CLI commands to create or update a segment (not just filter), a clear 'list' concept distinct from tags/segments, and a concrete example of reading back exact membership.",
+    "rationale": "Bento's API/CLI clearly supports creating/updating tags on subscribers and filtering/reading back subscribers by tag or segment (bento-docs-8, bento-docs-14, bento-docs-45, bento-docs-49), and segments are documented as saved filters that auto-update membership (bento-docs-42). However, there's no explicit evidence of an API/CLI endpoint to programmatically create or update a segment definition itself (only to filter by existing ones), and 'lists' as a distinct object aren't clearly documented. Missing for 10: documented segment-creation/update endpoint, explicit 'list' object support, and a worked example reading back full membership.",
     "evidenceIds": [
       "bento-docs-8",
       "bento-docs-14",
-      "bento-docs-16",
-      "bento-docs-26",
-      "bento-docs-2"
+      "bento-docs-42",
+      "bento-docs-45",
+      "bento-docs-49"
     ]
   },
   {
     "productId": "bento",
     "storyId": "stack-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Bento documents first-party SDKs/packages (JS, Ruby, PHP, Laravel, WordPress, WooCommerce, Next.js), a ClickFunnels integration, and generic outbound webhooks to trigger external systems — enough for ops users to wire up e-commerce and custom stacks. However, there is no evidence of maintained first-party integrations specifically named in the story (Stripe, Shopify, or a CDP like Segment); WooCommerce covers e-commerce but not Shopify directly, and webhooks are generic rather than pre-built connectors. Missing for 10: explicit Stripe integration, explicit Shopify integration, explicit Segment/CDP integration, and any direct database connector.",
+    "rationale": "Bento documents generic connectivity (Send-webhook workflow actions, first-party SDKs for JS/Ruby/PHP/Laravel/WordPress/WooCommerce/Next.js, and a ClickFunnels integration) that let ops teams wire external systems, but there is no evidence of maintained first-party integrations for Stripe, Shopify, or a CDP like Segment — the exact examples in the story. missing for 10: Stripe integration, Shopify integration, Segment/CDP integration, direct product-database connector.",
     "evidenceIds": [
+      "bento-docs-15",
+      "bento-docs-30",
       "bento-docs-19",
       "bento-docs-25",
-      "bento-docs-15",
-      "bento-docs-16"
+      "bento-docs-28"
     ]
   },
   {
@@ -681,23 +729,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Bento tracks unsubscribe times as a subscriber filter (bento-docs-8) but contains no documentation of automatic bounce handling, spam-complaint suppression, or a unified suppression list honored across broadcast and transactional sends — the core of this CAN-SPAM/GDPR hygiene story is unevidenced.",
+    "rationale": "The evidence pack shows subscriber management, segmentation, and a data-deletion/anonymization endpoint, but nowhere documents that Bento automatically suppresses bounces, spam complaints, or unsubscribes and honors that suppression across broadcasts, sequences, and transactional sends. The only tangential hint is a filter on 'unsubscribe times' for segmenting subscribers, which does not confirm enforced suppression logic.",
     "evidenceIds": [
       "bento-docs-8",
-      "bento-docs-3"
+      "bento-docs-47",
+      "bento-docs-33"
     ]
   },
   {
     "productId": "bento",
     "storyId": "templates-as-code",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers transactional email use-cases, CLI/SDK/MCP integrations, and account structure, but nothing documents managing email templates as HTML/MJML files or API-managed templates with variable substitution under version control.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Bento documents reusable templates managed via API/CLI (create once, reuse across Sequences/Workflows, CLI 'manage templates' command), which supports API-managed templates, but there is no evidence of HTML/MJML source format, explicit variable-substitution syntax, or any git/version-control workflow for templates. Missing for 10: HTML/MJML template authoring, documented variable substitution syntax, and version-control integration or CLI push/pull workflow tied to a repo.",
     "evidenceIds": [
-      "bento-docs-3",
-      "bento-docs-16",
-      "bento-docs-19"
+      "bento-docs-37",
+      "bento-docs-49",
+      "bento-docs-16"
     ]
   },
   {
@@ -705,38 +754,43 @@
     "storyId": "transactional-send-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Bento has a dedicated transactional-email doc explicitly covering receipts, password resets, login codes, and order confirmations, and this sits alongside the same platform's broadcast/automation/marketing APIs and SDKs (JS, Ruby, PHP, Laravel, etc.) using shared HTTP Basic auth conventions. Missing for 10: no explicit code sample showing a transactional send API call/endpoint, and no independent/hands-on confirmation of deliverability or API behavior for transactional sends.",
+    "confidence": "high",
+    "rationale": "Bento explicitly documents a dedicated transactional email API for account-triggered messages (receipts, password resets, login codes, order confirmations) that runs on the same platform/API as broadcasts and sequences, using the same auth (bento-docs-3, bento-docs-38, bento-docs-20). CLI and SDK docs also confirm transactional sending as a first-class supported operation (bento-docs-49). missing for 10: no independent/hands-on verification of transactional deliverability or example code beyond docs.",
     "evidenceIds": [
       "bento-docs-3",
-      "bento-docs-19",
+      "bento-docs-38",
       "bento-docs-20",
-      "bento-docs-9"
+      "bento-docs-49"
     ]
   },
   {
     "productId": "bento",
     "storyId": "transactional-separation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Bento explicitly documents transactional email as a distinct category (password resets, receipts, order confirmations) separate from marketing sends, and mentions dedicated IP options for high-volume senders. However, there is no explicit documentation confirming that suppression/unsubscribe rules are bypassed for transactional messages, that transactional templates are managed separately from marketing templates, or that transactional sending reputation/IP is isolated from marketing reputation. Missing for 10: explicit suppression-list bypass behavior for transactional sends, dedicated transactional template system, and documented separate sending reputation/domain infrastructure.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs clearly separate transactional email as its own category with its own use cases and templates (bento-docs-3, bento-docs-37, bento-docs-38, bento-docs-49), distinct from broadcasts/marketing sends (bento-docs-34). However, no evidence explicitly confirms that transactional sends bypass marketing unsubscribe/suppression lists or that transactional and marketing traffic maintain separate sending reputation/IP pools tied specifically to transactional mail. Missing for 10: explicit statement that unsubscribed contacts still receive transactional mail, documented suppression-list bypass logic, and evidence of reputation isolation between transactional and marketing streams.",
     "evidenceIds": [
       "bento-docs-3",
-      "bento-docs-7"
+      "bento-docs-37",
+      "bento-docs-38",
+      "bento-docs-49",
+      "bento-docs-34"
     ]
   },
   {
     "productId": "bento",
     "storyId": "visual-automation-builder",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm Bento supports flow-building from behavior, events and tags with branch logic ('Build flows from behavior, events, and tags. Check every branch before it runs.') and workflow actions like webhooks, implying multi-step automations. However, there is no explicit documentation of delay/wait steps, exit rules, or named templates like welcome/onboarding/winback series. missing for 10: explicit delay/wait-step documentation, exit-rule/goal mechanics, and named lifecycle templates (welcome, onboarding, winback).",
+    "rationale": "Bento's Workflows concept explicitly supports branching, delays, and decision logic ('when this happens, do that... branch, delay, make decisions'), Sequences support timed multi-step email series, and workflows can be built from behavior/events/tags with branch validation. Welcome/onboarding/winback use cases are implied by trigger+segment+tag combinations but not explicitly named as templates, and no exit-rule terminology or third-party hands-on review of complex automation flows is present. Missing for 10: explicit named 'exit rules' mechanism, first-party or independent case study showing a full welcome/onboarding/winback build, and screenshots/hands-on validation of branch complexity.",
     "evidenceIds": [
+      "bento-docs-46",
+      "bento-docs-43",
       "bento-docs-9",
-      "bento-docs-15",
-      "bento-docs-1"
+      "bento-docs-42",
+      "bento-docs-45"
     ]
   },
   {
