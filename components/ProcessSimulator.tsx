@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import SimRolePicker from '@/components/SimRolePicker'
 import type { SimLine, SimStep, VendorRole } from '@/lib/processSim'
 import { buildSimRun } from '@/lib/processSim'
 
 // Client-side dry-run theater over the mapped process data — no network calls are ever made.
 // The user picks a product per swappable market role (each role is one arena, defaulting to the
-// DAG's canonical vendor), hits Run, and a transcript reveals step-by-step at ~600ms cadence.
+// DAG's canonical vendor — components/SimRolePicker.tsx renders each role as a logo-bearing
+// card + popover listbox), hits Run, and a transcript reveals step-by-step at ~600ms cadence.
 // The transcript itself is built by lib/processSim.ts's buildSimRun (pure + unit-tested):
 // agent steps as their recorded API/tool calls, approval gates as pauses, already-made vendor
 // decisions as ✓ decided lines, and the remaining non-agent steps as explicit GAP handoffs.
@@ -82,29 +84,14 @@ export default function ProcessSimulator({
       </div>
 
       {roles.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {roles.map((role) => (
-            <label key={role.arenaId} className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-zinc-400">
-              <span>
-                {role.arenaName}
-                {selections[role.arenaId] !== role.canonicalVendor && (
-                  <span className="ml-1 text-amber-400/90">(swapped)</span>
-                )}
-              </span>
-              <select
-                value={selections[role.arenaId] ?? role.defaultProductId}
-                onChange={(e) => setSelections((s) => ({ ...s, [role.arenaId]: e.target.value }))}
-                className="min-w-0 max-w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-sm text-zinc-200 focus:border-emerald-400/60 focus:outline-none"
-              >
-                {role.alternatives.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.name}
-                    {o.agentReady !== null ? ` — ${o.agentReady.toFixed(0)}/100 agent-ready` : ''}
-                    {o.id === role.canonicalVendor ? ' (canonical)' : ''}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <SimRolePicker
+              key={role.arenaId}
+              role={role}
+              selectedId={selections[role.arenaId] ?? role.defaultProductId}
+              onSelect={(id) => setSelections((s) => ({ ...s, [role.arenaId]: id }))}
+            />
           ))}
         </div>
       )}

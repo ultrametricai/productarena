@@ -3,6 +3,7 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
+import { hasLogo } from './logos'
 import { isShutdown } from './shutdown'
 import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
 import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
@@ -737,7 +738,13 @@ function arenaSwapOptions(arenaId: string, dir?: string): SwapOption[] {
   const nameOf = (pid: string) => data.products.find((p) => p.id === pid)?.name ?? pid
   return [...data.rankings.leaderboard]
     .sort((a, b) => (b.agentReady ?? -1) - (a.agentReady ?? -1))
-    .map((e) => ({ id: e.productId, name: nameOf(e.productId), agentReady: e.agentReady }))
+    .map((e) => ({
+      id: e.productId,
+      name: nameOf(e.productId),
+      agentReady: e.agentReady,
+      // Resolved here (build time, node:fs) so the client-side role picker can show logo chips.
+      hasLogo: hasLogo(e.productId),
+    }))
 }
 
 // Product ids of one arena whose vendor announced a shutdown (lib/shutdown.ts founder rule):
