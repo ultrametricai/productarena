@@ -1585,27 +1585,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms mid-call function calling exists for the Voice Agent (deepgram-docs-2) but only documents an MCP *server* built into the CLI that lets coding tools access Deepgram APIs (deepgram-docs-13, deepgram-probe-4) — this is the reverse direction, not the Voice Agent acting as an MCP client to pull in external toolsets mid-call. No evidence shows the Voice Agent itself can connect to MCP servers as a tool source.",
+    "rationale": "Deepgram Voice Agent supports function calling where the application executes actions the model requests, but there is no evidence the agent can consume MCP servers as a tool source mid-call — the only MCP server mentioned is the dg CLI's own MCP server exposing Deepgram APIs to coding tools, which is the reverse (server) role, not the agent acting as an MCP client to import external toolsets.",
     "evidenceIds": [
       "deepgram-docs-2",
+      "deepgram-docs-20",
       "deepgram-docs-13",
-      "deepgram-probe-4"
+      "deepgram-docs-30"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "agent-provisions-voice-agent",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Deepgram documents agent creation via reusable agent configs (UUID-based), telephony connectivity for inbound/outbound calls, and a CLI with a built-in MCP server giving AI coding tools API access — the building blocks for programmatic provisioning exist. However, the evidence shows phone-call handling is done via a Twilio bridge (server code required) rather than a native Deepgram 'attach number/place call' API, and no doc shows the CLI or MCP server actually exposing agent-create + number-attach + call-place as a single end-to-end flow. Missing for 10: explicit CLI/MCP commands for provisioning a phone number and placing a call, and confirmation that this full workflow avoids external glue code/dashboard steps.",
+    "rationale": "Deepgram documents API-driven agent creation (reusable agent configs with UUIDs) and telephony connectivity for phone-based calls, plus a CLI with a built-in MCP server exposing Deepgram APIs to AI coding tools, which supports 'via API/CLI/MCP' provisioning in principle. However, the evidence shows Twilio bridging patterns (external server relays audio to Deepgram) rather than Deepgram itself provisioning/attaching a phone number or placing an outbound call via a single API/CLI/MCP call chain, and there's no explicit confirmation that the MCP server surface covers agent-creation-to-call-placement end-to-end. missing for 10: API/CLI/MCP endpoints for buying/attaching a phone number, explicit call-placement action via API/MCP without dashboard, and independent confirmation the MCP server exposes these agent-lifecycle operations.",
     "evidenceIds": [
       "deepgram-docs-4",
       "deepgram-docs-5",
-      "deepgram-docs-13",
       "deepgram-docs-18",
+      "deepgram-docs-13",
       "deepgram-probe-4",
-      "deepgram-probe-5"
+      "deepgram-docs-21"
     ]
   },
   {
@@ -1614,10 +1615,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probe confirms llms.txt exists at developers.deepgram.com/llms.txt (HTTP 200) with explicit AI-agent instructions, and docs pages support .md suffix for clean markdown retrieval, both verified by live probes. missing for 10: no independent third-party confirmation of an agent actually consuming this in practice.",
+    "rationale": "Direct probe confirms llms.txt exists at developers.deepgram.com/llms.txt with explicit instructions for AI agents, and .md versions of docs pages are confirmed live (HTTP 200), matching the docs' own agent-oriented markdown convention. missing for 10: no independent third-party report of an agent actually consuming llms.txt to complete a task.",
     "evidenceIds": [
       "deepgram-probe-1",
-      "deepgram-probe-2"
+      "deepgram-probe-2",
+      "deepgram-docs-1"
     ]
   },
   {
@@ -1634,8 +1636,8 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "confidence": "medium",
+    "rationale": "Deepgram Voice Agent is built for live, synchronous voice conversations (WebSocket streaming, barge-in, live function calling) — there is no evidence of scheduled, triggerless, or autonomous background automation workflows independent of an active call/session.",
     "evidenceIds": []
   },
   {
@@ -1650,14 +1652,15 @@
   {
     "productId": "deepgram",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The Voice Agent is a WebSocket API (no GUI dependency) and Deepgram ships a terminal-based `dg` CLI for scripting Deepgram operations (transcribe, synthesize, manage account) which is inherently automatable/CI-friendly, and temporary tokens support secure automated auth. However, there is no explicit documentation of running the Voice Agent itself headlessly in CI pipelines, no CI/CD examples, and the CLI's primary use-cases described are transcription/synthesis rather than orchestrating full voice-agent sessions programmatically. Missing for 10: dedicated CI/headless automation guide for Voice Agent sessions, example CI pipeline configs, and confirmation the CLI can drive the Agent API end-to-end rather than just STT/TTS.",
+    "rationale": "The Voice Agent is exposed as a single WebSocket API and the companion dg CLI explicitly supports scripting from the terminal (transcribe, stream, synthesize, manage account) with no GUI dependency, making headless/CI use straightforward. Multiple language starter templates (Node, Python, C#, Go) further support programmatic, non-interactive invocation. Missing for 10: an explicit CI pipeline example or documented automation/test-harness workflow, and independent hands-on confirmation of CI usage.",
     "evidenceIds": [
       "deepgram-docs-1",
       "deepgram-docs-12",
-      "deepgram-docs-14",
+      "deepgram-docs-24",
+      "deepgram-docs-25",
       "deepgram-probe-5"
     ]
   },
@@ -1666,11 +1669,13 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Deepgram Voice Agent supports function calling for custom tool use, but there is no evidence the Voice Agent can act as an MCP client to consume external MCP servers' tools. The only MCP-related evidence is a built-in MCP *server* in the `dg` CLI that lets coding tools access Deepgram's APIs — the opposite direction of the story.",
+    "confidence": "medium",
+    "rationale": "Deepgram Voice Agent supports generic function calling for live-call actions, but there is no evidence it can consume external MCP servers as a client to use their tools — the only MCP capability documented is the dg CLI's own MCP *server* that exposes Deepgram APIs to coding tools, which is the opposite integration direction.",
     "evidenceIds": [
       "deepgram-docs-2",
+      "deepgram-docs-20",
       "deepgram-docs-13",
+      "deepgram-docs-30",
       "deepgram-probe-4"
     ]
   },
@@ -1678,13 +1683,13 @@
     "productId": "deepgram",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Deepgram ships an official MCP server (bundled in the dg CLI) that lets AI coding tools/agents connect directly to Deepgram's APIs, confirmed both in docs and via a dedicated agentic-tools page. This directly satisfies the story of connecting an agent to Deepgram via an official MCP server. Missing for 10: independent/hands-on verification that the MCP server works reliably in practice, and more detail on which Voice Agent capabilities specifically are exposed through it.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Deepgram's official dg CLI ships a built-in MCP server that exposes Deepgram APIs to AI coding/agent tools, documented at a dedicated agentic-tools/mcp-server page and confirmed by a live probe. This is a first-party, officially supported MCP server enabling agent connection, though it's CLI-bundled rather than a standalone hosted MCP endpoint and lacks independent/hands-on corroboration. missing for 10: independent/community verification of the MCP server working end-to-end, and details on hosted (non-CLI) MCP endpoint options.",
     "evidenceIds": [
       "deepgram-docs-13",
-      "deepgram-probe-4",
-      "deepgram-docs-12"
+      "deepgram-docs-30",
+      "deepgram-probe-4"
     ]
   },
   {
@@ -1693,12 +1698,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Deepgram Voice Agent is fundamentally a conversational system: users interact via natural spoken language, and the agent supports function calling to perform tasks, live prompting to shape behavior, and mid-call message injection—all driven by natural-language conversation rather than rigid commands. This is core, well-documented functionality (docs-2, docs-7, docs-11) directly matching the story's intent for an ai-native/agentic persona. Missing for 10: independent/hands-on validation of natural-language command accuracy and no evidence of complex multi-turn command chaining reliability from third-party sources.",
+    "rationale": "Deepgram Voice Agent's core function is natural, spoken-language interaction: callers 'speak naturally, and hold a conversation with an AI that can be interrupted mid-sentence, the way people talk to each other,' with barge-in support and prompt-driven behavior shaping live-call responses. This is well documented across multiple first-party docs describing the conversational, natural-language operating model. Missing for 10: independent/hands-on corroboration beyond vendor docs, and clearer treatment of natural-language 'command' style operation (vs. free conversation) for task execution.",
     "evidenceIds": [
-      "deepgram-docs-2",
+      "deepgram-docs-19",
+      "deepgram-docs-8",
       "deepgram-docs-7",
-      "deepgram-docs-11",
-      "deepgram-docs-3"
+      "deepgram-docs-20"
     ]
   },
   {
@@ -1707,10 +1712,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Deepgram ships an official 'dg' CLI for transcribing files, streaming audio, synthesizing speech, and managing accounts from the terminal, and it even embeds an MCP server for AI coding tools, directly supporting agentic/AI-native workflows. Missing for 10: independent/hands-on corroboration beyond first-party docs and more detail on CLI coverage of Voice Agent-specific features.",
+    "rationale": "Deepgram ships an official 'dg' CLI that can transcribe, stream, synthesize speech, and manage account operations from the terminal, with a dedicated getting-started doc, and it even embeds an MCP server enabling AI coding tools to call Deepgram APIs directly, reinforcing agentic/AI-native usage. missing for 10: independent/hands-on user reports validating the CLI's real-world reliability beyond first-party docs.",
     "evidenceIds": [
       "deepgram-docs-12",
       "deepgram-docs-13",
+      "deepgram-docs-30",
       "deepgram-probe-5",
       "deepgram-probe-4"
     ]
@@ -1721,39 +1727,41 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Deepgram publishes a documented public API (WebSocket-based Voice Agent API plus OpenAPI spec confirmed live), extensive docs covering endpoints, function calling, LLM providers, telephony, and auth, and even a CLI/MCP server for programmatic/agentic access, making it clearly drivable by an AI-native user. Missing for 10: independent third-party corroboration of API usage beyond vendor docs.",
+    "rationale": "Deepgram provides a fully documented public WebSocket API (Voice Agent API) with a discoverable OpenAPI spec, detailed docs for settings, function calling, conversation context, multi-region endpoints, and SDKs/starter apps in multiple languages, plus a CLI and MCP server for programmatic/agentic access. This gives an AI-native user comprehensive, documented, machine-consumable ways to drive the product. missing for 10: independent third-party corroboration beyond vendor docs/probes.",
     "evidenceIds": [
       "deepgram-docs-1",
+      "deepgram-docs-23",
+      "deepgram-docs-29",
       "deepgram-probe-3",
+      "deepgram-probe-1",
       "deepgram-docs-12",
-      "deepgram-docs-13",
-      "deepgram-probe-5",
-      "deepgram-docs-14"
+      "deepgram-docs-25"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Deepgram documents temporary, short-lived tokens as an alternative to traditional API keys for secure, limited-duration access (deepgram-docs-14), which partially satisfies a least-privilege credential story, but there is no evidence of granular scopes/permissions (e.g., restricting a key to specific endpoints or agent capabilities) or role-based access control for agents. Missing for 10: documented scope/permission granularity, per-agent key restriction, and evidence of enforcement/verification of least-privilege in practice.",
+    "rationale": "Deepgram documents temporary, time-limited tokens (30s TTL) explicitly positioned as more secure than long-lived API keys for real-time use, which supports a least-privilege credential model. However, there is no evidence of granular scoping (e.g., restricting a token to specific capabilities, projects, or actions) beyond time-limitation. Missing for 10: documented permission/scope granularity for tokens, role-based restrictions, or agent-specific credential scoping beyond TTL.",
     "evidenceIds": [
-      "deepgram-docs-14"
+      "deepgram-docs-14",
+      "deepgram-docs-28"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Evidence shows an official 'Browser Agent SDK' with composable packages, plus an OpenAPI spec, CLI, and MCP server for developer tooling, indicating some official SDK/build tooling exists. However, evidence does not mention broader server-side/language SDKs (Python, Node, Go, etc.) commonly expected for building agentic applications, nor independent corroboration of SDK quality. Missing for 10: multi-language SDK documentation, independent/hands-on developer reports, broader agentic build examples beyond browser.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Deepgram documents official SDKs/quickstarts for multiple languages (Python, JavaScript, C#, Go, Node.js starter repo) plus a browser Agent SDK, and confirms an OpenAPI spec is available for programmatic/agentic use. This directly supports building against official SDKs for the Voice Agent. Missing for 10: independent/hands-on corroboration of SDK quality and completeness beyond first-party docs.",
     "evidenceIds": [
+      "deepgram-docs-25",
+      "deepgram-docs-24",
       "deepgram-docs-6",
-      "deepgram-probe-3",
-      "deepgram-probe-5",
-      "deepgram-probe-4"
+      "deepgram-probe-3"
     ]
   },
   {
@@ -1762,7 +1770,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Deepgram Voice Agent operates via a persistent WebSocket connection for real-time audio streaming, not webhook-based event subscription; no documentation mentions webhooks for event notifications (e.g., call completion, transcript ready, errors). Absence of evidence for an applicable capability yields 'none'.",
+    "rationale": "Deepgram's Voice Agent is a real-time WebSocket-based API for streaming audio conversations; the evidence pack describes function calling, telephony, multi-agent orchestration, and CLI/MCP tools, but no evidence mentions webhook subscriptions for events. This is a plausible axis for an API-based agent platform (webhook notifications for call events, transcripts, etc.), but no documentation supports it.",
     "evidenceIds": []
   },
   {
@@ -1771,13 +1779,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers building agents manually (prompting, function calling, reusable configs, MCP server for coding tools) but there is no mention of the platform's own AI generating or improving prompts, flows, or test cases from a description; the MCP server exposes Deepgram APIs to external coding assistants rather than being an AI author within the platform itself.",
-    "evidenceIds": [
-      "deepgram-docs-7",
-      "deepgram-docs-4",
-      "deepgram-docs-13",
-      "deepgram-probe-4"
-    ]
+    "rationale": "The evidence describes prompting, function calling, reusable configs, and MCP server access for AI coding tools, but nowhere shows the platform's own AI generating or improving prompts, flows, or test cases from a description — authoring remains manual.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
@@ -1785,7 +1788,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Deepgram Voice Agent's real-time conversation infrastructure (STT/TTS, function calling, telephony, prompting, A/B testing of voices/prompts) but contains no mention of post-call AI review, automated quality scoring, failure flagging, or resolution analysis of completed calls.",
+    "rationale": "Evidence covers Voice Agent architecture, function calling, telephony, multilingual support, and A/B testing of prompts/voices, but there is no mention of automated call review, quality scoring, failure flagging, or resolution analysis by AI. This is an applicable axis for a voice agent platform (analytics/QA is a plausible feature), but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -1807,7 +1810,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms Deepgram publishes a machine-readable OpenAPI spec at openapi.json containing the 'openapi' key, directly satisfying the story. Missing for 10: no first-party docs page explicitly announcing/describing the OpenAPI spec's coverage or versioning.",
+    "rationale": "A probe confirms a machine-readable OpenAPI spec is live at developers.deepgram.com/openapi.json returning valid JSON with an 'openapi' key, directly satisfying the story. Missing for 10: no independent third-party corroboration of the spec's completeness or SDK codegen usage.",
     "evidenceIds": [
       "deepgram-probe-3"
     ]
@@ -1818,7 +1821,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions a sandbox environment, test/dev API keys, or a way to test without touching production data or usage; only production endpoints, EU endpoint, and opt-out flags are documented. Missing for 10: sandbox/test-mode environment, documentation of non-production keys or test credits, any guidance on isolating test traffic from production data.",
+    "rationale": "No evidence of a sandbox/test environment separate from production data; docs mention temporary tokens, EU endpoints, and opt-out for model training, but nothing about a dedicated sandbox mode for testing without touching production data.",
     "evidenceIds": []
   },
   {
@@ -1827,7 +1830,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows extensive Voice Agent API documentation, an OpenAPI spec, CLI, and MCP server, but contains no mention of API versioning scheme or a documented deprecation policy for the Voice Agent API.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy anywhere in the pack; only general product docs, OpenAPI spec presence, and regional endpoints are shown, none of which address version lifecycle or deprecation commitments.",
     "evidenceIds": []
   },
   {
@@ -1835,20 +1838,22 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers real-time, single-conversation voice agent capabilities (function calling, telephony, multi-agent handoff, reusable configs) but nothing about processing many items/files/sessions in bulk as a batch operation. The dg CLI mention of 'transcribe files' is too thin to establish a bulk-operations capability. missing for 10: batch/bulk transcription or agent-session processing documentation, evidence of parallel/batch job APIs, throughput or queue-based bulk workflows.",
+    "evidenceIds": [
+      "deepgram-docs-12"
+    ]
   },
   {
     "productId": "deepgram",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Deepgram Voice Agent supports function calling that lets the agent trigger actions during a live conversation, and features like InjectAgentMessage and multi-agent handoff suggest some event-driven behavior, but this is developer-defined logic (via function calling code) rather than a declarative rules engine for automatically triggering actions on arbitrary events. missing for 10: a documented rules/trigger engine (if-this-then-that style), event subscription system, or automation workflow builder distinct from manual function-calling code.",
+    "rationale": "Function calling lets the agent's LLM decide to invoke defined functions during a conversation (deepgram-docs-2, deepgram-docs-20), which is the closest analog to event-triggered automation, but this is model-driven action selection rather than user-defined declarative rules that fire on specific events. There's no documented rule-engine, webhook-on-event, or conditional trigger system beyond LLM function calling and mid-call message injection (deepgram-docs-11). missing for 10: explicit rule/trigger definition syntax, event-based (non-LLM) automation, and evidence of deterministic 'if event X then action Y' configuration.",
     "evidenceIds": [
       "deepgram-docs-2",
-      "deepgram-docs-3",
+      "deepgram-docs-20",
       "deepgram-docs-11"
     ]
   },
@@ -1864,12 +1869,13 @@
   {
     "productId": "deepgram",
     "storyId": "automation-versioned-workflows",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Deepgram's Reusable Agent Configurations let you persist a named agent config and reference it by UUID, and support A/B testing two configs in parallel, which is adjacent to versioning, but there is no documented version history, diff/review workflow, or explicit rollback mechanism. missing for 10: version history tracking, review/approval workflow, explicit rollback capability, changelog or diffing between config versions.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Deepgram offers reusable agent configurations with UUIDs and A/B testing of configs, but there is no evidence of version history, change review, or rollback capability for agent automations/configurations.",
     "evidenceIds": [
       "deepgram-docs-4",
+      "deepgram-docs-21",
       "deepgram-docs-17"
     ]
   },
@@ -1877,13 +1883,14 @@
     "productId": "deepgram",
     "storyId": "barge-in-interruptions",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim barge-in support where users can talk over the agent and it stops instantly, plus mid-call context tools like InjectAgentMessage for updating conversation state. However, evidence lacks detail on how turn recovery/context updating works technically after interruption, and there's no independent/hands-on corroboration of graceful recovery in practice. missing for 10: technical details on context-state recovery post-interruption, independent verification of barge-in reliability, edge-case handling (e.g., rapid interruptions, latency of stop).",
+    "rationale": "Docs explicitly describe barge-in support: users can talk over the agent and it stops instantly, mid-sentence interruption is supported, and there's a mid-call InjectAgentMessage lever for context/turn management. However, evidence is first-party docs only, with no independent/hands-on corroboration of graceful recovery quality, latency, or edge-case handling (e.g., partial-response context updates after interruption). Missing for 10: independent/hands-on verification of barge-in reliability, detail on how context is truncated/updated after a stopped utterance, and quantified latency/turn-recovery metrics.",
     "evidenceIds": [
       "deepgram-docs-8",
+      "deepgram-docs-19",
       "deepgram-docs-11",
-      "deepgram-docs-1"
+      "deepgram-docs-23"
     ]
   },
   {
@@ -1892,26 +1899,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deepgram's docs confirm outbound telephony connectivity (docs-5, docs-18) and per-call features like barge-in and prompting, but there is no mention of campaign-level batch dialing, call scheduling, or throughput/rate controls for outbound campaigns — this is a real-time conversation API, not a dialer/campaign manager.",
+    "rationale": "Deepgram Voice Agent provides telephony connectivity (inbound/outbound calls via Twilio bridging) and per-call conversation controls, but nothing in the evidence describes batch campaign management, call scheduling, or throughput/concurrency controls for outbound dialing at scale — these are typically features of a dialer/CPaaS orchestration layer, not the Voice Agent API itself.",
     "evidenceIds": [
       "deepgram-docs-5",
-      "deepgram-docs-18"
+      "deepgram-docs-18",
+      "deepgram-docs-19"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "build-phone-agent-fast",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Deepgram provides all core building blocks — prompting, voice/LLM selection, telephony via Twilio bridging, and a single WebSocket API — that together could plausibly get a developer to a first live call quickly. However, the telephony path requires standing up your own server to bridge Twilio audio to the Voice Agent WebSocket, which is nontrivial integration work rather than a turnkey 'phone number in one hour' flow, and there's no first-party quickstart or time-to-first-call benchmark cited. missing for 10: an end-to-end quickstart/tutorial demonstrating full setup within an hour, evidence of a managed/no-code telephony number provisioning path, and independent hands-on confirmation of setup speed.",
+    "rationale": "Docs show all the building blocks needed—system prompting (docs-7), voice/TTS+STT config, Twilio telephony integration with step-by-step guide (docs-18, docs-19), and quickstart guides in multiple languages plus starter templates (docs-24, docs-25)—which together plausibly enable a phone agent to go live quickly. However, there is no explicit 'under an hour' benchmark or independent/hands-on report confirming the time-to-first-call, and phone number acquisition still requires a third-party (Twilio) setup outside Deepgram's own docs. Missing for 10: an end-to-end time-boxed tutorial or case study, independent developer corroboration of setup speed, and native phone-number provisioning within Deepgram itself.",
     "evidenceIds": [
-      "deepgram-docs-1",
-      "deepgram-docs-5",
       "deepgram-docs-7",
-      "deepgram-docs-9",
       "deepgram-docs-18",
-      "deepgram-docs-8"
+      "deepgram-docs-19",
+      "deepgram-docs-25",
+      "deepgram-docs-24",
+      "deepgram-docs-9"
     ]
   },
   {
@@ -1920,10 +1928,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deepgram is a developer API/infrastructure product; evidence shows mentions of A/B testing metrics (conversion, CSAT, containment rate) as data points but no evidence of an actual built-in dashboard for call analytics, success rates, durations, sentiment, or outcomes that founders can view without building their own.",
-    "evidenceIds": [
-      "deepgram-docs-17"
-    ]
+    "rationale": "Evidence covers agent architecture, function calling, telephony, LLM providers, and A/B testing of prompts/voices, but nothing mentions a dashboard for call analytics like success rates, durations, outcomes, or sentiment — the mentioned A/B testing metrics (conversion, CSAT, containment) imply some measurement exists but no built-in dashboard is documented, only that customers 'measure' these themselves.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
@@ -1931,28 +1937,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers telephony connectivity, function calling, multi-agent handoff between AI agents, and mid-call message injection, but nothing documents a warm/blind transfer to a human agent (e.g., SIP REFER, call transfer function, or context handoff to a live operator).",
-    "evidenceIds": []
+    "rationale": "Docs describe multi-agent handoff between AI agents, function calling, and telephony connectivity via Twilio, but no evidence of warm/blind transfer to a human agent with context passing (e.g., SIP REFER, transfer API, or handoff-to-human docs). This is a reasonable telephony capability for a voice agent product, but no evidence shows it exists.",
+    "evidenceIds": [
+      "deepgram-docs-3",
+      "deepgram-docs-5",
+      "deepgram-docs-18",
+      "deepgram-docs-20"
+    ]
   },
   {
     "productId": "deepgram",
     "storyId": "concurrency-scaling-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions concurrency limits, rate limits, per-account call caps, scaling guidance, or capacity request processes for the Voice Agent API; the docs cover architecture, features, and integrations but nothing about scale/concurrency documentation.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items document concurrency limits, rate limits, per-account call caps, or scaling/capacity guidance for the Voice Agent API; nothing addresses how to scale to many simultaneous calls or how limits are communicated/raised. Multi-region endpoints and reusable configs are mentioned but do not speak to concurrency capacity or documented limits.",
     "evidenceIds": []
   },
   {
     "productId": "deepgram",
     "storyId": "consent-recording-controls",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Deepgram documents general data-privacy controls (per-request opt-out from retention via mip_opt_out, EU-region processing endpoint) that touch on data retention/residency, but there is no explicit documentation of per-call recording toggles, consent/disclosure workflows, or configurable retention windows tied to call recordings specifically. Missing for 10: explicit per-call recording enable/disable controls, documented retention period configuration for stored call audio/transcripts, and consent/disclosure feature support.",
+    "rationale": "Deepgram documents data-privacy controls like MIP opt-out (no retention when opted out) and EU/AU/India regional endpoints for data residency, which speak to configurable retention/data handling, but there is no mention of per-call recording toggles, call-recording consent/disclosure workflows, or telephony-specific recording controls. missing for 10: per-call recording enable/disable controls, consent/disclosure messaging features, explicit retention duration settings tied to individual calls, and any compliance certification (e.g., call-recording law compliance) documentation.",
     "evidenceIds": [
       "deepgram-docs-15",
-      "deepgram-docs-16"
+      "deepgram-docs-16",
+      "deepgram-docs-29",
+      "deepgram-docs-31"
     ]
   },
   {
@@ -1961,7 +1974,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a voice cloning feature or consent process; docs cover STT/TTS model selection, multilingual voices, and agent configuration but never mention custom voice cloning or consent workflows.",
+    "rationale": "No evidence anywhere in the pack of voice cloning capability or a documented consent process; Deepgram's docs cover TTS model selection, multilingual voices, and agent configuration, but nothing about cloning a custom brand voice or consent workflows.",
     "evidenceIds": []
   },
   {
@@ -1970,12 +1983,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers architecture, features (barge-in, telephony, function calling, multi-agent), and CLI/SDK tooling, but contains no documented latency numbers (e.g., ms end-to-end) or tuning guidance for reducing turn-taking latency. missing for 10: quantified latency benchmarks, latency tuning/configuration guidance, any performance dashboard or whitepaper on speed claims.",
-    "evidenceIds": [
-      "deepgram-docs-1",
-      "deepgram-docs-8",
-      "deepgram-docs-18"
-    ]
+    "rationale": "The evidence pack contains no documented latency numbers, benchmarks, or tuning guidance for end-to-end voice latency—only feature descriptions like barge-in, architecture, and multi-region endpoints without any quantified speed metrics or optimization guidance.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
@@ -1983,22 +1992,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence covers telephony connectivity, function calling, barge-in, and multi-agent orchestration, but nothing documents DTMF keypress sending, IVR menu navigation, or voicemail detection/leaving capabilities.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Deepgram Voice Agent supports telephony bridging via Twilio, barge-in, and function calling for custom actions, but nowhere mentions DTMF keypress sending, IVR menu navigation, or voicemail detection/leaving capabilities. Since telephony is a supported use case, this axis is fair to ask, but no documentation or feature reference addresses these specific IVR/DTMF/voicemail behaviors.",
+    "evidenceIds": [
+      "deepgram-docs-5",
+      "deepgram-docs-18",
+      "deepgram-docs-19",
+      "deepgram-docs-20"
+    ]
   },
   {
     "productId": "deepgram",
     "storyId": "dynamic-call-personalization",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Deepgram supports prompting, reusable agent configs (passed at call time via UUID), function calling, and mid-call message injection, which together allow injecting per-call context/variables into agent behavior; A/B testing of configs also implies runtime parameterization. However there is no explicit documented mechanism for templated dynamic variables (e.g., {{caller_name}}) or a dedicated per-caller context API akin to other platforms. missing for 10: explicit dynamic variable templating syntax, dedicated per-caller metadata injection API, hands-on example of personalizing a call with caller-specific data.",
+    "rationale": "Deepgram's docs show several mechanisms that together enable per-call personalization — Settings-time prompting (docs-7), a conversation-context API with mid-call agent message injection (docs-11, docs-23), and reusable agent configs referenced by UUID (docs-4, docs-21) — but there's no explicit documented feature for templated dynamic variables (e.g. {{caller_name}}) substituted into the prompt/context at connection time. Missing for 10: explicit variable/templating syntax for injecting per-caller data into the Settings message, and a worked example showing caller-specific personalization end-to-end.",
     "evidenceIds": [
       "deepgram-docs-4",
       "deepgram-docs-7",
       "deepgram-docs-11",
-      "deepgram-docs-17",
-      "deepgram-docs-2"
+      "deepgram-docs-21",
+      "deepgram-docs-23"
     ]
   },
   {
@@ -2007,10 +2021,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence shows EU data-residency endpoint and an opt-out from data retention/training, indicating some compliance/trust infrastructure, but there is no mention of HIPAA/BAA support or SOC 2 certification anywhere in the pack. missing for 10: HIPAA/BAA documentation, SOC 2 attestation evidence, broader regional residency options beyond EU.",
+    "rationale": "Evidence documents data-residency options (EU, AU, India endpoints) and data-privacy/opt-out controls (Model Improvement Program opt-out), which supports part of the compliance story. However there is no mention of HIPAA/BAA support or SOC 2 certification anywhere in the evidence pack. Missing for 10: HIPAA/BAA attestation documentation, SOC 2 report/certification evidence, and any explicit compliance framework page beyond data residency/privacy.",
     "evidenceIds": [
+      "deepgram-docs-16",
+      "deepgram-docs-29",
       "deepgram-docs-15",
-      "deepgram-docs-16"
+      "deepgram-docs-31"
     ]
   },
   {
@@ -2018,21 +2034,17 @@
     "storyId": "knowledge-base-grounding",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers architecture, function calling, multi-agent handoff, telephony, prompting, and LLM providers, but nowhere documents a built-in knowledge base or RAG feature for grounding the agent on user documents. Function calling ([deepgram-docs-2]) could theoretically be wired to an external retrieval system, but that is not the same as a built-in KB/RAG capability, and no such feature is described.",
-    "evidenceIds": [
-      "deepgram-docs-2",
-      "deepgram-docs-3",
-      "deepgram-docs-7"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence covers function calling, prompting, multi-agent handoff, telephony, and LLM provider support, but nowhere mentions a built-in knowledge base, document ingestion, or RAG capability for grounding the agent on custom content. Function calling could theoretically be used to build a RAG pipeline externally, but that's a developer-built workaround, not a built-in feature evidenced here.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
     "storyId": "live-call-monitoring",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of live monitoring dashboards, error-rate alerting, or observability/analytics tooling for production calls; docs cover agent architecture, function calling, telephony, and configuration but nothing about monitoring or alerting on agent misbehavior.",
+    "confidence": "high",
+    "rationale": "No evidence of any live-call monitoring dashboard, error-rate alerting, or observability/alerting integration for production Voice Agent deployments; docs cover architecture, function calling, telephony, and configuration but nothing on monitoring or alerting.",
     "evidenceIds": []
   },
   {
@@ -2041,12 +2053,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm function calling is a supported feature for performing tasks mid-conversation (deepgram-docs-2), and the agent architecture is a single low-latency WebSocket for audio in/out (deepgram-docs-1) with barge-in and inject-message features (deepgram-docs-8, deepgram-docs-11) suggesting attention to latency/dead-air. However there's no explicit documentation or example describing how function-call latency is masked (e.g., filler speech, streaming partial results) while awaiting an API response. Missing for 10: concrete guidance/examples on avoiding dead air during function execution, sample code showing async function calls with the agent speaking a holding phrase, and independent/hands-on verification of smooth latency handling.",
+    "rationale": "Deepgram explicitly documents mid-conversation function calling where the model describes an action and the app executes it (deepgram-docs-2, deepgram-docs-20), and the API supports injecting agent messages mid-call (deepgram-docs-11) which could be used to fill dead air. However, there is no explicit documentation of automatic filler speech, latency-masking behavior, or best-practice guidance for avoiding awkward silence during function execution. Missing for 10: explicit filler/hold-message mechanism during function calls, documented latency benchmarks for function round-trips, and independent/hands-on evidence confirming no dead air occurs in practice.",
     "evidenceIds": [
       "deepgram-docs-2",
-      "deepgram-docs-1",
-      "deepgram-docs-8",
-      "deepgram-docs-11"
+      "deepgram-docs-20",
+      "deepgram-docs-11",
+      "deepgram-docs-23"
     ]
   },
   {
@@ -2055,7 +2067,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Deepgram's docs confirm multilingual voice agent support, noting that STT and TTS model choices must be configured for the target language (deepgram-docs-10), but the evidence pack does not explicitly document automatic language detection or dynamic switching mid-call — only static multilingual configuration is described. Missing for 10: explicit documentation of automatic language detection, mid-call language switching mechanics, and independent/hands-on confirmation of this behavior in production.",
+    "rationale": "Deepgram explicitly documents a 'multilingual voice agent' concept, noting that STT and TTS model choices determine language behavior (deepgram-docs-10), which implies multi-language conversational support. However, no evidence explicitly confirms automatic mid-call language detection or dynamic switching between languages during a single conversation—the docs only outline model configuration, not live switching behavior. missing for 10: explicit documentation or example of automatic language detection, mid-call language switching mechanics, and confirmation of supported language pairs during live calls.",
     "evidenceIds": [
       "deepgram-docs-10"
     ]
@@ -2066,7 +2078,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions noise suppression, background noise filtering, or audio denoising features for the Voice Agent; coverage focuses on barge-in, telephony, multi-agent orchestration, and LLM/TTS configuration instead.",
+    "rationale": "No evidence in the pack mentions noise suppression, audio filtering, or background-noise handling capabilities for the Voice Agent; only barge-in/interruption handling is documented, which is a different concern (turn-taking, not noise robustness).",
     "evidenceIds": []
   },
   {
@@ -2075,15 +2087,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Deepgram is fundamentally API-first — the Voice Agent is a WebSocket API with full configuration (prompting, function calling, multi-agent, telephony, reusable configs) exposed programmatically, and even the CLI/MCP server let AI-native users manage things from the terminal or via agentic tools rather than a GUI. However, evidence doesn't show a full-featured UI to compare against (e.g., a dashboard/console) nor confirm that every console feature (like A/B testing dashboards, analytics views) has a documented API equivalent. missing for 10: explicit mapping of console/UI-only features (analytics dashboards, A/B test result views) to API endpoints, and confirmation no UI-exclusive functionality exists.",
+    "rationale": "Deepgram exposes broad API surface (unified WebSocket agent API, reusable agent configs manageable via the Console API, OpenAPI spec, CLI covering transcription/synthesis/account management) suggesting most configuration done in the Console has an API equivalent (e.g., reusable agent config UUIDs, A/B testing without code deploys). However, there is no explicit documentation stating that every Console UI feature (e.g., analytics dashboards, billing, team management) is fully API-accessible. missing for 10: explicit parity statement or docs confirming all UI/console features (analytics, billing, account management) are exposed via API, independent confirmation of full UI-API parity.",
     "evidenceIds": [
-      "deepgram-docs-1",
       "deepgram-docs-4",
-      "deepgram-docs-12",
-      "deepgram-docs-13",
+      "deepgram-docs-21",
       "deepgram-docs-17",
+      "deepgram-docs-12",
       "deepgram-probe-3",
-      "deepgram-probe-4",
       "deepgram-probe-5"
     ]
   },
@@ -2093,7 +2103,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes any data export, account data portability, or open-format export/deletion workflow letting a user take their data and leave; docs cover retention opt-out and EU processing but not export tooling. missing for 10: data export mechanism, open-format export documentation, account closure/data portability guarantees.",
+    "rationale": "The evidence pack covers architecture, function calling, telephony, SDKs, MCP server, and data privacy/retention opt-outs, but nothing describes an export mechanism for agent configurations, conversation transcripts, or account data in open/portable formats, nor any account-closure data-portability workflow.",
     "evidenceIds": []
   },
   {
@@ -2102,7 +2112,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deepgram Voice Agent is a proprietary cloud API/SDK product; no evidence anywhere in the pack points to an open-source license or public source repository for the core Voice Agent service. Only API docs, CLI, and SDK usage are documented, none of which imply open-licensed source availability.",
+    "rationale": "Deepgram Voice Agent is a proprietary cloud API; the evidence pack shows only documentation, SDKs, CLI, and templates being open, but no evidence the core Voice Agent source code is released under an open license. Absence of evidence for this applicable axis (a product could open-source its engine) yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -2111,9 +2121,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deepgram Voice Agent is a cloud API/SaaS product; all evidence points to hosted WebSocket endpoints, EU regional endpoints, and cloud-based configuration — there is no mention of a self-hostable or on-premises deployment package for the core voice agent model/inference stack. missing for 10: any self-hosting/on-prem deployment option, downloadable model weights or container, docs on running the core service outside Deepgram's cloud.",
+    "rationale": "Deepgram Voice Agent is a fully hosted cloud API (WebSocket endpoints, EU/AU/India regional endpoints) with no evidence of any self-hostable/on-prem deployment option; the evidence pack describes only managed cloud service usage and SDKs/CLI that call the hosted API.",
     "evidenceIds": [
       "deepgram-docs-1",
+      "deepgram-docs-29",
       "deepgram-docs-16"
     ]
   },
@@ -2121,25 +2132,28 @@
     "productId": "deepgram",
     "storyId": "phone-number-provisioning",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm Deepgram Voice Agent supports inbound/outbound calls and telephony integration (e.g., via Twilio bridging audio to a single WebSocket), but there is no evidence Deepgram itself provisions or manages phone numbers—developers must bring their own Twilio account/number and build a bridging server. Missing for 10: native phone-number provisioning API, first-party telephony number management, and evidence of outbound call initiation directly through Deepgram's API without a third-party carrier.",
+    "rationale": "Deepgram documents telephony support for inbound/outbound voice agent calls (docs-5, docs-19) but the concrete implementation shown is a bridge pattern where Twilio owns the phone number and streams call audio to Deepgram's WebSocket (docs-18), not native phone-number provisioning via Deepgram's own API. There's no evidence of a Deepgram-native number-provisioning API endpoint. Missing for 10: a first-party phone-number provisioning API/console feature, and documentation of outbound call initiation directly through Deepgram rather than via a third-party telephony provider.",
     "evidenceIds": [
       "deepgram-docs-5",
       "deepgram-docs-18",
+      "deepgram-docs-19",
       "deepgram-docs-8"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "privacy-data-residency",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Deepgram documents an EU-specific endpoint (api.eu.deepgram.com) for customers requiring EU data processing, and a per-request opt-out for model improvement data retention, showing some regional/data-handling control. However, this is limited to EU vs. default (US) with no evidence of broader region selection (e.g., APAC, other jurisdictions) or a general residency configuration option across the platform. Missing for 10: documented list of all available regions, self-serve region selection in dashboard/API config, and independent confirmation of residency guarantees beyond docs.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Deepgram explicitly documents region-specific endpoints (EU, AU, India) for the Voice Agent API, allowing customers to choose where conversation data is processed, and further supports opting out of the Model Improvement Program to control data retention. missing for 10: no explicit data-residency/storage guarantee documentation (only processing endpoint region), and no independent/third-party corroboration of regional compliance claims.",
     "evidenceIds": [
+      "deepgram-docs-29",
       "deepgram-docs-16",
-      "deepgram-docs-15"
+      "deepgram-docs-15",
+      "deepgram-docs-31"
     ]
   },
   {
@@ -2148,45 +2162,51 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Deepgram documents a per-request opt-out (mip_opt_out=true) from its Model Improvement Program, with opted-out requests not retained, directly addressing training-data use. However, the evidence only shows a per-request flag rather than an account-wide default-off setting, and there's no independent verification that opt-out requests are truly excluded from training. Missing for 10: account/org-level opt-out default, third-party audit or independent confirmation of non-training use, and clarity on default behavior when the flag is omitted.",
+    "rationale": "Deepgram explicitly documents a Model Improvement Program that requests participate in by default, but provides a per-request opt-out (mip_opt_out=true) that ensures opted-out data is not retained/used for training. This gives users a concrete mechanism to prevent their data from training models, though it requires manual per-request action rather than a default privacy-first stance. Missing for 10: account-wide/default opt-out setting, independent confirmation that opt-out is honored in practice, and clarity on retroactive data deletion.",
     "evidenceIds": [
-      "deepgram-docs-15"
+      "deepgram-docs-15",
+      "deepgram-docs-31"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Deepgram documents a per-request opt-out (mip_opt_out=true) that prevents retention, and references data-privacy compliance including an EU-specific endpoint, giving users some retention control. However, there is no documented self-service deletion mechanism for already-retained data, no stated retention periods, and no dashboard/API for managing or purging stored voice data. Missing for 10: explicit data deletion API/console, documented retention duration policy, and confirmation of deletion for non-opted-out data.",
+    "rationale": "Deepgram documents opt-out from the Model Improvement Program per request (mip_opt_out=true), with opted-out requests not retained, and offers regional endpoints (EU/AU/India) for data residency needs, giving users some control over retention. However, there's no evidence of a broader self-service deletion mechanism, granular retention policy controls, or detailed data lifecycle/export tools beyond the MIP opt-out flag. Missing for 10: documented data deletion API/workflow, configurable retention windows, and independent confirmation of opt-out enforcement.",
     "evidenceIds": [
       "deepgram-docs-15",
-      "deepgram-docs-16"
+      "deepgram-docs-31",
+      "deepgram-docs-16",
+      "deepgram-docs-29"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "privacy-telemetry-optout",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Deepgram documents an opt-out mechanism (mip_opt_out=true) for model improvement/data retention on a per-request basis, which is a form of telemetry/usage-data opt-out, but this is narrowly scoped to training data retention rather than general telemetry/usage tracking (e.g., analytics, product usage metrics). Missing for 10: documentation of a broader telemetry/usage-tracking opt-out setting, confirmation this covers all usage data beyond model-improvement retention, and independent verification that opting out has no side effects.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Deepgram documents a per-request opt-out from its Model Improvement Program (mip_opt_out=true), which stops that request's data from being retained, directly addressing usage-data retention opt-out. However, this is narrowly scoped to MIP/model-training data and is per-request rather than an account-wide telemetry/usage-tracking toggle; there's no evidence of opting out of operational telemetry, analytics, or general usage tracking. Missing for 10: account-level or global telemetry opt-out settings, clarity on what non-MIP telemetry is collected and whether it can be disabled, independent confirmation of opt-out efficacy.",
     "evidenceIds": [
-      "deepgram-docs-15"
+      "deepgram-docs-15",
+      "deepgram-docs-31"
     ]
   },
   {
     "productId": "deepgram",
     "storyId": "realtime-transcription-quality",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm real-time transcription via the unified WebSocket API, selectable LLM providers (docs-9), and multilingual STT/TTS model choices (docs-10), giving developers meaningful control over STT and LLM models. However, there is no evidence of 'key terms' or keyword-boosting controls specific to the Voice Agent's transcription pipeline. Missing for 10: explicit key-term/keyword-boost configuration support, independent benchmarking of transcription accuracy.",
+    "rationale": "Deepgram documents STT model choice and multilingual STT/TTS selection (docs-10), configurable LLM provider selection (open_ai, anthropic, aws_bedrock, google, groq, nvidia — docs-9/22), and conversation-context controls (docs-11/23), giving developers real control over transcription and language model pipeline within the Voice Agent stack. However, there is no explicit documentation of 'key terms'/keyword-boosting or custom vocabulary support specifically within the Voice Agent API, and no independent/hands-on benchmark confirming real-time transcription accuracy claims. missing for 10: explicit key-term/keyword-boost support in Voice Agent context, independent accuracy benchmarks/corroboration for real-time transcription performance.",
     "evidenceIds": [
-      "deepgram-docs-1",
       "deepgram-docs-9",
-      "deepgram-docs-10"
+      "deepgram-docs-10",
+      "deepgram-docs-11",
+      "deepgram-docs-22",
+      "deepgram-docs-23"
     ]
   },
   {
@@ -2195,7 +2215,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Voice Agent architecture, function calling, telephony bridging, LLM providers, and data privacy opt-outs, but nowhere describes an API or mechanism to retrieve full call recordings or persisted transcripts after a call ends. No endpoint, storage feature, or retrieval workflow is documented for this specific capability.",
+    "rationale": "The evidence pack covers Voice Agent architecture, function calling, telephony, LLM providers, and auth, but contains no mention of call recording storage, transcript retrieval APIs, or any programmatic export/history mechanism for completed calls. No documentation of a recordings endpoint, transcript archive, or call log retrieval is present.",
     "evidenceIds": []
   },
   {
@@ -2204,21 +2224,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deepgram Voice Agent is a hosted, cloud-only API accessed via WebSocket; nothing in the evidence indicates open-source runtime code that can be self-hosted on customer infrastructure. All references point to Deepgram-hosted endpoints (api.deepgram.com, api.eu.deepgram.com) and a CLI/SDK for calling the cloud service, not deploying the runtime itself.",
-    "evidenceIds": [
-      "deepgram-docs-1",
-      "deepgram-docs-16",
-      "deepgram-docs-18"
-    ]
+    "rationale": "Deepgram Voice Agent is a hosted, proprietary API/WebSocket service (wss://api.deepgram.com/v1/agent/converse) with no open-source runtime available; evidence only shows client SDKs, CLI, and starter templates that connect to Deepgram's cloud, not a self-hostable engine. No evidence of open-source runtime code, on-prem deployment, or self-hosting options exists in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
     "storyId": "semantic-turn-detection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only mentions barge-in (interrupting agent mid-speech) and generic prompting/architecture docs; there is no mention of model-based end-of-turn detection or endpointing that goes beyond VAD/silence timeouts to avoid cutting off slow speakers.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers barge-in (user interrupting the agent) but contains no mention of model-based end-of-turn detection, semantic/endpointing models, or any mechanism beyond simple VAD to avoid talking over slow speakers.",
+    "evidenceIds": [
+      "deepgram-docs-8",
+      "deepgram-docs-19"
+    ]
   },
   {
     "productId": "deepgram",
@@ -2226,23 +2245,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers live-call features (function calling, prompting, telephony, A/B testing of live configs) but nothing describes a simulated-conversation or eval framework for pre-production testing of agents before real phone calls. Missing for 10: any documentation of a test/sandbox mode, conversation simulation tool, or eval harness for agents.",
-    "evidenceIds": [
-      "deepgram-docs-17",
-      "deepgram-docs-4"
-    ]
+    "rationale": "The evidence pack covers agent configuration, telephony integration, function calling, and even production A/B testing of voices/prompts, but there is no mention of a simulated-conversation testing framework, eval suite, or sandbox mode for validating agents before real phone calls. This is a fair capability to expect from a voice agent platform (testing before production telephony), so absence of evidence means 'none' rather than 'na'.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
     "storyId": "sip-trunk-byoc",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only documents a generic WebSocket bridge pattern for Twilio (docs-18, docs-8) and a general 'Telephony' feature bullet (docs-5), but there is no mention of SIP trunking, PBX connectivity, or Telnyx number import — the specific mechanisms a platform engineer would need to bring their own carrier.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Deepgram's Voice Agent architecture is a carrier-agnostic WebSocket API where the customer's own server bridges telephony audio to Deepgram (demonstrated with Twilio), which implies platform engineers aren't locked into a bundled telephony stack. However, there is no explicit documentation of SIP trunking to a PBX, or of importing/porting Twilio or Telnyx phone numbers — the evidence only covers a Twilio bridging pattern. Missing for 10: explicit SIP trunking/PBX connectivity docs, Telnyx integration example, and any documented number-porting/import workflow.",
     "evidenceIds": [
       "deepgram-docs-5",
       "deepgram-docs-18",
-      "deepgram-docs-8"
+      "deepgram-docs-19"
     ]
   },
   {
@@ -2251,7 +2267,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers live function calling during a call and various agent configuration/telephony features, but there is no mention of post-call structured data extraction (summaries, entities, dispositions) or webhook delivery of such analytics after a call ends.",
+    "rationale": "The evidence covers live in-call function calling and conversation-context tools, but nothing describes post-call structured data extraction (outcomes, entities, dispositions) or delivery via API/webhook after a call ends. Deepgram's docs pack shows real-time capabilities only, not post-call analytics or webhook callbacks.",
     "evidenceIds": []
   },
   {
@@ -2260,7 +2276,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions pricing, per-minute rates, usage-based cost, or any pricing page/calculator for the Voice Agent product; all citations focus on architecture, features, and developer tools.",
+    "rationale": "The evidence pack contains extensive technical documentation about Deepgram Voice Agent features but no mention of pricing pages, per-minute rates, usage-based cost tables, or any pricing calculator that a founder could use to estimate call costs.",
     "evidenceIds": []
   },
   {
@@ -2269,24 +2285,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence describes a code/API-first architecture (WebSocket connections, JSON Settings messages, system prompts, function calling, CLI/SDK) rather than a visual no-code builder; there is no mention of a drag-and-drop flow designer, branching UI, or state-machine editor. missing for 10: any visual builder UI, no-code branching/state design, or drag-and-drop handoff configuration.",
-    "evidenceIds": [
-      "deepgram-docs-1",
-      "deepgram-docs-3",
-      "deepgram-docs-4",
-      "deepgram-docs-7",
-      "deepgram-docs-9"
-    ]
+    "rationale": "Deepgram Voice Agent is a code-first API/SDK product (WebSocket, prompting, function calling, config JSON with UUIDs) with no evidence of any visual, no-code flow builder for branching conversation states or handoffs — multi-agent handoff is described as an architecture concept configured via code/config, not a drag-and-drop builder.",
+    "evidenceIds": []
   },
   {
     "productId": "deepgram",
     "storyId": "voice-library-choice",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence confirms TTS model selection exists (docs-10 references choosing a TTS model) but there is no documentation of a broad voice library or of plugging in multiple third-party TTS providers analogous to the multi-LLM-provider list (docs-9). Missing for 10: evidence of voice catalog/library breadth, evidence of multiple supported TTS providers/vendors, and any provider-switching mechanism for voice output.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs confirm the agent architecture lets you pick a 'TTS model' per language (deepgram-docs-10), but unlike the explicit multi-vendor LLM provider list (open_ai, anthropic, aws_bedrock, google, groq, nvidia), there is no equivalent list of supported third-party TTS providers or a documented voice catalog/library for the Voice Agent. Missing for 10: an enumerated list of pluggable TTS providers (e.g. ElevenLabs, Azure, etc.) within the Agent API, and documentation of a broad selectable voice library.",
     "evidenceIds": [
-      "deepgram-docs-10"
+      "deepgram-docs-10",
+      "deepgram-docs-9",
+      "deepgram-docs-22"
     ]
   },
   {
