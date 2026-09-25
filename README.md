@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-93-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-573-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32606-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-578-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32949-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **93 arenas, 573 products, 32,606 judged verdicts.**
+As of the last full pipeline run: **93 arenas, 578 products, 32,949 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -140,13 +140,13 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase, riveter, context-dev |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
-| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic, antigravity, random-labs, conductor |
+| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic, antigravity, random-labs, conductor, byteask |
 | Edge & App Platforms (`edge-platforms`) | cloudflare, vercel, netlify, fly-io, railway, render |
 | Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
-| Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
+| Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile, runanywhere |
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard, foreloop |
-| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara, yylo, humanlayer |
+| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara, yylo, humanlayer, superset |
 | Mobile & In-Person Payments (`mobile-payments`) | stripe-terminal, square, sumup, adyen-pos |
 | API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch, insomnia |
 | Team Chat (`team-chat`) | slack, discord, ms-teams, zulip, buzz |
@@ -166,7 +166,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Startup Legal & Incorporation (`legal-ops`) | stripe-atlas, clerky, docusign, firstbase, ironclad, beglaubigt, legalzoom |
 | Robotics Software Platforms (`robotics-platforms`) | formant, gazebo, nvidia-isaac, ros2, viam |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
-| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok, muse, poke, martin |
+| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok, muse, poke, martin, jo |
 | AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin, notebooklm |
 | Package & Toolchain Managers (`package-managers`) | homebrew, nix, pnpm, uv, bun, mise |
 | Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb, lancedb |
@@ -174,7 +174,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | AI Inference Providers (`inference-providers`) | groq, together-ai, fireworks-ai, cerebras, deepinfra, baseten, morph |
 | Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream, windmill, afk, gumloop, lindy, activepieces, trigger-dev |
 | Observability & Monitoring (`observability`) | datadog, grafana, sentry, new-relic, honeycomb, signoz |
-| MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram, manufact |
+| MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram, manufact, metorial |
 | Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel, notte, smooth |
 | AI Memory Layers (`ai-memory`) | mem0, zep, letta, supermemory, cognee, airweave |
 | Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat, bolna, telli, deepgram |
