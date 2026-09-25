@@ -70,13 +70,8 @@ export default function EverythingPage() {
     {
       title: 'Indexes',
       links: [
-        ...(firstArena
-          ? [{
-              href: `/arena/${firstArena.id}/checklist`,
-              label: `Buyer checklists — ${arenas.length} arenas`,
-              note: `one RFP view per arena, e.g. ${firstArena.name}`,
-            }]
-          : []),
+        // Buyer-checklist entry removed (founder 2026-09-25: checklist/report access off for
+        // now; routes stay alive)
         ...(firstAltProduct
           ? [{
               href: `/alternatives/${firstAltProduct.productId}`,
