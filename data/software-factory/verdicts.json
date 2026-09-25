@@ -5,11 +5,9 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms Codegen's docs site serves a working llms.txt at https://docs.codegen.com/llms.txt (HTTP 200) listing structured doc links, directly enabling an agent to be pointed at agent-oriented docs; this is corroborated by extensive first-party documentation of agent-friendly interfaces (SDK, CLI, API). Missing for 10: independent third-party confirmation of agents actually consuming the llms.txt in practice.",
+    "rationale": "There's a direct probe confirming llms.txt is live and returns 200 with structured doc links, meaning an agent can be pointed at it for agent-oriented navigation. Missing for 10: no independent third-party confirmation of agents actually consuming this file in practice.",
     "evidenceIds": [
-      "codegen-probe-1",
-      "codegen-docs-1",
-      "codegen-docs-11"
+      "codegen-probe-1"
     ]
   },
   {
@@ -18,27 +16,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codegen's PR review agent reads diffs, summarizes changes, runs security/secrets scans, checks test coverage, and posts review comments — a form of AI-generated insight/suggestion generation from the user's codebase data inside the product. However this is narrowly scoped to code/PR data rather than broader analytics-style insights, and there's no evidence of proactive dashboards or cross-data insight surfacing beyond code review and task creation from requirements. Missing for 10: broader in-product analytics/insight surfaces beyond PR review, independent/hands-on corroboration of insight quality.",
+    "rationale": "Codegen generates AI-driven insights from process data such as sandbox/setup logs (error diagnosis and suggested fixes) and PR diffs (change summaries, security/test-coverage checks), and exposes agent run logs for analyzing agent reasoning. However these insights are scoped to code/dev artifacts rather than general 'your data' (e.g. connected databases mentioned only as a connector, not as an insights source). Missing for 10: insight generation over arbitrary/business data sources (databases, docs) beyond code/CI artifacts, and independent/hands-on validation of insight quality.",
     "evidenceIds": [
+      "codegen-docs-39",
       "codegen-docs-20",
-      "codegen-docs-1",
-      "codegen-docs-28"
+      "codegen-docs-27",
+      "codegen-docs-6"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Codegen supports triggering agents via CI/CD, Slack, Linear, GitHub events, SDK, and API, and can run in isolated environments with logs/telemetry, which enables background/autonomous automation setups. However, there is no evidence of a native scheduler/cron-like trigger for fully unattended recurring runs, only event- or manually-triggered agent invocations. missing for 10: dedicated scheduling/cron trigger documentation, independent evidence of long-running unattended background jobs, third-party confirmation of reliability at scale.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Codegen supports triggering agents via CI/CD pipelines, Slack, issue trackers, API/SDK, and scheduled/background tasks that run autonomously in isolated sandboxes, reporting progress and creating PRs without direct supervision. missing for 10: independent/hands-on verification of unattended background scheduling (e.g., cron-like triggers) and real-world case studies confirming reliability of fully autonomous runs.",
     "evidenceIds": [
-      "codegen-docs-11",
-      "codegen-docs-15",
+      "codegen-docs-5",
       "codegen-docs-16",
       "codegen-docs-18",
+      "codegen-docs-24",
       "codegen-docs-27",
-      "codegen-docs-5"
+      "codegen-docs-38"
     ]
   },
   {
@@ -47,14 +46,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codegen is built around delegating tasks to an AI agent that analyzes requirements, implements features, fixes bugs, writes tests, opens PRs, and can be invoked via Slack, CLI, SDK, or API — directly matching an in-product AI assistant users can delegate to. Missing for 10: independent/hands-on user reports corroborating the delegation experience beyond vendor docs, and clearer detail on the interactive in-app assistant UI versus API/CLI-driven delegation.",
+    "rationale": "Codegen's docs extensively describe delegating coding tasks to a built-in AI agent that can analyze requirements, implement features, fix bugs, write tests, create PRs, and interact via chat, CLI, SDK, and API (codegen-docs-1, -16, -22, -24, -29). This is core to the product and well documented across multiple interfaces (web, Slack, CLI, SDK). Missing for 10: independent/hands-on third-party corroboration beyond vendor docs, and clearer detail on the native in-app assistant UI versus integration-based delegation.",
     "evidenceIds": [
       "codegen-docs-1",
-      "codegen-docs-4",
-      "codegen-docs-9",
-      "codegen-docs-15",
       "codegen-docs-16",
-      "codegen-docs-22"
+      "codegen-docs-22",
+      "codegen-docs-24",
+      "codegen-docs-29",
+      "codegen-docs-15"
     ]
   },
   {
@@ -62,14 +61,15 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Codegen offers a Python SDK and REST API for programmatically running/monitoring agents, explicit CI/CD triggering ('Trigger agents from CI/CD pipelines when builds fail'), and a CLI for scripting/automation, all supporting headless operation without a GUI. Missing for 10: independent hands-on confirmation of actual CI pipeline usage and no explicit dedicated 'headless mode' flag documentation beyond SDK/API/CLI references.",
+    "confidence": "high",
+    "rationale": "Codegen provides a Python SDK and REST API to programmatically create/run/monitor agents, an explicit example of triggering agents from CI/CD pipelines on build failures, agent run logs/traces for debugging, and a CLI that supports non-interactive automation. This directly supports headless/CI usage beyond just interactive chat. Missing for 10: no independent/hands-on CI pipeline example (e.g., a sample GitHub Actions workflow) or third-party confirmation that this works reliably outside vendor docs.",
     "evidenceIds": [
       "codegen-docs-11",
       "codegen-docs-15",
       "codegen-docs-16",
       "codegen-docs-18",
       "codegen-docs-27",
+      "codegen-docs-31",
       "codegen-probe-3"
     ]
   },
@@ -77,23 +77,29 @@
     "productId": "codegen",
     "storyId": "agentic-mcp-client",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state Codegen agents can connect to any MCP-compatible server ('Integrate any MCP-compatible server to extend agent functionality') and can provision MCP servers across an org, confirming client-side MCP plug-in support. Missing for 10: independent/hands-on corroboration of actually adding a custom MCP server and using its tools in a real run, and more detail on configuration/setup steps.",
+    "rationale": "Docs explicitly state users can integrate any MCP-compatible server to extend agent functionality, plus provisioning MCP servers across orgs and MCP injection for local Claude Code instances. Missing for 10: independent/hands-on corroboration of MCP server usage and detailed setup/config examples beyond docs claims.",
     "evidenceIds": [
-      "codegen-docs-6",
       "codegen-docs-26",
-      "codegen-docs-7"
+      "codegen-docs-6",
+      "codegen-docs-7",
+      "codegen-docs-30"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "agentic-mcp-server",
-    "verdict": "na",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Codegen is itself a coding agent; the evidence (docs-6, docs-26) shows it connecting to external MCP-compatible servers as a client, not hosting an official MCP server for other agents to connect to. docs-7's mention of 'provisioning MCP servers across your org' is ambiguous and tied to Claude Code integration, not a documented 'mcp serve' or hosted MCP endpoint role, so per the agent-role exception this axis does not apply.",
-    "evidenceIds": []
+    "rationale": "Codegen's CLI docs describe it as wrapping local Claude Code and providing 'access to your Codegen integrations via MCP injection' plus provisioning MCP servers across an org, indicating Codegen itself exposes an MCP server that other agents (e.g., local Claude Code) can connect to — this flips the usual agent 'na' exception since it documents a server role, not just client usage. However, the documentation is high-level with no explicit spec, endpoint list, or setup walkthrough for this server mode, and there's no independent/hands-on corroboration. missing for 10: detailed MCP server endpoint/spec documentation, explicit setup instructions for external agents to connect, independent verification of the MCP server working in practice.",
+    "evidenceIds": [
+      "codegen-docs-7",
+      "codegen-docs-30",
+      "codegen-docs-26",
+      "codegen-docs-6"
+    ]
   },
   {
     "productId": "codegen",
@@ -101,13 +107,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Codegen's core interaction model is prompt-driven: users describe tasks in natural language and the agent implements features, fixes bugs, and responds via Slack, PR comments, Linear/Jira comments, and SDK calls like agent.run(prompt=...). Multiple surfaces (chat, issue trackers, PR mentions, CLI/SDK) all funnel natural-language commands to the agent. Missing for 10: independent/hands-on confirmation beyond vendor docs, and no detail on NL command robustness/limitations.",
+    "rationale": "Codegen's core interaction model is prompt-driven: agents are run with natural-language prompts (e.g. agent.run(prompt=\"Leave a review on PR #123\")) via SDK, API, Slack, and integrations, and can analyze requirements, implement features, fix bugs from user prompts. This is well documented across docs/CLI/SDK but lacks independent hands-on corroboration. missing for 10: independent/third-party confirmation of natural-language command reliability, edge cases where prompts fail or need reformatting.",
     "evidenceIds": [
       "codegen-docs-1",
-      "codegen-docs-2",
-      "codegen-docs-3",
       "codegen-docs-15",
-      "codegen-docs-23"
+      "codegen-docs-9",
+      "codegen-docs-29",
+      "codegen-docs-11"
     ]
   },
   {
@@ -116,12 +122,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codegen documents an official CLI with concrete commands for viewing/pulling agent work, managing organizations, running Claude Code with telemetry, and an interactive TUI, clearly aimed at AI-native/agentic workflows. missing for 10: independent/hands-on corroboration beyond first-party docs, and more detail on CLI command surface/versioning.",
+    "rationale": "Codegen ships an official documented CLI (docs.codegen.com/introduction/cli) supporting viewing/pulling agent work, creating agents, running Claude Code with telemetry, an interactive TUI, and org/repo management, confirmed by dedicated docs pages and a probe hit. missing for 10: independent/hands-on third-party corroboration of the CLI beyond first-party docs.",
     "evidenceIds": [
       "codegen-docs-12",
       "codegen-docs-13",
       "codegen-docs-14",
       "codegen-docs-21",
+      "codegen-docs-30",
       "codegen-probe-3"
     ]
   },
@@ -131,14 +138,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codegen documents a public API (api-reference/overview, agent-run-logs endpoint), a Python SDK for programmatic agent control, and a CLI, all explicitly aimed at driving agents programmatically (e.g., triggering from CI/CD, retrieving traces). This directly satisfies an AI-native user's need to drive the product via documented API/SDK. Missing for 10: a discoverable formal OpenAPI/swagger spec (probe returned 404s) and independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Codegen documents a full REST API (agent runs, logs, resume, list, integrations, sandbox, PRs) plus a Python SDK wrapper and CLI, giving AI-native users multiple programmatic entry points. Missing for 10: a discoverable OpenAPI/Swagger spec (probe found only 404s), and independent third-party corroboration of API stability/versioning.",
     "evidenceIds": [
       "codegen-docs-11",
       "codegen-docs-15",
       "codegen-docs-16",
       "codegen-docs-17",
-      "codegen-docs-18",
       "codegen-docs-27",
+      "codegen-docs-31",
+      "codegen-docs-36",
       "codegen-probe-2"
     ]
   },
@@ -148,11 +156,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codegen exposes a Python SDK and REST API using an org_id + single token model (codegen-docs-15/16), and has agent-permission settings for repo actions like signed commits (codegen-docs-25), but there is no evidence of scoped or least-privilege API credentials/tokens (e.g., token scopes, role-based keys, restricted-permission tokens) that a user could issue for an agent. Missing for 10: any documentation of token scoping, permission levels for API keys, or least-privilege credential issuance mechanism.",
+    "rationale": "Codegen's SDK/API use a single org-level token (org_id + token) and org-wide permission toggles (e.g., allow/deny PR creation, require signed commits), but there is no documented mechanism to issue scoped, least-privilege API credentials per agent, task, or repo. missing for 10: scoped/short-lived API keys, per-agent credential minting, granular read/write permission tiers.",
     "evidenceIds": [
       "codegen-docs-15",
-      "codegen-docs-16",
-      "codegen-docs-25"
+      "codegen-docs-32",
+      "codegen-docs-25",
+      "codegen-docs-33"
     ]
   },
   {
@@ -161,13 +170,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codegen documents an official Python SDK with concrete usage examples (agent.run) plus a REST-style API reference (agent runs, logs, CI/CD triggers) and an official CLI, all under docs.codegen.com — clear evidence of official SDK-based programmatic access for AI-native builders. Missing for 10: no OpenAPI spec found (probe returned 404s) and no independent/third-party corroboration of SDK reliability beyond vendor docs.",
+    "rationale": "Codegen documents an official Python SDK (codegen-docs-11, -15, -31) as a thin pythonic wrapper around a documented REST API with extensive endpoint reference docs (codegen-docs-16 through -40), plus an official CLI (codegen-probe-3). This gives AI-native users first-party programmatic building blocks for agent automation. Missing for 10: independent/hands-on corroboration of SDK usage beyond vendor docs, and no discoverable OpenAPI spec (codegen-probe-2 shows 404s), suggesting the API reference may not be machine-generated/fully standardized.",
     "evidenceIds": [
       "codegen-docs-11",
       "codegen-docs-15",
+      "codegen-docs-31",
       "codegen-docs-16",
       "codegen-docs-17",
-      "codegen-docs-18",
+      "codegen-probe-3",
       "codegen-probe-2"
     ]
   },
@@ -177,12 +187,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Codegen's API, SDK, CLI, and integrations (Slack, Linear, Jira, MCP) but contains no mention of a webhook subscription mechanism for outbound event notifications; the OpenAPI spec probe even returned 404s, giving no indication of a documented webhooks endpoint.",
-    "evidenceIds": [
-      "codegen-docs-16",
-      "codegen-docs-27",
-      "codegen-probe-2"
-    ]
+    "rationale": "No evidence pack item mentions webhooks or event subscription mechanisms; only API endpoints, SDK, CLI, and integration triggers (e.g., CI/CD triggering agents) are documented, which is inbound triggering rather than outbound webhook subscriptions.",
+    "evidenceIds": []
   },
   {
     "productId": "codegen",
@@ -190,11 +196,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs state the agent writes tests as part of implementing features and can run code/install dependencies/test changes in isolated environments, and a PR-review flow checks test coverage before flagging issues — together implying self-validation via generated tests. However, there is no explicit end-to-end walkthrough showing the agent generating tests, running them, and iterating/fixing before proposing a PR, nor independent/hands-on confirmation. missing for 10: explicit documented workflow tying test generation+execution to pre-PR validation, independent corroboration of this loop working in practice.",
+    "rationale": "Docs confirm the agent writes tests and can run code/tests in isolated sandboxes (codegen-docs-1, codegen-docs-5, codegen-docs-29), and PR review flows check test coverage before posting feedback (codegen-docs-20), supporting self-validation before proposing changes. However there's no explicit documented workflow describing the agent autonomously running its own generated tests specifically as a pre-proposal validation gate, nor independent hands-on evidence confirming this loop works reliably. missing for 10: explicit documented test-then-validate-before-PR workflow, independent/hands-on confirmation of self-validation loop.",
     "evidenceIds": [
       "codegen-docs-1",
       "codegen-docs-5",
-      "codegen-docs-20"
+      "codegen-docs-20",
+      "codegen-docs-29"
     ]
   },
   {
@@ -203,7 +210,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of automatic model routing or selection between underlying LLMs based on task type; Codegen's docs describe agent capabilities, integrations, CLI/SDK, and permissions, but nothing about multi-model routing logic.",
+    "rationale": "No evidence anywhere in the pack mentions model selection, multi-model routing, or automatic choice of underlying LLM per task; Codegen's docs describe agent capabilities, integrations, and permissions but never reference model routing.",
     "evidenceIds": []
   },
   {
@@ -212,11 +219,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codegen integrates with issue trackers (Jira, Linear, ClickUp, Monday.com) to update statuses, add comments, and create tasks, and can review PRs for security/test-coverage issues, but there is no evidence of automated triage logic that assigns severity or routes issues to the correct owner.",
+    "rationale": "Codegen integrates with issue trackers (Linear, Jira, ClickUp) and can update statuses, add comments, and create tasks, but there is no evidence of automatic severity classification or routing incoming issues to the correct owner.",
     "evidenceIds": [
       "codegen-docs-3",
-      "codegen-docs-28",
-      "codegen-docs-20"
+      "codegen-docs-10",
+      "codegen-docs-28"
     ]
   },
   {
@@ -225,11 +232,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs show a static API reference (endpoints, overview, logs) but no evidence of an interactive explorer with runnable/try-it examples; a probe for OpenAPI/Swagger specs (which typically power interactive references) returned 404 on all checked paths, indicating no such interactive tooling exists.",
+    "rationale": "The docs pack shows a static API reference with many documented endpoints, but there is no evidence of an interactive, runnable API explorer (e.g., try-it-out console) — in fact the OpenAPI/swagger probe returned 404s, indicating no machine-readable interactive spec was found.",
     "evidenceIds": [
+      "codegen-probe-2",
       "codegen-docs-16",
-      "codegen-docs-27",
-      "codegen-probe-2"
+      "codegen-docs-27"
     ]
   },
   {
@@ -238,7 +245,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codegen has an API reference and Python SDK, but the probe explicitly found no OpenAPI/swagger spec at any standard location (all 404), and no docs mention exporting a machine-readable spec.",
+    "rationale": "Codegen documents an extensive REST API (agents, pull requests, integrations, sandbox endpoints) but a direct probe for machine-readable spec files (openapi.json, swagger.json, etc.) returned 404 at all standard locations, and no docs page links to a downloadable OpenAPI spec.",
     "evidenceIds": [
       "codegen-probe-2",
       "codegen-docs-16"
@@ -248,11 +255,13 @@
     "productId": "codegen",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs mention isolated environments for running code, installing dependencies, and testing changes safely, which implies sandboxed execution separate from production, but there is no detail on data isolation guarantees, environment provisioning, or independent verification. Missing for 10: explicit confirmation that sandbox is isolated from production data/systems, technical details of sandbox architecture, and third-party/hands-on corroboration.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Codegen documents running code, installing dependencies, and testing changes in 'robust isolated environments' (sandboxes), with dedicated sandbox log analysis API, which supports isolated testing without touching production. However, there's no explicit documentation describing production-data isolation guarantees, staging/prod separation, or how sandbox environments handle sensitive data. missing for 10: explicit statement on separation from production data/environments, details on sandbox data provisioning, and independent verification of isolation guarantees.",
     "evidenceIds": [
-      "codegen-docs-5"
+      "codegen-docs-5",
+      "codegen-docs-38",
+      "codegen-docs-39"
     ]
   },
   {
@@ -261,9 +270,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is an API reference, SDK, and CLI documented, but no evidence of API versioning scheme or any documented deprecation policy; the OpenAPI spec probe even returned 404s. Missing for 10: any mention of API version numbers, changelog, or deprecation/support policy.",
+    "rationale": "The evidence pack documents the API, SDK, and CLI capabilities extensively, but nowhere mentions API versioning scheme or a deprecation policy; the OpenAPI spec probe even returned 404s for all candidate paths, and no changelog/versioning docs are cited.",
     "evidenceIds": [
-      "codegen-docs-16",
       "codegen-probe-2"
     ]
   },
@@ -272,12 +280,11 @@
     "storyId": "approve-plan-before-execution",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs confirm agents present a structured plan showing each implementation step (codegen-docs-22), suggesting some plan visibility, but there is no evidence of a gating/approval workflow requiring developer sign-off before code changes are made — agents can create PRs and commit code seemingly autonomously (codegen-docs-24, codegen-docs-4). missing for 10: explicit approval/gate mechanism before execution, UI/CLI flow for approving or rejecting a plan, confirmation that code changes are blocked until plan is approved, independent/hands-on corroboration.",
+    "confidence": "medium",
+    "rationale": "Codegen docs confirm agents present a structured implementation plan before executing (codegen-docs-22), and agent runs can be paused/resumed (codegen-docs-35), suggesting some capacity to review before proceeding. However, there is no explicit documentation of a formal approval gate that blocks code changes until the developer approves the plan — the workflow described emphasizes autonomous execution with post-hoc PR review rather than a pre-execution approval step. Missing for 10: explicit approval/gating mechanism tied to the plan display, documentation of how pause interacts with plan review, and any UI/CLI flow showing 'approve plan' before code is written.",
     "evidenceIds": [
       "codegen-docs-22",
-      "codegen-docs-24",
-      "codegen-docs-4"
+      "codegen-docs-35"
     ]
   },
   {
@@ -286,39 +293,40 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Codegen documents that agents present a structured implementation plan before executing (codegen-docs-22) and offers permission settings like requiring signed commits (codegen-docs-25), suggesting some scope visibility and control, but there is no explicit documented gate requiring an engineering-lead's sign-off on the plan/contract before the agent is allowed to touch the repository. Missing for 10: explicit approval workflow/UI blocking agent execution until a lead approves, audit trail of approval decisions, and evidence of enforcement (not just plan presentation).",
+    "rationale": "Codegen agents present a structured plan of implementation steps before executing (codegen-docs-22), and agent runs can be paused/resumed (codegen-docs-35), suggesting some checkpointing exists, but there is no documented workflow requiring an engineering-lead's explicit approval of scope/contract as a gate before the agent is allowed to touch the repo. Missing for 10: an explicit approval/sign-off step tied to plan review, evidence that repo modification is blocked until a lead approves, and any UI/CLI flow for accepting or rejecting the proposed scope.",
     "evidenceIds": [
       "codegen-docs-22",
-      "codegen-docs-24",
-      "codegen-docs-25"
+      "codegen-docs-35",
+      "codegen-docs-32"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "assign-task-from-ticket",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe native integrations with Jira, Linear, ClickUp and Monday.com allowing the agent to update statuses, add comments, link PRs, and be triggered via mentions on issues/tickets (codegen-docs-3, codegen-docs-10, codegen-docs-23, codegen-docs-28), directly supporting task assignment from an existing ticket. Missing for 10: independent/hands-on confirmation of the workflow and more detail on the exact assignment UX beyond mention-triggering.",
+    "rationale": "Codegen integrates with Linear, Jira, ClickUp, and Monday.com to let agents update statuses, add comments, link PRs to issues, and create tasks, directly enabling task assignment from an existing ticket; Linear/Jira workspace connection docs confirm agent interaction with issues. missing for 10: hands-on/independent confirmation of the assign-from-ticket flow and more detail on trigger mechanics (e.g., mention-based invocation from ticket comments).",
     "evidenceIds": [
       "codegen-docs-3",
       "codegen-docs-10",
+      "codegen-docs-28",
       "codegen-docs-23",
-      "codegen-docs-28"
+      "codegen-docs-37"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "auto-approve-all-actions",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Codegen operates autonomously by default (creating PRs, committing code, running tasks without per-step human confirmation) and exposes 'agent-behavior' and 'agent-permissions' settings pages, implying some configurability of oversight, but the evidence never documents an explicit 'auto-approve all actions' toggle versus a step-by-step confirmation mode — instead it shows agents presenting a structured plan per step, which suggests some interactive checkpointing exists. Missing for 10: an explicit setting/flag to disable per-action confirmation, documentation contrasting confirm-each-step vs auto-approve modes, and independent confirmation of this behavior.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The docs describe permission toggles (e.g., allow/deny PR creation, signed commits, rule detection) and a structured plan-presentation step, but there is no evidence of a setting that lets a developer switch the agent from step-by-step confirmation to full auto-approval of all actions.",
     "evidenceIds": [
       "codegen-docs-22",
-      "codegen-docs-23",
       "codegen-docs-24",
-      "codegen-docs-25"
+      "codegen-docs-32",
+      "codegen-docs-33"
     ]
   },
   {
@@ -327,11 +335,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Codegen agents can fix bugs, write tests, and run CI/CD-triggered fixes (codegen-docs-1, codegen-docs-18, codegen-docs-20), which could be applied to remediate failing agent-readiness checks, but there is no explicit documentation of an 'agent-readiness criteria' concept, scoring rubric, or automated fix workflow tied specifically to such criteria. missing for 10: explicit agent-readiness criteria/checklist, automated detection-to-fix pipeline for those criteria, evidence of hands-on success fixing readiness gates.",
+    "rationale": "Codegen can auto-generate setup commands, analyze sandbox logs for errors, detect/apply repo rule files, and fix bugs/write tests via agent runs, which overlaps with making a repo 'agent-ready', but there is no documented concept of scored 'agent-readiness criteria' or a gate that automatically remediates failing readiness checks end-to-end. missing for 10: an explicit agent-readiness scoring/criteria system, evidence of automatic detection-and-fix loop tied to such criteria, and independent confirmation it works in practice.",
     "evidenceIds": [
-      "codegen-docs-1",
-      "codegen-docs-18",
-      "codegen-docs-20"
+      "codegen-docs-38",
+      "codegen-docs-39",
+      "codegen-docs-33",
+      "codegen-docs-20",
+      "codegen-docs-29"
     ]
   },
   {
@@ -340,69 +350,70 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly confirm agents can create new pull requests with code changes upon task completion (codegen-docs-24), backed by broader repo access/commit capabilities (codegen-docs-4, codegen-docs-8) and permission settings governing PR creation (codegen-docs-25). Missing for 10: independent/hands-on confirmation of the PR-open behavior and explicit trigger configuration details (e.g., toggles for auto-PR vs manual review).",
+    "rationale": "Docs explicitly document that agents can create pull requests with code changes upon task completion, with a configurable permission toggle controlling this behavior. Missing for 10: independent/hands-on confirmation of automatic PR creation triggering specifically 'on task completion' rather than general PR creation capability.",
     "evidenceIds": [
       "codegen-docs-24",
+      "codegen-docs-32",
       "codegen-docs-4",
-      "codegen-docs-8",
-      "codegen-docs-25"
+      "codegen-docs-40"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "automated-pr-review",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Codegen docs explicitly describe an automated PR review flow (reads diff, summarizes changes, runs security/secrets scan, checks coverage, posts a review comment) and general 'review PRs, suggest changes, comment on issues' capability, supporting the core ask. However the evidence doesn't confirm true line-level inline comments on every PR, and other docs note the agent 'only responds to comments containing explicit mentions,' suggesting review may be conditional/triggered rather than fully automatic for every PR. Missing for 10: hands-on/independent confirmation of inline diff comments, explicit confirmation of always-on automatic triggering for every PR without mention-based gating.",
+    "rationale": "Codegen docs explicitly describe an automated PR review flow (reads diff, summarizes changes, runs security/secrets scan, checks test coverage, posts a review comment on failure) plus general PR review/comment capabilities and configurable agent permissions for PR interactions. missing for 10: independent/hands-on confirmation of inline (line-level) comment placement and real-world examples of review quality beyond first-party docs.",
     "evidenceIds": [
       "codegen-docs-20",
       "codegen-docs-4",
-      "codegen-docs-23"
+      "codegen-docs-23",
+      "codegen-docs-32"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "automatic-environment-setup",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe agents that access repos via GitHub App install (no complex setup), run in isolated environments where they install dependencies and test changes, and manage repos/branches/commits autonomously — covering clone/install/configure end-to-end. Missing for 10: independent hands-on verification of the full clone-install-configure flow and explicit detail on environment configuration steps beyond dependency install.",
+    "rationale": "Docs describe agents running in isolated sandboxes that install dependencies and test changes, with GitHub App access granting repo cloning rights, and a setup-commands endpoint that analyzes repo structure to auto-generate environment setup, plus log analysis to fix setup errors. This directly covers autonomous clone/install/configure workflow. Missing for 10: independent/hands-on verification of the clone+setup flow and explicit end-to-end walkthrough beyond first-party docs.",
     "evidenceIds": [
       "codegen-docs-5",
       "codegen-docs-8",
-      "codegen-docs-4",
-      "codegen-docs-24"
+      "codegen-docs-38",
+      "codegen-docs-39"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Codegen exposes a Python SDK and REST API for programmatically creating and running agents with full control, and can be triggered from CI/CD pipelines — this enables scripting bulk operations (e.g., looping agent.run calls across many PRs/issues) even though no dedicated 'batch' or 'bulk' endpoint is documented. Missing for 10: an explicit batch/bulk API primitive, rate-limit/scale guidance, and any hands-on evidence of running many concurrent agents successfully.",
+    "rationale": "Codegen's SDK and API allow programmatic creation and management of multiple agents (e.g., looping agent.run calls, listing/filtering agent runs, triggering from CI/CD), which enables scripted bulk operations across many tasks/repos. However, there is no explicit bulk/batch endpoint or documented at-scale example. Missing for 10: a native bulk-operation API/endpoint, documented examples of running operations across many items simultaneously, and evidence of scale/performance under bulk use.",
     "evidenceIds": [
       "codegen-docs-11",
       "codegen-docs-15",
       "codegen-docs-16",
+      "codegen-docs-36",
       "codegen-docs-18",
-      "codegen-docs-17"
+      "codegen-docs-31"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Codegen supports several built-in event-triggered automations (CI/CD failure triggers, PR review-on-failure comments, agent responding only to explicit mentions, auto-creating tasks from workspace events), showing some automation-on-event capability. But there's no evidence of a general-purpose rules engine where users define arbitrary custom conditions/actions across events. Missing for 10: a configurable rules/trigger builder, support for user-defined arbitrary event conditions, and independent confirmation beyond vendor docs.",
+    "rationale": "Codegen supports some automatic event-driven actions—triggering agents from CI/CD pipeline failures, automatic PR review that posts comments on failing checks, and agents responding only to explicit mentions—showing a degree of rule/event-based automation. However, there's no evidence of a general-purpose rule-definition interface where users can author arbitrary 'if event X then action Y' automations; the examples are fixed integration behaviors rather than a configurable rules engine. Missing for 10: a documented general rules/trigger framework letting users define custom event-condition-action logic, and evidence of user-authored trigger configuration beyond built-in integrations.",
     "evidenceIds": [
       "codegen-docs-18",
       "codegen-docs-20",
       "codegen-docs-23",
-      "codegen-docs-28",
-      "codegen-docs-3"
+      "codegen-docs-33"
     ]
   },
   {
@@ -411,12 +422,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers triggering agents from CI/CD pipelines, Slack/Linear/Jira integrations, and SDK/API programmatic control, but nothing describes cron-like scheduling or recurring/periodic job execution. Since scheduling automation is a plausible capability for an AI-native dev automation platform, absence of evidence yields 'none' rather than 'na'.",
-    "evidenceIds": [
-      "codegen-docs-18",
-      "codegen-docs-11",
-      "codegen-docs-16"
-    ]
+    "rationale": "Evidence shows agents can be triggered programmatically via SDK/API and from CI/CD pipelines (event-triggered), but there is no mention of cron-style scheduling, recurring job configuration, or workflow automation on a timer anywhere in the docs pack.",
+    "evidenceIds": []
   },
   {
     "productId": "codegen",
@@ -424,27 +431,29 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Codegen's PRs, branches, and agent run logs/traces provide some inherent versioning and review via GitHub PR workflow and agent trace retrieval, but there is no evidence of a dedicated automation versioning system, rollback/undo mechanism for agent-made changes, or an automation change-history UI. missing for 10: explicit version history for automations/agent configs, a rollback or revert mechanism beyond git PR revert, review workflow specific to 'automations' (vs code changes), and any UI/CLI command for restoring prior automation states.",
+    "rationale": "Codegen agents work through PRs/branches/commits which are inherently versioned and reviewable (codegen-docs-4, codegen-docs-20, codegen-docs-24), and agent runs can be paused/resumed or banned (codegen-docs-34, codegen-docs-35), giving some control over in-flight automations. However there is no explicit documentation of versioning the automation/agent configuration itself, a review workflow for automations before they run, or a rollback mechanism to revert an automation to a prior version. Missing for 10: explicit automation/config versioning, an automation-specific review/approval flow, and a documented rollback feature for agent configurations.",
     "evidenceIds": [
-      "codegen-docs-24",
-      "codegen-docs-27",
+      "codegen-docs-4",
       "codegen-docs-20",
-      "codegen-docs-4"
+      "codegen-docs-24",
+      "codegen-docs-34",
+      "codegen-docs-35"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "autonomous-bug-fixing",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state agents analyze requirements, fix bugs, write tests, run in isolated sandboxes to test changes, create PRs, and integrate with issue trackers (Jira/Linear) to update statuses and link PRs — covering the full autonomous diagnose-and-fix loop from ticket to PR. Missing for 10: independent/hands-on verification of a real bug-fix run, and no benchmark or case study demonstrating diagnostic accuracy beyond vendor docs.",
+    "rationale": "Docs explicitly state the agent can 'analyze requirements, implement features, fix bugs, write tests' from prompts, and supports full workflow (branch creation, PR creation, running code in isolated sandboxes, linking issues) enabling autonomous bug diagnosis and fix. Missing for 10: independent/hands-on verification of a real bug-fix run and no third-party benchmark showing success rate.",
     "evidenceIds": [
       "codegen-docs-1",
-      "codegen-docs-3",
-      "codegen-docs-4",
+      "codegen-docs-29",
       "codegen-docs-5",
-      "codegen-docs-24"
+      "codegen-docs-24",
+      "codegen-docs-4",
+      "codegen-docs-39"
     ]
   },
   {
@@ -452,8 +461,8 @@
     "storyId": "bring-your-own-model",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions bringing your own LLM, configuring custom API keys, or selecting an underlying model provider; Codegen's docs focus on integrations, CLI, SDK, and permissions but never address model choice or BYO-key support.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack indicates Codegen supports bring-your-own-LLM or custom API key configuration; all agent execution appears tied to Codegen's own platform/model without mention of model choice or key configuration.",
     "evidenceIds": []
   },
   {
@@ -474,24 +483,27 @@
   {
     "productId": "codegen",
     "storyId": "ci-failure-auto-fix",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state agents can be 'triggered from CI/CD pipelines when builds fail' and can create PRs with code fixes, directly matching the story's mechanism, but there is no worked example or independent evidence showing an actual failed-CI-to-diagnosis-to-PR flow in practice. missing for 10: end-to-end case study/demo of CI failure triggering diagnosis and PR, independent/hands-on corroboration of this specific workflow.",
+    "rationale": "Codegen docs explicitly describe triggering agents from CI/CD pipelines on build failure (codegen-docs-18), an agent endpoint that analyzes sandbox/setup logs to identify errors and suggest fixes (codegen-docs-39), and agent permissions to automatically create pull requests with code changes (codegen-docs-24, codegen-docs-32). Together these map directly to 'diagnose failed CI and propose a fix via PR.' Missing for 10: a single documented end-to-end example wiring CI-failure trigger -> log analysis -> auto PR creation, and independent/hands-on verification beyond vendor docs.",
     "evidenceIds": [
       "codegen-docs-18",
+      "codegen-docs-39",
       "codegen-docs-24",
-      "codegen-docs-1"
+      "codegen-docs-32"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "codebase-context-file",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "No evidence in the pack describes a repo-level context/convention file (e.g., a rules or instructions file) that shapes agent plans; docs only cover settings for agent behavior/permissions, integrations, and CLI/SDK usage. missing for 10: documentation of a context file mechanism, examples of it influencing generated plans/code, any first-party or independent confirmation of such a feature.",
-    "evidenceIds": []
+    "rationale": "Codegen supports agents automatically detecting and applying 'rules from various rule files' in repositories (codegen-docs-33), which implies support for something like a codebase conventions/context file that shapes agent behavior. However, there's no explicit documentation of a dedicated context file format (e.g., a CODEGEN.md or similar), no example of how such a file should be structured, and no evidence of how it improves plan/code relevance. missing for 10: explicit context-file feature documentation, example file format/schema, evidence of impact on plan/code quality, independent confirmation of the rules-file mechanism working as described.",
+    "evidenceIds": [
+      "codegen-docs-33"
+    ]
   },
   {
     "productId": "codegen",
@@ -499,26 +511,28 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Codegen's SDK/API let engineering leads programmatically create and run many agents (agent.run, CI/CD triggers, org-wide agent management) and the CLI/dashboard can list and manage multiple concurrent agent runs, implying support for scaling parallel tasks. However, there's no explicit documentation of concurrency limits, throughput benchmarks, or independent evidence of running many agents simultaneously at scale. Missing for 10: documented concurrency/throughput limits, case studies or benchmarks showing large-scale parallel agent runs, and independent corroboration of scaling claims.",
+    "rationale": "Codegen's API/SDK let you programmatically create, run, and list many agent runs (with per-user filtering) and trigger agents from CI/CD, which supports running multiple tasks concurrently at an engineering-lead level. However, there is no explicit documentation of concurrency limits, throughput guarantees, or dashboards for managing large numbers of simultaneous runs. missing for 10: explicit concurrency/scale limits or benchmarks, independent evidence of running many agents at once, org-level throughput/queue management docs.",
     "evidenceIds": [
       "codegen-docs-15",
       "codegen-docs-16",
+      "codegen-docs-36",
       "codegen-docs-18",
-      "codegen-docs-12",
-      "codegen-docs-27"
+      "codegen-docs-11"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "connect-github-repo",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs clearly describe installing a GitHub App to grant repo access with no complex setup, and agents can create branches, commit code, and open pull requests. This directly matches the story of connecting a repo and having an agent open PRs. Missing for 10: independent/hands-on corroboration beyond first-party docs, and more detail on multi-repo/org-level connection flow.",
+    "rationale": "Codegen documents installing a GitHub App to grant agent access to repositories, with agents able to create branches, commit code, open PRs, and manage repositories, plus fine-grained permission controls for PR creation and signed commits. This is well-documented first-party capability core to the product, though it lacks independent/hands-on corroboration. Missing for 10: independent third-party verification of the GitHub integration working end-to-end.",
     "evidenceIds": [
-      "codegen-docs-8",
       "codegen-docs-4",
-      "codegen-docs-24"
+      "codegen-docs-8",
+      "codegen-docs-24",
+      "codegen-docs-32",
+      "codegen-docs-25"
     ]
   },
   {
@@ -527,21 +541,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions pricing plans, daily task limits, concurrency limits, or any admin/lead-facing dashboard for managing such quotas; the docs focus on agent capabilities, integrations, and SDK/CLI usage only.",
+    "rationale": "No evidence pack items mention pricing plans, daily task limits, concurrency limits, or any dashboard for engineering-leads to view/manage usage quotas — the docs cover agent capabilities, integrations, and API but nothing about plan-based limits or admin visibility into usage caps.",
     "evidenceIds": []
   },
   {
     "productId": "codegen",
     "storyId": "delegate-sessions-for-teammates",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Codegen's org-level SDK/CLI/API (org_id+token, 'manage organizations', programmatic agent creation) implies an engineering lead with org credentials could spin up agents at scale, but no docs explicitly describe creating or assigning a session to another named user in the org. Missing for 10: explicit user-impersonation or 'create on behalf of' API/UI feature, role-based permissions for delegating agent sessions, and any admin console for assigning sessions to teammates.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Docs show org-level management (switching orgs, configuring repos) and API filtering of agent runs by user_id, implying multi-user tracking, but nowhere is there evidence that an engineering-lead can explicitly create or launch an agent session on behalf of another user's identity. No impersonation, delegation, or 'run-as' mechanism is documented.",
     "evidenceIds": [
       "codegen-docs-14",
-      "codegen-docs-15",
-      "codegen-docs-12",
-      "codegen-docs-16"
+      "codegen-docs-36",
+      "codegen-docs-15"
     ]
   },
   {
@@ -550,13 +563,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show users can prompt in plain language to \"analyze requirements, implement features, fix bugs\" (codegen-docs-1), and agents respond by presenting a structured plan with each implementation step (codegen-docs-22) before creating PRs (codegen-docs-24) or tasks (codegen-docs-28), matching the intent-to-spec flow. Missing for 10: independent/hands-on validation of scoping accuracy, and more detail on how ambiguous requirements are clarified or broken into sub-tasks beyond the single plan-presentation feature.",
+    "rationale": "Docs show the agent takes plain-language prompts, analyzes requirements, and produces a structured implementation plan with concrete steps before generating code/PRs, which matches the 'intent-to-spec' story directly (codegen-docs-1, codegen-docs-22, codegen-docs-15, codegen-docs-29, codegen-docs-24). This is consistent across CLI, SDK, and API surfaces, suggesting the capability is core to the product rather than a side feature.  missing for 10: independent/hands-on corroboration of how well the generated plan actually matches user intent, and detail on how 'scoping' (task breakdown, effort/acceptance criteria) is structured beyond a generic step list.",
     "evidenceIds": [
       "codegen-docs-1",
       "codegen-docs-22",
-      "codegen-docs-24",
-      "codegen-docs-28",
-      "codegen-docs-15"
+      "codegen-docs-15",
+      "codegen-docs-29",
+      "codegen-docs-24"
     ]
   },
   {
@@ -565,11 +578,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Codegen documents general natural-language-to-code agent capabilities and a Figma connector, which could plausibly enable design-to-implementation workflows, but there is no evidence of an actual mockup/design import flow, PM-facing UI, or end-to-end case study showing a non-engineer going from a design file to a merged implementation. missing for 10: dedicated design-to-code workflow docs, PM-oriented UX, evidence of Figma mockup ingestion producing working code, and any case study of a non-engineering handoff.",
+    "rationale": "Codegen supports task-driven implementation via Slack/Jira/Linear and can be given prompts to build features, and docs mention a Figma integration, but there is no evidence of a documented workflow for turning a design/mockup into a working implementation end-to-end without engineering setup. Missing for 10: detailed Figma-to-code workflow, PM-oriented UI/mockup ingestion, and any hands-on example of design-to-implementation without engineer involvement.",
     "evidenceIds": [
       "codegen-docs-6",
       "codegen-docs-1",
-      "codegen-docs-22"
+      "codegen-docs-29"
     ]
   },
   {
@@ -578,11 +591,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Codegen shows a pre-implementation plan (codegen-docs-22) and lets you pull agent branches/changes locally via CLI (codegen-docs-13) before merging, and agents can create PRs directly (codegen-docs-24), but there is no documented explicit 'approve diff before PR creation' gate — PR creation appears to happen automatically as part of the agent workflow rather than after a human diff-approval step. Missing for 10: a documented review/approval UI or workflow step that gates PR creation on human diff approval, and evidence of how a rejected diff is handled before PR submission.",
+    "rationale": "Codegen documents a pre-implementation 'structured plan' step (codegen-docs-22) and PR state controls including draft/ready_for_review (codegen-docs-40), which could be used as an approval gate, but agents are documented to create PRs directly/automatically (codegen-docs-24, codegen-docs-32) rather than surfacing a diff for approval prior to PR creation. missing for 10: explicit diff-review-and-approve-before-PR workflow, evidence of a UI/CLI step where a raw diff is shown pre-PR, hands-on confirmation this gate is used in practice.",
     "evidenceIds": [
       "codegen-docs-22",
-      "codegen-docs-13",
-      "codegen-docs-24"
+      "codegen-docs-24",
+      "codegen-docs-32",
+      "codegen-docs-40"
     ]
   },
   {
@@ -591,12 +605,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Codegen's docs explicitly describe agents analyzing requirements, implementing features, fixing bugs, and writing tests (codegen-docs-1), running code and installing dependencies in isolated environments to validate changes (codegen-docs-5), and autonomously creating PRs with code changes (codegen-docs-24, codegen-docs-4). This covers the full end-to-end implementation-plus-tests workflow described in the story. Missing for 10: independent/hands-on verification beyond vendor documentation, and a concrete example showing tests being written/passing for a specific feature.",
+    "rationale": "Docs explicitly describe agents analyzing requirements, implementing features, and writing tests end-to-end (codegen-docs-1, codegen-docs-29), backed by sandboxed execution/testing environments (codegen-docs-5), automated PR creation (codegen-docs-24), and structured implementation plans (codegen-docs-22). Missing for 10: independent/hands-on third-party verification of end-to-end feature delivery with tests, beyond first-party docs.",
     "evidenceIds": [
       "codegen-docs-1",
+      "codegen-docs-29",
       "codegen-docs-5",
       "codegen-docs-24",
-      "codegen-docs-4",
       "codegen-docs-22"
     ]
   },
@@ -605,8 +619,8 @@
     "storyId": "enterprise-sso-licensing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items mention SSO, enterprise licensing tiers, org-wide admin controls, or commercial/enterprise support plans; evidence covers agent features, integrations, and CLI/SDK usage only.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions SSO, enterprise licensing, commercial support, or org-wide rollout plans; the docs focus on agent features, integrations, and API/SDK usage. This is a fair axis for an enterprise dev-tool but there's no documentation of it.",
     "evidenceIds": []
   },
   {
@@ -629,12 +643,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codegen explicitly documents triggering agents from CI/CD pipelines (e.g., on build failures) and offers a Python SDK plus CLI for programmatic/scripted invocation, which supports headless usage in pipelines and scripts. However, there's no dedicated CI/CD integration guide, no example pipeline configs (e.g., GitHub Actions YAML), and no independent/hands-on evidence confirming real-world headless CI usage. missing for 10: concrete CI/CD pipeline examples or config snippets, exit-code/status handling for scripts, independent verification of headless operation in automated pipelines.",
+    "rationale": "Codegen has a CLI, Python SDK, and REST API explicitly documented to trigger and manage agent runs, including a stated use case of triggering agents from CI/CD pipelines on build failure (codegen-docs-18), plus programmatic run creation/monitoring (codegen-docs-15, codegen-docs-16, codegen-docs-27). However there's no explicit evidence of headless/non-interactive flag support, exit-code semantics for pipeline gating, or shell-script examples showing invocation without the TUI/interactive elements. missing for 10: documented headless/non-interactive CLI flags, exit-code/status conventions for CI gating, concrete shell-script or pipeline YAML examples, independent hands-on confirmation of CI usage.",
     "evidenceIds": [
       "codegen-docs-18",
-      "codegen-docs-11",
       "codegen-docs-15",
-      "codegen-docs-12",
+      "codegen-docs-16",
+      "codegen-docs-27",
       "codegen-probe-3"
     ]
   },
@@ -642,13 +656,13 @@
     "productId": "codegen",
     "storyId": "isolated-sandbox-execution",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state agents 'safely run code, install dependencies, and test changes in robust isolated environments,' directly matching the story, with additional evidence of PR/CI-based execution and structured plans. missing for 10: independent/hands-on verification of sandbox isolation, technical details on the sandboxing mechanism (e.g., container tech, resource limits).",
+    "rationale": "Codegen docs explicitly describe running agent code and installing dependencies inside 'robust isolated environments' (sandboxes), with dedicated API endpoints for analyzing sandbox setup logs and generating setup commands, indicating a real sandbox execution pipeline. Missing for 10: independent/hands-on verification of sandbox isolation guarantees and no detail on the underlying sandbox technology (e.g., VM/container specifics) or security boundaries.",
     "evidenceIds": [
       "codegen-docs-5",
-      "codegen-docs-20",
-      "codegen-docs-22"
+      "codegen-docs-38",
+      "codegen-docs-39"
     ]
   },
   {
@@ -657,41 +671,44 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim support for Jira, Linear, ClickUp and Monday.com to update statuses, add comments, link PRs, and create tasks, plus dedicated Linear and ClickUp integration guides. Missing for 10: independent/hands-on corroboration of these integrations working, and no dedicated Jira/Monday.com setup docs beyond the general mention.",
+    "rationale": "Docs explicitly confirm support for Jira, Linear, ClickUp, and Monday.com issue trackers, allowing agents to update statuses, add comments, link PRs, and create tasks, with a dedicated integrations overview endpoint listing all four as OAuth integrations. Missing for 10: independent/hands-on corroboration beyond vendor docs, and deeper detail on Jira/Monday.com-specific setup flows (only ClickUp/Linear have dedicated integration pages shown).",
     "evidenceIds": [
       "codegen-docs-3",
       "codegen-docs-10",
-      "codegen-docs-28"
+      "codegen-docs-28",
+      "codegen-docs-37"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "live-agent-activity-monitoring",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Codegen offers a TUI and web interface to view agents, browse runs, and retrieve detailed execution logs/traces (thought process, tool usage) via API, plus Slack progress updates, which together approximate real-time oversight of agent status. However, there is no explicit evidence of a live streaming view of an in-progress agent's current action (vs. polling logs/traces after the fact) or a dashboard showing real-time status updates as they happen. missing for 10: evidence of true real-time/live streaming of agent activity as it happens, a persistent status indicator during execution, and independent/hands-on confirmation of the monitoring UX.",
+    "rationale": "Codegen provides multiple first-party channels for observing agent activity: a CLI/TUI for 'browsing agents, viewing runs' with 'full telemetry and monitoring' (codegen-docs-12, codegen-docs-21, codegen-docs-30), a web UI that surfaces traces, an Agent Run Logs API exposing 'the agent's thought process, tool usage, and execution flow' (codegen-docs-27), and endpoints to list/resume agent runs implying live status tracking (codegen-docs-35, codegen-docs-36). Missing for 10: independent/hands-on confirmation that monitoring is truly real-time (vs. periodic log retrieval) and explicit documentation of a live status enum (running/paused/failed) surfaced in the UI.",
     "evidenceIds": [
+      "codegen-docs-12",
       "codegen-docs-21",
       "codegen-docs-27",
-      "codegen-docs-2",
-      "codegen-docs-12"
+      "codegen-docs-30",
+      "codegen-docs-35",
+      "codegen-docs-36"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "managed-cloud-execution",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Codegen offers cloud-run agents with isolated execution environments, API/SDK/CLI access, and no need to self-host infrastructure (codegen-docs-5, codegen-docs-11, codegen-docs-15, codegen-docs-16). This directly matches running agents without operating own backend. Missing for 10: independent/hands-on verification of the managed infrastructure's reliability at scale, and explicit pricing/SLA details for the managed cloud offering.",
+    "rationale": "Codegen's docs describe a fully hosted service where agents run in isolated cloud sandboxes (codegen-docs-5), are created/managed via API, SDK, CLI, or web UI (codegen-docs-15,16,12,31) without requiring the developer to host any backend, and provide telemetry/logs remotely (codegen-docs-27,30). This matches a managed cloud agent-running offering with no self-hosted infrastructure needed. Missing for 10: independent/hands-on corroboration beyond vendor docs, and explicit detail on scaling/quota limits of the managed backend.",
     "evidenceIds": [
       "codegen-docs-5",
-      "codegen-docs-11",
       "codegen-docs-15",
       "codegen-docs-16",
-      "codegen-docs-17",
-      "codegen-docs-18"
+      "codegen-docs-12",
+      "codegen-docs-30",
+      "codegen-docs-27"
     ]
   },
   {
@@ -699,8 +716,8 @@
     "storyId": "manual-model-override",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions model selection or the ability to choose a specific underlying model versus automatic selection; nothing addresses this axis at all.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions model selection, choosing between underlying LLMs, or any setting to override automatic model routing — the docs cover integrations, permissions, CLI/SDK, but never model choice.",
     "evidenceIds": []
   },
   {
@@ -708,28 +725,32 @@
     "storyId": "mid-task-takeover",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Codegen provides a CLI (with TUI) to view agents, pull agent work/branches locally, and a Python SDK/API to programmatically interact with running agents, plus Slack integration for interacting with the agent in-chat — suggesting some ability to monitor/redirect agent tasks across surfaces. However, there is no explicit evidence of 'taking over' a live in-progress task mid-execution (e.g., pausing, injecting new instructions into a running session, or resuming control in an editor/IDE) — the CLI/SDK descriptions focus on viewing, pulling, and creating agents rather than live handoff/redirection of an active run. missing for 10: explicit documentation of pausing/interrupting an in-progress run, editor-based takeover (IDE session control), and redirecting a running agent's task rather than just viewing/pulling completed work or starting new prompts.",
+    "confidence": "medium",
+    "rationale": "Codegen provides multiple surfaces to interact with an in-progress agent — CLI (view/pull agent work, TUI for browsing runs), API (resume-agent-run, list-agent-runs, agent run logs), Slack notifications/clarification requests, and PR/branch review in GitHub — suggesting a developer could redirect or continue a task from several environments. However, there's no explicit documentation of a live 'takeover' UX (e.g., pausing mid-task in an editor and injecting new instructions interactively) or an editor/IDE extension for real-time handoff; the resume endpoint implies pause/resume but not fine-grained redirection. missing for 10: explicit editor-integrated takeover flow, documented mid-task redirection UX, independent/hands-on confirmation of seamless handoff across editor/terminal/browser.",
     "evidenceIds": [
       "codegen-docs-12",
       "codegen-docs-13",
-      "codegen-docs-15",
       "codegen-docs-21",
-      "codegen-docs-9",
-      "codegen-docs-2"
+      "codegen-docs-35",
+      "codegen-docs-36",
+      "codegen-docs-2",
+      "codegen-docs-4",
+      "codegen-docs-27"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "mobile-approval-of-decisions",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Codegen supports Slack-based agent notifications, clarification requests, and progress reports (codegen-docs-2, codegen-docs-9), which could be accessed via a phone's Slack app, and agents present structured plans for review (codegen-docs-22). However there is no explicit mobile app, push-approval workflow, or documented mechanism for a PM to approve/reject agent decisions specifically from a phone while work continues. missing for 10: dedicated mobile/approval UI, explicit approve-in-place-of-agent-continuing workflow, evidence of PM-specific decision gating via phone.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Codegen supports Slack-based interaction (mobile-accessible) for notifications, clarification requests, and progress updates, and the API exposes pause/resume-agent-run and structured plan presentation that could function as approval checkpoints. However, there is no documented dedicated mobile app, push-notification approval UI, or explicit 'approve this decision' workflow tailored for PM oversight on the go. Missing for 10: dedicated mobile/PM approval interface, explicit approval-gate documentation, evidence of PM-specific decision review workflow.",
     "evidenceIds": [
       "codegen-docs-2",
       "codegen-docs-9",
-      "codegen-docs-22"
+      "codegen-docs-22",
+      "codegen-docs-35",
+      "codegen-docs-23"
     ]
   },
   {
@@ -738,29 +759,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Codegen docs explicitly state installing the GitHub App grants repo access with 'No complex setup required,' directly matching the story, and this is reinforced by permission/settings docs showing granular repo-level controls post-install. Missing for 10: independent/hands-on confirmation of the install flow's simplicity and no first-party screenshots/video walkthrough evidencing true one-click UX.",
+    "rationale": "Docs explicitly describe installing the GitHub App to grant repo access with 'no complex setup required,' matching the one-click install story, plus supporting integration docs (Slack, Linear) reinforcing the low-friction connection model. Missing for 10: independent/hands-on corroboration of the install flow beyond first-party docs.",
     "evidenceIds": [
       "codegen-docs-8",
-      "codegen-docs-24",
-      "codegen-docs-25"
+      "codegen-docs-4",
+      "codegen-docs-6"
     ]
   },
   {
     "productId": "codegen",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Codegen exposes a Python SDK and REST API for creating/running agents, pulling logs/traces, and triggering agents from CI/CD (codegen-docs-11,15,16,17,27), giving strong parity for core agent-execution workflows. However, many UI-configurable capabilities—agent behavior/permission settings, integration setup (Slack, Linear, Jira, MCP servers), org/repo management—appear only documented as UI/CLI actions with no corresponding API endpoints, and no public OpenAPI spec was found (codegen-probe-2), suggesting the API surface is narrower than the full UI feature set. Missing for 10: API endpoints for settings/permissions management, integration configuration via API, and a discoverable OpenAPI spec confirming full coverage.",
+    "rationale": "Codegen documents a broad API/SDK/CLI surface covering agent creation, running, resuming, banning checks, listing runs, PR editing, integration management, sandbox log analysis, and run-log retrieval, suggesting strong feature parity with the UI (codegen-docs-15,16,27,34,35,36,37,39,40). However, there is no explicit statement of full UI-API parity, and a live probe found no published OpenAPI spec, plus some UI-only settings (agent-behavior toggles, permission controls) aren't clearly confirmed as API-configurable. Missing for 10: an explicit parity guarantee/documentation, a discoverable OpenAPI/schema reference, and confirmation that all settings-page controls (agent-behavior, permissions) are API-exposed.",
     "evidenceIds": [
-      "codegen-docs-11",
       "codegen-docs-15",
       "codegen-docs-16",
-      "codegen-docs-17",
       "codegen-docs-27",
-      "codegen-docs-22",
-      "codegen-docs-23",
-      "codegen-docs-25",
+      "codegen-docs-34",
+      "codegen-docs-35",
+      "codegen-docs-36",
+      "codegen-docs-37",
+      "codegen-docs-39",
+      "codegen-docs-40",
       "codegen-probe-2"
     ]
   },
@@ -783,7 +805,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence indicates Codegen's source code is published under an open license; all evidence concerns SaaS features, integrations, and API docs, not source availability. missing for 10: any statement of an open-source license, public repository, or source code release.",
+    "rationale": "No evidence of Codegen's source code being available under an open license; all evidence is product documentation and API references, not licensing/source-availability information.",
     "evidenceIds": []
   },
   {
@@ -792,13 +814,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Codegen is presented entirely as a cloud SaaS agent service (GitHub App, Slack App, hosted API/SDK, cloud-run agents) with no mention of a self-hosted or on-premise deployment option anywhere in the docs; the CLI/SDK only interact with the hosted service, not a local core.",
-    "evidenceIds": [
-      "codegen-docs-8",
-      "codegen-docs-9",
-      "codegen-docs-16",
-      "codegen-docs-11"
-    ]
+    "rationale": "Codegen is presented entirely as a cloud SaaS agent platform (API, SDK, CLI connecting to hosted service, GitHub/Slack/Linear apps) with no evidence of a self-hostable core product, Docker image, or on-prem deployment option.",
+    "evidenceIds": []
   },
   {
     "productId": "codegen",
@@ -806,7 +823,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance controls for where data is stored; Codegen's docs focus on agent capabilities, integrations, and CLI/SDK usage.",
+    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls; all docs focus on agent capabilities, integrations, and CLI/SDK usage.",
     "evidenceIds": []
   },
   {
@@ -814,8 +831,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data-training opt-out, privacy controls, or any policy preventing use of user data/code for AI model training; all evidence covers agent features and integrations, not privacy posture.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data-training opt-out, privacy controls, or model-training policies for Codegen; the evidence only covers agent capabilities, integrations, and CLI/SDK features.",
     "evidenceIds": []
   },
   {
@@ -823,8 +840,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items discuss data retention policies, deletion controls, or privacy/data lifecycle settings for Codegen; documentation covers agent capabilities, integrations, and permissions but nothing about controlling how long data is stored or how to delete it. Missing for 10: retention policy documentation, deletion/export controls, data lifecycle settings, privacy compliance statements.",
+    "confidence": "high",
+    "rationale": "No evidence pack item addresses data retention policies, deletion controls, or privacy/data lifecycle settings for Codegen; documentation covers agent capabilities, integrations, CLI/SDK, and permissions but nothing about controlling how long data is stored or how to delete it.",
     "evidenceIds": []
   },
   {
@@ -832,10 +849,11 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the docs of a telemetry or usage-tracking opt-out setting; in fact the CLI docs mention running 'with full telemetry and monitoring' as a built-in feature, with no mention of disabling it.",
+    "confidence": "medium",
+    "rationale": "Codegen's docs explicitly describe telemetry as a built-in feature ('full telemetry and monitoring', 'remote telemetry and analytics' surfaced in the web UI) but provide no mention of any setting, flag, or mechanism to disable or opt out of this tracking.",
     "evidenceIds": [
-      "codegen-docs-12"
+      "codegen-docs-12",
+      "codegen-docs-30"
     ]
   },
   {
@@ -844,11 +862,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Codegen can 'improve documentation' as part of coding tasks and interact with repos via GitHub App, but there is no evidence of a dedicated feature to generate and query documentation for any public or private repository (e.g., a docs Q&A/wiki-style interface). Missing for 10: any mention of auto-generated repo documentation, a query/search interface over that documentation, or support for arbitrary public/private repos beyond connected ones.",
-    "evidenceIds": [
-      "codegen-docs-1",
-      "codegen-docs-8"
-    ]
+    "rationale": "The evidence pack covers Codegen's agent capabilities (code writing, PR review, integrations, CLI, SDK) but contains no mention of a documentation-generation-and-query feature that lets developers ask questions against generated docs for a repo; 'improve documentation' is listed as a task the agent can perform, not a queryable docs corpus.",
+    "evidenceIds": []
   },
   {
     "productId": "codegen",
@@ -856,7 +871,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a dedicated 'repository readiness report' feature evaluating how ready a codebase is for autonomous agents; existing docs cover PR review, security scanning of diffs, and integrations, but none describe a readiness assessment/scoring capability for repos.",
+    "rationale": "No evidence of a dedicated readiness report evaluating repository readiness for autonomous agents; closest features are setup-command generation and sandbox log analysis, which are diagnostic/setup tools, not a readiness scoring report.",
     "evidenceIds": []
   },
   {
@@ -865,12 +880,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Codegen agents can fix bugs, open PRs autonomously, run security/secrets scans on PR diffs, and be triggered from CI/CD (e.g., on build failure), which together could plausibly support security-alert remediation, but there is no direct evidence of an end-to-end workflow that ingests security alerts (e.g., from a scanner/Dependabot), validates them, and auto-opens a remediation PR. missing for 10: explicit security-alert ingestion/triage workflow, evidence of automatic remediation PR creation tied to a specific vulnerability alert, and any customer/independent confirmation of this exact use case.",
+    "rationale": "Codegen can run security/secrets scans on PR diffs and post review comments, can trigger agents from CI/CD on build failures, and agents can autonomously create pull requests with code changes. However, there is no direct evidence of ingesting external security alerts (e.g., Dependabot/CodeQL/SCA findings) and automatically validating + remediating them via an opened PR. missing for 10: explicit security-alert ingestion workflow, automated remediation logic tied to alert triage, and any example/case study of alert-to-PR remediation.",
     "evidenceIds": [
       "codegen-docs-20",
       "codegen-docs-24",
       "codegen-docs-18",
-      "codegen-docs-1"
+      "codegen-docs-32"
     ]
   },
   {
@@ -879,8 +894,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack indicates Codegen offers self-hosted, on-prem, or VM/container deployment options; all documentation describes a cloud-hosted SaaS agent platform accessed via GitHub App, Slack App, CLI, and SDK. missing for 10: any mention of self-hosting, on-prem deployment, Docker/container distribution, or VM installation instructions.",
-    "evidenceIds": []
+    "rationale": "Codegen is presented entirely as a cloud-hosted agent platform (SaaS API, SDK, CLI, GitHub/Slack apps, sandbox execution) with no evidence of self-hosted deployment options such as Docker images, Helm charts, on-prem installers, or VM deployment guides; the CLI even wraps local Claude Code but reports telemetry back to Codegen's cloud, implying dependency on the hosted service rather than local/self-hosted infrastructure.",
+    "evidenceIds": [
+      "codegen-docs-7",
+      "codegen-docs-12",
+      "codegen-docs-30",
+      "codegen-docs-16"
+    ]
   },
   {
     "productId": "codegen",
@@ -888,11 +908,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs indicate agents can be engaged via mentions in comments and interact with teams in Slack (codegen-docs-23, codegen-docs-2), implying some capacity to send follow-up input during a task, but there is no explicit documentation of continuing/steering an already-running agent session without restarting it. Missing for 10: explicit 'send follow-up message to active session' feature, session persistence details, and independent confirmation that mid-task steering doesn't require a new run.",
+    "rationale": "Docs show agents respond to explicit mentions in comments (docs-23) and can be resumed after pausing (docs-35), suggesting some mechanism to redirect an in-progress agent, but there is no explicit documented API or UI feature for sending a mid-session follow-up instruction/steering message to a running agent without restarting. Missing for 10: explicit 'send message to active agent run' endpoint/UI, confirmation that resume preserves context with new instructions, and independent/hands-on verification that steering mid-task works as described.",
     "evidenceIds": [
       "codegen-docs-23",
+      "codegen-docs-35",
       "codegen-docs-2",
-      "codegen-docs-9"
+      "codegen-docs-4"
     ]
   },
   {
@@ -913,14 +934,17 @@
     "productId": "codegen",
     "storyId": "tiered-autonomy-levels",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Codegen exposes agent-permissions and agent-behavior settings (e.g., requiring explicit mentions to trigger, presenting a structured plan before executing, requiring signed commits) which give some control over agent autonomy, but there is no documented concept of tiered autonomy levels or a granular confirmation-gating system for actions.\nmissing for 10: explicit tiered autonomy levels (e.g., auto-approve vs. require-approval per action type), a policy engine or role-based confirmation workflow, and independent verification that these settings actually block agent actions pending human approval.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Codegen provides agent-permission settings (control over PR creation, signed commit requirements, rule auto-detection, mention-only response mode) and pause/resume controls on agent runs, which give some coarse-grained control over agent autonomy. However, there is no evidence of distinct tiered autonomy levels (e.g., read-only vs. suggest vs. auto-execute) that an engineering-lead can configure as a graduated scale — settings appear to be individual binary toggles rather than a tiered system. Missing for 10: explicit multi-tier autonomy levels/presets, granular per-action confirmation thresholds, and any documentation framing permissions as a tiered oversight system rather than isolated toggles.",
     "evidenceIds": [
       "codegen-docs-22",
       "codegen-docs-23",
       "codegen-docs-24",
-      "codegen-docs-25"
+      "codegen-docs-25",
+      "codegen-docs-32",
+      "codegen-docs-33",
+      "codegen-docs-35"
     ]
   },
   {
@@ -929,12 +953,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state agents can be 'Triggered from CI/CD pipelines when builds fail' and support fixing bugs/tests via API/SDK with programmatic control, which directly matches the story. Missing for 10: independent/hands-on confirmation of a real CI/CD integration example (e.g., GitHub Actions snippet) and details on how failing test context is passed to the agent.",
+    "rationale": "Docs explicitly state agents can be triggered from CI/CD pipelines when builds fail, backed by API/SDK for programmatic agent invocation and log analysis for setup/build failures. missing for 10: independent/hands-on confirmation of a real CI pipeline integration, and no explicit test-failure-fix CI example beyond the general claim.",
     "evidenceIds": [
       "codegen-docs-18",
       "codegen-docs-16",
-      "codegen-docs-11",
-      "codegen-docs-15"
+      "codegen-docs-39",
+      "codegen-docs-15",
+      "codegen-docs-31"
     ]
   },
   {
@@ -942,11 +967,9 @@
     "storyId": "visual-context-for-tasks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence that Codegen supports attaching screenshots or annotated mockups to a task; the closest mention is a generic Figma integration, which is not the same as accepting an image/markup input for visual bug fixes. Missing for 10: any documentation of image/screenshot upload, visual diff input, or mockup-to-code workflow.",
-    "evidenceIds": [
-      "codegen-docs-6"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack of image/screenshot attachment or visual mockup input to tasks; Codegen's inputs are described as text prompts, Slack/issue-tracker integrations, and Figma connection is mentioned only as a generic integration without markup-to-implementation workflow detail.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
