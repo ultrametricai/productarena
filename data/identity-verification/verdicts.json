@@ -2679,17 +2679,19 @@
   {
     "productId": "sumsub",
     "storyId": "agent-onboarding-decisions",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Sumsub's REST API and webhooks deliver structured, machine-readable notifications on verification status changes, and verification levels/AML screening/liveness checks produce discrete check results that a workflow could branch on (e.g., approve/reject logic). However, there is no documented schema detailing specific risk-signal fields or standardized failure-reason codes, and a probe found no public OpenAPI/swagger spec, suggesting less machine-native structure than ideal for autonomous agent decisioning. missing for 10: explicit risk-signal/failure-reason code schema, discoverable OpenAPI spec, independent evidence of agents successfully branching on outputs.",
+    "rationale": "Sumsub exposes RESTful APIs and webhooks that return applicant status, rejection reasons, and next steps (sumsub-docs-40), plus configurable AML/risk screening and anomaly detection signals that can drive automated branching (sumsub-docs-6, sumsub-docs-24, sumsub-docs-37). Webhooks deliver machine-readable event notifications for status changes usable by automated onboarding flows (sumsub-docs-3, sumsub-docs-28), and an MCP server is documented to let agents perform operations programmatically (sumsub-docs-4, sumsub-probe-3). missing for 10: no published OpenAPI/schema spec was found (sumsub-probe-2 shows 404s), and no independent/hands-on confirmation of structured risk-signal payload completeness.",
     "evidenceIds": [
-      "sumsub-docs-1",
-      "sumsub-docs-3",
-      "sumsub-docs-5",
+      "sumsub-docs-40",
       "sumsub-docs-6",
-      "sumsub-docs-12",
-      "sumsub-docs-22",
+      "sumsub-docs-24",
+      "sumsub-docs-37",
+      "sumsub-docs-3",
+      "sumsub-docs-28",
+      "sumsub-docs-4",
+      "sumsub-probe-3",
       "sumsub-probe-2"
     ]
   },
@@ -2699,13 +2701,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub has a documented REST API and an official MCP server explicitly described for letting AI agents perform Sumsub operations under scoped role-based permissions (sumsub-docs-4, sumsub-probe-3), plus webhooks for outcome notification (sumsub-docs-3). However, evidence doesn't confirm specifics like polling outcomes, retrieving extracted data, or triggering re-checks explicitly through the MCP surface, nor is there an OpenAPI spec confirming full API surface (sumsub-probe-2 shows 404s). Missing for 10: explicit documentation of session creation/polling/re-check operations via MCP, confirmation of scoped credential granularity within MCP, and independent/hands-on validation of the MCP server's agent workflows.",
+    "rationale": "Sumsub documents a REST API for processing applicant data and an official MCP server that lets AI agents perform operations under existing role-based permissions, directly supporting agent-driven session creation and data retrieval with scoped credentials. However, the evidence doesn't explicitly confirm polling outcomes, triggering re-checks, or granular per-agent credential scoping (only account-level role permissions) via the MCP surface, and no independent/hands-on validation of the MCP server's actual capabilities exists. missing for 10: explicit documentation of poll/re-check operations via MCP or API, fine-grained scoped-credential mechanics for agents, independent verification of MCP server functionality.",
     "evidenceIds": [
-      "sumsub-docs-4",
-      "sumsub-probe-3",
-      "sumsub-docs-3",
       "sumsub-docs-1",
-      "sumsub-probe-2"
+      "sumsub-docs-4",
+      "sumsub-probe-3"
     ]
   },
   {
@@ -2714,70 +2714,67 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A confirmed live llms.txt exists (HTTP 200) with clear instructions that any doc page can be fetched as markdown by appending .md, and multiple docs pages are indeed available in .md form, directly enabling agent-oriented consumption. Missing for 10: independent third-party confirmation of an agent actually using this workflow end-to-end.",
+    "rationale": "Sumsub has a confirmed live llms.txt (HTTP 200) explicitly designed for agent consumption, plus .md-appendable docs pages and an official MCP server for AI agents to perform operations. missing for 10: no independent third-party confirmation of agent usage beyond first-party probe evidence.",
     "evidenceIds": [
       "sumsub-probe-1",
       "sumsub-docs-7",
-      "sumsub-docs-8",
-      "sumsub-docs-9"
+      "sumsub-docs-4",
+      "sumsub-probe-3"
     ]
   },
   {
     "productId": "sumsub",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Sumsub documents AI-powered Anomaly Detection that generates insights on transaction monitoring, which is a form of AI-generated insight from data, and its MCP server lets AI agents act on Sumsub data. However, there's no evidence of broader AI-generated suggestions (e.g., dashboards, natural-language insights, recommendations) across the core verification/analytics product beyond this single anomaly-detection feature. Missing for 10: evidence of AI-generated suggestions/insights in the main dashboard or analytics UI, independent corroboration of the anomaly detection's AI insight quality, and broader coverage beyond transaction monitoring.",
-    "evidenceIds": [
-      "sumsub-docs-24",
-      "sumsub-docs-4",
-      "sumsub-probe-3"
-    ]
-  },
-  {
-    "productId": "sumsub",
-    "storyId": "agentic-autonomous-automation",
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Sumsub's webhooks trigger automatic notifications on verification events, AML screening and anomaly detection run continuously in the background, and the MCP server explicitly lets AI agents autonomously perform Sumsub operations under role permissions — together enabling background automations without manual intervention. Missing for 10: independent/hands-on evidence of these automations running reliably at scale, and more detail on autonomous action-taking (not just notification) via webhooks.",
+    "rationale": "Sumsub's \"Summy AI\" produces AI-generated applicant overviews (status, rejection reasons, next steps) directly from verification data, and Sumsub also ships AI-powered anomaly detection for transaction data, both of which are in-product AI insight/suggestion features rather than external tools. Missing for 10: independent/hands-on corroboration of Summy AI's output quality and broader coverage of AI-generated suggestions across all data types (documents, AML, etc.), not just applicant status.",
     "evidenceIds": [
-      "sumsub-docs-3",
-      "sumsub-docs-6",
-      "sumsub-docs-24",
-      "sumsub-docs-4",
-      "sumsub-probe-3",
-      "sumsub-docs-23"
-    ]
-  },
-  {
-    "productId": "sumsub",
-    "storyId": "agentic-builtin-assistant",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Sumsub's evidence shows an MCP server that lets external AI agents call Sumsub's API (docs-4, probe-3) and AI-powered anomaly detection for transaction monitoring (docs-24), but neither is a built-in assistant embedded in the Sumsub product that a user converses with or delegates tasks to. No evidence of an in-product AI copilot/assistant UI for compliance analysts or applicants.",
-    "evidenceIds": [
-      "sumsub-docs-4",
-      "sumsub-probe-3",
+      "sumsub-docs-40",
+      "sumsub-docs-36",
       "sumsub-docs-24"
     ]
   },
   {
     "productId": "sumsub",
-    "storyId": "agentic-headless",
+    "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub offers a RESTful API, sandbox testing, and webhooks that together enable headless/automated integration into CI or backend pipelines, and even an MCP server for agent-driven operations. However, there's no explicit CI-specific tooling (CLI, GitHub Actions, CI templates) or documented automated testing pipeline examples, and OpenAPI spec probes 404'd, suggesting weaker machine-readable API tooling for automation. missing for 10: dedicated CI/CD examples or CLI, discoverable OpenAPI spec, independent confirmation of headless automation in production pipelines.",
+    "rationale": "Sumsub provides webhooks for automatic event-driven notifications and an MCP server that lets AI agents perform Sumsub operations under existing permissions, which supports background/automated workflows, plus Summy AI for plain-language level configuration. However, these are event-triggered or user-invoked integrations rather than fully autonomous, self-scheduling background agents, and there's no evidence of persistent/scheduled autonomous automation or independent corroboration. missing for 10: evidence of truly autonomous scheduled background automations (not just event-webhooks/API), independent/hands-on validation of the MCP server's autonomous operation.",
     "evidenceIds": [
-      "sumsub-docs-1",
-      "sumsub-docs-2",
       "sumsub-docs-3",
       "sumsub-docs-4",
-      "sumsub-probe-2",
+      "sumsub-docs-36",
       "sumsub-probe-3"
+    ]
+  },
+  {
+    "productId": "sumsub",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Sumsub docs mention 'Summy AI' as a built-in assistant that can build verification levels from plain-language descriptions and summarize applicant status/rejection reasons/next steps, which is direct evidence of task delegation to an in-product AI assistant. However, evidence only covers two narrow use cases (level building, applicant overview) rather than a general-purpose assistant, and there's no independent/hands-on corroboration of how broadly it can act. Missing for 10: broader task coverage beyond level-building and applicant overviews, independent verification of the assistant's actual capabilities, and details on user-facing invocation/UX.",
+    "evidenceIds": [
+      "sumsub-docs-36",
+      "sumsub-docs-40"
+    ]
+  },
+  {
+    "productId": "sumsub",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Sumsub exposes a full RESTful API for headless integration, a Sandbox mode explicitly for testing integrations before going live, and webhooks for automated event handling — all of which enable running verification workflows programmatically without a UI, suitable for CI-style automation. Missing for 10: explicit CI/CD pipeline examples, a CLI tool, or documented automated test suites/hands-on CI usage reports.",
+    "evidenceIds": [
+      "sumsub-docs-1",
+      "sumsub-docs-15",
+      "sumsub-docs-2",
+      "sumsub-docs-27",
+      "sumsub-docs-3",
+      "sumsub-docs-16"
     ]
   },
   {
@@ -2785,8 +2782,8 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Sumsub is a KYC/identity-verification SaaS platform, not an AI agent; the evidence shows Sumsub built an MCP *server* so external AI agents can call Sumsub's tools (sumsub-docs-4, sumsub-probe-3), which is the opposite direction from this story asking whether a user can plug external MCP servers into Sumsub so it can consume their tools. There is no agentic core in Sumsub that would consume outside tools, making this axis a category mismatch rather than a gap.",
+    "confidence": "medium",
+    "rationale": "Sumsub is a KYC/verification SaaS that exposes its own MCP server so external AI agents can call Sumsub's tools (docs-4, probe-3) — this is the reverse of the story, which asks whether Sumsub itself can consume external MCP servers as a client. There's no indication Sumsub has an agentic core or assistant that ingests third-party MCP tools; this axis is a category mismatch for a verification platform rather than an agent/orchestrator product.",
     "evidenceIds": [
       "sumsub-docs-4",
       "sumsub-probe-3"
@@ -2798,7 +2795,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Sumsub documents an official MCP server that lets AI agents perform Sumsub operations under existing role permissions, corroborated by a direct probe confirming the docs page exists. Missing for 10: independent/hands-on third-party confirmation of the MCP server working in practice and details on setup/auth flow beyond the docs summary.",
+    "rationale": "Sumsub explicitly documents an official MCP server that lets AI agents perform Sumsub operations under existing role permissions, corroborated by a probe confirming the docs page exists. missing for 10: independent/hands-on third-party validation of the MCP server working in practice, and more detail on setup/tool coverage.",
     "evidenceIds": [
       "sumsub-docs-4",
       "sumsub-probe-3"
@@ -2810,8 +2807,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub documents an official MCP server that lets AI agents perform Sumsub operations on the user's behalf under role-based permissions, which enables natural-language/agentic control via an AI agent interface rather than the product itself exposing an NL command layer. Missing for 10: direct evidence of a native natural-language command interface within Sumsub's own UI/API, and independent/hands-on confirmation of the MCP server's real-world usability.",
+    "rationale": "Sumsub offers Summy AI, which lets users create/configure verification levels and get applicant status summaries by describing requirements in plain language, and an MCP server that lets AI agents perform Sumsub operations under natural-language driven agent control. These are concrete natural-language interfaces, but they cover only specific features (level building, applicant overview) rather than full product operation, and there is no independent/hands-on corroboration of reliability. missing for 10: broader coverage of all major workflows via NL commands, independent/hands-on verification of accuracy and reliability.",
     "evidenceIds": [
+      "sumsub-docs-36",
+      "sumsub-docs-40",
       "sumsub-docs-4",
       "sumsub-probe-3"
     ]
@@ -2822,7 +2821,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an official CLI tool; Sumsub offers REST APIs, SDKs, and an MCP server (docs-4, probe-3) but nothing indicating a command-line interface for AI-native workflows.",
+    "rationale": "Sumsub offers an official MCP server for AI agents, but there is no evidence of an official CLI tool for AI-native or developer workflows anywhere in the docs. Missing for 10: any mention of a Sumsub CLI, command-line tooling, or install instructions for one.",
     "evidenceIds": []
   },
   {
@@ -2831,12 +2830,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Sumsub documents a full RESTful API for driving applicant verification, webhooks for events, sandbox testing, and even an official MCP server enabling AI agents to perform operations under existing role permissions. This directly satisfies the AI-native driving-via-documented-API story, though no public OpenAPI/Swagger spec was found in probes. Missing for 10: publicly discoverable machine-readable OpenAPI spec, independent third-party corroboration of API robustness.",
+    "rationale": "Sumsub documents a full public RESTful API for driving applicant verification, with sandbox testing, webhooks, and even an official MCP server for AI agents to perform operations under existing role permissions. This directly supports AI-native, API-driven usage beyond just the UI SDKs. Missing for 10: a discoverable OpenAPI/Swagger spec (probe found all standard OpenAPI endpoints returning 404) and independent third-party corroboration of API robustness.",
     "evidenceIds": [
       "sumsub-docs-1",
       "sumsub-docs-15",
-      "sumsub-docs-3",
       "sumsub-docs-2",
+      "sumsub-docs-3",
       "sumsub-docs-4",
       "sumsub-probe-3",
       "sumsub-probe-2"
@@ -2848,28 +2847,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Sumsub's MCP server docs state that agent actions are gated by \"your existing Sumsub role permissions,\" implying some degree of least-privilege control when an AI agent uses the API, and team-member access grants show role-based permissioning exists. However, there is no explicit documentation of issuing a distinct, scoped API key/token specifically for an agent (e.g., token scopes, expiring credentials, or agent-specific API keys) beyond reusing account role permissions. missing for 10: dedicated scoped API-key/token creation for agents, granular permission scoping documentation, independent verification of least-privilege enforcement.",
+    "rationale": "Sumsub's MCP server docs state that AI agent access is 'controlled by your existing Sumsub role permissions,' implying agents can be restricted via the platform's role-based access system rather than full account access, and team-member role management further supports granular permissioning. However, there is no explicit documentation of scoped/least-privilege API tokens or keys (e.g., token-level scopes, expiring credentials) issued specifically for agents beyond reusing existing dashboard roles. Missing for 10: dedicated API-key/token scoping mechanism for agents, granular permission documentation for MCP/agent use, independent verification of least-privilege enforcement.",
     "evidenceIds": [
       "sumsub-docs-4",
-      "sumsub-probe-3",
-      "sumsub-docs-8"
+      "sumsub-docs-8",
+      "sumsub-docs-38",
+      "sumsub-probe-3"
     ]
   },
   {
     "productId": "sumsub",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub documents official Web and Mobile SDKs (get-started, customization, accessibility, permalinks) plus a REST API and, notably for agenticness, an official MCP server letting AI agents perform Sumsub operations under existing role permissions. This directly satisfies 'build against official SDKs' including an AI-native integration path. Missing for 10: no discoverable OpenAPI/swagger spec (probe returned 404s), no independent/third-party corroboration of SDK quality, and no explicit repo/version details for the Mobile SDKs.",
+    "rationale": "Sumsub offers RESTful APIs, WebSDK, mobile SDKs, and a React package, plus a dedicated MCP server for AI agents to perform Sumsub operations, showing agentic/AI-native building blocks. However, there's no evidence of dedicated official SDKs for popular languages (Python, Node, Java, etc.) beyond WebSDK/React, and no OpenAPI spec was found (404s), limiting confidence in broad official SDK coverage. missing for 10: official multi-language backend SDKs (Python/Node/Java/etc.), a published OpenAPI/swagger spec, independent developer corroboration of SDK quality.",
     "evidenceIds": [
       "sumsub-docs-4",
-      "sumsub-probe-3",
       "sumsub-docs-14",
-      "sumsub-docs-18",
-      "sumsub-docs-19",
-      "sumsub-docs-7",
-      "sumsub-probe-2"
+      "sumsub-docs-26",
+      "sumsub-probe-2",
+      "sumsub-probe-3"
     ]
   },
   {
@@ -2878,11 +2876,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Sumsub has dedicated, detailed webhook documentation describing automatic notifications for applicant verification events, plus a rollout percentage control feature for managing webhook endpoints, confirming a mature webhook subscription system. missing for 10: no independent/hands-on corroboration of webhook reliability or event coverage list.",
+    "rationale": "Sumsub documents webhooks for automatically receiving notifications on applicant verification events, with configurable rollout and sandbox testing support. Missing for 10: independent/hands-on corroboration of webhook reliability and a full payload/event-type reference.",
     "evidenceIds": [
       "sumsub-docs-3",
       "sumsub-docs-16",
-      "sumsub-docs-23"
+      "sumsub-docs-23",
+      "sumsub-docs-27"
     ]
   },
   {
@@ -2891,11 +2890,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Sumsub's AML screening docs confirm configurable sanctions/PEP/adverse-media watchlist screening within the same platform, integrated via the same API and verification levels used for identity verification, giving a single vendor/API/review surface. Missing for 10: independent/hands-on confirmation of watchlist coverage breadth and ongoing monitoring re-screening cadence beyond the docs.",
+    "rationale": "Sumsub's AML Screening is documented as an integrated part of the verification flow, screening against sanctions lists, PEP lists, watchlists, and adverse media, with configurable list/category targeting and fuzziness — all within the same API/dashboard used for identity verification, satisfying one-vendor/one-API/one-review-surface. missing for 10: no independent/hands-on corroboration of screening accuracy or of the unified review surface in practice, and no detail on ongoing ongoing/ re-screening monitoring cadence.",
     "evidenceIds": [
       "sumsub-docs-6",
-      "sumsub-docs-5",
-      "sumsub-docs-15",
+      "sumsub-docs-37",
+      "sumsub-docs-34",
       "sumsub-docs-24"
     ]
   },
@@ -2905,10 +2904,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The pack shows Sumsub has an API reference page and sandbox testing mode, but there is no evidence of an interactive, runnable API explorer (e.g., try-it-now console); a probe for OpenAPI/Swagger specs that would power such an interface returned 404s across all checked paths.",
+    "rationale": "The evidence shows a REST API reference page and sandbox testing mode, but nothing describes an interactive reference with runnable/try-it code examples, and a probe for an OpenAPI spec at standard paths returned 404s, suggesting no discoverable machine-readable spec to power such interactivity.",
     "evidenceIds": [
       "sumsub-docs-1",
-      "sumsub-docs-2",
+      "sumsub-docs-15",
+      "sumsub-docs-27",
       "sumsub-probe-2"
     ]
   },
@@ -2918,11 +2918,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Sumsub has a REST API reference (sumsub-docs-1, sumsub-docs-15) but no evidence of a downloadable OpenAPI/Swagger spec; explicit probes for openapi.json, swagger.json, and other well-known paths all returned 404 (sumsub-probe-2), indicating no machine-readable spec is exposed.",
+    "rationale": "Sumsub documents a REST API and a reference section, but there is no evidence of a downloadable OpenAPI/Swagger spec; explicit probes for common OpenAPI paths (openapi.json, swagger.json, etc.) all returned 404, indicating no machine-readable spec is exposed.",
     "evidenceIds": [
-      "sumsub-probe-2",
       "sumsub-docs-1",
-      "sumsub-docs-15"
+      "sumsub-probe-2"
     ]
   },
   {
@@ -2930,12 +2929,12 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Sumsub explicitly documents a Sandbox mode for testing integrations before going live, keeping test activity separate from production, and separately offers an MCP server for AI agents to perform operations under controlled permissions — implying agentic access can also target sandbox environments. Missing for 10: explicit confirmation that the MCP server itself can be pointed at sandbox vs production, and independent/hands-on verification of sandbox data isolation.",
+    "confidence": "high",
+    "rationale": "Sumsub provides a documented Sandbox mode that lets users test integrations (app tokens, webhooks, WebSDK) without touching production data, explicitly for pre-go-live testing. This directly matches the story for both regular and AI-native (MCP-based) integrations since the MCP server operates under the same account/role permissions. Missing for 10: explicit confirmation that MCP-driven agent actions can be scoped to sandbox mode specifically, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "sumsub-docs-2",
-      "sumsub-docs-4",
-      "sumsub-probe-3"
+      "sumsub-docs-27",
+      "sumsub-docs-4"
     ]
   },
   {
@@ -2955,27 +2954,24 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence describes per-applicant API calls, webhooks, and an MCP server for individual Sumsub operations, but nothing documents batch/bulk endpoints or the ability to act on many applicants or documents in a single call. Missing for 10: bulk/batch API endpoints, batch job or CSV import documentation, evidence of multi-item operations via MCP or API.",
-    "evidenceIds": [
-      "sumsub-docs-1",
-      "sumsub-docs-15",
-      "sumsub-docs-4"
-    ]
+    "confidence": "medium",
+    "rationale": "Sumsub's docs describe a REST API, webhooks, client lists, and an MCP server for individual applicant/AML operations, but none of the evidence describes any bulk/batch API, CSV import, or mass-action tooling for processing many applicants or items at once.",
+    "evidenceIds": []
   },
   {
     "productId": "sumsub",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Sumsub supports event-driven automation via Webhooks that fire on verification events, and rollout percentage controls for webhook endpoints, plus an MCP server for AI agents to perform operations — but there's no evidence of a general-purpose rules engine where users define custom conditional logic/actions triggered by arbitrary events (e.g., 'if X then do Y' automation builder). missing for 10: a documented rules/automation engine or workflow builder allowing custom condition-action triggers beyond webhooks, and evidence of AI agents autonomously acting on triggered events rather than just being invoked.",
+    "confidence": "low",
+    "rationale": "Sumsub provides event-based webhooks that notify external systems of applicant/verification changes, plus client lists that let you define rules (blocklists, transaction monitoring conditions) and configurable AML/verification-level settings—together forming pieces of rule-driven automation. However, there is no documented unified rules engine that lets a user declare arbitrary 'on event X, do action Y' logic within Sumsub itself; webhooks merely notify, requiring external logic to act, and client lists are more static key-set management than a triggerable action framework. Missing for 10: a native rules/automation engine spec, examples of automatic actions (not just notifications) triggered by events, and independent confirmation of such automation working in practice.",
     "evidenceIds": [
       "sumsub-docs-3",
       "sumsub-docs-16",
+      "sumsub-docs-34",
       "sumsub-docs-23",
-      "sumsub-docs-4",
-      "sumsub-probe-3"
+      "sumsub-docs-37",
+      "sumsub-docs-24"
     ]
   },
   {
@@ -2984,7 +2980,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any scheduling, cron-like, or recurring workflow capability in Sumsub's docs; webhooks are event-triggered, not schedule-based automation, and no orchestration/automation platform is mentioned.",
+    "rationale": "Sumsub offers webhooks, APIs, and an MCP server, but nothing in the evidence indicates support for scheduling recurring jobs or workflows (e.g., cron-like automation, scheduled checks, or recurring verification runs).",
     "evidenceIds": []
   },
   {
@@ -2992,8 +2988,8 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Sumsub's docs describe configuring verification levels, webhooks, and AML rules, but there is no evidence of any versioning, review, or rollback mechanism for these configurations or for any AI-agent-driven automations (e.g., via the MCP server). The axis is plausible for a platform with configurable verification flows, but no capability is documented.",
+    "confidence": "high",
+    "rationale": "Sumsub's docs cover verification levels, webhooks, AML, MCP server access, and rollout percentages, but there is no evidence of version control, review workflows, or rollback for automations/configurations (e.g., verification level configs or workflows) themselves.",
     "evidenceIds": []
   },
   {
@@ -3001,8 +2997,8 @@
     "storyId": "biometric-consent-compliance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers biometric liveness checks, verification levels, SDK customization, and accessibility, but contains no documentation about GDPR legal bases for biometric processing, BIPA or other US biometric statute compliance, or specific consent language for founders' legal review — this specific legal/compliance documentation axis is unaddressed.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows Sumsub's biometric/liveness features (docs-12, docs-13) but contains no documentation addressing GDPR legal bases, BIPA or other US biometric statutes, or consent language guidance for legal review. Since Sumsub processes biometric data, this is a fair and applicable axis, but no evidence of such compliance documentation is present. Missing for 10: GDPR legal basis documentation, BIPA/US biometric statute guidance, consent language templates or legal review materials.",
     "evidenceIds": []
   },
   {
@@ -3010,8 +3006,8 @@
     "storyId": "conversion-analytics",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items describe funnel analytics, pass-rate dashboards, drop-off tracking, or completion-time breakdowns by country/document type; only conversion-boosting features (Reusable KYC) and general API/webhook docs are present, none of which constitute analytics reporting.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers verification levels, SDKs, webhooks, AML, and branding, but contains no mention of a funnel analytics dashboard, pass-rate/drop-off reporting, or completion-time breakdowns by country or document type. This is a fair capability to expect from a verification-orchestration platform, but no evidence documents it.",
     "evidenceIds": []
   },
   {
@@ -3020,7 +3016,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers verification, SDK, AML, and MCP features but contains no mention of documented data retention windows or a redaction/deletion API for PII. Missing for 10: retention policy documentation, deletion/redaction API endpoints, data lifecycle controls.",
+    "rationale": "The evidence pack covers verification flows, SDKs, AML, webhooks, and MCP server access, but nowhere documents retention windows for collected PII or a redaction/deletion API for scrubbing applicant data on demand. No mention of data lifecycle, deletion endpoints, or retention policy exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -3029,7 +3025,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers document-based verification, liveness, AML screening, and reusable KYC, but contains no mention of database-only identity verification (SSN checks, national registry lookups, or credit-header/bureau data) as an alternative to document scanning. This is a fair capability to expect from an identity-verification platform, but no evidence supports it here.",
+    "rationale": "The evidence pack covers document verification, liveness, AML/sanctions screening, and verification-level configuration, but nowhere mentions non-document identity verification against SSN, national registries, or credit-header databases. This is a plausible axis for an IDV platform, but no supporting evidence is present.",
     "evidenceIds": []
   },
   {
@@ -3062,52 +3058,61 @@
     "storyId": "hosted-verification-flow",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs show server-side token generation for WebSDK, hosted/drop-in flows via WebSDK and permalinks, verification levels combining document and selfie/liveness checks, and webhooks to receive verification results — covering the full server-create → embed/redirect → read-result flow without building capture UI. Missing for 10: explicit end-to-end code sample for creating a session via REST API and reading the final decision via API (only webhook notification is shown), and no independent/hands-on corroboration of the full flow.",
+    "confidence": "high",
+    "rationale": "Sumsub provides a full server-side API, verification levels combining document and selfie/liveness checks, Web/Mobile SDKs (drop-in UI) or WebSDK permalinks (hosted redirect), and webhooks to read results asynchronously — covering create-session, redirect/embed, and result-read without building capture UI. Missing for 10: no direct end-to-end code sample tying token generation, SDK embed, and webhook result together, and no independent/hands-on developer report confirming the full flow works smoothly.",
     "evidenceIds": [
+      "sumsub-docs-1",
       "sumsub-docs-5",
       "sumsub-docs-14",
       "sumsub-docs-17",
+      "sumsub-docs-26",
       "sumsub-docs-3",
       "sumsub-docs-12",
-      "sumsub-docs-18",
-      "sumsub-docs-15"
+      "sumsub-docs-27"
     ]
   },
   {
     "productId": "sumsub",
     "storyId": "kyb-business-verification",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers only individual KYC flows (verification levels, AML screening, liveness, document checks) with no mention of business verification, company registry lookups, UBO identification, or KYB-to-KYC chaining. This is a fair axis for an identity-verification platform, but no evidence supports it here.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Docs show business verification levels with distinct steps (Company data, Company documents, Associated parties) implying KYB flows that link to individual KYC checks on owners/associated parties, but there is no explicit documentation of registry lookups or dedicated UBO identification features. Missing for 10: explicit registry/company-database lookup capability, dedicated UBO identification documentation, and clear description of how KYC checks are triggered for identified owners.",
+    "evidenceIds": [
+      "sumsub-docs-33",
+      "sumsub-docs-25",
+      "sumsub-docs-5"
+    ]
   },
   {
     "productId": "sumsub",
     "storyId": "manual-review-queues",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm applicants have profiles showing check results (e.g., Liveness section) and reviewers can manually approve/reject regardless of status, implying a review workflow with evidence, and webhooks propagate status changes back to the record. However, there is no explicit description of a dedicated 'manual review queue' UI, extracted field display, or how reviewer decisions feed back into re-scoring/orchestration logic. Missing for 10: dedicated review-queue UI documentation, extracted-field presentation details, explicit feedback loop into verification level/orchestration.",
+    "rationale": "Docs confirm a reviewer workflow: applicants can be manually approved/rejected in the dashboard (sumsub-docs-22), reviewers can inspect check results like Liveness in the applicant profile (sumsub-docs-13), and webhooks propagate status/decision changes back into the client's system (sumsub-docs-3, sumsub-docs-16, sumsub-docs-28), with verification levels defining the document/selfie/liveness checks that generate this evidence (sumsub-docs-5). However, the evidence pack never explicitly describes a dedicated 'manual review queue' for borderline cases, does not show extracted-field display alongside document images, and doesn't detail how reviewer decisions are recorded as an auditable feedback loop. Missing for 10: explicit borderline-queue/triage mechanism, extracted-field UI evidence, and documented reviewer-decision audit trail.",
     "evidenceIds": [
-      "sumsub-docs-13",
       "sumsub-docs-22",
+      "sumsub-docs-13",
       "sumsub-docs-3",
-      "sumsub-docs-11"
+      "sumsub-docs-16",
+      "sumsub-docs-28",
+      "sumsub-docs-5"
     ]
   },
   {
     "productId": "sumsub",
     "storyId": "native-sdk-capture",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence confirms Sumsub's Web/Mobile SDKs handle document capture across 14,000+ document types and support customizable instructions/tips (sumsub-docs-11, sumsub-docs-7, sumsub-docs-18), but nothing in the pack documents specific real-time capture coaching such as glare detection, blur detection, or edge/frame detection guiding the user to a usable photo. This is a fair, applicable axis for an identity-verification SDK, but no evidence substantiates the specific guided-capture mechanics described in the story.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Evidence confirms native Web SDK, iOS SDK (theme API), and general 'Mobile SDKs' branding/customization plus document verification across 14,000+ types, implying camera-based capture flows, but no documentation explicitly describes glare/blur/edge-detection coaching guiding users to a usable photo. Missing for 10: explicit mention of real-time image-quality checks (glare, blur, edge detection) in SDKs, Android SDK specifics, and any hands-on/independent confirmation of capture guidance UX.",
     "evidenceIds": [
-      "sumsub-docs-11",
       "sumsub-docs-7",
-      "sumsub-docs-18"
+      "sumsub-docs-18",
+      "sumsub-docs-31",
+      "sumsub-docs-11",
+      "sumsub-docs-26"
     ]
   },
   {
@@ -3116,11 +3121,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub documents WebSDK permalinks that let applicants complete verification via a direct link, which supports an ops lead sending a one-off verification without engineering (sumsub-docs-17), and access-token/API docs suggest programmatic generation is also possible (sumsub-docs-14). However, there is no explicit evidence of a QR code option or of a dashboard-only, no-code workflow for generating these links, and other flows (SDK customization, webhooks) still emphasize API/engineering-driven setup (sumsub-docs-14, sumsub-docs-18). Missing for 10: explicit QR code generation feature, confirmation that ops (non-engineering) can generate/share the link from the dashboard without any API call.",
+    "rationale": "Sumsub supports WebSDK permalinks — a direct link applicants can use to complete verification without any code — which matches the 'no-code link' need, and dashboard-based manual approve/reject flows suggest an ops-friendly UI. However, there's no explicit evidence of a QR code generation feature or a dedicated no-code 'send verification' dashboard action described for one-off, ad-hoc use by non-engineering staff. missing for 10: explicit QR code generation, dedicated no-code UI flow for ops to trigger one-off verification without any setup, independent/hands-on confirmation.",
     "evidenceIds": [
       "sumsub-docs-17",
-      "sumsub-docs-14",
-      "sumsub-docs-18"
+      "sumsub-docs-22",
+      "sumsub-docs-38"
     ]
   },
   {
@@ -3128,12 +3133,13 @@
     "storyId": "ongoing-monitoring",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Sumsub docs confirm configurable AML/watchlist screening (sumsub-docs-6) and a webhook system that fires on 'events and changes' in an applicant's verification process (sumsub-docs-3/16), which together imply some ongoing screening and event notification. However, no evidence explicitly describes continuous re-screening of already-approved applicants against updated watchlists or a dedicated 'ongoing monitoring' event type distinct from initial verification. Missing for 10: explicit documentation of periodic/automatic re-screening cadence, watchlist-update-triggered events, and confirmation these events fire for already-verified (not just in-progress) applicants.",
+    "confidence": "medium",
+    "rationale": "Sumsub's AML screening explicitly screens against \"constantly changing sanctions lists, PEP lists and data, watchlists, and adverse media\" and webhooks notify on applicant verification changes, suggesting some ongoing monitoring and event-based alerting. However, there is no explicit documentation of automatic re-screening of already-approved applicants against watchlist updates or a dedicated webhook/event type for watchlist-match changes post-verification. Missing for 10: explicit continuous/ongoing monitoring workflow for previously verified users, specific event/webhook type for watchlist-hit changes, and any hands-on confirmation of this re-screening loop.",
     "evidenceIds": [
-      "sumsub-docs-6",
+      "sumsub-docs-37",
       "sumsub-docs-3",
-      "sumsub-docs-16"
+      "sumsub-docs-16",
+      "sumsub-docs-34"
     ]
   },
   {
@@ -3142,18 +3148,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub's REST API covers the core identity-verification workflow end-to-end (applicant creation, document processing, verification levels, AML screening, webhooks, approve/reject actions) per docs-1, 3, 5, 6, 15, 22, and it also offers an MCP server letting agents perform 'Sumsub operations' under existing role permissions (docs-4). However, several UI-only administrative capabilities shown in the pack — team member access management, security key/biometric setup, and SDK branding/customization — are described without any corresponding API/agent path, and no OpenAPI spec was discoverable (probe-2 shows 404s), so full UI/API parity isn't demonstrated. Missing for 10: explicit API endpoints for account/team management and branding settings, and a public machine-readable API spec confirming complete surface parity.",
+    "rationale": "Sumsub's REST API covers core verification workflows (applicant creation, document/liveness checks, approve/reject, AML screening, webhooks) [sumsub-docs-1,15,22,37,16] and even offers an MCP server letting AI agents perform Sumsub operations under role permissions [sumsub-docs-4]. However, several dashboard-only capabilities (team member management, SSO/SAML setup, branding/SDK customization, client lists) are described purely as Dashboard actions with no API equivalent mentioned, and no discoverable OpenAPI spec was found by probes. missing for 10: confirmed API endpoints for team/SSO management, branding/customization config, and a published OpenAPI spec proving full UI-API parity.",
     "evidenceIds": [
       "sumsub-docs-1",
-      "sumsub-docs-3",
       "sumsub-docs-4",
-      "sumsub-docs-5",
-      "sumsub-docs-6",
-      "sumsub-docs-8",
-      "sumsub-docs-9",
-      "sumsub-docs-18",
+      "sumsub-docs-15",
       "sumsub-docs-22",
-      "sumsub-probe-2"
+      "sumsub-docs-37",
+      "sumsub-docs-38",
+      "sumsub-docs-39",
+      "sumsub-probe-2",
+      "sumsub-probe-3"
     ]
   },
   {
@@ -3162,11 +3167,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Sumsub is a KYC/identity-verification platform with API access to applicant data, but there is no evidence of a bulk data export feature in open/standard formats or an account-closure/data-portability workflow letting a user take all their data and leave; the API is designed for verification workflows, not full self-service export.",
-    "evidenceIds": [
-      "sumsub-docs-1",
-      "sumsub-docs-15"
-    ]
+    "rationale": "The evidence shows API access to individual applicant data and webhooks for events, but no documented bulk data export feature, no data-portability tooling, and no exit/migration path for customers to take all their data with them in open formats.",
+    "evidenceIds": []
   },
   {
     "productId": "sumsub",
@@ -3174,7 +3176,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sumsub is a closed-source SaaS identity verification platform, not an open-source project; source code availability under an open license is not a relevant axis for this product category.",
+    "rationale": "Sumsub is a closed-source SaaS identity verification platform; source code availability under an open license is not applicable to this type of product.",
     "evidenceIds": []
   },
   {
@@ -3183,7 +3185,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sumsub is a cloud-based SaaS identity verification platform accessed via API/SDK; self-hosting the core product is not offered or implied anywhere, and this is a category error for a hosted compliance/KYC service rather than an applicable but unmet capability.",
+    "rationale": "Sumsub is a cloud-based SaaS identity verification platform with no self-hosted or on-premise deployment option evidenced; self-hosting the core product is a category error for this type of managed compliance/KYC service.",
     "evidenceIds": []
   },
   {
@@ -3192,7 +3194,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers document verification, liveness, AML screening, and verification levels, but contains no mention of phone/email verification, carrier checks, address history, or device fingerprinting as documented check types. This axis is plausible for an identity verification platform, but no supporting evidence exists in the pack.",
+    "rationale": "The evidence pack describes verification levels, document/selfie/liveness checks, AML/PEP screening, and anomaly detection, but never mentions phone/carrier verification, email risk scoring, address history, or device fingerprinting as check types. No documentation item ties these specific signal types to Sumsub's verification-level configuration.",
     "evidenceIds": []
   },
   {
@@ -3201,7 +3203,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions data residency, regional data storage options, or geographic hosting choices for Sumsub customers; the docs cover verification, SDKs, webhooks, and MCP but nothing about where data is stored.",
+    "rationale": "The evidence pack contains no mention of data residency, regional data storage options, or geographic hosting choices for Sumsub's platform; no docs address this axis at all.",
     "evidenceIds": []
   },
   {
@@ -3210,7 +3212,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses an opt-out or data-usage policy regarding AI model training; Sumsub's docs focus on identity verification, AML, SDKs, and MCP integration, none of which speak to preventing applicant/user data from being used to train AI models.",
+    "rationale": "Sumsub is an identity-verification/KYC platform; no evidence pack item addresses AI-training data opt-out or any privacy control specific to preventing use of user data for training AI models. This is an applicable privacy-posture axis for any vendor with AI features, but no documentation supports it.",
     "evidenceIds": []
   },
   {
@@ -3219,7 +3221,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers verification levels, SDKs, webhooks, AML screening, and an MCP server, but contains no mention of data retention policies, deletion controls, or applicant data lifecycle management, which is a fair and material axis for an identity-verification product handling sensitive PII.",
+    "rationale": "No evidence pack items address data retention periods, deletion requests, or applicant data purging controls; Sumsub's docs focus on verification workflows, SDKs, and AML rather than retention/deletion policies.",
     "evidenceIds": []
   },
   {
@@ -3228,7 +3230,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings for AI agents or developers; documentation covers API, verification levels, and MCP server but nothing about data collection preferences or opt-out controls.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI-native users; Sumsub's docs focus on identity verification, AML, SDK customization, and MCP server integration, not privacy controls over its own telemetry collection. This is an applicable axis for any product but no evidence supports it, so verdict is none. missing for 10: any mention of telemetry collection, usage analytics, or an opt-out/data-collection settings mechanism.",
     "evidenceIds": []
   },
   {
@@ -3237,12 +3239,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers liveness, AML screening, reusable KYC (data sharing between consenting clients), and transaction anomaly detection, but none of these describe automatic detection of the same face or document resurfacing under different applicant identities. Missing for 10: any documentation of cross-applicant duplicate/repeat identity matching, facial similarity search across profiles, or fraud-ring detection linking multiple names to one biometric/document.",
+    "rationale": "The evidence pack covers liveness detection, document verification, AML screening, anomaly detection for transactions, and client blocklists, but none of it describes automatic flagging of the same face or document resurfacing under a different identity/name across verifications — the specific cross-applicant duplicate/repeat-identity detection capability is not documented.",
     "evidenceIds": [
       "sumsub-docs-12",
-      "sumsub-docs-10",
       "sumsub-docs-24",
-      "sumsub-docs-6"
+      "sumsub-docs-34",
+      "sumsub-docs-37"
     ]
   },
   {
@@ -3251,7 +3253,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Sumsub's Reusable KYC feature explicitly lets applicants reuse verification data from prior passed checks across clients/products instead of re-running full verification, documented with clear developer-facing docs. Missing for 10: independent/hands-on corroboration beyond vendor docs, and no detailed API reference snippet showing the reuse call/response schema.",
+    "rationale": "Sumsub's Reusable KYC feature explicitly documents applicant data reuse across clients/products, letting a previously verified applicant reuse prior verification data instead of re-running full checks, boosting conversion by skipping redundant verification. Missing for 10: independent/hands-on corroboration of the reuse flow in production and finer detail on cross-session (not just cross-client) recognition mechanics.",
     "evidenceIds": [
       "sumsub-docs-10",
       "sumsub-docs-21"
@@ -3261,11 +3263,12 @@
     "productId": "sumsub",
     "storyId": "sandbox-test-verifications",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Sumsub documents a Sandbox mode for testing integrations before going live (sumsub-docs-2), but the evidence pack contains no specifics on documented test documents, personas, or magic values that deterministically trigger pass/fail/review outcomes. Missing for 10: documented deterministic test data/personas, explicit mapping of test inputs to pass/fail/review results, and any hands-on confirmation of sandbox behavior.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Sumsub documents a Sandbox mode for testing integrations with app tokens, webhooks, and WebSDK before going live, confirming a sandbox exists for exercising the integration. However, there is no documentation of specific deterministic test documents, magic values, or personas that reliably produce pass/fail/review outcomes. Missing for 10: documented magic values or test personas for deterministic pass/fail/review outcomes, and independent/hands-on confirmation of sandbox determinism.",
     "evidenceIds": [
-      "sumsub-docs-2"
+      "sumsub-docs-2",
+      "sumsub-docs-27"
     ]
   },
   {
@@ -3274,11 +3277,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Sumsub's docs explicitly describe liveness detection matching the live applicant to their account/documents and confirm defenses against deepfakes, AI-generated images, paper masks, and photos of a screen, directly addressing spoofing via printed photos and screen replays. Liveness & Face match is documented as part of verification levels, and reviewers can inspect results per applicant. Missing for 10: explicit mention of replayed video attacks specifically, and independent/third-party test results validating anti-spoofing accuracy claims.",
+    "rationale": "Sumsub's docs explicitly describe Liveness & Face match checks that confirm the applicant is a real, live person and match them to documents, with named defenses against deepfakes, AI-generated images, paper masks, and photos of screens, plus dashboard review of liveness results. missing for 10: no independent/third-party lab test results (e.g., iBeta/NIST PAD certification) or hands-on failure/success reports corroborating the anti-spoofing claims.",
     "evidenceIds": [
       "sumsub-docs-12",
-      "sumsub-docs-5",
-      "sumsub-docs-13"
+      "sumsub-docs-13",
+      "sumsub-docs-5"
     ]
   },
   {
@@ -3287,12 +3290,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Sumsub's docs confirm a RESTful API for processing applicant data and full control over the verification flow, plus webhooks and sandbox for testing, implying API-driven session management. However, the evidence pack never explicitly documents individual lifecycle endpoints (create session, poll status, fetch results/media, cancel or redact an applicant), and a probe for an OpenAPI/swagger spec returned 404s, so end-to-end API-drivability isn't concretely demonstrated. Missing for 10: explicit endpoint-level docs for status retrieval, media/result retrieval, cancellation, and redaction, plus a discoverable OpenAPI reference.",
+    "rationale": "Sumsub's docs confirm a RESTful API for creating/processing applicant verification, webhooks for status updates, sandbox testing, and manual approve/reject actions, showing several lifecycle stages are API/dashboard driven. However, there is no explicit documentation for retrieving captured media, cancelling, or redacting an applicant via API, and a probe for a machine-readable OpenAPI/swagger spec returned 404s, suggesting the full lifecycle isn't uniformly documented as clean API endpoints. missing for 10: explicit docs for retrieve-captured-media endpoint, cancel/redact API endpoints, and a discoverable OpenAPI/reference spec covering the whole lifecycle.",
     "evidenceIds": [
       "sumsub-docs-1",
       "sumsub-docs-15",
       "sumsub-docs-3",
-      "sumsub-docs-2",
+      "sumsub-docs-16",
+      "sumsub-docs-22",
+      "sumsub-docs-27",
       "sumsub-probe-2"
     ]
   },
@@ -3315,27 +3320,34 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sumsub docs confirm a webhooks system that automatically notifies on applicant verification events and even supports gradual rollout to production endpoints, satisfying the core 'no polling' requirement. However, the evidence never explicitly confirms webhook payloads are cryptographically signed nor lists the specific lifecycle event names (created, processing, verified, requires-input). Missing for 10: explicit signature/verification mechanism documentation, explicit enumeration of lifecycle event types.",
+    "rationale": "Sumsub documents a Webhooks system that automatically notifies on applicant verification status changes, with rollout controls for safe testing, and Sandbox support for webhook testing — covering the polling-avoidance and lifecycle-event core of the story. However, the evidence pack never confirms webhook payloads are cryptographically signed nor enumerates the specific lifecycle states (created, processing, verified, requires-input) claimed in the story. missing for 10: explicit signature/verification mechanism documentation, explicit list of granular lifecycle event types matching the story's named states.",
     "evidenceIds": [
       "sumsub-docs-3",
       "sumsub-docs-16",
-      "sumsub-docs-23"
+      "sumsub-docs-23",
+      "sumsub-docs-35",
+      "sumsub-docs-27"
     ]
   },
   {
     "productId": "sumsub",
     "storyId": "workflow-rules-routing",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm ops can configure 'verification levels' (sequences of steps) and AML screening settings directly, implying dashboard-based configuration without code (sumsub-docs-5, sumsub-docs-25, sumsub-docs-6). However, there is no explicit evidence of conditional step logic, risk-based routing rules, or country-specific requirement branching being configurable without an engineering deploy — only general coverage of document types across countries (sumsub-docs-11) and branding/step customization (sumsub-docs-7, sumsub-docs-18), not logic branching. missing for 10: explicit no-code conditional/branching logic UI, risk-based routing configuration, country-specific rule setup, and confirmation that changes deploy without engineering involvement.",
+    "rationale": "Sumsub's docs show substantial no-code configuration surface: verification levels can be built and edited via UI (even via plain-language AI level builder, sumsub-docs-36), AML screening lists/fuzziness are configurable (sumsub-docs-6/37), client lists enable flexible flow/blocklist rules (sumsub-docs-34), and branding/SDK text/templates are editable without engineering deploy (sumsub-docs-7/18/29/30). However, there is no explicit documentation of conditional branching logic or country-specific requirement rules as a distinct no-code feature — only general level/step configuration and document coverage across 220+ countries (sumsub-docs-11) is mentioned. Missing for 10: explicit conditional-step/branching UI documentation, explicit risk-based routing configuration feature, explicit country-specific rule-setting UI evidence.",
     "evidenceIds": [
       "sumsub-docs-5",
       "sumsub-docs-25",
       "sumsub-docs-6",
-      "sumsub-docs-11",
+      "sumsub-docs-37",
+      "sumsub-docs-34",
+      "sumsub-docs-36",
       "sumsub-docs-7",
-      "sumsub-docs-18"
+      "sumsub-docs-18",
+      "sumsub-docs-29",
+      "sumsub-docs-30",
+      "sumsub-docs-11"
     ]
   },
   {
