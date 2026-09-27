@@ -1,18 +1,16 @@
 {
-  "hash": "7ba692628d03ccb8268a38bf09aeb58f087672d63c1e7b8872768b958437ced3",
+  "hash": "1dea8830f297718d114b3112f7122aa8f3ae46e2002f4f3e125f1ee54cf7cae5",
   "verdict": {
-    "productId": "paypal-agent-commerce",
-    "storyId": "order-event-webhooks",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PayPal has a general-purpose webhook system that supports subscribing to event types (with retries and signature verification) over HTTPS, and the REST API surface includes orders/subscriptions that could emit lifecycle events; the agent toolkit also exposes order/refund/dispute tools. However, there is no documented mapping showing that agentic-commerce-specific order lifecycle events (created/updated/fulfilled/canceled for AI-agent-initiated orders/carts) are pushed via webhooks \u2014 the cart API (createcart/getcart) is polling-based, not event-push, and Store Sync says the order simply lands in the existing OMS rather than emitting agent-specific lifecycle webhooks. Missing for 10: explicit documentation that agentic/cart orders trigger the general webhook event types, a list of agent-specific lifecycle event names, and confirmation that fulfillment/cancellation of AI-agent orders is webhook-pushed rather than requiring polling via getcart.",
+    "rationale": "PayPal's general webhooks system lets a backend subscribe HTTPS endpoints to PayPal event types with durable retry and signature verification, and Store Sync/agentic-commerce orders are stated to flow into the merchant's existing order management system 'just as it would from any other channel', implying the same webhook events apply. However, no evidence explicitly enumerates order-lifecycle events (created/updated/fulfilled/canceled) as tied to agentic-commerce orders specifically, and this is a generic REST webhook feature rather than something surfaced through the agent toolkit or MCP server. Missing for 10: explicit agentic-commerce-order event type list, agent-toolkit/MCP-level subscription support, independent/hands-on confirmation of delivery for agent-originated orders.",
     "evidenceIds": [
       "paypal-ac-supp-webhooks",
-      "paypal-ac-supp-cart-reverse-api",
-      "paypal-ac-supp-getcart",
       "paypal-ac-supp-store-sync",
-      "paypal-ac-supp-rest-overview"
-    ]
+      "paypal-ac-supp-cart-reverse-api"
+    ],
+    "productId": "paypal-agent-commerce",
+    "storyId": "order-event-webhooks"
   }
 }

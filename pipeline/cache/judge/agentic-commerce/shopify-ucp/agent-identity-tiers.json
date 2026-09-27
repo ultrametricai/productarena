@@ -1,14 +1,13 @@
 {
-  "hash": "0019ab1c0d9b23105655e2c63952cdabf3c47e475d836e1254e56b86fdbb25d2",
+  "hash": "e0dc89d09fe9b353bd15d1ab9bd67c462c3d44c1338b86bf8ced720b7bc7c4d1",
   "verdict": {
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Shopify's UCP documents a concrete three-tier trust model (Token, Signed, Anonymous) tied to agent identity, with Signed-tier requiring RFC 9421 ECDSA P-256 signature verification against a published public key in the agent's UCP profile, and access/rate-limits scaling with identification strength; a live probe confirms the trust gate actually enforces this (invalid_profile_url error when no hosted profile is presented). This gives merchants a verifiable way to distinguish anonymous vs. cryptographically-signed vs. token-authenticated agent traffic. missing for 10: no independent/third-party audit of the signature verification in production merchant traffic, and no merchant-facing dashboard/reporting evidence showing how tier data is surfaced to merchants themselves.",
+    "rationale": "Shopify's UCP docs describe a concrete verifiable-identity system: agents present a profile (well-known/ucp with signing keys), traffic is classified into Token/Signed/Anonymous trust tiers, Signed-tier requests use RFC 9421 HTTP Message Signatures (ECDSA P-256) verified against the profile's published public key, and higher identification tiers unlock higher rate limits and sensitive tools (e.g., Order MCP and complete_checkout are Token-tier only). This directly gives merchants a mechanism to distinguish trusted agent traffic from anonymous bots. Missing for 10: independent/hands-on corroboration that the tiering works as documented in production, and evidence of a merchant-facing dashboard/report that surfaces which incoming traffic is Token/Signed/Anonymous.",
     "evidenceIds": [
       "shopify-ucp-supp-trust-tiers",
       "shopify-ucp-supp-agent-profiles",
-      "shopify-ucp-probe-rt-4",
       "shopify-ucp-docs-9",
       "shopify-ucp-docs-27"
     ],
