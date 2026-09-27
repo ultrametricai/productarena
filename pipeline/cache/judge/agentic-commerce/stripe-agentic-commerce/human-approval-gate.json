@@ -1,17 +1,17 @@
 {
-  "hash": "04a330ebe7eb70e88e0155297142af3efbf7365e093fcd2af4b4a0cf81390757",
+  "hash": "8eb6e37a23910b3d816aa655140c94d31eefa4b79709c61e9eb3716138e7901e",
   "verdict": {
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe documents multiple concrete consent gates before money moves: MCP requires explicit human 'Approve' confirmation with an approval token before write actions like refunds/outbound payments (expiring in 24h), Link CLI requires the customer to 'approve each request on the Link website or in the mobile app' before releasing one-time-use credentials, and Shared Payment Tokens carry issuer-set usage_limits (currency, max_amount, expiration) plus revocation and a documented state machine with webhooks. Runtime probes corroborate the MCP OAuth-gated approval flow and the live Link CLI package. missing for 10: independent/hands-on evidence of the approval UX actually blocking a real transaction end-to-end (only docs/runtime probes, no third-party test), and no evidence of a 'signed mandate' artifact akin to AP2's cryptographic mandates.",
+    "rationale": "Stripe documents multiple concrete consent mechanisms gating agent spend: Shared Payment Tokens carry scoped usage limits (currency, max amount, expiry) and can be revoked before use; Link CLI requires 'Customers approve each request on the Link website or in the mobile app' before returning a one-time-use credential; and the Stripe MCP server requires human confirmation with an approval token/24-hour expiry before write actions like refunds or outbound payments. These are first-party documented, specific mechanisms rather than vague claims. However, community discussion notes that the machine-payments/MPP rail 'handles how agents pay, but not did anyone authorize this' — meaning per-purchase human consent is not universal across all agentic payment paths, and several of the consent-bearing features (ACS, OCA) are gated as private preview or US/Canada/EU-only. Missing for 10: independent hands-on verification that approval flows work as documented in production, and closing the gap where machine-payments (MPP/x402) lacks a built-in human-authorization step.",
     "evidenceIds": [
-      "stripe-ac-supp-mcp-approval",
-      "stripe-ac-supp-link-wallet",
       "stripe-ac-supp-spt-limits",
-      "stripe-ac-probe-rt-1",
-      "stripe-ac-probe-rt-4",
-      "stripe-agentic-commerce-docs-28"
+      "stripe-ac-supp-link-wallet",
+      "stripe-agentic-commerce-docs-28",
+      "stripe-agentic-commerce-docs-30",
+      "stripe-ac-supp-mcp-approval",
+      "stripe-agentic-commerce-comm-8"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "human-approval-gate"

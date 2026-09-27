@@ -1,18 +1,16 @@
 {
-  "hash": "ae476e63a99ede8e17f2802adad62292684738a86408c13ca1c52a5daef7f7a4",
+  "hash": "8c8ba4f271b8a0ef7ed7e667dbbda726b3f192e86a06bd58c5621ec480b4e6a4",
   "verdict": {
     "verdict": "partial",
-    "quality": 7,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Shopify's UCP/MCP surface documents broad API parity for the core buyer journey — catalog search, cart building, checkout creation/completion, and order tracking/webhooks all mirror what a human can do in a Shopify storefront UI, with runtime probes confirming live handshakes and a real cart creation. However, the spec explicitly carves out cases where the API cannot fully replace the UI: checkouts can enter a `requires_escalation` state where 'Checkout requires buyer input or review not available via API,' forcing a handoff via `continue_url` to the merchant's own UI, and full autonomous `complete_checkout` is gated to Token-tier trusted agents only. Missing for 10: evidence of parity for non-purchase storefront actions (account management, returns UI, arbitrary merchant customizations) and confirmation that escalation-required flows are rare rather than common.",
+    "rationale": "Shopify's UCP/MCP stack lets agents do discovery, cart-building, checkout creation, and order tracking entirely through API/CLI (shopify-ucp-docs-1,19,32), but the docs explicitly carve out cases where the API cannot complete the job: checkout can enter `requires_escalation` where 'Checkout requires buyer input or review not available via API' and the agent must hand off to the merchant's own UI via continue_url (shopify-ucp-supp-buyer-handoff), and webhook subscription setup 'is not self-serve... contact your Shopify partner manager' (shopify-ucp-supp-order-webhooks) rather than being configurable via API. complete_checkout is also gated to Token-tier trust only (shopify-ucp-supp-trust-tiers).\nmissing for 10: self-serve webhook subscription API, full API-driven checkout with no buyer-UI escalation path, evidence of parity for merchant-admin-level configuration tasks.",
     "evidenceIds": [
-      "shopify-ucp-supp-checkout-mcp",
+      "shopify-ucp-docs-1",
       "shopify-ucp-supp-buyer-handoff",
+      "shopify-ucp-supp-order-webhooks",
       "shopify-ucp-supp-trust-tiers",
-      "shopify-ucp-supp-cart-mcp",
-      "shopify-ucp-probe-rt-3",
-      "shopify-ucp-supp-order-mcp",
-      "shopify-ucp-supp-order-webhooks"
+      "shopify-ucp-docs-32"
     ],
     "productId": "shopify-ucp",
     "storyId": "openness-api-parity"

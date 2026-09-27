@@ -1,15 +1,15 @@
 {
-  "hash": "7b02121f7e572866c2eb49d352c11bd298b4469ff965a2999b16faefd41527b6",
+  "hash": "4276a116dfbd1db1fb37565df296a9b3a79e099f7cb13740471f4bc8ef518116",
   "verdict": {
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Shopify's UCP documents concrete least-privilege mechanics: three trust tiers (Anonymous/Signed/Token) that gate which tools and rate limits an agent gets, a specific scope (read_global_api_orders) required for Order MCP, short-lived (60-minute TTL) JWTs minted from Dev Dashboard client credentials, and checkout completion gated on the token being 'granted permission to complete purchases.' A runtime probe confirms the profile/identity gate rejects unauthenticated calls (invalid_profile_url), corroborating the scoped-access model works as documented. Missing for 10: a full catalog of all available scopes/permissions beyond the few named, self-service credential/scope management UI, explicit revocation workflow, and independent third-party verification of least-privilege enforcement in production.",
+    "rationale": "Shopify's UCP documents a genuine least-privilege credential model: three trust tiers (Token/Signed/Anonymous) gating access to sensitive tools, JWTs minted from Dev Dashboard client credentials with 60-minute TTL, checkout completion requiring a token 'granted permission to complete purchases', and Order MCP requiring a specific 'read_global_api_orders' scope unavailable to lower tiers. Signed-tier uses RFC 9421 HTTP Message Signatures with ECDSA P-256 keys tied to a published profile, giving cryptographic, scoped identification short of full API tokens.\nmissing for 10: independent/hands-on corroboration of scope enforcement, documentation of credential revocation or fine-grained custom scopes beyond the few named ones.",
     "evidenceIds": [
       "shopify-ucp-supp-trust-tiers",
-      "shopify-ucp-supp-order-mcp",
       "shopify-ucp-supp-checkout-mcp",
-      "shopify-ucp-probe-rt-4"
+      "shopify-ucp-supp-order-mcp",
+      "shopify-ucp-supp-agent-profiles"
     ],
     "productId": "shopify-ucp",
     "storyId": "agentic-scoped-keys"
