@@ -13,6 +13,58 @@ import {
 // (2026-09-21) so the homepage's process mode renders the exact same rows as /processes; one
 // derivation, two surfaces.
 
+// ---- Areas (founder 2026-09-28): friendly display groups over the corpus's internal phases —
+// the primary grouping on the "All processes" table (inspiration: the old site's sections at
+// ultrametric.ai/process — Formation, Fundraising, Finance, HR & Payroll, Legal, Compliance &
+// Tax, Operations, Sales, Growth, Software). Order = the founder-lifecycle order the grouped
+// table renders in. The map must stay TOTAL over the corpus: areaOf throws on an unmapped
+// phase, and the totality test in lib/__tests__/processRows.test.ts walks the live corpus — a
+// new phase without a curated area fails loudly at test (and build) time instead of silently
+// rendering a stray group.
+export const AREA_ORDER = [
+  'Starting up',
+  'Fundraising & investors',
+  'Money & finance',
+  'Team & payroll',
+  'Legal',
+  'Ongoing compliance & tax',
+  'Running operations',
+  'Building & shipping',
+  'Growth & sales',
+] as const
+
+export type Area = (typeof AREA_ORDER)[number]
+
+export const PHASE_AREA: Record<string, Area> = {
+  startup: 'Starting up',
+  formation: 'Starting up',
+  fundraising: 'Fundraising & investors',
+  vc: 'Fundraising & investors',
+  finance: 'Money & finance',
+  hr: 'Team & payroll',
+  legal: 'Legal',
+  compliance: 'Ongoing compliance & tax', // the corpus has no separate tax phase — filings live here
+  operations: 'Running operations',
+  product: 'Building & shipping',
+  software: 'Building & shipping',
+  growth: 'Growth & sales',
+  sales: 'Growth & sales',
+}
+
+/** The display area for a corpus phase — throws on an unmapped phase (totality by force). */
+export function areaOf(phase: string): Area {
+  const area = PHASE_AREA[phase]
+  if (area === undefined) {
+    throw new Error(`No display area mapped for phase "${phase}" — add it to PHASE_AREA in lib/processRows.ts`)
+  }
+  return area
+}
+
+/** Founder-lifecycle rank of an area (its AREA_ORDER index) — the grouped table's group order. */
+export function areaRank(area: string): number {
+  return (AREA_ORDER as readonly string[]).indexOf(area)
+}
+
 // Vendor-cell cap for the index table — founder 2026-09-22 ("we are missing vendors on the
 // processes main page, e.g. GitLab for 'Cut a release' — I want a more complete answer"):
 // raised from 4, and the cell now always tops up from the derived market after the curated
@@ -63,11 +115,16 @@ export function buildProcessRows(): ProcessRowsBundle {
     const c = taskCeiling(t)
     agentSteps += c.agentSteps
     totalSteps += c.totalSteps
+    // Resolved server-side (like cadence below) so the client table never imports this
+    // node-only module — the row carries both the area name and its lifecycle rank.
+    const area = areaOf(t.phase)
     return {
       slug: processSlug(t.title),
       title: t.title,
       icon: processIcon(t.id),
       phase: t.phase,
+      area,
+      areaRank: areaRank(area),
       pct: c.pct,
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,
