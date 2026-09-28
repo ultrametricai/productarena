@@ -1,0 +1,409 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ultrametric operational process",
+  "description": "One record of the operational founder-process corpus (processes/corpus.json is an array of these): a real startup operating process mapped as a DAG whose steps are routed agent/form/person, with curated cadence, geo scope, rank axes, and time estimates. Generated from ProcessTaskSchema in lib/processes.ts by scripts/generate-corpus-schemas.ts — edit the zod schema, never this file.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "slugAliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "slug",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cadence": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "annual",
+        "event-driven",
+        "once"
+      ]
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "us"
+      ]
+    },
+    "geoScope": {
+      "type": "string",
+      "enum": [
+        "global",
+        "us",
+        "us-state"
+      ]
+    },
+    "geoNotes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "IN",
+              "UK",
+              "DE",
+              "FR"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actionUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "actionLabel": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "country",
+          "summary",
+          "actionUrl",
+          "actionLabel"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "timeOrder": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "annoyance": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "risk": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "growthImpact": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "complexity": {
+      "type": "string",
+      "enum": [
+        "simple",
+        "moderate",
+        "complex",
+        "very_complex"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supportLevel": {
+      "type": "string",
+      "enum": [
+        "full",
+        "partial",
+        "manual_guide"
+      ]
+    },
+    "supportReason": {
+      "type": "string"
+    },
+    "vendors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dag": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "route": {
+                "type": "string",
+                "enum": [
+                  "agent",
+                  "form",
+                  "person"
+                ]
+              },
+              "vendor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "vendorOptions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "optionsArenaId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "extraOptionArenas": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "extraOptionRefs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "arenaId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "productId": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "arenaId",
+                    "productId"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "toolCall": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actionUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "actionLabel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "functionCalls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "rest",
+                        "sdk",
+                        "graphql",
+                        "manual"
+                      ]
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "method"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "signupUrl": {
+                "type": "string",
+                "minLength": 1
+              },
+              "approvalRequired": {
+                "type": "boolean"
+              },
+              "legalSignature": {
+                "type": "boolean"
+              },
+              "riskLevel": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "estimatedMinutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "async": {
+                "type": "boolean"
+              },
+              "jurisdictions": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "CA",
+                    "MULTI"
+                  ]
+                }
+              },
+              "processRef": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "route",
+              "estimatedMinutes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "additionalProperties": false
+    },
+    "contextNeeded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "tool",
+          "tier",
+          "required"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "activeMinutes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "totalEstimatedMinutes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "hasAsyncSteps": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "description",
+    "phase",
+    "cadence",
+    "geoScope",
+    "timeOrder",
+    "annoyance",
+    "risk",
+    "growthImpact",
+    "complexity",
+    "category",
+    "supportLevel",
+    "supportReason",
+    "vendors",
+    "dag",
+    "contextNeeded",
+    "tags",
+    "activeMinutes",
+    "totalEstimatedMinutes",
+    "hasAsyncSteps"
+  ],
+  "additionalProperties": false
+}

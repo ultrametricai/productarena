@@ -82,7 +82,10 @@ function indexed(files: string[], errors: string[], name: string): Map<string, J
 
 // Small, deterministic JSON Schema subset — mirrors the starter's checker; the schemas/ files
 // stay the canonical draft-2020-12 contracts for any external consumer with a full validator.
-function shape(value: Json | undefined, schema: JsonObject, where: string, errors: string[], root?: JsonObject): void {
+// Exported since stage 2 of the corpus lift so the corpus-schema drift test
+// (__tests__/corpus-schemas.test.ts) can validate every committed operational-process record
+// against the published schemas/operational-process.schema.json with the same checker.
+export function shape(value: Json | undefined, schema: JsonObject, where: string, errors: string[], root?: JsonObject): void {
   const schemaRoot = root ?? schema
   if (typeof schema.$ref === 'string') {
     if (!schema.$ref.startsWith('#/$defs/')) {
@@ -116,6 +119,10 @@ function shape(value: Json | undefined, schema: JsonObject, where: string, error
       : t === 'string' ? typeof value === 'string'
       : t === 'null' ? value === null
       : t === 'number' ? typeof value === 'number'
+      // The operational-process schema (zod-generated) uses these two; the starter's hand-written
+      // schemas never did, so supporting them is a strict superset of the original checker.
+      : t === 'boolean' ? typeof value === 'boolean'
+      : t === 'integer' ? typeof value === 'number' && Number.isInteger(value)
       : false,
     )
     if (!ok) {
