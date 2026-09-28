@@ -1557,7 +1557,7 @@ async function handleMcp(request) {
 
 const WORKOS_API = 'https://api.workos.com'
 const AUTH_SITE = 'https://ultrametric.ai'
-const AUTH_CALLBACK_URL = `${AUTH_SITE}/productarena/auth/callback`
+const AUTH_CALLBACK_URL = `${AUTH_SITE}/auth/callback`
 const SESSION_COOKIE = 'pa_session'
 const STATE_COOKIE = 'pa_state'
 const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60 // hard cap — verifySession also rejects longer exps
@@ -1679,7 +1679,7 @@ export function sidFromAccessToken(token) {
 // request's own localhost origin in mock mode) — absolute URLs on any other origin,
 // scheme-relative //host tricks, and backslash smuggling all fall back to the PA home page.
 export function sanitizeReturnTo(raw, site = AUTH_SITE) {
-  const fallback = `${site}/productarena`
+  const fallback = `${site}/`
   if (typeof raw !== 'string' || raw === '') return fallback
   let path = raw
   if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) {

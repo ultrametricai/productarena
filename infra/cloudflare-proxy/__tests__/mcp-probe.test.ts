@@ -163,7 +163,7 @@ describe('probeMcpEndpoint', () => {
 
 describe('handleMcpProbe', () => {
   const probeRequest = (body: unknown, method = 'POST') =>
-    new Request('https://ultrametric.ai/productarena/api/mcp-probe', {
+    new Request('https://ultrametric.ai/api/mcp-probe', {
       method,
       headers: { 'content-type': 'application/json', 'cf-connecting-ip': `ip-${Math.random()}` },
       ...(method === 'POST' ? { body: JSON.stringify(body) } : {}),

@@ -1,4 +1,4 @@
-// Unit tests for the worker's /productarena/auth/* WorkOS AuthKit backend: cookie sign/verify
+// Unit tests for the worker's /auth/* WorkOS AuthKit backend: cookie sign/verify
 // round-trips (incl. tampering and expiry), return_to sanitization, and every route handler
 // with an injectable fetch for the WorkOS code exchange (same no-network pattern as
 // mcp-probe.test.ts). Runs on Node's WebCrypto — the same crypto.subtle API the worker uses.
@@ -53,7 +53,7 @@ const fakeJwt = (claims: Record<string, unknown>) =>
 
 const authGet = (path: string, cookie?: string, env: object | undefined = ENV, fetchImpl?: FetchImpl) =>
   handleAuth(
-    new Request(`https://ultrametric.ai/productarena/auth${path}`, {
+    new Request(`https://ultrametric.ai/auth${path}`, {
       headers: cookie ? { cookie } : undefined,
     }),
     env,
@@ -112,12 +112,12 @@ describe('sidFromAccessToken', () => {
 })
 
 describe('sanitizeReturnTo', () => {
-  const HOME = 'https://ultrametric.ai/productarena'
+  const HOME = 'https://ultrametric.ai/'
 
   it('accepts ultrametric.ai paths and full URLs', () => {
-    expect(sanitizeReturnTo('/productarena/arena/crm')).toBe('https://ultrametric.ai/productarena/arena/crm')
-    expect(sanitizeReturnTo('https://ultrametric.ai/productarena/watchlist?x=1')).toBe(
-      'https://ultrametric.ai/productarena/watchlist?x=1',
+    expect(sanitizeReturnTo('/arena/crm')).toBe('https://ultrametric.ai/arena/crm')
+    expect(sanitizeReturnTo('https://ultrametric.ai/watchlist?x=1')).toBe(
+      'https://ultrametric.ai/watchlist?x=1',
     )
   })
 
@@ -156,16 +156,16 @@ describe('GET /auth/me', () => {
 
 describe('GET /auth/login', () => {
   it('302s to the WorkOS authorize URL with provider=authkit and a nonce-carrying state', async () => {
-    const res = await authGet('/login?return_to=%2Fproductarena%2Farena%2Fcrm')
+    const res = await authGet('/login?return_to=%2Farena%2Fcrm')
     expect(res.status).toBe(302)
     const location = new URL(res.headers.get('location') ?? '')
     expect(location.origin + location.pathname).toBe('https://api.workos.com/user_management/authorize')
     expect(location.searchParams.get('client_id')).toBe('client_TEST123')
-    expect(location.searchParams.get('redirect_uri')).toBe('https://ultrametric.ai/productarena/auth/callback')
+    expect(location.searchParams.get('redirect_uri')).toBe('https://ultrametric.ai/auth/callback')
     expect(location.searchParams.get('response_type')).toBe('code')
     expect(location.searchParams.get('provider')).toBe('authkit')
     const state = JSON.parse(Buffer.from(location.searchParams.get('state') ?? '', 'base64url').toString())
-    expect(state.r).toBe('https://ultrametric.ai/productarena/arena/crm')
+    expect(state.r).toBe('https://ultrametric.ai/arena/crm')
     // The CSRF nonce is mirrored into the pa_state cookie
     const stateCookie = setCookies(res).find((c) => c.startsWith('pa_state='))
     expect(stateCookie).toContain(`pa_state=${state.n};`)
@@ -181,7 +181,7 @@ describe('GET /auth/login', () => {
 
   it('rejects non-GET methods', async () => {
     const res = (await handleAuth(
-      new Request('https://ultrametric.ai/productarena/auth/login', { method: 'POST' }),
+      new Request('https://ultrametric.ai/auth/login', { method: 'POST' }),
       ENV,
     )) as Response
     expect(res.status).toBe(405)
@@ -276,22 +276,22 @@ describe('GET /auth/callback', () => {
 describe('GET /auth/logout', () => {
   it('clears pa_session and bounces through the WorkOS logout URL when the session has a sid', async () => {
     const cookie = await sign(KEY, { sub: 'u', email: 'a@b.co', sid: 'session_01XYZ' })
-    const res = await authGet('/logout?return_to=%2Fproductarena%2Farena%2Fcrm', `pa_session=${cookie}`)
+    const res = await authGet('/logout?return_to=%2Farena%2Fcrm', `pa_session=${cookie}`)
     expect(res.status).toBe(302)
     const location = new URL(res.headers.get('location') ?? '')
     expect(location.origin + location.pathname).toBe('https://api.workos.com/user_management/sessions/logout')
     expect(location.searchParams.get('session_id')).toBe('session_01XYZ')
-    expect(location.searchParams.get('return_to')).toBe('https://ultrametric.ai/productarena/arena/crm')
+    expect(location.searchParams.get('return_to')).toBe('https://ultrametric.ai/arena/crm')
     expect(setCookies(res).find((c) => c.startsWith('pa_session='))).toMatch(/Max-Age=0/)
   })
 
   it('redirects straight to return_to when there is no (valid) session', async () => {
-    const res = await authGet('/logout?return_to=%2Fproductarena')
+    const res = await authGet('/logout?return_to=%2F')
     expect(res.status).toBe(302)
-    expect(res.headers.get('location')).toBe('https://ultrametric.ai/productarena')
+    expect(res.headers.get('location')).toBe('https://ultrametric.ai/')
     // Off-site return_to still sanitized
     const evil = await authGet('/logout?return_to=https%3A%2F%2Fevil.example')
-    expect(evil.headers.get('location')).toBe('https://ultrametric.ai/productarena')
+    expect(evil.headers.get('location')).toBe('https://ultrametric.ai/')
   })
 })
 
@@ -305,20 +305,20 @@ describe('mock mode (WORKOS_MOCK=1 — dev-only harness, see docs/AUTH.md)', () 
   const MOCK_ENV = { WORKOS_MOCK: '1' } // deliberately NO client id and NO secrets — the point
   const localGet = (path: string, cookie?: string, env: object = MOCK_ENV) =>
     handleAuth(
-      new Request(`http://localhost:8787/productarena/auth${path}`, {
+      new Request(`http://localhost:8787/auth${path}`, {
         headers: cookie ? { cookie } : undefined,
       }),
       env,
     ) as Promise<Response>
 
   it('login mints an immediate session for test@ultrametric.ai with a host-only non-Secure cookie', async () => {
-    const returnTo = encodeURIComponent('http://localhost:8787/productarena/arena/crm')
+    const returnTo = encodeURIComponent('http://localhost:8787/arena/crm')
     const res = await localGet(`/login?return_to=${returnTo}`)
     expect(res.status).toBe(302)
-    expect(res.headers.get('location')).toBe('http://localhost:8787/productarena/arena/crm')
+    expect(res.headers.get('location')).toBe('http://localhost:8787/arena/crm')
     const cookie = setCookies(res).find((c) => c.startsWith('pa_session='))
     expect(cookie).toMatch(/HttpOnly/i)
-    expect(cookie).toMatch(/Path=\/productarena/)
+    expect(cookie).toMatch(/Path=\//)
     expect(cookie).not.toMatch(/Domain=/i) // host-only: a Domain cookie would be rejected on localhost
     expect(cookie).not.toMatch(/Secure/i) // http://localhost
     // Full round-trip: /auth/me accepts the minted cookie without any secrets configured.
@@ -330,10 +330,10 @@ describe('mock mode (WORKOS_MOCK=1 — dev-only harness, see docs/AUTH.md)', () 
 
   it('still sanitizes return_to — off-origin targets fall back to the local PA home', async () => {
     const res = await localGet(`/login?return_to=${encodeURIComponent('https://evil.example/phish')}`)
-    expect(res.headers.get('location')).toBe('http://localhost:8787/productarena')
-    const prod = await localGet(`/login?return_to=${encodeURIComponent('https://ultrametric.ai/productarena')}`)
+    expect(res.headers.get('location')).toBe('http://localhost:8787/')
+    const prod = await localGet(`/login?return_to=${encodeURIComponent('https://ultrametric.ai/')}`)
     // Even the production origin is "off-origin" for a localhost dev session.
-    expect(prod.headers.get('location')).toBe('http://localhost:8787/productarena')
+    expect(prod.headers.get('location')).toBe('http://localhost:8787/')
   })
 
   it('logout clears the cookie locally and never bounces through WorkOS', async () => {
