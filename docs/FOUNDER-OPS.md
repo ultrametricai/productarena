@@ -43,11 +43,20 @@ structure and semantic invariants; it does not prove laws true or implement a ca
   every directory README bridges to the live implementation. `data/processes.json`,
   `data/process-chains.json`, and the arena data deliberately did not move (fingerprinted,
   loader-bound, and under active lanes).
-- **Stage 2.** Consolidate: move chains into `journeys/` and the operational corpus under
-  `processes/` behind the loaders; extract the site's zod schemas as published JSON Schema into
-  `schemas/`; generate vendor-review interchange records from judged arena data; fold the geo
-  work (process geo-scope, vendor region availability) into `jurisdictions/` + `rules/`;
-  surface the workflow layer on the site (a `/founder-ops` or per-process "legal layer" view).
+- **Stage 2 — done 2026-09-28.** Consolidated, byte-identical moves behind the loaders:
+  `data/processes.json` → `processes/corpus.json` and `data/process-chains.json` →
+  `journeys/chains.json` (`lib/processes.ts` resolves both as siblings of the arena-data dir;
+  the founder-ops workflow walker skips `corpus.json`); `data/vendor-geo.json` →
+  `jurisdictions/vendor-geo.json` (`lib/vendorGeo.ts`). Published the corpus contract as
+  `schemas/operational-process.schema.json`, generated from the zod source of truth by
+  `scripts/generate-corpus-schemas.ts` with a byte-identical drift gate
+  (`__tests__/corpus-schemas.test.ts`). Generated the vendor-review interchange layer:
+  `vendors/reviews/generated/<arena>--<productId>.json` for every judged product (578 records)
+  via `pipeline/scripts/generate-vendor-reviews.ts` — deterministic projection of the committed
+  rankings/evidence/pricing/geo data, owner disclosures always carried
+  (`pipeline/__tests__/vendorReviews.test.ts`). Still open from the original stage-2 sketch:
+  folding process geo-scope into `rules/`, and the on-site workflow-layer surface (a
+  `/founder-ops` or per-process "legal layer" view).
 - **Stage 3.** Physically move the site/CLI/MCP/worker under `apps/` as workspace packages.
   Deploy-infra churn only; deliberately last.
 
