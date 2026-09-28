@@ -35,13 +35,13 @@ function wrap<T>(fn: () => Promise<T>) {
 }
 
 export function createServer(client: ArenaClient = createClient()): McpServer {
-  const server = new McpServer({ name: 'productarena-mcp', version: SERVER_VERSION })
+  const server = new McpServer({ name: 'ultrametric-mcp', version: SERVER_VERSION })
 
   server.registerTool(
     'list_arenas',
     {
       title: 'List arenas',
-      description: 'List every ProductArena arena/category (id, name, description, personas, themes).',
+      description: 'List every Ultrametric arena/category (id, name, description, personas, themes).',
       inputSchema: {},
     },
     async () => wrap(() => fetchArenas(client)),
@@ -116,7 +116,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Get AI stacks',
       description:
-        'Get ProductArena\'s curated cross-arena AI stacks (e.g. "local sovereign stack") with every scored slot resolved LIVE from current arena leaderboards; editorial slots are labeled as such.',
+        'Get Ultrametric\'s curated cross-arena AI stacks (e.g. "local sovereign stack") with every scored slot resolved LIVE from current arena leaderboards; editorial slots are labeled as such.',
       inputSchema: {},
     },
     async () => wrap(() => getStacks(client)),

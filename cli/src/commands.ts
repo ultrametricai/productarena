@@ -50,7 +50,7 @@ function resolveMetric(flags: Flags, fallback: Metric): Metric {
 // One-line disclaimer stamped onto every object-shaped --json payload (arrays stay arrays so
 // `| jq '.[]'` pipelines keep working). Additive only — existing keys are untouched.
 const DISCLAIMER =
-  'Research output derived from cited evidence at a point in time, provided "as is" — verify before acting on it. © Ultrametric Inc; see https://ultrametric.ai/productarena/terms'
+  'Research output derived from cited evidence at a point in time, provided "as is" — verify before acting on it. © Ultrametric Inc; see https://ultrametric.ai/terms'
 const json = (data: unknown) =>
   JSON.stringify(Array.isArray(data) ? data : { ...(data as Record<string, unknown>), disclaimer: DISCLAIMER }, null, 2)
 
@@ -63,7 +63,7 @@ export async function cmdArenas(ctx: Ctx, flags: Flags): Promise<void> {
     { align: ['l', 'l', 'r'], color: ctx.color },
   ))
   ctx.out()
-  ctx.out(palette(ctx.color).dim(`${arenas.length} arenas · productarena rankings <id> for a leaderboard`))
+  ctx.out(palette(ctx.color).dim(`${arenas.length} arenas · ultrametric-cli rankings <id> for a leaderboard`))
 }
 
 export async function cmdRankings(ctx: Ctx, arena: string, flags: Flags): Promise<void> {
@@ -119,7 +119,7 @@ export async function cmdProduct(ctx: Ctx, arena: string, productId: string, fla
   }
   ctx.out()
   ctx.out(`  Vendor:       ${product.urls.site}`)
-  ctx.out(`  ProductArena: ${ctx.client.baseUrl}/arena/${arena}/product/${product.id}`)
+  ctx.out(`  Ultrametric: ${ctx.client.baseUrl}/arena/${arena}/product/${product.id}`)
 }
 
 export async function cmdCompare(ctx: Ctx, ids: string[], flags: Flags): Promise<void> {
@@ -170,7 +170,7 @@ export async function cmdPick(ctx: Ctx, role: string, flags: Flags): Promise<voi
   if (!arena) {
     const hint = suggestions.length > 0
       ? `did you mean: ${suggestions.join(', ')}?`
-      : 'run `productarena arenas` for the full list'
+      : 'run `ultrametric-cli arenas` for the full list'
     throw new UsageError(`no arena matches role "${role}" — ${hint}`)
   }
   const category = categories.find((cat) => cat.id === arena)!
@@ -221,7 +221,7 @@ export async function cmdStacks(ctx: Ctx, stackId: string | undefined, flags: Fl
       { align: ['l', 'l', 'r', 'l'], color: ctx.color },
     ))
     ctx.out()
-    ctx.out(c.dim('productarena stacks <id> to resolve one live'))
+    ctx.out(c.dim('ultrametric-cli stacks <id> to resolve one live'))
     return
   }
   const stack = stacks.find((s) => s.id === stackId)
@@ -303,7 +303,7 @@ const CHECK_GLYPHS: Record<CertCheckResult['status'], (color: boolean) => string
 // The self-serve Agent-Ready certification suite (docs/CERTIFICATION.md): keyless conformance
 // checks against the vendor's own product, a scored checklist, and an optional machine-
 // verifiable --report file a maintainer can re-run and diff. No ArenaClient involved — every
-// request goes to the target, not to ProductArena.
+// request goes to the target, not to Ultrametric.
 export async function cmdCertify(ctx: Ctx, url: string, flags: Flags): Promise<void> {
   const report = await runCertify(url, { mcpUrl: flags.mcp, apiUrl: flags.api })
 
@@ -338,7 +338,7 @@ export async function cmdCertify(ctx: Ctx, url: string, flags: Flags): Promise<v
   }
   if (flags.report) ctx.out(c.dim(`  Report written to ${flags.report}`))
   ctx.out()
-  ctx.out(c.dim(`  Submit for certification: see docs/CERTIFICATION.md in the ProductArena repo`))
+  ctx.out(c.dim(`  Submit for certification: see docs/CERTIFICATION.md in the Ultrametric repo`))
 }
 
 // Compact alias-map dump for `pick` errors and --help curiosity; exposed as `pick --list`.

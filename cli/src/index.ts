@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// productarena — pick good vendors without leaving the terminal.
+// ultrametric-cli — pick good vendors without leaving the terminal.
 // Dispatch + exit-code policy only; all real logic lives in api.ts/commands.ts (fetch+render)
 // and the pure modules (args.ts, aliases.ts, pick.ts, format.ts, metrics.ts).
 import pc from 'picocolors'
@@ -20,33 +20,33 @@ import {
   type Ctx,
 } from './commands.js'
 
-const HELP = `productarena — pick good vendors without leaving the terminal
+const HELP = `ultrametric-cli — pick good vendors without leaving the terminal
 
-Evidence-graded product rankings, live from ultrametric.ai/productarena.
+Evidence-graded product rankings, live from ultrametric.ai.
 
 Usage
-  productarena <command> [args] [--json]
+  ultrametric-cli <command> [args] [--json]
 
 Commands
   arenas                                 list every arena
-                                           $ productarena arenas
+                                           $ ultrametric-cli arenas
   rankings <arena>                       one arena's leaderboard
-                                           $ productarena rankings ai-coding
+                                           $ ultrametric-cli rankings ai-coding
   product <arena> <id>                   one product's scorecard, access, and links
-                                           $ productarena product payments stripe
+                                           $ ultrametric-cli product payments stripe
   compare <id> <id> [...]                cross-arena comparison (max 6, ids are global)
-                                           $ productarena compare stripe adyen
+                                           $ ultrametric-cli compare stripe adyen
   top [--metric M] [--oss] [--limit N]   cross-arena best by one metric
-                                           $ productarena top --metric agentReady --oss
+                                           $ ultrametric-cli top --metric agentReady --oss
   pick <role> [--metric M] [--oss]       THE vendor pick for a role (pick --list for roles)
-                                           $ productarena pick payroll
+                                           $ ultrametric-cli pick payroll
   stacks [id]                            curated AI stacks, slots resolved live
-                                           $ productarena stacks
+                                           $ ultrametric-cli stacks
   scan <url>                             agent-readiness quick scan of any product site
-                                           $ productarena scan https://stripe.com
+                                           $ ultrametric-cli scan https://stripe.com
   certify <url>                          Agent-Ready certification suite (keyless conformance
                                          checks run from YOUR machine — see docs/CERTIFICATION.md)
-                                           $ productarena certify https://docs.stripe.com --report cert-report.json
+                                           $ ultrametric-cli certify https://docs.stripe.com --report cert-report.json
 
 Flags
   --json      machine-readable output (stable shapes — built for scripts and agents)
@@ -77,7 +77,7 @@ async function main(): Promise<void> {
   }
 
   const need = (n: number, usage: string): void => {
-    if (positional.length < n) throw new UsageError(`usage: productarena ${usage}`)
+    if (positional.length < n) throw new UsageError(`usage: ultrametric-cli ${usage}`)
   }
 
   switch (command) {
@@ -107,7 +107,7 @@ async function main(): Promise<void> {
       need(1, 'certify <url> [--report cert-report.json] [--mcp <url>] [--api <url>]')
       return cmdCertify(ctx, positional[0], flags)
     default:
-      throw new UsageError(`unknown command "${command}" — see productarena --help`)
+      throw new UsageError(`unknown command "${command}" — see ultrametric-cli --help`)
   }
 }
 

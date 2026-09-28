@@ -61,7 +61,7 @@ export function parseArgs(argv: string[]): ParsedArgs {
         break
       }
       default:
-        throw new UsageError(`unknown flag ${name} — see productarena --help`)
+        throw new UsageError(`unknown flag ${name} — see ultrametric-cli --help`)
     }
   }
 

@@ -204,7 +204,7 @@ export interface CompareResult {
   note: string
 }
 
-// Cross-arena comparison: product ids are globally unique across ProductArena, so each id is
+// Cross-arena comparison: product ids are globally unique across Ultrametric, so each id is
 // located via the flat product index, then scored from its own arena's leaderboard. Scores are
 // comparable in spirit (same scoring formula everywhere) but each arena has its own story set —
 // hence the note in the result.

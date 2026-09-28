@@ -84,7 +84,7 @@ describe('runCertify', () => {
       ['structured-errors', 'pass'],
     ])
     expect(report.level).toBe('agent-native')
-    expect(report.tool).toBe('productarena certify')
+    expect(report.tool).toBe('ultrametric-cli certify')
     expect(report.version).toBe(1)
   })
 

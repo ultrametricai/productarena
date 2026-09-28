@@ -1,4 +1,4 @@
-// Role -> arena alias map for `productarena pick <role>`. Every live arena id (from
+// Role -> arena alias map for `ultrametric-cli pick <role>`. Every live arena id (from
 // data/categories.json) is always accepted verbatim; this map adds the short names a human
 // actually types ("banking", "git", "pm", "vector-db", ...). Aliases only ever point at ids
 // that exist in categories.json — resolveRole() double-checks against the live list so a
