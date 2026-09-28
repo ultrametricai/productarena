@@ -55,6 +55,7 @@ import {
   resolveVsEvents,
   taskMinutesById,
   computeBurn,
+  VS_PERSONAS,
   type VsAccessMap,
   type VsPersonaId,
   type VsPricingMap,
@@ -193,6 +194,22 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
   { id: 'd90', label: 'First 90 days' },
   { id: 'year', label: 'Year one' },
 ]
+
+// Compact-band display copy (founder ask 2026-09-28: the setup controls compress into one tight
+// band so the terminal sits above the fold). Short labels are DISPLAY ONLY — every option button
+// keeps its canonical full label as the accessible name (aria-label) and full label + corpus
+// mapping in the tooltip, so nothing about the decision semantics or the a11y/test contract moves.
+const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<string, string> }> = {
+  entity: { title: 'Entity', options: { 'c-corp': 'C-Corp', llc: 'LLC' } },
+  team: { title: 'Team', options: { cofounders: 'Cofounders', solo: 'Solo' } },
+  funding: { title: 'Funding', options: { seed: 'Seed', bootstrap: 'Bootstrap' } },
+  product: { title: 'Model', options: { subscriptions: 'SaaS', invoices: 'Invoices' } },
+  ordering: { title: 'Order', options: { 'name-first': 'Name', 'build-first': 'Build' } },
+  hire: { title: 'Hire', options: { yes: 'Yes', no: 'No' } },
+  compliance: { title: 'Compliance', options: { now: 'Early', later: 'Later' } },
+  enterprise: { title: 'Enterprise', options: { no: 'No', yes: 'Yes' } },
+  ph: { title: 'Launch', options: { yes: 'PH', no: 'Quiet' } },
+}
 
 export default function VirtualStartup({
   chains,
@@ -434,6 +451,10 @@ export default function VirtualStartup({
     setEventChoices((prev) => ({ ...prev, [eventId]: choiceId }))
   }
 
+  // The active persona's named simulation assumption prints in the band's info line (the compact
+  // picker itself only carries the blurbs, in tooltips).
+  const activePersona = VS_PERSONAS.find((p) => p.id === persona) ?? VS_PERSONAS[0]
+
   // The title-bar run identity: "agentloop — virtual run" style, derived from the (SIMULATED)
   // company display name — lowercased, entity suffix dropped, terminal-slugged.
   const termName = co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -530,164 +551,241 @@ export default function VirtualStartup({
 
   return (
     <div className="space-y-8">
-      {/* Try an example — one-tap preset companies (founder ask 2026-09-25). Every journey runs
-          the same real software-company process corpus; the hardware/biotech cards say so out
-          loud. Identities are fixed, clearly-fictional, and SIMULATED-chipped. */}
-      <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
-        <h2 className="font-display text-lg font-semibold tracking-tight">Try an example</h2>
-        <p className="mt-1 text-sm text-zinc-400">
-          One tap prefills every decision with a themed example company — then hit ▶ Run. Change
-          any decision afterwards and the setup stays, but the preset deselects.
-        </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {VS_PRESETS.map((p) => {
-            const active = preset === p.id
-            return (
-              <button
-                key={p.id}
-                type="button"
-                data-testid={`vs-preset-${p.id}`}
-                aria-pressed={active}
-                onClick={() => applyPreset(p)}
-                className={`rounded-xl border p-3 text-left transition ${
-                  active ? 'border-emerald-400/60 bg-emerald-400/10' : 'border-zinc-800 hover:border-zinc-600'
-                }`}
-              >
-                <span className="text-[10px] uppercase tracking-widest text-zinc-500">{p.label}</span>
-                <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
+      {/* ── The compact setup band (founder ask 2026-09-28: "make the examples, decisions and
+          'who is the founder' much more compact, so we can see the terminal above the fold").
+          Same state, same URL params, same determinism as the verbose cards it replaces — the
+          explanations moved into tooltips (components/InstantTooltip.tsx upgrades every title=)
+          and the "full setup guide" expand at the band's foot. The hardware/biotech honesty
+          disclosures stay reachable BEFORE any run via the amber ⓘ on the pill (tooltip +
+          screen-reader text; tests assert it) and verbatim in the expand. The band and the
+          terminal share a tight space-y-3 group so the terminal's top edge lands above the fold
+          (~420px on a 1440×900 desktop, within ~50vh of the component top on mobile); the old
+          mobile-sticky run bar is gone because the run now prints inside the fixed terminal at
+          the very top of the page — Run/Restart is one flick away, never a long timeline away. */}
+      <div className="space-y-3">
+      <section data-testid="vs-setup" aria-label="Set up the virtual startup" className="rounded-2xl border border-zinc-800 p-3">
+        {/* Row 1: example-company pills + YC mode + founder persona, with the Run CTA
+            right-aligned. On mobile the pills+persona strip collapses to ONE horizontally
+            scrollable select-like row and the CTA wraps beneath it. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div className="flex min-w-0 max-w-full grow items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+            <span className="shrink-0 text-[9px] uppercase tracking-widest text-zinc-500">Example</span>
+            {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: identity
+                stays SIMULATED-chipped on the pill itself; the product tagline rides in the
+                tooltip; the hardware/biotech corpus disclosure is the amber ⓘ. */}
+            {VS_PRESETS.map((p) => {
+              const active = preset === p.id
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  data-testid={`vs-preset-${p.id}`}
+                  aria-pressed={active}
+                  onClick={() => applyPreset(p)}
+                  title={`${p.label}: ${p.company.name} — ${p.product} (${p.company.descriptor}). One tap prefills every decision; change any decision afterwards and the setup stays, but the preset deselects.`}
+                  className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
+                    active ? 'border-emerald-400/60 bg-emerald-400/10' : 'border-zinc-800 hover:border-zinc-600'
+                  }`}
+                >
+                  <span className="text-zinc-500">{p.label}</span>
                   <span className="font-medium text-zinc-200">{p.company.name}</span>
                   <SimChip />
-                </span>
-                <span className="mt-0.5 block text-sm text-zinc-400">
-                  {p.product} — {p.company.descriptor}
-                </span>
-                {p.disclosure && (
-                  <span data-testid="vs-preset-disclosure" className="mt-1.5 block text-[11px] leading-snug text-amber-300/90">
-                    {p.disclosure}
-                  </span>
-                )}
-              </button>
-            )
-          })}
+                  {p.disclosure && (
+                    <span data-testid="vs-preset-disclosure" title={p.disclosure} className="text-amber-300/90">
+                      <span aria-hidden>ⓘ</span>
+                      <span className="sr-only">{p.disclosure}</span>
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+            {/* YC batch mode — a calibration applied on top of any setup, never a new process;
+                its full disclosure prints in the info line below while the mode is on. */}
+            <button
+              type="button"
+              data-testid="vs-yc-toggle"
+              aria-pressed={yc}
+              onClick={toggleYc}
+              title="Calibrates any setup to the publicly known YC batch shape — Demo-Day raise, launch-early pressure. Simulated; not affiliated with or endorsed by Y Combinator."
+              className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
+                yc
+                  ? 'border-orange-400/60 bg-orange-400/10 text-orange-300'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+              }`}
+            >
+              YC batch mode
+            </button>
+            <span aria-hidden className="h-4 w-px shrink-0 bg-zinc-800" />
+            {/* v3: founder persona — a persona change is a new run (the event stream is seeded
+                by it). */}
+            <VsPersonaPicker
+              persona={persona}
+              onSelect={(id) => {
+                clearRun()
+                clearRunState()
+                setPersona(id)
+              }}
+            />
+          </div>
+          {/* The run CTA — prominent, right-aligned in the band (founder 2026-09-28), still
+              before any timeline content (founder 2026-09-25). */}
+          <div className="flex items-center gap-3 sm:ml-auto">
+            <button
+              type="button"
+              onClick={start}
+              disabled={running}
+              className="rounded-full bg-emerald-500 px-6 py-2 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
+            >
+              {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
+            </button>
+            <button
+              type="button"
+              onClick={showAll}
+              className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition hover:text-zinc-300"
+            >
+              skip the animation — show the whole timeline
+            </button>
+          </div>
         </div>
-        {/* YC batch mode — a calibration applied on top of any setup, never a new process. */}
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-zinc-800 pt-3">
-          <button
-            type="button"
-            data-testid="vs-yc-toggle"
-            aria-pressed={yc}
-            onClick={toggleYc}
-            className={`rounded-full border px-3 py-1 text-sm transition ${
-              yc
-                ? 'border-orange-400/60 bg-orange-400/10 text-orange-300'
-                : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
-            }`}
-          >
-            YC batch mode
-          </button>
-          {yc ? (
-            <p data-testid="vs-yc-disclosure" className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">
-              <SimChip />
-              <span>
-                {YC_BATCH.disclosure} Batch calendar: {YC_BATCH.calendar}. The raise compresses to
-                Demo-Day timing on the standard published deal; PH launch and build-first turn on.
-              </span>
-            </p>
-          ) : (
-            <span className="text-[11px] text-zinc-500">
-              calibrates any setup to the publicly known YC batch shape — Demo-Day raise, launch-early pressure
-            </span>
-          )}
-        </div>
-      </section>
 
-      {/* Starting decisions */}
-      <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
-        <h2 className="font-display text-lg font-semibold tracking-tight">Starting decisions</h2>
-        <p className="mt-1 text-sm text-zinc-400">
-          Each choice selects which real processes and playbooks make up the journey — nothing is
-          invented, options only swap, reorder, or skip corpus processes.
-        </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Row 2: the nine starting decisions as a tight segmented strip — short labels, current
+            value highlighted, canonical full label as the accessible name and full label + corpus
+            mapping in the tooltip. Each choice still only swaps, reorders, or skips corpus
+            processes; a single scrollable row on mobile, wrapping to two rows from sm up. */}
+        <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {DECISIONS.map((d) => (
-            <fieldset key={d.id}>
-              <legend className="text-[10px] uppercase tracking-widest text-zinc-500">{d.title}</legend>
-              <div className="mt-1.5 flex flex-wrap gap-2">
-                {d.options.map((o) => {
-                  const active = choices[d.id] === o.value
-                  return (
-                    <button
-                      key={o.value}
-                      type="button"
-                      onClick={() => pickChoice(d.id, o.value)}
-                      title={o.detail}
-                      aria-pressed={active}
-                      className={`rounded-full border px-3 py-1 text-sm transition ${
-                        active
-                          ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-                          : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
-                      }`}
-                    >
-                      {o.label}
-                    </button>
-                  )
-                })}
-              </div>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                {d.options.find((o) => o.value === choices[d.id])?.detail}
-              </p>
-            </fieldset>
+            <div
+              key={d.id}
+              role="group"
+              aria-label={d.title}
+              className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
+            >
+              <span className="mr-1 text-[9px] uppercase tracking-widest text-zinc-500">{DECISION_SHORT[d.id].title}</span>
+              {d.options.map((o) => {
+                const active = choices[d.id] === o.value
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => pickChoice(d.id, o.value)}
+                    aria-label={o.label}
+                    title={`${o.label} — ${o.detail}`}
+                    aria-pressed={active}
+                    className={`whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[11px] transition ${
+                      active
+                        ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                        : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                    }`}
+                  >
+                    {DECISION_SHORT[d.id].options[o.value]}
+                  </button>
+                )
+              })}
+            </div>
           ))}
         </div>
 
-        {/* The virtual company — synthetic from the first pixel, labeled as such. */}
-        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-3 text-sm">
+        {/* Info line: the virtual company — synthetic from the first pixel, labeled as such —
+            plus the run size. Mode disclosures print underneath while active. */}
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-zinc-800/70 pt-2 text-xs">
           <span className="text-zinc-500">Your virtual company:</span>
           <span className="font-medium text-zinc-200">{co.display}</span>
           {co.descriptor && <span className="text-zinc-400">— making {co.descriptor}</span>}
           <SimChip />
-          <span className="text-xs text-zinc-500">
-            — same choices, same company: everything synthetic is deterministic from the decisions above.
+          <span className="text-zinc-500">
+            · {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
           </span>
         </div>
+        {yc && (
+          <p data-testid="vs-yc-disclosure" className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">
+            <SimChip />
+            <span>
+              {YC_BATCH.disclosure} Batch calendar: {YC_BATCH.calendar}. The raise compresses to
+              Demo-Day timing on the standard published deal; PH launch and build-first turn on.
+            </span>
+          </p>
+        )}
+        {activePersona?.assumption && (
+          <p data-testid="vs-persona-assumption" className="mt-1.5 text-[11px] leading-snug text-amber-300/90">
+            {activePersona.assumption}
+          </p>
+        )}
+
+        {/* The "setup" expand — the previous verbose card copy for readers who want the
+            explanations, in one place and off the critical path to the terminal. */}
+        <details className="mt-2">
+          <summary className="cursor-pointer select-none text-[11px] text-zinc-500 transition hover:text-zinc-300">
+            full setup guide — what the example companies, decisions, and founder personas mean
+          </summary>
+          <div className="mt-3 grid gap-x-6 gap-y-4 text-[13px] text-zinc-400 sm:grid-cols-2">
+            <div>
+              <h3 className="text-[10px] uppercase tracking-widest text-zinc-500">Example companies</h3>
+              <p className="mt-1 text-[11px] text-zinc-500">
+                One tap prefills every decision with a themed example company — then hit ▶ Run.
+                Change any decision afterwards and the setup stays, but the preset deselects.
+                Identities are fixed, clearly-fictional, and always tagged simulated.
+              </p>
+              <ul className="mt-1.5 space-y-1.5">
+                {VS_PRESETS.map((p) => (
+                  <li key={p.id}>
+                    <span className="text-zinc-300">{p.label} — {p.company.name}</span>: {p.product},{' '}
+                    {p.company.descriptor}.
+                    {p.disclosure && (
+                      <span className="block text-[11px] leading-snug text-amber-300/90">{p.disclosure}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[11px] text-zinc-500">
+                YC batch mode calibrates any setup to the publicly known YC batch shape — Demo-Day
+                raise, launch-early pressure — applied on top of the current decisions, never a
+                new process.
+              </p>
+              <h3 className="mt-3 text-[10px] uppercase tracking-widest text-zinc-500">Who is the founder?</h3>
+              <p className="mt-1 text-[11px] text-zinc-500">
+                The persona shifts which steps the founder grinds through by hand in the simulated
+                clock — it never changes a judged verdict or a corpus estimate, only the disclosed
+                multipliers.
+              </p>
+              <ul className="mt-1.5 space-y-1.5">
+                {VS_PERSONAS.map((p) => (
+                  <li key={p.id}>
+                    <span className="text-zinc-300">{p.label}</span> — {p.blurb}
+                    {p.icpId && (
+                      <>
+                        {' '}· matches the{' '}
+                        <Link href={`/icp/${p.icpId}`} className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+                          {p.icpId}
+                        </Link>{' '}
+                        buyer lens
+                      </>
+                    )}
+                    {p.assumption && (
+                      <span className="block text-[11px] leading-snug text-amber-300/90">{p.assumption}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-[10px] uppercase tracking-widest text-zinc-500">Starting decisions</h3>
+              <p className="mt-1 text-[11px] text-zinc-500">
+                Each choice selects which real processes and playbooks make up the journey —
+                nothing is invented, options only swap, reorder, or skip corpus processes. Same
+                choices, same company: everything synthetic is deterministic from the decisions.
+              </p>
+              <ul className="mt-1.5 space-y-1.5">
+                {DECISIONS.map((d) => (
+                  <li key={d.id}>
+                    <span className="text-zinc-300">{d.title}.</span>{' '}
+                    {d.options.map((o) => `${o.label}: ${o.detail}`).join(' · ')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </details>
       </section>
-
-      {/* ── v3: founder persona — with the setup controls, above the terminal. A persona change
-          is a new run (the event stream is seeded by it). */}
-      <VsPersonaPicker
-        persona={persona}
-        onSelect={(id) => {
-          clearRun()
-          clearRunState()
-          setPersona(id)
-        }}
-      />
-
-      {/* The run CTA — big, unmistakable, before any timeline content (founder 2026-09-25:
-          "make the run button clearer and put it at the top"). Sticky on mobile so Run/Restart
-          stays reachable while scrolling the long timeline; static from sm up. */}
-      <div className="sticky top-2 z-30 -mx-2 rounded-2xl border border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-0">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <button
-            type="button"
-            onClick={start}
-            disabled={running}
-            className="rounded-full bg-emerald-500 px-8 py-3 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
-          >
-            {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
-          </button>
-          <span className="text-xs text-zinc-500">
-            {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
-          </span>
-          <button
-            type="button"
-            onClick={showAll}
-            className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition hover:text-zinc-300"
-          >
-            skip the animation — show the whole timeline
-          </button>
-        </div>
-      </div>
 
       {/* The terminal — the page's visual centerpiece (founder ask 2026-09-28: "have the
           terminal at the top so it prints the timeline in that terminal up top"). The run
@@ -870,6 +968,7 @@ export default function VirtualStartup({
           </span>
         </div>
       </section>
+      </div>
 
       {/* The operating rhythm the company now runs, once the launch journey lands — first 30
           days, first 90 days, and year one. */}
