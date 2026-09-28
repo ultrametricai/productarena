@@ -350,7 +350,11 @@ async function mapCell(t: CallTarget): Promise<RawCalls> {
     raw = await llmJson({
       schema: RawCallsSchema,
       system: SYSTEM,
-      prompt: callPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Correct it — at most ${MAX_CALLS_PER_VENDOR} calls, every sourceUrl copied exactly from the provided URLs, every method a real invocation with NO annotations or parenthetical variants in the method string (put variant notes like "with attachments" in description), and no two calls sharing the same method — fold endpoint variants into one call. Return [] if nothing is genuinely grounded.`),
+      // Correction-round message only — the initial prompt and PROMPT_VERSION stay untouched
+      // (email-lane precedent 2026-09-23; namecheap Go-SDK trap 2026-09-28: the model kept
+      // answering with a bare Go function "CheckWithContext(ctx, domains...)", so the reminder
+      // now spells out the dotted-invocation shape for sdk calls).
+      prompt: callPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Correct it — at most ${MAX_CALLS_PER_VENDOR} calls, every sourceUrl copied exactly from the provided URLs, every method a real invocation with NO annotations or parenthetical variants in the method string (put variant notes like "with attachments" in description), and no two calls sharing the same method — fold endpoint variants into one call. CRITICAL REMINDERS: an sdk method MUST be a DOTTED invocation like "client.domains.check(...)" — a bare function name from a language binding (Go's "CheckWithContext(ctx, ...)", a lone "createInvoice(...)") is NOT acceptable: write the dotted client/namespace invocation the evidence shows, or cite the underlying HTTP call as type rest instead. Return [] if nothing is genuinely grounded.`),
     })
     violation = validateCalls(raw, allowed)
   }
