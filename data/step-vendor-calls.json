@@ -23,20 +23,6 @@
     "taskId": "comp_001",
     "nodeId": "n5",
     "arenaId": "compliance-automation",
-    "productId": "drata",
-    "calls": [
-      {
-        "method": "GET /v2/monitoring-tests",
-        "type": "rest",
-        "description": "List monitoring tests for configuration review",
-        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Monitoring-Tests/"
-      }
-    ]
-  },
-  {
-    "taskId": "comp_001",
-    "nodeId": "n5",
-    "arenaId": "compliance-automation",
     "productId": "vanta",
     "calls": [
       {
@@ -44,26 +30,6 @@
         "type": "rest",
         "description": "List automated compliance tests based on applied filters",
         "sourceUrl": "https://developer.vanta.com/api-reference/tests/list-tests"
-      }
-    ]
-  },
-  {
-    "taskId": "comp_002",
-    "nodeId": "n2",
-    "arenaId": "compliance-automation",
-    "productId": "drata",
-    "calls": [
-      {
-        "method": "GET /monitoring-tests",
-        "type": "rest",
-        "description": "List monitoring tests to review continuous control monitoring status",
-        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Monitoring-Tests/"
-      },
-      {
-        "method": "GET /controls",
-        "type": "rest",
-        "description": "List controls being monitored for SOC 2 compliance",
-        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Controls/"
       }
     ]
   },
@@ -104,8 +70,22 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request for the DPA document with AI-detected signature fields",
+        "description": "Create a notarization request with AI-detected signature/date fields for the DPA document",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_010",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "ironclad",
+    "calls": [
+      {
+        "method": "POST /webhooks",
+        "type": "rest",
+        "description": "Create a webhook to receive e-signature workflow events for the DPA flow",
+        "sourceUrl": "https://developer.ironcladapp.com/reference/create-a-webhook.md"
       }
     ]
   },
@@ -124,7 +104,7 @@
       {
         "method": "POST /v2/schedules",
         "type": "rest",
-        "description": "Create a schedule defining when the board cadence event type is available",
+        "description": "Create a recurring availability schedule for board meeting slots",
         "sourceUrl": "https://cal.com/docs/api-reference/v2/schedules/create-a-schedule.md"
       }
     ]
@@ -138,7 +118,7 @@
       {
         "method": "POST /event_types",
         "type": "rest",
-        "description": "Create an event type representing the recurring board meeting cadence",
+        "description": "Create a recurring board meeting event type for scheduling cadence",
         "sourceUrl": "https://developer.calendly.com/docs/mcp/supported-tools.md"
       }
     ]
@@ -150,10 +130,30 @@
     "productId": "beglaubigt",
     "calls": [
       {
-        "method": "POST /v1/notarization",
+        "method": "POST /notarization",
         "type": "rest",
-        "description": "Creates a notarization request for a document, using AI-detected signature fields to circulate for signature",
+        "description": "Creates a notarization request for the board minutes document, routing it for signature/notarization",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "POST /files/upload_sessions",
+        "type": "rest",
+        "description": "Upload the signed board minutes file into Box via a chunked upload session for reliable storage in the data room.",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "POST /collaborations",
+        "type": "rest",
+        "description": "Grant appropriate users or groups access to the folder holding signed minutes, controlling data room permissions.",
+        "sourceUrl": "https://developer.box.com/guides/collaborations/"
       }
     ]
   },
@@ -164,9 +164,9 @@
     "productId": "dropbox",
     "calls": [
       {
-        "method": "dbx.filesUpload(...)",
+        "method": "dbx.filesUpload({ path, contents })",
         "type": "sdk",
-        "description": "Upload signed minutes file into the data room folder",
+        "description": "Upload signed minutes file into the Dropbox data room folder",
         "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
       }
     ]
@@ -180,20 +180,20 @@
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload the signed minutes file into Drive as a new file",
+        "description": "Upload the signed minutes file into the data room folder",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "method": "PATCH /v3/files/{fileId}",
         "type": "rest",
-        "description": "Grant data room access/roles to relevant parties for the filed minutes",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+        "description": "Set custom properties (e.g. meeting date, signed status) on the filed minutes",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
       },
       {
-        "method": "PATCH /drive/v3/files/{fileId}",
+        "method": "GET /v3/files",
         "type": "rest",
-        "description": "Set custom properties (e.g. tags/IDs) on the filed minutes for metadata tracking",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
+        "description": "Search the data room for existing minutes files to confirm filing/avoid duplicates",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
       }
     ]
   },
@@ -206,19 +206,19 @@
       {
         "method": "PUT /drive/items/{item-id}/content",
         "type": "rest",
-        "description": "Upload the signed minutes file content into a OneDrive/data room folder",
+        "description": "Upload signed minutes file content to a location in the data room drive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
       },
       {
         "method": "POST /drive/items/{item-id}/createUploadSession",
         "type": "rest",
-        "description": "Create a resumable upload session for filing larger signed minutes documents",
+        "description": "Create resumable upload session for larger signed minutes files",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
       },
       {
         "method": "GET /drive/root:/path/to/file",
         "type": "rest",
-        "description": "Locate the target data room folder/item by path before filing the minutes",
+        "description": "Locate the data room folder/file path to file the signed minutes",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
       }
     ]
@@ -232,7 +232,7 @@
       {
         "method": "mutation IssueCreate(...)",
         "type": "graphql",
-        "description": "Create a tracked issue in Linear for each finding",
+        "description": "Create a tracked issue for each pentest finding",
         "sourceUrl": "https://linear.app/developers/graphql.md"
       }
     ]
@@ -362,10 +362,16 @@
     "productId": "airwallex",
     "calls": [
       {
-        "method": "POST /docs/payouts/batch-transfers/create-a-batch-transfer",
+        "method": "POST /api/v1/batch_transfers/create",
         "type": "rest",
-        "description": "Create a batch of transfers to multiple vendor beneficiaries as a single payment run",
+        "description": "Create a batch transfer to pay multiple approved vendor bills at once",
         "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
+      },
+      {
+        "method": "POST /api/v1/transfers/create",
+        "type": "rest",
+        "description": "Create a single transfer to pay an approved vendor bill",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
       }
     ]
   },
@@ -380,6 +386,26 @@
         "type": "rest",
         "description": "Post the payment summary message to the team channel via webhook",
         "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "ms-teams",
+    "calls": [
+      {
+        "method": "POST /teams/{team-id}/channels/{channel-id}/messages",
+        "type": "rest",
+        "description": "Send a new chatMessage with the payment summary to the specified channel",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/channel-post-messages"
+      },
+      {
+        "method": "POST /webhookb2/{connector-url}",
+        "type": "rest",
+        "description": "Post the payment-run summary via an Incoming Webhook to a Teams channel",
+        "sourceUrl": "https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/what-are-webhooks-and-connectors"
       }
     ]
   },
@@ -474,13 +500,13 @@
       {
         "method": "POST /bankaccounts/{bank_account_id}/reconciliation",
         "type": "rest",
-        "description": "Create a bank reconciliation for a bank account",
+        "description": "Create a bank reconciliation for an account",
         "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
       },
       {
         "method": "GET /bankaccounts/{bank_account_id}/reconciliation",
         "type": "rest",
-        "description": "List existing bank reconciliations for an account",
+        "description": "List bank reconciliations for an account",
         "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
       },
       {
@@ -514,13 +540,13 @@
       {
         "method": "GET /developer/v1/banking/accounts",
         "type": "rest",
-        "description": "Returns bank accounts (checking, investment, managed portfolio) held by the business",
+        "description": "Retrieve the business's bank/treasury accounts and their current balances",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       },
       {
         "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
         "type": "rest",
-        "description": "Returns daily available balance history for a given bank account",
+        "description": "Pull day-over-day available balance history for a given bank account",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       }
     ]
@@ -534,19 +560,19 @@
       {
         "method": "stripe_analytics",
         "type": "mcp",
-        "description": "Query MRR/revenue metrics or run financial report templates for board reporting",
+        "description": "Query MRR/revenue metrics for the report",
         "sourceUrl": "https://mcp.stripe.com/"
       },
       {
         "method": "stripe_report",
         "type": "mcp",
-        "description": "Generate downloadable financial reports (balance, payouts, revenue recognition) for the board report",
-        "sourceUrl": "https://mcp.stripe.com/"
+        "description": "Run balance/revenue financial report and generate CSV",
+        "sourceUrl": "https://docs.stripe.com/data/analyze-with-ai.md"
       },
       {
         "method": "stripe_api_read",
         "type": "mcp",
-        "description": "Read raw balance/charges data via any Stripe GET API method to pull revenue figures",
+        "description": "Read balance or charges data via GET methods",
         "sourceUrl": "https://mcp.stripe.com/"
       }
     ]
@@ -560,7 +586,7 @@
       {
         "method": "POST /v1/pages",
         "type": "rest",
-        "description": "Create a new Notion page for the board report draft",
+        "description": "Create a new Notion page for the board financial report draft",
         "sourceUrl": "https://developers.notion.com"
       }
     ]
@@ -574,7 +600,7 @@
       {
         "method": "POST /jmap/api/",
         "type": "rest",
-        "description": "Send batched JMAP method calls including EmailSubmission/set to send board report email",
+        "description": "Submit JMAP methodCalls to create and send an email (EmailSubmission/set) to board members",
         "sourceUrl": "https://jmap.io"
       }
     ]
@@ -588,7 +614,7 @@
       {
         "method": "POST /gmail/v1/users/{userId}/messages/send",
         "type": "rest",
-        "description": "Send board report email to recipients",
+        "description": "Send the board financial report email to recipients",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
@@ -600,9 +626,9 @@
     "productId": "beglaubigt",
     "calls": [
       {
-        "method": "POST /incorporation",
+        "method": "POST /v1/incorporation",
         "type": "rest",
-        "description": "Creates an incorporation request for a company (e.g. GmbH/UG) including company details, shareholders, and directors",
+        "description": "Creates an incorporation request for a German company including company details, shareholders, and directors",
         "sourceUrl": "https://docs.beglaubigt.de/incorporation/post"
       }
     ]
@@ -628,10 +654,30 @@
     "productId": "kintsugi",
     "calls": [
       {
-        "method": "POST /v1/registrations",
+        "method": "POST /reference/create-registration",
         "type": "rest",
-        "description": "Create a new state sales tax registration for tracking and filing",
+        "description": "Creates a new sales tax registration for a jurisdiction",
         "sourceUrl": "https://docs.trykintsugi.com/reference/create-registration"
+      }
+    ]
+  },
+  {
+    "taskId": "form_012",
+    "nodeId": "n3",
+    "arenaId": "legal-ops",
+    "productId": "clerky",
+    "calls": [
+      {
+        "method": "POST /v1/document_sets",
+        "type": "rest",
+        "description": "Create a document set from a template to begin preparing the C-Corp formation/charter documents",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      },
+      {
+        "method": "GET /v1/document_sets/{id}/forms",
+        "type": "rest",
+        "description": "Render the forms needed to collect data for the plan of conversion and charter documents",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
       }
     ]
   },
@@ -674,6 +720,20 @@
         "type": "rest",
         "description": "Send closing confirmation email to investors",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n2",
+    "arenaId": "legal-ops",
+    "productId": "ironclad",
+    "calls": [
+      {
+        "method": "POST /public/api/v1/workflows/{workflowId}/launch",
+        "type": "rest",
+        "description": "Launch a workflow to generate a new contract document (e.g., SAFE) from a template",
+        "sourceUrl": "https://developer.ironcladapp.com/docs/launch-a-workflow.md"
       }
     ]
   },
@@ -734,7 +794,7 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request to send SAFE document for signature",
+        "description": "Create a notarization request for the SAFE document to be sent for signature",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
       }
     ]
@@ -800,42 +860,28 @@
     ]
   },
   {
-    "taskId": "fund_001",
-    "nodeId": "n8",
-    "arenaId": "equity-management",
-    "productId": "ledgy",
-    "calls": [
-      {
-        "method": "query companyCaptable(...)",
-        "type": "graphql",
-        "description": "Retrieve cap table data for the company after recording SAFE",
-        "sourceUrl": "https://docs.ledgy.com"
-      }
-    ]
-  },
-  {
     "taskId": "fund_002",
     "nodeId": "n2",
     "arenaId": "cloud-storage",
     "productId": "box",
     "calls": [
       {
-        "method": "POST /2.0/files/{file_id}/versions",
+        "method": "GET /2.0/search",
         "type": "rest",
-        "description": "Upload updated diligence documents as new file versions to refresh the data room",
+        "description": "Search data room contents to locate outdated or missing diligence documents",
+        "sourceUrl": "https://developer.box.com/guides/search/"
+      },
+      {
+        "method": "POST /2.0/files/{file_id}/content",
+        "type": "rest",
+        "description": "Upload new/updated versions of files into the data room",
         "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
       },
       {
-        "method": "search_files",
-        "type": "mcp",
-        "description": "Agent searches Box data room content to locate outdated or missing diligence files",
-        "sourceUrl": "https://mcp.box.com/"
-      },
-      {
-        "method": "GET /2.0/search",
+        "method": "POST /2.0/metadata_instances/find_by_query",
         "type": "rest",
-        "description": "Query full-text search to find existing documents needing refresh in the data room",
-        "sourceUrl": "https://developer.box.com/guides/search/"
+        "description": "Query metadata on files/folders to verify diligence completeness",
+        "sourceUrl": "https://developer.box.com/guides/metadata/"
       }
     ]
   },
@@ -862,19 +908,19 @@
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload new or updated diligence documents to the data room folder",
+        "description": "Upload new or updated diligence documents into the data room",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
-        "method": "GET /drive/v3/files",
+        "method": "PATCH /drive/v3/files/{fileId}",
         "type": "rest",
-        "description": "List existing files/folders to identify stale or missing diligence materials",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+        "description": "Update custom properties/metadata on a file to reflect refreshed diligence status",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
       },
       {
         "method": "POST /drive/v3/files/{fileId}/permissions",
         "type": "rest",
-        "description": "Update sharing permissions for investors accessing the refreshed data room",
+        "description": "Grant or update sharing permissions for diligence reviewers",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
       }
     ]
@@ -914,8 +960,22 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request for the board/stockholder consent document to circulate for signature",
+        "description": "Create a notarization request to circulate board/stockholder consent documents for signature",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n5",
+    "arenaId": "legal-ops",
+    "productId": "ironclad",
+    "calls": [
+      {
+        "method": "POST /public/api/v1/workflows",
+        "type": "rest",
+        "description": "Launch a workflow to prepare and circulate the board and stockholder consent packet for signature",
+        "sourceUrl": "https://developer.ironcladapp.com/docs/launch-a-workflow.md"
       }
     ]
   },
@@ -930,20 +990,6 @@
         "type": "rest",
         "description": "Create a notarization request for the closing packet with signature fields auto-detected",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
-      }
-    ]
-  },
-  {
-    "taskId": "fund_002",
-    "nodeId": "n6",
-    "arenaId": "legal-ops",
-    "productId": "ironclad",
-    "calls": [
-      {
-        "method": "POST /public/api/v1/workflows",
-        "type": "rest",
-        "description": "Launch a workflow to route the closing packet through approval and signature",
-        "sourceUrl": "https://developer.ironcladapp.com/docs/launch-a-workflow.md"
       }
     ]
   },
@@ -976,13 +1022,13 @@
       {
         "method": "get_balance_sheet",
         "type": "mcp",
-        "description": "Retrieve Balance Sheet report for financial statement compilation",
+        "description": "Retrieve balance sheet report for financial statement compilation",
         "sourceUrl": "https://github.com/intuit/quickbooks-online-mcp-server"
       },
       {
         "method": "get_profit_and_loss",
         "type": "mcp",
-        "description": "Retrieve P&L report for financial statement compilation",
+        "description": "Retrieve profit and loss report for financial statement compilation",
         "sourceUrl": "https://github.com/intuit/quickbooks-online-mcp-server"
       }
     ]
@@ -1022,7 +1068,7 @@
       {
         "method": "query companyCaptable",
         "type": "graphql",
-        "description": "Retrieve cap table data for the queried company",
+        "description": "Retrieve cap table data for a queried company via Ledgy's GraphQL interface",
         "sourceUrl": "https://docs.ledgy.com"
       }
     ]
@@ -1034,9 +1080,9 @@
     "productId": "carta",
     "calls": [
       {
-        "method": "GET /v1alpha1/issuers/{issuer_id}/fair_market_values",
+        "method": "GET /v1alpha1/issuers/{issuer_id}/fair-market-values",
         "type": "rest",
-        "description": "Retrieve the fair market values from the issuer's completed 409A valuation",
+        "description": "Retrieve fair market values from completed 409A valuation to check report status",
         "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-fair-market-values/"
       }
     ]
@@ -1078,7 +1124,7 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request to send document for signature/notarization",
+        "description": "Creates a notarization request to send the option agreement document for signature",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
       }
     ]
@@ -1114,6 +1160,20 @@
         "type": "rest",
         "description": "Retrieve convertible notes/SAFEs outstanding for the issuer",
         "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-convertible-notes/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_006",
+    "nodeId": "n1",
+    "arenaId": "equity-management",
+    "productId": "ledgy",
+    "calls": [
+      {
+        "method": "query companyCaptable(...)",
+        "type": "graphql",
+        "description": "Retrieve cap table data including outstanding convertible securities like SAFEs",
+        "sourceUrl": "https://docs.ledgy.com"
       }
     ]
   },
@@ -1242,38 +1302,10 @@
     "productId": "hubspot",
     "calls": [
       {
-        "method": "GET /crm/v3/objects/contacts/{contactId}",
+        "method": "POST /crm/v3/objects/contacts",
         "type": "rest",
-        "description": "Retrieve contact record properties (e.g., custom health score field) to assess account status",
+        "description": "Create/lookup contact record to check its properties (e.g., health-related fields)",
         "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_002",
-    "nodeId": "n4",
-    "arenaId": "email",
-    "productId": "agentmail",
-    "calls": [
-      {
-        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
-        "type": "rest",
-        "description": "Send retention email from an AgentMail inbox",
-        "sourceUrl": "https://docs.agentmail.to/messages.md"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_002",
-    "nodeId": "n4",
-    "arenaId": "email",
-    "productId": "fastmail",
-    "calls": [
-      {
-        "method": "POST /jmap",
-        "type": "rest",
-        "description": "Submit methodCalls batch including EmailSubmission/set to send retention email via JMAP",
-        "sourceUrl": "https://jmap.io"
       }
     ]
   },
@@ -1286,7 +1318,7 @@
       {
         "method": "POST /gmail/v1/users/{userId}/messages/send",
         "type": "rest",
-        "description": "Send retention email to customer's To/Cc/Bcc recipients",
+        "description": "Send retention email to the customer",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
@@ -1295,19 +1327,13 @@
     "taskId": "growth_002",
     "nodeId": "n6",
     "arenaId": "payments",
-    "productId": "paypal",
+    "productId": "stripe",
     "calls": [
       {
-        "method": "cancel_subscription",
+        "method": "stripe_api_write",
         "type": "mcp",
-        "description": "Cancel the customer's subscription if save attempt fails",
-        "sourceUrl": "https://developer.paypal.com/ai-tools/agent-tools.md"
-      },
-      {
-        "method": "update_subscription",
-        "type": "mcp",
-        "description": "Modify subscription plan/pricing to apply a retention discount",
-        "sourceUrl": "https://developer.paypal.com/ai-tools/agent-tools.md"
+        "description": "Apply a discount coupon or cancel the subscription via generic write tool",
+        "sourceUrl": "https://mcp.stripe.com/"
       }
     ]
   },
@@ -1320,7 +1346,7 @@
       {
         "method": "POST /contacts/create",
         "type": "rest",
-        "description": "Add a contact to your audience list",
+        "description": "Add a contact to the audience list",
         "sourceUrl": "https://loops.so/agents/api"
       }
     ]
@@ -1334,14 +1360,22 @@
       {
         "method": "POST /events/send",
         "type": "rest",
-        "description": "Send an event to trigger the welcome automation workflow",
+        "description": "Send an event to trigger a welcome automation workflow",
         "sourceUrl": "https://loops.so/agents/api"
-      },
+      }
+    ]
+  },
+  {
+    "taskId": "growth_003",
+    "nodeId": "n5",
+    "arenaId": "email-marketing",
+    "productId": "mailchimp",
+    "calls": [
       {
-        "method": "POST /contacts/create",
+        "method": "POST /lists/{list_id}/members",
         "type": "rest",
-        "description": "Add a contact to the audience to enter the welcome automation",
-        "sourceUrl": "https://loops.so/agents/api"
+        "description": "Create a new contact/member for an audience via signup form submission",
+        "sourceUrl": "https://mailchimp.com/developer/marketing/api/"
       }
     ]
   },
@@ -1501,19 +1535,13 @@
     "taskId": "growth_011",
     "nodeId": "n4",
     "arenaId": "edge-platforms",
-    "productId": "netlify",
+    "productId": "vercel",
     "calls": [
       {
-        "method": "POST /api/v1/sites/{site_id}/deploys",
-        "type": "rest",
-        "description": "Publish a new deploy to a Netlify site via the REST API",
-        "sourceUrl": "https://docs.netlify.com"
-      },
-      {
-        "method": "netlify deploy --prod",
-        "type": "cli",
-        "description": "Deploy the site to production from the command line",
-        "sourceUrl": "https://docs.netlify.com"
+        "method": "deploy_to_vercel",
+        "type": "mcp",
+        "description": "Deploy the site to Vercel to publish content live",
+        "sourceUrl": "https://vercel.com/docs/agent-resources/vercel-mcp/tools.md"
       }
     ]
   },
@@ -1524,10 +1552,16 @@
     "productId": "mixpanel",
     "calls": [
       {
-        "method": "Create-Dashboard",
-        "type": "mcp",
-        "description": "Create a dashboard with reports to monitor traffic and ranking metrics",
-        "sourceUrl": "https://docs.mixpanel.com/docs/mcp.md"
+        "method": "GET /api/2.0/export",
+        "type": "rest",
+        "description": "Export raw event data (e.g., traffic events) as JSONL for analysis",
+        "sourceUrl": "https://docs.mixpanel.com/reference/raw-event-export.md"
+      },
+      {
+        "method": "GET /api/query/engage",
+        "type": "rest",
+        "description": "Export user profile data via the Engage API to monitor user segments",
+        "sourceUrl": "https://docs.mixpanel.com/docs/export-methods.md"
       }
     ]
   },
@@ -1540,7 +1574,7 @@
       {
         "method": "GET /api/v1/stats/timeseries",
         "type": "rest",
-        "description": "Retrieve historical or real-time traffic stats for monitoring",
+        "description": "Retrieve historical/real-time traffic timeseries data for monitoring",
         "sourceUrl": "https://plausible.io/docs/stats-api"
       },
       {
@@ -1560,13 +1594,13 @@
       {
         "method": "dashboard-get",
         "type": "mcp",
-        "description": "Retrieve dashboard data to monitor traffic and ranking metrics",
+        "description": "Retrieve a PostHog dashboard (e.g. traffic/rankings) via the MCP server",
         "sourceUrl": "https://mcp.posthog.com/mcp"
       },
       {
         "method": "execute-sql",
         "type": "mcp",
-        "description": "Run SQL queries against analytics data to check traffic trends",
+        "description": "Run a SQL query against PostHog analytics data to check traffic/ranking metrics",
         "sourceUrl": "https://mcp.posthog.com/mcp"
       }
     ]
@@ -1580,7 +1614,7 @@
       {
         "method": "POST /crm/v3/objects/contacts",
         "type": "rest",
-        "description": "Create target contact records for the sequence list",
+        "description": "Create a contact record to add to the target list",
         "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
       }
     ]
@@ -1594,20 +1628,34 @@
       {
         "method": "POST /v2/bookings",
         "type": "rest",
-        "description": "Create a booking for a responder using an event type slug and username",
+        "description": "Create a booking to schedule a meeting with a responder",
         "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/create-a-booking.md"
       },
       {
         "method": "create_booking",
         "type": "mcp",
-        "description": "Schedule a meeting with a responder via MCP-compatible agent client",
+        "description": "Create a booking via MCP-compatible client using natural language",
         "sourceUrl": "https://mcp.cal.com/mcp"
       },
       {
-        "method": "POST /v2/bookings/{bookingUid}/reschedule",
+        "method": "POST /v2/bookings/{uid}/reschedule",
         "type": "rest",
         "description": "Reschedule a booking if the responder needs a new time",
         "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/reschedule-a-booking.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Write data with any Stripe API POST method, e.g. creating a promotion code",
+        "sourceUrl": "https://mcp.stripe.com/"
       }
     ]
   },
@@ -1618,10 +1666,10 @@
     "productId": "customer-io",
     "calls": [
       {
-        "method": "trigger_broadcast",
-        "type": "mcp",
+        "method": "POST /api/campaigns/{id}/triggers",
+        "type": "rest",
         "description": "Trigger a broadcast to announce the referral program to existing users",
-        "sourceUrl": "https://mcp.customer.io/mcp"
+        "sourceUrl": "https://docs.customer.io/integrations/api/customerio-apis/"
       }
     ]
   },
@@ -1634,7 +1682,7 @@
       {
         "method": "POST /v1/broadcasts",
         "type": "rest",
-        "description": "Create/draft a broadcast to announce the referral program to existing subscribers",
+        "description": "Create and send a broadcast announcing the referral program to all or a segment of subscribers",
         "sourceUrl": "https://developers.kit.com/api-reference/broadcasts/create-a-broadcast"
       }
     ]
@@ -1648,22 +1696,8 @@
       {
         "method": "POST /api/campaigns",
         "type": "rest",
-        "description": "Creates a campaign to announce the referral program to existing users",
+        "description": "Creates a campaign (e.g., referral program announcement) to send to existing users",
         "sourceUrl": "https://developers.klaviyo.com/en/reference/create_campaign"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_013",
-    "nodeId": "n3",
-    "arenaId": "email-marketing",
-    "productId": "loops",
-    "calls": [
-      {
-        "method": "POST /events/send",
-        "type": "rest",
-        "description": "Trigger a workflow event (e.g. referral announcement) to existing contacts",
-        "sourceUrl": "https://loops.so/agents/api"
       }
     ]
   },
@@ -1676,28 +1710,14 @@
       {
         "method": "POST /campaigns/{campaign_id}/actions/send",
         "type": "rest",
-        "description": "Send the referral program announcement campaign to the existing subscriber audience",
+        "description": "Send the referral program announcement campaign immediately to the audience",
         "sourceUrl": "https://mailchimp.com/developer/marketing/api/"
       },
       {
         "method": "POST /lists/{list_id}/members",
         "type": "rest",
-        "description": "Create/update contact records for existing users to target with the referral announcement",
+        "description": "Add or update contacts in the audience to be targeted for the referral announcement",
         "sourceUrl": "https://mailchimp.com/developer/marketing/api/"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_013",
-    "nodeId": "n4",
-    "arenaId": "product-analytics",
-    "productId": "amplitude",
-    "calls": [
-      {
-        "method": "POST /2/httpapi",
-        "type": "rest",
-        "description": "Send referral conversion event data directly from server to Amplitude's HTTP V2 endpoint",
-        "sourceUrl": "https://amplitude.com/docs/apis"
       }
     ]
   },
@@ -1710,8 +1730,56 @@
       {
         "method": "POST /api/event",
         "type": "rest",
-        "description": "Record a custom event (e.g. referral conversion) via server-side tracking",
+        "description": "Record a custom event (e.g. referral conversion) via the Plausible Events API for server-side tracking",
         "sourceUrl": "https://plausible.io/docs/events-api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n4",
+    "arenaId": "product-analytics",
+    "productId": "posthog",
+    "calls": [
+      {
+        "method": "POST /api/projects/:project_id/query/",
+        "type": "rest",
+        "description": "Run a HogQL query to compute referral conversion metrics from captured events",
+        "sourceUrl": "https://posthog.com/docs/api/queries.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_014",
+    "nodeId": "n6",
+    "arenaId": "email-marketing",
+    "productId": "bento",
+    "calls": [
+      {
+        "method": "create_broadcast",
+        "type": "mcp",
+        "description": "Create a broadcast email to announce the pricing change to subscribers",
+        "sourceUrl": "https://mcp.bentonow.com/mcp"
+      },
+      {
+        "method": "POST /events",
+        "type": "rest",
+        "description": "Track user activity or trigger automations that notify customers of the pricing change",
+        "sourceUrl": "https://bentonow.com/docs/events_api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_014",
+    "nodeId": "n6",
+    "arenaId": "email-marketing",
+    "productId": "customer-io",
+    "calls": [
+      {
+        "method": "POST /v1/broadcasts/trigger",
+        "type": "rest",
+        "description": "Trigger a broadcast message to announce the pricing change to customers via the App API",
+        "sourceUrl": "https://docs.customer.io/integrations/api/customerio-apis/"
       }
     ]
   },
@@ -1722,38 +1790,10 @@
     "productId": "kit",
     "calls": [
       {
-        "method": "POST /api-reference/broadcasts/create-a-broadcast",
+        "method": "POST /v1/broadcasts",
         "type": "rest",
-        "description": "Draft or schedule a broadcast to announce the pricing change to subscribers or a targeted segment",
+        "description": "Create/draft a broadcast to announce the pricing change to subscribers",
         "sourceUrl": "https://developers.kit.com/api-reference/broadcasts/create-a-broadcast"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_014",
-    "nodeId": "n6",
-    "arenaId": "email-marketing",
-    "productId": "klaviyo",
-    "calls": [
-      {
-        "method": "POST /api/campaigns",
-        "type": "rest",
-        "description": "Create a campaign to announce the pricing change to customers",
-        "sourceUrl": "https://developers.klaviyo.com/en/reference/create_campaign"
-      }
-    ]
-  },
-  {
-    "taskId": "growth_014",
-    "nodeId": "n6",
-    "arenaId": "email-marketing",
-    "productId": "loops",
-    "calls": [
-      {
-        "method": "POST /events/send",
-        "type": "rest",
-        "description": "Trigger an email workflow that announces the pricing change to customers",
-        "sourceUrl": "https://loops.so/agents/api"
       }
     ]
   },
@@ -1828,7 +1868,7 @@
       {
         "method": "POST /api/campaigns",
         "type": "rest",
-        "description": "Create the win-back campaign with drafted sequence and offer content",
+        "description": "Create a win-back campaign with sequence content and offer",
         "sourceUrl": "https://developers.klaviyo.com/en/reference/create_campaign"
       }
     ]
@@ -1842,7 +1882,7 @@
       {
         "method": "POST /events/send",
         "type": "rest",
-        "description": "Send an event to trigger the win-back email workflow",
+        "description": "Send an event to trigger the win-back workflow/sequence for a contact",
         "sourceUrl": "https://loops.so/agents/api"
       }
     ]
@@ -1897,6 +1937,20 @@
   },
   {
     "taskId": "hr_001",
+    "nodeId": "n4",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "gusto employee create --agent",
+        "type": "cli",
+        "description": "Add a new employee to payroll via the agent-friendly Gusto CLI",
+        "sourceUrl": "https://github.com/Gusto/gusto-cli"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_001",
     "nodeId": "n9",
     "arenaId": "team-chat",
     "productId": "buzz",
@@ -1934,6 +1988,12 @@
         "type": "rest",
         "description": "Decline a pending or approved time off request",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/reference/put-v1-time_off-requests-time_off_request_uuid-decline.md"
+      },
+      {
+        "method": "gusto timesheet",
+        "type": "cli",
+        "description": "Review and prep timesheet entries as part of per-cycle payroll prep",
+        "sourceUrl": "https://github.com/Gusto/gusto-cli"
       }
     ]
   },
@@ -1968,20 +2028,6 @@
         "type": "rest",
         "description": "Create a contractor contract/agreement",
         "sourceUrl": "https://developer.deel.com/home"
-      }
-    ]
-  },
-  {
-    "taskId": "hr_003",
-    "nodeId": "n5",
-    "arenaId": "payroll",
-    "productId": "gusto",
-    "calls": [
-      {
-        "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
-        "type": "rest",
-        "description": "Validate inputs and determine payment timing/blockers for contractor payment schedule",
-        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
   },
@@ -2030,6 +2076,26 @@
         "type": "rest",
         "description": "Submit a candidate application via the careers site application form",
         "sourceUrl": "https://docs.recruitee.com/reference/candidates-post"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_005",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "POST /v1/companies/{id}/payrolls",
+        "type": "rest",
+        "description": "Create an off-cycle payroll run to calculate final paycheck and PTO payout",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/create-an-off-cycle-payroll.md"
+      },
+      {
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
+        "type": "rest",
+        "description": "Retrieve payroll data to review before completing final off-cycle payroll",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
   },
@@ -2125,20 +2191,6 @@
   },
   {
     "taskId": "legal_001",
-    "nodeId": "n4",
-    "arenaId": "legal-ops",
-    "productId": "beglaubigt",
-    "calls": [
-      {
-        "method": "POST /notarization",
-        "type": "rest",
-        "description": "Create a notarization request with AI-detected signature fields for signers",
-        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
-      }
-    ]
-  },
-  {
-    "taskId": "legal_001",
     "nodeId": "n6",
     "arenaId": "cloud-storage",
     "productId": "google-drive",
@@ -2146,14 +2198,20 @@
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload executed NDA file to Drive (simple upload)",
+        "description": "Upload the executed NDA file content to Drive",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
         "method": "POST /upload/drive/v3/files?uploadType=resumable",
         "type": "rest",
-        "description": "Resumable upload for larger executed NDA file",
+        "description": "Resumable upload of the executed NDA file for reliability on larger files",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search files to confirm the executed NDA copy was filed",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
       }
     ]
   },
@@ -2164,13 +2222,13 @@
     "productId": "onedrive",
     "calls": [
       {
-        "method": "PUT /me/drive/items/{parent-id}:/{filename}:/content",
+        "method": "PUT /drive/items/{item-id}:/{filename}:/content",
         "type": "rest",
         "description": "Upload executed NDA file content to OneDrive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
       },
       {
-        "method": "POST /me/drive/items/{item-id}:/createUploadSession",
+        "method": "POST /drive/items/{item-id}:/{filename}:/createUploadSession",
         "type": "rest",
         "description": "Create resumable upload session for larger executed NDA file",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
@@ -2179,20 +2237,48 @@
   },
   {
     "taskId": "legal_003",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request for the PIIA document to be routed for signature",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "ironclad",
+    "calls": [
+      {
+        "method": "POST /public/api/v1/workflows",
+        "type": "rest",
+        "description": "Bulk launch PIIA signature workflows for multiple signers",
+        "sourceUrl": "https://developer.ironcladapp.com/docs/bulk-launch-a-workflow.md"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
     "nodeId": "n6",
     "arenaId": "cloud-storage",
     "productId": "google-drive",
     "calls": [
       {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
         "type": "rest",
-        "description": "Simple upload of a small executed/signed file into Drive",
+        "description": "Upload signed executed IP assignment copy as a file (resumable upload)",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
-        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Resumable upload of larger executed copies into Drive",
+        "description": "Upload small signed executed IP assignment file without metadata",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       }
     ]
@@ -2204,10 +2290,30 @@
     "productId": "onedrive",
     "calls": [
       {
-        "method": "PUT /drives/{drive-id}/items/{item-id}/content",
+        "method": "PUT /me/drive/items/{item-id}/content",
         "type": "rest",
-        "description": "Upload executed IPIA copy content to a file in OneDrive",
+        "description": "Upload signed executed PIIA copy contents to OneDrive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /me/drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session for larger signed PIIA files",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "opp_001",
+    "nodeId": "n2",
+    "arenaId": "startup-banking",
+    "productId": "airwallex",
+    "calls": [
+      {
+        "method": "POST /api/v1/transfers/create",
+        "type": "rest",
+        "description": "Create a transfer to move funds to a supplier, employee, or bank account",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
       }
     ]
   },
@@ -2281,6 +2387,20 @@
   },
   {
     "taskId": "opp_002",
+    "nodeId": "n1",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "gusto contractor create --confirm",
+        "type": "cli",
+        "description": "Add a new 1099 contractor record via the Gusto CLI's agent-friendly contractor command",
+        "sourceUrl": "https://github.com/Gusto/gusto-cli"
+      }
+    ]
+  },
+  {
+    "taskId": "opp_002",
     "nodeId": "n3",
     "arenaId": "payroll",
     "productId": "gusto",
@@ -2288,7 +2408,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate contractor payment inputs and surface submission blockers (e.g. missing W-9/payment method) before payment",
+        "description": "Validate contractor payment inputs and surface submission blockers before paying",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -2426,6 +2546,20 @@
     ]
   },
   {
+    "taskId": "ops_004",
+    "nodeId": "n4",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({path: ''})",
+        "type": "sdk",
+        "description": "List folder contents to set up and verify shared drive/folder structure",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
     "taskId": "ops_013",
     "nodeId": "n5",
     "arenaId": "compliance-automation",
@@ -2531,6 +2665,20 @@
     "taskId": "prod_003",
     "nodeId": "n1",
     "arenaId": "domain-registrars",
+    "productId": "namecheap",
+    "calls": [
+      {
+        "method": "client.Domains.CheckWithContext(ctx, domains...)",
+        "type": "sdk",
+        "description": "Check availability of one or more domains",
+        "sourceUrl": "https://raw.githubusercontent.com/namecheap/go-namecheap-sdk/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
     "productId": "porkbun",
     "calls": [
       {
@@ -2577,6 +2725,26 @@
   },
   {
     "taskId": "prod_003",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
+    "productId": "namecheap",
+    "calls": [
+      {
+        "method": "namecheap.domains.CreateWithContext(ctx, args)",
+        "type": "sdk",
+        "description": "Register a new domain (charge-bearing)",
+        "sourceUrl": "https://raw.githubusercontent.com/namecheap/go-namecheap-sdk/HEAD/README.md"
+      },
+      {
+        "method": "namecheap.domains.CheckWithContext(ctx, domains)",
+        "type": "sdk",
+        "description": "Check availability of one or more domains before registration",
+        "sourceUrl": "https://raw.githubusercontent.com/namecheap/go-namecheap-sdk/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
     "nodeId": "n4",
     "arenaId": "edge-platforms",
     "productId": "cloudflare",
@@ -2597,6 +2765,20 @@
   },
   {
     "taskId": "prod_005",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "POST /api/event",
+        "type": "rest",
+        "description": "Record custom events via the Events API for server-side or mobile tracking",
+        "sourceUrl": "https://plausible.io/docs/events-api"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_005",
     "nodeId": "n4",
     "arenaId": "product-analytics",
     "productId": "mixpanel",
@@ -2606,20 +2788,6 @@
         "type": "mcp",
         "description": "Create a new dashboard with text cards and reports",
         "sourceUrl": "https://docs.mixpanel.com/docs/mcp.md"
-      }
-    ]
-  },
-  {
-    "taskId": "prod_010",
-    "nodeId": "n1",
-    "arenaId": "incident-management",
-    "productId": "rootly",
-    "calls": [
-      {
-        "method": "find_related_incidents",
-        "type": "mcp",
-        "description": "Find similar past incidents to help reconstruct timeline context",
-        "sourceUrl": "https://mcp.rootly.com/mcp"
       }
     ]
   },
@@ -2714,8 +2882,14 @@
       {
         "method": "POST /graphql",
         "type": "graphql",
-        "description": "Query app performance, crash, and alert data via NerdGraph GraphQL API to monitor post-launch health",
+        "description": "Query NerdGraph for app performance, crash and log data to monitor post-release health",
         "sourceUrl": "https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/"
+      },
+      {
+        "method": "newrelic deployment create",
+        "type": "cli",
+        "description": "Record an APM deployment marker in New Relic when the app store release goes live",
+        "sourceUrl": "https://github.com/newrelic/newrelic-cli"
       }
     ]
   },
@@ -2930,7 +3104,7 @@
       {
         "method": "analyze_spend_data",
         "type": "mcp",
-        "description": "Query expenses and break down costs by department, vendor, or category to analyze monthly spend",
+        "description": "Query expenses, identify trends, and break down costs by department, vendor, or category",
         "sourceUrl": "https://mcp.navan.com/mcp"
       }
     ]
@@ -3091,13 +3265,13 @@
     "taskId": "scale_001",
     "nodeId": "n7",
     "arenaId": "team-chat",
-    "productId": "ms-teams",
+    "productId": "buzz",
     "calls": [
       {
-        "method": "POST /teams/{team-id}/channels/{channel-id}/messages",
-        "type": "rest",
-        "description": "Post review delivery message to a channel via Graph API",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/channel-post-messages"
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create a private channel/room to deliver a performance review and coordinate follow-up",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
       }
     ]
   },
@@ -3105,27 +3279,27 @@
     "taskId": "scale_001",
     "nodeId": "n7",
     "arenaId": "team-chat",
-    "productId": "zulip",
+    "productId": "discord",
     "calls": [
       {
-        "method": "POST /v1/messages",
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
         "type": "rest",
-        "description": "Send a message to deliver review or schedule a 1:1 conversation",
-        "sourceUrl": "https://zulip.com/api/"
+        "description": "Post performance review results or 1:1 scheduling notifications into a Discord channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
       }
     ]
   },
   {
-    "taskId": "scale_003",
-    "nodeId": "n4",
-    "arenaId": "project-management",
-    "productId": "notion",
+    "taskId": "scale_001",
+    "nodeId": "n7",
+    "arenaId": "team-chat",
+    "productId": "ms-teams",
     "calls": [
       {
-        "method": "POST /v1/pages",
+        "method": "POST /channels/{channel-id}/messages",
         "type": "rest",
-        "description": "Create a new page in Notion to publish handbook content",
-        "sourceUrl": "https://developers.notion.com"
+        "description": "Post review delivery message to a channel",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/channel-post-messages"
       }
     ]
   },
@@ -3138,22 +3312,8 @@
       {
         "method": "POST /v1/inboxes/{inbox_id}/messages/send",
         "type": "rest",
-        "description": "Send announcement message from an inbox to the team",
+        "description": "Send the handbook announcement message from an agent inbox to the team",
         "sourceUrl": "https://docs.agentmail.to/messages.md"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_003",
-    "nodeId": "n5",
-    "arenaId": "email",
-    "productId": "fastmail",
-    "calls": [
-      {
-        "method": "POST /jmap/api/",
-        "type": "rest",
-        "description": "Send email announcement via JMAP methodCalls (Email/set and EmailSubmission/set) in one HTTP request",
-        "sourceUrl": "https://jmap.io"
       }
     ]
   },
@@ -3166,22 +3326,8 @@
       {
         "method": "POST /gmail/v1/users/{userId}/messages/send",
         "type": "rest",
-        "description": "Send the handbook announcement email to team recipients",
+        "description": "Send the handbook announcement email to the team via Gmail API",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_003",
-    "nodeId": "n5",
-    "arenaId": "email",
-    "productId": "zero",
-    "calls": [
-      {
-        "method": "send_email",
-        "type": "mcp",
-        "description": "Create and send a new email to announce the handbook to the team",
-        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
       }
     ]
   },
@@ -3192,7 +3338,7 @@
     "productId": "discord",
     "calls": [
       {
-        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "method": "POST /api/webhooks/{webhook.id}/{webhook.token}",
         "type": "rest",
         "description": "Post expense notification messages into a Discord channel via webhook",
         "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
@@ -3203,18 +3349,38 @@
     "taskId": "scale_005",
     "nodeId": "n1",
     "arenaId": "startup-banking",
+    "productId": "brex",
+    "calls": [
+      {
+        "method": "GET /v1/transactions",
+        "type": "rest",
+        "description": "Retrieve account transactions and balances for board financial reporting",
+        "sourceUrl": "https://developer.brex.com"
+      },
+      {
+        "method": "GET /v1/accounting",
+        "type": "rest",
+        "description": "View accounting data to compile financial figures",
+        "sourceUrl": "https://developer.brex.com"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
     "productId": "mercury",
     "calls": [
       {
-        "method": "GET /api/v1/transactions",
+        "method": "GET /api/v1/accounts",
         "type": "rest",
-        "description": "List account transactions to pull financial data for board prep",
-        "sourceUrl": "https://docs.mercury.com"
+        "description": "Pull account balances for board financial summary",
+        "sourceUrl": "https://mercury.com/api"
       },
       {
-        "method": "GET /api/v1/transactions/{id}",
+        "method": "GET /api/v1/transactions",
         "type": "rest",
-        "description": "Retrieve a specific transaction's details",
+        "description": "List transactions to compile financial data for the board",
         "sourceUrl": "https://docs.mercury.com"
       }
     ]
@@ -3228,19 +3394,19 @@
       {
         "method": "GET /developer/v1/banking/accounts",
         "type": "rest",
-        "description": "Retrieve business bank/treasury accounts and balances for board financial reporting",
+        "description": "Retrieve the business's cash/treasury accounts for board financial reporting",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       },
       {
         "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
         "type": "rest",
-        "description": "Pull daily cash balance history for quarterly financial trends",
+        "description": "Pull daily balance history over the reporting period",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       },
       {
         "method": "GET /developer/v1/banking/syncable-transactions",
         "type": "rest",
-        "description": "Pull banking transactions to compile spend data for board prep",
+        "description": "Pull banking transactions for the quarter to compile financials",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       }
     ]
@@ -3254,8 +3420,28 @@
       {
         "method": "stripe_analytics",
         "type": "mcp",
-        "description": "Query MRR and other revenue metrics via pre-built templates or SQL",
+        "description": "Query metrics such as MRR and gross volume for board revenue reporting",
         "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_report",
+        "type": "mcp",
+        "description": "Generate financial report runs (balance, payouts, revenue recognition) as CSV for board review",
+        "sourceUrl": "https://docs.stripe.com/data/analyze-with-ai.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n7",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to publish board meeting content",
+        "sourceUrl": "https://developers.notion.com"
       }
     ]
   },
@@ -3268,7 +3454,7 @@
       {
         "method": "POST /v1/inboxes/{inbox_id}/messages/send",
         "type": "rest",
-        "description": "Send board deck email from agent's inbox to board members",
+        "description": "Send board deck message from an inbox with attachments and cc/bcc",
         "sourceUrl": "https://docs.agentmail.to/messages.md"
       }
     ]
@@ -3280,9 +3466,9 @@
     "productId": "fastmail",
     "calls": [
       {
-        "method": "POST /jmap",
+        "method": "POST /jmap/api/",
         "type": "rest",
-        "description": "Send methodCalls batch including Email/set to submit board deck email via JMAP",
+        "description": "Submit JMAP methodCalls (e.g. EmailSubmission/set) to send email via HTTP request",
         "sourceUrl": "https://jmap.io"
       }
     ]
@@ -3296,22 +3482,22 @@
       {
         "method": "POST /gmail/v1/users/{userId}/messages/send",
         "type": "rest",
-        "description": "Send board deck email to board members via To/Cc/Bcc",
+        "description": "Send the board deck email to recipients via To/Cc/Bcc",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
   },
   {
     "taskId": "scale_006",
-    "nodeId": "n5",
-    "arenaId": "team-chat",
-    "productId": "buzz",
+    "nodeId": "n3",
+    "arenaId": "project-management",
+    "productId": "notion",
     "calls": [
       {
-        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
-        "type": "cli",
-        "description": "Create a new team channel via Buzz CLI",
-        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (project) in a database, optionally linked to team members/properties",
+        "sourceUrl": "https://developers.notion.com"
       }
     ]
   },
@@ -3324,7 +3510,7 @@
       {
         "method": "POST /v1/pages",
         "type": "rest",
-        "description": "Create a new page in Notion to document the process",
+        "description": "Create a page in Notion to document the reorganization process",
         "sourceUrl": "https://developers.notion.com"
       }
     ]
@@ -3338,7 +3524,7 @@
       {
         "method": "GET /admin/directory/v1/users",
         "type": "rest",
-        "description": "List existing users in a domain to provision/sync them",
+        "description": "List existing users in the domain for provisioning/sync",
         "sourceUrl": "https://developers.google.com/workspace/admin/directory/reference/rest/v1/users/list"
       }
     ]
@@ -3352,7 +3538,7 @@
       {
         "method": "GET /users",
         "type": "rest",
-        "description": "Retrieve a list of existing user objects",
+        "description": "Retrieve existing user objects via Microsoft Graph API for provisioning",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0"
       }
     ]
@@ -3364,9 +3550,9 @@
     "productId": "okta",
     "calls": [
       {
-        "method": "create_user",
+        "method": "create_new_user",
         "type": "mcp",
-        "description": "Create a new user via Okta MCP server for provisioning",
+        "description": "Create a new user and add to a group via Okta MCP server",
         "sourceUrl": "https://github.com/okta/okta-mcp-server"
       }
     ]
@@ -3382,6 +3568,12 @@
         "type": "rest",
         "description": "Create a company offer (job or talent pool)",
         "sourceUrl": "https://docs.recruitee.com/reference/offersid-post.md"
+      },
+      {
+        "method": "GET /offers",
+        "type": "rest",
+        "description": "Returns a collection of published company jobs",
+        "sourceUrl": "https://docs.recruitee.com/reference/offers"
       }
     ]
   },
@@ -3394,7 +3586,7 @@
       {
         "method": "GET /candidates/:id/offer",
         "type": "rest",
-        "description": "Retrieve the candidate's latest offer for review/approval",
+        "description": "Retrieve the candidate's latest offer for approval review",
         "sourceUrl": "https://workable.readme.io/reference/candidatesidoffer"
       }
     ]
@@ -3403,13 +3595,13 @@
     "taskId": "scale_008",
     "nodeId": "n6",
     "arenaId": "team-chat",
-    "productId": "buzz",
+    "productId": "slack",
     "calls": [
       {
-        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "method": "slack create",
         "type": "cli",
-        "description": "Create a hiring channel via Buzz CLI",
-        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+        "description": "Create a new Slack app/project via CLI",
+        "sourceUrl": "https://docs.slack.dev"
       }
     ]
   },
@@ -3436,7 +3628,7 @@
       {
         "method": "POST /v1/pages",
         "type": "rest",
-        "description": "Create a new page (post-mortem template) in a workspace",
+        "description": "Create a new page in Notion to serve as the post-mortem template",
         "sourceUrl": "https://developers.notion.com"
       }
     ]
@@ -3448,24 +3640,10 @@
     "productId": "hightouch",
     "calls": [
       {
-        "method": "POST /v1/sources",
+        "method": "POST /v1/events",
         "type": "rest",
-        "description": "Configure a CDP event source via Hightouch's REST API for resources like sources",
-        "sourceUrl": "https://hightouch.com/docs/developer-tools/api-guide"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_010",
-    "nodeId": "n2",
-    "arenaId": "customer-data-platforms",
-    "productId": "segment",
-    "calls": [
-      {
-        "method": "POST /sources",
-        "type": "rest",
-        "description": "Create a new event source (CDP data collection point) in a Segment workspace",
-        "sourceUrl": "https://segment.com/docs/api/public-api/"
+        "description": "Send customer event data server-side via the HTTP Tracking API to configure an event source",
+        "sourceUrl": "https://hightouch.com/docs/events/sdks/http"
       }
     ]
   },
@@ -3478,7 +3656,7 @@
       {
         "method": "ctx.getWarehouse(...)",
         "type": "sdk",
-        "description": "Query the connected data warehouse from within a Jitsu function",
+        "description": "Warehouse API within Jitsu Functions to query the connected data warehouse",
         "sourceUrl": "https://jitsu.com/docs/functions/"
       }
     ]
@@ -3518,9 +3696,9 @@
     "productId": "buzz",
     "calls": [
       {
-        "method": "buzz channels create --name \"company-okrs\" --type stream --visibility open",
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
         "type": "cli",
-        "description": "Creates a channel/room to host the OKR kickoff discussion for the team",
+        "description": "Creates a team channel that can be used to post the OKR kickoff announcement",
         "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
       }
     ]
@@ -3534,7 +3712,7 @@
       {
         "method": "POST /webhooks/{webhook.id}/{webhook.token}",
         "type": "rest",
-        "description": "Post the OKR kickoff message into a Discord channel via webhook",
+        "description": "Post kickoff message to a Discord channel via webhook",
         "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
       }
     ]
@@ -3546,9 +3724,9 @@
     "productId": "slack",
     "calls": [
       {
-        "method": "POST /chat.postMessage",
+        "method": "POST /api/chat.postMessage",
         "type": "rest",
-        "description": "Send kickoff announcement message to a Slack channel",
+        "description": "Send kickoff message announcing OKRs to a channel",
         "sourceUrl": "https://docs.slack.dev/reference/methods/chat.postMessage"
       }
     ]
@@ -3560,16 +3738,30 @@
     "productId": "zulip",
     "calls": [
       {
-        "method": "POST /api/v1/messages",
+        "method": "POST /messages",
         "type": "rest",
-        "description": "Send a channel message to kick off the OKR announcement to the team",
+        "description": "Send a message to a channel/topic to announce the OKR kickoff",
         "sourceUrl": "https://zulip.com/api/"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n11",
+    "arenaId": "startup-banking",
+    "productId": "airwallex",
+    "calls": [
+      {
+        "method": "POST /v1/transfers",
+        "type": "rest",
+        "description": "Transfer remaining funds out to a bank account as part of winding down",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
       },
       {
-        "method": "zulip-send --help",
-        "type": "cli",
-        "description": "Send a message from a script/headless CLI to announce kickoff",
-        "sourceUrl": "https://zulip.com/api/installation-instructions"
+        "method": "POST /v1/batch_transfers",
+        "type": "rest",
+        "description": "Distribute remaining assets to multiple recipients in bulk",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
       }
     ]
   },
@@ -3886,8 +4078,28 @@
       {
         "method": "POST /v1/notarization",
         "type": "rest",
-        "description": "Creates a notarization request for the founder agreement/IP assignment document",
+        "description": "Create a notarization request for founder agreement/IP assignment document with AI-detected signature fields",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_002",
+    "nodeId": "n2",
+    "arenaId": "legal-ops",
+    "productId": "clerky",
+    "calls": [
+      {
+        "method": "POST /v1/document_sets",
+        "type": "rest",
+        "description": "Create a document set from a template to start generating founder/IP assignment documents",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      },
+      {
+        "method": "GET /v1/document_sets/{id}/forms",
+        "type": "rest",
+        "description": "Retrieve the forms needed to collect founder agreement and IP assignment data",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
       }
     ]
   },
@@ -3900,28 +4112,8 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Creates a notarization request, routing document for signature and notarization",
+        "description": "Create a notarization request for a document, routing it for signature/notarization",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
-      }
-    ]
-  },
-  {
-    "taskId": "startup_002",
-    "nodeId": "n3",
-    "arenaId": "legal-ops",
-    "productId": "clerky",
-    "calls": [
-      {
-        "method": "POST /v1/document_sets",
-        "type": "rest",
-        "description": "Create a document set that bundles documents/signatures for the agreement to be routed",
-        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
-      },
-      {
-        "method": "GET /v1/document_sets/{id}/forms",
-        "type": "rest",
-        "description": "Retrieve forms needed before documents can be submitted and signed",
-        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
       }
     ]
   },
@@ -4073,20 +4265,6 @@
     "taskId": "sw_002",
     "nodeId": "n4",
     "arenaId": "error-tracking",
-    "productId": "honeybadger",
-    "calls": [
-      {
-        "method": "POST /v1/notices",
-        "type": "rest",
-        "description": "Report exceptions/errors to Honeybadger for post-release monitoring",
-        "sourceUrl": "https://docs.honeybadger.io/api/reporting-exceptions/"
-      }
-    ]
-  },
-  {
-    "taskId": "sw_002",
-    "nodeId": "n4",
-    "arenaId": "error-tracking",
     "productId": "sentry",
     "calls": [
       {
@@ -4221,19 +4399,13 @@
     "taskId": "sw_010",
     "nodeId": "n5",
     "arenaId": "mcp-infrastructure",
-    "productId": "composio",
+    "productId": "metorial",
     "calls": [
       {
-        "method": "composio.sessions.create({ mcp: true })",
+        "method": "metorial.connect({ adapter, providers })",
         "type": "sdk",
-        "description": "Creates a Composio session with MCP enabled, exposing its hosted MCP server for agent tool access",
-        "sourceUrl": "https://docs.composio.dev/docs/sessions-via-mcp"
-      },
-      {
-        "method": "COMPOSIO_REMOTE_WORKBENCH",
-        "type": "mcp",
-        "description": "Meta-tool exposed via the shared Composio MCP server for running remote sandboxed operations",
-        "sourceUrl": "https://docs.composio.dev/docs/composio-connect"
+        "description": "Connect an AI agent session to MCP-enabled provider tools",
+        "sourceUrl": "https://metorial.com/developers"
       }
     ]
   },
@@ -4244,21 +4416,15 @@
     "productId": "smithery",
     "calls": [
       {
-        "method": "GET /servers",
-        "type": "rest",
-        "description": "Search Smithery registry for MCP servers keylessly",
-        "sourceUrl": "https://registry.smithery.ai/servers?pageSize=3"
-      },
-      {
         "method": "smithery mcp add <url>",
         "type": "cli",
-        "description": "Add an MCP server connection to the stack",
+        "description": "Add/connect an MCP server from the registry to the local stack",
         "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
       },
       {
         "method": "smithery mcp search [term]",
         "type": "cli",
-        "description": "Search the Smithery registry for a vendor's MCP server",
+        "description": "Search the Smithery registry for a vendor's MCP server before connecting",
         "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
       }
     ]
@@ -4298,7 +4464,7 @@
       {
         "method": "POST /files/content",
         "type": "rest",
-        "description": "Upload the franchise tax confirmation receipt file to Box",
+        "description": "Upload confirmation receipt file to Box for storage",
         "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
       }
     ]
@@ -4310,7 +4476,7 @@
     "productId": "dropbox",
     "calls": [
       {
-        "method": "dbx.filesUpload({ path, contents })",
+        "method": "dbx.filesUpload({path, contents})",
         "type": "sdk",
         "description": "Upload the confirmation receipt file to Dropbox storage",
         "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
@@ -4384,20 +4550,6 @@
         "type": "rest",
         "description": "Send financial package email to CPA",
         "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
-      }
-    ]
-  },
-  {
-    "taskId": "tax_002",
-    "nodeId": "n8",
-    "arenaId": "cloud-storage",
-    "productId": "box",
-    "calls": [
-      {
-        "method": "POST /chunked_uploads",
-        "type": "rest",
-        "description": "Upload the tax return file copy to Box for storage as a record",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
       }
     ]
   },
@@ -4488,16 +4640,72 @@
     "productId": "kintsugi",
     "calls": [
       {
-        "method": "GET /v1/nexus",
+        "method": "GET /reference/get-nexus-for-org",
         "type": "rest",
-        "description": "List all nexuses for the organization based on synced transaction data",
+        "description": "List all nexuses determined for the organization from synced billing data",
         "sourceUrl": "https://docs.trykintsugi.com/reference/get-nexus-for-org"
       },
       {
         "method": "POST /v1/tax/estimate",
         "type": "rest",
-        "description": "Calculate sales tax on synced billing transactions",
+        "description": "Price sales tax based on nexus, product taxability, and shipping address",
         "sourceUrl": "https://docs.trykintsugi.com/docs/api-guides/sales-tax-calculations"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_011",
+    "nodeId": "n2",
+    "arenaId": "tax-automation",
+    "productId": "stripe-tax",
+    "calls": [
+      {
+        "method": "GET /v1/tax/registrations",
+        "type": "rest",
+        "description": "List current tax registrations and monitored jurisdictions from nexus study",
+        "sourceUrl": "https://docs.stripe.com/tax/registering.md"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_011",
+    "nodeId": "n2",
+    "arenaId": "tax-automation",
+    "productId": "taxjar",
+    "calls": [
+      {
+        "method": "taxjar.nexusRegions()",
+        "type": "sdk",
+        "description": "List nexus regions where sales tax obligations exist based on connected billing data",
+        "sourceUrl": "https://github.com/taxjar/taxjar-node"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_011",
+    "nodeId": "n5",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Generic write tool used to enable automatic tax calculation/registration settings on the account",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_011",
+    "nodeId": "n6",
+    "arenaId": "tax-automation",
+    "productId": "kintsugi",
+    "calls": [
+      {
+        "method": "GET /reference/get-filings",
+        "type": "rest",
+        "description": "Retrieve paginated list of filings by jurisdiction/date/status to monitor scheduled remittance",
+        "sourceUrl": "https://docs.trykintsugi.com/reference/get-filings"
       }
     ]
   },
@@ -4524,7 +4732,7 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request to send the subscription document to signers",
+        "description": "Create a notarization request for the subscription document, sending it to signers",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
       }
     ]
@@ -4585,34 +4793,14 @@
   },
   {
     "taskId": "vendor_010",
-    "nodeId": "n1",
-    "arenaId": "mcp-infrastructure",
-    "productId": "smithery",
-    "calls": [
-      {
-        "method": "smithery mcp search [term]",
-        "type": "cli",
-        "description": "Search the Smithery registry for available MCP servers or integrations",
-        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
-      },
-      {
-        "method": "smithery mcp add <url>",
-        "type": "cli",
-        "description": "Add an MCP server connection, choosing the integration path for connecting a vendor",
-        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
-      }
-    ]
-  },
-  {
-    "taskId": "vendor_010",
     "nodeId": "n3",
     "arenaId": "mcp-infrastructure",
     "productId": "composio",
     "calls": [
       {
-        "method": "composio.mcp.create(name=\"my-gmail-server\", toolkits=[{\"toolkit\": \"gmail\", \"auth_config\": \"ac_xyz123\"}], allowed_tools=[\"GMAIL_FETCH_EMAILS\", \"GMAIL_SEND_EMAIL\"])",
+        "method": "composio.mcp.create(name=..., toolkits=..., allowed_tools=...)",
         "type": "sdk",
-        "description": "Create a hosted MCP server registered with specified toolkits and tools for the agent runtime",
+        "description": "Creates an MCP server registered with specified toolkits for the agent runtime",
         "sourceUrl": "https://docs.composio.dev/docs/single-toolkit-mcp.md"
       }
     ]
@@ -4626,7 +4814,7 @@
       {
         "method": "smithery mcp add <url>",
         "type": "cli",
-        "description": "Register an MCP server connection with the agent runtime",
+        "description": "Add/register an MCP server connection with the agent runtime via Smithery CLI",
         "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
       }
     ]
@@ -4640,7 +4828,7 @@
       {
         "method": "POST /notarization",
         "type": "rest",
-        "description": "Create a notarization request for a document with auto-detected signature fields",
+        "description": "Create a notarization request with auto-detected signature/date fields to prepare the document for signature",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
       }
     ]
@@ -4654,7 +4842,13 @@
       {
         "method": "POST /v1/document_sets",
         "type": "rest",
-        "description": "Create a document set from a template to bundle documents/signatures for signing",
+        "description": "Create a document set from a template to prepare the agreement",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      },
+      {
+        "method": "GET /v1/document_sets/{id}/forms",
+        "type": "rest",
+        "description": "Render the forms needing values before signature",
         "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
       }
     ]

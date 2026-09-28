@@ -47,6 +47,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   // Formation
   form_001: '🏛️', // Incorporate C-Corp
   form_011: '🧱', // Set up an LLC (the simpler building block)
+  form_012: '🦋', // Convert an LLC to a C-Corp (the metamorphosis into the venture-ready entity)
   form_002: '🆔', // Get EIN
   form_005: '🗺️', // Register state taxes
   qs_044: '📬', // Set up mailing address

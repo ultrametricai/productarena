@@ -24,9 +24,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 122 processes with unique, non-empty slugs', () => {
+  it('loads all 123 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(122)
+    expect(tasks.length).toBe(123)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -54,7 +54,9 @@ describe('corpus', () => {
     // aliases, so old indexed links keep landing somewhere honest.
     const folded: Array<[string, string]> = [
       ['incorporate-a-company', 'form_001'], // 2-step duplicate of the full incorporation flow
-      ['evaluate-c-corp-conversion', 'form_001'], // LLC-wizard branch — the answer IS incorporating
+      // 2026-09-28 old-process-site sweep: with the LLC path first-class (form_011), the honest
+      // keeper for the old conversion page is the ported statutory-conversion process itself.
+      ['evaluate-c-corp-conversion', 'form_012'],
       ['file-de-annual-report', 'tax_001'], // the DE annual report IS the franchise-tax filing
       ['file-an-annual-report-registered-agent', 'qs_047'], // duplicate of the state annual report
       ['set-up-website', 'site_001'], // wizard duplicate of "Generate a website"

@@ -242,10 +242,6 @@
       {
         "slug": "incorporate-a-company",
         "label": "Incorporate a company"
-      },
-      {
-        "slug": "evaluate-c-corp-conversion",
-        "label": "Evaluate C Corp conversion"
       }
     ],
     "timeOrder": 1,
@@ -256,7 +252,7 @@
   {
     "id": "form_011",
     "title": "Set up an LLC",
-    "description": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses \u2014 founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead (that flow, and the LLC\u2192C-Corp conversion question, live in Incorporate C-Corp).",
+    "description": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses \u2014 founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead, and an LLC that later takes that path runs the statutory conversion (see Convert an LLC to a C-Corp).",
     "phase": "formation",
     "cadence": "once",
     "complexity": "moderate",
@@ -16367,6 +16363,212 @@
     "totalEstimatedMinutes": 4390,
     "hasAsyncSteps": true,
     "timeOrder": 122,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
+  },
+  {
+    "id": "form_012",
+    "title": "Convert an LLC to a C-Corp",
+    "slugAliases": [
+      {
+        "slug": "evaluate-c-corp-conversion",
+        "label": "Evaluate C Corp conversion"
+      }
+    ],
+    "description": "The LLC is about to raise or grant options, so it becomes a Delaware C-Corp: assess the timing and tax consequences, get counsel's sign-off, have the members approve a plan of conversion, file the Certificate of Conversion together with the Certificate of Incorporation, then re-issue equity and refile 83(b) elections under the new corporation.",
+    "phase": "formation",
+    "cadence": "once",
+    "region": "us",
+    "complexity": "complex",
+    "category": "company_formation",
+    "supportLevel": "partial",
+    "supportReason": "The go/no-go call and counsel review are human judgment, member and founder signatures are legally required acts, and Delaware's conversion filing is portal/mail work with no API — the system preps documents and tracks progress but cannot file.",
+    "vendors": [
+      "clerky",
+      "legalzoom"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Assess whether and when to convert",
+          "route": "person",
+          "riskLevel": "medium",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n2",
+          "label": "Get tax and legal advice on the conversion",
+          "route": "person",
+          "riskLevel": "high",
+          "estimatedMinutes": 2880,
+          "async": true
+        },
+        {
+          "id": "n3",
+          "label": "Prepare the plan of conversion and C-Corp charter documents",
+          "route": "form",
+          "vendor": "clerky",
+          "vendorOptions": [
+            "clerky",
+            "legalzoom"
+          ],
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 30,
+          "functionCalls": [
+            {
+              "method": "clerky.conversion.prepare()",
+              "type": "manual",
+              "description": "Prepared on the formation service's portal"
+            }
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "Members sign the plan of conversion and written consent",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 10
+        },
+        {
+          "id": "n5",
+          "label": "File the Certificate of Conversion and Certificate of Incorporation",
+          "route": "form",
+          "vendor": "clerky",
+          "actionUrl": "https://corp.delaware.gov/howtoform/",
+          "actionLabel": "Delaware Division of Corporations",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n6",
+          "label": "Receive the stamped conversion and incorporation certificates",
+          "route": "person",
+          "estimatedMinutes": 2880,
+          "async": true
+        },
+        {
+          "id": "n7",
+          "label": "Adopt bylaws and issue founder stock under the C-Corp",
+          "route": "form",
+          "vendor": "clerky",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n7b",
+          "label": "Founders sign the new stock purchase agreements",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 5
+        },
+        {
+          "id": "n8a",
+          "label": "Sign the 83(b) elections",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 5
+        },
+        {
+          "id": "n8",
+          "label": "File the 83(b) elections with the IRS",
+          "route": "form",
+          "actionUrl": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
+          "actionLabel": "IRS Form 15620 (83(b) election)",
+          "vendor": "irs",
+          "riskLevel": "high",
+          "estimatedMinutes": 15,
+          "async": true,
+          "functionCalls": [
+            {
+              "method": "USPS certified mail to IRS",
+              "type": "manual",
+              "description": "Must be mailed within 30 days of the stock purchase"
+            }
+          ]
+        },
+        {
+          "id": "n9",
+          "label": "Update bank, payroll, and state registrations to the corporation",
+          "route": "form",
+          "riskLevel": "medium",
+          "estimatedMinutes": 30
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        },
+        {
+          "from": "n7",
+          "to": "n7b"
+        },
+        {
+          "from": "n7b",
+          "to": "n8a"
+        },
+        {
+          "from": "n8a",
+          "to": "n8"
+        },
+        {
+          "from": "n8",
+          "to": "n9"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "fundraising timeline",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "LLC members and ownership split",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "formation",
+      "legal",
+      "llc",
+      "equity"
+    ],
+    "activeMinutes": 150,
+    "totalEstimatedMinutes": 5925,
+    "hasAsyncSteps": true,
+    "timeOrder": 123,
     "annoyance": 4,
     "risk": 4,
     "growthImpact": 1
