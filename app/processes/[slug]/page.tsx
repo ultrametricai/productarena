@@ -62,6 +62,21 @@ const SUPPORT_LABELS: Record<string, string> = {
   manual_guide: 'guided manual',
 }
 
+// Open-startup toolkit hook (founder 2026-09-28): the equity/fundraising processes point
+// at the cap-table calculator (/tools/cap-table, lib/openstartup/capTable.ts) where a
+// step means modeling ownership. Keyed by corpus task id; one sentence anchors WHY the
+// tool applies to this process.
+const CAP_TABLE_TOOL_BLURBS: Record<string, string> = {
+  fund_001: 'Before you sign SAFEs, see exactly what ownership each cap and discount sells.',
+  fund_002: 'Model the round before the term sheet: pool shuffle, SAFE conversion, final ownership.',
+  fund_006: 'Run the conversion math live — caps vs discounts vs the round price, pro rata carve-outs.',
+  fund_003: 'The 409A starts from a clean fully-diluted share count — model yours first.',
+  fund_004: 'Check the unissued pool and its dilution before promising options.',
+  qs_051: 'Start from a modeled table: founders, pool, SAFEs, with the math cited.',
+  qs_052: 'Re-model after each SAFE or grant so the fully-diluted view stays honest.',
+  qs_053: 'Rebuild the table from first principles and diff it against your records.',
+}
+
 export default async function ProcessPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const task = findProcessBySlug(slug)
@@ -81,6 +96,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // Jurisdiction-conditional steps (stripped from every default surface by loadProcesses) —
   // serialized for the client-side toggle; [] for the many processes that don't branch.
   const jurisSteps = jurisdictionStepViews(task.id)
+  const capTableBlurb = CAP_TABLE_TOOL_BLURBS[task.id]
 
   return (
     <div className="space-y-10">
@@ -134,6 +150,17 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         </div>
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {capTableBlurb && (
+          <p className="mt-3 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
+            {capTableBlurb}{' '}
+            <Link
+              href="/tools/cap-table"
+              className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+            >
+              model this on the cap-table tool →
+            </Link>
+          </p>
+        )}
       </section>
 
       {/* Founder 2026-09-18: the process ITSELF leads — who covers it, then the step-by-step
