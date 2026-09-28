@@ -20,6 +20,42 @@ describe('ai-stacks data', () => {
   })
 })
 
+describe('gstack (Garry Tan) curated stack', () => {
+  // resolveStack silently drops picks that stop resolving (dead product, renamed arena) — for an
+  // externally-attributed stack that silent degradation would misrepresent the source, so pin
+  // every member explicitly.
+  it('sits first on the page and every curated pick resolves against judged data', () => {
+    const stacks = loadAiStacks(DATA_DIR)
+    expect(stacks[0]?.id).toBe('gstack')
+    const gstack = stacks[0]!
+    const resolved = resolveStack(gstack, loadAll(DATA_DIR))
+    const byRole = new Map(resolved.slots.map((s) => [s.role, s]))
+    for (const [role, productId] of [
+      ['Coding agent', 'claude-code'],
+      ['Runtime & package manager', 'bun'],
+      ['Backend & knowledge store', 'supabase'],
+      ['Private mesh network', 'tailscale'],
+    ] as const) {
+      const slot = byRole.get(role)
+      expect(slot, `gstack/${role}: slot dropped — pick no longer resolves`).toBeTruthy()
+      expect(slot!.productId).toBe(productId)
+      expect(slot!.metricValue).not.toBeNull()
+    }
+  })
+
+  it('records its source URL, attribution, and liveness/as-of dates in the data entry', () => {
+    const gstack = loadAiStacks(DATA_DIR).find((s) => s.id === 'gstack')!
+    expect(gstack.name).toBe('gstack (Garry Tan)')
+    expect(gstack.tagline).toContain('github.com/garrytan/gstack')
+    expect(gstack.tagline).toMatch(/as of \d{4}-\d{2}-\d{2}/)
+    const source = gstack.slots
+      .map((s) => s.pick)
+      .find((p): p is Extract<typeof p, { kind: 'editorial' }> => p.kind === 'editorial')
+    expect(source?.url).toBe('https://github.com/garrytan/gstack')
+    expect(source?.note).toMatch(/verified live \d{4}-\d{2}-\d{2}/)
+  })
+})
+
 describe('resolveStack', () => {
   it('resolves arena-top slots to the metric leader and keeps editorial slots labeled', () => {
     const categories = loadAll(DATA_DIR)
