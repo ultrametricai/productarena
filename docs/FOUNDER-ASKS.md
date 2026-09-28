@@ -173,11 +173,12 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | **URGENT post-cutover**: Vercel env NEXT_PUBLIC_SITE_URL still = "https://ultrametric.ai/productarena" — poisons og:url, sitemap.xml, RSS link, auth return_to on the LIVE site. Fix: `vercel env rm NEXT_PUBLIC_SITE_URL production` (code default is correct) then redeploy — or edit in dashboard. Classifier blocks me from secret-store writes | blocked (founder — Vercel env, 1 min) |
 | **URGENT post-cutover**: WorkOS dashboard — redirect URI → https://ultrametric.ai/auth/callback, logout URI → https://ultrametric.ai (login 302 already sends the new redirect_uri; WorkOS will reject it until allowlisted) | blocked (founder — WorkOS dashboard) |
 | Homepage main table: companies only — collapse multi-product families to the parent (one Stripe row) | open — inline now |
-| Homepage ("Open rankings for the AI era"): drop the 'MCP' toggle from the main table controls | open (founder 2026-09-28) |
-| gstack (Garry Tan) added to /stacks | in flight — lane running |
-| GEO dimension: process geo-scope + IN/UK/EU vendor availability spikes | in flight — lane running |
-| "Open startup repo" lift: business-logic toolkit, cap-table engine first | in flight — lane running |
-| Virtual Startup: compact controls so terminal is above the fold | in flight — lane running |
+| Homepage ("Open rankings for the AI era", now at /overall): drop the 'MCP' toggle from the main table controls | shipped 2026-09-28 |
+| gstack (Garry Tan) added to /stacks | shipped 2026-09-28 (top slot, attributed, roster gaps recorded) |
+| GEO dimension: process geo-scope + IN/UK/EU vendor availability spikes | shipped 2026-09-28 (123 geoScopes, 31 country notes, 114 vendor-geo rows) |
+| "Open startup repo" lift: cap-table engine + founder-ops corpus structure (stage 1) | shipped 2026-09-28 (lib/openstartup, /tools/cap-table, corpus tree + lib/founderOps.ts gates; stages 2–3 in docs/FOUNDER-OPS.md) |
+| Virtual Startup: compact controls so terminal is above the fold | shipped 2026-09-28 |
+| Homepage revert: '/' = landing site again, product homepage at /overall, bare /productarena → /overall | shipped 2026-09-28 (worker) |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
 
 ## Shipped (recent — see git log for full history)
