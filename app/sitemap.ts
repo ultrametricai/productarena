@@ -42,7 +42,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/my-stack`, lastModified: now },
     { url: `${SITE_URL}/stacks/battle`, lastModified: now },
     // Open-startup toolkit (lib/openstartup/): founder-usable business-logic tools.
-    { url: `${SITE_URL}/tools/cap-table`, lastModified: now },
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
     { url: `${SITE_URL}/rankings/ai-native`, lastModified: now },
     { url: `${SITE_URL}/rankings/claims-integrity`, lastModified: now },

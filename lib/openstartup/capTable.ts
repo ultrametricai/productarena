@@ -3,7 +3,7 @@
 // repo for all founders — business logic for things like cap tables").
 //
 // Pure, client-safe (no node builtins), deterministic. Consumed by
-// components/CapTableTool.tsx (/tools/cap-table) and exhaustively tested in
+// repo-only since 2026-09-28 (founder: the logic lives here, no site page) — exhaustively tested in
 // lib/openstartup/__tests__/capTable.test.ts — the test file is written to read like a
 // textbook and re-derives every published worked example.
 //
