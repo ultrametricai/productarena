@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 // Vendor region-availability EVIDENCE (founder GEO ask 2026-09-28: "do spikes into India, UK,
 // European countries … whether the vendors are tuned for those regions or work globally").
-// data/vendor-geo.json holds one row per (product, country) for the top vendors of the most
+// jurisdictions/vendor-geo.json holds one row per (product, country) for the top vendors of the most
 // geo-sensitive arenas — startup-banking, payroll, legal-ops, tax-automation, payments,
 // accounting — each grounded in the vendor's OWN pages (help center, docs, availability
 // tables), crawl-verified live, honest negatives recorded (Mercury/Brex/Ramp/Gusto really are
@@ -56,10 +56,15 @@ const DEFAULT_DIR = () => path.join(process.cwd(), 'data')
 
 const cache = new Map<string, VendorGeoEntry[]>()
 
+// Stage 2 of the corpus lift (docs/FOUNDER-OPS.md): the geo evidence moved out of data/ into
+// jurisdictions/. `dir` stays the arena-data dir (same convention as lib/processes.ts); the
+// evidence file resolves as a sibling of it, so every call site keeps working unchanged.
+const geoFile = (dir: string) => path.join(dir, '..', 'jurisdictions', 'vendor-geo.json')
+
 export function loadVendorGeo(dir: string = DEFAULT_DIR()): VendorGeoEntry[] {
   const hit = cache.get(dir)
   if (hit) return hit
-  const file = path.join(dir, 'vendor-geo.json')
+  const file = geoFile(dir)
   const entries = fs.existsSync(file)
     ? VendorGeoEntrySchema.array().parse(JSON.parse(fs.readFileSync(file, 'utf8')))
     : []
