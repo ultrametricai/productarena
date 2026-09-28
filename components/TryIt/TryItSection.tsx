@@ -51,7 +51,7 @@ export default function TryItSection({
           : ''}{' '}
         sandboxed self-drive sessions are designed and gated (
         <a
-          href="https://github.com/ultrametricai/productarena/blob/main/docs/TRY-IT.md"
+          href="https://github.com/ultrametricai/ultrametric/blob/main/docs/TRY-IT.md"
           target="_blank"
           rel="noopener noreferrer"
           className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"

@@ -16,9 +16,9 @@ Attach or inline: drafts/outreach/linear/cert-report.json
 
 Hi — this is a heads-up with a small gift attached, not a request.
 
-We maintain ProductArena, an open, evidence-based tracker of how agent-ready developer
+We maintain Ultrametric, an open, evidence-based tracker of how agent-ready developer
 products are. Part of it is a keyless, read-only conformance suite anyone can run
-(`npx productarena certify <url>`) covering the surfaces agents depend on: `llms.txt`,
+(`npx ultrametric-cli certify <url>`) covering the surfaces agents depend on: `llms.txt`,
 markdown doc mirrors, OpenAPI at conventional paths, an MCP initialize handshake, robots.txt,
 and structured errors.
 
@@ -34,9 +34,9 @@ suite from passing. Re-running it on 2026-09-11, that's fixed on your side — i
 - OpenAPI at a conventional path: fail (expected — your API is GraphQL)
 
 The full machine-verifiable report (per-request URLs, statuses, digests) is attached. If you'd
-like the dated certification to show on your ProductArena page, it's one issue form and takes
+like the dated certification to show on your Ultrametric page, it's one issue form and takes
 minutes — or ignore this entirely and the result stands as a maintainer-run record either way:
-https://ultrametric.ai/productarena/arena/project-management/product/linear
+https://ultrametric.ai/arena/project-management/product/linear
 
 The only check between you and the top level (Agent-Native) is a machine-readable schema at a
 conventional path. For a GraphQL API the equivalent would be serving the SDL (the schema you

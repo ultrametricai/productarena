@@ -5,7 +5,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import ShutdownBadge from '@/components/ShutdownBadge'
-import { adjacentProducts, findProductArena, rivalsFor } from '@/lib/alternatives'
+import { adjacentProducts, findUltrametric, rivalsFor } from '@/lib/alternatives'
 import { loadAll } from '@/lib/data'
 import { humanizeTheme } from '@/lib/icons'
 import { SITE_URL } from '@/lib/site'
@@ -32,14 +32,14 @@ export async function generateMetadata({
   params: Promise<{ product: string }>
 }): Promise<Metadata> {
   const { product: productId } = await params
-  const found = findProductArena(loadAll(), productId)
-  if (!found) return { title: 'Alternatives — ProductArena' }
+  const found = findUltrametric(loadAll(), productId)
+  if (!found) return { title: 'Alternatives — Ultrametric' }
   const { data, product } = found
   const year = new Date().getFullYear()
   const rivals = rivalsFor(data, productId)
   const topNames = rivals.slice(0, 3).map((r) => r.product.name).join(', ')
   return {
-    title: `Alternatives to ${product.name} (${year}) — evidence-scored — ProductArena`,
+    title: `Alternatives to ${product.name} (${year}) — evidence-scored — Ultrametric`,
     description: `The best ${product.name} alternatives in ${year}, ranked by evidence — ${topNames} and ${Math.max(rivals.length - 3, 0)} more ${data.category.name} products, each judged against the same user stories with cited proof, never opinion.`,
     alternates: { canonical: `${SITE_URL}/alternatives/${productId}` },
   }
@@ -48,7 +48,7 @@ export async function generateMetadata({
 export default async function AlternativesPage({ params }: { params: Promise<{ product: string }> }) {
   const { product: productId } = await params
   const categories = loadAll()
-  const found = findProductArena(categories, productId)
+  const found = findUltrametric(categories, productId)
   if (!found) notFound()
   const { data, product } = found
   const rivals = rivalsFor(data, productId)

@@ -16,7 +16,7 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 // stays open (no notFound) but is left out of app/sitemap.ts, since the content is session-gated.
 
 export const metadata: Metadata = {
-  title: 'Watchlist — ProductArena',
+  title: 'Watchlist — Ultrametric',
   description: 'Products you starred across every arena, with current scores and 30-day trends. Saved to your account.',
   // Session-gated content, same posture as /account and /processes/*/mine.
   robots: { index: false, follow: false },
@@ -53,7 +53,7 @@ export default function WatchlistPage() {
       <div>
         <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Watchlist</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          Products you starred (☆ → ★) anywhere on ProductArena, with their current scores and
+          Products you starred (☆ → ★) anywhere on Ultrametric, with their current scores and
           score trend. Saved to your account.
         </p>
       </div>

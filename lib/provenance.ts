@@ -8,12 +8,14 @@ import type { Rankings } from './schemas'
 // against a suspected copy) can recompute HMAC(key, arenaId + "\n" + sha256(content)) and check
 // it matches — see pipeline/scripts/verify-provenance.ts. Everything here is a pure function of
 // the rankings content + arena id, so pipeline/scripts/recompute-check.ts stays deterministic.
+// Legacy-named from the pre-rebrand ProductArena era ON PURPOSE: this string is the HMAC key,
+// so renaming it would invalidate the fingerprint on every published dataset file.
 export const PROVENANCE_KEY = 'productarena-provenance-v1'
 export const PROVENANCE_OWNER = 'Ultrametric Inc'
 export const PROVENANCE_LICENSE = 'see DATA-LICENSE'
 // Deliberately NOT lib/site.ts's SITE_URL: that reads NEXT_PUBLIC_SITE_URL, and the watermark
 // written into committed data files must not vary with the build environment.
-export const PROVENANCE_SOURCE = 'https://ultrametric.ai/productarena'
+export const PROVENANCE_SOURCE = 'https://ultrametric.ai'
 const FINGERPRINT_HEX_CHARS = 32 // truncated SHA-256 HMAC — 128 bits is plenty for a watermark
 
 export interface Provenance {

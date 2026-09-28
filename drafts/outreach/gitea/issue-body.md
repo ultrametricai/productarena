@@ -13,6 +13,6 @@ Hi — we drafted an `llms.txt` for the Gitea documentation and are offering it 
 
 AI disclosure (per the Gitea AI Contribution Policy in CONTRIBUTING.md): the file and this text were drafted with AI assistance. I reviewed every line, ran the link verification myself, can explain and revise any of it, and will answer questions personally.
 
-For provenance: we maintain ProductArena, an open, evidence-based tracker of how agent-ready developer products are, and Gitea's page there is what surfaced the gap (our probe found `docs.gitea.com/llms.txt` returning 404): https://ultrametric.ai/productarena/arena/code-hosting/product/gitea
+For provenance: we maintain Ultrametric, an open, evidence-based tracker of how agent-ready developer products are, and Gitea's page there is what surfaced the gap (our probe found `docs.gitea.com/llms.txt` returning 404): https://ultrametric.ai/arena/code-hosting/product/gitea
 
 No expectation attached — if this isn't something the project wants, please just close this issue, and sorry for the noise. If it's welcome but you'd rather restructure or trim it, it's plain markdown; happy to adjust or for you to take it over entirely.

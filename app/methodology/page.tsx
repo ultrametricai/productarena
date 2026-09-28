@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Methodology — ProductArena',
+  title: 'Methodology — Ultrametric',
   description: 'Evidence tiers, judging, scoring, the Overall score, story provenance, and bias disclosure — full writeup on GitHub.',
 }
 
@@ -18,7 +18,7 @@ export default function MethodologyPage() {
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Methodology</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">How ProductArena scores products</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">How Ultrametric scores products</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Evidence in, rankings out. Every claim traces back to a cited evidence item — vendor docs, GitHub, an
           independent community source, or a hands-on probe — and an LLM judge scores every product user story (each product × user story pair)

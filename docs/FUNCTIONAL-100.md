@@ -13,7 +13,7 @@ glyph, 375px no page-scroll, N/100 pills with dimmed `/100`, honest empty states
 ## Bugs & correctness
 
 1. `[done]` components/ProductLogoView.tsx — no-logo fallback was a `<div>` rendered inside `<p>`/`<a>` call sites (e.g. /missing "Current leader" line): invalid HTML that caused a real React #418 hydration failure on /missing (caught by the crawl). Now a `<span>` with identical flex styling.
-2. `[done]` app/proofs/page.tsx — hardcoded `ultrametricai/productarena` GitHub URL replaced with the `REPO` constant from lib/site; the one link site-wide that would silently go stale on a repo rename.
+2. `[done]` app/proofs/page.tsx — hardcoded `ultrametricai/ultrametric` GitHub URL replaced with the `REPO` constant from lib/site; the one link site-wide that would silently go stale on a repo rename.
 3. `[open]` public/badges — the crawl found ~30 badge SVG 404s (bugsnag, expensify, grok, notebooklm, navan…): products added after the last badge generation have no `<id>-agent-ready.svg`/`<id>-arena-score.svg`. Regenerate via the badge script (asset regen, not a code diff).
 4. `[open]` app/arena/[category]/page.tsx + app/my-stack — crawl shows h1 textContent duplicated ("AI Coding Agents arenaAI Coding Agents", "My Stack — recommendations…My Stack"): sr-only + visible copy read twice by screen readers; verify the sr-only span is genuinely needed or mark the visible twin `aria-hidden`.
 
@@ -131,7 +131,7 @@ glyph, 375px no page-scroll, N/100 pills with dimmed `/100`, honest empty states
 ## Copy precision & cross-page consistency
 
 95. `[done]` app/not-found.tsx — "Global Arena ranking" renamed "Highest PA Score ranking" to match the destination page's h1 and the nav label (stale pre-rename terminology).
-96. `[done]` app/arena/[category]/product/[id]/page.tsx — page `<title>` now ends "— ProductArena" like every other page on the site.
+96. `[done]` app/arena/[category]/product/[id]/page.tsx — page `<title>` now ends "— Ultrametric" like every other page on the site.
 97. `[done]` app/everything/page.tsx — gains `robots: { index: false, follow: false }` like the other three deliberately unlisted pages (/gifts, /experiments/*).
 98. `[done]` app/arena/[category]/page.tsx — the "Arena" eyebrow now links back up (its own children's eyebrows already link back to the arena; same pattern one level higher).
 99. `[open]` app/rankings/init vs product page vs report — the same coverage number is labeled "story coverage", "Coverage score", and "raw coverage score"; standardize one casing/label.

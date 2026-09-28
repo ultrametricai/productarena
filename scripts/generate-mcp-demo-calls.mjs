@@ -7,7 +7,7 @@
 // vendor's endpoint before being committed (curation rule: if the call needs auth, writes
 // anything, or spends anything, it does not belong here). Keys are "arena/productId" and must
 // exist in the MCP_ENDPOINTS allowlist (lib/mcpEndpoints.ts), with one exception:
-// "self/productarena" — our own /productarena/mcp endpoint, which the worker dispatches
+// "self/productarena" — our own /mcp endpoint, which the worker dispatches
 // in-process (a worker fetch()ing its own route would hit the origin instead of the handler).
 //
 // Output: lib/mcpDemoCalls.ts (imported by the site) — and the SAME map must be pasted into
@@ -21,6 +21,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+// Legacy-named from the pre-rebrand ProductArena era on purpose: this key must stay in sync
+// with data/mcp-demo-calls.json AND worker.js's MCP_DEMO_CALLS (a unit test enforces it).
 const SELF_KEY = 'self/productarena'
 
 const demoCalls = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'mcp-demo-calls.json'), 'utf8'))

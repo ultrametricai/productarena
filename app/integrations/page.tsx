@@ -16,7 +16,7 @@ import {
 import { hasLogo } from '@/lib/logos'
 
 export const metadata: Metadata = {
-  title: 'Integration graph — ProductArena',
+  title: 'Integration graph — Ultrametric',
   description:
     'Who verifiably connects to whom: every edge between tracked products is backed by a verbatim quote from collected evidence — no edge without a receipt, and a missing edge only ever means no evidence was found.',
 }

@@ -33,7 +33,7 @@ function stubLocalStorage() {
 
 const PAGE_KEY = 'task-x'
 const STORAGE_KEY = lensStorageKey(PAGE_KEY)
-const PATH = '/productarena/processes/task-x'
+const PATH = '/processes/task-x'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
 const params = () => new URLSearchParams(window.location.search)
 const storedPicks = () => parseLensState(window.localStorage.getItem(STORAGE_KEY)).picks

@@ -186,10 +186,10 @@ export async function GET() {
   const spec = {
     openapi: '3.1.0',
     info: {
-      title: 'ProductArena Data API',
+      title: 'Ultrametric Data API',
       version: '1.0.0',
       description:
-        'Read-only, statically-served JSON data behind ultrametric.ai/productarena — the same files the site itself renders from. ' +
+        'Read-only, statically-served JSON data behind ultrametric.ai — the same files the site itself renders from. ' +
         'No auth, no rate limit beyond normal CDN caching. See /llms.txt for a full agent-facing index and /methodology for ' +
         'how the underlying scores and verdicts are produced.',
       contact: { url: `${SITE}/llms.txt` },

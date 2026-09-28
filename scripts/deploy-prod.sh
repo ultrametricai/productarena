@@ -16,7 +16,7 @@ REPO=/Users/judegomila/Documents/GitHub/productarena
 DEPLOY=/tmp/pa-deploy
 
 if [ ! -d "$DEPLOY/.git" ]; then
-  git clone --depth 1 https://github.com/ultrametricai/productarena.git "$DEPLOY"
+  git clone --depth 1 https://github.com/ultrametricai/ultrametric.git "$DEPLOY"
 fi
 cp -R "$REPO/.vercel" "$DEPLOY/.vercel" 2>/dev/null || true
 cd "$DEPLOY"

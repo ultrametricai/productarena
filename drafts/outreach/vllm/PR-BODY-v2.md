@@ -44,10 +44,10 @@ this PR can confirm the file lands in the build output.
 
 All 50 links 200 OK; no code paths touched, so no test-suite impact.
 
-For provenance: we maintain ProductArena, an open, evidence-based tracker of how agent-ready
+For provenance: we maintain Ultrametric, an open, evidence-based tracker of how agent-ready
 developer products are, and vLLM's page there is what surfaced the gap (our probe found
 `docs.vllm.ai/llms.txt` returning 404):
-https://ultrametric.ai/productarena/arena/local-llm-runtimes/product/vllm
+https://ultrametric.ai/arena/local-llm-runtimes/product/vllm
 
 No expectation attached — if this isn't something the project wants, please just close, and
 sorry for the noise. If it's welcome but you'd rather restructure or trim it, it's plain

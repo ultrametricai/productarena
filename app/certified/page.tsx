@@ -14,16 +14,16 @@ import type { Product } from '@/lib/schemas'
 import { REPO } from '@/lib/site'
 
 // The Agent-Ready certification registry: every product that has passed the self-serve
-// conformance suite (`productarena certify <url>`, protocol in docs/CERTIFICATION.md), with
+// conformance suite (`ultrametric-cli certify <url>`, protocol in docs/CERTIFICATION.md), with
 // its level, date, and the committed machine-verifiable report. Static by construction — the
 // registry is data/<arena>/certifications.json, read at build time like everything else.
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Certified Agent-Ready — ProductArena',
+  title: 'Certified Agent-Ready — Ultrametric',
   description:
-    'Products certified through ProductArena’s keyless Agent-Ready conformance suite — llms.txt, docs .md mirrors, OpenAPI, a real MCP handshake, robots posture, and structured errors — each with a dated, machine-verifiable report.',
+    'Products certified through Ultrametric’s keyless Agent-Ready conformance suite — llms.txt, docs .md mirrors, OpenAPI, a real MCP handshake, robots posture, and structured errors — each with a dated, machine-verifiable report.',
 }
 
 const DOCS_URL = `https://github.com/${REPO}/blob/main/docs/CERTIFICATION.md`
@@ -67,7 +67,7 @@ function ProgramExplainer() {
       <p>
         Certification is <span className="text-zinc-200">self-serve and keyless</span>: a vendor runs{' '}
         <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-xs text-emerald-300">
-          npx productarena certify &lt;url&gt; --report cert-report.json
+          npx ultrametric-cli certify &lt;url&gt; --report cert-report.json
         </code>{' '}
         against their own product. The suite checks the surfaces agents actually depend on — llms.txt, docs served as
         markdown, an OpenAPI spec, a real MCP initialize handshake, robots.txt posture, and structured JSON errors —
@@ -120,7 +120,7 @@ export default function CertifiedPage() {
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Certified Agent-Ready</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          Products that passed ProductArena&apos;s Agent-Ready conformance suite, each with a dated,
+          Products that passed Ultrametric&apos;s Agent-Ready conformance suite, each with a dated,
           machine-verifiable report anyone can re-run.
         </p>
       </div>

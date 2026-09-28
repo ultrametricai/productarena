@@ -10,7 +10,7 @@
 //   star    — star polygon {n/k}: n vertices (5–9) on a circle, every k-th connected. When
 //             gcd(n,k) > 1 the figure degrades into its compound form — e.g. {6/2} is the
 //             hexagram's two interlocking triangles, the same two-triangle construction as
-//             the ProductArena logo mark.
+//             the Ultrametric logo mark.
 //   phyllo  — phyllotaxis dot spiral: dot i sits at angle i·137.5077…° (the golden angle,
 //             360°/φ²) and radius ∝ √i — the sunflower-seed packing.
 //   dendro  — an ultrametric dendrogram: leaves on a common baseline merging at hash-chosen

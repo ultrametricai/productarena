@@ -1,4 +1,4 @@
-# Product Arena v2 — Design Spec
+# Ultrametric v2 — Design Spec
 
 **Date:** 2026-08-27
 **Status:** Approved in chat (user: "good to build that")

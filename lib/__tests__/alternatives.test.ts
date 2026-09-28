@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { adjacentProducts, domainThemes, findProductArena, rivalsFor } from '@/lib/alternatives'
+import { adjacentProducts, domainThemes, findUltrametric, rivalsFor } from '@/lib/alternatives'
 import type { CategoryData } from '@/lib/data-helpers'
 import type { Rankings, Story } from '@/lib/schemas'
 
@@ -89,13 +89,13 @@ const infra = arena(
 
 const categories = [pay, pos, infra]
 
-describe('findProductArena', () => {
+describe('findUltrametric', () => {
   it('resolves a product to its first arena, deterministically', () => {
-    expect(findProductArena(categories, 'x')?.data.category.id).toBe('pay')
+    expect(findUltrametric(categories, 'x')?.data.category.id).toBe('pay')
     // p1 exists only in pos; a duplicated id would resolve to the earlier category.
     const dupe = [pos, arena('pay2', ['p1'], [])]
-    expect(findProductArena(dupe, 'p1')?.data.category.id).toBe('pos')
-    expect(findProductArena(categories, 'ghost')).toBeNull()
+    expect(findUltrametric(dupe, 'p1')?.data.category.id).toBe('pos')
+    expect(findUltrametric(categories, 'ghost')).toBeNull()
   })
 })
 

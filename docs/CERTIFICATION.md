@@ -6,17 +6,17 @@ own product in one command, covering the surfaces agents actually depend on. Pas
 **dated certification** with the machine-verifiable report attached — public, re-runnable by
 anyone, and expiring after 180 days.
 
-The current implementation: the suite is `productarena certify` (`cli/src/certify.ts`), the
+The current implementation: the suite is `ultrametric-cli certify` (`cli/src/certify.ts`), the
 registry is `data/<arena>/certifications.json` (`CertificationSchema` in
 `lib/certifications.ts`, loaded tolerant-optionally by `lib/data.ts`), the public listing is
-[/certified](https://ultrametric.ai/productarena/certified), intake is the
+[/certified](https://ultrametric.ai/certified), intake is the
 [Certification](../.github/ISSUE_TEMPLATE/certification.yml) issue form, and badges come from
 `scripts/generate-badges.mjs` (`<productId>-certified.svg`).
 
 ## 1. The suite
 
 ```
-npx productarena certify https://docs.your-product.com --report cert-report.json
+npx ultrametric-cli certify https://docs.your-product.com --report cert-report.json
 ```
 
 Six checks, all keyless, read-only, and run from the operator's machine against public

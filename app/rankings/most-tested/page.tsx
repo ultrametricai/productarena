@@ -43,7 +43,7 @@ export function generateMetadata(): Metadata {
   const rows = buildTestedRows(loadAll())
   const leader = rows[0]
   return {
-    title: `Most tested — all ${rows.length} products ranked by tested-evidence share — ProductArena`,
+    title: `Most tested — all ${rows.length} products ranked by tested-evidence share — Ultrametric`,
     description: `Whose verdicts rest on hands-on probes and inspectable source rather than vendor claims? ${leader ? `${leader.product.name} leads with ${pct(leader.confidence.testedShare)} of applicable cells tested.` : ''} The scores themselves are unchanged — this ranks their footing.`,
   }
 }

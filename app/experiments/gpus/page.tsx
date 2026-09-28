@@ -9,7 +9,7 @@ import raw from '@/data/experiments/gpus.json'
 // publish, side by side, with per-cell sourcing. Linked from the arena header
 // ("Raw spec table →"); the arena link below is the way back.
 export const metadata: Metadata = {
-  title: 'GPU spec table — ProductArena',
+  title: 'GPU spec table — Ultrametric',
   description:
     'Raw vendor-spec annex of the GPUs & AI Accelerators arena: current consumer and datacenter GPU specs side by side, curated from vendor spec sheets with per-cell sourcing.',
 }

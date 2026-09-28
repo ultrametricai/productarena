@@ -13,14 +13,14 @@ import { SITE_URL, withBase } from '@/lib/site'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Score badges — ProductArena',
+  title: 'Score badges — Ultrametric',
   description:
-    'Embeddable agent-ready and Overall score badges for every product ProductArena ranks — hotlink the SVG and your badge always shows the live current score.',
+    'Embeddable agent-ready and Overall score badges for every product Ultrametric ranks — hotlink the SVG and your badge always shows the live current score.',
 }
 
 const BADGE_KINDS = [
-  { suffix: 'agent-ready', alt: 'ProductArena agent-ready score' },
-  { suffix: 'arena-score', alt: 'ProductArena Overall score' },
+  { suffix: 'agent-ready', alt: 'Ultrametric agent-ready score' },
+  { suffix: 'arena-score', alt: 'Ultrametric Overall score' },
 ] as const
 
 function snippets(productId: string, categoryId: string, suffix: string, alt: string) {

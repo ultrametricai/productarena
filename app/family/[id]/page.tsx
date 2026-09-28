@@ -27,9 +27,9 @@ export async function generateMetadata({
   const { id } = await params
   const family = loadFamilies().find((f) => f.id === id)
   return {
-    title: `${family ? family.name : id}, product by product — ProductArena`,
+    title: `${family ? family.name : id}, product by product — Ultrametric`,
     description: family
-      ? `${family.name}'s product lines broken out one by one: which are judged in a ProductArena arena (with live rank and Overall score) and which have no arena yet.`
+      ? `${family.name}'s product lines broken out one by one: which are judged in an Ultrametric arena (with live rank and Overall score) and which have no arena yet.`
       : undefined,
   }
 }

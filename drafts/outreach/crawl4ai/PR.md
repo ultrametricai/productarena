@@ -32,10 +32,10 @@ Placement: `docs/md_v2/llms.txt` (`docs_dir` in mkdocs.yml), which MkDocs copies
 the site root. Crawl4AI's users are, almost by definition, building LLM pipelines — their
 agents get a reliable entry point into the current docs instead of scraping guesses.
 
-For provenance: we maintain ProductArena, an open, evidence-based tracker of how agent-ready
+For provenance: we maintain Ultrametric, an open, evidence-based tracker of how agent-ready
 developer products are, and Crawl4AI's page there is what surfaced the gap (our probe found
 `docs.crawl4ai.com/llms.txt` returning 404):
-https://ultrametric.ai/productarena/arena/web-scraping/product/crawl4ai
+https://ultrametric.ai/arena/web-scraping/product/crawl4ai
 
 No expectation attached — if this isn't something the project wants, please just close, and
 sorry for the noise. If it's welcome but you'd rather restructure or trim it (or generate it

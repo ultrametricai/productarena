@@ -70,7 +70,7 @@ export function generateMetadata(): Metadata {
   const { risers, fallers } = buildTrendIndex(loadAll())
   const top = risers[0]
   return {
-    title: `Rising & falling — biggest ${TREND_WINDOW_DAYS}-day Overall score moves — ProductArena`,
+    title: `Rising & falling — biggest ${TREND_WINDOW_DAYS}-day Overall score moves — Ultrametric`,
     description: `${risers.length} products rose and ${fallers.length} fell over the last ${TREND_WINDOW_DAYS} days of re-derived scores.${top ? ` ${top.product.name} gained the most (${fmtDelta(top.delta)}).` : ''} Derived from the committed score history — falls shown too, honest both ways.`,
   }
 }

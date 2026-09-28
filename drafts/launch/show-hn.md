@@ -9,15 +9,15 @@ notes: >
 
 # Title
 
-Show HN: ProductArena – evidence-based software rankings for the agent era
+Show HN: Ultrametric – evidence-based software rankings for the agent era
 
 # URL
 
-https://ultrametric.ai/productarena
+https://ultrametric.ai
 
 # First comment (post immediately after submitting)
 
-Hi HN — we built ProductArena because software rankings are broken in a specific way:
+Hi HN — we built Ultrametric because software rankings are broken in a specific way:
 they measure what vendors claim and what reviewers feel, not what actually works. That
 gets worse in the agent era, where the "user" is often a coding agent that needs an API,
 an MCP server, or llms.txt — not a pretty onboarding flow.

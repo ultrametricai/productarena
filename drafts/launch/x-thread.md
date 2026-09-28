@@ -7,10 +7,10 @@ notes: attach the OG card (public/og.png renders automatically when linking the 
 
 1/ Software rankings measure claims. We built one that measures evidence.
 
-ProductArena: 300+ products, 60 categories, 18,000+ judged verdicts — every one cited,
+Ultrametric: 300+ products, 60 categories, 18,000+ judged verdicts — every one cited,
 confidence-graded, and publicly contestable.
 
-https://ultrametric.ai/productarena
+https://ultrametric.ai
 
 2/ The AI twist: buyers are increasingly agents, not humans. So we rank what agents need —
 does it have a real API? An MCP server that actually handshakes? llms.txt? Can a headless
@@ -45,4 +45,4 @@ stories that matter to you.
 8/ It's all open — data, methodology, judge prompts, score history in git. If you find a
 wrong verdict, contest it: that's a feature, not a bug reports channel.
 
-⭐ https://github.com/ultrametricai/productarena
+⭐ https://github.com/ultrametricai/ultrametric

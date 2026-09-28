@@ -44,7 +44,7 @@ export const STALENESS_REPORT_FILE = 'staleness-report.json'
 
 const TIMEOUT_MS = 8_000
 const MAX_CONCURRENT = 4
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena-staleness/1.0; +https://ultrametric.ai/productarena)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; Ultrametric-staleness/1.0; +https://ultrametric.ai)'
 // How many top-cited URLs get live-checked per product — bounded so a fleet run stays polite.
 const CITED_URL_SAMPLE = 2
 

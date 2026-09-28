@@ -1,7 +1,7 @@
 # Stripe: an agentic roadmap
 
 **Status: draft — requires founder sign-off before any part is sent anywhere.**
-Prepared 2026-09-14 from ProductArena's payments-arena evidence pass of the same date (branch
+Prepared 2026-09-14 from Ultrametric's payments-arena evidence pass of the same date (branch
 `stripe-agentic-spike`). Every claim below traces to `data/payments/evidence/stripe.json`
 (128 items, 44 crawled vendor pages + 7 live keyless probes) and the judged verdicts in
 `data/payments/verdicts.json`. The gap ranking is the site's own Opportunities engine

@@ -59,7 +59,7 @@ async function probe(url) {
     const res = await fetch(url, {
       redirect: 'follow',
       signal: controller.signal,
-      headers: { 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ProductArena-link-audit' },
+      headers: { 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Ultrametric-link-audit' },
     })
     res.body?.cancel?.()
     return { status: res.status, finalUrl: res.url }

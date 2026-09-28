@@ -87,7 +87,7 @@ export function renderRss(items: FeedItem[]): string {
     `<!-- ${provenanceLine()} -->`,
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     '  <channel>',
-    '    <title>ProductArena — evidence-based rankings changelog</title>',
+    '    <title>Ultrametric — evidence-based rankings changelog</title>',
     `    <link>${escapeXml(SITE_URL)}</link>`,
     `    <atom:link href="${escapeXml(`${SITE_URL}/feed.xml`)}" rel="self" type="application/rss+xml" />`,
     '    <description>Rank overtakes, score moves, new arenas and products — every change re-derived from cited evidence. Scores only move when evidence moves.</description>',

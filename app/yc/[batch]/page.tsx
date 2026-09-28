@@ -36,7 +36,7 @@ export async function generateMetadata({
   const rows = rowsForBatch(code)
   const leader = rows[0]
   return {
-    title: `YC ${code} (${batchLabel(code)}) — ${rows.length} tracked ${rows.length === 1 ? 'product' : 'products'} ranked by agent readiness — ProductArena`,
+    title: `YC ${code} (${batchLabel(code)}) — ${rows.length} tracked ${rows.length === 1 ? 'product' : 'products'} ranked by agent readiness — Ultrametric`,
     description: `The Y Combinator ${batchLabel(code)} companies we track, ranked on evidence-graded agent readiness and built-in AI.${leader && leader.agentReady !== null ? ` ${leader.productName} leads at ${leader.agentReady.toFixed(0)}/100 agent-ready.` : ''} Not a batch-wide census — coverage grows batch by batch.`,
   }
 }
@@ -49,7 +49,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
 
   const jsonLd = rankingJsonLd(
     `YC ${code} — tracked products ranked by agent readiness`,
-    `Y Combinator ${batchLabel(code)} alumni tracked on ProductArena, ranked by evidence-graded agent readiness, built-in AI, and Overall score.`,
+    `Y Combinator ${batchLabel(code)} alumni tracked on Ultrametric, ranked by evidence-graded agent readiness, built-in AI, and Overall score.`,
     rows.map((row) => ({
       name: row.productName,
       path: `/arena/${row.arenaId}/product/${row.productId}`,

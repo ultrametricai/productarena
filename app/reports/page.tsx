@@ -14,7 +14,7 @@ import { REPO } from '@/lib/site'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Weekly reports — ProductArena',
+  title: 'Weekly reports — Ultrametric',
   description:
     'Weekly Arena Reports — the last 7 days of rank flips, Overall score movers, new arenas and close races, generated from the committed score history. Copy-paste ready for a newsletter.',
 }

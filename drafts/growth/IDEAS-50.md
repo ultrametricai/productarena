@@ -25,7 +25,7 @@
 
 ## Product-led loops
 18. [x] Badges (permanent backlinks); NEXT: badge CTA inside every cert issue + vendor notification
-19. [x] Certification: make `npx productarena certify` the standard; publicize each new pass
+19. [x] Certification: make `npx ultrametric-cli certify` the standard; publicize each new pass
 20. Weekly movers newsletter fed by the RSS feed (Buttondown-class, one field signup on /changelog)
 21. Watchlist alert emails once WorkOS auth lands (retention loop)
 22. Contributors wall + good-first-issues → flag-a-verdict users become stargazers

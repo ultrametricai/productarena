@@ -22,7 +22,7 @@ import {
 //      founder's `localStorage.setItem('pa-admin', '1')` switch — everyone else gets literally
 //      nothing rendered beyond an empty shell.
 export const metadata: Metadata = {
-  title: 'Ops — coverage & engines — ProductArena',
+  title: 'Ops — coverage & engines — Ultrametric',
   description: 'Internal coverage dashboard: testing depth, arena coverage, cron health, vendor news.',
   robots: { index: false, follow: false },
 }

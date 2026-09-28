@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Privacy — ProductArena',
+  title: 'Privacy — Ultrametric',
   description:
-    'What ProductArena collects and why: Google Analytics, an anonymous compare-pair counter, a local-only watchlist, and — if you log in — your email. Nothing is sold.',
+    'What Ultrametric collects and why: Google Analytics, an anonymous compare-pair counter, a local-only watchlist, and — if you log in — your email. Nothing is sold.',
 }
 
 // Static page, same pattern as app/terms/page.tsx. Plain-language, PA-specific privacy notes on
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">Privacy</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Privacy</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          ProductArena is a static site: every reader gets the same pages, no account needed. The short
+          Ultrametric is a static site: every reader gets the same pages, no account needed. The short
           version — we collect very little, and we sell none of it. Details below; the{' '}
           <a
             href="https://ultrametric.ai/privacy"
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
       <section className={SECTION}>
         <h2 className={H2}>Cookies</h2>
         <p className="mt-2 text-sm text-zinc-300">
-          The only cookie ProductArena itself sets is the session cookie above, and only after you log in.
+          The only cookie Ultrametric itself sets is the session cookie above, and only after you log in.
           Google Analytics sets its own cookies as described in its policy.
         </p>
       </section>

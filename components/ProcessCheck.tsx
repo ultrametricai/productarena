@@ -33,7 +33,7 @@ function AuthPrompt() {
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <a
-          href={registrationUrl('/productarena/processes')}
+          href={registrationUrl('/processes')}
           onClick={(e) => {
             e.preventDefault()
             window.location.href = registrationUrl(window.location.href)
@@ -43,7 +43,7 @@ function AuthPrompt() {
           Sign up
         </a>
         <a
-          href={loginUrl('/productarena/processes')}
+          href={loginUrl('/processes')}
           onClick={(e) => {
             e.preventDefault()
             window.location.href = loginUrl(window.location.href)

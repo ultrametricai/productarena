@@ -8,7 +8,7 @@ branch: add-productarena-leaderboards in /tmp/pa-awesome/awesome-generative-ai (
   clone; recreate anywhere with `git apply entry.patch` on a fresh clone)
 ---
 
-# PR draft: Add ProductArena to awesome-generative-ai → DISCOVERIES → Leaderboards
+# PR draft: Add Ultrametric to awesome-generative-ai → DISCOVERIES → Leaderboards
 
 ## Why this list, and why Discoveries not the Main List
 
@@ -32,22 +32,22 @@ Append at the bottom of `### Leaderboards` in DISCOVERIES.md, immediately after 
 `[Rival](https://rival.tips)` line:
 
 ```markdown
-- [ProductArena](https://ultrametric.ai/productarena) - Evidence-cited comparison rankings of AI coding agents and developer tools, with an open, published methodology.
+- [Ultrametric](https://ultrametric.ai) - Evidence-cited comparison rankings of AI coding agents and developer tools, with an open, published methodology.
 ```
 
 ## PR title
 
 ```
-Add ProductArena to Discoveries Leaderboards
+Add Ultrametric to Discoveries Leaderboards
 ```
 
 ## PR body
 
 ```markdown
-Adds [ProductArena](https://ultrametric.ai/productarena) to **DISCOVERIES.md →
+Adds [Ultrametric](https://ultrametric.ai) to **DISCOVERIES.md →
 Leaderboards**: comparison rankings of AI coding agents and developer tools where every
 verdict links the public evidence it was derived from, scored against a published
-methodology (https://ultrametric.ai/productarena/methodology).
+methodology (https://ultrametric.ai/methodology).
 
 Targeting the Discoveries list deliberately (we don't yet meet the Main List's 1,000+
 follower bar). Entry follows the CONTRIBUTING format: bottom of its category,
@@ -61,7 +61,7 @@ gh repo fork steven2358/awesome-generative-ai --clone /tmp/awesome-generative-ai
 cd /tmp/awesome-generative-ai && git checkout -b add-productarena-leaderboards
 git apply <this-dir>/entry.patch --3way
 git push -u origin add-productarena-leaderboards
-gh pr create --repo steven2358/awesome-generative-ai --title "Add ProductArena to Discoveries Leaderboards" --body-file <body above>
+gh pr create --repo steven2358/awesome-generative-ai --title "Add Ultrametric to Discoveries Leaderboards" --body-file <body above>
 ```
 
 Note: the maintainer hand-reviews FIFO and rejects low-effort adds; the evidence-cited /

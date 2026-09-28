@@ -144,7 +144,7 @@ function UntrackedChip({ info }: { info: StepRowUntracked }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-0.5">
       <span
-        title={`${info.label} — not yet judged on ProductArena`}
+        title={`${info.label} — not yet judged on Ultrametric`}
         className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-400"
       >
         <ProductLogoView product={{ id: info.vendor, name: info.label }} size={28} hasLogo={info.hasLogo} />

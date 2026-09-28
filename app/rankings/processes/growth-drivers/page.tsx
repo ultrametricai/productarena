@@ -17,7 +17,7 @@ function buildRows() {
 export function generateMetadata(): Metadata {
   const rows = buildRows()
   return {
-    title: `Growth-driver processes — all ${rows.length} ranked by growth impact — ProductArena`,
+    title: `Growth-driver processes — all ${rows.length} ranked by growth impact — Ultrametric`,
     description:
       'Every founder process ranked by curated growth impact (1–5: how directly it drives revenue and user growth), with the company phase each one belongs to.',
   }

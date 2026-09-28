@@ -17,7 +17,7 @@ import { canonGraphStoryIds } from '@/lib/storyGraph'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Capability adoption across the industry — ProductArena',
+  title: 'Capability adoption across the industry — Ultrametric',
   description:
     'How widely each cross-arena capability — official MCP servers, llms.txt, webhooks, self-hosting, 2FA and more — is adopted among every product we track, with evidence-backed verdicts.',
 }

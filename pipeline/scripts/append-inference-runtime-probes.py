@@ -14,7 +14,7 @@ import subprocess
 import sys
 
 NOW = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.000Z')
-UA = 'Mozilla/5.0 (compatible; ProductArena/1.0; +https://ultrametric.ai/productarena)'
+UA = 'Mozilla/5.0 (compatible; Ultrametric/1.0; +https://ultrametric.ai)'
 MCP_INIT = json.dumps({
     'jsonrpc': '2.0', 'id': 1, 'method': 'initialize',
     'params': {'protocolVersion': '2025-06-18', 'capabilities': {},

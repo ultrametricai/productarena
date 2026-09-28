@@ -42,11 +42,11 @@ describe('ProofBlock', () => {
     const { container } = render(
       <ProofBlock
         entry={{ ...TERMINAL, kind: 'video', file: 'claude-code/x.webm' }}
-        videoSrc="/productarena/data/ai-coding/proofs/claude-code/x.webm"
+        videoSrc="/data/ai-coding/proofs/claude-code/x.webm"
       />,
     )
     const video = container.querySelector('video')
-    expect(video?.getAttribute('src')).toBe('/productarena/data/ai-coding/proofs/claude-code/x.webm')
+    expect(video?.getAttribute('src')).toBe('/data/ai-coding/proofs/claude-code/x.webm')
     expect(video?.hasAttribute('controls')).toBe(true)
   })
 

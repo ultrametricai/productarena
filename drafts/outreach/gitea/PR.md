@@ -32,10 +32,10 @@ drafted with AI assistance. I reviewed every line, ran the link verification mys
 explain and revise any of it during review, and will answer review questions personally.
 
 Use it freely, restructure or trim anything, no attribution needed. For provenance: we
-maintain ProductArena, an open evidence-based tracker of how agent-ready developer products
+maintain Ultrametric, an open evidence-based tracker of how agent-ready developer products
 are, and Gitea's page there is what surfaced the gap (our probe found
 `docs.gitea.com/llms.txt` returning 404):
-https://ultrametric.ai/productarena/arena/code-hosting/product/gitea
+https://ultrametric.ai/arena/code-hosting/product/gitea
 
 If this isn't something the project wants, please just close — no expectation attached.
 

@@ -9,7 +9,7 @@ import raw from '@/data/experiments/processors.json'
 // with per-cell sourcing. Linked from the arena header ("Raw spec table →"); the arena link
 // below is the way back.
 export const metadata: Metadata = {
-  title: 'Processor spec table — ProductArena',
+  title: 'Processor spec table — Ultrametric',
   description:
     'Raw vendor-spec annex of the Processors arena: current CPU/SoC specs side by side, curated from vendor spec sheets with per-cell sourcing.',
 }

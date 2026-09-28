@@ -145,7 +145,7 @@ export default function CapabilityDag({
           const short = CANON_SHORT_LABELS[n.id] ?? n.id
           const fillW = a ? Math.round((meterW * Math.min(100, Math.max(0, a.pct))) / 100) : 0
           return (
-            // SVG <a>, so next/link can't apply the /productarena basePath — withBase() does.
+            // SVG <a>, so next/link can't apply a basePath — withBase() does (identity today).
             <a key={n.id} href={withBase(`/global/${n.id}`)} className="group">
               <title>{nodeTooltip(n.id, titles[n.id] ?? short, a, edges)}</title>
               <rect

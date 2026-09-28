@@ -32,7 +32,7 @@ function stubLocalStorage() {
   })
 }
 
-const PATH = '/productarena/processes/incorporate-c-corp'
+const PATH = '/processes/incorporate-c-corp'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
 const url = () => `${window.location.pathname}${window.location.search}`
 

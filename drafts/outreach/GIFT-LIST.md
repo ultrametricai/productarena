@@ -2,7 +2,7 @@
 
 **Status: everything here is a draft awaiting founder sign-off. Nothing has been posted,
 opened, or sent anywhere.** All external checks were read-only (HTTP GETs, GitHub API reads,
-and the keyless `productarena certify` suite, which POSTs only a JSON-RPC `initialize`
+and the keyless `ultrametric-cli certify` suite, which POSTs only a JSON-RPC `initialize`
 handshake to candidate MCP endpoints — the same probe the pipeline runs).
 
 ## The thesis

@@ -23,8 +23,8 @@ export default function AiModeBadge({
   const v = verdictFor(data, productId, STORY_ID)
   if (v.verdict !== 'full' && v.verdict !== 'partial') return null
   return (
-    // next/link, not a plain <a>: the site lives under the /productarena basePath, which Next
-    // only applies to Link/router navigations — a raw <a href="/arena/..."> escapes the app.
+    // next/link, not a plain <a>: Link keeps navigation inside the app router (and would
+    // apply a basePath if one ever returned) — a raw <a href="/arena/..."> escapes the app.
     <Link
       href={href}
       title={`Has a built-in AI assistant you can delegate tasks to (${v.verdict}). ${v.rationale}`}

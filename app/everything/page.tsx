@@ -11,7 +11,7 @@ import {
 import { collectGlobalStories } from '@/lib/globalStories'
 
 export const metadata: Metadata = {
-  title: 'Everything — ProductArena',
+  title: 'Everything — Ultrametric',
   description:
     'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its agent ceiling, every stack, every ICP lens, and a link index to the rest of the site.',
   // Unlisted by founder call (see app/layout.tsx's nav comment) — noindex like the other
@@ -54,7 +54,7 @@ export default function EverythingPage() {
         { href: '/compare', label: 'Compare', note: 'any products side by side' },
         { href: '/stacks/builder', label: 'Stack builder', note: 'compose your own stack' },
         { href: '/submit', label: 'Submit a product', note: 'agent-readiness quick scan' },
-        { href: '/mcp#cli', label: 'CLI', note: 'npx productarena' },
+        { href: '/mcp#cli', label: 'CLI', note: 'npx ultrametric-cli' },
         { href: '/llms.txt', label: '/llms.txt', note: 'for agents' },
       ],
     },

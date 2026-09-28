@@ -63,7 +63,7 @@ function renderArenasBlock() {
 // generated numbers as the stats line, so the row can never drift from data/ (the repo has no
 // public dynamic-badge source to hotlink while it's private).
 function renderStatBadgesBlock(stats) {
-  const site = 'https://ultrametric.ai/productarena'
+  const site = 'https://ultrametric.ai'
   return [
     BADGES_START_MARKER,
     `[![arenas](https://img.shields.io/badge/arenas-${stats.arenas}-34d399)](${site})`,

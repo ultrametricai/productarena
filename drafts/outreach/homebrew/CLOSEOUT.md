@@ -39,7 +39,7 @@ responsibility for the submission (including initially missing the PR template â
 for that)."
 ```
 
-Do NOT include score/tracker talk, do NOT ask them to reconsider, do NOT link ProductArena
+Do NOT include score/tracker talk, do NOT ask them to reconsider, do NOT link Ultrametric
 again.
 
 ## Program consequences (folded into README.md checklist + GIFT-LIST learnings)

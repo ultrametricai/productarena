@@ -34,11 +34,11 @@ export async function GET() {
 
   const body = `<!-- ${provenanceLine()} -->
 
-# ProductArena (${SITE})
+# Ultrametric (${SITE})
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 
-ProductArena crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, a Overall score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
+Ultrametric crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, a Overall score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
 
 ## Arenas (markdown, one per category)
 

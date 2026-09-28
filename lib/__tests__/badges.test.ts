@@ -22,9 +22,9 @@ describe('badgeSvg', () => {
     expect(svg).toContain('agent-ready 72/100')
     expect(svg).toContain('#059669') // emerald right panel
     expect(svg).toContain('#09090b') // zinc-950 left panel
-    expect(svg).toContain('>Product</text>')
-    expect(svg).toContain('>Arena</text>')
-    expect(svg).toContain('aria-label="ProductArena: agent-ready 72/100"')
+    expect(svg).toContain('>Ultra</text>')
+    expect(svg).toContain('>metric</text>')
+    expect(svg).toContain('aria-label="Ultrametric: agent-ready 72/100"')
   })
 
   it('rounds instead of truncating', () => {
@@ -54,7 +54,7 @@ describe('certBadgeSvg', () => {
     const svg = certBadgeSvg({ level: 'agent-ready', date: '2026-09-08' })
     expect(svg).toContain('CERTIFIED AGENT-READY · 2026')
     expect(svg).toContain('#059669') // always the earned emerald panel — no untested variant
-    expect(svg).toContain('aria-label="ProductArena: CERTIFIED AGENT-READY · 2026"')
+    expect(svg).toContain('aria-label="Ultrametric: CERTIFIED AGENT-READY · 2026"')
     expect(certBadgeSvg({ level: 'agent-native', date: '2027-01-02' })).toContain('CERTIFIED AGENT-NATIVE · 2027')
   })
 

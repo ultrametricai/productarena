@@ -61,10 +61,10 @@ plain-text, stable* entry point sized for LLM context windows.
 Disclosure: the file and this description were drafted with AI assistance; I reviewed every
 line, ran the link verification myself, and am accountable for the change.
 
-For provenance: we maintain ProductArena, an open, evidence-based tracker of how agent-ready
+For provenance: we maintain Ultrametric, an open, evidence-based tracker of how agent-ready
 developer products are, and Docusaurus's page there is what surfaced the gap (our probe found
 `docusaurus.io/llms.txt` returning 404):
-https://ultrametric.ai/productarena/arena/docs-platforms/product/docusaurus
+https://ultrametric.ai/arena/docs-platforms/product/docusaurus
 
 No expectation attached — if this isn't wanted (or you'd rather wait for a generated version
 like #11958), please just close, and sorry for the noise.

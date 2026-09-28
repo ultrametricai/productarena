@@ -4,7 +4,7 @@ import { loadAll } from '@/lib/data'
 import { buildIcpRanking, icpTopThemes, loadIcpTypes } from '@/lib/icp'
 
 export const metadata: Metadata = {
-  title: 'ICP lenses — rankings through your buyer type’s eyes — ProductArena',
+  title: 'ICP lenses — rankings through your buyer type’s eyes — Ultrametric',
   description:
     'Ten cross-arena buyer-type lenses — solo technical founder, Built-in AI startup, privacy-first org, open-source purist and more — each re-weighting the same evidence-judged verdicts into a ranking for that buyer.',
 }

@@ -11,7 +11,7 @@ import { loadIntegrationGraph, verifiedPairKeys } from '@/lib/integrations'
 import { buildMyStackProducts, curatedStackArenaPatterns } from '@/lib/myStackData'
 
 export const metadata: Metadata = {
-  title: 'My Stack — ProductArena',
+  title: 'My Stack — Ultrametric',
   description:
     'Enter the stack you already run and get evidence-cited recommendations: upgrades where a rival scores materially higher, adjacent arenas you have nothing in, possible overlaps, vendor consolidations, and break-outs — every number from the live arena rankings, with a shareable URL.',
 }

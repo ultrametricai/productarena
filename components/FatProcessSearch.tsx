@@ -42,7 +42,7 @@ export default function FatProcessSearch({ rows }: { rows: FatSearchRow[] }) {
         onFocus={() => setFocused(true)}
         onBlur={() => setTimeout(() => setFocused(false), 150)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && matches[0]) window.location.href = `/productarena/processes/${matches[0].slug}`
+          if (e.key === 'Enter' && matches[0]) window.location.href = `/processes/${matches[0].slug}`
         }}
         placeholder={`Search ${rows.length} company processes — payroll, SOC 2, EIN…`}
         aria-label="Search processes"

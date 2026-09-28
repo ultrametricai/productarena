@@ -37,10 +37,10 @@ Disclosure: this file was drafted with AI assistance from the sitemap and then h
 every link was mechanically verified. Happy to adjust anything to fit the Prose Style
 Guidelines.
 
-For provenance: we maintain ProductArena, an open, evidence-based tracker of how agent-ready
+For provenance: we maintain Ultrametric, an open, evidence-based tracker of how agent-ready
 developer products are, and Homebrew's page there is what surfaced the gap (our probe found
 `docs.brew.sh/llms.txt` returning 404):
-https://ultrametric.ai/productarena/arena/package-managers/product/homebrew
+https://ultrametric.ai/arena/package-managers/product/homebrew
 
 No expectation attached — if this isn't something the project wants, please just close, and
 sorry for the noise. If it's welcome but you'd rather restructure or trim it, it's plain

@@ -46,10 +46,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const task = findProcessBySlug(slug)
-  if (!task) return { title: 'Process — ProductArena' }
+  if (!task) return { title: 'Process — Ultrametric' }
   const ceiling = taskCeiling(task)
   return {
-    title: `${task.title} — Processes — ProductArena`,
+    title: `${task.title} — Processes — Ultrametric`,
     description: `${task.description} An agent can run ${ceiling.agentSteps} of ${ceiling.totalSteps} steps today.`,
     // Alias slugs point search engines at the one canonical page.
     alternates: { canonical: `${SITE_URL}/processes/${processSlug(task.title)}` },

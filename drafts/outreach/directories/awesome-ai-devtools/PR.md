@@ -8,7 +8,7 @@ branch: add-productarena-resources in /tmp/pa-awesome/awesome-ai-devtools (ephem
   recreate anywhere with `git apply entry.patch` on a fresh clone)
 ---
 
-# PR draft: Add ProductArena to awesome-ai-devtools → Resources
+# PR draft: Add Ultrametric to awesome-ai-devtools → Resources
 
 ## Why this list
 
@@ -26,13 +26,13 @@ Append as the last line of `## Resources`, after the "Awesome AI Startups — Co
 Developer Tools" entry:
 
 ```markdown
-- [ProductArena](https://ultrametric.ai/productarena) — Open-methodology comparison rankings of AI coding agents and developer tools, with evidence-cited scoring against published criteria.
+- [Ultrametric](https://ultrametric.ai) — Open-methodology comparison rankings of AI coding agents and developer tools, with evidence-cited scoring against published criteria.
 ```
 
 ## PR title
 
 ```
-Add ProductArena to Resources
+Add Ultrametric to Resources
 ```
 
 ## PR body (fills their template checklist)
@@ -40,10 +40,10 @@ Add ProductArena to Resources
 ```markdown
 ## Description
 
-Adds [ProductArena](https://ultrametric.ai/productarena) to the **Resources** section —
+Adds [Ultrametric](https://ultrametric.ai) to the **Resources** section —
 comparison rankings of AI coding agents and developer tools where every verdict cites its
 public evidence and the scoring methodology is published
-(https://ultrametric.ai/productarena/methodology). Same category as the existing
+(https://ultrametric.ai/methodology). Same category as the existing
 aiforcode.io and AI Coding Compare entries.
 
 ## Checklist
@@ -61,7 +61,7 @@ gh repo fork jamesmurdza/awesome-ai-devtools --clone /tmp/awesome-ai-devtools
 cd /tmp/awesome-ai-devtools && git checkout -b add-productarena-resources
 git apply <this-dir>/entry.patch --3way   # or cherry-pick from the prepared local branch
 git push -u origin add-productarena-resources
-gh pr create --repo jamesmurdza/awesome-ai-devtools --title "Add ProductArena to Resources" --body-file <body above>
+gh pr create --repo jamesmurdza/awesome-ai-devtools --title "Add Ultrametric to Resources" --body-file <body above>
 ```
 
 Then add `status.json` here per drafts/outreach/README.md.

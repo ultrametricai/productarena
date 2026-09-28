@@ -73,7 +73,7 @@ export function generateMetadata(): Metadata {
   const rows = buildConnectedRows(loadAll())
   const leader = rows[0]
   return {
-    title: `Most connected — ${rows.length} products ranked by verified integrations — ProductArena`,
+    title: `Most connected — ${rows.length} products ranked by verified integrations — Ultrametric`,
     description: `Which products verifiably connect to the most other tracked products? ${leader ? `${leader.product.name} leads with ${leader.neighborCount} verified connections.` : ''} Every edge carries a verbatim evidence quote — verified mechanically, or dropped.`,
   }
 }

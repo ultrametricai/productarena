@@ -49,16 +49,16 @@ founder-blocked; not repeated per-row below.
 
 ## Standard submission copy (reuse everywhere)
 
-- **Name:** ProductArena
-- **URL:** https://ultrametric.ai/productarena
+- **Name:** Ultrametric
+- **URL:** https://ultrametric.ai
 - **Maker:** Ultrametric, Inc.
 - **Tagline (≤60 chars):** `Evidence-cited rankings of AI coding agents and dev tools`
 - **Alt tagline:** `Software rankings where every verdict cites its evidence`
-- **Short description (~250 chars):** ProductArena ranks software tools — AI coding agents,
+- **Short description (~250 chars):** Ultrametric ranks software tools — AI coding agents,
   developer tooling, and more — against a published methodology. Every verdict links the
   public evidence it was derived from, and anyone can flag a verdict with counter-evidence.
   Free, no signup.
-- **Long description:** ProductArena is an evidence-based software comparison site. Instead
+- **Long description:** Ultrametric is an evidence-based software comparison site. Instead
   of star ratings or affiliate-driven "best of" lists, each arena scores products against
   concrete user stories; every verdict cites the public evidence (docs, changelogs, issues,
   recordings) it was derived from, and the full methodology is published. Wrong verdicts can
@@ -66,8 +66,8 @@ founder-blocked; not repeated per-row below.
   data is queryable through a public API and an MCP server, and quotable with attribution.
   Free, no account required.
 - **Tags:** developer tools, AI, comparison, rankings, benchmarks, open data, MCP
-- **Key links:** methodology https://ultrametric.ai/productarena/methodology · MCP
-  https://ultrametric.ai/productarena/mcp · llms.txt https://ultrametric.ai/productarena/llms.txt
+- **Key links:** methodology https://ultrametric.ai/methodology · MCP
+  https://ultrametric.ai/mcp · llms.txt https://ultrametric.ai/llms.txt
 
 ### Venue-specific copy
 
@@ -86,11 +86,11 @@ rejection. Description: short description above.
 **SaaSHub** — standard copy; then run their free "submit to 110 directories" tool from the
 same session.
 
-**Console.dev pitch email** (to hello@console.dev, subject `ProductArena — evidence-cited
+**Console.dev pitch email** (to hello@console.dev, subject `Ultrametric — evidence-cited
 dev-tool rankings`): "Console features devtools with clear docs and honest positioning —
-ProductArena is a rankings site built on that same premise: every verdict cites the public
+Ultrametric is a rankings site built on that same premise: every verdict cites the public
 evidence it came from, methodology is published, wrong verdicts get flagged and re-judged in
-the open. Free, no signup: https://ultrametric.ai/productarena — happy to answer anything
+the open. Free, no signup: https://ultrametric.ai — happy to answer anything
 about the methodology."
 
 **dev.to article** (once account exists) — title: `We ranked AI coding agents and published

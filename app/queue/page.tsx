@@ -12,7 +12,7 @@ import path from 'node:path'
 // NOTE data/spike-queue.json is also world-readable at /data/spike-queue.json (copy-data.mjs
 // mirrors all of data/) — unadvertised, not private, and it contains nothing sensitive.
 export const metadata: Metadata = {
-  title: 'Spike queue — founder review — ProductArena',
+  title: 'Spike queue — founder review — Ultrametric',
   description: 'Internal review page for the standing spike-engine deep-refresh queue.',
   robots: { index: false, follow: false },
 }

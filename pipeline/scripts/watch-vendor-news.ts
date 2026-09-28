@@ -45,7 +45,7 @@ export const RECHECK_DAYS = 7
 const FETCH_TIMEOUT_MS = 8_000
 const POLITE_DELAY_MS = 150
 const USER_AGENT =
-  'Mozilla/5.0 (compatible; ProductArena-news-watcher/1.0; +https://ultrametric.ai/productarena)'
+  'Mozilla/5.0 (compatible; Ultrametric-news-watcher/1.0; +https://ultrametric.ai)'
 
 // ---------------------------------------------------------------------------
 // State file schema (data/vendor-news.json)
