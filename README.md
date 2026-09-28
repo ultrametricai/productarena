@@ -1,6 +1,4 @@
-# Ultrametric (ultrametric.ai)
-
-*(formerly ProductArena)*
+# Ultrametric — the open startup repo
 
 [![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
 [![site](https://img.shields.io/badge/site-ultrametric.ai-000000)](https://ultrametric.ai)
@@ -12,34 +10,34 @@
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
 
-**The open evidence layer for the agent economy.** Ultrametric measures how ready the
-world's software is for AI agents — and how Built-in AI it is for humans — with evidence, not
-opinion: crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge
-whose every verdict carries citations, a confidence grade, and a contest button.
+**The open startup repo: a source-backed operating map for starting and running a company,
+anywhere.** Ultrametric is built from dated, citable, testable records — never opinion — and it
+is designed to be extended by founders everywhere, one pull request at a time:
 
-It has grown past rankings into an operating map of the AI era:
+- **Processes & journeys** — 123 step-by-step founder processes and 24 chained playbooks, each
+  step routed agent / manual form / human, with the honest **agent ceiling** (what an agent can
+  run today) and a [Virtual Startup](https://ultrametric.ai/virtual-startup) that replays the
+  whole corpus as a simulated company.
+- **Rules & jurisdictions** — source-locked legal rule cards (statute/regulation locators,
+  checked dates), a conservative planner that refuses what it cannot exactly match, and a
+  growing geo layer: which processes are global vs US-centric, per-country analogs, and where
+  each vendor actually operates.
+- **Business logic** — open, exhaustively-tested startup math with a citation on every formula
+  (cap-table engine first: SAFEs, priced rounds, vesting, dilution waterfalls —
+  [try it live](https://ultrametric.ai/tools/cap-table)).
+- **Vendors & evidence** — head-to-head, evidence-graded rankings of the tools startups run on:
+  crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge whose
+  every verdict carries citations, a confidence grade, and a contest button.
+- **Agent-native access** — the whole corpus is machine-readable: JSON data API, llms.txt,
+  published JSON Schemas, and per-product interchange records.
 
-- **Arenas** — head-to-head, story-judged rankings across 60 software categories
-- **Processes** — how startups actually run, step by step, with the honest agent ceiling:
-  what an agent can do today and where the market still forces a human
-- **Simulator** — dry-run a founder process through real market options and watch the API calls
-- **Stacks & lenses** — evidence-backed toolchains, buyer-type (ICP) views, comparisons
-- **Proofs** — recorded terminal/MCP sessions and a prove-it protocol vendors can submit to
-- **Agent-native access** — MCP server, JSON API, llms.txt: agents are first-class readers
-
-> ⭐ **If evidence-based software rankings are useful to you, [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other builders find this, and every ranking, verdict, and proof here is open for you to audit or contest.
+> ⭐ **If an open, evidence-based operating map for founders is useful to you,
+> [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other
+> founders find this, and every record here is open for you to audit, contest, or extend.
 
 ![Ultrametric](https://ultrametric.ai/opengraph-image)
 
-Ultrametric is an evidence-based comparison site: evidence in, rankings out. For each of 80+
-product arenas (500+ products and growing) we crawl vendor docs, GitHub, and community sources,
-extract per-product evidence, and
-have an LLM judge every product against a shared set of user stories. The result is a
-leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
-global rankings of how agent-ready and Built-in AI every product is. Every score traces back to
-cited evidence, not opinion.
-
-Live site: https://ultrametric.ai
+Live site: https://ultrametric.ai (rankings at [/overall](https://ultrametric.ai/overall))
 
 <!-- stats:start -->
 As of the last full pipeline run: **93 arenas, 578 products, 32,949 judged verdicts.**
@@ -48,18 +46,121 @@ As of the last full pipeline run: **93 arenas, 578 products, 32,949 judged verdi
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
 `pnpm stats` — never a hand-maintained claim; see "Status & roadmap" for what's next.
 
-## Try it in 10 seconds
+## Start here
 
-Nothing to install — the rankings are a public JSON API and agent-readable markdown:
+**You're a founder starting or running a company:**
+
+| What you need | Where |
+| --- | --- |
+| What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — 123 processes grouped by area, each with its agent ceiling |
+| Chained playbooks (incorporate → launch, the VC raise, agent-run back office) | [/processes](https://ultrametric.ai/processes) playbooks |
+| Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
+| Model your cap table (SAFEs, priced round, dilution) | [/tools/cap-table](https://ultrametric.ai/tools/cap-table) |
+| Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · per-arena leaderboards · [/compare](https://ultrametric.ai/compare) |
+| Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
+| Does this work outside the US? | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
+
+**You want to contribute** (add your country or state, contest a verdict, add evidence, add a
+product, add business logic):
 
 ```bash
-curl https://ultrametric.ai/data/ai-coding/rankings.json   # any arena, machine-readable
-curl https://ultrametric.ai/arena/ai-coding/llms.md        # same arena, markdown for agents
+git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
+pnpm install
+pnpm dev        # http://localhost:3000
+pnpm test
 ```
 
-Agents: start from [`/llms.txt`](https://ultrametric.ai/llms.txt) — every arena and
-product has agent-readable markdown, and the data API needs no auth. (A first-party Ultrametric
-MCP server + API is coming; Ultrametric itself is not offered over MCP or a CLI.)
+Then see [Go global](#go-global-add-your-country-or-state) below,
+[CONTRIBUTING.md](./CONTRIBUTING.md), and
+[governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md). Contesting a verdict is a
+first-class workflow: every verdict on the site has a "⚑ contest" link that opens a
+[prefilled issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml).
+Founders: ["Add your product"](./CONTRIBUTING.md#3-add-your-product) covers the quick issue
+path (via [/submit](https://ultrametric.ai/submit)) and the PR path, plus how to make your
+product probe well (llms.txt, OpenAPI, remote MCP, `.md` docs mirrors).
+
+**You're an agent or developer consuming the data** — nothing to install, no auth:
+
+```bash
+curl https://ultrametric.ai/data/categories.json           # every arena
+curl https://ultrametric.ai/data/ai-coding/rankings.json   # any arena, machine-readable
+curl https://ultrametric.ai/arena/ai-coding/llms.md        # same arena, markdown for agents
+curl https://ultrametric.ai/llms.txt                       # the index for agents
+```
+
+Ground rules for agents using the corpus: [governance/AGENT_POLICY.md](governance/AGENT_POLICY.md).
+(A first-party Ultrametric MCP server + API is coming; the JSON data API and llms.txt/llms.md
+surfaces are the supported ways in.)
+
+## The map of the repo
+
+Everything in the tree, top down. The **knowledge layer** is the product — plain JSON and
+markdown, schema-validated in CI, usable without running any code:
+
+| Path | What lives there | Contract / gate |
+| --- | --- | --- |
+| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage | `lib/founderOps.ts` coverage checks |
+| [`journeys/`](journeys/) | `chains.json` — 24 multi-process founder paths | corpus schema + loader tests |
+| [`processes/`](processes/) | `corpus.json` (123 operational processes: DAGs, routing, geo scope, time estimates) + jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
+| [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`, …) | `schemas/rule.schema.json` + validator |
+| [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
+| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited) | exact-dimension matching; unknown = `unsupported`, never guessed |
+| [`business-logic/`](business-logic/) | Index of the open startup-math modules (code in `lib/openstartup/`) | worked-example + property tests |
+| [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product (578) | `schemas/vendor-review.schema.json`, deterministic regeneration |
+| [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews | drift-gated against the zod source |
+| [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
+| [`templates/`](templates/) | Blank, schema-valid starting points for contributions | — |
+| [`governance/`](governance/) | Review policy + maturity ladder, evidence doctrine, agent policy, security | — |
+| [`connectors/`](connectors/) | Optional vendor/government integrations — always behind human-approval gates | adapter rules in the README there |
+| [`apps/`](apps/) | Map of the surfaces (site, CLI, MCP, edge worker) | — |
+| `data/` | The arena evidence layer: per-arena products, stories, verdicts, evidence packs, fingerprinted rankings | `recompute-check` (bit-identical determinism) |
+| `app/`, `components/`, `lib/` | The Next.js site (~5,900 static pages) over the corpus | typecheck, lint, ~2,000 vitest tests |
+| `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
+| `cli/`, `mcp/` | `ultrametric-cli`, `ultrametric-mcp` packages | — |
+| `infra/` | Cloudflare edge worker (routing, auth, live MCP probes) | 120 worker tests |
+| `docs/` | Architecture ([FOUNDER-OPS.md](docs/FOUNDER-OPS.md)), scoring companions, program docs | — |
+
+Record semantics that bind everything (from [docs/FOUNDER-OPS.md](docs/FOUNDER-OPS.md)):
+stable IDs with versioned edits; every legal statement resolves to a primary source with an
+exact locator; `reviewed_on`/`review_due` are editorial dates, never legal effective dates;
+every externally-effectful workflow step requires a named, scoped human approval; the planner
+answers `unsupported` rather than guessing; and no jurisdiction is called covered because a
+few playbooks exist ([maturity ladder](governance/REVIEW_POLICY.md)).
+
+## Go global: add your country or state
+
+The goal is the **complete global repo for startup founders** — processes, rules, and vendor
+reality for every jurisdiction, contributed by founders who operate there and verified against
+primary sources. The US slice (federal + Delaware, CA/multi-state overlays) is the template,
+not the ceiling; UK, India, Germany, and France already have first process analogs and vendor
+rows. Four PR shapes, smallest first — each is schema-validated, so `pnpm test` tells you
+immediately whether your records hold up:
+
+1. **Vendor availability in your country** — add rows to
+   [`jurisdictions/vendor-geo.json`](jurisdictions/): `{productId, country, status:
+   available|unavailable|partial, sourceUrl, note}`. The source must be the vendor's own page
+   (or an official register) stating the fact; honest negatives ("US entities only") are as
+   valuable as positives. These rows drive the geo switcher and "Where it works" on the site.
+2. **A country analog for a process** — add a `geoNotes` entry to the process in
+   [`processes/corpus.json`](processes/): `{country, summary, actionUrl, actionLabel}` with a
+   live, official actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). This is what
+   renders in the top-of-page geo banner and the "Outside the US" block.
+3. **Rule cards for your jurisdiction** — register the jurisdiction in
+   [`jurisdictions/registry.json`](jurisdictions/) with an honest, narrow scope, then add
+   `rules/<CODE>/*.json` rule cards citing primary sources in
+   [`sources/registry.json`](sources/) (statute, regulation, agency guidance — a provider blog
+   cannot establish law). One proposition per stable ID.
+4. **A full jurisdiction-scoped workflow** — copy
+   [`templates/process.json`](templates/process.json), narrow the applicability dimensions,
+   reference your rule cards, gate every external effect on a human approval, add a fictional
+   fixture, and record the honest maturity in [`catalog/coverage.json`](catalog/) (`draft` or
+   `demonstration` to start — `reviewed` requires a named domain expert; see the
+   [review policy](governance/REVIEW_POLICY.md)).
+
+Never copy US rules into another jurisdiction, never mark a country covered because one
+workflow exists, and never commit real company data — fixtures are fictional by gate. The
+validator (`lib/founderOps.ts`, run by `npx vitest run __tests__/founder-ops.test.ts`) enforces
+source resolution, jurisdiction matching, approval gates, and coverage honesty on every PR.
 
 ## What's new
 
@@ -77,40 +178,6 @@ snapshot to build against.
 number in this image as historical. The live table is at
 [ultrametric.ai](https://ultrametric.ai); machine-readable rankings
 are at `/data/<arena>/rankings.json` per arena.*
-
-## Quickstart
-
-**I want to contribute (fix a verdict, add evidence, add a product):**
-
-```bash
-git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
-pnpm install
-pnpm dev        # http://localhost:3000
-pnpm test
-```
-
-Then see [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict or adding evidence is a
-first-class workflow, not a favor. Founders: the ["Add your product"](./CONTRIBUTING.md#3-add-your-product)
-section covers both the quick issue path (via [/submit](https://ultrametric.ai/submit))
-and the PR path, plus how to make your product probe well (llms.txt, OpenAPI, remote MCP,
-`.md` docs mirrors) so the pipeline sees everything you've shipped.
-
-**I want to consume the data (curl, or an agent reading /llms.txt):**
-
-```bash
-curl https://ultrametric.ai/data/categories.json
-curl https://ultrametric.ai/data/ai-coding/rankings.json
-curl https://ultrametric.ai/llms.txt          # index for agents
-```
-
-(A first-party Ultrametric MCP server + API is coming; Ultrametric itself is not offered over
-MCP or a CLI — the JSON data API and llms.txt/llms.md surfaces above are the supported ways in.)
-
-**I want to contest a verdict (I think a score is wrong):**
-
-Every verdict on the site has a "⚑ contest" link that opens a prefilled issue. Or file one
-directly: [new contest-verdict issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml) —
-cite the evidence URL and quote the relevant excerpt so a maintainer can verify it.
 
 ## How it fits together
 
@@ -233,10 +300,9 @@ Regenerated by `pnpm stats` — never hand-edited. …and growing — see the li
 
 See `data/categories.json` for each arena's full description, personas, and themes.
 
-## The open-startup toolkit
+## Business logic — open startup math
 
-This repo is growing beyond an evidence layer for vendor testing into open business logic
-for founders: pure, exhaustively-tested, source-cited TypeScript for the mechanics every
+Pure, exhaustively-tested, source-cited TypeScript for the mechanics every
 startup runs on, each module shipping with a founder-usable surface on the site.
 
 The first module is the **cap-table engine** (`lib/openstartup/capTable.ts`):
@@ -263,36 +329,22 @@ sanity models, and non-US instruments (see
 [Contributing](#contributing--how-the-community-can-help)). The bar: pure functions, a
 citation on every formula, and tests that double as the documentation.
 
-## The founder-ops corpus
+## Vendors & the evidence layer
 
-The larger lift the toolkit belongs to: an open, source-backed operating system for starting
-and running a company — **index → scenario match → source-backed process → private execution
-record**. The public repo holds reusable knowledge; a company's own facts, documents, and audit
-log belong in its private workspace, never here.
+The deepest part of the repo: evidence-graded, head-to-head rankings of the tools startups run
+on. For each arena we crawl vendor docs, GitHub, and community sources, run hands-on probes,
+and have an LLM judge every product against a shared story taxonomy — leaderboards, battle
+logs, story matrices, and global agent-readiness rankings, with every score tracing to cited
+evidence. Committed rankings are HMAC-fingerprinted and recompute bit-identically; verdict
+flips are kept only when they cite new evidence; owner-affiliated products are disclosed and
+adversarially bias-audited ([evidence doctrine](governance/REVIEW_POLICY.md)).
 
-| Path | What lives there |
-| --- | --- |
-| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage |
-| [`journeys/`](journeys/) | Multi-process founder paths (start, hire, grant equity, raise, launch…) |
-| [`processes/`](processes/) | Jurisdiction-scoped legal workflows + the 123-process operational corpus |
-| [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs |
-| [`sources/`](sources/) | Primary authorities: exact provision locators and checked dates |
-| [`jurisdictions/`](jurisdictions/) | Registry + vendor region-availability evidence; unknown combinations are `unsupported`, never guessed |
-| [`business-logic/`](business-logic/) | Cited, deterministic calculations (cap-table engine first) |
-| [`vendors/`](vendors/) | The evidence layer + generated vendor-review interchange records for every judged product |
-| [`connectors/`](connectors/) | Optional integrations, always behind human-approval gates |
-| [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews |
-| [`fixtures/`](fixtures/), [`templates/`](templates/) | Fictional test scenarios; contribution starting points |
-| [`governance/`](governance/) | Review policy, evidence doctrine, agent policy, security |
-
-The starter workflow layer ships two demonstration US Delaware equity workflows (409A
-valuation review, 83(b) election) whose every legal statement resolves to a primary source
-with an exact locator — validated by `lib/founderOps.ts` inside the normal test gates, with a
-conservative planner that refuses anything it cannot exactly match. Status honesty is the
-whole point: `demonstration` means illustrative, not certified, and no jurisdiction is called
-covered because a few playbooks exist. Architecture, record semantics, and the staged lift
-plan: [docs/FOUNDER-OPS.md](docs/FOUNDER-OPS.md). Agent ground rules:
-[governance/AGENT_POLICY.md](governance/AGENT_POLICY.md).
+The same layer ships in the open interchange format at
+[`vendors/reviews/generated/`](vendors/) — one dated record per judged product (evidence URIs,
+pricing, per-country availability, affiliations) conforming to
+[`schemas/vendor-review.schema.json`](schemas/), regenerated deterministically from the
+committed data. The full methodology (evidence tiers, judging, scoring, confidence, bias
+disclosure) is below.
 
 ## Methodology
 
@@ -474,7 +526,7 @@ Two sibling group-scoped indexes live under the same `agenticness` theme: `agent
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
 `api-quality` (see below).
 
-### 5. The PA Score (formerly the Arena Score / AI-Era Index)
+### 5. The Overall score (formerly the PA / Arena Score / AI-Era Index)
 
 v2.4 adds a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
 alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"

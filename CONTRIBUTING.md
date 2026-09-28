@@ -10,6 +10,12 @@ vendor reviews, business-logic modules) has its own workflow and review bar — 
 [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) and the templates in
 [`templates/`](templates/).
 
+**Founders outside the US (or outside Delaware):** the highest-leverage contribution is local
+knowledge — vendor availability rows for your country, verified country analogs for the
+processes, rule cards for your jurisdiction, full workflows. The four PR shapes, with exact
+file paths and the gates that validate them, are in the README's
+["Go global: add your country or state"](README.md#go-global-add-your-country-or-state).
+
 ## 1. Contest a verdict
 
 Every verdict shown on the site (battle round cards, product pages) carries a small
