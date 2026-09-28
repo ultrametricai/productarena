@@ -43,7 +43,7 @@ export default function VirtualStartupPage() {
   const chains: VsChain[] = VS_CHAIN_IDS.map((id) => {
     const chain = loadChains().find((c) => c.id === id)
     // Fail the build loudly if the journey references a chain the corpus no longer has.
-    if (!chain) throw new Error(`virtual-startup: chain "${id}" missing from data/process-chains.json`)
+    if (!chain) throw new Error(`virtual-startup: chain "${id}" missing from journeys/chains.json`)
     return { id: chain.id, name: chain.name, taskIds: chain.taskIds }
   })
 
@@ -51,7 +51,7 @@ export default function VirtualStartupPage() {
   const tasks: Record<string, VirtualTaskPayload> = {}
   const unionTasks = unionTaskIds(chains).map((id) => {
     const task = byId.get(id)
-    if (!task) throw new Error(`virtual-startup: task "${id}" missing from data/processes.json`)
+    if (!task) throw new Error(`virtual-startup: task "${id}" missing from processes/corpus.json`)
     return task
   })
   for (const task of unionTasks) {

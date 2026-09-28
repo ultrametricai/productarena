@@ -17,5 +17,12 @@ Rubric for a review: functional fit, local legal coverage (jurisdictions!), secu
 privacy, API/export quality, implementation burden, support, accessibility, total cost, lock-in
 and portability, failure recovery, references. Include an exit/export test. Disclose referral
 payments, equity, employment, and partnerships — payment can never change scores or inclusion.
-Stage 2 of the corpus lift adds a generator that emits records in this format from the judged
-arena data, so external consumers get the evidence layer in the interchange shape.
+
+`reviews/generated/` holds one record per judged product in this format, emitted
+deterministically from the committed arena data by
+`pipeline/scripts/generate-vendor-reviews.ts` (stage 2 of the corpus lift): dated evidence URIs
+from the packs, region availability from `jurisdictions/vendor-geo.json` (honest negatives
+included), the committed pricing facts, the rankings dimensions, and the affiliation
+disclosures — owner products always carry theirs. Regeneration is byte-identical
+(`pipeline/__tests__/vendorReviews.test.ts`), so external consumers get the evidence layer in
+the interchange shape without scraping the site.

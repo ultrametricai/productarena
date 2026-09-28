@@ -265,7 +265,8 @@ export function buildArenaCoverage(dir: string = DEFAULT_DIR()): ArenaCoverage {
   try {
     tasks = loadProcesses(dir)
   } catch {
-    // No/invalid processes.json in this dir (fixtures) — census degrades to empty.
+    // No/invalid corpus (processes/corpus.json) resolved from this dir (fixtures) — census
+    // degrades to empty.
   }
 
   return {

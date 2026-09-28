@@ -14,7 +14,7 @@ import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 export { formatMinutes, gapWhy }
 export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 123 real startup operating processes, each
+// The founder-process corpus (processes/corpus.json): 123 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
 // or a computer-use agent does it: meetings, judgment, waiting on a third party — with
@@ -278,6 +278,15 @@ export function processesByCadence(tasks: ProcessTask[]): Array<{ cadence: Caden
 
 const DEFAULT_DIR = () => path.join(process.cwd(), 'data')
 
+// Stage 2 of the corpus lift (docs/FOUNDER-OPS.md): the operational corpus and the chains moved
+// out of data/ into the founder-ops tree — processes/corpus.json and journeys/chains.json.
+// `dir` stays the ARENA-DATA dir (it keys the caches and resolves the live markets via
+// loadCategory); the corpus files resolve as siblings of it, so every existing call site
+// (DEFAULT_DIR, tests' DATA_DIR, pipeline/paths.ts DATA_DIR — all `<root>/data`) keeps working
+// unchanged. Content is byte-identical to the pre-move files; paths only.
+const corpusFile = (dir: string) => path.join(dir, '..', 'processes', 'corpus.json')
+const chainsFile = (dir: string) => path.join(dir, '..', 'journeys', 'chains.json')
+
 // URL slug for a process — kebab-case of the title, same convention as arena/product ids
 // elsewhere on the site (lowercase, hyphen-separated). Uniqueness across the corpus is enforced
 // at load time, so /processes/[slug] routing is collision-free by construction.
@@ -293,7 +302,7 @@ const jurisdictionNodesCache = new Map<string, Map<string, DagNode[]>>()
 export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   const hit = processesCache.get(dir)
   if (hit) return hit
-  const raw = JSON.parse(fs.readFileSync(path.join(dir, 'processes.json'), 'utf8'))
+  const raw = JSON.parse(fs.readFileSync(corpusFile(dir), 'utf8'))
   const parsed = ProcessTaskSchema.array().parse(raw)
   // Split jurisdiction-conditional nodes OUT of the default corpus here, so every downstream
   // consumer (ceilings, rankings, simulator, manifest, generators, tests) sees exactly the
@@ -370,12 +379,12 @@ export function slugAliasFor(task: ProcessTask, slug: string): SlugAlias | null 
 
 const chainsCache = new Map<string, ProcessChain[]>()
 
-// Curated chained stories (data/process-chains.json): ordered runs of real corpus task ids.
+// Curated chained stories (journeys/chains.json): ordered runs of real corpus task ids.
 // Integrity-checked at load: every taskId must exist in the corpus, chain ids must be unique.
 export function loadChains(dir: string = DEFAULT_DIR()): ProcessChain[] {
   const hit = chainsCache.get(dir)
   if (hit) return hit
-  const raw = JSON.parse(fs.readFileSync(path.join(dir, 'process-chains.json'), 'utf8'))
+  const raw = JSON.parse(fs.readFileSync(chainsFile(dir), 'utf8'))
   const chains = ProcessChainSchema.array().parse(raw)
   const taskIds = new Set(loadProcesses(dir).map((t) => t.id))
   const chainIds = new Set<string>()

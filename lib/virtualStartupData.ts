@@ -2,7 +2,7 @@
 // the pure client-safe half; this file owns the node:fs-backed resolution, same split convention
 // as lib/processes.ts vs lib/processSim.ts). Everything built here is a serialization of already-
 // judged/committed data — canonical agent-access verdicts (lib/accessGlyphs.ts), verbatim
-// published-pricing facts (lib/pricing.ts), and the corpus risk axis (data/processes.json) —
+// published-pricing facts (lib/pricing.ts), and the corpus risk axis (processes/corpus.json) —
 // never a new judgment.
 import { ACCESS_COLUMNS, bestAccessVerdict } from './accessGlyphs'
 import { loadCategory } from './data'
@@ -93,7 +93,7 @@ export function buildVsPricing(roles: VendorRole[], dir?: string): VsPricingMap 
   return out
 }
 
-// The corpus risk axis (data/processes.json `risk`, 1–5) keyed by task id — the event engine's
+// The corpus risk axis (processes/corpus.json `risk`, 1–5) keyed by task id — the event engine's
 // plausibility gate reads it client-side.
 export function buildVsTaskRisks(dir?: string): Record<string, number> {
   return Object.fromEntries(loadProcesses(dir).map((t) => [t.id, t.risk]))
