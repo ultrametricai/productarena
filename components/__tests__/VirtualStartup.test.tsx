@@ -141,6 +141,12 @@ const renderIt = () =>
       roles={[]}
       yearCandidates={YEAR_CANDIDATES}
       eventExamples={EVENT_EXAMPLES}
+      // Empty v3 payloads: no roles → no outcome modifiers, and no risks → no plausibility gate
+      // passes, so the seeded mid-run events stay out of these fixtures' timelines. The v3
+      // surfaces get their own suite (components/__tests__/VirtualStartupRun.test.tsx).
+      access={{}}
+      pricing={{}}
+      taskRisks={{}}
     />,
   )
 const showAll = () => fireEvent.click(screen.getByRole('button', { name: /show the whole timeline/i }))
@@ -373,7 +379,7 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     fireEvent.click(screen.getByTestId('vs-preset-biotech'))
     expect(screen.getByText('Demovax, Inc.')).toBeTruthy()
     rerender(
-      <VirtualStartup chains={CHAINS} tasks={TASKS} roles={[]} yearCandidates={YEAR_CANDIDATES} eventExamples={EVENT_EXAMPLES} />,
+      <VirtualStartup chains={CHAINS} tasks={TASKS} roles={[]} yearCandidates={YEAR_CANDIDATES} eventExamples={EVENT_EXAMPLES} access={{}} pricing={{}} taskRisks={{}} />,
     )
     expect(within(container).getByText('Demovax, Inc.')).toBeTruthy()
   })

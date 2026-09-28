@@ -19,14 +19,26 @@ export default function ProcessSimulator({
   steps,
   roles,
   multiTask = false,
+  selections: controlledSelections,
+  onSelectionsChange,
 }: {
   steps: SimStep[]
   roles: VendorRole[]
   multiTask?: boolean
+  // Optional controlled mode (Virtual Startup v3): the parent owns the role-pick state so the
+  // same picks drive its outcome model (lib/virtualStartupRun.ts) AND this transcript. Omitted
+  // (every process page), the picker state stays internal exactly as before.
+  selections?: Record<string, string>
+  onSelectionsChange?: (next: Record<string, string>) => void
 }) {
-  const [selections, setSelections] = useState<Record<string, string>>(
+  const [internalSelections, setInternalSelections] = useState<Record<string, string>>(
     () => Object.fromEntries(roles.map((r) => [r.arenaId, r.defaultProductId])),
   )
+  const selections = controlledSelections ?? internalSelections
+  const setSelections = (updater: (s: Record<string, string>) => Record<string, string>) => {
+    if (onSelectionsChange) onSelectionsChange(updater(selections))
+    else setInternalSelections(updater)
+  }
   const [lines, setLines] = useState<SimLine[]>([])
   const [running, setRunning] = useState(false)
   const [done, setDone] = useState(false)

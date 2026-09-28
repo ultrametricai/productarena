@@ -10,6 +10,10 @@ import {
   buildEventExamples, buildYearCandidates, unionTaskIds, VS_CHAIN_IDS,
   type RouteMix, type VirtualTaskPayload, type VsChain, type YearTaskSource,
 } from '@/lib/virtualStartup'
+// v3 run layer (vendor picks → outcomes, personas, seeded events, scorecard): serialized
+// canonical access verdicts, published-pricing headlines, and the corpus risk axis — see
+// lib/virtualStartupRun.ts for the client-side model and its honesty rules.
+import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
 
 // Virtual Startup (founder ask 2026-09-23): a synthetic company run through the REAL process
 // corpus. This page is fully static: it precomputes, at build time, the payload for every task
@@ -90,6 +94,8 @@ export default function VirtualStartupPage() {
   // (no months, no runs/yr), gated per decision combo client-side.
   const eventExamples = buildEventExamples(yearSources)
 
+  const roles = vendorRoles(unionTasks)
+
   return (
     <div className="space-y-10">
       <section className="mx-auto max-w-3xl text-center">
@@ -117,9 +123,12 @@ export default function VirtualStartupPage() {
       <VirtualStartup
         chains={chains}
         tasks={tasks}
-        roles={vendorRoles(unionTasks)}
+        roles={roles}
         yearCandidates={yearCandidates}
         eventExamples={eventExamples}
+        access={buildVsAccess(roles)}
+        pricing={buildVsPricing(roles)}
+        taskRisks={buildVsTaskRisks()}
       />
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
