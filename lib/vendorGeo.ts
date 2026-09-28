@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
+import type { VendorGeoLookup } from './geoPreference'
 
 // Vendor region-availability EVIDENCE (founder GEO ask 2026-09-28: "do spikes into India, UK,
 // European countries … whether the vendors are tuned for those regions or work globally").
@@ -80,4 +81,21 @@ export function vendorGeoFor(productId: string, dir?: string): VendorGeoEntry[] 
   return loadVendorGeo(dir)
     .filter((e) => e.productId === productId)
     .sort((a, b) => countryRank(a.country) - countryRank(b.country))
+}
+
+// The client-annotation lookup for a page's vendors (founder GEO ask 2026-09-28: annotate the
+// process page's vendor chips/leaderboard rows under a non-US selection): non-US cells only —
+// the US default never annotates — keyed by productId, restricted to the products actually on
+// the page so nothing extra ships to the client. Products without rows are absent, and the
+// annotations render nothing for them (evidence-only, never guessed). Still annotation-only:
+// no judged score or rank reads this.
+export function vendorGeoLookup(productIds: Iterable<string>, dir?: string): VendorGeoLookup {
+  const wanted = new Set(productIds)
+  const lookup: VendorGeoLookup = {}
+  for (const e of loadVendorGeo(dir)) {
+    if (e.country === 'US' || !wanted.has(e.productId)) continue
+    const byCountry = (lookup[e.productId] ??= {})
+    byCountry[e.country] = { status: e.status, note: e.note, sourceUrl: e.sourceUrl }
+  }
+  return lookup
 }

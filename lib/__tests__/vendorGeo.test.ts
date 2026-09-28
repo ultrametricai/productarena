@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { loadCategory } from '@/lib/data'
 import {
   loadVendorGeo, VENDOR_GEO_COUNTRIES, VENDOR_GEO_COUNTRY_META, VENDOR_GEO_STATUS_META,
-  vendorGeoFor,
+  vendorGeoFor, vendorGeoLookup,
 } from '@/lib/vendorGeo'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
@@ -111,5 +111,26 @@ describe('vendorGeoFor', () => {
       expect(VENDOR_GEO_STATUS_META[s].glyph).toBeTruthy()
       expect(VENDOR_GEO_STATUS_META[s].label).toBeTruthy()
     }
+  })
+})
+
+// The client-annotation lookup (founder GEO ask 2026-09-28: annotate vendor chips/leaderboard
+// rows under a non-US selection) — evidence-only and page-scoped, never guessed.
+describe('vendorGeoLookup', () => {
+  it('keys by productId, restricted to the requested products, non-US cells only', () => {
+    const lookup = vendorGeoLookup(['mercury', 'linear', 'does-not-exist'], DATA_DIR)
+    expect(Object.keys(lookup)).toEqual(['mercury'])
+    const mercury = lookup.mercury
+    // US never ships to the client — the default view annotates nothing.
+    expect(Object.keys(mercury)).not.toContain('US')
+    // The pinned negative: Mercury really does NOT bank a UK entity.
+    expect(mercury.UK?.status).toBe('unavailable')
+    expect(mercury.UK?.note).toMatch(/United States|US/)
+    expect(mercury.UK?.sourceUrl).toMatch(/^https:\/\//)
+  })
+
+  it('unspiked products are simply absent — annotations never invent a row', () => {
+    expect(vendorGeoLookup(['linear'], DATA_DIR)).toEqual({})
+    expect(vendorGeoLookup([], DATA_DIR)).toEqual({})
   })
 })
