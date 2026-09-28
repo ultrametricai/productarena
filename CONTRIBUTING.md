@@ -1,6 +1,6 @@
-# Contributing to ProductArena
+# Contributing to Ultrametric
 
-ProductArena's whole premise is that every score should trace back to cited evidence, and
+Ultrametric's whole premise is that every score should trace back to cited evidence, and
 that anyone can contest a verdict. This document covers the three contribution paths (contest
 a verdict, add evidence, or [add your product](#3-add-your-product) to an arena) plus local
 setup and style rules.
@@ -126,7 +126,7 @@ and full rate-limit docs — until their deep developer-docs URLs were added to 
 
 ### 3a. Quick path: prefilled issue (no repo knowledge needed)
 
-Go to [/submit](https://ultrametric.ai/productarena/submit), paste your product URL, and run the
+Go to [/submit](https://ultrametric.ai/submit), paste your product URL, and run the
 instant agent-readiness scan (llms.txt / OpenAPI / MCP / robots signals). The result page links
 to a **prefilled GitHub issue** with the scan attached — add which arena you belong in and why,
 and you're done. A maintainer takes it from there.
@@ -208,7 +208,7 @@ maps directly to scored stories:
 | **robots.txt that doesn't block everything** | `User-agent: *` not fully disallowed | cert `robots` check; agents can read you at all |
 
 Then run the suite yourself before anyone else does:
-`npx productarena certify https://docs.your-product.com` (see
+`npx ultrametric-cli certify https://docs.your-product.com` (see
 [docs/CERTIFICATION.md](./docs/CERTIFICATION.md) — passing earns a dated, badge-backed
 certification).
 
@@ -232,7 +232,7 @@ certification).
 
 ```bash
 git clone <repo>
-cd productarena
+cd ultrametric
 pnpm install
 cp .env.example .env    # fill in ANTHROPIC_API_KEY if you need to run extract/normalize/collect-community/judge
 pnpm dev                # http://localhost:3000

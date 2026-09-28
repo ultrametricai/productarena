@@ -28,7 +28,7 @@ import { DATA_DIR, readCategories, readJson } from '../paths'
 
 const TIMEOUT_MS = 8_000
 const MAX_CONCURRENT = 3
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena-SLO/1.0; +https://ultrametric.ai/productarena)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; Ultrametric-SLO/1.0; +https://ultrametric.ai)'
 
 interface Target {
   arena: string

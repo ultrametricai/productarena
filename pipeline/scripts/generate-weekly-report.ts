@@ -141,10 +141,10 @@ export function eventMarkdownLine(event: ChangeEvent, siteUrl: string): string {
 export function renderWeeklyReport(input: WeeklyReportInput): string {
   const { weekEnding, events, movers, closeRaces, siteUrl } = input
   const lines: string[] = []
-  lines.push(`# ProductArena Weekly — week ending ${dayLabel(weekEnding)}, ${weekEnding.slice(0, 4)}`)
+  lines.push(`# Ultrametric Weekly — week ending ${dayLabel(weekEnding)}, ${weekEnding.slice(0, 4)}`)
   lines.push('')
   lines.push(
-    `The last ${REPORT_WINDOW_DAYS} days across every [ProductArena](${siteUrl}) arena — rank flips, Overall score` +
+    `The last ${REPORT_WINDOW_DAYS} days across every [Ultrametric](${siteUrl}) arena — rank flips, Overall score` +
       ` moves, new arenas and products, derived from the committed score history` +
       ` ([how scoring works](${siteUrl}/methodology)). Scores only move when evidence and verdicts are re-derived.`,
   )
@@ -227,7 +227,7 @@ export function renderWeeklyReport(input: WeeklyReportInput): string {
   lines.push('---')
   lines.push('')
   lines.push(
-    `*Generated from [ProductArena](${siteUrl})'s committed score history — evidence in, rankings out.` +
+    `*Generated from [Ultrametric](${siteUrl})'s committed score history — evidence in, rankings out.` +
       ` Full changelog: ${siteUrl}/changelog · Methodology: ${siteUrl}/methodology*`,
   )
   return lines.join('\n').trimEnd() + '\n'

@@ -114,7 +114,7 @@ export function generateMetadata(): Metadata {
   const { hot, byStars, byInstalls } = buildPopularIndex(loadAll())
   const topStars = byStars[0]
   return {
-    title: 'Most popular — stars, installs, and what’s hot — ProductArena',
+    title: 'Most popular — stars, installs, and what’s hot — Ultrametric',
     description: `Popularity measured fairly: ${byStars.length} products by GitHub stars${topStars?.stars !== undefined ? ` (${topStars.name} leads with ${formatCompact(topStars.stars)})` : ''}, ${byInstalls.length} by weekly npm/PyPI installs, plus ${hot.length} exploding in interest right now — each with its measured reason. Never blended into one fake number, never part of the Overall score.`,
   }
 }

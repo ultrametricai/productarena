@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# WorkOS go-live for ProductArena — one command after two dashboard copies.
+# WorkOS go-live for Ultrametric — one command after two dashboard copies.
 #
 # Prereqs (2 minutes in https://dashboard.workos.com — the Ultrametric environment):
-#   1. Applications → create (or open) the ProductArena application.
-#   2. Redirects → add sign-in redirect URI:  https://ultrametric.ai/productarena/auth/callback
-#                  add logout redirect URI:   https://ultrametric.ai/productarena
+#   1. Applications → create (or open) the Ultrametric application.
+#   2. Redirects → add sign-in redirect URI:  https://ultrametric.ai/auth/callback
+#                  add logout redirect URI:   https://ultrametric.ai
 #   3. Copy the Client ID (client_…) and an API key (sk_…) from the same environment.
 #
 # Then run from the repo root:
@@ -43,8 +43,8 @@ npx wrangler deploy
 # 4. Smoke test: login must 302 to api.workos.com; /auth/me must answer JSON (anonymous).
 echo "--- smoke ---"
 curl -s -o /dev/null -w "login redirect: %{http_code} -> %{redirect_url}\n" \
-  "https://ultrametric.ai/productarena/auth/login?return_to=https://ultrametric.ai/productarena"
-curl -s "https://ultrametric.ai/productarena/auth/me" | head -c 200; echo
+  "https://ultrametric.ai/auth/login?return_to=https://ultrametric.ai"
+curl -s "https://ultrametric.ai/auth/me" | head -c 200; echo
 cat <<'NEXT'
 
 Done. Final steps:

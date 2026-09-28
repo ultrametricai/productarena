@@ -35,7 +35,7 @@ import { discoverUrlsFromLlmsTxt } from './spike-engine'
 
 const ARENA = 'game-engines'
 const TIMEOUT_MS = 10_000
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena-spike-engine/1.0; +https://ultrametric.ai/productarena)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; Ultrametric-spike-engine/1.0; +https://ultrametric.ai)'
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(name)

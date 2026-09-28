@@ -20,7 +20,7 @@ import {
 // derivation from data/processes.json.
 
 export const metadata: Metadata = {
-  title: 'Operating rhythm — a year of running a startup — ProductArena',
+  title: 'Operating rhythm — a year of running a startup — Ultrametric',
   description:
     'What a startup actually does, on the record: the recurring operations x-ray. Which founder processes run daily, weekly, monthly, quarterly, or annually — with each one’s agent ceiling and the software that runs it.',
 }
@@ -62,7 +62,7 @@ function ProcessCard({ task }: { task: ProcessTask }) {
             ) : (
               <span
                 key={v.label}
-                title={`${v.label} — not yet judged on ProductArena`}
+                title={`${v.label} — not yet judged on Ultrametric`}
                 className="inline-flex items-center gap-1 rounded-full border border-zinc-800 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-500"
               >
                 <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />

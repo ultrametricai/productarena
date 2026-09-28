@@ -35,7 +35,7 @@ export async function generateMetadata({
   const data = loadCategory(category)
   const product = data.products.find((p) => p.id === id)
   return {
-    title: `${product ? product.name : id} score calculation — ${data.category.name} Arena — ProductArena`,
+    title: `${product ? product.name : id} score calculation — ${data.category.name} Arena — Ultrametric`,
     description: `The transparent audit trail behind ${product ? product.name : id}'s Overall score: every judged story, verdict, cited evidence item, and the exact arithmetic from verdicts to the blended score.`,
     alternates: { canonical: `${SITE_URL}/arena/${category}/product/${id}/score` },
   }

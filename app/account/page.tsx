@@ -10,7 +10,7 @@ import GeoMark from '@/components/GeoMark'
 // moved to /account/vendors; the watchlist stays at /watchlist. Static shell — all personal
 // state is client-gated (lib/session.ts); the server never sees who you are.
 export const metadata: Metadata = {
-  title: 'Account — ProductArena',
+  title: 'Account — Ultrametric',
   description: 'Your account: your session, sign-out, and links to your vendors and watchlist.',
   // Session-gated content: noindex, and deliberately absent from app/sitemap.ts.
   robots: { index: false, follow: false },
@@ -21,7 +21,7 @@ export default function AccountPage() {
     <div className="space-y-8">
       <section>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          <GeoMark seed="account" title="Your ProductArena account" size={22} className="text-zinc-500" />
+          <GeoMark seed="account" title="Your Ultrametric account" size={22} className="text-zinc-500" />
           Account
         </h1>
         {/* Client-gated identity row: email + log out when signed in, sign-up prompt when not. */}

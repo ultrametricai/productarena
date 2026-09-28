@@ -24,7 +24,7 @@ import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualSt
 // the SIMULATED label — see lib/virtualStartup.ts for the honesty contract.
 
 export const metadata: Metadata = {
-  title: 'Virtual Startup — ProductArena',
+  title: 'Virtual Startup — Ultrametric',
   description:
     'Pick the starting decisions — or a one-tap example company (software, hardware, biotech) or YC batch mode — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
 }

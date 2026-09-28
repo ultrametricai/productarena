@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Claims vs reality ranking — all ${totalProducts} products — ProductArena`,
+    title: `Claims vs reality ranking — all ${totalProducts} products — Ultrametric`,
     description: `Every product across every arena ranked by claims integrity — how well the vendor's own website claims survive independent verification. Verified claims count fully, contradicted claims count doubly against. Evidence-graded, no opinion.`,
   }
 }

@@ -37,7 +37,7 @@ export async function generateMetadata({
   const data = loadCategory(category)
   const year = new Date().getFullYear()
   return {
-    title: `${data.category.name} procurement report (${year}) — ProductArena`,
+    title: `${data.category.name} procurement report (${year}) — Ultrametric`,
     description: `A print-ready ${data.category.name} procurement report: the evidence-graded leaderboard for ${data.products.length} products, the ${data.stories.length}-requirement buyer checklist, pricing signals, recorded probes, and honest uncertainty notes.`,
     alternates: { canonical: `${SITE_URL}/arena/${category}/report` },
   }
@@ -111,7 +111,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
           {data.category.name} — procurement report
         </h1>
         <p className="mt-2 text-sm text-zinc-400">
-          ProductArena · rankings as of {reportDate}
+          Ultrametric · rankings as of {reportDate}
           {freshness && <> · evidence as of {freshness}</>} · {data.products.length} products ·{' '}
           {data.stories.length} judged requirements · {data.verdicts.length} judged cells
         </p>
@@ -310,13 +310,13 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
       {/* License + citation footer */}
       <section className="rounded-xl border border-zinc-800 p-4 text-xs text-zinc-500">
         <p>
-          <span className="font-semibold text-zinc-400">Cite as:</span> ProductArena by Ultrametric Inc,{' '}
+          <span className="font-semibold text-zinc-400">Cite as:</span> Ultrametric by Ultrametric Inc,{' '}
           {data.category.name} arena, rankings as of {reportDate} — {SITE_URL}/arena/{category}
         </p>
         <p className="mt-2">
           <span className="font-semibold text-zinc-400">License:</span> © 2026 Ultrametric Inc. Brief
           quotation of individual verdicts, scores, or evidence excerpts is permitted with attribution to
-          &quot;ProductArena by Ultrametric Inc (ultrametric.ai/productarena)&quot;, as is use of the data to
+          &quot;Ultrametric by Ultrametric Inc (ultrametric.ai)&quot;, as is use of the data to
           evaluate, contest, or contribute corrections. Bulk copying, redistribution, or use to build
           competing datasets requires prior written permission (see DATA-LICENSE in the repository).
         </p>

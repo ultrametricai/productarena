@@ -29,7 +29,7 @@ Implementation map:
 - `lib/mcpEndpoints.ts` — GENERATED static allowlist (`scripts/generate-mcp-allowlist.mjs`).
 - `lib/mcpDemoCalls.ts` — GENERATED curated demo calls (`scripts/generate-mcp-demo-calls.mjs`
   from `data/mcp-demo-calls.json`).
-- `infra/cloudflare-proxy/worker.js` — `POST /productarena/api/mcp-probe` (`MCP_ENDPOINTS` and
+- `infra/cloudflare-proxy/worker.js` — `POST /api/mcp-probe` (`MCP_ENDPOINTS` and
   `MCP_DEMO_CALLS` hardcoded copies of the same maps; clients send `{arena, product}` + tier
   flags, never URLs or tools).
 - `docs/TRY-IT-DEMO-ACCOUNTS.md` — sandbox-tier provisioning checklist (top-10 endpoint list).

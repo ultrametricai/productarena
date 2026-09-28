@@ -9,7 +9,7 @@ import { loadGifts, type GiftEntry, type GiftStatus } from '@/lib/gifts'
 // drafts tree — this page surfaces program state, it never invents any.
 
 export const metadata: Metadata = {
-  title: 'Gift program — founder review — ProductArena',
+  title: 'Gift program — founder review — Ultrametric',
   description: 'Internal review page for the drafts/outreach gift-PR program.',
   robots: { index: false, follow: false },
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Agent-Ready certifications — the registry side of the self-serve conformance suite
-// (`productarena certify <url>`, protocol in docs/CERTIFICATION.md). One optional file per
+// (`ultrametric-cli certify <url>`, protocol in docs/CERTIFICATION.md). One optional file per
 // arena, `data/<category>/certifications.json`, loaded tolerant-optionally into CategoryData
 // by lib/data.ts (same "absence is not an error" contract as popularity/claims/uncertainty/
 // vendor-responses).

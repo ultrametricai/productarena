@@ -1,6 +1,6 @@
 # Prove-It: the protocol for evidence-based software claims
 
-ProductArena's verdicts already cite evidence. Prove-It goes one step further: **claims get
+Ultrametric's verdicts already cite evidence. Prove-It goes one step further: **claims get
 recordings**. When we say "product X has a working CLI / MCP server / documented endpoint",
 we publish a replayable capture of that thing actually happening — a terminal transcript or a
 browser video — next to the verdict. And the protocol runs in both directions: instead of us

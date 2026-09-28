@@ -1,6 +1,6 @@
 # Coverage Strategy: an AI-first taxonomy at G2 scale
 
-This document explains how ProductArena grows from 11 live arenas to 180+ planned arenas
+This document explains how Ultrametric grows from 11 live arenas to 180+ planned arenas
 (`data/arena-roadmap.json`), how our taxonomy relates to G2's, why ours is organized differently,
 and the runner architecture that gets us to 100+ live arenas in roughly three months.
 
@@ -51,7 +51,7 @@ capturing every possible buyer search phrase for review SEO. That is not our goa
 
 ## 2. Our organizing principle: the AI-era scoring spine
 
-Every ProductArena arena is judged on the same canon (see `lib/scoring.ts` — the Overall score
+Every Ultrametric arena is judged on the same canon (see `lib/scoring.ts` — the Overall score
 blends five components with renormalized weights):
 
 | Component | Weight | Question it answers |

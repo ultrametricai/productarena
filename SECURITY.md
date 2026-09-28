@@ -1,6 +1,6 @@
 # Security Policy
 
-ProductArena (ultrametric.ai/productarena) is a static, evidence-based comparison site. The deployed site serves
+Ultrametric (ultrametric.ai) is a static, evidence-based comparison site. The deployed site serves
 pre-computed data from `data/` — it does not accept user input that is executed, does not run
 a database, and does not call any LLM API at build or request time (see README, "Pipeline
 refresh workflow"). The pipeline that *produces* the data runs locally, out of band, and is
@@ -26,7 +26,7 @@ Please include:
 
 In scope:
 
-- The deployed site (`ultrametric.ai/productarena`) and its data API / `llms.md` / `llms.txt` /
+- The deployed site (`ultrametric.ai`) and its data API / `llms.md` / `llms.txt` /
   OpenAPI endpoints.
 - The pipeline (`pipeline/`) — crawl, extract, normalize, collect-community, probe, judge,
   derive stages — including SSRF/injection risks from fetching third-party vendor pages, and

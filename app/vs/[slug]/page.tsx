@@ -70,7 +70,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const found = resolve(slug)
-  if (!found) return { title: 'Comparison — ProductArena' }
+  if (!found) return { title: 'Comparison — Ultrametric' }
   const { data, a, b } = found
   const year = new Date().getFullYear()
   return {

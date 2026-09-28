@@ -8,9 +8,9 @@ import type { Session } from '@/lib/session'
 const sessionStub = vi.hoisted(() => ({ current: { state: 'loading' } as Session }))
 vi.mock('@/lib/session', () => ({
   useSession: () => sessionStub.current,
-  loginUrl: (returnTo: string) => `/productarena/auth/login?return_to=${encodeURIComponent(returnTo)}`,
+  loginUrl: (returnTo: string) => `/auth/login?return_to=${encodeURIComponent(returnTo)}`,
   registrationUrl: (returnTo: string) =>
-    `/productarena/auth/login?screen_hint=sign-up&return_to=${encodeURIComponent(returnTo)}`,
+    `/auth/login?screen_hint=sign-up&return_to=${encodeURIComponent(returnTo)}`,
 }))
 
 import ProcessCheck from '@/components/ProcessCheck'

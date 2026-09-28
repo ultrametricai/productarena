@@ -9,7 +9,7 @@ import { loadIntegrationGraph, verifiedPairKeys } from '@/lib/integrations'
 import { buildMyStackProducts } from '@/lib/myStackData'
 
 export const metadata: Metadata = {
-  title: 'Battle of the stacks — ProductArena',
+  title: 'Battle of the stacks — Ultrametric',
   description:
     'Put two stacks side by side — curated AI stacks or your own product lists — and compare their evidence aggregates: mean Overall score, agent-readiness, arena coverage, verified interconnects, and the weakest link. Aggregates of published scores, not a judged head-to-head.',
 }

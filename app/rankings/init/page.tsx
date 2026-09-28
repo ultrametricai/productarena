@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full Overall score ranking — all ${totalProducts} products — ProductArena`,
+    title: `Full Overall score ranking — all ${totalProducts} products — Ultrametric`,
     description: `Every product across every arena ranked by the blended Overall score (agent-ready, API quality, openness, agentic app, automation). Evidence-graded, no opinion.`,
   }
 }

@@ -18,7 +18,7 @@ import { REPO } from '@/lib/site'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Predictions — ProductArena',
+  title: 'Predictions — Ultrametric',
   description:
     'Yes/no questions auto-generated from live close races — will the #2 overtake the #1 within 30 days? Settled mechanically from the public changelog, never by opinion.',
 }

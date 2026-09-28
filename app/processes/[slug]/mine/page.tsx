@@ -30,7 +30,7 @@ export async function generateMetadata({
   const { slug } = await params
   const task = findProcessBySlug(slug)
   return {
-    title: task ? `${task.title} — with your stack — ProductArena` : 'Check my process — ProductArena',
+    title: task ? `${task.title} — with your stack — Ultrametric` : 'Check my process — Ultrametric',
     description: 'Run this process with your own stack: your vendor per step, scored against the market’s best, with upgrade recommendations.',
     robots: { index: false, follow: false },
   }

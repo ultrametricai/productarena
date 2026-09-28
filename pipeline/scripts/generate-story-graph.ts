@@ -2,7 +2,7 @@
 // 2026-09-22: "This connection between stories and processes should form a large DAG on our
 // backend, so we know how everything connects") as data/graph.json, the committed public
 // artifact. Ships exactly like every other data file: scripts/copy-data.mjs mirrors data/ →
-// public/data/ before each build, so the graph is fetchable at /productarena/data/graph.json
+// public/data/ before each build, so the graph is fetchable at /data/graph.json
 // (the same mechanism the CLI's /data/categories.json reads use).
 //
 // Pure derivation — re-run after any corpus / mapping / verdict change; determinism against the

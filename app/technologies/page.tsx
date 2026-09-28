@@ -15,7 +15,7 @@ export const dynamic = 'force-static'
 export function generateMetadata(): Metadata {
   const { totalProducts, totalArenas, surfaces } = computeControlSurfaces(loadAll())
   return {
-    title: `Control surfaces — ${surfaces.length} technologies ranked by evidence — ProductArena`,
+    title: `Control surfaces — ${surfaces.length} technologies ranked by evidence — Ultrametric`,
     description: `API, MCP, CLI, webhooks and other agent control surfaces ranked by judged adoption across ${totalProducts} products in ${totalArenas} arenas — plus each surface's pros, cons and agent-readiness lift.`,
   }
 }

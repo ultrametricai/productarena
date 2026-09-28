@@ -49,7 +49,7 @@ export function generateMetadata(): Metadata {
   const rows = buildRows()
   const leader = rows[0]
   return {
-    title: `Best-covered processes — all ${rows.length} ranked by market coverage — ProductArena`,
+    title: `Best-covered processes — all ${rows.length} ranked by market coverage — Ultrametric`,
     description: `Which founder processes does the software market already serve best? ${leader?.top ? `${leader.title} leads: ${leader.top.name} scores ${leader.top.processScore}/100 across its ranked steps.` : ''} Derived from judged story verdicts, never vibes.`,
   }
 }

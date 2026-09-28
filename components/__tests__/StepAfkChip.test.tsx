@@ -32,7 +32,7 @@ function stubLocalStorage() {
   })
 }
 
-const MANIFEST_URL = 'https://ultrametric.ai/productarena/processes/get-ein/manifest.json'
+const MANIFEST_URL = 'https://ultrametric.ai/processes/get-ein/manifest.json'
 const NODE_ID = 'n3'
 
 describe('afkStepRunUrl', () => {

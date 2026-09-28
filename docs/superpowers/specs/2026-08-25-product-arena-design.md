@@ -1,11 +1,11 @@
-# Product Arena — Design Spec
+# Ultrametric — Design Spec
 
 **Date:** 2026-08-25
 **Status:** Approved design, pre-implementation
 
 ## 1. Overview
 
-Product Arena is a website that ranks competing software products within a category by comparing their **user stories** — what a user can actually accomplish with each product — backed by collected evidence and judged by an LLM.
+Ultrametric is a website that ranks competing software products within a category by comparing their **user stories** — what a user can actually accomplish with each product — backed by collected evidence and judged by an LLM.
 
 **v1 scope:** one category, done well — **Desktop OS**, with four products: **macOS, Omarchy, Ubuntu, Fedora**. The system is built so more categories and products can be added later, but v1 ships only this arena.
 

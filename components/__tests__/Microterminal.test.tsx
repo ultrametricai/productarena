@@ -133,7 +133,7 @@ describe('Microterminal live tiers', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /run live/i }))
     await waitFor(() => expect(urls).toHaveLength(1))
-    expect(urls[0]).toBe('https://ultrametric.ai/productarena/api/try/payments/stripe/llms-txt')
+    expect(urls[0]).toBe('https://ultrametric.ai/api/try/payments/stripe/llms-txt')
     expect(await screen.findByText(/recorded replay \+ live re-run/)).toBeTruthy()
   })
 

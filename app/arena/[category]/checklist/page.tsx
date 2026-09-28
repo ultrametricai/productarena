@@ -38,7 +38,7 @@ export async function generateMetadata({
   const data = loadCategory(category)
   const year = new Date().getFullYear()
   return {
-    title: `${data.category.name} buyer checklist / RFP template (${year}) — ProductArena`,
+    title: `${data.category.name} buyer checklist / RFP template (${year}) — Ultrametric`,
     description: `A ready-to-send ${data.category.name} RFP checklist: ${data.stories.length} evidence-judged requirements grouped by theme with must-have/should-have/nice-to-have priorities, plus current pass/fail verdicts for the top-ranked of ${data.products.length} products.`,
     alternates: { canonical: `${SITE_URL}/arena/${category}/checklist` },
   }

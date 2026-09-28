@@ -1,5 +1,5 @@
 // Hardware arena bring-up (2026-09): pre-populates the crawl cache for www.amd.com pages.
-// www.amd.com resets connections for the pipeline's ProductArena crawler UA (verified live at
+// www.amd.com resets connections for the pipeline's Ultrametric crawler UA (verified live at
 // bring-up: HTTP/2 stream reset with the PA UA, HTTP 200 with a browser UA) — the same
 // bot-wall class as Intel ARK at the experiments curation (see data/experiments/*.json notes).
 // This writes the exact crawl-cache layout crawl.ts produces (<!-- source: url --> header +

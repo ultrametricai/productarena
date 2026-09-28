@@ -1,4 +1,4 @@
-# How to read a ProductArena score
+# How to read an Ultrametric score
 
 This page is for readers, not engineers — plain language, no jargon. If you want the technical
 formulas and source code, see [METHODOLOGY.md](../METHODOLOGY.md).

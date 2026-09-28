@@ -1,7 +1,7 @@
-# ProductArena Methodology
+# Ultrametric Methodology
 
 The full methodology writeup — evidence tiers, judging, scoring, the PA Score, story
-provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://ultrametric.ai/productarena/methodology)
+provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://ultrametric.ai/methodology)
 page is a tight one-screen summary of this document; this file is the source of truth. See also
 [README.md](./README.md) for the arena list, data layout, and pipeline workflow, and
 [CONTRIBUTING.md](./CONTRIBUTING.md) for how to contest a verdict.

@@ -32,7 +32,7 @@ export async function generateMetadata({
   const { story } = await params
   const entry = findGlobalStory(loadAll(), story)
   return {
-    title: `${entry ? stripPersonaPrefix(entry.title) : story} — across all software — ProductArena`,
+    title: `${entry ? stripPersonaPrefix(entry.title) : story} — across all software — Ultrametric`,
     description: entry
       ? `Every product's evidence-backed verdict on "${stripPersonaPrefix(entry.title)}" across ${entry.arenaCount} arenas.`
       : undefined,

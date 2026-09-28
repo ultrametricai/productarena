@@ -9,7 +9,7 @@ import { buildProcessRows } from '@/lib/processRows'
 import { chainTasks, computeCeiling, loadChains } from '@/lib/processes'
 
 export const metadata: Metadata = {
-  title: 'Going agentic with company processes — ProductArena',
+  title: 'Going agentic with company processes — Ultrametric',
   description:
     'Startup operations in the open — every founder process, the software that runs it, and the best an agent can do today. Agent ceilings, human/manual gaps, and simulated dry runs over real market options.',
 }

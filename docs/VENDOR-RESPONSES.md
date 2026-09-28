@@ -2,7 +2,7 @@
 
 CVE databases let a vendor put an official statement on the record next to a finding about
 their product — the finding stands, the statement is published verbatim beside it, and readers
-see both. ProductArena does the same for verdicts. A **vendor response** is a short, verified,
+see both. Ultrametric does the same for verdicts. A **vendor response** is a short, verified,
 official statement from a product's vendor about one specific (product, story) verdict,
 published word-for-word next to that verdict.
 
@@ -85,7 +85,7 @@ would be misleading. Rules:
 
 ## Affiliated products
 
-Ultrametric (which operates ProductArena) also ships products that appear in arenas (e.g.
+Ultrametric (which operates Ultrametric) also ships products that appear in arenas (e.g.
 Foreloop in `software-factory`, disclosed via the product's `affiliation` field). Responses on
 our own products follow this exact protocol with no shortcuts — `github-org` verification via
 this repository's org, same verbatim cap, same "never moves a verdict" rule — and exist partly

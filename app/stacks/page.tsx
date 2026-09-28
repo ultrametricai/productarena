@@ -7,7 +7,7 @@ import { hasLogo } from '@/lib/logos'
 import { metricLabel, resolveAllStacks } from '@/lib/aiStacks'
 
 export const metadata: Metadata = {
-  title: 'AI Stacks — ProductArena',
+  title: 'AI Stacks — Ultrametric',
   description:
     'Best evidence-backed pairings for going agentic: OS, local model runtime, coding agent, and the founder ops layer — every scored pick resolved live from arena rankings.',
 }

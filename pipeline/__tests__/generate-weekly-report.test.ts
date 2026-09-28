@@ -148,7 +148,7 @@ describe('renderWeeklyReport', () => {
       ],
       siteUrl: SITE,
     })
-    expect(md).toContain('# ProductArena Weekly — week ending Sep 6, 2026')
+    expect(md).toContain('# Ultrametric Weekly — week ending Sep 6, 2026')
     expect(md).toContain('*Score history begins Aug 28, 2026')
     expect(md).toContain(`- [Warp](${SITE}/arena/terminals/product/warp) +5.4 → 45.4 in [Terminals](${SITE}/arena/terminals)`)
     expect(md).toContain(`- [kitty](${SITE}/arena/terminals/product/kitty) -2.1 → 27.9`)

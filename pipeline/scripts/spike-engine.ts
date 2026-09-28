@@ -57,7 +57,7 @@ const POPULAR_FILE = path.join(DATA_DIR, 'popular-products.json')
 const TIMEOUT_MS = 10_000
 export const DEFAULT_URL_BUDGET = 12
 export const SPIKE_INTERVAL_DAYS = 21 // base re-spike cadence; boosts shorten it
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena-spike-engine/1.0; +https://ultrametric.ai/productarena)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; Ultrametric-spike-engine/1.0; +https://ultrametric.ai)'
 
 export const SpikeRunSchema = z.object({
   at: z.string(),

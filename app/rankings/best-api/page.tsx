@@ -67,7 +67,7 @@ export function generateMetadata(): Metadata {
   const rows = buildApiRows(loadAll())
   const leader = rows[0]
   return {
-    title: `Best API — all ${rows.length} products ranked by API quality — ProductArena`,
+    title: `Best API — all ${rows.length} products ranked by API quality — Ultrametric`,
     description: `Whose API is actually good once an agent gets there — machine-readable specs, sandboxes, versioning, interactive docs? ${leader && leader.apiQuality !== null ? `${leader.product.name} leads with ${leader.apiQuality.toFixed(0)}/100.` : ''} Untested APIs are unscored, never shown as 0.`,
   }
 }

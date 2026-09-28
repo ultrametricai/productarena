@@ -1,4 +1,4 @@
-// Cross-references ProductArena's existing catalog (every product in every arena, not just the
+// Cross-references Ultrametric's existing catalog (every product in every arena, not just the
 // YC-classified modern batches) against the FULL YC public directory (all batches, 2006–present)
 // to find which current products are themselves YC alumni. Matches are verified by normalized
 // website domain — never by name — to avoid false positives from unrelated companies that share a

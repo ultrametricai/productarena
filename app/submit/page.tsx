@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import SubmitScan from '@/components/SubmitScan'
 
 export const metadata: Metadata = {
-  title: 'Test my product — ProductArena',
+  title: 'Test my product — Ultrametric',
   description:
     'Paste your product URL for an instant agent-readiness quick scan (llms.txt, OpenAPI, MCP signals), then submit it for a full evidence-based arena evaluation.',
 }
@@ -33,7 +33,7 @@ export default function SubmitPage() {
         <code className="text-zinc-300">mcp.&lt;your-domain&gt;</code>, keyless <code className="text-zinc-300">.md</code> docs
         mirrors) are in{' '}
         <a
-          href="https://github.com/ultrametricai/productarena/blob/main/CONTRIBUTING.md#3-add-your-product"
+          href="https://github.com/ultrametricai/ultrametric/blob/main/CONTRIBUTING.md#3-add-your-product"
           target="_blank"
           rel="noopener noreferrer"
           className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"

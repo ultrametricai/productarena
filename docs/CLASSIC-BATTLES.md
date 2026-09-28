@@ -1,4 +1,4 @@
-# Classic battles ProductArena is missing
+# Classic battles Ultrametric is missing
 
 A prioritized backlog of classic product rivalries that would make strong arenas. Priority
 weighs: (1) how iconic/searched the head-to-head is, (2) how well our evidence ladder

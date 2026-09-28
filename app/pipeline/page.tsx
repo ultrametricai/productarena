@@ -20,7 +20,7 @@ import {
 } from '@/lib/testingPipeline'
 
 export const metadata: Metadata = {
-  title: 'Testing pipeline — what we have NOT tested — ProductArena',
+  title: 'Testing pipeline — what we have NOT tested — Ultrametric',
   description:
     'The transparency board: every arena’s untested product user stories, the share of verdicts backed by hands-on probes, the most-wanted untested product/story pairs, and which arenas are next.',
 }

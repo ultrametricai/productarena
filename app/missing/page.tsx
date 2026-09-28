@@ -17,7 +17,7 @@ import { globallyUnservedStories, OPPORTUNITY_FORMULA, rankMissingStartups } fro
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Missing startups — where the agent economy has gaps — ProductArena',
+  title: 'Missing startups — where the agent economy has gaps — Ultrametric',
   description:
     'Arenas ranked by opportunity for new agent-native entrants: weak fleet agent-readiness, stories no product serves, and leaders with low Overall scores — all derived from evidence-backed verdicts.',
 }

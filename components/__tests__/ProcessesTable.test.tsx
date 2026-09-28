@@ -11,7 +11,7 @@ import { fireEvent, render, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
 
-const PATH = '/productarena/'
+const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
 const params = () => new URLSearchParams(window.location.search)
 

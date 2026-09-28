@@ -7,7 +7,7 @@ import { loadCategories } from '@/lib/data'
 // The main Arenas page (founder 2026-09-23): a visual navigation over every judged arena,
 // grouped by the same curated sections as the header dropdown, with a jump strip up top.
 export const metadata: Metadata = {
-  title: 'Arenas — ProductArena',
+  title: 'Arenas — Ultrametric',
   description:
     'Every judged arena — grouped, visual, one card per market with its ranked leader. Pick an arena for the full evidence-backed leaderboard.',
 }

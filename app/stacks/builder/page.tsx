@@ -7,7 +7,7 @@ import { buildCompareProducts } from '@/lib/compareData'
 import { loadIntegrationGraph, verifiedPairKeys } from '@/lib/integrations'
 
 export const metadata: Metadata = {
-  title: 'Stack builder — ProductArena',
+  title: 'Stack builder — Ultrametric',
   description:
     'Build your own evidence-backed AI-era stack: pick roles and constraints, and every slot resolves live to the arena leaderboard winner — with its honest rank, runner-up, and a shareable URL.',
 }

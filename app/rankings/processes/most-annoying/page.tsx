@@ -19,7 +19,7 @@ function buildRows() {
 export function generateMetadata(): Metadata {
   const rows = buildRows()
   return {
-    title: `Most annoying processes — all ${rows.length} ranked by drudgery — ProductArena`,
+    title: `Most annoying processes — all ${rows.length} ranked by drudgery — Ultrametric`,
     description:
       'Every founder process ranked by curated annoyance (1–5 drudgery by hand), with its real operating cadence — because a monthly 5/5 chore hurts more than a one-time one.',
   }

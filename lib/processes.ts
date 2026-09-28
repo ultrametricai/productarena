@@ -676,7 +676,7 @@ const VENDOR_LABELS: Record<string, string> = {
   fastlane: 'fastlane',
   // Contextual vendor selection (vendor_011): our own evidence-comparison surface, disclosed as
   // ours — same honest-affiliation posture as Ultrametric products judged in their arenas.
-  productarena: 'ProductArena (ours)',
+  productarena: 'Ultrametric (ours)',
   // 2026-09-22 wave-3 vendor-cell fill (title-case fallback misfires on these).
   virtualpostmail: 'VirtualPostMail',
   workos: 'WorkOS',
@@ -756,7 +756,7 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   expo: 'https://expo.dev/',
   // Our own compare-against-your-stack page (vendor_011) — verified live; the chip label
   // discloses the affiliation.
-  productarena: 'https://ultrametric.ai/productarena/my-stack',
+  productarena: 'https://ultrametric.ai/my-stack',
   // 2026-09-22 wave-3 vendor-cell fill — every URL curl-verified 200 before listing.
   // (Northwest Registered Agent's site serves 403 to non-browser clients, so its chip
   // deliberately carries no signup link — no unverifiable URL is fabricated.)

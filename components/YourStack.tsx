@@ -95,7 +95,7 @@ export default function YourStack({
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <a
-            href={registrationUrl('/productarena/my-stack')}
+            href={registrationUrl('/my-stack')}
             onClick={(e) => {
               e.preventDefault()
               window.location.href = registrationUrl(window.location.href)
@@ -105,7 +105,7 @@ export default function YourStack({
             Sign up to save your stack
           </a>
           <a
-            href={loginUrl('/productarena/my-stack')}
+            href={loginUrl('/my-stack')}
             onClick={(e) => {
               e.preventDefault()
               window.location.href = loginUrl(window.location.href)

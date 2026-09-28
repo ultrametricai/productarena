@@ -18,7 +18,7 @@ import { buildMyStackProducts, curatedStackArenaPatterns } from '@/lib/myStackDa
 // personal state is client-gated (lib/session.ts + lib/myStack.ts); the server never sees a
 // stack, so the prerendered HTML is identical for anonymous readers.
 export const metadata: Metadata = {
-  title: 'My vendors — ProductArena',
+  title: 'My vendors — Ultrametric',
   description: 'The vendors you run, per arena — recorded from “I’m using this” and synced to your account.',
   // Session-gated content: noindex, and deliberately absent from app/sitemap.ts (same posture
   // as /account and /watchlist).

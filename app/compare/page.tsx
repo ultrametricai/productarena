@@ -18,9 +18,9 @@ const STARTERS: { label: string; ids: string[] }[] = [
 ]
 
 export const metadata: Metadata = {
-  title: 'Compare products — ProductArena',
+  title: 'Compare products — Ultrametric',
   description:
-    'Side-by-side, evidence-backed comparison of any products on ProductArena — Overall score, agent-readiness, API quality, shared theme scores, and agent access, with a shareable URL.',
+    'Side-by-side, evidence-backed comparison of any products on Ultrametric — Overall score, agent-readiness, API quality, shared theme scores, and agent access, with a shareable URL.',
 }
 
 // Static shell: the page prerenders once; the actual selection lives in `?p=…`, read

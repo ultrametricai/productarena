@@ -16,7 +16,7 @@ import {
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Changelog — ProductArena',
+  title: 'Changelog — Ultrametric',
   description:
     'What changed across every arena — rank flips, Overall score moves, new products, and new arenas, derived from the committed score history. Nothing hand-written.',
 }

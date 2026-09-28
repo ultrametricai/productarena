@@ -37,7 +37,7 @@ function saveProgress(done: Set<string>) {
 
 function systemPrompt(arenas: { id: string; name: string; description: string }[]): string {
   const arenaList = arenas.map((a) => `- ${a.id}: ${a.description}`).join('\n')
-  return `You classify Y Combinator companies onto ProductArena's arena taxonomy.
+  return `You classify Y Combinator companies onto Ultrametric's arena taxonomy.
 
 EXISTING ARENAS (use the exact id if a company genuinely competes here — i.e. a buyer evaluating products in this arena would seriously consider this company as an alternative):
 ${arenaList}

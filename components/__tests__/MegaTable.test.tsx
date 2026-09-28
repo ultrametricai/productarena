@@ -14,7 +14,7 @@ import MegaTable from '@/components/MegaTable'
 import { HomeModeContext } from '@/components/HomeModes'
 import type { MegaTableRow } from '@/lib/megaTableSort'
 
-const PATH = '/productarena/'
+const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
 const params = () => new URLSearchParams(window.location.search)
 

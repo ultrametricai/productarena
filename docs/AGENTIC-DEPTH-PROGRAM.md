@@ -1,6 +1,6 @@
 # The Agentic Depth Program
 
-**Status: proposed, phased rollout.** This document is the design for ProductArena's next layer of
+**Status: proposed, phased rollout.** This document is the design for Ultrametric's next layer of
 agent-readiness measurement — a successor to (not a replacement for) the current
 `agentic-*`/`api-*` verdict cells described in the [README](../README.md#4-the-agenticness-index).
 Those cells ask *"does documentation/evidence say this product has an MCP server / CLI /
@@ -169,4 +169,4 @@ whether a laggard is catching up or falling further behind.
 
 Each phase ships independently and is additive to the current site — no phase requires
 retracting or invalidating the existing evidence-tier verdicts, and every ArenaBench/task-trial
-result is itself subject to the same contest mechanism as any other verdict on ProductArena.
+result is itself subject to the same contest mechanism as any other verdict on Ultrametric.

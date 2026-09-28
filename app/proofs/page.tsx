@@ -13,9 +13,9 @@ import { REPO, withBase } from '@/lib/site'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Recorded proofs — ProductArena',
+  title: 'Recorded proofs — Ultrametric',
   description:
-    'Every replayable probe recording on ProductArena — real commands run keyless on our machines, captured verbatim (terminal transcripts and browser videos), each tied to the user stories it substantiates.',
+    'Every replayable probe recording on Ultrametric — real commands run keyless on our machines, captured verbatim (terminal transcripts and browser videos), each tied to the user stories it substantiates.',
 }
 
 interface ProductGroup {

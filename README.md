@@ -1,18 +1,18 @@
-# ProductArena (ultrametric.ai/productarena)
+# Ultrametric (ultrametric.ai)
 
-*(formerly Product Arena)*
+*(formerly ProductArena)*
 
-[![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
-[![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
+[![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
+[![site](https://img.shields.io/badge/site-ultrametric.ai-000000)](https://ultrametric.ai)
 <!-- stat-badges:start -->
-[![arenas](https://img.shields.io/badge/arenas-93-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-578-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32949-34d399)](https://ultrametric.ai/productarena/methodology)
+[![arenas](https://img.shields.io/badge/arenas-93-34d399)](https://ultrametric.ai)
+[![products](https://img.shields.io/badge/products-578-34d399)](https://ultrametric.ai/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32949-34d399)](https://ultrametric.ai/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
 
-**The open evidence layer for the agent economy.** ProductArena measures how ready the
+**The open evidence layer for the agent economy.** Ultrametric measures how ready the
 world's software is for AI agents — and how Built-in AI it is for humans — with evidence, not
 opinion: crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge
 whose every verdict carries citations, a confidence grade, and a contest button.
@@ -27,11 +27,11 @@ It has grown past rankings into an operating map of the AI era:
 - **Proofs** — recorded terminal/MCP sessions and a prove-it protocol vendors can submit to
 - **Agent-native access** — MCP server, JSON API, llms.txt: agents are first-class readers
 
-> ⭐ **If evidence-based software rankings are useful to you, [star the repo](https://github.com/ultrametricai/productarena)** — stars are how other builders find this, and every ranking, verdict, and proof here is open for you to audit or contest.
+> ⭐ **If evidence-based software rankings are useful to you, [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other builders find this, and every ranking, verdict, and proof here is open for you to audit or contest.
 
-![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
+![Ultrametric](https://ultrametric.ai/opengraph-image)
 
-ProductArena is an evidence-based comparison site: evidence in, rankings out. For each of 80+
+Ultrametric is an evidence-based comparison site: evidence in, rankings out. For each of 80+
 product arenas (500+ products and growing) we crawl vendor docs, GitHub, and community sources,
 extract per-product evidence, and
 have an LLM judge every product against a shared set of user stories. The result is a
@@ -39,7 +39,7 @@ leaderboard, a head-to-head battle log, a per-product story matrix, and — acro
 global rankings of how agent-ready and Built-in AI every product is. Every score traces back to
 cited evidence, not opinion.
 
-Live site: https://ultrametric.ai/productarena
+Live site: https://ultrametric.ai
 
 <!-- stats:start -->
 As of the last full pipeline run: **93 arenas, 578 products, 32,949 judged verdicts.**
@@ -53,29 +53,29 @@ Arena, product, and verdict counts above (and in the badge row) are regenerated 
 Nothing to install — the rankings are a public JSON API and agent-readable markdown:
 
 ```bash
-curl https://ultrametric.ai/productarena/data/ai-coding/rankings.json   # any arena, machine-readable
-curl https://ultrametric.ai/productarena/arena/ai-coding/llms.md        # same arena, markdown for agents
+curl https://ultrametric.ai/data/ai-coding/rankings.json   # any arena, machine-readable
+curl https://ultrametric.ai/arena/ai-coding/llms.md        # same arena, markdown for agents
 ```
 
-Agents: start from [`/llms.txt`](https://ultrametric.ai/productarena/llms.txt) — every arena and
+Agents: start from [`/llms.txt`](https://ultrametric.ai/llms.txt) — every arena and
 product has agent-readable markdown, and the data API needs no auth. (A first-party Ultrametric
-MCP server + API is coming; ProductArena itself is not offered over MCP or a CLI.)
+MCP server + API is coming; Ultrametric itself is not offered over MCP or a CLI.)
 
 ## What's new
 
 The news is generated from the committed score history, never hand-written: the live
-[changelog](https://ultrametric.ai/productarena/changelog) (rank flips, PA Score moves, new
-arenas), [weekly arena reports](https://ultrametric.ai/productarena/reports), and point-in-time
-[dataset releases](https://github.com/ultrametricai/productarena/releases) if you want a stable
+[changelog](https://ultrametric.ai/changelog) (rank flips, PA Score moves, new
+arenas), [weekly arena reports](https://ultrametric.ai/reports), and point-in-time
+[dataset releases](https://github.com/ultrametricai/ultrametric/releases) if you want a stable
 snapshot to build against.
 
 ## The rankings, at a glance
 
-![ProductArena rankings — homepage snapshot](docs/assets/rankings-snapshot.png)
+![Ultrametric rankings — homepage snapshot](docs/assets/rankings-snapshot.png)
 
 *Dated snapshot — rankings move whenever new evidence lands, so treat every
 number in this image as historical. The live table is at
-[ultrametric.ai/productarena](https://ultrametric.ai/productarena); machine-readable rankings
+[ultrametric.ai](https://ultrametric.ai); machine-readable rankings
 are at `/data/<arena>/rankings.json` per arena.*
 
 ## Quickstart
@@ -83,7 +83,7 @@ are at `/data/<arena>/rankings.json` per arena.*
 **I want to contribute (fix a verdict, add evidence, add a product):**
 
 ```bash
-git clone https://github.com/ultrametricai/productarena.git && cd productarena
+git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
 pnpm install
 pnpm dev        # http://localhost:3000
 pnpm test
@@ -91,25 +91,25 @@ pnpm test
 
 Then see [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict or adding evidence is a
 first-class workflow, not a favor. Founders: the ["Add your product"](./CONTRIBUTING.md#3-add-your-product)
-section covers both the quick issue path (via [/submit](https://ultrametric.ai/productarena/submit))
+section covers both the quick issue path (via [/submit](https://ultrametric.ai/submit))
 and the PR path, plus how to make your product probe well (llms.txt, OpenAPI, remote MCP,
 `.md` docs mirrors) so the pipeline sees everything you've shipped.
 
 **I want to consume the data (curl, or an agent reading /llms.txt):**
 
 ```bash
-curl https://ultrametric.ai/productarena/data/categories.json
-curl https://ultrametric.ai/productarena/data/ai-coding/rankings.json
-curl https://ultrametric.ai/productarena/llms.txt          # index for agents
+curl https://ultrametric.ai/data/categories.json
+curl https://ultrametric.ai/data/ai-coding/rankings.json
+curl https://ultrametric.ai/llms.txt          # index for agents
 ```
 
-(A first-party Ultrametric MCP server + API is coming; ProductArena itself is not offered over
+(A first-party Ultrametric MCP server + API is coming; Ultrametric itself is not offered over
 MCP or a CLI — the JSON data API and llms.txt/llms.md surfaces above are the supported ways in.)
 
 **I want to contest a verdict (I think a score is wrong):**
 
 Every verdict on the site has a "⚑ contest" link that opens a prefilled issue. Or file one
-directly: [new contest-verdict issue](https://github.com/ultrametricai/productarena/issues/new?template=contest-verdict.yml) —
+directly: [new contest-verdict issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml) —
 cite the evidence URL and quote the relevant excerpt so a maintainer can verify it.
 
 ## How it fits together
@@ -125,7 +125,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
                                         ┌───────────────┼────────────────┐
                                         ▼               ▼                ▼
                                   static site      /data JSON API   MCP server
-                                  ultrametric.ai/productarena + llms.md/txt (mcp/)
+                                  ultrametric.ai + llms.md/txt (mcp/)
                                                      + /openapi.json
 ```
 
@@ -378,7 +378,7 @@ worse than staying silent — with the score clamped at 0.
 **Null, never zero:** a product with no claims data (or no testable claims) gets `null`,
 not a fabricated `0` — same rule as every other index here: "we don't know" is not "the
 worst", and nulls sort last. The full cross-arena ranking lives at
-[/rankings/claims-integrity](https://ultrametric.ai/productarena/rankings/claims-integrity),
+[/rankings/claims-integrity](https://ultrametric.ai/rankings/claims-integrity),
 and each product page's "Claims vs evidence" section opens with its integrity summary.
 
 ### 4. The Agenticness Index
@@ -557,7 +557,7 @@ model and folding cross-model disagreement into the interval is listed as future
 ### 9. Bias disclosure — the judge is an Anthropic model
 
 **Owner-product disclosure:** the Product Feedback & Intent arena includes Foreloop, built by
-Ultrametric Inc — the company that operates ProductArena. Foreloop is judged by the identical evidence
+Ultrametric Inc — the company that operates Ultrametric. Foreloop is judged by the identical evidence
 rules as every other product (it placed third of four in its own arena as of this writing), its
 product page carries an affiliation banner, and every one of its verdicts is contestable like
 any other. An adversarial bias audit of Foreloop's verdicts (2026-09-21) found and corrected 14
@@ -681,7 +681,7 @@ every paragraph must cite its site source inline (`(source: /changelog)`, `(sour
 
 Publishing is a human act, by design. Every generated file carries
 `status: draft — requires founder sign-off before publishing` in its frontmatter, and the
-[/notes](https://ultrametric.ai/productarena/notes) page (see `lib/notes.ts`) renders **only**
+[/notes](https://ultrametric.ai/notes) page (see `lib/notes.ts`) renders **only**
 files whose frontmatter a human has edited to exactly `status: published`. Review the draft,
 edit the frontmatter, commit — that's the whole publish flow. Unreviewed drafts never render.
 
@@ -713,16 +713,16 @@ build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs — s
 agents" below.
 
 **Dataset releases.** Point-in-time snapshots of `data/` are periodically tagged and published
-as [GitHub releases](https://github.com/ultrametricai/productarena/releases) (e.g.
+as [GitHub releases](https://github.com/ultrametricai/ultrametric/releases) (e.g.
 `data-2026-09-02`), each with a zip of the full `data/` tree attached and release notes listing
 arena/product/verdict counts at that snapshot — useful if you want a stable dataset to build
 against instead of tracking `main`.
 
 ## For AI agents
 
-ProductArena is built to be read by agents, not just browsed by humans:
+Ultrametric is built to be read by agents, not just browsed by humans:
 
-- **[/llms.txt](https://ultrametric.ai/productarena/llms.txt)** — the top-level index per the
+- **[/llms.txt](https://ultrametric.ai/llms.txt)** — the top-level index per the
   [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
   every arena's markdown endpoint, the data API, and `/openapi.json`.
 - **Markdown endpoints** — every arena has a full-content markdown rendering at
@@ -734,14 +734,14 @@ ProductArena is built to be read by agents, not just browsed by humans:
   `/data/{category}/{products,stories,verdicts,rankings}.json`,
   `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
   (gitignored) — it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
-- **[/openapi.json](https://ultrametric.ai/productarena/openapi.json)** — an OpenAPI 3.1 document
+- **[/openapi.json](https://ultrametric.ai/openapi.json)** — an OpenAPI 3.1 document
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
-- **[/methodology](https://ultrametric.ai/productarena/methodology)** — a tight, on-site summary of
+- **[/methodology](https://ultrametric.ai/methodology)** — a tight, on-site summary of
   the methodology below (evidence tiers, judging, scoring, PA Score weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
-- **MCP / CLI** — retired as offerings (2026-09-23): ProductArena is not served over its own
+- **MCP / CLI** — retired as offerings (2026-09-23): Ultrametric is not served over its own
   MCP server or CLI; a first-party Ultrametric MCP + API is coming instead. The `mcp/` and
   `cli/` workspaces remain in-repo for that successor work but are not published entry points.
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
@@ -754,7 +754,7 @@ ProductArena is built to be read by agents, not just browsed by humans:
 
 ## Status & roadmap
 
-ProductArena is live at **[ultrametric.ai/productarena](https://ultrametric.ai/productarena)** and under active expansion. In flight:
+Ultrametric is live at **[ultrametric.ai](https://ultrametric.ai)** and under active expansion. In flight:
 
 - **Finer-grained arenas** — splitting broad categories (e.g. project management, edge
   platforms) into narrower slices as products diverge enough to need it.
@@ -802,7 +802,7 @@ contribution. Pick your angle:
 - **Add evidence by PR** — new doc pages, changelogs, or community sources for any
   product; the pipeline re-judges only the cells whose evidence changed.
 - **Submit a product or arena** — the *Submit a product* issue form (prefilled from the
-  [/submit](https://ultrametric.ai/productarena/submit) quick scan), or open a PR adding your
+  [/submit](https://ultrametric.ai/submit) quick scan), or open a PR adding your
   `data/<arena>/products.json` entry — the exact entry shape, which URLs to include and why,
   and how to make your product probe well are all in
   [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product).
@@ -832,21 +832,21 @@ already filled in; a maintainer (or, in the future, a GitHub Action) does the de
 adding evidence, then `pnpm pipeline judge --category <category> --product <product>` followed
 by `pnpm pipeline derive --category <category>` — before any verdict actually changes.
 
-## Citing ProductArena
+## Citing Ultrametric
 
 Quoting a ranking, verdict, or evidence excerpt (with attribution, per DATA-LICENSE) in a
 paper, post, or dataset card:
 
-> ProductArena — evidence-graded software rankings for the agent economy. Ultrametric Inc,
-> 2026. https://ultrametric.ai/productarena
+> Ultrametric — evidence-graded software rankings for the agent economy. Ultrametric Inc,
+> 2026. https://ultrametric.ai
 
 ```bibtex
-@misc{productarena,
-  title        = {ProductArena: evidence-graded software rankings for the agent economy},
+@misc{ultrametric,
+  title        = {Ultrametric: evidence-graded software rankings for the agent economy},
   author       = {{Ultrametric Inc}},
   year         = {2026},
-  howpublished = {\url{https://ultrametric.ai/productarena}},
-  note         = {Methodology: \url{https://ultrametric.ai/productarena/methodology}}
+  howpublished = {\url{https://ultrametric.ai}},
+  note         = {Methodology: \url{https://ultrametric.ai/methodology}}
 }
 ```
 
@@ -859,7 +859,7 @@ Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LIC
 Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE) — viewable
 and quotable with attribution; bulk reuse requires written permission.
 Rankings are research outputs provided "as is" — no responsibility for decisions made in
-reliance on them (see [/terms](https://ultrametric.ai/productarena/terms)); published
+reliance on them (see [/terms](https://ultrametric.ai/terms)); published
 `rankings.json` files carry a `_provenance` watermark, verifiable with
 `pnpm tsx pipeline/scripts/verify-provenance.ts <file>`.
 

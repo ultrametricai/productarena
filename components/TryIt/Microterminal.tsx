@@ -22,12 +22,12 @@ import {
 // A third, visibly disabled tab describes the designed-but-gated full sandbox (docs/TRY-IT.md).
 //
 // Same hardened-endpoint calling pattern as components/SubmitScan.tsx.
-const PROBE_ENDPOINT = 'https://ultrametric.ai/productarena/api/mcp-probe'
+const PROBE_ENDPOINT = 'https://ultrametric.ai/api/mcp-probe'
 
 // "Run live" for recorded stories whose exact command is pure HTTP: the worker re-runs it as a
 // fetch of a fixed URL from the committed live-probe manifest and answers with a sanitized
 // summary. This component only ever sends the three path ids — never a URL, never a command.
-const TRY_ENDPOINT = 'https://ultrametric.ai/productarena/api/try'
+const TRY_ENDPOINT = 'https://ultrametric.ai/api/try'
 
 const LIVE_ID = '__live-mcp__'
 
@@ -392,7 +392,7 @@ export default function Microterminal({
                 type="button"
                 onClick={() => runProbe({ sandbox: true })}
                 disabled={liveBusy}
-                title="Re-run the handshake authenticated with ProductArena's own demo/sandbox account for this vendor (test-mode credentials, provisioned by us)"
+                title="Re-run the handshake authenticated with Ultrametric's own demo/sandbox account for this vendor (test-mode credentials, provisioned by us)"
                 className={actionButton}
               >
                 ▶ use our sandbox account

@@ -1,8 +1,8 @@
-# Product Arena v2 Implementation Plan
+# Ultrametric v2 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Expand Product Arena to 7 categories / ~36 products with story groups, an AI-native persona, a judged Agenticness Index, N/A verdicts, product logos, per-page metadata, a real README, and public-release prep (repo stays private; transferred to the `ultrametricai` org).
+**Goal:** Expand Ultrametric to 7 categories / ~36 products with story groups, an AI-native persona, a judged Agenticness Index, N/A verdicts, product logos, per-page metadata, a real README, and public-release prep (repo stays private; transferred to the `ultrametricai` org).
 
 **Architecture:** Unchanged from v1 (offline pipeline → committed JSON → static Next.js). v2 re-shapes the data layout to `data/categories.json` + `data/{categoryId}/…`, adds `group` to stories and `na` to verdicts, injects a canonical agenticness story set per category, adds a logos stage, and moves routes under `/arena/[category]`.
 
@@ -173,7 +173,7 @@ describe('agenticness index', () => {
 - `ProductLogo({ product, size?: number })` — renders `/logos/{id}.png` via `next/image` unoptimized `<img>` (static export friendly) with `onError`-free server-safe fallback: if `public/logos/{id}.png` missing at build time (fs check in a server helper `lib/logos.ts: hasLogo(id): boolean`), render a rounded div with the product's first letter.
 - `AgenticBadge({ value }: { value: number|null })` — pill showing `AGENTIC {value}` amber-scaled, or muted `AGENTIC n/a`.
 - `StoryMatrix({ data }: { data: CategoryData })` — for each theme (order of first appearance in stories), for each group: heading + table rows = stories, columns = products (logo initial header), cells = VerdictBadge (na → muted "n/a") + quality. Server component.
-- All pages: `generateStaticParams` from `loadCategories`/`loadAll`; `generateMetadata` (arena: `{category.name} Arena — Product Arena`; battle: `{A} vs {B} — {category.name}`; product: `{name} — {category.name} Arena`); `dynamicParams = false`.
+- All pages: `generateStaticParams` from `loadCategories`/`loadAll`; `generateMetadata` (arena: `{category.name} Arena — Ultrametric`; battle: `{A} vs {B} — {category.name}`; product: `{name} — {category.name} Arena`); `dynamicParams = false`.
 - VerdictBadge gains `na` style: `bg-zinc-900 text-zinc-600 ring-zinc-800 italic`.
 
 Implementation notes (follow existing v1 component style exactly):
@@ -297,7 +297,7 @@ Same recipe (11 products). For ai-coding, add to the report: any verdict where A
 
 **Files:** Create `LICENSE` (MIT, copyright 2026 Ultrametric), `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/contest-verdict.md`; rewrite `README.md`.
 
-- README: what Product Arena is; the 7 arenas; methodology (evidence tiers → judged cells → derived battles; scoring formula; na semantics; agenticness canon; judge model + PROMPT_VERSION; **bias disclosure** for ai-coding); local dev (`pnpm dev`), pipeline refresh workflow per category; data layout; contributing pointer.
+- README: what Ultrametric is; the 7 arenas; methodology (evidence tiers → judged cells → derived battles; scoring formula; na semantics; agenticness canon; judge model + PROMPT_VERSION; **bias disclosure** for ai-coding); local dev (`pnpm dev`), pipeline refresh workflow per category; data layout; contributing pointer.
 - CONTRIBUTING: contest-a-verdict flow (issue template → maintainer adds evidence → re-judge cell), add-evidence PR flow (edit `data/{cat}/evidence/{product}.json`, run `pnpm pipeline judge --category X --product Y`, commit both), local setup, style (schemas are law: `pnpm test` validates), no secrets.
 - Issue template fields: category, product, story id, current verdict, proposed verdict, evidence URLs, quotes.
 - Secrets audit: `git log -p | grep -iE 'sk-|api[_-]?key\s*=' ` style scan (bounded: `git log --all -p -- .env* ; gitleaks if available else grep of full history dump`) — report findings (expect none).
@@ -307,8 +307,8 @@ Same recipe (11 products). For ai-coding, add to the report: any verdict where A
 
 ### Task 13: Transfer repo to ultrametricai (keep private)
 
-- [ ] `gh api repos/judegomila/productarena/transfer -f new_owner=ultrametricai` (repo transfer preserves history/settings; requires org create-repo permission — if the API returns 422 for permissions, fall back to: `gh repo create ultrametricai/productarena --private` + push all branches, and report that the old repo should be archived).
-- [ ] Verify: `gh repo view ultrametricai/productarena --json isPrivate,name` shows private; `git remote set-url origin https://github.com/ultrametricai/productarena.git`; `git push origin main` (no-op) + `git pull --dry-run` OK.
+- [ ] `gh api repos/judegomila/productarena/transfer -f new_owner=ultrametricai` (repo transfer preserves history/settings; requires org create-repo permission — if the API returns 422 for permissions, fall back to: `gh repo create ultrametricai/ultrametric --private` + push all branches, and report that the old repo should be archived).
+- [ ] Verify: `gh repo view ultrametricai/ultrametric --json isPrivate,name` shows private; `git remote set-url origin https://github.com/ultrametricai/ultrametric.git`; `git push origin main` (no-op) + `git pull --dry-run` OK.
 - [ ] Confirm Vercel still deploys (CLI-linked to local dir, unaffected by GitHub transfer) — no action expected; note it.
 - [ ] Report the new repo URL.
 

@@ -1,7 +1,7 @@
 # AFK handoff — process manifests
 
-The contract between ProductArena's founder-process corpus and **AFK** (the Ultrametric
-agent-execution product that will actually RUN these processes). ProductArena publishes each
+The contract between Ultrametric's founder-process corpus and **AFK** (the Ultrametric
+agent-execution product that will actually RUN these processes). Ultrametric publishes each
 process as a versioned, machine-readable **manifest**; AFK consumes the manifest URL and plans a
 run from it. Nothing else crosses the boundary.
 
@@ -13,7 +13,7 @@ served by `app/processes/[slug]/manifest.json/route.ts` and
 ## URLs
 
 - Per process: `{SITE_URL}/processes/{slug}/manifest.json`
-  (e.g. `https://ultrametric.ai/productarena/processes/incorporate-c-corp/manifest.json`)
+  (e.g. `https://ultrametric.ai/processes/incorporate-c-corp/manifest.json`)
 - Per chain (end-to-end playbook): `{SITE_URL}/processes/chains/{chain}/manifest.json`
   (e.g. `.../processes/chains/company-launch/manifest.json`)
 
@@ -30,7 +30,7 @@ Process manifest:
 {
   "manifestVersion": 1,
   "process": { "slug": "get-ein", "title": "Get EIN", "phase": "formation", "description": "…" },
-  "manifestUrl": "https://ultrametric.ai/productarena/processes/get-ein/manifest.json",
+  "manifestUrl": "https://ultrametric.ai/processes/get-ein/manifest.json",
   "steps": [
     {
       "id": "n1",
@@ -53,7 +53,7 @@ Process manifest:
           "arena": "startup-banking",    // null when untracked
           "agentReady": 92,              // arena agent-readiness score; null when unscored
           "mcpEndpoint": "https://mcp.mercury.com/mcp", // allowlisted (lib/mcpEndpoints.ts) or null
-          "paProductUrl": "https://ultrametric.ai/productarena/arena/startup-banking/product/mercury"
+          "paProductUrl": "https://ultrametric.ai/arena/startup-banking/product/mercury"
         }
       ],
       "actionUrl": "https://…",      // optional: deep link to perform the step (forward-compat)
@@ -67,9 +67,9 @@ Process manifest:
   ],
   "provenance": {
     "source": "productarena",
-    "url": "https://ultrametric.ai/productarena",
+    "url": "https://ultrametric.ai",
     "generatedFrom": "data/processes.json + data/process-chains.json …", // commit-agnostic: refetch, don't pin
-    "license": "ProductArena Data License (DATA-LICENSE) …"
+    "license": "Ultrametric Data License (DATA-LICENSE) …"
   }
 }
 ```

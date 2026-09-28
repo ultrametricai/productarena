@@ -10,7 +10,7 @@ import { buildMegaTableArenaOptions, buildMegaTableRows, isHardwareClass } from 
 import { buildProcessRows } from '@/lib/processRows'
 
 export const metadata: Metadata = {
-  title: 'ProductArena — which software is most AI-friendly?',
+  title: 'Ultrametric — which software is most AI-friendly?',
   description:
     "One sortable table across every arena: every product judged on AGENT-READY (can an agent reach and operate it?), BUILT-IN AI (does it act agentically for its users?), API quality, and popularity. No opinion, every score traces back to cited evidence.",
 }
@@ -126,7 +126,7 @@ export default function Home() {
                 The full Arenas page →
               </Link>{' '}
               <a
-                href="https://github.com/ultrametricai/productarena/issues/new?title=%5Barena%5D%20Suggest%20a%20new%20arena%3A%20%3Cname%3E&labels=arena-suggestion&body=%23%23%20Arena%20name%0A%0A%23%23%20Products%20that%20compete%20in%20it%20(4%2B)%0A%0A-%20%0A-%20%0A-%20%0A-%20%0A%0A%23%23%20Why%20it%20matters%20in%20the%20AI%20era%0A"
+                href="https://github.com/ultrametricai/ultrametric/issues/new?title=%5Barena%5D%20Suggest%20a%20new%20arena%3A%20%3Cname%3E&labels=arena-suggestion&body=%23%23%20Arena%20name%0A%0A%23%23%20Products%20that%20compete%20in%20it%20(4%2B)%0A%0A-%20%0A-%20%0A-%20%0A-%20%0A%0A%23%23%20Why%20it%20matters%20in%20the%20AI%20era%0A"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-3 text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"

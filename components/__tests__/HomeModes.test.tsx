@@ -29,7 +29,7 @@ function stubLocalStorage() {
   })
 }
 
-const PATH = '/productarena/'
+const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
 const url = () => `${window.location.pathname}${window.location.search}`
 

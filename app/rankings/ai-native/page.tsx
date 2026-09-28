@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full Built-in AI ranking — all ${totalProducts} products — ProductArena`,
+    title: `Full Built-in AI ranking — all ${totalProducts} products — Ultrametric`,
     description: `Every product across every arena ranked by BUILT-IN AI — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
   }
 }

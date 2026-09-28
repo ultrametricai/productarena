@@ -23,7 +23,7 @@ import type { StoryProcessLink } from './storyVerdictsSort'
 //     step → story (story:<arenaId>:<storyId>)                   the committed mapping, kind-tagged
 //     story → product (product:<arenaId>:<productId>)            judged full/partial verdicts only
 //     Exported as a public artifact (data/graph.json via pipeline/scripts/generate-story-graph.ts,
-//     mirrored to /productarena/data/graph.json by scripts/copy-data.mjs like every data file).
+//     mirrored to /data/graph.json by scripts/copy-data.mjs like every data file).
 //
 // Everything here is DERIVATION over already-judged data — display/export only, never feeds
 // scoring, never writes; same contract as lib/processRankings.ts and lib/vendorProcesses.ts.

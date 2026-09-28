@@ -16,7 +16,7 @@ export function generateMetadata(): Metadata {
   const rows = buildYcRows(loadAll())
   const batches = ycBatchSummaries(rows)
   return {
-    title: `YC companies on ProductArena — ${rows.length} products across ${batches.length} batches — ProductArena`,
+    title: `YC companies on Ultrametric — ${rows.length} products across ${batches.length} batches — Ultrametric`,
     description: `Y Combinator alumni we track, ranked by evidence-graded agent readiness and built-in AI — ${rows.length} products from ${batches.length} batches, ${batches[0] ? `${batches[0].label} back to ${batches[batches.length - 1].label}` : ''}. Not a YC-wide census: coverage grows batch by batch.`,
   }
 }

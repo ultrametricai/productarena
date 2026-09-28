@@ -68,7 +68,7 @@ export function generateMetadata(): Metadata {
   const rows = buildOpenRows(loadAll())
   const leader = rows[0]
   return {
-    title: `Most open — all ${rows.length} products ranked by openness — ProductArena`,
+    title: `Most open — all ${rows.length} products ranked by openness — Ultrametric`,
     description: `Who lets you self-host, export everything, and inspect the code? ${leader && leader.openness !== null ? `${leader.product.name} leads with ${leader.openness.toFixed(0)}/100 openness.` : ''} Evidence-graded verdicts on self-hosting, full export, open license, and API parity.`,
   }
 }

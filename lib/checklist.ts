@@ -82,7 +82,7 @@ export function checklistMarkdown(data: CategoryData): string {
   const lines: string[] = [
     `# ${data.category.name} — buyer checklist (RFP)`,
     '',
-    `Derived from ProductArena's evidence-graded user-story taxonomy for ${data.category.name}: ${data.stories.length} judged requirements. Priorities mirror story weights (3 = must-have, 2 = should-have, 1 = nice-to-have).`,
+    `Derived from Ultrametric's evidence-graded user-story taxonomy for ${data.category.name}: ${data.stories.length} judged requirements. Priorities mirror story weights (3 = must-have, 2 = should-have, 1 = nice-to-have).`,
     '',
   ]
   for (const [theme, stories] of checklistThemes(data.stories)) {

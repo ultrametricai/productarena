@@ -21,9 +21,9 @@ lane this hour.
    resolving against the arena's actual `rankings.battles` (forward or reverse, drop if the
    pair has no battle page — honest, not a guessed link).
 
-2. ✅ **Internal links rendered without the `/productarena` basePath — 404 in production**
-   (site is served at `ultrametric.ai/productarena`, so a plain `<a href="/arena/...">`
-   escapes the app entirely). Offenders:
+2. ✅ **Internal links rendered without the basePath — 404 in production**
+   (at the time the site was served under the pre-rebrand `/productarena` basePath, so a
+   plain `<a href="/arena/...">` escaped the app entirely). Offenders:
    - `components/AiModeBadge.tsx` — the "Built-in AI assistant" pill on every row of
      `/rankings/agentic`, `/rankings/ai-native`, arena tables (150+ broken links per page).
    - `components/CapabilityDag.tsx` — every capability node on `/global` (29 links).
@@ -65,8 +65,8 @@ lane this hour.
    "Skip to content" link targeting `<main id="main">` in `app/layout.tsx`.
 
 9. ✅ **404 page has no title** — `app/not-found.tsx` renders the excellent "No evidence this
-   page exists" body but the tab reads bare "ProductArena". Added
-   `metadata.title: 'Page not found — ProductArena'` (+ robots noindex).
+   page exists" body but the tab reads bare "Ultrametric". Added
+   `metadata.title: 'Page not found — Ultrametric'` (+ robots noindex).
 
 10. ✅ **`:target` glow animation ignores `prefers-reduced-motion`** — the story-anchor glow
     in `globals.css` runs unconditionally. Wrapped in a reduced-motion guard (keeps a static
@@ -87,7 +87,7 @@ lane this hour.
     clickable. Added three curated starter comparisons (classic pairs) under the empty state
     on `/compare` (page-level, additive; `CompareBuilder` untouched).
 
-15. ✅ **`/vs/*` titles drop the "— ProductArena" brand suffix** every other page carries
+15. ✅ **`/vs/*` titles drop the "— Ultrametric" brand suffix** every other page carries
     (e.g. "macOS vs Ubuntu Desktop (2026): which is more AI-ready? Evidence-tested
     comparison"). Left as-is after review — the title is already long and keyword-complete;
     documented as a deliberate exception.

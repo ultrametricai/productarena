@@ -10,7 +10,7 @@ import { withBase } from '@/lib/site'
 // no IPs/UAs — see infra/cloudflare-proxy/worker.js "Compare popularity counter") and serves
 // the top pairs from this keyless endpoint. Same absolute-URL pattern as SubmitScan's
 // SCAN_ENDPOINT: the endpoint only exists on the worker, not on the Vercel origin.
-const POPULAR_ENDPOINT = 'https://ultrametric.ai/productarena/api/popular-compares'
+const POPULAR_ENDPOINT = 'https://ultrametric.ai/api/popular-compares'
 
 // Render nothing below this many resolvable pairs — a two-entry "leaderboard" is noise.
 const MIN_PAIRS = 3

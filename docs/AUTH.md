@@ -1,14 +1,14 @@
 # Auth: WorkOS AuthKit via the Cloudflare worker
 
-ProductArena is a static export — there is no Next server — so the Cloudflare worker that
-proxies `ultrametric.ai/productarena/*` (`infra/cloudflare-proxy/worker.js`, "Auth backend"
+Ultrametric is a static export — there is no Next server — so the Cloudflare worker that
+proxies `ultrametric.ai/*` (`infra/cloudflare-proxy/worker.js`, "Auth backend"
 section) is the auth backend. Login goes through the WorkOS AuthKit hosted page; the callback
 mints **our own** session cookie (`pa_session`, HMAC-SHA256-signed, HttpOnly, Secure,
-SameSite=Lax, `Domain=ultrametric.ai; Path=/productarena`, expiry capped at 30 days, no PII
-beyond the email). The client hook (`lib/session.ts`) asks `GET /productarena/auth/me` — same
+SameSite=Lax, `Domain=ultrametric.ai; Path=/`, expiry capped at 30 days, no PII
+beyond the email). The client hook (`lib/session.ts`) asks `GET /auth/me` — same
 origin, no CORS — and everything degrades to anonymous if auth is unreachable or unconfigured.
 
-Routes (all under `https://ultrametric.ai/productarena/auth/`):
+Routes (all under `https://ultrametric.ai/auth/`):
 
 | Route | Does |
 | --- | --- |
@@ -18,14 +18,14 @@ Routes (all under `https://ultrametric.ai/productarena/auth/`):
 | `/logout?return_to=…` | clear `pa_session` → 302 through WorkOS's logout URL → back to `return_to` |
 
 `return_to` is only ever honored as an `ultrametric.ai` path; anything else falls back to
-`/productarena`.
+`/`.
 
 ## What login unlocks: the watchlist
 
-The account feature is the ☆/★ watchlist (`/productarena/watchlist`,
+The account feature is the ☆/★ watchlist (`/watchlist`,
 `components/WatchButton.tsx` stars on product pages and tables). Starred ids live in
 localStorage for instant UI, and for logged-in readers they sync to the account through the
-worker's session-gated `GET`/`PUT /productarena/api/watchlist` (worker.js "Watchlist API"):
+worker's session-gated `GET`/`PUT /api/watchlist` (worker.js "Watchlist API"):
 one KV value per account (`watchlist:<WorkOS user id>` in the `PA_COMPARE_STATS` namespace —
 prefix-separated from the compare counters, so **no new KV setup is needed**; bind a dedicated
 `PA_WATCHLIST` namespace later if wanted). First sync after login merges (union) the account
@@ -39,10 +39,10 @@ stay device-local. All failures are fail-open to device-local — the sync layer
 1. **WorkOS dashboard** (the existing UM-email account), in the environment you want to use:
    - AuthKit: make sure AuthKit is activated (Authentication → AuthKit).
    - **Redirects → Sign-in redirect URIs**: register exactly
-     `https://ultrametric.ai/productarena/auth/callback`
+     `https://ultrametric.ai/auth/callback`
    - **Redirects → Logout redirect URIs** (a.k.a. app homepage / allowed logout URIs): add
-     `https://ultrametric.ai/productarena` (WorkOS only honors `return_to` on its logout URL if
-     it is allowlisted; PA sends `https://ultrametric.ai/productarena…` pages there).
+     `https://ultrametric.ai` (WorkOS only honors `return_to` on its logout URL if
+     it is allowlisted; PA sends `https://ultrametric.ai…` pages there).
    - Copy the **Client ID** (`client_…`) and an **API key** (`sk_…`) from API Keys.
 
 2. **Worker config** — from `infra/cloudflare-proxy/`:
@@ -98,7 +98,7 @@ localStorage['pa-auth-test'] = '1'
 Reload — the quiet "Log in" link appears in the header (only in your browser). Full check:
 log in via AuthKit, confirm the account chip + Watchlist appear, star a product, log out.
 `delete localStorage['pa-auth-test']` to hide the link again. (You can always drive the flow
-directly at `/productarena/auth/login` too — the flag only gates the link, not the routes.)
+directly at `/auth/login` too — the flag only gates the link, not the routes.)
 
 ## Go-live checklist (founder, ~5 minutes)
 
@@ -107,9 +107,9 @@ Everything else is built, tested, and merged — these are the only remaining st
 1. **WorkOS dashboard** (existing UM-email account, chosen environment):
    - Authentication → AuthKit: activated.
    - Redirects → **Sign-in redirect URI** — paste exactly:
-     `https://ultrametric.ai/productarena/auth/callback`
+     `https://ultrametric.ai/auth/callback`
    - Redirects → **Logout redirect URI** — paste exactly:
-     `https://ultrametric.ai/productarena`
+     `https://ultrametric.ai`
 2. From `infra/cloudflare-proxy/`:
    ```sh
    # paste the client_… id from the dashboard into wrangler.toml [vars] WORKOS_CLIENT_ID, then:
@@ -117,7 +117,7 @@ Everything else is built, tested, and merged — these are the only remaining st
    wrangler secret put PA_SESSION_KEY     # fresh random: openssl rand -base64 48
    wrangler deploy
    ```
-3. Verify privately: on ultrametric.ai/productarena set `localStorage['pa-auth-test'] = '1'`,
+3. Verify privately: on ultrametric.ai set `localStorage['pa-auth-test'] = '1'`,
    reload, log in via AuthKit, star a product, check /watchlist (and on a second
    browser/device: log in there — the list follows), log out.
 4. Unhide the login for everyone: in `components/AccountMenu.tsx`, delete the
@@ -144,7 +144,7 @@ Everything else is built, tested, and merged — these are the only remaining st
   signed cookie. The WorkOS session id (`sid` claim of their access token) exists solely to
   build the logout URL.
 - Ory (`auth.ultrametric.ai`) remains live for other Ultrametric products — this change only
-  swapped ProductArena's client and gave it its own worker-side backend.
+  swapped Ultrametric's client and gave it its own worker-side backend.
 - Tests: `infra/cloudflare-proxy/__tests__/auth.test.ts` (worker routes + cookie crypto +
   mock mode incl. the production host guard),
   `infra/cloudflare-proxy/__tests__/watchlist-route.test.ts` (/api/watchlist gating, storage,

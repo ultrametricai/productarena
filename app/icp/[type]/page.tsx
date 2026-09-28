@@ -29,7 +29,7 @@ export async function generateMetadata({
   const { type } = await params
   const icp = loadIcpTypes().find((i) => i.id === type)
   return {
-    title: `${icp ? icp.name : type} — best software for this buyer — ProductArena`,
+    title: `${icp ? icp.name : type} — best software for this buyer — Ultrametric`,
     description: icp
       ? `Every arena's products re-ranked for a ${icp.name.toLowerCase()}: ${icp.tagline}`
       : undefined,

@@ -1,4 +1,4 @@
-# Product Arena v1 Implementation Plan
+# Ultrametric v1 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -1002,7 +1002,7 @@ git add lib && git commit -m "feat: data loader with referential integrity check
   - `VerdictBadge({ verdict }: { verdict: Verdict['verdict'] })` — colored pill (full=emerald, partial=amber, disputed=red, none=zinc).
   - `LeaderboardTable({ data }: { data: AppData })` — pure presentational; ranks, names, score bars, theme chips, links to `/product/[id]` and top battles.
 
-Design direction (applies to Tasks 7–9): dark arena aesthetic — background `zinc-950`, off-white text, single amber accent for scores/wins, tabular numbers (`font-mono` for figures), generous whitespace, no gradients-everywhere AI-slop. Site title: **Product Arena**; tagline: “User-story combat for software. Evidence in, rankings out.”
+Design direction (applies to Tasks 7–9): dark arena aesthetic — background `zinc-950`, off-white text, single amber accent for scores/wins, tabular numbers (`font-mono` for figures), generous whitespace, no gradients-everywhere AI-slop. Site title: **Ultrametric**; tagline: “User-story combat for software. Evidence in, rankings out.”
 
 - [ ] **Step 1: Write the failing component test**
 
@@ -1134,7 +1134,7 @@ const orderByProduct = (x: string, y: string): [string, string] => {
 
 ```tsx
 export const metadata = {
-  title: 'Product Arena',
+  title: 'Ultrametric',
   description: 'User-story combat for software. Evidence in, rankings out.',
 }
 ```
@@ -1667,7 +1667,7 @@ export async function fetchWithRetry(url: string, retries = 2): Promise<string> 
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ProductArena/1.0; +https://productarena.dev)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Ultrametric/1.0; +https://productarena.dev)' },
         redirect: 'follow',
       })
       if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)

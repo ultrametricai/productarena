@@ -123,7 +123,7 @@ export function chainManifestPath(chainId: string): string {
   return `/processes/chains/${chainId}/manifest.json`
 }
 
-// Absolute — SITE_URL already includes the /productarena basePath.
+// Absolute — SITE_URL is the deployed origin (served at the domain root, no basePath).
 export function processManifestUrl(slug: string): string {
   return `${SITE_URL}${processManifestPath(slug)}`
 }
@@ -228,12 +228,12 @@ export function manifestProvenance(): ManifestProvenance {
     source: 'productarena',
     url: SITE_URL,
     generatedFrom:
-      'data/processes.json + data/process-chains.json (the ProductArena founder-process corpus), '
+      'data/processes.json + data/process-chains.json (the Ultrametric founder-process corpus), '
       + 'resolved against live arena leaderboards at build time. Regenerate by refetching this '
       + 'manifest URL — it always reflects the currently deployed data, not a pinned data commit.',
     license:
-      'ProductArena Data License (DATA-LICENSE in github.com/ultrametricai/productarena): '
-      + 'querying and quoting with attribution to "ProductArena by Ultrametric Inc" is fine; '
+      'Ultrametric Data License (DATA-LICENSE in github.com/ultrametricai/ultrametric): '
+      + 'querying and quoting with attribution to "Ultrametric by Ultrametric Inc" is fine; '
       + 'bulk redistribution or use to build competing datasets requires written permission.',
   }
 }

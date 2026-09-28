@@ -7,7 +7,7 @@ import { REPO } from '@/lib/site'
 // endpoint (see infra/cloudflare-proxy/worker.js: SSRF guards, capped reads, rate limits) which
 // only ever GETs a fixed set of well-known paths on the submitted origin — nothing from the
 // response is executed or rendered as HTML, and bad/internal URLs are rejected server-side.
-const SCAN_ENDPOINT = 'https://ultrametric.ai/productarena/api/scan'
+const SCAN_ENDPOINT = 'https://ultrametric.ai/api/scan'
 
 interface ScanResult {
   ok: boolean

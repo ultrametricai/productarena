@@ -1,6 +1,6 @@
 # The Accuracy Engine
 
-How ProductArena keeps 65 arenas / ~350 products from silently rotting: four scheduled loops,
+How Ultrametric keeps 65 arenas / ~350 products from silently rotting: four scheduled loops,
 each catching a different failure mode, feeding one work queue, with humans at exactly the
 points where a score could change. This doc is the map; the workflows and scripts it names are
 the source of truth.

@@ -164,22 +164,22 @@ export const metadata: Metadata = {
   alternates: {
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
   },
-  title: "ProductArena",
+  title: "Ultrametric",
   description:
-    "ProductArena — the unbiased, evidence-based arena for software in the AI era. Evidence in, rankings out.",
+    "Ultrametric — the unbiased, evidence-based arena for software in the AI era. Evidence in, rankings out.",
   openGraph: {
-    title: "ProductArena",
+    title: "Ultrametric",
     description: "The unbiased, evidence-based arena for software in the AI era.",
     url: SITE_URL,
-    siteName: "ProductArena",
+    siteName: "Ultrametric",
     type: "website",
-    images: [{ url: `${SITE_URL}/og4.png`, width: 1200, height: 630, alt: "ProductArena — open rankings for the AI era" }],
+    images: [{ url: `${SITE_URL}/og5.png`, width: 1200, height: 630, alt: "Ultrametric — open rankings for the AI era" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ProductArena",
+    title: "Ultrametric",
     description: "The unbiased, evidence-based arena for software in the AI era.",
-    images: [`${SITE_URL}/og4.png`],
+    images: [`${SITE_URL}/og5.png`],
   },
 };
 
@@ -188,7 +188,7 @@ export const metadata: Metadata = {
 const SITE_JSONLD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "ProductArena",
+  name: "Ultrametric",
   url: SITE_URL,
   description:
     "The unbiased, evidence-based arena for software in the AI era. Products judged on real user stories with a citation behind every verdict.",
@@ -266,26 +266,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl flex-nowrap items-center justify-between gap-x-3 px-3 py-3 sm:gap-x-4 sm:px-5 sm:py-4">
             <div className="flex shrink-0 items-baseline gap-2">
-              <a
-                href="https://ultrametric.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden text-sm text-zinc-500 transition hover:text-emerald-300 sm:inline"
+              {/* Sole brand since the 2026-09-28 rebrand: the ultrametric wordmark IS the site,
+                  so it links home (the old Product▸Arena mark + "/" separator are gone). */}
+              <Link
+                href="/"
+                className="font-display text-lg font-bold tracking-tight transition hover:text-emerald-300"
                 title="Ultrametric home"
               >
                 ultrametric
-              </a>
-              <span aria-hidden className="hidden text-zinc-700 sm:inline">/</span>
-              <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
-                {/* The arena mark: two facing triangles (same asset family as the landing site's
-                    product-menu icon). */}
-                <svg viewBox="0 0 24 24" width={16} height={16} className="shrink-0 text-emerald-400" fill="currentColor" aria-hidden>
-                  <path d="M4.5 5.6v12.8c0 .84.99 1.3 1.64.76l7.68-6.4a1 1 0 0 0 0-1.52L6.14 4.84c-.65-.54-1.64-.08-1.64.76Z" />
-                  <path opacity="0.5" d="M19.5 5.6v12.8c0 .84-.99 1.3-1.64.76l-7.68-6.4a1 1 0 0 1 0-1.52l7.68-6.4c.65-.54 1.64-.08 1.64.76Z" />
-                </svg>
-                <span>
-                  Product<span className="text-emerald-400">Arena</span>
-                </span>
               </Link>
             </div>
             {/* Primary IA: Arenas (the product), Explore (every secondary view: global rankings,
@@ -444,7 +432,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   product IS the test. /submit (the quick scanner) stays reachable from the
                   CONTRIBUTING flow, just not from the footer. */}
               <a
-                href="https://github.com/ultrametricai/productarena/blob/main/CONTRIBUTING.md#3-add-your-product"
+                href="https://github.com/ultrametricai/ultrametric/blob/main/CONTRIBUTING.md#3-add-your-product"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-emerald-300"
@@ -465,7 +453,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
         {GA_ID && (
           // Google Analytics 4 — the site-wide ultrametric.ai property (G-WWC2ZJRDCB);
-          // NEXT_PUBLIC_GA_ID overrides if ProductArena ever gets its own property.
+          // NEXT_PUBLIC_GA_ID overrides if this app ever gets its own property.
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
             <script

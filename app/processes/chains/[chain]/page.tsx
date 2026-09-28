@@ -33,7 +33,7 @@ export async function generateMetadata({
   const { chain } = await params
   const def = loadChains().find((c) => c.id === chain)
   return {
-    title: `${def ? def.name : chain} — End-to-end playbooks — ProductArena`,
+    title: `${def ? def.name : chain} — End-to-end playbooks — Ultrametric`,
     description: def?.tagline,
   }
 }

@@ -23,7 +23,7 @@ function buildRows() {
 export function generateMetadata(): Metadata {
   const rows = buildRows()
   return {
-    title: `Riskiest processes — all ${rows.length} ranked by cost of getting it wrong — ProductArena`,
+    title: `Riskiest processes — all ${rows.length} ranked by cost of getting it wrong — Ultrametric`,
     description:
       'Every founder process ranked by curated risk (1–5: legal, tax, and security exposure), with the human and form steps that carry most of that exposure counted per process.',
   }

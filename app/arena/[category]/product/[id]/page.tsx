@@ -99,8 +99,8 @@ export async function generateMetadata({
   const { category, id } = await params
   const data = loadCategory(category)
   const product = data.products.find((p) => p.id === id)
-  // "— ProductArena" suffix like every other page title on the site.
-  return { title: `${product ? product.name : id} — ${data.category.name} Arena — ProductArena` }
+  // "— Ultrametric" suffix like every other page title on the site.
+  return { title: `${product ? product.name : id} — ${data.category.name} Arena — Ultrametric` }
 }
 
 export default async function ProductPage({
