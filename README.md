@@ -263,6 +263,37 @@ sanity models, and non-US instruments (see
 [Contributing](#contributing--how-the-community-can-help)). The bar: pure functions, a
 citation on every formula, and tests that double as the documentation.
 
+## The founder-ops corpus
+
+The larger lift the toolkit belongs to: an open, source-backed operating system for starting
+and running a company — **index → scenario match → source-backed process → private execution
+record**. The public repo holds reusable knowledge; a company's own facts, documents, and audit
+log belong in its private workspace, never here.
+
+| Path | What lives there |
+| --- | --- |
+| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage |
+| [`journeys/`](journeys/) | Multi-process founder paths (start, hire, grant equity, raise, launch…) |
+| [`processes/`](processes/) | Jurisdiction-scoped legal workflows + the 123-process operational corpus |
+| [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs |
+| [`sources/`](sources/) | Primary authorities: exact provision locators and checked dates |
+| [`jurisdictions/`](jurisdictions/) | Registry + overlays; unknown combinations are `unsupported`, never guessed |
+| [`business-logic/`](business-logic/) | Cited, deterministic calculations (cap-table engine first) |
+| [`vendors/`](vendors/) | The evidence layer + the vendor-review interchange format |
+| [`connectors/`](connectors/) | Optional integrations, always behind human-approval gates |
+| [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews |
+| [`fixtures/`](fixtures/), [`templates/`](templates/) | Fictional test scenarios; contribution starting points |
+| [`governance/`](governance/) | Review policy, evidence doctrine, agent policy, security |
+
+The starter workflow layer ships two demonstration US Delaware equity workflows (409A
+valuation review, 83(b) election) whose every legal statement resolves to a primary source
+with an exact locator — validated by `lib/founderOps.ts` inside the normal test gates, with a
+conservative planner that refuses anything it cannot exactly match. Status honesty is the
+whole point: `demonstration` means illustrative, not certified, and no jurisdiction is called
+covered because a few playbooks exist. Architecture, record semantics, and the staged lift
+plan: [docs/FOUNDER-OPS.md](docs/FOUNDER-OPS.md). Agent ground rules:
+[governance/AGENT_POLICY.md](governance/AGENT_POLICY.md).
+
 ## Methodology
 
 New to the site and just want plain-language answers ("what does `na` mean," "why does this
