@@ -6,6 +6,7 @@ import IconChip from '@/components/IconChip'
 import JurisdictionToggle from '@/components/JurisdictionToggle'
 import MineLink from '@/components/MineLink'
 import ProcessDag from '@/components/ProcessDag'
+import ProcessGeoNotes from '@/components/ProcessGeoNotes'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessVendorPicker from '@/components/ProcessVendorPicker'
@@ -107,7 +108,15 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
           {task.title}
           {task.region === 'us' && (
-            <span aria-label="US-specific process" title="US-specific: this flow is written around US law and agencies (IRS, Delaware, state filings)" className="text-xl">🇺🇸</span>
+            <span
+              aria-label="US-specific process"
+              // geoScope (founder GEO ask 2026-09-28) sharpens the flag's story: state-level
+              // work names the state as the counterparty, federal work names the agencies.
+              title={task.geoScope === 'us-state'
+                ? 'US state-level: the counterparty here is a US state (Delaware filings, state portals, state registrations)'
+                : 'US-specific: this flow is written around US federal law and agencies (IRS, USPTO, SEC, immigration)'}
+              className="text-xl"
+            >🇺🇸</span>
           )}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
@@ -209,6 +218,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           </p>
         )}
       </section>
+
+      {/* The GEO dimension (founder 2026-09-28): per-country analogs of a US-scoped process,
+          curated in the corpus (geoNotes) — renders nothing for the many processes without. */}
+      <ProcessGeoNotes notes={task.geoNotes ?? []} />
 
       <ProcessVerdict ceiling={ceiling} tasks={[task]} />
 
