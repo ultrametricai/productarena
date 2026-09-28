@@ -14,7 +14,7 @@ import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 export { formatMinutes, gapWhy }
 export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 122 real startup operating processes, each
+// The founder-process corpus (data/processes.json): 123 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
 // or a computer-use agent does it: meetings, judgment, waiting on a third party — with

@@ -334,8 +334,12 @@ async function generateOne(t: PromptTarget): Promise<{ prompt: string; calls: nu
       system: SYSTEM,
       // Correction-round message only — the initial prompt and PROMPT_VERSION stay untouched
       // (email-lane precedent 2026-09-23; vendor_010 Composio trap 2026-09-25: the model kept
-      // naming the canonical vendor, so the reminder now spells the placeholder rule out).
-      prompt: generationPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Rewrite the prompt correcting it; every other rule still applies. CRITICAL REMINDERS: never write ANY vendor's actual name — not even the canonical/top-ranked vendor for this step — always the literal {{vendor}} token wherever the vendor is meant; keep every other vendor mention generic ("your registrar", "your CRM").`),
+      // naming the canonical vendor, so the reminder now spells the placeholder rule out;
+      // scale_004 Slack-in-the-label trap 2026-09-28: when the step LABEL itself names the
+      // canonical vendor the model kept echoing it, so the reminder now covers that case;
+      // scale_010 warehouse-credentials trap 2026-09-28: the model kept writing connection
+      // set-up prose like "copy the API key", so the reminder now spells the secrets rule out).
+      prompt: generationPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Rewrite the prompt correcting it; every other rule still applies. CRITICAL REMINDERS: never write ANY vendor's actual name — not even the canonical/top-ranked vendor for this step, and not even when the step's own label names it (paraphrase the label generically: "Configure Slack notifications" → "configure notifications in {{vendor}}") — always the literal {{vendor}} token wherever the vendor is meant; keep every other vendor mention generic ("your registrar", "your CRM", "your team chat"). NEVER give credential-handling instructions — no pasting/sharing/copying/embedding of API keys, tokens, passwords, secrets or credentials anywhere in the prompt, even as connection-setup steps; the ONLY allowed credential sentence is "use your configured credentials".`),
     })
     calls += 1
     violation = validatePrompt(t, raw.prompt)

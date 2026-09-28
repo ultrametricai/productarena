@@ -330,58 +330,58 @@
     "calls": []
   },
   "comp_011:n5:dropbox": {
-    "hash": "381bfd5632cdd726b7218a82815ff37a1b5a409cf5a9919f230eece7cd421705",
+    "hash": "eee0c30188450fc44e89ea6df479ac35038a023579ddf70d716061a1ca28b018",
     "calls": [
       {
-        "method": "dbx.filesUpload(...)",
+        "method": "dbx.filesUpload({ path, contents })",
         "type": "sdk",
-        "description": "Upload signed minutes file into the data room folder",
+        "description": "Upload signed minutes file into the Dropbox data room folder",
         "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
       }
     ]
   },
   "comp_011:n5:google-drive": {
-    "hash": "932594466dbbdf2e73abeadeba1cb644b86beba928e1aec08dc111d9ad3cf842",
+    "hash": "deffe312452809cde2fd70a27bed24c398fbeb9ec43e9f9a90c5dd77e0405c77",
     "calls": [
       {
         "method": "POST /upload/drive/v3/files?uploadType=media",
         "type": "rest",
-        "description": "Upload the signed minutes file into Drive as a new file",
+        "description": "Upload the signed minutes file into the data room folder",
         "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
       },
       {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "method": "PATCH /v3/files/{fileId}",
         "type": "rest",
-        "description": "Grant data room access/roles to relevant parties for the filed minutes",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+        "description": "Set custom properties (e.g. meeting date, signed status) on the filed minutes",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
       },
       {
-        "method": "PATCH /drive/v3/files/{fileId}",
+        "method": "GET /v3/files",
         "type": "rest",
-        "description": "Set custom properties (e.g. tags/IDs) on the filed minutes for metadata tracking",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
+        "description": "Search the data room for existing minutes files to confirm filing/avoid duplicates",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
       }
     ]
   },
   "comp_011:n5:onedrive": {
-    "hash": "3eacd319f477790c3e80b5bfc5e2a0816d7be64f27bf9c4819551cbd2217a2aa",
+    "hash": "f2ba1d6a3391d8f688e01e9b566ca078353aa35d6e4dcfe6d5dec0b4e7b1d76c",
     "calls": [
       {
         "method": "PUT /drive/items/{item-id}/content",
         "type": "rest",
-        "description": "Upload the signed minutes file content into a OneDrive/data room folder",
+        "description": "Upload signed minutes file content to a location in the data room drive",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
       },
       {
         "method": "POST /drive/items/{item-id}/createUploadSession",
         "type": "rest",
-        "description": "Create a resumable upload session for filing larger signed minutes documents",
+        "description": "Create resumable upload session for larger signed minutes files",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
       },
       {
         "method": "GET /drive/root:/path/to/file",
         "type": "rest",
-        "description": "Locate the target data room folder/item by path before filing the minutes",
+        "description": "Locate the data room folder/file path to file the signed minutes",
         "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
       }
     ]
@@ -421,8 +421,21 @@
     ]
   },
   "comp_011:n5:box": {
-    "hash": "c2f84845b2abebe36498eefe40f63abcadcf3c75257bbd8d06305a75a11c5801",
-    "calls": []
+    "hash": "5f47e7dd819e697cba92f178cbd5949e953377b57e55bcc7059a7a193077f107",
+    "calls": [
+      {
+        "method": "POST /files/upload_sessions",
+        "type": "rest",
+        "description": "Upload the signed board minutes file into Box via a chunked upload session for reliable storage in the data room.",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "POST /collaborations",
+        "type": "rest",
+        "description": "Grant appropriate users or groups access to the folder holding signed minutes, controlling data room permissions.",
+        "sourceUrl": "https://developer.box.com/guides/collaborations/"
+      }
+    ]
   },
   "shutdown_001:n12:onedrive": {
     "hash": "02a709cf55c277cb79d14055bad7243693b228b0d02c4f560ebe96fa214516c0",
