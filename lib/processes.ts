@@ -128,6 +128,35 @@ export const SlugAliasSchema = z.object({
 
 export type SlugAlias = z.infer<typeof SlugAliasSchema>
 
+// The GEO dimension (founder ask 2026-09-28: "a GEO dimension for our analysis — e.g.
+// USA-centric processes vs global processes; choosing a name is global"). One curated note per
+// country DOCUMENTING the real non-US analog of a US-scoped process — what a founder in that
+// country does instead ("incorporate C-Corp" → UK Companies House, India MCA SPICe+, Germany
+// notary + Handelsregister, France INPI guichet unique). Editorial and honest: every actionUrl
+// is curl-verified live before listing (the VENDOR_SIGNUP_URL house rule — no unverifiable URL
+// is fabricated), and a country with no true analog simply carries no note. Display-only:
+// rendered as the "Outside the US" block on /processes/[slug]; no judged number reads these.
+export const GEO_NOTE_COUNTRIES = ['IN', 'UK', 'DE', 'FR'] as const
+export type GeoNoteCountry = (typeof GEO_NOTE_COUNTRIES)[number]
+
+export const GeoNoteSchema = z.object({
+  country: z.enum(GEO_NOTE_COUNTRIES),
+  // What the analog IS and how it differs — one or two honest sentences, not marketing.
+  summary: z.string().min(1),
+  // The canonical page a founder in that country starts from — verified live before listing.
+  actionUrl: z.string().url(),
+  actionLabel: z.string().min(1),
+})
+
+export type GeoNote = z.infer<typeof GeoNoteSchema>
+
+export const GEO_COUNTRY_META: Record<GeoNoteCountry, { label: string; flag: string }> = {
+  IN: { label: 'India', flag: '🇮🇳' },
+  UK: { label: 'United Kingdom', flag: '🇬🇧' },
+  DE: { label: 'Germany', flag: '🇩🇪' },
+  FR: { label: 'France', flag: '🇫🇷' },
+}
+
 export const ProcessTaskSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -144,6 +173,22 @@ export const ProcessTaskSchema = z.object({
   // processes index + detail page for flows written around US law/agencies (DE franchise tax,
   // 409A, 1099s, EIN prerequisites, IRS/83(b) references). Absent = jurisdiction-neutral.
   region: z.enum(['us']).optional(),
+  // The GEO dimension proper (founder 2026-09-28) — REQUIRED, so tagging is total by
+  // construction (an untagged process fails the corpus parse; the corpus test re-asserts it):
+  //   'global'   — the work is the same everywhere: choosing a name/logo/website, shipping
+  //                code, running payroll once it's set up, closing the books.
+  //   'us'       — written around US FEDERAL law/agencies: IRS (EIN, returns, 1099s, 83(b),
+  //                R&D credit), USPTO, SEC/Reg D, I-9/W-4, H-1B, 401(k)/ERISA.
+  //   'us-state' — the counterparty is a US STATE: DE franchise tax, state tax registrations,
+  //                foreign qualifications, state annual reports, registered agents, sales-tax
+  //                nexus. Only where the step's obligation is truly state-level.
+  // Consistency with `region` (the 🇺🇸 display flag) is corpus-tested both ways: geoScope
+  // 'us'/'us-state' ⇔ region 'us'.
+  geoScope: z.enum(['global', 'us', 'us-state']),
+  // Per-country analogs for a US-scoped process — see GeoNoteSchema above. At most one note
+  // per country per process (corpus-tested); only on non-'global' processes, since a global
+  // process needs no "Outside the US" story.
+  geoNotes: GeoNoteSchema.array().optional(),
   // The five founder orderings (founder ask 2026-09-18) — curated, display-only rank axes for
   // the /processes table. All four are REQUIRED so coverage is total by construction:
   //   timeOrder   — unique position in the sequence a founder actually hits these processes
