@@ -125,6 +125,9 @@ export function buildProcessRows(): ProcessRowsBundle {
       phase: t.phase,
       area,
       areaRank: areaRank(area),
+      // Required on every corpus process (lib/processes.ts) — the index rows carry it for the
+      // client-side geo-scope glyph shown while a non-US country is selected (GeoSwitcher).
+      geoScope: t.geoScope,
       pct: c.pct,
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,

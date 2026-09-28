@@ -7,6 +7,8 @@ import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import TableControls from '@/components/TableControls'
+import { useGeoSelection } from '@/components/useGeoSelection'
+import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
 import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
 import { readParams, setParams } from '@/lib/urlState'
 
@@ -44,6 +46,10 @@ export interface ProcessRow {
   // server-side so this client component never imports the node-only builder.
   area: string
   areaRank: number
+  // The GEO dimension (founder 2026-09-28) — required on every corpus process. While a non-US
+  // country is selected (GeoSwitcher / lib/geoPreference.ts) each row wears its scope glyph
+  // (🌐 global / 🇺🇸 US / 🏛 state); the default view is untouched. Display only — no re-sorting.
+  geoScope: 'global' | 'us' | 'us-state'
   pct: number
   agentSteps: number
   totalSteps: number
@@ -159,6 +165,10 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
   const [direction, setDirection] = useState<Direction>('desc')
   const [phase, setPhase] = useState('all')
   const [query, setQuery] = useState('')
+  // Non-null while the reader has a non-US country selected (GeoSwitcher seeds the shared
+  // store) — each row then wears its geoScope glyph. Null in the static HTML and the default
+  // view, so the no-selection markup is untouched. Display only: never re-sorts.
+  const geo = useGeoSelection()
 
   // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
   // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
@@ -287,6 +297,15 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
             <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
               {r.title}
             </Link>
+            {geo !== null && (
+              <span
+                aria-hidden
+                className="text-[10px] opacity-70"
+                title={GEO_SCOPE_GLYPH[r.geoScope].label}
+              >
+                {GEO_SCOPE_GLYPH[r.geoScope].glyph}
+              </span>
+            )}
           </span>
         </td>
         <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
