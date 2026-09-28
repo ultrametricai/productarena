@@ -2077,21 +2077,30 @@ export default {
     const url = new URL(request.url)
 
     // ── Ultrametric rebrand cutover (founder 2026-09-28) ─────────────────────────────────
-    // The product moved from ultrametric.ai/productarena/* to the ROOT of ultrametric.ai.
-    // 1. Legacy /productarena URLs 301 to the same path without the prefix — every old link,
-    //    badge embed, and indexed page keeps working.
+    // The product moved from ultrametric.ai/productarena/* to the root of ultrametric.ai —
+    // EXCEPT the homepage (founder, same day): '/' stays the company landing site, and the
+    // product's index page ("Open rankings for the AI era") serves at /overall for now.
+    // 1. Legacy /productarena URLs 301 without the prefix — every old deep link, badge embed,
+    //    and indexed page keeps working; the bare product URL goes to /overall.
     if (url.pathname === '/productarena' || url.pathname.startsWith('/productarena/')) {
       const stripped = url.pathname.slice('/productarena'.length) || '/'
-      return Response.redirect(`https://ultrametric.ai${stripped}${url.search}`, 301)
+      const target = stripped === '/' ? '/overall' : stripped
+      return Response.redirect(`https://ultrametric.ai${target}${url.search}`, 301)
     }
-    // 2. The old company landing site keeps its few root pages (passthrough to the zone
-    //    origin): /company, /tos, the archived /process/* guides, and /afk. The product owns
-    //    everything else at root — including '/', /privacy, /llms.txt, /sitemap.xml (the
-    //    landing site shipped none). Shadowed landing pages: '/' (old landing home) and its
-    //    /privacy — flagged to the founder at cutover.
-    const LANDING_PREFIXES = ['/company', '/tos', '/process', '/afk']
-    if (LANDING_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
+    // 2. The landing site (Astro) owns the homepage, its pages, and its asset dirs
+    //    (passthrough to the zone origin). Root-path landing assets that collide with product
+    //    paths (/logos/*, /favicon.png, standalone svg/jpg files) are handled by the 404
+    //    fallback after the product proxy below.
+    const LANDING_PREFIXES = ['/company', '/tos', '/process', '/afk', '/_astro', '/faces']
+    if (
+      url.pathname === '/' ||
+      LANDING_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))
+    ) {
       return fetch(request)
+    }
+    // 3. /overall serves the product homepage (the Next app's index at the origin root).
+    if (url.pathname === '/overall' || url.pathname === '/overall/') {
+      url.pathname = '/'
     }
 
     if (url.pathname.startsWith('/auth/')) return handleAuth(request, env)
@@ -2126,6 +2135,15 @@ export default {
       body: request.body,
       redirect: 'manual',
     })
+    // Landing-asset fallback: the Astro landing site references root-path assets whose
+    // prefixes the product also uses (/logos/*, /favicon.png, top-level svg/jpg…). When the
+    // product origin 404s a GET for a file-looking path, retry against the zone origin so
+    // landing pages stay styled. Product misses for real product assets still 404 (the
+    // fallback's own 404 is returned).
+    if (resp.status === 404 && request.method === 'GET' && /\.[a-z0-9]+$/i.test(url.pathname)) {
+      const fallback = await fetch(request)
+      if (fallback.ok) return fallback
+    }
     // Rewrite any absolute redirects back onto ultrametric.ai
     const headers = new Headers(resp.headers)
     const loc = headers.get('location')
