@@ -105,18 +105,14 @@ export default function VirtualStartupPage() {
           virtual startup
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Virtual Startup</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
-          A simulated company starts its journey. Pick the starting decisions and watch what
-          actually has to happen, in time order — every step is a real corpus process routed
-          agent / manual form / human (legal signatures flagged), vendors come from the judged
-          rankings, and time estimates are the corpus&apos;s own. When the launch lands, the
-          year-one operating rhythm shows the recurring runs the company owns from then on.
-        </p>
-        <p className="mx-auto mt-2 max-w-2xl text-xs text-zinc-500">
-          The company itself is synthetic: every generated artifact — the name, the EIN, the first
-          invoice — is deterministic demo data and carries a visible{' '}
+        {/* One-line hero (founder 2026-09-28: terminal above the fold) — the fuller explanation
+            lives in the setup band's "full setup guide" expand inside the component. */}
+        <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400">
+          A simulated company runs the real founder-process corpus — every step routed agent /
+          manual / human, vendors from the judged rankings, time estimates the corpus&apos;s own.
+          Everything generated carries a visible{' '}
           <span className="rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300">simulated</span>{' '}
-          tag. Nothing simulated is a judged fact.
+          tag: nothing simulated is a judged fact.
         </p>
       </section>
 
