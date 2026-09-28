@@ -7,9 +7,10 @@
 // control writes it, (c) the default state removes it; invalid values fall back silently.
 // Since 2026-09-28 the no-param default is the GROUPED-BY-AREA view; any valid ?order= opens
 // the flat sorted table (the param contract itself is unchanged).
-import { fireEvent, render, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { act, fireEvent, render, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
+import { setGeoSelection } from '@/lib/geoPreference'
 
 const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
@@ -20,6 +21,7 @@ function row(over: Pick<ProcessRow, 'slug' | 'title' | 'phase'> & Partial<Proces
     icon: '🏦',
     area: 'Starting up',
     areaRank: 0,
+    geoScope: 'global',
     pct: 50,
     agentSteps: 2,
     totalSteps: 4,
@@ -202,5 +204,36 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
     expect(within(container).queryByText('Growth & sales')).toBeNull()
     expect(within(container).queryByText('Run payroll')).toBeNull()
     expect(params().get('phase')).toBe('Formation') // URL contract untouched in the grouped view
+  })
+})
+
+describe('geoScope glyphs under a geo selection (founder GEO ask 2026-09-28)', () => {
+  // The module-level geo store outlives unmounts — always reset.
+  afterEach(() => setGeoSelection(null))
+  const GEO_ROWS: ProcessRow[] = [
+    row({ slug: 'open-bank-account', title: 'Open a bank account', phase: 'Formation', geoScope: 'global' }),
+    row({ slug: 'incorporate', title: 'Incorporate the company', phase: 'Formation', geoScope: 'us-state', timeOrder: 2 }),
+    row({ slug: 'get-an-ein', title: 'Get an EIN', phase: 'Formation', geoScope: 'us', timeOrder: 3 }),
+  ]
+
+  it('no selection: no glyphs — the default view is untouched (rows and order unchanged)', () => {
+    const { container } = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} />)
+    for (const glyph of ['🌐', '🏛']) expect(container.textContent).not.toContain(glyph)
+    // 🇺🇸 appears nowhere either — the row titles are the only cell contents.
+    expect(container.textContent).not.toContain('🇺🇸')
+  })
+
+  it('a non-US selection shows each row its scope glyph (🌐 / 🇺🇸 / 🏛) without re-sorting', () => {
+    const { container } = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} />)
+    act(() => setGeoSelection('UK'))
+    const cells = [...container.querySelectorAll('tbody td:first-child')]
+    const byTitle = (t: string) => cells.find((c) => c.textContent?.includes(t))
+    expect(byTitle('Open a bank account')?.textContent).toContain('🌐')
+    expect(byTitle('Incorporate the company')?.textContent).toContain('🏛')
+    expect(byTitle('Get an EIN')?.textContent).toContain('🇺🇸')
+    // Annotation only — the timeOrder grouping is exactly the no-selection order.
+    expect(cells.map((c) => c.textContent?.includes('Open a bank account') ? 'bank' : c.textContent?.includes('Incorporate') ? 'inc' : 'ein')).toEqual(['bank', 'inc', 'ein'])
+    act(() => setGeoSelection(null))
+    expect(container.textContent).not.toContain('🌐')
   })
 })

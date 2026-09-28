@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import FatProcessSearch from '@/components/FatProcessSearch'
+import GeoSwitcher from '@/components/GeoSwitcher'
 import IconChip from '@/components/IconChip'
 import ProcessesTable from '@/components/ProcessesTable'
 import { chainIcon, processIcon } from '@/lib/processIcons'
@@ -39,6 +40,12 @@ export default function ProcessesPage() {
         <FatProcessSearch
           rows={tableRows.map((r) => ({ slug: r.slug, title: r.title, icon: r.icon, phase: r.phase, pct: r.pct }))}
         />
+        {/* The global geo switcher (founder GEO ask 2026-09-28, lib/geoPreference.ts): with a
+            non-US country selected every table row below wears its geoScope glyph — the US
+            default view is byte-identical to before. */}
+        <div className="mt-4 flex justify-center">
+          <GeoSwitcher />
+        </div>
       </section>
 
       {/* Curated playbooks — several processes run back to back as one walkthrough */}
