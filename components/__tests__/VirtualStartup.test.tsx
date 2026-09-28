@@ -4,8 +4,8 @@
 // synthetic being mistakable for a judged fact) plus the decision → rendered-journey wiring.
 // Fixture chains/tasks keep the journey small; the decision→journey mapping itself is tested
 // against the live corpus in lib/__tests__/virtualStartup.test.ts.
-import { fireEvent, render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
 import type { SimStep } from '@/lib/processSim'
 import type { EventExample, VirtualTaskPayload, VsChain, YearCandidate } from '@/lib/virtualStartup'
@@ -232,10 +232,11 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
 })
 
 describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)', () => {
-  it('shows the primary run CTA before any timeline content', () => {
+  it('shows the primary run CTA with an idle terminal — no timeline content before a run', () => {
     renderIt()
     expect(screen.getByRole('button', { name: /run this startup/i })).toBeTruthy()
-    expect(screen.queryByText('Timeline')).toBeNull()
+    expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
+    expect(screen.queryByText('The operating rhythm')).toBeNull()
   })
 
   it('renders the year view (Year one tab), gated by the decisions and grouped by cadence', () => {
@@ -410,6 +411,98 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     showAll()
     expect(screen.queryByText('Founder agreement & equity split')).toBeNull()
     expect(screen.getByText('Send an invoice')).toBeTruthy()
+  })
+})
+
+// jsdom does no real layout or scrolling, so the follow logic is tested against a fake scroll
+// box: fixed scrollHeight/clientHeight, and a scrollTop that stores assignments (jsdom's own
+// scrollTop setter is a no-op, which would make every pin-to-bottom invisible).
+function mockScrollBox(el: HTMLElement, { scrollHeight, clientHeight }: { scrollHeight: number; clientHeight: number }) {
+  let top = 0
+  Object.defineProperty(el, 'scrollHeight', { configurable: true, get: () => scrollHeight })
+  Object.defineProperty(el, 'clientHeight', { configurable: true, get: () => clientHeight })
+  Object.defineProperty(el, 'scrollTop', {
+    configurable: true,
+    get: () => top,
+    set: (v: number) => { top = v },
+  })
+}
+
+describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run prints up top, inside the terminal)', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('renders the terminal chrome idle before any run: SIMULATED title bar, placeholder prompt, no rows', () => {
+    renderIt()
+    const term = screen.getByTestId('vs-terminal')
+    // The title bar carries the run identity, its own SIMULATED chip, and the idle status.
+    expect(within(term).getByText(/^simulated$/i)).toBeTruthy()
+    expect(within(term).getByText(/press ▶ Run this startup/)).toBeTruthy()
+    expect(within(term).queryAllByTestId('vs-artifact')).toHaveLength(0)
+    expect(screen.getByTestId('vs-terminal-status').textContent).toBe('idle')
+  })
+
+  it('the run prints INSIDE the terminal body; the page below it does not grow until completion', () => {
+    vi.useFakeTimers()
+    renderIt()
+    fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+    act(() => { vi.advanceTimersByTime(240 * 4) })
+    const body = screen.getByTestId('vs-terminal-body')
+    // Mid-run: revealed content lives inside the terminal…
+    expect(within(body).getByText('Name & brand')).toBeTruthy()
+    expect(screen.getByTestId('vs-terminal-status').textContent).toMatch(/running/)
+    // …and NOTHING has appeared below it: no rhythm section, no completion summary.
+    expect(screen.queryByText('The operating rhythm')).toBeNull()
+    expect(screen.queryByText(/journey complete/)).toBeNull()
+    // Run to completion: the summary prints as final terminal output, the rhythm opens below.
+    act(() => { vi.advanceTimersByTime(240 * 500) })
+    expect(within(body).getByText(/journey complete/)).toBeTruthy()
+    expect(screen.getByTestId('vs-terminal-status').textContent).toMatch(/complete/)
+    expect(screen.getByText('The operating rhythm')).toBeTruthy()
+    // EVERY revealed artifact node sits inside the terminal body — none printed down the page.
+    const artifacts = screen.getAllByTestId('vs-artifact')
+    expect(artifacts.length).toBeGreaterThan(0)
+    for (const node of artifacts) expect(body.contains(node)).toBe(true)
+  })
+
+  it('terminal-follow: pins to the newest line, pauses when the reader scrolls up, resumes at the bottom', () => {
+    vi.useFakeTimers()
+    renderIt()
+    const body = screen.getByTestId('vs-terminal-body')
+    mockScrollBox(body, { scrollHeight: 1000, clientHeight: 400 })
+    fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+    act(() => { vi.advanceTimersByTime(240) })
+    expect(body.scrollTop).toBe(1000) // pinned to the bottom on each printed line
+    // The reader scrolls up mid-run → follow pauses; new lines must not yank them back down.
+    body.scrollTop = 100
+    fireEvent.scroll(body)
+    act(() => { vi.advanceTimersByTime(240) })
+    expect(body.scrollTop).toBe(100)
+    // Back within the slack of the bottom → follow re-engages on the next printed line.
+    body.scrollTop = 590 // 590 + 400 ≥ 1000 − 24
+    fireEvent.scroll(body)
+    act(() => { vi.advanceTimersByTime(240) })
+    expect(body.scrollTop).toBe(1000)
+  })
+
+  it('"show the whole timeline" fills the terminal instantly scrolled to the TOP; restart clears it', () => {
+    vi.useFakeTimers()
+    renderIt()
+    const body = screen.getByTestId('vs-terminal-body')
+    mockScrollBox(body, { scrollHeight: 1000, clientHeight: 400 })
+    fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+    act(() => { vi.advanceTimersByTime(240 * 3) })
+    expect(body.scrollTop).toBe(1000) // mid-run, following
+    showAll()
+    expect(within(body).getAllByTestId('vs-artifact').length).toBeGreaterThan(0)
+    expect(within(body).getByText(/journey complete/)).toBeTruthy()
+    expect(body.scrollTop).toBe(0) // instant fill reads from the top, not the bottom
+    // Restart: the terminal clears back to the placeholder prompt, scrolled to the top.
+    fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
+    expect(within(body).queryAllByTestId('vs-artifact')).toHaveLength(0)
+    expect(within(body).getByText(/press ▶ Run this startup/)).toBeTruthy()
+    expect(body.scrollTop).toBe(0)
   })
 })
 

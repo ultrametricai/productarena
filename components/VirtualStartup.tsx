@@ -50,6 +50,10 @@ import {
 
 const CADENCE_MS = 240
 
+// Terminal-follow slack: how close (px) to the bottom still counts as "at the bottom" — the
+// standard terminal behavior, so a stray one-line scroll doesn't silently unpin the follow.
+const FOLLOW_SLACK_PX = 24
+
 type Row =
   | { kind: 'phase'; key: string; title: string; chainId: string; chainName: string; note: string | null }
   | { kind: 'task'; key: string; task: VirtualTaskPayload }
@@ -189,8 +193,35 @@ export default function VirtualStartup({
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  // The terminal viewport (founder ask 2026-09-28): the run prints INSIDE this fixed-height
+  // scroll box, so the page never grows mid-run. followRef is the terminal-follow flag — pinned
+  // to the newest line unless the reader scrolled up inside the terminal; scrolling back to
+  // (near) the bottom re-engages it. pendingTopRef is the one-shot "show the whole timeline"
+  // override: fill instantly, then read from the top.
+  const termRef = useRef<HTMLDivElement>(null)
+  const followRef = useRef(true)
+  const pendingTopRef = useRef(false)
 
   useEffect(() => () => { if (timer.current) clearInterval(timer.current) }, [])
+
+  // After every reveal commit: pin the terminal to its newest line while following, or honor the
+  // one-shot scroll-to-top after an instant fill. Reading scrollHeight post-commit is the whole
+  // point — this cannot run inside the click/tick handlers, the new rows aren't in the DOM yet.
+  useEffect(() => {
+    const el = termRef.current
+    if (!el) return
+    if (pendingTopRef.current) {
+      pendingTopRef.current = false
+      el.scrollTop = 0
+      return
+    }
+    // An emptied terminal (restart / decision change) rests at its top, never "the bottom".
+    if (revealed === 0) {
+      el.scrollTop = 0
+      return
+    }
+    if (followRef.current) el.scrollTop = el.scrollHeight
+  }, [revealed])
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
      (external system). The static HTML must render the default view, so this cannot be a
@@ -272,15 +303,48 @@ export default function VirtualStartup({
 
   const done = revealed >= rows.length
 
+  // The title-bar run identity: "agentloop — virtual run" style, derived from the (SIMULATED)
+  // company display name — lowercased, entity suffix dropped, terminal-slugged.
+  const termName = co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
   function stop() {
     if (timer.current) clearInterval(timer.current)
     timer.current = null
     setRunning(false)
   }
 
-  function pickChoice(id: keyof Choices, value: string) {
+  // Empty the terminal and re-arm the follow — every decision/preset/mode change and every
+  // restart goes through here so the viewport starts clean at its top.
+  function clearRun() {
     stop()
     setRevealed(0)
+    followRef.current = true
+    pendingTopRef.current = false
+    if (termRef.current) termRef.current.scrollTop = 0
+  }
+
+  // Terminal-follow: any scroll (the reader's or our own pin) re-derives the flag from where
+  // the viewport actually is — up = paused, back within FOLLOW_SLACK_PX of the bottom = following.
+  function onTermScroll() {
+    const el = termRef.current
+    if (!el) return
+    followRef.current = el.scrollTop + el.clientHeight >= el.scrollHeight - FOLLOW_SLACK_PX
+  }
+
+  function showAll() {
+    stop()
+    followRef.current = false
+    if (revealed >= rows.length) {
+      // Already fully printed — the reveal effect won't re-fire, scroll directly.
+      if (termRef.current) termRef.current.scrollTop = 0
+      return
+    }
+    pendingTopRef.current = true
+    setRevealed(rows.length)
+  }
+
+  function pickChoice(id: keyof Choices, value: string) {
+    clearRun()
     // Manual toggle: the preset no longer describes the combo — ?preset clears, the combo stays.
     setPreset(null)
     // A manual value contradicting the YC calibration turns YC mode off; other toggles keep it.
@@ -292,8 +356,7 @@ export default function VirtualStartup({
   }
 
   function applyPreset(p: VsPreset) {
-    stop()
-    setRevealed(0)
+    clearRun()
     setPreset(p.id)
     // YC mode applies ON TOP of any preset — the calibration wins where they disagree.
     setChoices(yc ? applyYcCalibration(p.choices) : p.choices)
@@ -301,8 +364,7 @@ export default function VirtualStartup({
   }
 
   function toggleYc() {
-    stop()
-    setRevealed(0)
+    clearRun()
     const next = !yc
     setYc(next)
     if (next) setChoices((c) => applyYcCalibration(c))
@@ -315,8 +377,7 @@ export default function VirtualStartup({
   }
 
   function start() {
-    stop()
-    setRevealed(0)
+    clearRun()
     setRunning(true)
     let i = 0
     timer.current = setInterval(() => {
@@ -468,7 +529,7 @@ export default function VirtualStartup({
           </span>
           <button
             type="button"
-            onClick={() => { stop(); setRevealed(rows.length) }}
+            onClick={showAll}
             className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition hover:text-zinc-300"
           >
             skip the animation — show the whole timeline
@@ -476,16 +537,45 @@ export default function VirtualStartup({
         </div>
       </div>
 
-      {/* Timeline */}
-      {revealed > 0 && (
-        <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display text-lg font-semibold tracking-tight">Timeline</h2>
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              real processes & judged vendors · fuchsia-tagged data is simulated
-            </span>
-          </div>
-          <ol className="mt-4 space-y-1.5">
+      {/* The terminal — the page's visual centerpiece (founder ask 2026-09-28: "have the
+          terminal at the top so it prints the timeline in that terminal up top"). The run
+          prints INSIDE this fixed-height viewport with terminal-follow autoscroll, so the page
+          itself never grows mid-run; the chrome matches the site's terminal precedent
+          (components/TryIt/Microterminal.tsx: dark window, dots, title bar, mono body). */}
+      <section
+        data-testid="vs-terminal"
+        aria-label="Virtual run terminal"
+        className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950"
+      >
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-zinc-800 bg-zinc-900/60 px-3 py-2">
+          <span aria-hidden className="flex gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
+            <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+          </span>
+          <code className="min-w-0 truncate font-mono text-xs text-zinc-300">
+            <span className="mr-1.5 select-none text-emerald-400">$</span>
+            {termName} — virtual run
+          </code>
+          <SimChip />
+          <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+            {running ? 'running…' : revealed > 0 && done ? '✓ complete' : 'idle'}
+          </span>
+        </div>
+
+        <div
+          ref={termRef}
+          onScroll={onTermScroll}
+          data-testid="vs-terminal-body"
+          className="h-[50vh] overflow-y-auto overscroll-contain px-3 py-2.5 font-mono text-xs leading-relaxed sm:h-[60vh]"
+        >
+          {revealed === 0 && (
+            <p className="text-zinc-500">
+              <span aria-hidden className="mr-1.5 select-none text-emerald-400">$</span>
+              press ▶ Run this startup — the journey prints here, step by step
+            </p>
+          )}
+          <ol className="space-y-1.5">
             {rows.slice(0, revealed).map((row) => {
               if (row.kind === 'phase') {
                 return (
@@ -560,23 +650,33 @@ export default function VirtualStartup({
               )
             })}
           </ol>
-          {done && (
-            <div className="mt-4 border-t border-zinc-800 pt-3 text-sm text-zinc-300">
+          {running && <span aria-hidden className="animate-pulse text-emerald-400">▋</span>}
+          {/* The completion summary prints as the terminal's final output — the page below the
+              terminal only ever grows AFTER the run completes (the rhythm section under it). */}
+          {revealed > 0 && done && (
+            <div className="mt-4 border-t border-zinc-800 pt-3 text-[13px] text-zinc-300">
               <p>
                 ✓ journey complete — {stats.totalSteps} steps: {stats.agentSteps} agent-runnable,{' '}
                 {stats.formSteps} manual form{stats.formSteps === 1 ? '' : 's'}, {stats.personSteps} human
                 {stats.legalSignatures > 0 && <> (incl. {stats.legalSignatures} legal signature{stats.legalSignatures === 1 ? '' : 's'})</>},{' '}
                 {stats.approvals} approval gate{stats.approvals === 1 ? '' : 's'}
               </p>
-              <p className="mt-1 text-xs text-zinc-500">
+              <p className="mt-1 text-[11px] text-zinc-500">
                 Corpus time estimate: {formatMinutes(stats.totalMinutes)} (~{dayOf(stats.totalMinutes)} simulated days,
                 incl. {stats.asyncSteps} async wait{stats.asyncSteps === 1 ? '' : 's'}) — from each step&apos;s recorded
                 estimate, not invented.
               </p>
             </div>
           )}
-        </section>
-      )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-zinc-800 px-3 py-1.5 text-[10px] text-zinc-500">
+          <span>real processes & judged vendors · fuchsia-tagged data is simulated</span>
+          <span className="ml-auto shrink-0 font-mono tabular-nums">
+            {Math.min(revealed, rows.length)}/{rows.length} lines
+          </span>
+        </div>
+      </section>
 
       {/* The operating rhythm the company now runs, once the launch journey lands — first 30
           days, first 90 days, and year one. */}
