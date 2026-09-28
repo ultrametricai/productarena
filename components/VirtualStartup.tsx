@@ -37,6 +37,29 @@ import {
   type YearCandidate,
   type YearRow,
 } from '@/lib/virtualStartup'
+// ── v3 run layer (founder-approved 2026-09-28): vendor picks drive outcomes, founder personas,
+// seeded corpus-grounded events, scorecard + shareable ?run= permalink. All logic lives in
+// lib/virtualStartupRun.ts (pure, deterministic); the UI pieces are separate components.
+import VsEventCard from '@/components/VsEventCard'
+import VsPersonaPicker from '@/components/VsPersonaPicker'
+import VsScorecard from '@/components/VsScorecard'
+import {
+  computeStackOutcome,
+  corpusLaunchDay,
+  decodeRunState,
+  drawVsEvents,
+  eligibleVsEvents,
+  eventSeedKey,
+  journeyOutcomeInputs,
+  optimalSelections,
+  resolveVsEvents,
+  taskMinutesById,
+  computeBurn,
+  type VsAccessMap,
+  type VsPersonaId,
+  type VsPricingMap,
+  type VsRunState,
+} from '@/lib/virtualStartupRun'
 
 // The Virtual Startup timeline (see lib/virtualStartup.ts for the honesty contract): the reader
 // picks the starting decisions, then a synthetic company replays the REAL selected processes in
@@ -58,8 +81,12 @@ type Row =
   | { kind: 'phase'; key: string; title: string; chainId: string; chainName: string; note: string | null }
   | { kind: 'task'; key: string; task: VirtualTaskPayload }
   | { kind: 'day'; key: string; day: number }
-  | { kind: 'step'; key: string; step: SimStep; top: TopVendorPick | null }
+  // v3: outNote names the outcome-model rule applied to this step's simulated minutes (null =
+  // corpus estimate as-is); outMinutes is the effective clock advance the day markers use.
+  | { kind: 'step'; key: string; step: SimStep; top: TopVendorPick | null; outNote: string | null; outMinutes: number }
   | { kind: 'artifact'; key: string; artifact: SyntheticArtifact }
+  // v3: a seeded mid-run event, printed inside the terminal flow at its simulated day.
+  | { kind: 'vsevent'; key: string; eventId: string }
 
 // The visible synthetic-data label — rendered beside EVERY generated artifact (and the company
 // banner). Tests assert one of these per artifact node; nothing synthetic ships without it.
@@ -173,6 +200,9 @@ export default function VirtualStartup({
   roles,
   yearCandidates,
   eventExamples,
+  access,
+  pricing,
+  taskRisks,
 }: {
   chains: VsChain[]
   // Precomputed payload for every task any decision combo can reach, keyed by corpus task id.
@@ -185,10 +215,22 @@ export default function VirtualStartup({
   yearCandidates: YearCandidate[]
   // Event-driven examples (lib/virtualStartup.ts buildEventExamples) — gated per combo below.
   eventExamples: EventExample[]
+  // v3 payloads (lib/virtualStartupData.ts): canonical MCP/CLI verdicts per swap option, the
+  // picked vendors' published-pricing headlines, and the corpus risk axis for the event gates.
+  access: VsAccessMap
+  pricing: VsPricingMap
+  taskRisks: Record<string, number>
 }) {
   const [choices, setChoices] = useState<Choices>(DEFAULT_CHOICES)
   const [preset, setPreset] = useState<PresetId | null>(null)
   const [yc, setYc] = useState(false)
+  // ── v3 state: founder persona, the reader's vendor picks (shared with ProcessSimulator below,
+  // controlled), decided event branches, and the run seed — together with the combo/preset/yc
+  // this is the WHOLE run state the ?run= permalink encodes.
+  const [persona, setPersona] = useState<VsPersonaId>('solo-technical')
+  const [picks, setPicks] = useState<Record<string, string>>({})
+  const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
+  const [runSeed, setRunSeed] = useState(0)
   const [win, setWin] = useState<WindowTab>('d30')
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
@@ -238,10 +280,68 @@ export default function VirtualStartup({
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  // ── v3: one-time ?run= restore — a run link carries the WHOLE state (combo, preset, yc,
+  // persona, picks, event choices, seed) and replays the exact run, so it wins over ?preset/?yc
+  // (this effect runs after the one above; a malformed param decodes to null and changes nothing).
+  /* eslint-disable react-hooks/set-state-in-effect -- same one-time post-hydration URL sync
+     contract as the preset/yc effect above. */
+  useEffect(() => {
+    const run = decodeRunState(readParam('run'))
+    if (!run) return
+    setChoices(run.choices)
+    setPreset(run.preset)
+    setYc(run.yc)
+    setPersona(run.persona)
+    setPicks(run.picks)
+    setEventChoices(run.eventChoices)
+    setRunSeed(run.seed)
+  }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   const identity = useMemo(() => presetById(preset)?.company ?? null, [preset])
   const key = `${comboKey(choices)}|yc:${yc ? '1' : '0'}`
   const co = useMemo(() => synthCompany(choices, identity), [choices, identity])
   const phases = useMemo(() => journeyPhases(choices, chains, { yc }), [choices, chains, yc])
+
+  // ── v3 outcome model (lib/virtualStartupRun.ts): the reader's picks + persona recompute the
+  // simulated clock over the same corpus estimates — the day markers below use these minutes.
+  const outcomeInputs = useMemo(() => journeyOutcomeInputs(phases, tasks), [phases, tasks])
+  const outcome = useMemo(
+    () => computeStackOutcome(outcomeInputs, picks, roles, access, persona),
+    [outcomeInputs, picks, roles, access, persona],
+  )
+  const optimalPicks = useMemo(() => optimalSelections(roles, access), [roles, access])
+  // ── v3 event engine: seeded, corpus-grounded, plausibility-gated; deterministic from
+  // (combo, preset, yc, persona, seed) — the day span comes from the raw corpus estimates so
+  // vendor picks never reshuffle which events fire.
+  const drawnEvents = useMemo(
+    () =>
+      drawVsEvents(
+        eligibleVsEvents(choices, phases.flatMap((p) => p.taskIds), taskRisks),
+        eventSeedKey(choices, preset, yc, persona, runSeed),
+        corpusLaunchDay(outcomeInputs),
+      ),
+    [choices, phases, taskRisks, preset, yc, persona, runSeed, outcomeInputs],
+  )
+  const taskMinutes = useMemo(() => taskMinutesById(tasks), [tasks])
+  const eventResolution = useMemo(
+    () => resolveVsEvents(drawnEvents, eventChoices, { roles, selections: picks, taskMinutes, chains }),
+    [drawnEvents, eventChoices, roles, picks, taskMinutes, chains],
+  )
+  // Post-event stack (a switch-vendor branch re-picks from the real arena ranking) — the
+  // scorecard and burn read this; the timeline keeps the reader's own picks.
+  const effectivePicks = useMemo(
+    () => ({ ...picks, ...eventResolution.pickOverrides }),
+    [picks, eventResolution],
+  )
+  const finalOutcome = useMemo(
+    () => computeStackOutcome(outcomeInputs, effectivePicks, roles, access, persona),
+    [outcomeInputs, effectivePicks, roles, access, persona],
+  )
+  const optimalOutcome = useMemo(
+    () => computeStackOutcome(outcomeInputs, optimalPicks, roles, access, persona),
+    [outcomeInputs, optimalPicks, roles, access, persona],
+  )
 
   const { rows, steps, stats } = useMemo(() => {
     const taskIds = phases.flatMap((p) => p.taskIds)
@@ -250,6 +350,15 @@ export default function VirtualStartup({
     const steps: SimStep[] = []
     let cum = 0
     let lastDay = 0
+    // v3: seeded mid-run events print inside the terminal flow at their simulated day
+    // (drawnEvents is day-sorted, so this is a simple cursor flush).
+    let evIdx = 0
+    const flushEvents = (uptoDay: number) => {
+      while (evIdx < drawnEvents.length && drawnEvents[evIdx].day <= uptoDay) {
+        rows.push({ kind: 'vsevent', key: `vsevent-${drawnEvents[evIdx].def.id}`, eventId: drawnEvents[evIdx].def.id })
+        evIdx += 1
+      }
+    }
     for (const phase of phases) {
       rows.push({ kind: 'phase', key: `phase-${phase.id}`, title: phase.title, chainId: phase.chainId, chainName: phase.chainName, note: phase.note })
       for (const taskId of phase.taskIds) {
@@ -259,20 +368,27 @@ export default function VirtualStartup({
         task.steps.forEach((step, i) => {
           const day = dayOf(cum)
           if (day !== lastDay) {
+            flushEvents(day - 1)
             lastDay = day
             rows.push({ kind: 'day', key: `day-${day}-${taskId}-${i}`, day })
+            flushEvents(day)
           }
-          rows.push({ kind: 'step', key: `step-${taskId}-${i}`, step, top: task.tops[i] ?? null })
+          // v3: the clock advances by the outcome model's effective minutes (picks + persona,
+          // disclosed simulation assumptions) — falling back to the raw corpus estimate.
+          const outStep = outcome.steps[steps.length]
+          const outMinutes = outcome.minutesByKey[`${taskId}:${i}`] ?? step.estimatedMinutes
+          rows.push({ kind: 'step', key: `step-${taskId}-${i}`, step, top: task.tops[i] ?? null, outNote: outStep?.note ?? null, outMinutes })
           steps.push(step)
-          cum += step.estimatedMinutes
+          cum += outMinutes
         })
         for (const [j, artifact] of (artifacts[taskId] ?? []).entries()) {
           rows.push({ kind: 'artifact', key: `artifact-${taskId}-${j}`, artifact })
         }
       }
     }
+    flushEvents(Number.POSITIVE_INFINITY)
     return { rows, steps, stats: journeyStats(steps) }
-  }, [phases, tasks, choices, identity, yc])
+  }, [phases, tasks, choices, identity, yc, outcome, drawnEvents])
 
   // Only the roles whose arena the selected journey actually touches — the transcript resolves
   // picks via step.arenaId / step.choiceArenaId, so this filter loses nothing it uses.
@@ -303,6 +419,21 @@ export default function VirtualStartup({
 
   const done = revealed >= rows.length
 
+  // ── v3 render lookups: the resolved event per id (choice + time delta), the journey's burn
+  // lines (journey roles only — the vendors this run actually picks), and the permalink state.
+  const resolvedEventById = useMemo(
+    () => new Map(eventResolution.events.map((e) => [e.def.id, e])),
+    [eventResolution],
+  )
+  const burn = useMemo(() => computeBurn(journeyRoles, effectivePicks, pricing), [journeyRoles, effectivePicks, pricing])
+  const runState: VsRunState = useMemo(
+    () => ({ choices, preset, yc, persona, picks, eventChoices, seed: runSeed }),
+    [choices, preset, yc, persona, picks, eventChoices, runSeed],
+  )
+  function chooseEventBranch(eventId: string, choiceId: string) {
+    setEventChoices((prev) => ({ ...prev, [eventId]: choiceId }))
+  }
+
   // The title-bar run identity: "agentloop — virtual run" style, derived from the (SIMULATED)
   // company display name — lowercased, entity suffix dropped, terminal-slugged.
   const termName = co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -321,6 +452,13 @@ export default function VirtualStartup({
     followRef.current = true
     pendingTopRef.current = false
     if (termRef.current) termRef.current.scrollTop = 0
+  }
+
+  // v3: a decision/preset/mode change is a NEW run — decided event branches reset (the drawn
+  // event set changes with the combo); vendor picks deliberately survive (they are the reader's
+  // stack, not run state), and a plain restart keeps both so a shared ?run= replays intact.
+  function clearRunState() {
+    setEventChoices({})
   }
 
   // Terminal-follow: any scroll (the reader's or our own pin) re-derives the flag from where
@@ -345,6 +483,7 @@ export default function VirtualStartup({
 
   function pickChoice(id: keyof Choices, value: string) {
     clearRun()
+    clearRunState()
     // Manual toggle: the preset no longer describes the combo — ?preset clears, the combo stays.
     setPreset(null)
     // A manual value contradicting the YC calibration turns YC mode off; other toggles keep it.
@@ -357,6 +496,7 @@ export default function VirtualStartup({
 
   function applyPreset(p: VsPreset) {
     clearRun()
+    clearRunState()
     setPreset(p.id)
     // YC mode applies ON TOP of any preset — the calibration wins where they disagree.
     setChoices(yc ? applyYcCalibration(p.choices) : p.choices)
@@ -365,6 +505,7 @@ export default function VirtualStartup({
 
   function toggleYc() {
     clearRun()
+    clearRunState()
     const next = !yc
     setYc(next)
     if (next) setChoices((c) => applyYcCalibration(c))
@@ -511,6 +652,17 @@ export default function VirtualStartup({
         </div>
       </section>
 
+      {/* ── v3: founder persona — with the setup controls, above the terminal. A persona change
+          is a new run (the event stream is seeded by it). */}
+      <VsPersonaPicker
+        persona={persona}
+        onSelect={(id) => {
+          clearRun()
+          clearRunState()
+          setPersona(id)
+        }}
+      />
+
       {/* The run CTA — big, unmistakable, before any timeline content (founder 2026-09-25:
           "make the run button clearer and put it at the top"). Sticky on mobile so Run/Restart
           stays reachable while scrolling the long timeline; static from sm up. */}
@@ -622,6 +774,17 @@ export default function VirtualStartup({
                       {formatMinutes(row.step.estimatedMinutes)}
                       {row.step.async ? ' ⏳' : ''}
                     </span>
+                    {/* v3: the outcome model changed this step's simulated clock — say so, with
+                        the named rule (always a disclosed simulation assumption) in the title. */}
+                    {row.outNote && (
+                      <span
+                        data-testid="vs-step-outnote"
+                        title={row.outNote}
+                        className="rounded border border-amber-400/40 px-1 py-px font-mono text-[10px] text-amber-300/90"
+                      >
+                        sim {formatMinutes(row.outMinutes)}
+                      </span>
+                    )}
                     {row.step.approvalRequired && (
                       <span className="text-[11px] text-amber-300/90" title="A human signs off before this runs">⏸ approval</span>
                     )}
@@ -634,6 +797,24 @@ export default function VirtualStartup({
                         {row.top.name} · {row.top.score.toFixed(0)}
                       </Link>
                     )}
+                  </li>
+                )
+              }
+              if (row.kind === 'vsevent') {
+                // v3: a seeded mid-run event interrupts the terminal flow — SIMULATED-chipped,
+                // grounded in a real corpus process, with deterministic branching choices.
+                const resolved = resolvedEventById.get(row.eventId)
+                if (!resolved) return null
+                const grounded = tasks[resolved.def.groundedIn]
+                return (
+                  <li key={row.key}>
+                    <VsEventCard
+                      event={resolved}
+                      groundedTitle={grounded?.title ?? resolved.def.groundedIn}
+                      groundedSlug={grounded?.slug ?? ''}
+                      risk={taskRisks[resolved.def.groundedIn] ?? 0}
+                      onChoose={chooseEventBranch}
+                    />
                   </li>
                 )
               }
@@ -667,6 +848,18 @@ export default function VirtualStartup({
                 estimate, not invented.
               </p>
             </div>
+          )}
+          {/* ── v3: the run scorecard prints as the terminal's final output block (time-to-launch,
+              agent-run share, cited published-pricing burn, events survived, copy-run-link). */}
+          {revealed > 0 && done && (
+            <VsScorecard
+              outcome={finalOutcome}
+              optimal={optimalOutcome}
+              resolution={eventResolution}
+              burn={burn}
+              personaId={persona}
+              runState={runState}
+            />
           )}
         </div>
 
@@ -879,8 +1072,16 @@ export default function VirtualStartup({
 
       {/* The reused playbook simulator over the exact selected journey — swap any market role and
           the transcript stays honest about whose API was actually recorded. Keyed by the decision
-          combo so its picker state resets with the journey. */}
-      <ProcessSimulator key={key} steps={steps} roles={journeyRoles} multiTask />
+          combo so its transcript resets with the journey. v3: the role picks are CONTROLLED —
+          the same picks drive the outcome model (day markers, scorecard, burn) above. */}
+      <ProcessSimulator
+        key={key}
+        steps={steps}
+        roles={journeyRoles}
+        multiTask
+        selections={picks}
+        onSelectionsChange={setPicks}
+      />
     </div>
   )
 }
