@@ -169,10 +169,14 @@ describe('VirtualStartup — synthetic labeling invariant', () => {
     }
   })
 
-  it('labels the virtual company itself as simulated before the timeline even runs', () => {
+  it('marks the run as simulated before the timeline even runs (terminal title bar)', () => {
+    // Founder 2026-09-28: the loud chips left the setup band — the pre-run honesty marker now
+    // lives on the terminal chrome itself, which is visible idle before any run.
     renderIt()
     const banner = screen.getByText(/your virtual company/i).closest('div')!
-    expect(within(banner).getByText(/^simulated$/i)).toBeTruthy()
+    expect(within(banner).queryByText(/^simulated$/i)).toBeNull()
+    const terminal = screen.getByTestId('vs-terminal')
+    expect(within(terminal).getByText(/^simulated$/i)).toBeTruthy()
   })
 })
 
@@ -399,9 +403,9 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     expect(within(screen.getByTestId('vs-preset-software')).queryByTestId('vs-preset-disclosure')).toBeNull()
     expect(within(screen.getByTestId('vs-preset-hardware')).getByTestId('vs-preset-disclosure')).toBeTruthy()
     expect(within(screen.getByTestId('vs-preset-biotech')).getByTestId('vs-preset-disclosure')).toBeTruthy()
-    // Every preset identity is SIMULATED-chipped on the card itself.
+    // Preset pills carry NO simulated chip (founder 2026-09-28) — the tags live in the terminal.
     for (const id of ['software', 'hardware', 'biotech']) {
-      expect(within(screen.getByTestId(`vs-preset-${id}`)).getByText(/^simulated$/i)).toBeTruthy()
+      expect(within(screen.getByTestId(`vs-preset-${id}`)).queryByText(/^simulated$/i)).toBeNull()
     }
   })
 
@@ -409,10 +413,9 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     renderIt()
     fireEvent.click(screen.getByTestId('vs-preset-hardware'))
     expect(window.location.search).toContain('preset=hardware')
-    // Identity overrides the seeded name; the banner stays SIMULATED-chipped.
+    // Identity overrides the seeded name (chip removed from the band, founder 2026-09-28).
     const banner = screen.getByText(/your virtual company/i).closest('div')!
     expect(within(banner).getByText('Holofield, Inc.')).toBeTruthy()
-    expect(within(banner).getByText(/^simulated$/i)).toBeTruthy()
     // The hardware combo: build-first, invoice-billed, no PH launch, enterprise on.
     showAll()
     expect(screen.getByText('Send an invoice')).toBeTruthy()
@@ -570,7 +573,6 @@ describe('VirtualStartup — YC batch mode', () => {
     expect(window.location.search).toContain('yc=1')
     const disclosure = screen.getByTestId('vs-yc-disclosure')
     expect(disclosure.textContent).toContain('not affiliated with or endorsed by Y Combinator')
-    expect(within(disclosure).getByText(/^simulated$/i)).toBeTruthy()
     // Launch-early calibration: PH on, build-first, seed raise.
     expect(screen.getByRole('button', { name: 'Launch on Product Hunt' }).getAttribute('aria-pressed')).toBe('true')
     expect(screen.getByRole('button', { name: 'Build first' }).getAttribute('aria-pressed')).toBe('true')

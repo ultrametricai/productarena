@@ -2084,8 +2084,16 @@ export default {
     //    and indexed page keeps working; the bare product URL goes to /overall.
     if (url.pathname === '/productarena' || url.pathname.startsWith('/productarena/')) {
       const stripped = url.pathname.slice('/productarena'.length) || '/'
-      const target = stripped === '/' ? '/overall' : stripped
-      return Response.redirect(`https://ultrametric.ai${target}${url.search}`, 301)
+      // Bare /productarena → /overall as an UNCACHEABLE 302: the target is "for now" (founder),
+      // and the earlier 301 to '/' got permanently cached by browsers — never again. Deep paths
+      // keep 301 (their root-path targets are stable; old links/badges/SEO keep working).
+      if (stripped === '/') {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `https://ultrametric.ai/overall${url.search}`, 'Cache-Control': 'no-store' },
+        })
+      }
+      return Response.redirect(`https://ultrametric.ai${stripped}${url.search}`, 301)
     }
     // 2. The landing site (Astro) owns the homepage, its pages, and its asset dirs
     //    (passthrough to the zone origin). Root-path landing assets that collide with product
@@ -2096,7 +2104,37 @@ export default {
       url.pathname === '/' ||
       LANDING_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))
     ) {
-      return fetch(request)
+      // Cache heal (2026-09-28): during the ~30-min window before landing-asset routing landed,
+      // some POPs cached 404s for landing paths — a non-OK GET gets one cache-busted retry
+      // (different cache key → guaranteed origin fetch) and the stale entry evicted.
+      let resp = await fetch(request)
+      if (!resp.ok && request.method === 'GET') {
+        const healUrl = new URL(request.url)
+        healUrl.searchParams.set('cf-heal', String(Date.now()))
+        const fresh = await fetch(new Request(healUrl.toString(), request))
+        if (fresh.ok) {
+          ctx?.waitUntil?.(caches.default.delete(request.url).catch(() => {}))
+          resp = fresh
+        }
+      }
+      // The landing's header still links the retired brand URL (https://ultrametric.ai/
+      // productarena) — rewrite those hrefs in-flight to the live product paths until the
+      // landing repo itself is updated (founder 2026-09-28: "the products link … should get
+      // to the overall page"). Direct hrefs also sidestep browsers that cached the old 301.
+      const contentType = resp.headers.get('content-type') ?? ''
+      if (contentType.includes('text/html')) {
+        return new HTMLRewriter()
+          .on('a', {
+            element(el) {
+              const href = el.getAttribute('href')
+              if (!href) return
+              const m = href.match(/^(?:https:\/\/ultrametric\.ai)?\/productarena(\/.*)?$/)
+              if (m) el.setAttribute('href', m[1] && m[1] !== '/' ? m[1] : '/overall')
+            },
+          })
+          .transform(resp)
+      }
+      return resp
     }
     // 3. /overall serves the product homepage (the Next app's index at the origin root).
     if (url.pathname === '/overall' || url.pathname === '/overall/') {

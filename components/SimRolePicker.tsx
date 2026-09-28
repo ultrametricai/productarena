@@ -65,9 +65,11 @@ export default function SimRolePicker({
   }
 
   return (
+    // No card chrome (founder 2026-09-28: the simulate section had "a lot of nested boxes") —
+    // the trigger button is the only bordered element; the label sits bare above it.
     <div
       ref={rootRef}
-      className="relative min-w-0 rounded-xl border border-zinc-800 bg-zinc-900/40 px-2.5 py-2"
+      className="relative min-w-0"
       onKeyDown={(e) => {
         if (e.key === 'Escape' && open) {
           e.stopPropagation()

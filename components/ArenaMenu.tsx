@@ -126,7 +126,10 @@ export default function ArenaMenu({
         </span>
       </button>
       {open && (
-        <div className="absolute left-0 z-50 mt-2 flex max-h-[70vh] w-80 max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-xl shadow-black/40 sm:left-auto sm:right-0 sm:w-96">
+        // Left-anchored at every breakpoint: the trigger sits at the left end of the nav since
+        // the rebrand removed the wordmark, so a right-anchored panel ran off-screen left
+        // (founder 2026-09-28). The viewport clamp handles narrow screens.
+        <div className="absolute left-0 z-50 mt-2 flex max-h-[70vh] w-80 max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-xl shadow-black/40 sm:w-96">
           {searchable && (
             // Pinned above the scrolling list (sibling of the overflow container, so it never
             // scrolls away). Filters every section live; Enter opens the first match.
