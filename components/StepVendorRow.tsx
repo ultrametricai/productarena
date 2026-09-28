@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
+import VendorGeoMark, { useVendorGeoCell } from '@/components/VendorGeoMark'
+import type { VendorGeoByCountry } from '@/lib/geoPreference'
 import { isPicked } from '@/lib/myStack'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 import { lensGapFor, useProcessLens, type LensSource } from '@/lib/processLens'
@@ -55,6 +57,9 @@ const CHIP_BASE =
   'inline-flex min-w-0 items-center gap-1.5 rounded-md border py-0.5 pl-0.5 pr-2 transition'
 const CHIP_DEFAULT = `${CHIP_BASE} border-zinc-700 bg-zinc-900/60 text-zinc-200 hover:border-emerald-400/60 hover:text-emerald-300`
 const CHIP_SELECTED = `${CHIP_BASE} border-emerald-400/70 bg-emerald-400/10 text-emerald-200 ring-1 ring-emerald-400/40 hover:text-emerald-100`
+// Vendor unavailable in the reader's selected country (committed vendor-geo evidence,
+// components/VendorGeoMark.tsx) — muted but still linked; the rank and score are untouched.
+const CHIP_GEO_MUTED = `${CHIP_BASE} border-zinc-800 bg-zinc-900/40 text-zinc-500 opacity-70 hover:opacity-100 hover:text-zinc-300`
 
 function SelectedTag({ source }: { source: LensSource }) {
   return (
@@ -76,6 +81,7 @@ function VendorChipButton({
   rank,
   selected,
   alsoYours,
+  geo,
   onSelect,
   onClear,
 }: {
@@ -85,9 +91,17 @@ function VendorChipButton({
   /** An UNPINNED chip that is still one of the reader's stack picks (multi-vendor stacks) —
    *  wears a subtle "yours" tag so every vendor they run stays recognizable. */
   alsoYours: boolean
+  /** Committed per-country availability (jurisdictions/vendor-geo.json) — absent for the many
+   *  vendors the geo spike hasn't judged; the chip then never changes (no guess). */
+  geo?: VendorGeoByCountry
   onSelect: () => void
   onClear: () => void
 }) {
+  // Muted only on committed "unavailable" evidence under a non-US selection; a lens/stack
+  // selection keeps its emerald styling (the reader's explicit pick outranks the shade) while
+  // the ✕ mark still names the availability problem.
+  const geoHit = useVendorGeoCell(geo)
+  const geoMuted = !selected && geoHit?.cell.status === 'unavailable'
   const title =
     rank === null
       ? `${vendor.name} — your resolved vendor for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on the mapped ${vendor.arenaName} stories — open the judged product page`
@@ -97,7 +111,7 @@ function VendorChipButton({
       <Link
         href={`/arena/${vendor.arenaId}/product/${vendor.productId}`}
         title={title}
-        className={selected ? CHIP_SELECTED : CHIP_DEFAULT}
+        className={selected ? CHIP_SELECTED : geoMuted ? CHIP_GEO_MUTED : CHIP_DEFAULT}
       >
         <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={28} hasLogo={vendor.hasLogo} />
         {selected && <SelectedTag source={selected} />}
@@ -116,6 +130,7 @@ function VendorChipButton({
           </span>
         )}
         <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
+        <VendorGeoMark geo={geo} />
       </Link>
       {selected === 'lens' ? (
         <button
@@ -172,6 +187,7 @@ export default function StepVendorRow({
   storyCount,
   lensKey,
   checkStep,
+  vendorGeo,
 }: {
   /** The ranked chips in serialized default order (primary market merged with cross-arena). */
   vendors: StepRowVendor[]
@@ -185,6 +201,9 @@ export default function StepVendorRow({
    *  resolve and pin even when it ranks below the display cap. Absent for extras-only steps,
    *  where resolution falls back to the displayed chips. */
   checkStep?: ProcessCheckStep
+  /** Committed per-country availability by productId (lib/vendorGeo.ts vendorGeoLookup) —
+   *  chips annotate under a non-US geo selection; vendors without rows never change. */
+  vendorGeo?: Record<string, VendorGeoByCountry>
 }) {
   const { lens, stack, setPick, resolveFor } = useProcessLens(lensKey)
   const hasExtras = vendors.some((v) => v.cross)
@@ -262,6 +281,7 @@ export default function StepVendorRow({
           rank={e.rank}
           selected={e.selected}
           alsoYours={e.alsoYours}
+          geo={vendorGeo?.[e.vendor.productId]}
           onSelect={() => setPick(e.vendor.arenaId, e.vendor.productId, e.vendor.name)}
           onClear={() => setPick(e.vendor.arenaId, null)}
         />

@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import DoViaAfk from '@/components/DoViaAfk'
+import GeoSwitcher from '@/components/GeoSwitcher'
 import IconChip from '@/components/IconChip'
 import JurisdictionToggle from '@/components/JurisdictionToggle'
+import ProcessGeoBanner from '@/components/ProcessGeoBanner'
 import MineLink from '@/components/MineLink'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessGeoNotes from '@/components/ProcessGeoNotes'
@@ -159,6 +161,15 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         </div>
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
+            at the top of a particular process page … so we know how it works across the
+            globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner
+            below it renders the selected country's committed story — nothing for the US
+            default, so the static HTML stays the one shared view and no judged number moves. */}
+        <div className="mt-4">
+          <GeoSwitcher />
+        </div>
+        <ProcessGeoBanner geoScope={task.geoScope} notes={task.geoNotes ?? []} />
         {capTableBlurb && (
           <p className="mt-3 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
             {capTableBlurb}{' '}
@@ -217,6 +228,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             mineHref={mineHref}
             lensKey={task.id}
             manifestUrl={processManifestUrl(slug)}
+            usScoped={task.geoScope !== 'global'}
           />
         </div>
         {/* Jurisdiction-conditional steps (founder 2026-09-25) — only processes that genuinely

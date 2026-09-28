@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Fragment } from 'react'
 import CeilingBar from '@/components/CeilingBar'
 import ComputerUseChips from '@/components/ComputerUseChips'
+import GeoStepMark from '@/components/GeoStepMark'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import StepCanonicalVendor from '@/components/StepCanonicalVendor'
@@ -21,6 +22,7 @@ import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/pro
 import { crossArenaStepRankings, stepRanking, type StepCite, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
 import { stepPromptFor } from '@/lib/stepPrompts'
 import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
+import { vendorGeoLookup } from '@/lib/vendorGeo'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -266,6 +268,10 @@ function StepRankingRow({
     hasLogo: hasLogo(o.vendor),
     signupUrl: o.signupUrl,
   }))
+  // Committed (vendor, country) availability for THIS row's vendors (jurisdictions/
+  // vendor-geo.json) — the client row annotates chips under a non-US geo selection
+  // (✓/◐/muted ✕, components/VendorGeoMark.tsx); never re-ranks, never guesses.
+  const vendorGeo = vendorGeoLookup(rowVendors.map((v) => v.productId))
   return (
     <>
       <StepVendorRow
@@ -275,6 +281,7 @@ function StepRankingRow({
         storyCount={storyCount}
         lensKey={lensKey}
         checkStep={checkStep}
+        vendorGeo={vendorGeo}
       />
       <details className="group mt-1.5">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
@@ -330,6 +337,7 @@ function NodeBlock({
   mineHref,
   lensKey,
   manifestUrl,
+  usScoped,
 }: {
   node: DagNode
   index: number
@@ -344,6 +352,10 @@ function NodeBlock({
   // Absolute URL of this page's manifest (process or chain) — feeds the staff-gated per-step
   // AFK computer-use trigger (components/StepAfkChip.tsx) on actionUrl steps.
   manifestUrl?: string
+  // The process is us/us-state scoped (geoScope, lib/processes.ts) — every step carries the
+  // subtle client-side 🇺🇸 marker while a non-US country is selected (GeoStepMark renders
+  // nothing otherwise, so the static HTML is untouched).
+  usScoped?: boolean
 }) {
   const style = node.legalSignature ? SIGNATURE_STYLE : ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
@@ -418,6 +430,7 @@ function NodeBlock({
             {String(index).padStart(2, '0')}
           </span>
           {node.label}
+          {usScoped && <GeoStepMark />}
         </p>
         <span
           className={`mt-px shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}
@@ -622,6 +635,7 @@ function Flow({
   mineHref,
   lensKey,
   manifestUrl,
+  usScoped,
 }: {
   nodes: DagNode[]
   edges?: DagEdge[]
@@ -630,6 +644,7 @@ function Flow({
   mineHref?: string
   lensKey?: string
   manifestUrl?: string
+  usScoped?: boolean
 }) {
   const layers = layerNodes(nodes, edges)
   // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
@@ -656,6 +671,7 @@ function Flow({
                 mineHref={mineHref}
                 lensKey={lensKey}
                 manifestUrl={manifestUrl}
+                usScoped={usScoped}
               />
             ) : (
               <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
@@ -673,6 +689,7 @@ function Flow({
                       mineHref={mineHref}
                       lensKey={lensKey}
                       manifestUrl={manifestUrl}
+                      usScoped={usScoped}
                     />
                   ))}
                 </div>
@@ -724,6 +741,7 @@ export default function ProcessDag({
   mineHref,
   lensKey,
   manifestUrl,
+  usScoped,
 }: {
   nodes?: DagNode[]
   edges?: DagEdge[]
@@ -739,6 +757,10 @@ export default function ProcessDag({
   // /processes/[slug], the chain manifest on /processes/chains/[chain] — the artifact the
   // per-step AFK trigger hands off, scoped by &node=<nodeId>.
   manifestUrl?: string
+  // us/us-state geoScope of the ONE process this diagram renders — /processes/[slug] passes it
+  // so every step wears the client-side 🇺🇸 marker under a non-US selection. Chain pages (mixed
+  // scopes per section) don't pass it and stay unmarked.
+  usScoped?: boolean
 }) {
   if (sections && sections.length > 0) {
     return (
@@ -772,6 +794,7 @@ export default function ProcessDag({
         mineHref={mineHref}
         lensKey={lensKey}
         manifestUrl={manifestUrl}
+        usScoped={usScoped}
       />
     </div>
   )

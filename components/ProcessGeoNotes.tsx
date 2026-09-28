@@ -10,7 +10,9 @@ import { GEO_COUNTRY_META } from '@/lib/processes'
 export default function ProcessGeoNotes({ notes }: { notes: GeoNote[] }) {
   if (notes.length === 0) return null
   return (
-    <section>
+    // Anchor target for the top geo banner's "all countries ↓" link (ProcessGeoBanner) — the
+    // banner promotes ONE country's analog; the full multi-country detail stays down here.
+    <section id="outside-the-us" className="scroll-mt-4">
       <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Outside the US</h2>
       <p className="mt-1 text-sm text-zinc-400">
         This flow is written around US law and agencies. Here is what the same work looks like

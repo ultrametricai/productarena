@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import GeoStepMark from '@/components/GeoStepMark'
 import {
   activeJurisdictionSteps,
   ceilingWithJurisdictions,
@@ -135,7 +136,12 @@ export default function JurisdictionToggle({
                     {JURISDICTION_META[j].badge}
                   </span>
                 ))}
-                <span className="text-zinc-200">{s.label}</span>
+                <span className="text-zinc-200">
+                  {s.label}
+                  {/* Jurisdiction-conditional steps are inherently US-specific — under a non-US
+                      geo selection they carry the subtle flag (renders nothing otherwise). */}
+                  <GeoStepMark />
+                </span>
                 <span className={`text-xs ${ROUTE_COLOR[s.route]}`}>{ROUTE_LABEL[s.route]}</span>
                 <span className="text-xs text-zinc-500">
                   {formatMinutes(s.estimatedMinutes)}
