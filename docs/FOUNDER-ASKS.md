@@ -179,6 +179,11 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | "Open startup repo" lift: cap-table engine + founder-ops corpus structure (stage 1) | shipped 2026-09-28 (lib/openstartup, /tools/cap-table, corpus tree + lib/founderOps.ts gates; stages 2–3 in docs/FOUNDER-OPS.md) |
 | Virtual Startup: compact controls so terminal is above the fold | shipped 2026-09-28 |
 | Homepage revert: '/' = landing site again, product homepage at /overall, bare /productarena → /overall | shipped 2026-09-28 (worker) |
+| Landing "ProductArena" header link went nowhere (browser-cached old 301) | shipped 2026-09-28 (worker rewrites landing hrefs → /overall; bare redirect now uncacheable 302) |
+| VS: remove 'Simulated' chips from page top + improve top layout | in progress (founder 2026-09-28) |
+| /stacks: gstack moved from top to bottom | in progress (founder 2026-09-28) |
+| Top bar Arenas menu renders off-screen left | in progress (founder 2026-09-28) |
+| "Simulate this playbook" section: too many nested boxes, tighten UI | in progress (founder 2026-09-28) |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
 
 ## Shipped (recent — see git log for full history)

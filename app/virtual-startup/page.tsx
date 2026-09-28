@@ -105,14 +105,12 @@ export default function VirtualStartupPage() {
           virtual startup
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Virtual Startup</h1>
-        {/* One-line hero (founder 2026-09-28: terminal above the fold) — the fuller explanation
-            lives in the setup band's "full setup guide" expand inside the component. */}
+        {/* One-line hero (founder 2026-09-28: terminal above the fold; same day: no loud
+            "simulated" chips up top) — generated artifacts keep their tags inside the terminal,
+            and the fuller explanation lives in the setup band's "full setup guide" expand. */}
         <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400">
-          A simulated company runs the real founder-process corpus — every step routed agent /
+          A virtual company runs the real founder-process corpus — every step routed agent /
           manual / human, vendors from the judged rankings, time estimates the corpus&apos;s own.
-          Everything generated carries a visible{' '}
-          <span className="rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300">simulated</span>{' '}
-          tag: nothing simulated is a judged fact.
         </p>
       </section>
 

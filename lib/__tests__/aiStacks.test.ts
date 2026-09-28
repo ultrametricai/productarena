@@ -24,10 +24,11 @@ describe('gstack (Garry Tan) curated stack', () => {
   // resolveStack silently drops picks that stop resolving (dead product, renamed arena) — for an
   // externally-attributed stack that silent degradation would misrepresent the source, so pin
   // every member explicitly.
-  it('sits first on the page and every curated pick resolves against judged data', () => {
+  // Founder 2026-09-28: gstack sits LAST on the page (house-curated stacks lead), not first.
+  it('sits last on the page and every curated pick resolves against judged data', () => {
     const stacks = loadAiStacks(DATA_DIR)
-    expect(stacks[0]?.id).toBe('gstack')
-    const gstack = stacks[0]!
+    expect(stacks[stacks.length - 1]?.id).toBe('gstack')
+    const gstack = stacks[stacks.length - 1]!
     const resolved = resolveStack(gstack, loadAll(DATA_DIR))
     const byRole = new Map(resolved.slots.map((s) => [s.role, s]))
     for (const [role, productId] of [

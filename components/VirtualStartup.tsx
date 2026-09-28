@@ -589,7 +589,6 @@ export default function VirtualStartup({
                 >
                   <span className="text-zinc-500">{p.label}</span>
                   <span className="font-medium text-zinc-200">{p.company.name}</span>
-                  <SimChip />
                   {p.disclosure && (
                     <span data-testid="vs-preset-disclosure" title={p.disclosure} className="text-amber-300/90">
                       <span aria-hidden>ⓘ</span>
@@ -685,20 +684,21 @@ export default function VirtualStartup({
           ))}
         </div>
 
-        {/* Info line: the virtual company — synthetic from the first pixel, labeled as such —
-            plus the run size. Mode disclosures print underneath while active. */}
+        {/* Info line: the virtual company plus the run size. The loud SIMULATED chips left the
+            setup band (founder 2026-09-28: "remove 'Simulated' … make the top layout better") —
+            "virtual company" says it in prose, and the honesty tags stay where they're
+            load-bearing: the terminal title bar and every generated artifact inside the run.
+            Mode disclosures print underneath while active. */}
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-zinc-800/70 pt-2 text-xs">
           <span className="text-zinc-500">Your virtual company:</span>
           <span className="font-medium text-zinc-200">{co.display}</span>
           {co.descriptor && <span className="text-zinc-400">— making {co.descriptor}</span>}
-          <SimChip />
           <span className="text-zinc-500">
             · {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
           </span>
         </div>
         {yc && (
           <p data-testid="vs-yc-disclosure" className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">
-            <SimChip />
             <span>
               {YC_BATCH.disclosure} Batch calendar: {YC_BATCH.calendar}. The raise compresses to
               Demo-Day timing on the standard published deal; PH launch and build-first turn on.
