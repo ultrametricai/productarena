@@ -342,6 +342,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                       { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
                       { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
                       { id: "stack-battle", name: "Battle of the stacks", label: "tool", href: "/stacks/battle" },
+                      { id: "cap-table", name: "Cap table", label: "tool", href: "/tools/cap-table" },
                       { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
                       { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
                       { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
