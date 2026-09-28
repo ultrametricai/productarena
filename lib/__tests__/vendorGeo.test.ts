@@ -9,9 +9,11 @@ import {
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
 // The vendor-geo spike (founder 2026-09-28): region-availability EVIDENCE for the top vendors
-// of the geo-sensitive arenas. These tests pin the integrity rules — real products, one row per
-// (product, country), sources on every row — and the headline findings, so a silent data edit
-// that flips a judged negative (Mercury banking a UK entity?) fails loudly.
+// of the geo-sensitive arenas, committed at jurisdictions/vendor-geo.json since stage 2 of the
+// corpus lift (loadVendorGeo resolves it as a sibling of the arena-data dir). These tests pin
+// the integrity rules — real products, one row per (product, country), sources on every row —
+// and the headline findings, so a silent data edit that flips a judged negative (Mercury
+// banking a UK entity?) fails loudly.
 
 describe('vendor-geo corpus', () => {
   const entries = loadVendorGeo(DATA_DIR)
