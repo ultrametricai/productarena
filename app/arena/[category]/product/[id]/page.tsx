@@ -39,6 +39,7 @@ import TryItSection from '@/components/TryIt/TryItSection'
 import VendorProcesses from '@/components/VendorProcesses'
 import ImUsing from '@/components/ImUsing'
 import WatchButton from '@/components/WatchButton'
+import WhereItWorks from '@/components/WhereItWorks'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
 import ShutdownBadge from '@/components/ShutdownBadge'
 import YcBadge from '@/components/YcBadge'
@@ -341,6 +342,9 @@ export default async function ProductPage({
               computer-use-only vendors. */}
           {/* "serves N processes →" chip removed (founder 2026-09-23) — the full table below
               carries it. */}        </div>
+        {/* GEO spike (founder 2026-09-28): per-country availability evidence from the vendor's
+            own pages — renders only for spiked products (data/vendor-geo.json), never a score. */}
+        <WhereItWorks productId={id} />
       </div>
 
       {/* Top actions rail retired (founder 2026-09-23: after Install and Compare moved out it
