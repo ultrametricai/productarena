@@ -2123,6 +2123,24 @@ export default {
       // to the overall page"). Direct hrefs also sidestep browsers that cached the old 301.
       const contentType = resp.headers.get('content-type') ?? ''
       if (contentType.includes('text/html')) {
+        // Buffered per-element text replacer: HTMLRewriter delivers text in arbitrary chunks,
+        // so accumulate until lastInTextNode before matching (long strings straddle chunks).
+        const textReplace = (map) => {
+          let buffer = ''
+          return {
+            text(t) {
+              buffer += t.text
+              if (!t.lastInTextNode) {
+                t.remove()
+                return
+              }
+              let out = buffer
+              buffer = ''
+              for (const [from, to] of Object.entries(map)) out = out.split(from).join(to)
+              t.replace(out, { html: false })
+            },
+          }
+        }
         return new HTMLRewriter()
           .on('a', {
             element(el) {
@@ -2132,6 +2150,38 @@ export default {
               if (m) el.setAttribute('href', m[1] && m[1] !== '/' ? m[1] : '/overall')
             },
           })
+          // The landing's #products card still ships the retired ProductArena brand — recast it
+          // as the Open Source / open-startup-repo card until the landing repo updates
+          // (founder 2026-09-28). The card's link goes to the GitHub repo, the ranking surfaces
+          // stay one click in from there (and from the header link).
+          .on('section#products a[href="/overall"]', {
+            element(el) {
+              el.setAttribute('href', 'https://github.com/ultrametricai/ultrametric')
+              el.setAttribute('target', '_blank')
+              el.setAttribute('rel', 'noopener noreferrer')
+            },
+          })
+          .on('section#products h2', textReplace({ ProductArena: 'Open Source' }))
+          .on(
+            'section#products p',
+            textReplace({
+              'ultrametric.ai/productarena': 'github.com/ultrametricai/ultrametric',
+              'The evidence-based software arena.': 'The open startup repo.',
+              'Rankings for the AI era — products crawled, probed, and judged on how agent-ready they are, with a citation behind every verdict and a contest button on every score.':
+                'Source-backed founder processes and journeys, jurisdiction rule cards, open cap-table math, and evidence-graded rankings of 570+ tools — every record cited, dated, testable, and open to PRs from founders anywhere.',
+            }),
+          )
+          .on('section#products span', textReplace({ 'Enter the arena': 'Explore the repo' }))
+          // Header products menu + footer still carry the retired brand name — the surface they
+          // link to (/overall) is the rankings, so say that.
+          .on(
+            'nav span',
+            textReplace({
+              ProductArena: 'Rankings',
+              'The evidence-based software arena': 'Evidence-graded software rankings',
+            }),
+          )
+          .on('footer a', textReplace({ ProductArena: 'Rankings' }))
           .transform(resp)
       }
       return resp
