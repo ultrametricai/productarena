@@ -564,12 +564,13 @@ export default function VirtualStartup({
           the very top of the page — Run/Restart is one flick away, never a long timeline away. */}
       <div className="space-y-3">
       <section data-testid="vs-setup" aria-label="Set up the virtual startup" className="rounded-2xl border border-zinc-800 p-3">
-        {/* Row 1: example-company pills + YC mode + founder persona, with the Run CTA
-            right-aligned. On mobile the pills+persona strip collapses to ONE horizontally
-            scrollable select-like row and the CTA wraps beneath it. */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <div className="flex min-w-0 max-w-full grow items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
-            <span className="shrink-0 text-[9px] uppercase tracking-widest text-zinc-500">Example</span>
+        {/* The control panel as a labeled form grid (founder 2026-09-28: the crammed single-row
+            band was "poorly designed layout wise") — one aligned label column (Example / Founder
+            / Decisions), one content column, and a footer bar holding the company info + the Run
+            CTA. Rows keep horizontal scroll on mobile, wrap from sm up. */}
+        <div className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">Example</span>
+          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: identity
                 stays SIMULATED-chipped on the pill itself; the product tagline rides in the
                 tooltip; the hardware/biotech corpus disclosure is the amber ⓘ. */}
@@ -614,9 +615,11 @@ export default function VirtualStartup({
             >
               YC batch mode
             </button>
-            <span aria-hidden className="h-4 w-px shrink-0 bg-zinc-800" />
-            {/* v3: founder persona — a persona change is a new run (the event stream is seeded
-                by it). */}
+          </div>
+          {/* v3: founder persona — a persona change is a new run (the event stream is seeded
+              by it). */}
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">Founder</span>
+          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             <VsPersonaPicker
               persona={persona}
               onSelect={(id) => {
@@ -626,32 +629,12 @@ export default function VirtualStartup({
               }}
             />
           </div>
-          {/* The run CTA — prominent, right-aligned in the band (founder 2026-09-28), still
-              before any timeline content (founder 2026-09-25). */}
-          <div className="flex items-center gap-3 sm:ml-auto">
-            <button
-              type="button"
-              onClick={start}
-              disabled={running}
-              className="rounded-full bg-emerald-500 px-6 py-2 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
-            >
-              {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
-            </button>
-            <button
-              type="button"
-              onClick={showAll}
-              className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition hover:text-zinc-300"
-            >
-              skip the animation — show the whole timeline
-            </button>
-          </div>
-        </div>
-
-        {/* Row 2: the nine starting decisions as a tight segmented strip — short labels, current
-            value highlighted, canonical full label as the accessible name and full label + corpus
-            mapping in the tooltip. Each choice still only swaps, reorders, or skips corpus
-            processes; a single scrollable row on mobile, wrapping to two rows from sm up. */}
-        <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          {/* The nine starting decisions as a tight segmented strip — short labels, current
+              value highlighted, canonical full label as the accessible name and full label +
+              corpus mapping in the tooltip. Each choice still only swaps, reorders, or skips
+              corpus processes. */}
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:self-start sm:pt-1.5 sm:text-right">Decisions</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {DECISIONS.map((d) => (
             <div
               key={d.id}
@@ -659,7 +642,7 @@ export default function VirtualStartup({
               aria-label={d.title}
               className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
             >
-              <span className="mr-1 text-[9px] uppercase tracking-widest text-zinc-500">{DECISION_SHORT[d.id].title}</span>
+              <span className="mr-1 text-[10px] uppercase tracking-wider text-zinc-300">{DECISION_SHORT[d.id].title}</span>
               {d.options.map((o) => {
                 const active = choices[d.id] === o.value
                 return (
@@ -670,10 +653,10 @@ export default function VirtualStartup({
                     aria-label={o.label}
                     title={`${o.label} — ${o.detail}`}
                     aria-pressed={active}
-                    className={`whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[11px] transition ${
+                    className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
                       active
                         ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-                        : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                        : 'border-transparent text-zinc-300 hover:text-zinc-100'
                     }`}
                   >
                     {DECISION_SHORT[d.id].options[o.value]}
@@ -682,20 +665,29 @@ export default function VirtualStartup({
               })}
             </div>
           ))}
+          </div>
         </div>
 
-        {/* Info line: the virtual company plus the run size. The loud SIMULATED chips left the
-            setup band (founder 2026-09-28: "remove 'Simulated' … make the top layout better") —
+        {/* Footer bar: the virtual company + run size on the left, the Run CTA on the right
+            (founder 2026-09-25: CTA before any timeline content). The skip-animation link is
+            gone (founder 2026-09-28); the loud SIMULATED chips left the band the same day —
             "virtual company" says it in prose, and the honesty tags stay where they're
-            load-bearing: the terminal title bar and every generated artifact inside the run.
-            Mode disclosures print underneath while active. */}
-        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-zinc-800/70 pt-2 text-xs">
+            load-bearing: the terminal title bar and every generated artifact inside the run. */}
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-2 border-t border-zinc-800/70 pt-2.5 text-xs">
           <span className="text-zinc-500">Your virtual company:</span>
           <span className="font-medium text-zinc-200">{co.display}</span>
           {co.descriptor && <span className="text-zinc-400">— making {co.descriptor}</span>}
           <span className="text-zinc-500">
             · {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
           </span>
+          <button
+            type="button"
+            onClick={start}
+            disabled={running}
+            className="ml-auto rounded-full bg-emerald-500 px-6 py-2 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
+          >
+            {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
+          </button>
         </div>
         {yc && (
           <p data-testid="vs-yc-disclosure" className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">

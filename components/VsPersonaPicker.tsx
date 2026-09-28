@@ -31,7 +31,7 @@ export default function VsPersonaPicker({
       aria-label="Who is the founder?"
       className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
     >
-      <span className="mr-1 text-[9px] uppercase tracking-widest text-zinc-500">Founder</span>
+      {/* No visible label — the setup band's grid label column says "Founder" (2026-09-28). */}
       {VS_PERSONAS.map((p) => (
         <button
           key={p.id}
@@ -41,10 +41,10 @@ export default function VsPersonaPicker({
           aria-label={p.label}
           title={`${p.label} — ${p.blurb}`}
           onClick={() => onSelect(p.id)}
-          className={`whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[11px] transition ${
+          className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
             p.id === persona
               ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-              : 'border-transparent text-zinc-400 hover:text-zinc-200'
+              : 'border-transparent text-zinc-300 hover:text-zinc-100'
           }`}
         >
           {SHORT_LABEL[p.id]}

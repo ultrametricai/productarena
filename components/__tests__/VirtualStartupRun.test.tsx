@@ -5,7 +5,7 @@
 // labeled "published pricing" with per-vendor cites and honest gaps; and the ?run= permalink
 // replays the exact run (picks included) after a reload. The pure math behind these surfaces is
 // tested against the live corpus in lib/__tests__/virtualStartupRun.test.ts.
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
 import type { SimStep, VendorRole } from '@/lib/processSim'
@@ -143,7 +143,19 @@ const renderIt = () =>
     />,
   )
 
-const showAll = () => fireEvent.click(screen.getByRole('button', { name: /show the whole timeline/i }))
+// The skip-animation link is gone (founder 2026-09-28) — reveal the full timeline by running
+// the startup under fake timers (the reveal interval self-clears when the last row prints).
+const showAll = () => {
+  vi.useFakeTimers()
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /run this startup|run it again/i }))
+    act(() => {
+      vi.runAllTimers()
+    })
+  } finally {
+    vi.useRealTimers()
+  }
+}
 
 beforeEach(() => {
   window.history.replaceState(null, '', '/')

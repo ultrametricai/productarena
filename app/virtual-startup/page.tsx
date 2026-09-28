@@ -99,12 +99,9 @@ export default function VirtualStartupPage() {
   return (
     <div className="space-y-10">
       <section className="mx-auto max-w-3xl text-center">
-        <p className="text-[10px] uppercase tracking-widest text-zinc-400">
-          <Link href="/processes" className="hover:text-emerald-300">Processes</Link>
-          <span className="mx-1 text-zinc-600">/</span>
-          virtual startup
-        </p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Virtual Startup</h1>
+        {/* No breadcrumb eyebrow (founder 2026-09-28) — the title stands alone; /processes is
+            linked from the outro below. */}
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Virtual Startup</h1>
         {/* One-line hero (founder 2026-09-28: terminal above the fold; same day: no loud
             "simulated" chips up top) — generated artifacts keep their tags inside the terminal,
             and the fuller explanation lives in the setup band's "full setup guide" expand. */}

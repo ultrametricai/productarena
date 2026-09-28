@@ -149,7 +149,19 @@ const renderIt = () =>
       taskRisks={{}}
     />,
   )
-const showAll = () => fireEvent.click(screen.getByRole('button', { name: /show the whole timeline/i }))
+// The skip-animation link is gone (founder 2026-09-28) — reveal the full timeline by running
+// the startup under fake timers (the reveal interval self-clears when the last row prints).
+const showAll = () => {
+  vi.useFakeTimers()
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /run this startup|run it again/i }))
+    act(() => {
+      vi.runAllTimers()
+    })
+  } finally {
+    vi.useRealTimers()
+  }
+}
 const rhythmSection = () => screen.getByText('The operating rhythm').closest('section')!
 const showYearTab = () => fireEvent.click(within(rhythmSection()).getByRole('button', { name: 'Year one' }))
 
@@ -353,7 +365,8 @@ describe('VirtualStartup — the compact setup band', () => {
     expect(within(band).getByTestId('vs-yc-toggle')).toBeTruthy()
     expect(within(band).getByTestId('vs-persona-picker')).toBeTruthy()
     expect(within(band).getByRole('button', { name: /run this startup/i })).toBeTruthy()
-    expect(within(band).getByRole('button', { name: /show the whole timeline/i })).toBeTruthy()
+    // The skip-animation link is gone (founder 2026-09-28) — Run is the band's only run control.
+    expect(within(band).queryByRole('button', { name: /show the whole timeline/i })).toBeNull()
     // Every decision option keeps its canonical full label as the accessible name.
     for (const name of [
       'Delaware C-Corp', 'LLC', 'Cofounders', 'Solo founder', 'Raise a seed', 'Bootstrap',
@@ -545,7 +558,9 @@ describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run 
     expect(body.scrollTop).toBe(1000)
   })
 
-  it('"show the whole timeline" fills the terminal instantly scrolled to the TOP; restart clears it', () => {
+  it('a full run fills the terminal (following the tail); restart clears it back to the prompt', () => {
+    // The skip-animation link is gone (founder 2026-09-28) — the full timeline arrives by
+    // letting the run's reveal interval play out under fake timers.
     vi.useFakeTimers()
     renderIt()
     const body = screen.getByTestId('vs-terminal-body')
@@ -553,10 +568,10 @@ describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run 
     fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
     act(() => { vi.advanceTimersByTime(240 * 3) })
     expect(body.scrollTop).toBe(1000) // mid-run, following
-    showAll()
+    act(() => { vi.runAllTimers() })
     expect(within(body).getAllByTestId('vs-artifact').length).toBeGreaterThan(0)
     expect(within(body).getByText(/journey complete/)).toBeTruthy()
-    expect(body.scrollTop).toBe(0) // instant fill reads from the top, not the bottom
+    expect(body.scrollTop).toBe(1000) // completed run stays followed to the tail
     // Restart: the terminal clears back to the placeholder prompt, scrolled to the top.
     fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
     expect(within(body).queryAllByTestId('vs-artifact')).toHaveLength(0)
