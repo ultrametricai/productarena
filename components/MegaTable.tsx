@@ -109,7 +109,8 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   // table rankings") — each is a URL-shareable toggle; off is the default and elided.
   const [ossOnly, setOssOnly] = useState(false)
   const [ycOnly, setYcOnly] = useState(false)
-  const [mcpOnly, setMcpOnly] = useState(false)
+  // MCP toggle removed (founder 2026-09-28: "we don't need MCP as a toggle on the main page")
+  // — the Access column still shows each product's MCP glyph; old ?mcp=1 links are ignored.
   // Founder 2026-09-16: companies by default — judged family sub-products (stripe-issuing,
   // adyen-for-platforms, …) hide so a company appears once. Founder 2026-09-23: the old
   // include-sub-products checkbox is now the homepage's Products tab — the mode arrives via
@@ -136,7 +137,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     if (arena !== null && arenas.some((a) => a.id === arena)) setArenaId(arena)
     if (p.get('oss') === '1') setOssOnly(true)
     if (p.get('yc') === '1') setYcOnly(true)
-    if (p.get('mcp') === '1') setMcpOnly(true)
     const q = p.get('q')
     if (q !== null && q !== '') setQuery(q)
     // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
@@ -152,11 +152,8 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     let rows_ = filterMegaRowsByArena(companyRows, arenaId)
     if (ossOnly) rows_ = rows_.filter((r) => r.type === 'oss')
     if (ycOnly) rows_ = rows_.filter((r) => !!r.ycBatch)
-    // "has MCP" = a judged full (✓) or partial (~) MCP-server verdict — same glyphs as the
-    // Access column, so the filter and the column can never disagree.
-    if (mcpOnly) rows_ = rows_.filter((r) => r.access.MCP.char === '✓' || r.access.MCP.char === '~')
     return rows_
-  }, [companyRows, arenaId, ossOnly, ycOnly, mcpOnly])
+  }, [companyRows, arenaId, ossOnly, ycOnly])
   // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
   // the selected arena when one is chosen — a reader picking an arena wants that arena's
   // standings, not each product's position in the site-wide list.
@@ -216,7 +213,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               [
                 { key: 'oss', label: 'OSS', on: ossOnly, set: setOssOnly, title: 'Only open-source products' },
                 { key: 'yc', label: 'YC', on: ycOnly, set: setYcOnly, title: 'Only Y Combinator companies' },
-                { key: 'mcp', label: 'MCP', on: mcpOnly, set: setMcpOnly, title: 'Only products with a judged MCP server (full ✓ or partial ~)' },
               ] as const
             ).map((f) => (
               <button
