@@ -183,6 +183,70 @@ describe('corpus', () => {
     expect(byId('fund_003').risk).toBeGreaterThanOrEqual(4)
   })
 
+  // The GEO dimension (founder 2026-09-28: "USA-centric processes vs global processes —
+  // choosing a name is global"). geoScope is required in the schema, so totality is enforced
+  // by the parse itself; these tests pin the curation and the region-flag consistency.
+  it('geoScope is total and consistent with the 🇺🇸 region flag both ways', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    for (const t of tasks) {
+      expect(['global', 'us', 'us-state'], `${t.id} geoScope`).toContain(t.geoScope)
+      // The flag and the scope tell one story: every US-scoped process wears the flag,
+      // and no jurisdiction-neutral process does.
+      expect(t.region === 'us', `${t.id}: region flag must match geoScope ${t.geoScope}`)
+        .toBe(t.geoScope !== 'global')
+    }
+    // Honest distribution: most of running a company is global tooling work; the US-centric
+    // core is real but the minority.
+    const scopes = tasks.map((t) => t.geoScope)
+    expect(scopes.filter((s) => s === 'global').length).toBeGreaterThan(scopes.length / 2)
+    expect(scopes.filter((s) => s === 'us').length).toBeGreaterThan(0)
+    expect(scopes.filter((s) => s === 'us-state').length).toBeGreaterThan(0)
+  })
+
+  it('geo anchors: name is global, EIN is federal, franchise tax is state-level', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const byId = (id: string) => tasks.find((t) => t.id === id)!
+    expect(byId('brand_001').geoScope).toBe('global') // choosing a name is global
+    expect(byId('site_001').geoScope).toBe('global') // so is generating a website
+    expect(byId('form_002').geoScope).toBe('us') // EIN — the IRS
+    expect(byId('form_001').geoScope).toBe('us') // DE incorporation (founder call: us)
+    expect(byId('tax_003').geoScope).toBe('us') // 1099s — the IRS
+    // Truly state-level: the counterparty is a US state.
+    for (const id of ['tax_001', 'form_005', 'qs_043', 'qs_045', 'qs_047', 'tax_011']) {
+      expect(byId(id).geoScope, `${id} is state-level work`).toBe('us-state')
+    }
+    // Payroll RUNNING is global (the vendor loop); payroll SETUP is US (state/federal
+    // registrations) and carries the per-country analogs.
+    expect(byId('hr_002').geoScope).toBe('global')
+    expect(byId('qs_063').geoScope).toBe('us')
+    expect((byId('qs_063').geoNotes ?? []).length).toBeGreaterThan(0)
+  })
+
+  it('geoNotes are curated, deduped per country, and only on US-scoped processes', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    let total = 0
+    for (const t of tasks) {
+      const notes = t.geoNotes ?? []
+      if (notes.length === 0) continue
+      // A global process needs no "Outside the US" story.
+      expect(t.geoScope, `${t.id} carries geoNotes but is global`).not.toBe('global')
+      // At most one note per country per process, IN/UK/DE/FR only (schema re-checks the enum).
+      expect(new Set(notes.map((n) => n.country)).size).toBe(notes.length)
+      for (const n of notes) {
+        expect(n.actionUrl).toMatch(/^https:\/\//)
+        expect(n.summary.length).toBeGreaterThan(20)
+        expect(n.actionLabel.length).toBeGreaterThan(2)
+      }
+      total += notes.length
+    }
+    // The founder's target band for the documentation pass: 20–40 verified notes.
+    expect(total).toBeGreaterThanOrEqual(20)
+    expect(total).toBeLessThanOrEqual(40)
+    // The founder's worked example: incorporation has all four country analogs.
+    const form001 = tasks.find((t) => t.id === 'form_001')!
+    expect((form001.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'FR', 'IN', 'UK'])
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()

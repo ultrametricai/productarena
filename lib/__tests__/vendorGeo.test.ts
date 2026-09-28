@@ -1,0 +1,113 @@
+import path from 'node:path'
+import { describe, expect, it } from 'vitest'
+import { loadCategory } from '@/lib/data'
+import {
+  loadVendorGeo, VENDOR_GEO_COUNTRIES, VENDOR_GEO_COUNTRY_META, VENDOR_GEO_STATUS_META,
+  vendorGeoFor,
+} from '@/lib/vendorGeo'
+
+const DATA_DIR = path.resolve(__dirname, '../../data')
+
+// The vendor-geo spike (founder 2026-09-28): region-availability EVIDENCE for the top vendors
+// of the geo-sensitive arenas. These tests pin the integrity rules — real products, one row per
+// (product, country), sources on every row — and the headline findings, so a silent data edit
+// that flips a judged negative (Mercury banking a UK entity?) fails loudly.
+
+describe('vendor-geo corpus', () => {
+  const entries = loadVendorGeo(DATA_DIR)
+
+  it('loads, is non-trivial, and every row is fully sourced', () => {
+    expect(entries.length).toBeGreaterThanOrEqual(80)
+    for (const e of entries) {
+      expect(e.sourceUrl).toMatch(/^https:\/\//)
+      expect(e.note.length, `${e.productId}/${e.country} note`).toBeGreaterThan(15)
+    }
+  })
+
+  it('every (arenaId, productId) resolves to a real judged product in that arena', () => {
+    const seen = new Map<string, Set<string>>()
+    for (const e of entries) {
+      let ids = seen.get(e.arenaId)
+      if (!ids) {
+        ids = new Set(loadCategory(e.arenaId, DATA_DIR).products.map((p) => p.id))
+        seen.set(e.arenaId, ids)
+      }
+      expect(ids.has(e.productId), `${e.productId} must exist in ${e.arenaId}`).toBe(true)
+    }
+    // The founder's six geo-sensitive arenas are all represented.
+    for (const arena of ['startup-banking', 'payroll', 'legal-ops', 'tax-automation', 'payments', 'accounting']) {
+      expect([...seen.keys()], `spike covers ${arena}`).toContain(arena)
+    }
+  })
+
+  it('one row per (product, country); a product never spans two arenas here', () => {
+    const pairs = new Set<string>()
+    const arenaOf = new Map<string, string>()
+    for (const e of entries) {
+      const key = `${e.productId}/${e.country}`
+      expect(pairs.has(key), `duplicate ${key}`).toBe(false)
+      pairs.add(key)
+      const prev = arenaOf.get(e.productId)
+      if (prev) expect(prev, `${e.productId} arena consistency`).toBe(e.arenaId)
+      arenaOf.set(e.productId, e.arenaId)
+    }
+  })
+
+  it('records honest negatives and partials, not just availability marketing', () => {
+    const byStatus = (s: string) => entries.filter((e) => e.status === s).length
+    expect(byStatus('unavailable')).toBeGreaterThanOrEqual(10)
+    expect(byStatus('partial')).toBeGreaterThanOrEqual(5)
+    expect(byStatus('available')).toBeGreaterThan(0)
+  })
+
+  it('pins the headline findings: US-locked vendors stay locked, global vendors stay global', () => {
+    const status = (pid: string, c: (typeof VENDOR_GEO_COUNTRIES)[number]) =>
+      entries.find((e) => e.productId === pid && e.country === c)?.status
+    // US-entity-only: the banking stack and Gusto payroll.
+    for (const pid of ['mercury', 'brex', 'ramp', 'relay', 'gusto', 'clerky', 'taxjar']) {
+      expect(status(pid, 'US'), `${pid} US`).toBe('available')
+      for (const c of ['UK', 'IN', 'DE', 'FR'] as const) {
+        expect(status(pid, c), `${pid} ${c} is a judged negative`).toBe('unavailable')
+      }
+    }
+    // Genuinely global: Deel and Rippling payroll run in all four spike countries.
+    for (const pid of ['deel', 'rippling']) {
+      for (const c of VENDOR_GEO_COUNTRIES) expect(status(pid, c), `${pid} ${c}`).toBe('available')
+    }
+    // The sharp per-country splits the spike surfaced.
+    expect(status('square', 'UK')).toBe('available')
+    expect(status('square', 'FR')).toBe('available')
+    expect(status('square', 'DE')).toBe('unavailable')
+    expect(status('square', 'IN')).toBe('unavailable')
+    expect(status('stripe', 'IN')).toBe('partial') // "Preview" on stripe.com/global
+    expect(status('stripe-tax', 'IN')).toBe('partial') // beta-flagged in the docs data
+    expect(status('airwallex', 'IN')).toBe('unavailable')
+    expect(status('zoho-books', 'IN')).toBe('available') // the dedicated GST edition
+    expect(status('beglaubigt', 'DE')).toBe('available') // the reverse-locked case
+    expect(status('beglaubigt', 'US')).toBe('unavailable')
+  })
+})
+
+describe('vendorGeoFor', () => {
+  it('returns rows in canonical US→UK→IN→DE→FR order and [] for unspiked products', () => {
+    const rows = vendorGeoFor('mercury', DATA_DIR)
+    expect(rows.map((r) => r.country)).toEqual(['US', 'UK', 'IN', 'DE', 'FR'])
+    expect(vendorGeoFor('linear', DATA_DIR)).toEqual([])
+    expect(vendorGeoFor('does-not-exist', DATA_DIR)).toEqual([])
+  })
+
+  it('missing file degrades to no rows, never an error', () => {
+    expect(loadVendorGeo(path.resolve(__dirname))).toEqual([])
+  })
+
+  it('display metadata covers every country and status', () => {
+    for (const c of VENDOR_GEO_COUNTRIES) {
+      expect(VENDOR_GEO_COUNTRY_META[c].label).toBeTruthy()
+      expect(VENDOR_GEO_COUNTRY_META[c].flag).toBeTruthy()
+    }
+    for (const s of ['available', 'partial', 'unavailable'] as const) {
+      expect(VENDOR_GEO_STATUS_META[s].glyph).toBeTruthy()
+      expect(VENDOR_GEO_STATUS_META[s].label).toBeTruthy()
+    }
+  })
+})
