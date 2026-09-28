@@ -1,4 +1,4 @@
-// Generates the OG share card (public/og4.png, 1200×630 — new filename per change so WhatsApp/Slack caches bust) by screenshotting a styled
+// Generates the OG share card (public/og5.png, 1200×630 — new filename per change so WhatsApp/Slack caches bust) by screenshotting a styled
 // HTML template with Playwright — the only way to get the site's real display font (Satoshi via
 // Fontshare) and the real rankings table into the card. Golden-ratio horizontal split: brand
 // panel left (38.2%), live table screenshot right (61.8%).
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SNAPSHOT = path.join(ROOT, 'docs/assets/rankings-snapshot.png')
-const OUT = path.join(ROOT, 'public/og4.png')
+const OUT = path.join(ROOT, 'public/og5.png')
 
 const { chromium } = await import(path.join(ROOT, '.proof-scratch/node_modules/playwright/index.mjs'))
 
@@ -25,7 +25,6 @@ const html = `<!doctype html>
   * { margin: 0; box-sizing: border-box; }
   body { width: 1200px; height: 630px; background: #09090b; font-family: 'Satoshi', sans-serif; overflow: hidden; display: flex; }
   .left { width: 38.2%; padding: 56px 8px 56px 52px; display: flex; flex-direction: column; justify-content: center; gap: 22px; position: relative; z-index: 2; }
-  .crumb { font-family: ui-monospace, monospace; font-size: 17px; color: #71717a; letter-spacing: 0.04em; }
   .wordmark { font-weight: 900; font-size: 64px; letter-spacing: -0.03em; color: #fafafa; line-height: 0.95; }
   .wordmark em { font-style: normal; color: #34d399; }
   .tag { font-weight: 700; font-size: 24px; color: #a1a1aa; line-height: 1.35; max-width: 360px; }
@@ -37,10 +36,9 @@ const html = `<!doctype html>
 </style></head>
 <body>
   <div class="left">
-    <div class="crumb">ultrametric /</div>
-    <div class="wordmark">Product<em>Arena</em></div>
+    <div class="wordmark">Ultra<em>metric</em></div>
     <div class="tag">Open rankings for the AI era</div>
-    <div class="url">ultrametric.ai/productarena</div>
+    <div class="url">ultrametric.ai</div>
   </div>
   <div class="right">
     <div class="shot-wrap">
