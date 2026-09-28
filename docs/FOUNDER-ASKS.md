@@ -170,7 +170,14 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | GitHub social preview upload (public/og2.png) | blocked (founder — repo Settings) |
 | Google Search Console: add domain property for ultrametric.ai (DNS TXT), submit both sitemaps | blocked (founder Google account) |
 | Cloudflare managed robots.txt blocks GPTBot/meta-externalagent at apex — disable AI-bot blocking | blocked (founder — CF dashboard, Security → Bots) |
+| **URGENT post-cutover**: Vercel env NEXT_PUBLIC_SITE_URL still = "https://ultrametric.ai/productarena" — poisons og:url, sitemap.xml, RSS link, auth return_to on the LIVE site. Fix: `vercel env rm NEXT_PUBLIC_SITE_URL production` (code default is correct) then redeploy — or edit in dashboard. Classifier blocks me from secret-store writes | blocked (founder — Vercel env, 1 min) |
+| **URGENT post-cutover**: WorkOS dashboard — redirect URI → https://ultrametric.ai/auth/callback, logout URI → https://ultrametric.ai (login 302 already sends the new redirect_uri; WorkOS will reject it until allowlisted) | blocked (founder — WorkOS dashboard) |
 | Homepage main table: companies only — collapse multi-product families to the parent (one Stripe row) | open — inline now |
+| Homepage ("Open rankings for the AI era"): drop the 'MCP' toggle from the main table controls | open (founder 2026-09-28) |
+| gstack (Garry Tan) added to /stacks | in flight — lane running |
+| GEO dimension: process geo-scope + IN/UK/EU vendor availability spikes | in flight — lane running |
+| "Open startup repo" lift: business-logic toolkit, cap-table engine first | in flight — lane running |
+| Virtual Startup: compact controls so terminal is above the fold | in flight — lane running |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
 
 ## Shipped (recent — see git log for full history)

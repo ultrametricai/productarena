@@ -54,7 +54,7 @@ export default function EverythingPage() {
         { href: '/compare', label: 'Compare', note: 'any products side by side' },
         { href: '/stacks/builder', label: 'Stack builder', note: 'compose your own stack' },
         { href: '/submit', label: 'Submit a product', note: 'agent-readiness quick scan' },
-        { href: '/mcp#cli', label: 'CLI', note: 'npx ultrametric-cli' },
+        // /mcp link removed — that page is retired and redirects home (see app/mcp/page.tsx)
         { href: '/llms.txt', label: '/llms.txt', note: 'for agents' },
       ],
     },
