@@ -5,7 +5,7 @@ import RankingsNav from '@/components/RankingsNav'
 import { buildProcessRows } from '@/lib/processRows'
 
 // 🔁 PROCESS ranking (founder 2026-09-21). Ranks processes by the corpus's curated `annoyance`
-// ordering (data/processes.json, 1–5: how much of a toil the process is by hand). Ties break
+// ordering (processes/corpus.json, 1–5: how much of a toil the process is by hand). Ties break
 // on cadence, most frequent first — regularity × annoyance is the pain story: a 5/5 chore you
 // hit monthly hurts more than one you hit once. Rows come straight from buildProcessRows.
 
@@ -44,7 +44,7 @@ export default function MostAnnoyingProcessesPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           This ranks <strong className="font-semibold text-zinc-200">processes, not companies</strong>: all {rows.length} founder
-          processes ordered by the corpus&rsquo;s curated annoyance score (data/processes.json `annoyance`, 1–5 — how much of a
+          processes ordered by the corpus&rsquo;s curated annoyance score (processes/corpus.json `annoyance`, 1–5 — how much of a
           toil it is by hand). Ties break on cadence, most frequent first: regularity × annoyance is the real pain story, so a
           monthly 5/5 outranks a once-ever 5/5.
         </p>

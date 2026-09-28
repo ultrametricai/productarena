@@ -277,9 +277,9 @@ log belong in its private workspace, never here.
 | [`processes/`](processes/) | Jurisdiction-scoped legal workflows + the 123-process operational corpus |
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs |
 | [`sources/`](sources/) | Primary authorities: exact provision locators and checked dates |
-| [`jurisdictions/`](jurisdictions/) | Registry + overlays; unknown combinations are `unsupported`, never guessed |
+| [`jurisdictions/`](jurisdictions/) | Registry + vendor region-availability evidence; unknown combinations are `unsupported`, never guessed |
 | [`business-logic/`](business-logic/) | Cited, deterministic calculations (cap-table engine first) |
-| [`vendors/`](vendors/) | The evidence layer + the vendor-review interchange format |
+| [`vendors/`](vendors/) | The evidence layer + generated vendor-review interchange records for every judged product |
 | [`connectors/`](connectors/) | Optional integrations, always behind human-approval gates |
 | [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews |
 | [`fixtures/`](fixtures/), [`templates/`](templates/) | Fictional test scenarios; contribution starting points |

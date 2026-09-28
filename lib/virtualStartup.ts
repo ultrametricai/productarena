@@ -1,6 +1,6 @@
 // Virtual Startup (founder ask 2026-09-23): a synthetic company run through the REAL process
 // corpus. The reader picks a handful of starting decisions; each decision selects which real
-// processes/chains (data/processes.json + data/process-chains.json) make up the journey, and the
+// processes/chains (processes/corpus.json + journeys/chains.json) make up the journey, and the
 // timeline replays them with clearly-labeled synthetic artifacts ("what each step produces").
 //
 // Client-safe and pure (no node builtins) — same split convention as lib/processSim.ts: the
@@ -9,7 +9,7 @@
 //
 // Honesty rules (the site's whole brand):
 //   - the journey is COMPOSED of real corpus processes — every task id here must exist in
-//     data/processes.json (lib/__tests__/virtualStartup.test.ts enforces it against the live
+//     processes/corpus.json (lib/__tests__/virtualStartup.test.ts enforces it against the live
 //     corpus; journeyPhases throws on an unknown chain rather than inventing one);
 //   - vendor picks are the judged rankings (lib/processRankings.ts stepRanking), resolved
 //     server-side — nothing here fabricates a score;
@@ -309,10 +309,10 @@ export function gateActive(gate: VsGate, choices: Choices): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Decision → journey mapping (real chains from data/process-chains.json only)
+// Decision → journey mapping (real chains from journeys/chains.json only)
 // ---------------------------------------------------------------------------
 
-// The chains the journey is composed from — each id must exist in data/process-chains.json
+// The chains the journey is composed from — each id must exist in journeys/chains.json
 // (journeyPhases throws otherwise; the test suite checks against the committed file).
 export const VS_CHAIN_IDS = [
   'name-the-company',
@@ -730,7 +730,7 @@ export function dayOf(cumulativeMinutes: number): number {
 // Year one — the operating rhythm ("cron jobs") the virtual company now runs
 // ---------------------------------------------------------------------------
 // Founder iteration 2026-09-25: after the launch journey, show the RECURRING processes the
-// company owns for the year, derived from the corpus cadence axis (data/processes.json
+// company owns for the year, derived from the corpus cadence axis (processes/corpus.json
 // `cadence`, the same field /processes/operating-rhythm slices by). The row set is mechanical:
 //   - the month-end-close and tax-season chains (committed corpus playbooks any operating
 //     company runs) are ALWAYS in;
@@ -787,7 +787,7 @@ export interface YearTaskSource {
   ceilingPct: number
 }
 
-// Founder iteration 2026-09-25 (richer year view): sweep data/processes.json for EVERY
+// Founder iteration 2026-09-25 (richer year view): sweep processes/corpus.json for EVERY
 // calendar-recurring process the journey plausibly activates — not just the tasks the journey
 // chains happen to carry. Each swept task names its gate: null = every operating company runs
 // it; a choice gate turns it on only when the decision that plausibly activates it is set.

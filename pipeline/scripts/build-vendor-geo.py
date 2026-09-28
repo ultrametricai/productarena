@@ -1,4 +1,4 @@
-# One-off (2026-09-28 GEO lane 2/2): write data/vendor-geo.json — per-country region
+# One-off (2026-09-28 GEO lane 2/2): write jurisdictions/vendor-geo.json — per-country region
 # availability EVIDENCE for the top vendors of the six most geo-sensitive arenas
 # (startup-banking, payroll, legal-ops, tax-automation, payments, accounting).
 #
@@ -247,6 +247,6 @@ print('rows:', len(ROWS), '| products:', len({r['productId'] for r in ROWS}))
 print('status:', Counter(r['status'] for r in ROWS))
 print('by country:', Counter(r['country'] for r in ROWS))
 
-with open('data/vendor-geo.json', 'w') as f:
+with open('jurisdictions/vendor-geo.json', 'w') as f:
     json.dump(ROWS, f, indent=2)
     f.write('\n')

@@ -343,7 +343,7 @@ export default async function ProductPage({
           {/* "serves N processes →" chip removed (founder 2026-09-23) — the full table below
               carries it. */}        </div>
         {/* GEO spike (founder 2026-09-28): per-country availability evidence from the vendor's
-            own pages — renders only for spiked products (data/vendor-geo.json), never a score. */}
+            own pages — renders only for spiked products (jurisdictions/vendor-geo.json), never a score. */}
         <WhereItWorks productId={id} />
       </div>
 

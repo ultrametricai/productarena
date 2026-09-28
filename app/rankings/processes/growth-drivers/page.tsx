@@ -5,7 +5,7 @@ import RankingsNav from '@/components/RankingsNav'
 import { buildProcessRows } from '@/lib/processRows'
 
 // 🔁 PROCESS ranking (founder 2026-09-21). Ranks processes by the corpus's curated
-// `growthImpact` ordering (data/processes.json, 1–5: how directly the process drives
+// `growthImpact` ordering (processes/corpus.json, 1–5: how directly the process drives
 // revenue/user growth — daily feature shipping and outbound at 5, compliance filings at 1).
 // Ties break on title. Rows come straight from buildProcessRows.
 
@@ -42,7 +42,7 @@ export default function GrowthDriverProcessesPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           This ranks <strong className="font-semibold text-zinc-200">processes, not companies</strong>: all {rows.length} founder
-          processes ordered by the corpus&rsquo;s curated growth-impact score (data/processes.json `growthImpact`, 1–5 — how
+          processes ordered by the corpus&rsquo;s curated growth-impact score (processes/corpus.json `growthImpact`, 1–5 — how
           directly the process drives revenue/user growth; daily feature shipping and outbound sit at 5, compliance filings
           at 1). Ties break on title; the phase column says when in a company&rsquo;s life each one lands.
         </p>
