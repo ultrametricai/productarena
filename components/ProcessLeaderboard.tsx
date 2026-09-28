@@ -2,9 +2,11 @@ import Link from 'next/link'
 import ProcessDagStrip from '@/components/ProcessDagStrip'
 import ProcessYourVendor from '@/components/ProcessYourVendor'
 import ProductLogoView from '@/components/ProductLogoView'
+import VendorGeoMark, { VendorGeoShade } from '@/components/VendorGeoMark'
 import { hasLogo } from '@/lib/logos'
 import type { ProcessTask } from '@/lib/processes'
 import { processLeaderboard } from '@/lib/processRankings'
+import { vendorGeoLookup } from '@/lib/vendorGeo'
 
 // "Who covers this process best" — the process-level, story-derived ranking (founder ask:
 // don't assume the user has a vendor; look at what stories the vendors support for the process
@@ -26,6 +28,12 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
   const lb = processLeaderboard(task)
   if (lb.entries.length === 0 || lb.rankableSteps === 0) return null
   const entries = lb.entries.slice(0, LEADERBOARD_CAP)
+  // Committed (vendor, country) availability for the displayed rows (jurisdictions/
+  // vendor-geo.json) — under a non-US geo selection each row annotates client-side
+  // (components/VendorGeoMark.tsx): ✓/◐, or a muted row + the honest "US entities only"-style
+  // note when the evidence says unavailable. Rows without evidence never change, and the
+  // RANKING never moves — annotation only.
+  const geoLookup = vendorGeoLookup(entries.map((e) => e.productId))
 
   return (
     <section>
@@ -65,7 +73,14 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-zinc-800">
         {entries.map((e, i) => (
-          <details key={`${e.arenaId}-${e.productId}`} className="group border-b border-zinc-800/70 last:border-b-0">
+          // The shade div (client) owns the sibling-positional row styles so it can mute the
+          // whole row on committed "unavailable" evidence — the rank number never changes.
+          <VendorGeoShade
+            key={`${e.arenaId}-${e.productId}`}
+            geo={geoLookup[e.productId]}
+            className="border-b border-zinc-800/70 last:border-b-0"
+          >
+          <details className="group">
             <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-2.5 transition hover:bg-zinc-900/60 [&::-webkit-details-marker]:hidden">
               <span className="w-5 shrink-0 font-mono text-xs tabular-nums text-zinc-500">{i + 1}</span>
               <span className="flex min-w-0 grow items-center gap-2">
@@ -82,6 +97,8 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
                 >
                   {e.arenaName}
                 </Link>
+                {/* ✓/◐/✕ + the vendor's own note under a non-US selection — nothing otherwise. */}
+                <VendorGeoMark geo={geoLookup[e.productId]} />
               </span>
               <span
                 className="shrink-0 text-[11px] text-zinc-500"
@@ -112,6 +129,7 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
               ))}
             </ul>
           </details>
+          </VendorGeoShade>
         ))}
       </div>
 
