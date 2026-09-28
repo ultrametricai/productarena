@@ -21,8 +21,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const ZINC_950 = '#09090b' // left panel
 const ZINC_700 = '#3f3f46' // right panel when untested
 const ZINC_200 = '#e4e4e7' // untested text
-const ZINC_50 = '#fafafa' // "Product" wordmark text
-const EMERALD_400 = '#34d399' // "Arena" wordmark text
+const ZINC_50 = '#fafafa' // "Ultra" wordmark text
+const EMERALD_400 = '#34d399' // "metric" wordmark text
 const EMERALD_600 = '#059669' // right panel when scored
 
 const FONT = 'Verdana,Geneva,DejaVu Sans,sans-serif'
@@ -47,7 +47,7 @@ export function textWidth(text, { bold = false } = {}) {
 }
 
 /**
- * One shield-style badge: zinc-950 left panel carrying the ProductArena wordmark, right panel
+ * One shield-style badge: zinc-950 left panel carrying the Ultrametric wordmark, right panel
  * carrying `<label> <score>/100` on emerald — or `<label> untested` on zinc when the score is
  * null (a product whose axis genuinely has no applicable data, never rendered as a fake 0).
  *
@@ -60,13 +60,13 @@ export function badgeSvg({ label, score }) {
   const rightBg = score === null ? ZINC_700 : EMERALD_600
   const rightFg = score === null ? ZINC_200 : ZINC_50
 
-  const productW = textWidth('Product', { bold: true })
-  const arenaW = textWidth('Arena', { bold: true })
+  const productW = textWidth('Ultra', { bold: true })
+  const arenaW = textWidth('metric', { bold: true })
   const leftW = PAD_X + productW + arenaW + PAD_X
   const rightTextW = textWidth(rightText)
   const rightW = PAD_X + rightTextW + PAD_X
   const total = leftW + rightW
-  const title = `ProductArena: ${label} ${value}`
+  const title = `Ultrametric: ${label} ${value}`
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${total}" height="${HEIGHT}" role="img" aria-label="${title}">
   <title>${title}</title>
@@ -76,8 +76,8 @@ export function badgeSvg({ label, score }) {
     <rect x="${leftW}" width="${rightW}" height="${HEIGHT}" fill="${rightBg}"/>
   </g>
   <g font-family="${FONT}" font-size="11">
-    <text x="${PAD_X}" y="14" textLength="${productW}" font-weight="bold" fill="${ZINC_50}">Product</text>
-    <text x="${PAD_X + productW}" y="14" textLength="${arenaW}" font-weight="bold" fill="${EMERALD_400}">Arena</text>
+    <text x="${PAD_X}" y="14" textLength="${productW}" font-weight="bold" fill="${ZINC_50}">Ultra</text>
+    <text x="${PAD_X + productW}" y="14" textLength="${arenaW}" font-weight="bold" fill="${EMERALD_400}">metric</text>
     <text x="${leftW + PAD_X}" y="14" textLength="${rightTextW}" fill="${rightFg}">${rightText}</text>
   </g>
 </svg>
@@ -97,13 +97,13 @@ export function certBadgeSvg({ level, date }) {
   const year = date.slice(0, 4)
   const rightText = `CERTIFIED ${level === 'agent-native' ? 'AGENT-NATIVE' : 'AGENT-READY'} · ${year}`
 
-  const productW = textWidth('Product', { bold: true })
-  const arenaW = textWidth('Arena', { bold: true })
+  const productW = textWidth('Ultra', { bold: true })
+  const arenaW = textWidth('metric', { bold: true })
   const leftW = PAD_X + productW + arenaW + PAD_X
   const rightTextW = textWidth(rightText)
   const rightW = PAD_X + rightTextW + PAD_X
   const total = leftW + rightW
-  const title = `ProductArena: ${rightText}`
+  const title = `Ultrametric: ${rightText}`
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${total}" height="${HEIGHT}" role="img" aria-label="${title}">
   <title>${title}</title>
@@ -113,8 +113,8 @@ export function certBadgeSvg({ level, date }) {
     <rect x="${leftW}" width="${rightW}" height="${HEIGHT}" fill="${EMERALD_600}"/>
   </g>
   <g font-family="${FONT}" font-size="11">
-    <text x="${PAD_X}" y="14" textLength="${productW}" font-weight="bold" fill="${ZINC_50}">Product</text>
-    <text x="${PAD_X + productW}" y="14" textLength="${arenaW}" font-weight="bold" fill="${EMERALD_400}">Arena</text>
+    <text x="${PAD_X}" y="14" textLength="${productW}" font-weight="bold" fill="${ZINC_50}">Ultra</text>
+    <text x="${PAD_X + productW}" y="14" textLength="${arenaW}" font-weight="bold" fill="${EMERALD_400}">metric</text>
     <text x="${leftW + PAD_X}" y="14" textLength="${rightTextW}" fill="${ZINC_50}">${rightText}</text>
   </g>
 </svg>
