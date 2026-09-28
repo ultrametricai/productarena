@@ -1,10 +1,10 @@
-// Thin fetch wrapper over ProductArena's static JSON data API — the same access pattern as
+// Thin fetch wrapper over Ultrametric's static JSON data API — the same access pattern as
 // mcp/src/client.ts (see the root README's "For AI agents" section and /openapi.json): a small
 // in-process TTL cache so commands that fan out across every arena (arenas, compare, top, pick)
 // don't refetch the same static files within one invocation. Base URL is overridable via
 // PA_BASE_URL so the CLI can be pointed at a local `next dev`/`next start`.
 
-export const DEFAULT_BASE_URL = 'https://ultrametric.ai/productarena'
+export const DEFAULT_BASE_URL = 'https://ultrametric.ai'
 export const CACHE_TTL_MS = 5 * 60 * 1000
 
 export function resolveBaseUrl(): string {

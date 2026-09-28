@@ -1,4 +1,4 @@
-// `productarena certify <url>` — the self-serve Agent-Ready conformance suite (see
+// `ultrametric-cli certify <url>` — the self-serve Agent-Ready conformance suite (see
 // docs/CERTIFICATION.md in the main repo). Every check is keyless, read-only, and runs
 // against the vendor's own public surfaces, mirroring the pipeline's probe conventions
 // (pipeline/stages/probe.ts): llms.txt, docs .md mirrors, OpenAPI, an MCP initialize
@@ -26,7 +26,7 @@ export interface CertifyFetchInit {
 
 export type CertifyFetcher = (url: string, init?: CertifyFetchInit) => Promise<CertifyFetchResult>
 
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena-Certify/1.0; +https://ultrametric.ai/productarena)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; Ultrametric-Certify/1.0; +https://ultrametric.ai)'
 const FETCH_TIMEOUT_MS = 20_000
 
 export const defaultCertifyFetcher: CertifyFetcher = async (url, init = {}) => {
@@ -77,7 +77,7 @@ export type CertLevel = 'agent-ready' | 'agent-native'
 
 export interface CertReport {
   version: 1
-  tool: 'productarena certify'
+  tool: 'ultrametric-cli certify'
   target: string
   startedAt: string
   finishedAt: string
@@ -208,7 +208,7 @@ const MCP_INITIALIZE = JSON.stringify({
   params: {
     protocolVersion: '2025-06-18',
     capabilities: {},
-    clientInfo: { name: 'productarena-certify', version: '1.0' },
+    clientInfo: { name: 'ultrametric-certify', version: '1.0' },
   },
 })
 
@@ -386,7 +386,7 @@ export function apiRootFrom(explicit: string | undefined, specBody: string | nul
   }
 }
 
-export const STRUCTURED_ERRORS_PROBE_PATH = '/productarena-certify-nonexistent-path'
+export const STRUCTURED_ERRORS_PROBE_PATH = '/ultrametric-certify-nonexistent-path'
 
 async function checkStructuredErrors(ctx: CheckCtx, apiRoot: string | null): Promise<CertCheckResult> {
   const r = makeRecorder(ctx.fetcher, ctx.now)
@@ -475,7 +475,7 @@ export async function runCertify(target: string, opts: CertifyOptions = {}): Pro
 
   return {
     version: 1,
-    tool: 'productarena certify',
+    tool: 'ultrametric-cli certify',
     target: normalizedTarget,
     startedAt,
     finishedAt: now(),

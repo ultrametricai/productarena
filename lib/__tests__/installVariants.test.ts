@@ -3,10 +3,10 @@ import { installVariants } from '@/lib/installVariants'
 
 describe('installVariants', () => {
   it('derives pnpm/yarn/bun for global npm installs', () => {
-    const v = installVariants('npm install -g productarena')
+    const v = installVariants('npm install -g ultrametric-cli')
     expect(v.map((x) => x.manager)).toEqual(['npm', 'pnpm', 'yarn', 'bun'])
-    expect(v[1].command).toBe('pnpm add -g productarena')
-    expect(v[3].command).toBe('bun add -g productarena')
+    expect(v[1].command).toBe('pnpm add -g ultrametric-cli')
+    expect(v[3].command).toBe('bun add -g ultrametric-cli')
   })
 
   it('accepts the --global and add spellings', () => {

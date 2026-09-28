@@ -1,4 +1,4 @@
-// Pure vendor-pick logic for `productarena pick`: rank an arena's leaderboard by one metric
+// Pure vendor-pick logic for `ultrametric-cli pick`: rank an arena's leaderboard by one metric
 // (optionally OSS-only), take the top two, and flag a close race with the same Δ3.0 convention
 // the site uses everywhere (lib/uncertainty.ts isCloseRace / lib/aiStacks.ts CLOSE_CALL_DELTA).
 import { metricValue, type Metric } from './metrics.js'

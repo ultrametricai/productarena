@@ -1,13 +1,13 @@
-# productarena-mcp
+# ultrametric-mcp
 
-A stdio [MCP](https://modelcontextprotocol.io) server exposing [ProductArena](https://ultrametric.ai/productarena)'s
+A stdio [MCP](https://modelcontextprotocol.io) server exposing [Ultrametric](https://ultrametric.ai)'s
 evidence-graded product rankings, verdicts, and evidence as tools for AI agents — the same
 static JSON data the site itself renders from (see
-[/openapi.json](https://ultrametric.ai/productarena/openapi.json) and
-[/llms.txt](https://ultrametric.ai/productarena/llms.txt)).
+[/openapi.json](https://ultrametric.ai/openapi.json) and
+[/llms.txt](https://ultrametric.ai/llms.txt)).
 
 Prefer not to run anything locally? The same eight tools are hosted as a remote MCP endpoint
-at **`https://ultrametric.ai/productarena/mcp`** (streamable HTTP, no auth, rate-limited) —
+at **`https://ultrametric.ai/mcp`** (streamable HTTP, no auth, rate-limited) —
 opening that same URL in a browser shows the setup page, or just point any HTTP-transport MCP
 client at it.
 
@@ -24,7 +24,7 @@ client at it.
 | `get_stacks` | — | Curated cross-arena AI stacks with every scored slot resolved live from current leaderboards. |
 | `top_products` | `metric`, `limit?` | Cross-arena top-N by one metric: `score`, `arenaScore`, `agentReady`, `agenticApp`, or `apiQuality`. |
 
-Data source: fetches `https://ultrametric.ai/productarena/data/...` at call time with a 5-minute
+Data source: fetches `https://ultrametric.ai/data/...` at call time with a 5-minute
 in-process cache (no local dataset, no build-time bundling). Override the base URL with the
 `PA_BASE_URL` env var, e.g. to point at a local `next dev`/`next start`.
 
@@ -33,7 +33,7 @@ in-process cache (no local dataset, no build-time bundling). Override the base U
 ### Claude Code
 
 ```bash
-claude mcp add productarena -- npx -y productarena-mcp
+claude mcp add ultrametric -- npx -y ultrametric-mcp
 ```
 
 ### Claude Desktop
@@ -43,9 +43,9 @@ Add to `claude_desktop_config.json` (Settings → Developer → Edit Config):
 ```json
 {
   "mcpServers": {
-    "productarena": {
+    "ultrametric": {
       "command": "npx",
-      "args": ["-y", "productarena-mcp"]
+      "args": ["-y", "ultrametric-mcp"]
     }
   }
 }
@@ -56,11 +56,11 @@ Add to `claude_desktop_config.json` (Settings → Developer → Edit Config):
 Any client that speaks MCP over stdio can launch:
 
 ```bash
-npx -y productarena-mcp
+npx -y ultrametric-mcp
 ```
 
 Optional env: `PA_BASE_URL` overrides the data source base URL (default
-`https://ultrametric.ai/productarena`).
+`https://ultrametric.ai`).
 
 ### From a repo checkout (no npm install)
 
@@ -70,18 +70,18 @@ pnpm install && pnpm run build   # produces dist/index.js
 node dist/index.js               # or, without a build step: pnpm run dev (tsx src/index.ts)
 ```
 
-Then configure your client with `"command": "node", "args": ["/absolute/path/to/productarena/mcp/dist/index.js"]`.
+Then configure your client with `"command": "node", "args": ["/absolute/path/to/ultrametric/mcp/dist/index.js"]`.
 
 ## Data license
 
 This package's **code** is UNLICENSED (© Ultrametric Inc, all rights reserved; source visible
-at [ultrametricai/productarena](https://github.com/ultrametricai/productarena)).
+at [ultrametricai/ultrametric](https://github.com/ultrametricai/ultrametric)).
 
-The **data the tools return** is the ProductArena dataset, © Ultrametric Inc — mirroring the
-repo's [DATA-LICENSE](https://github.com/ultrametricai/productarena/blob/main/DATA-LICENSE):
+The **data the tools return** is the Ultrametric dataset, © Ultrametric Inc — mirroring the
+repo's [DATA-LICENSE](https://github.com/ultrametricai/ultrametric/blob/main/DATA-LICENSE):
 you may view and query it through these tools and **briefly quote individual verdicts, scores,
-or evidence excerpts with attribution** to "ProductArena by Ultrametric Inc
-(ultrametric.ai/productarena)", and use it to evaluate, contest, or contribute corrections
+or evidence excerpts with attribution** to "Ultrametric by Ultrametric Inc
+(ultrametric.ai)", and use it to evaluate, contest, or contribute corrections
 back. Bulk copying, redistribution, resale, or use to build/train competing products or
 datasets requires prior written permission.
 

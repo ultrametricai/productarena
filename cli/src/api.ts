@@ -15,7 +15,7 @@ export function fetchCategories(client: ArenaClient): Promise<Category[]> {
 export async function assertKnownArena(client: ArenaClient, arena: string): Promise<void> {
   const categories = await fetchCategories(client)
   if (!categories.some((c) => c.id === arena)) {
-    throw new UsageError(`unknown arena "${arena}" — run \`productarena arenas\` for valid ids`)
+    throw new UsageError(`unknown arena "${arena}" — run \`ultrametric-cli arenas\` for valid ids`)
   }
 }
 
@@ -146,7 +146,7 @@ export async function getProduct(client: ArenaClient, arena: string, productId: 
   ])
   const product = products.find((p) => p.id === productId)
   if (!product) {
-    throw new UsageError(`unknown product "${productId}" in arena "${arena}" — run \`productarena rankings ${arena}\``)
+    throw new UsageError(`unknown product "${productId}" in arena "${arena}" — run \`ultrametric-cli rankings ${arena}\``)
   }
   const index = rankings.leaderboard.findIndex((e) => e.productId === productId)
   const verdictCounts: Record<Verdict['verdict'], number> = { full: 0, partial: 0, none: 0, disputed: 0, na: 0 }
