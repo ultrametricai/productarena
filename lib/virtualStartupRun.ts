@@ -577,7 +577,7 @@ export const VS_EVENTS: VsEventDef[] = [
 
 // Plausibility gate: the run's decisions (all decision gates active), the journey actually
 // containing the grounded process, and the corpus risk floor. `risks` is the committed
-// data/processes.json risk axis, serialized server-side (lib/virtualStartupData.ts).
+// processes/corpus.json risk axis, serialized server-side (lib/virtualStartupData.ts).
 export function eligibleVsEvents(
   choices: Choices,
   journeyTaskIds: string[],

@@ -1,6 +1,6 @@
 // Virtual Startup — the decision→journey mapping and the synthetic-data honesty contract
 // (lib/virtualStartup.ts), checked against the LIVE corpus: every journey must be composed of
-// real data/processes.json tasks selected via real data/process-chains.json chains, and every
+// real processes/corpus.json tasks selected via real journeys/chains.json chains, and every
 // synthetic artifact must be born labeled simulated and replay deterministically from the
 // decision combo.
 import path from 'node:path'
@@ -77,7 +77,7 @@ const sources: YearTaskSource[] = [...corpusById.values()].map((t) => ({
 const candidates = buildYearCandidates(chains, sources)
 
 describe('decision → journey mapping (against the live corpus)', () => {
-  it('every journey chain exists in data/process-chains.json', () => {
+  it('every journey chain exists in journeys/chains.json', () => {
     const chainIds = new Set(chains.map((c) => c.id))
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })

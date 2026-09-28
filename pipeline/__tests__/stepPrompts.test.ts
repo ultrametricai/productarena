@@ -2,7 +2,7 @@
 // map-step-prompts.ts). Two layers, same posture as stepVendorCalls.test.ts: pure-part tests
 // of the generator's validator (no LLM, no network), then re-validation of the committed
 // data/step-prompts.json against EXACTLY the rules the generator enforced — referential
-// integrity against data/processes.json, the {{vendor}} placeholder rule, endpoint grounding
+// integrity against processes/corpus.json, the {{vendor}} placeholder rule, endpoint grounding
 // against data/step-vendor-calls.json, the human-step audit posture — and a loader smoke test.
 import { describe, expect, it } from 'vitest'
 import { humanStepAudit } from '../../lib/humanSteps'

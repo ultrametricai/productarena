@@ -25,7 +25,7 @@ import { readParams, setParams } from '@/lib/urlState'
 // grouped view is the no-param default — the ?order= URL contract below is unchanged.
 //
 // Rank-by presets (founder ask 2026-09-18) — beyond the agent ceiling, five curated orderings
-// over the corpus (fields on data/processes.json, coverage-tested):
+// over the corpus (fields on processes/corpus.json, coverage-tested):
 //   Founder timeline — timeOrder, the sequence a founder actually hits these processes;
 //   Regularity       — cadence, daily loops first through one-time setup;
 //   Most annoying    — annoyance 1–5, the drudgery score;
@@ -48,7 +48,7 @@ export interface ProcessRow {
   agentSteps: number
   totalSteps: number
   complexity: string
-  // The five-orderings fields (curated in data/processes.json; cadence label/rank resolved
+  // The five-orderings fields (curated in processes/corpus.json; cadence label/rank resolved
   // server-side so this component stays free of the node-only cadence helpers).
   timeOrder: number
   cadenceLabel: string

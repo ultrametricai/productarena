@@ -11,7 +11,7 @@ claim a country is covered because a few playbooks exist — see `governance/REV
 - **Arenas** (`data/categories.json`, rendered at `/arenas`) are the vendor-evaluation cut of
   the same territory: each domain's tooling questions become head-to-head, evidence-judged
   product rankings.
-- **Operational processes** (`data/processes.json`, rendered at `/processes`) are grouped into
+- **Operational processes** (`processes/corpus.json`, rendered at `/processes`) are grouped into
   nine operating areas (`lib/processRows.ts` `AREA_ORDER`) that crosswalk onto these domains:
   Starting up → start/formation, Fundraising & investors → fundraising, Money & finance →
   finance, Team & payroll → people, Legal → governance, Ongoing compliance & tax → tax,
