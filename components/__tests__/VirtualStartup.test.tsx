@@ -337,15 +337,65 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
   })
 })
 
+// The compact setup band (founder 2026-09-28: "make the examples, decisions and 'who is the
+// founder' much more compact, so we can see the terminal above the fold") — structure only;
+// every preset/persona/toggle interaction stays semantically identical and is covered by the
+// suites around this one.
+describe('VirtualStartup — the compact setup band', () => {
+  it('one band holds presets, YC mode, persona, all nine decisions, and the run CTA — and renders before the terminal', () => {
+    renderIt()
+    const band = screen.getByTestId('vs-setup')
+    expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
+    expect(within(band).getByTestId('vs-yc-toggle')).toBeTruthy()
+    expect(within(band).getByTestId('vs-persona-picker')).toBeTruthy()
+    expect(within(band).getByRole('button', { name: /run this startup/i })).toBeTruthy()
+    expect(within(band).getByRole('button', { name: /show the whole timeline/i })).toBeTruthy()
+    // Every decision option keeps its canonical full label as the accessible name.
+    for (const name of [
+      'Delaware C-Corp', 'LLC', 'Cofounders', 'Solo founder', 'Raise a seed', 'Bootstrap',
+      'SaaS subscriptions', 'Invoice-billed services', 'Name first', 'Build first',
+      'Make the first hire', 'Stay founders-only', 'Compliance early', 'Compliance later',
+      'Not yet', 'Chase the enterprise deal', 'Launch on Product Hunt', 'Quiet launch',
+    ]) {
+      expect(within(band).getByRole('button', { name })).toBeTruthy()
+    }
+    // The band precedes the terminal in document order — the terminal sits right under it.
+    const term = screen.getByTestId('vs-terminal')
+    expect(band.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('decision options show short labels but keep the full label + corpus mapping in the tooltip', () => {
+    renderIt()
+    const btn = screen.getByRole('button', { name: 'Chase the enterprise deal' })
+    expect(btn.textContent).toBe('Yes')
+    expect(btn.getAttribute('title')).toContain('Chase the enterprise deal')
+    expect(btn.getAttribute('title')).toContain('land-the-enterprise-deal')
+  })
+
+  it('the full setup guide expand carries the verbose explanations, disclosures verbatim included', () => {
+    renderIt()
+    const details = screen.getByText(/full setup guide/i).closest('details')!
+    const guide = within(details as HTMLElement)
+    expect(guide.getByText(/hardware-specific steps \(regulatory, manufacturing\)/)).toBeTruthy()
+    expect(guide.getByText(/biotech-specific steps \(regulatory, trials, manufacturing\)/)).toBeTruthy()
+    expect(guide.getByText(/never changes a judged verdict/)).toBeTruthy()
+    expect(guide.getByText(/nothing is invented/)).toBeTruthy()
+  })
+})
+
 describe('VirtualStartup — preset example companies and the ?preset= contract', () => {
-  it('renders the three cards; the honesty disclosure sits on hardware and biotech, NOT software', () => {
+  it('renders the three preset pills; the honesty disclosure sits on hardware and biotech, NOT software', () => {
     renderIt()
     expect(screen.getByTestId('vs-preset-software')).toBeTruthy()
     expect(screen.getByTestId('vs-preset-hardware')).toBeTruthy()
     expect(screen.getByTestId('vs-preset-biotech')).toBeTruthy()
     const disclosures = screen.getAllByTestId('vs-preset-disclosure')
     expect(disclosures).toHaveLength(2)
-    for (const d of disclosures) expect(d.textContent).toContain('same real software-company process corpus')
+    // Reachable BEFORE any run, on the pill itself: ⓘ tooltip + screen-reader text.
+    for (const d of disclosures) {
+      expect(d.textContent).toContain('same real software-company process corpus')
+      expect(d.getAttribute('title')).toContain('same real software-company process corpus')
+    }
     expect(within(screen.getByTestId('vs-preset-software')).queryByTestId('vs-preset-disclosure')).toBeNull()
     expect(within(screen.getByTestId('vs-preset-hardware')).getByTestId('vs-preset-disclosure')).toBeTruthy()
     expect(within(screen.getByTestId('vs-preset-biotech')).getByTestId('vs-preset-disclosure')).toBeTruthy()
