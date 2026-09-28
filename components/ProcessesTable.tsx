@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -15,6 +15,14 @@ import { readParams, setParams } from '@/lib/urlState'
 // list. Rows are pre-flattened server-side; every row clicks out to its own process page.
 // Each row leads with its curated process icon (lib/processIcons.ts) and its software chips
 // carry real product logos (hasLogo resolved server-side — ProductLogoView is client-safe).
+//
+// Grouped-by-AREA default (founder 2026-09-28): the table opens grouped into friendly
+// founder-lifecycle areas ("Starting up", "Ongoing compliance & tax", … — the curated
+// phase→area map in lib/processRows.ts), area header rows carrying the process count and the
+// area's average agent ceiling, rows ordered by timeOrder within each area. Grouping and
+// cross-corpus sorting can't coexist honestly, so picking ANY rank-by preset or column sort
+// switches to the flat sorted table; a subtle "grouped by area" reset pill returns. The
+// grouped view is the no-param default — the ?order= URL contract below is unchanged.
 //
 // Rank-by presets (founder ask 2026-09-18) — beyond the agent ceiling, five curated orderings
 // over the corpus (fields on data/processes.json, coverage-tested):
@@ -31,6 +39,11 @@ export interface ProcessRow {
   // Curated emoji for this process (lib/processIcons.ts), resolved server-side by task id.
   icon: string
   phase: string
+  // Friendly display area over the internal phase (lib/processRows.ts PHASE_AREA — curated and
+  // totality-tested) plus its founder-lifecycle rank (AREA_ORDER index), both resolved
+  // server-side so this client component never imports the node-only builder.
+  area: string
+  areaRank: number
   pct: number
   agentSteps: number
   totalSteps: number
@@ -56,8 +69,10 @@ const defaultDirection = (col: Column): Direction => (ASC_DEFAULT.has(col) ? 'as
 
 // Shareable ?order= values (founder 2026-09-21, lib/urlState.ts): every pickable column, with
 // the timeOrder column spelled 'timeline' in the URL (?order=order reads badly; ?order=timeline
-// says what it is). The default sort (pct — the agent ceiling) never appears in the URL, and
-// bad values fall back to it silently. Both `timeline` and the raw `order` are accepted on read.
+// says what it is). The UI's default sort (pct — the agent ceiling) never appears in the URL,
+// and bad values fall back silently — since 2026-09-28 the no-param default is the grouped-by-
+// area view, and any valid ?order= (pct included) opens the flat sorted table. Both `timeline`
+// and the raw `order` are accepted on read.
 const ALL_COLUMNS: readonly Column[] = ['title', 'phase', 'pct', 'steps', 'order', 'cadence', 'annoyance', 'risk', 'growth']
 const columnToParam = (col: Column): string => (col === 'order' ? 'timeline' : col)
 function paramToColumn(value: string | null): Column | null {
@@ -114,7 +129,8 @@ function SortableTh({
 }: {
   children: ReactNode
   col: Column
-  current: Column
+  // null while the grouped view is active — no column is sorted-on, so none reads as current.
+  current: Column | null
   direction: Direction
   onSort: (col: Column) => void
   sortable?: boolean
@@ -136,6 +152,9 @@ function SortableTh({
 }
 
 export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; phases: string[] }) {
+  // Grouped-by-area is the default view; column/direction only apply once the reader sorts
+  // (which flips grouped off — grouping and cross-corpus sorting can't coexist honestly).
+  const [grouped, setGrouped] = useState(true)
   const [column, setColumn] = useState<Column>('pct')
   const [direction, setDirection] = useState<Direction>('desc')
   const [phase, setPhase] = useState('all')
@@ -151,7 +170,11 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
   useEffect(() => {
     const p = readParams()
     const col = paramToColumn(p.get('order'))
-    if (col !== null && col !== 'pct') {
+    if (col !== null) {
+      // Any shared ?order= opens the FLAT sorted table — grouped is the no-param default.
+      // ?order=pct is accepted on read (it shares the ceiling-sorted flat view) even though
+      // the UI still elides pct on write, per the original contract.
+      setGrouped(false)
       setColumn(col)
       setDirection(defaultDirection(col))
     }
@@ -173,10 +196,20 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
 
   // Sort changes mirror into ?order= (default pct elided). Direction is deliberately NOT in the
   // URL: a shared ordering opens in its preset direction — the five orderings are what's shared.
+  // Any sort leaves the grouped default for the flat table.
   function changeSort(col: Column, dir: Direction) {
+    setGrouped(false)
     setColumn(col)
     setDirection(dir)
     setParams({ order: col === 'pct' ? null : columnToParam(col) })
+  }
+
+  // The "grouped by area" reset pill: back to the default view, with a clean ?order=.
+  function resetToGrouped() {
+    setGrouped(true)
+    setColumn('pct')
+    setDirection('desc')
+    setParams({ order: null })
   }
 
   const filtered = useMemo(() => {
@@ -201,9 +234,34 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
   }, [filtered, column, direction])
 
   function handleSort(col: Column) {
-    if (col === column) setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
+    // From the grouped view any header click starts a fresh flat sort in the column's preset
+    // direction (there's no current sort to toggle).
+    if (grouped) changeSort(col, defaultDirection(col))
+    else if (col === column) setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
     else changeSort(col, defaultDirection(col))
   }
+
+  // The grouped view's area sections: filtered rows bucketed by area, areas in founder-lifecycle
+  // order (areaRank rides on every row), rows in timeOrder within each area, plus the header
+  // stats (count + the area's average agent ceiling). The phase filter above collapses this to
+  // the matching area(s) for free — filtered already only holds that phase's rows.
+  const groups = useMemo(() => {
+    if (!grouped) return null
+    const byArea = new Map<string, ProcessRow[]>()
+    for (const r of filtered) {
+      const bucket = byArea.get(r.area)
+      if (bucket) bucket.push(r)
+      else byArea.set(r.area, [r])
+    }
+    return [...byArea.values()]
+      .map((rs) => ({
+        area: rs[0].area,
+        areaRank: rs[0].areaRank,
+        avgPct: Math.round(rs.reduce((sum, r) => sum + r.pct, 0) / rs.length),
+        rows: [...rs].sort((a, b) => a.timeOrder - b.timeOrder),
+      }))
+      .sort((a, b) => a.areaRank - b.areaRank)
+  }, [filtered, grouped])
 
   // Which ordering the adaptive metric column shows.
   const metric: Metric = (['order', 'cadence', 'annoyance', 'risk', 'growth'] as const).includes(column as Metric)
@@ -218,12 +276,85 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
     return <ScoreDots value={r.growthImpact} label="Growth impact" />
   }
 
+  // One process row — identical markup in the grouped and flat views (the founder ask keeps the
+  // existing columns/rows unchanged under the area headers).
+  function processRow(r: ProcessRow): ReactNode {
+    return (
+      <tr key={r.slug} className="transition hover:bg-zinc-800/70">
+        <td className="max-w-[260px] px-2 py-2">
+          <span className="flex items-center gap-1.5">
+            <IconChip icon={r.icon} title={`${r.title} — ${r.phase} process`} />
+            <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
+              {r.title}
+            </Link>
+          </span>
+        </td>
+        <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
+          {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
+              to that phase; click again (or pick All) to clear. */}
+          <button
+            type="button"
+            onClick={() => changePhase(phase === r.phase ? 'all' : r.phase)}
+            title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
+            className={`flex cursor-pointer items-center gap-1.5 whitespace-nowrap transition hover:text-emerald-300 ${phase === r.phase ? 'text-emerald-300' : ''}`}
+          >
+            <IconChip icon={phaseIcon(r.phase)} title={phaseTooltip(r.phase)} />
+            {r.phase}
+          </button>
+        </td>
+        <td className="px-2 py-2">
+          <CeilingBar pct={r.pct} />
+        </td>
+        <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
+          <Link
+            href={`/processes/${r.slug}#steps`}
+            title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
+            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+          >
+            {r.agentSteps}/{r.totalSteps}
+          </Link>
+        </td>
+        <td className="whitespace-nowrap px-2 py-2">{metricCell(r)}</td>
+        <td className="hidden px-2 py-2 lg:table-cell">
+          <span className="flex flex-wrap gap-1">
+            {r.vendors.slice(0, 3).map((v) =>
+              v.arena ? (
+                // Founder 2026-09-25: a vendor chip opens the PROCESS through that
+                // vendor (?via= lens, lib/processLens.ts) — not the vendor's own page.
+                <Link key={v.label} href={`/processes/${r.slug}?via=${v.arena}:${v.id}`} title={`Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </Link>
+              ) : (
+                <span key={v.label} title={`${v.label} — not yet judged on ProductArena`} className="inline-flex items-center gap-1 rounded-full border border-zinc-800 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-500">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </span>
+              ),
+            )}
+            {r.vendors.length > 3 && (
+              <Link
+                href={`/processes/${r.slug}`}
+                className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
+                title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
+              >
+                +{r.vendors.length - 3} →
+              </Link>
+            )}
+          </span>
+        </td>
+      </tr>
+    )
+  }
+
   return (
     <div className="space-y-3">
       <TableControls
         presets={PRESETS}
         activeColumn={column}
-        presetActive={direction === defaultDirection(column)}
+        // In the grouped default no preset is "on" — the pills light up only once the reader
+        // has sorted into the flat view (and the mobile "Rank by" select shows its placeholder).
+        presetActive={!grouped && direction === defaultDirection(column)}
         onPreset={(col) => changeSort(col, defaultDirection(col))}
         scope={{
           value: phase,
@@ -241,87 +372,65 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
           setParams({ pq: value.trim() === '' ? null : value })
         }}
       />
+      {/* Sorting flattens the table (cross-corpus order and area grouping can't coexist) — this
+          subtle pill is the way back to the grouped default. */}
+      {!grouped && (
+        <p className="text-xs text-zinc-500">
+          Sorted across all areas —{' '}
+          <button
+            type="button"
+            onClick={resetToGrouped}
+            title="Back to the default view — processes grouped into founder-lifecycle areas"
+            className="rounded-full border border-zinc-800 px-2.5 py-0.5 text-[11px] text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
+          >
+            ← grouped by area
+          </button>
+        </p>
+      )}
       <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-2xl sm:border md:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
           <thead>
+            {/* In the grouped view no column is sorted-on (current=null, aria-sort none) —
+                clicking any header sorts that column and flattens the table. */}
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-              <SortableTh col="title" current={column} direction={direction} onSort={handleSort}><span title="A real startup operating process, mapped step by step">Process</span></SortableTh>
-              <SortableTh col="phase" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
-              <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Current agent ceiling</span></SortableTh>
-              <SortableTh col="steps" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
+              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="A real startup operating process, mapped step by step">Process</span></SortableTh>
+              <SortableTh col="phase" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
+              <SortableTh col="pct" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Current agent ceiling</span></SortableTh>
+              <SortableTh col="steps" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}
-              <SortableTh col={metric} current={column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
-              <SortableTh col="title" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main software this process runs on — judged vendors link to their product page">Software</span></SortableTh>
+              <SortableTh col={metric} current={grouped ? null : column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
+              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main software this process runs on — judged vendors link to their product page">Software</span></SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
-            {sorted.map((r) => (
-              <tr key={r.slug} className="transition hover:bg-zinc-800/70">
-                <td className="max-w-[260px] px-2 py-2">
-                  <span className="flex items-center gap-1.5">
-                    <IconChip icon={r.icon} title={`${r.title} — ${r.phase} process`} />
-                    <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
-                      {r.title}
-                    </Link>
-                  </span>
-                </td>
-                <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
-                  {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
-                      to that phase; click again (or pick All) to clear. */}
-                  <button
-                    type="button"
-                    onClick={() => changePhase(phase === r.phase ? 'all' : r.phase)}
-                    title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
-                    className={`flex cursor-pointer items-center gap-1.5 whitespace-nowrap transition hover:text-emerald-300 ${phase === r.phase ? 'text-emerald-300' : ''}`}
-                  >
-                    <IconChip icon={phaseIcon(r.phase)} title={phaseTooltip(r.phase)} />
-                    {r.phase}
-                  </button>
-                </td>
-                <td className="px-2 py-2">
-                  <CeilingBar pct={r.pct} />
-                </td>
-                <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
-                  <Link
-                    href={`/processes/${r.slug}#steps`}
-                    title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
-                    className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-                  >
-                    {r.agentSteps}/{r.totalSteps}
-                  </Link>
-                </td>
-                <td className="whitespace-nowrap px-2 py-2">{metricCell(r)}</td>
-                <td className="hidden px-2 py-2 lg:table-cell">
-                  <span className="flex flex-wrap gap-1">
-                    {r.vendors.slice(0, 3).map((v) =>
-                      v.arena ? (
-                        // Founder 2026-09-25: a vendor chip opens the PROCESS through that
-                        // vendor (?via= lens, lib/processLens.ts) — not the vendor's own page.
-                        <Link key={v.label} href={`/processes/${r.slug}?via=${v.arena}:${v.id}`} title={`Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
-                          <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
-                          {v.label}
-                        </Link>
-                      ) : (
-                        <span key={v.label} title={`${v.label} — not yet judged on ProductArena`} className="inline-flex items-center gap-1 rounded-full border border-zinc-800 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-500">
-                          <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
-                          {v.label}
+            {groups !== null
+              ? groups.map((g) => (
+                  <Fragment key={g.area}>
+                    {/* Area header: friendly name + process count + the area's average agent
+                        ceiling as a quiet stat. colSpan spans whatever columns the breakpoint
+                        shows (hidden columns collapse it), so the header reads fine at the
+                        homepage width and in the mobile edge-to-edge table. */}
+                    <tr className="bg-zinc-900/50">
+                      <th colSpan={6} scope="colgroup" className="px-2 pb-1.5 pt-3 text-left font-normal">
+                        <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                          <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">{g.area}</span>
+                          <span className="text-[11px] text-zinc-500">
+                            {g.rows.length} {g.rows.length === 1 ? 'process' : 'processes'}
+                          </span>
+                          <span
+                            className="ml-auto whitespace-nowrap text-[11px] text-zinc-500"
+                            title={`Average agent ceiling across this area's ${g.rows.length === 1 ? 'process' : 'processes'}`}
+                          >
+                            avg ceiling <span className="font-mono text-emerald-300/80">{g.avgPct}%</span>
+                          </span>
                         </span>
-                      ),
-                    )}
-                    {r.vendors.length > 3 && (
-                      <Link
-                        href={`/processes/${r.slug}`}
-                        className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
-                        title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
-                      >
-                        +{r.vendors.length - 3} →
-                      </Link>
-                    )}
-                  </span>
-                </td>
-              </tr>
-            ))}
+                      </th>
+                    </tr>
+                    {g.rows.map(processRow)}
+                  </Fragment>
+                ))
+              : sorted.map(processRow)}
             {sorted.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-zinc-500">
