@@ -1,6 +1,6 @@
-// Cloudflare Worker: serves ProductArena at ultrametric.ai/productarena/* by transparently
-// proxying to the Vercel deployment (which is built with basePath '/productarena', so paths
-// pass through unchanged). Route: ultrametric.ai/productarena*
+// Cloudflare Worker: serves Ultrametric (the product) at the ROOT of ultrametric.ai by
+// transparently proxying to the Vercel deployment (built with no basePath since the
+// 2026-09-28 rebrand). Route: ultrametric.ai/* — legacy /productarena/* URLs 301 here.
 //
 // Also hosts POST /productarena/api/scan — the "test my product" quick scan behind the /submit
 // page. It runs a fixed, keyless probe set (llms.txt, openapi.json, robots.txt, homepage hints)
@@ -911,7 +911,7 @@ export async function handleTryProbe(request, env, fetchImpl = fetch) {
 
   // Path segments are a LOOKUP KEY ONLY — never interpolated into a URL or anything else.
   const segments = new URL(request.url).pathname
-    .slice('/productarena/api/try/'.length)
+    .slice('/api/try/'.length)
     .split('/')
     .map((s) => { try { return decodeURIComponent(s) } catch { return s } })
   if (segments.length !== 3 || segments.some((s) => !s || s.length > 100)) {
@@ -1541,7 +1541,7 @@ async function handleMcp(request) {
 //       https://workos.com/docs/reference/authkit/logout/get-logout-url
 //
 // We do NOT keep WorkOS's tokens around. The callback mints OUR session: `pa_session`, an
-// HttpOnly Secure SameSite=Lax cookie scoped to ultrametric.ai (Path=/productarena), holding a
+// HttpOnly Secure SameSite=Lax cookie scoped to ultrametric.ai (Path=/), holding a
 // compact HMAC-SHA256-signed payload {sub, email, sid, exp} — no PII beyond the email, exp
 // capped at 30 days, key = the PA_SESSION_KEY worker secret, signing via WebCrypto. /auth/me
 // verifies it and answers {email} (or 401) for the client-side session hook (lib/session.ts).
@@ -1709,12 +1709,12 @@ function getCookie(request, name) {
 // host-only (no Domain — a Domain=ultrametric.ai cookie is rejected there) and non-Secure.
 function sessionSetCookie(ctx, value, maxAge) {
   return ctx.mock
-    ? `${SESSION_COOKIE}=${value}; Path=/productarena; Max-Age=${maxAge}; HttpOnly; SameSite=Lax`
-    : `${SESSION_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
+    ? `${SESSION_COOKIE}=${value}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax`
+    : `${SESSION_COOKIE}=${value}; Domain=ultrametric.ai; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
 }
 
 function stateSetCookie(value, maxAge) {
-  return `${STATE_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena/auth; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
+  return `${STATE_COOKIE}=${value}; Domain=ultrametric.ai; Path=/auth; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
 }
 
 function authJson(status, body, extraHeaders) {
@@ -1735,7 +1735,7 @@ function authNotConfigured(missing) {
 export async function handleAuth(request, env, fetchImpl = fetch) {
   const url = new URL(request.url)
   const ctx = authContext(env, url)
-  const route = url.pathname.slice('/productarena/auth'.length)
+  const route = url.pathname.slice('/auth'.length)
   if (request.method !== 'GET') {
     return authJson(405, { error: 'GET only' }, { allow: 'GET' })
   }
@@ -2075,28 +2075,47 @@ export async function handleMyStack(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
-    if (url.pathname.startsWith('/productarena/auth/')) return handleAuth(request, env)
-    if (url.pathname === '/productarena/api/watchlist') return handleWatchlist(request, env)
-    if (url.pathname === '/productarena/api/my-stack') return handleMyStack(request, env)
-    if (url.pathname === '/productarena/api/scan') return handleScan(request)
-    if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request, fetch, env)
-    if (url.pathname.startsWith('/productarena/api/try/')) return handleTryProbe(request, env)
-    if (url.pathname === '/productarena/api/popular-compares') {
+
+    // ── Ultrametric rebrand cutover (founder 2026-09-28) ─────────────────────────────────
+    // The product moved from ultrametric.ai/productarena/* to the ROOT of ultrametric.ai.
+    // 1. Legacy /productarena URLs 301 to the same path without the prefix — every old link,
+    //    badge embed, and indexed page keeps working.
+    if (url.pathname === '/productarena' || url.pathname.startsWith('/productarena/')) {
+      const stripped = url.pathname.slice('/productarena'.length) || '/'
+      return Response.redirect(`https://ultrametric.ai${stripped}${url.search}`, 301)
+    }
+    // 2. The old company landing site keeps its few root pages (passthrough to the zone
+    //    origin): /company, /tos, the archived /process/* guides, and /afk. The product owns
+    //    everything else at root — including '/', /privacy, /llms.txt, /sitemap.xml (the
+    //    landing site shipped none). Shadowed landing pages: '/' (old landing home) and its
+    //    /privacy — flagged to the founder at cutover.
+    const LANDING_PREFIXES = ['/company', '/tos', '/process', '/afk']
+    if (LANDING_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
+      return fetch(request)
+    }
+
+    if (url.pathname.startsWith('/auth/')) return handleAuth(request, env)
+    if (url.pathname === '/api/watchlist') return handleWatchlist(request, env)
+    if (url.pathname === '/api/my-stack') return handleMyStack(request, env)
+    if (url.pathname === '/api/scan') return handleScan(request)
+    if (url.pathname === '/api/mcp-probe') return handleMcpProbe(request, fetch, env)
+    if (url.pathname.startsWith('/api/try/')) return handleTryProbe(request, env)
+    if (url.pathname === '/api/popular-compares') {
       return handlePopularCompares(request, env?.PA_COMPARE_STATS)
     }
     // /productarena/mcp retired (founder 2026-09-23): ProductArena is not offered over its own
     // MCP server — a first-party Ultrametric MCP + API is coming instead. JSON-RPC POSTs get an
     // explicit 410 pointing at the data API; GETs fall through to the site's /mcp redirect page.
-    if (url.pathname === '/productarena/mcp' && request.method === 'POST') {
+    if (url.pathname === '/mcp' && request.method === 'POST') {
       return new Response(
-        JSON.stringify({ error: 'gone', message: 'The ProductArena MCP server is retired. Use the JSON data API (https://ultrametric.ai/productarena/data/categories.json) or /llms.txt. A first-party Ultrametric MCP is coming.' }),
+        JSON.stringify({ error: 'gone', message: 'The ProductArena MCP server is retired. Use the JSON data API (https://ultrametric.ai/data/categories.json) or /llms.txt. A first-party Ultrametric MCP is coming.' }),
         { status: 410, headers: { 'Content-Type': 'application/json' } },
       )
     }
 
     // Compare popularity: count pair selections without ever delaying the page (see the
     // "Compare popularity counter" section). GETs only; the response is the plain proxy below.
-    if (request.method === 'GET' && url.pathname === '/productarena/compare' && url.searchParams.get('p')) {
+    if (request.method === 'GET' && url.pathname === '/compare' && url.searchParams.get('p')) {
       ctx?.waitUntil?.(bumpComparePairs(env?.PA_COMPARE_STATS, url.searchParams.get('p')))
     }
 
