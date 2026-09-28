@@ -24,7 +24,7 @@ is designed to be extended by founders everywhere, one pull request at a time:
   each vendor actually operates.
 - **Business logic** — open, exhaustively-tested startup math with a citation on every formula
   (cap-table engine first: SAFEs, priced rounds, vesting, dilution waterfalls —
-  [try it live](https://ultrametric.ai/tools/cap-table)).
+  [`lib/openstartup/`](lib/openstartup/)).
 - **Vendors & evidence** — head-to-head, evidence-graded rankings of the tools startups run on:
   crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge whose
   every verdict carries citations, a confidence grade, and a contest button.
@@ -55,7 +55,6 @@ Arena, product, and verdict counts above (and in the badge row) are regenerated 
 | What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — 123 processes grouped by area, each with its agent ceiling |
 | Chained playbooks (incorporate → launch, the VC raise, agent-run back office) | [/processes](https://ultrametric.ai/processes) playbooks |
 | Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
-| Model your cap table (SAFEs, priced round, dilution) | [/tools/cap-table](https://ultrametric.ai/tools/cap-table) |
 | Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · per-arena leaderboards · [/compare](https://ultrametric.ai/compare) |
 | Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
 | Does this work outside the US? | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
@@ -320,8 +319,9 @@ The first module is the **cap-table engine** (`lib/openstartup/capTable.ts`):
   textbook — they replay YC's published worked examples number-for-number, including
   Appendix II Example 1's full pro-forma cap table, plus property tests (ownership always
   sums to 100%, no negative or fractional shares).
-- Use it live at [/tools/cap-table](https://ultrametric.ai/tools/cap-table): build a cap
-  table event-by-event, share it as a URL, export it. Educational, not legal advice.
+- Repo-only by design: the engine is a pure library (`lib/openstartup/`) with a compact
+  shareable-state codec and CSV/markdown report output — use it from tests, scripts, or your
+  own agent. Educational, not legal advice.
 
 Contributions welcome — candidate next modules include convertible notes (interest +
 maturity), liquidity-event waterfalls (the SAFE's cash-out vs conversion choice), 409A

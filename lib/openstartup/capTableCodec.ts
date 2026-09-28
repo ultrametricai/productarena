@@ -1,4 +1,4 @@
-// Shareable permalink for /tools/cap-table — the whole event list in one compact
+// Shareable cap-table permalink codec — the whole event list in one compact
 // URL-safe ?ct= param, modeled on the Virtual Startup ?run= codec
 // (lib/virtualStartupRun.ts): unpadded base64url over compact-key JSON, versioned,
 // and fully defensive on decode (ANY malformation → null, UI falls back to defaults).
