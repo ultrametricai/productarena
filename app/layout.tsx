@@ -318,7 +318,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href="/virtual-startup"
                 className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
               >
-                <GeoMark seed="virtual-startup" title="Virtual Startup Simulator — run a synthetic company through the real process corpus" size={13} className="hidden text-zinc-500 sm:inline-flex" />
+                <GeoMark seed="virtual-startup" title="Virtual Startup — run a synthetic company through the real process corpus" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Virtual Startup
               </Link>
               {/* geo: every Explore destination wears its deterministic concept mark
