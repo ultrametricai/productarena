@@ -134,6 +134,13 @@ export default function VirtualStartupPage() {
             browse all processes →
           </Link>
         </p>
+        <p className="mt-2">
+          The equity artifacts (founder split, SAFE round, cap table) are simulated — run the real math on your own
+          numbers:{' '}
+          <Link href="/tools/cap-table" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+            model this on the cap-table tool →
+          </Link>
+        </p>
       </section>
     </div>
   )
