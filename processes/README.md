@@ -10,7 +10,8 @@ Two layers, deliberately separate:
    Delaware equity workflows (409A valuation review, 83(b) election) — status `demonstration`,
    not production-certified; see `governance/REVIEW_POLICY.md` for the maturity ladder.
 
-2. **The operational corpus** (`data/processes.json`, 123 processes rendered at `/processes`):
+2. **The operational corpus** (`corpus.json` in this directory, 123 processes rendered at
+   `/processes`, contract in `schemas/operational-process.schema.json`):
    step-by-step operating DAGs with agent/manual/human routing, judged vendor rankings per
    step, agent ceilings, and time estimates. These are operating guides, not legal advice, and
    they carry no jurisdiction warranty — the site's jurisdiction toggle (`lib/jurisdictions.ts`)
@@ -18,6 +19,9 @@ Two layers, deliberately separate:
 
 A process here may cite operational corpus pages for the how-to mechanics; the operational
 corpus links back when a step crosses into fact-specific legal territory. The two layers keep
-separate IDs and never silently substitute for each other. `data/processes.json` stays in place
-until stage 2 of the corpus lift (it is fingerprinted and loader-bound); the layers will then
-live side by side under this directory.
+separate IDs and never silently substitute for each other. Stage 2 of the corpus lift
+(2026-09-28) moved the operational corpus here from `data/processes.json`, byte-identical —
+paths only: `lib/processes.ts` `loadProcesses()` reads `processes/corpus.json`, and the
+founder-ops workflow validator (`lib/founderOps.ts`) deliberately skips `corpus.json` when it
+walks this tree (the corpus has its own schema and gates). The two layers now live side by
+side under this directory as promised.

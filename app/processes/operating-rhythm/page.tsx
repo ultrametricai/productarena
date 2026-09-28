@@ -17,7 +17,7 @@ import {
 // phase. Formation pages tell you what a startup does ONCE; this page is the x-ray of what it
 // does every day/week/month/quarter/year — and what only fires on a trigger — each process
 // wearing its agent ceiling and the software it runs on. Static, server-rendered, pure
-// derivation from data/processes.json.
+// derivation from processes/corpus.json.
 
 export const metadata: Metadata = {
   title: 'Operating rhythm — a year of running a startup — Ultrametric',

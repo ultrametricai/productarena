@@ -13,6 +13,18 @@ import path from 'node:path'
 const ROOT = process.cwd()
 const MATCH_KEYS = ['entity_jurisdiction', 'tax_jurisdiction', 'entity_type', 'event_type'] as const
 
+// processes/ holds TWO layers (see processes/README.md): the jurisdiction-scoped legal
+// workflows this validator owns, and — since stage 2 of the corpus lift — the operational
+// corpus (processes/corpus.json, the 123-process array behind /processes). The corpus has its
+// own schema, loader and gates (lib/processes.ts, schemas/operational-process.schema.json,
+// lib/__tests__/processes.test.ts), so the workflow walker skips it rather than misreading a
+// task array as a workflow record.
+const OPERATIONAL_CORPUS = path.join('processes', 'corpus.json')
+
+function workflowJson(dir: string): string[] {
+  return listJson(dir).filter((f) => !f.endsWith(OPERATIONAL_CORPUS))
+}
+
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json }
 type JsonObject = { [key: string]: Json }
 
@@ -214,7 +226,7 @@ export function validateFounderOps(asOf?: Date): string[] {
     }
   }
 
-  const processes = indexed(listJson(path.join(ROOT, 'processes')), errors, 'process')
+  const processes = indexed(workflowJson(path.join(ROOT, 'processes')), errors, 'process')
   for (const [pid, process] of processes) {
     shape(process, need('process.schema'), `process ${pid}`, errors)
     const scope = isObj(process.applicability) ? process.applicability : {}
@@ -301,7 +313,7 @@ export function planFounderOps(event: JsonObject, asOf?: Date): FounderOpsPlan {
   if (missing.length > 0) {
     return { status: 'needs_review', reason: 'missing dimensions', missing: [...missing], may_execute: false }
   }
-  const processes = listJson(path.join(ROOT, 'processes'))
+  const processes = workflowJson(path.join(ROOT, 'processes'))
     .map(read)
     .filter(isObj)
   const matches = processes.filter((p) => {

@@ -228,7 +228,7 @@ export function manifestProvenance(): ManifestProvenance {
     source: 'productarena',
     url: SITE_URL,
     generatedFrom:
-      'data/processes.json + data/process-chains.json (the Ultrametric founder-process corpus), '
+      'processes/corpus.json + journeys/chains.json (the Ultrametric founder-process corpus), '
       + 'resolved against live arena leaderboards at build time. Regenerate by refetching this '
       + 'manifest URL — it always reflects the currently deployed data, not a pinned data commit.',
     license:

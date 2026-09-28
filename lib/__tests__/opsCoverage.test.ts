@@ -132,14 +132,14 @@ describe('untrackedVendorCensus', () => {
 })
 
 describe('buildArenaCoverage', () => {
-  it('reports live vs roadmap and both drift directions; census degrades without processes.json', () => {
+  it('reports live vs roadmap and both drift directions; census degrades without a corpus', () => {
     const dir = writeFixture()
     const cov = buildArenaCoverage(dir)
     expect(cov.liveArenas).toBe(1)
     expect(cov.plannedArenas).toEqual([{ id: 'gamma', name: 'Gamma Arena', tier: 2, status: 'planned' }])
     expect(cov.liveNotPopulated).toEqual(['beta'])
     expect(cov.populatedNotInRoadmap).toEqual([])
-    expect(cov.untrackedVendors).toEqual([]) // fixture has no processes.json — honest empty
+    expect(cov.untrackedVendors).toEqual([]) // fixture resolves no processes/corpus.json — honest empty
   })
 })
 

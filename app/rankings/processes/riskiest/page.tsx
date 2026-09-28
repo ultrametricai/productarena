@@ -5,7 +5,7 @@ import RankingsNav from '@/components/RankingsNav'
 import { buildProcessRows } from '@/lib/processRows'
 
 // 🔁 PROCESS ranking (founder 2026-09-21). Ranks processes by the corpus's curated `risk`
-// ordering (data/processes.json, 1–5: the cost of getting it wrong — legal / tax / security
+// ordering (processes/corpus.json, 1–5: the cost of getting it wrong — legal / tax / security
 // exposure). Ties break on how much of the process still runs through forms or people (the
 // exposure usually lives in the human steps), then title. Rows come straight from
 // buildProcessRows — the same derivation /processes renders.
@@ -48,7 +48,7 @@ export default function RiskiestProcessesPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           This ranks <strong className="font-semibold text-zinc-200">processes, not companies</strong>: all {rows.length} founder
-          processes ordered by the corpus&rsquo;s curated risk score (data/processes.json `risk`, 1–5 — legal / tax / security
+          processes ordered by the corpus&rsquo;s curated risk score (processes/corpus.json `risk`, 1–5 — legal / tax / security
           exposure; the DE franchise tax and the federal return sit at 5, naming a brand at 1). Ties break on the number of
           steps still done by forms or people — where the exposure usually lives — then title.
         </p>
