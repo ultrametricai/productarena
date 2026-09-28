@@ -53,7 +53,7 @@ function fetchOnce(response: Response | Error): { impl: FetchImpl; calls: Array<
 }
 
 const tryRequest = (pathSuffix: string, ip = 'test-ip', method = 'POST') =>
-  new Request(`https://ultrametric.ai/productarena/api/try/${pathSuffix}`, {
+  new Request(`https://ultrametric.ai/api/try/${pathSuffix}`, {
     method,
     headers: { 'cf-connecting-ip': ip, origin: 'https://ultrametric.ai' },
   })

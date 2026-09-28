@@ -1,4 +1,4 @@
-// Unit tests for the worker's session-gated GET/PUT /productarena/api/watchlist route and its
+// Unit tests for the worker's session-gated GET/PUT /api/watchlist route and its
 // pure id normalizer — fake in-memory KV, cookies minted with the same createSessionCookieValue
 // the auth routes use (no network, no worker runtime; same pattern as auth.test.ts).
 import { describe, expect, it } from 'vitest'
@@ -30,7 +30,7 @@ const call = (
   opts: { cookie?: string; body?: unknown; env?: object; origin?: string } = {},
 ) =>
   handleWatchlist(
-    new Request(`${opts.origin ?? 'https://ultrametric.ai'}/productarena/api/watchlist`, {
+    new Request(`${opts.origin ?? 'https://ultrametric.ai'}/api/watchlist`, {
       method,
       headers: {
         ...(opts.cookie ? { cookie: opts.cookie } : {}),
@@ -141,7 +141,7 @@ describe('/api/watchlist under mock auth (WORKOS_MOCK=1 on localhost)', () => {
     const kv = fakeKv()
     const env = { WORKOS_MOCK: '1', PA_COMPARE_STATS: kv }
     const login = (await handleAuth(
-      new Request('http://localhost:8787/productarena/auth/login'),
+      new Request('http://localhost:8787/auth/login'),
       env,
     )) as Response
     const cookie = /pa_session=[^;]+/.exec(login.headers.getSetCookie().join('; '))?.[0]
@@ -155,7 +155,7 @@ describe('/api/watchlist under mock auth (WORKOS_MOCK=1 on localhost)', () => {
   it('a mock-signed cookie is worthless in production (different key, host guard)', async () => {
     const kv = fakeKv()
     const login = (await handleAuth(
-      new Request('http://localhost:8787/productarena/auth/login'),
+      new Request('http://localhost:8787/auth/login'),
       { WORKOS_MOCK: '1' },
     )) as Response
     const cookie = /pa_session=[^;]+/.exec(login.headers.getSetCookie().join('; '))?.[0]

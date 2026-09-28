@@ -73,7 +73,7 @@ function fetchScript(responses: Array<Response | Error>): { impl: FetchImpl; cal
 }
 
 const probeRequest = (body: unknown) =>
-  new Request('https://ultrametric.ai/productarena/api/mcp-probe', {
+  new Request('https://ultrametric.ai/api/mcp-probe', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'cf-connecting-ip': `ip-${Math.random()}` },
     body: JSON.stringify(body),

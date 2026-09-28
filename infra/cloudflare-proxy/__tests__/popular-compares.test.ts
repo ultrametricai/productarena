@@ -26,7 +26,7 @@ function mockKv(initial: Record<string, string> = {}): MockKv {
   }
 }
 
-const get = (path = '/productarena/api/popular-compares', method = 'GET') =>
+const get = (path = '/api/popular-compares', method = 'GET') =>
   new Request(`https://ultrametric.ai${path}`, { method })
 
 describe('normalizeCompareIds', () => {
