@@ -5,6 +5,11 @@ that anyone can contest a verdict. This document covers the three contribution p
 a verdict, add evidence, or [add your product](#3-add-your-product) to an arena) plus local
 setup and style rules.
 
+Contributing to the **founder-ops corpus** (jurisdiction-scoped workflows, rule cards, sources,
+vendor reviews, business-logic modules) has its own workflow and review bar — see
+[governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) and the templates in
+[`templates/`](templates/).
+
 ## 1. Contest a verdict
 
 Every verdict shown on the site (battle round cards, product pages) carries a small
