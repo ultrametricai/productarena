@@ -2,7 +2,7 @@
 
 // WorkOS AuthKit session, client-side only. The site is a static export — every page ships the
 // same HTML to everyone — so "logged in" is purely a browser-side fact: one same-origin GET to
-// the Cloudflare worker's /productarena/auth/me (infra/cloudflare-proxy/worker.js — the worker
+// the Cloudflare worker's /auth/me (infra/cloudflare-proxy/worker.js — the worker
 // IS the auth backend; it verifies our HMAC-signed pa_session cookie) per page load, cached in
 // this module. Anything that goes wrong (401, worker not configured, or the page being served
 // off productarena.vercel.app where the worker doesn't exist) degrades to 'anonymous' — the
@@ -17,7 +17,7 @@ import { syncWatchlistFromServer } from './watchlist'
 
 // Same-origin path — the worker only exists on ultrametric.ai, and relative URLs mean the
 // session cookie flows with no CORS at all (simpler than the old cross-origin Ory setup).
-export const AUTH_BASE = '/productarena/auth'
+export const AUTH_BASE = '/auth'
 
 export type Session =
   | { state: 'loading' }

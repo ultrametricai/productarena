@@ -85,7 +85,7 @@ describe('account sync (syncWatchlistFromServer / write push-through)', () => {
     // GET, then the union PUT (local had a star the account was missing)
     expect(fetchMock).toHaveBeenCalledTimes(2)
     const [putUrl, putInit] = fetchMock.mock.calls[1] as [string, RequestInit]
-    expect(putUrl).toBe('/productarena/api/watchlist')
+    expect(putUrl).toBe('/api/watchlist')
     expect(putInit.method).toBe('PUT')
     expect(JSON.parse(String(putInit.body))).toEqual({ ids: ['shared', 'server-only', 'local-only'] })
   })

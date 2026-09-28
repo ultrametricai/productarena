@@ -187,7 +187,7 @@ describe('account sync (syncStackFromServer / write push-through)', () => {
     // GET, then the merged PUT (the device had a pick the account was missing) — written as v2.
     expect(fetchMock).toHaveBeenCalledTimes(2)
     const [putUrl, putInit] = fetchMock.mock.calls[1] as [string, RequestInit]
-    expect(putUrl).toBe('/productarena/api/my-stack')
+    expect(putUrl).toBe('/api/my-stack')
     expect(putInit.method).toBe('PUT')
     expect(JSON.parse(String(putInit.body))).toEqual({ stack: { payments: ['stripe'], crm: ['attio'] } })
   })

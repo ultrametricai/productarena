@@ -4,15 +4,15 @@
 // instead of re-declaring `const SITE = ...`.
 //
 // SITE_URL reads NEXT_PUBLIC_SITE_URL so builds still deployed at a *.vercel.app preview/prod
-// URL can override it; it already includes the /productarena basePath since the app is served
-// at ultrametric.ai/productarena, not at the domain root.
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ultrametric.ai/productarena'
-export const REPO = 'ultrametricai/productarena'
+// URL can override it. Since the 2026-09-28 rebrand (ProductArena became Ultrametric) the app
+// is served at the domain root — no path suffix, no basePath.
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://ultrametric.ai'
+export const REPO = 'ultrametricai/ultrametric'
 
-// Must match `basePath` in next.config.ts. Next.js rewrites next/link and next/navigation for
-// us, but plain <img>/<a> src/href values (e.g. unoptimized logos, hardcoded /data or /logos
-// references) need this prefix applied manually.
-export const BASE_PATH = '/productarena'
+// The app is served at the domain root since the 2026-09-28 rebrand, so there is no base path.
+// Kept (empty) alongside withBase() so the many call sites that prefix plain <img>/<a>
+// src/href values don't churn — if a basePath ever returns, this is the single place to set it.
+export const BASE_PATH = ''
 
 export function withBase(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`

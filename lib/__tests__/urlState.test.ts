@@ -6,9 +6,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { readParam, readParamAll, readParams, setParams } from '@/lib/urlState'
 
-// The site lives under next.config.ts's basePath — every test URL carries it, and every
-// assertion checks it survived (never a hardcoded path in the helper).
-const PATH = '/productarena/'
+// A real (non-root) pathname: every test URL carries it, and every assertion checks it
+// survived (never a hardcoded path in the helper) — this is what kept the old basePath safe
+// and now keeps any deep path safe.
+const PATH = '/processes'
 
 function setUrl(search: string, hash = '') {
   window.history.replaceState(null, '', `${PATH}${search}${hash}`)
@@ -41,7 +42,7 @@ describe('setParams patch semantics', () => {
   beforeEach(() => setUrl(''))
   afterEach(() => vi.restoreAllMocks())
 
-  it('sets a param and preserves the basePath pathname', () => {
+  it('sets a param and preserves the pathname', () => {
     setParams({ rank: 'initScore' })
     expect(url()).toBe(`${PATH}?rank=initScore`)
   })
