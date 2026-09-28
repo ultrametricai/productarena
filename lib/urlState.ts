@@ -12,9 +12,9 @@
 // query, so multiple components on one page (homepage: HomeModes + MegaTable + ProcessesTable)
 // each own their keys and never clobber each other's.
 //
-// basePath note: the next URL is always rebuilt from location.pathname (which already carries
-// next.config.ts's '/productarena' basePath) + the new search + the existing hash — never a
-// hardcoded path.
+// basePath note: the next URL is always rebuilt from location.pathname (which would carry any
+// next.config.ts basePath — none since the 2026-09-28 rebrand) + the new search + the existing
+// hash — never a hardcoded path.
 
 /** Current query params — empty during SSR, so mount-effect reads are the only sane callsite. */
 export function readParams(): URLSearchParams {

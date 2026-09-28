@@ -29,11 +29,11 @@ async function settledSession() {
 
 describe('login/registration flow URLs', () => {
   it('point at the worker auth backend (same-origin) with an encoded return_to', () => {
-    expect(loginUrl('https://ultrametric.ai/productarena/arena/crm')).toBe(
-      '/productarena/auth/login?return_to=https%3A%2F%2Fultrametric.ai%2Fproductarena%2Farena%2Fcrm',
+    expect(loginUrl('https://ultrametric.ai/arena/crm')).toBe(
+      '/auth/login?return_to=https%3A%2F%2Fultrametric.ai%2Farena%2Fcrm',
     )
-    expect(registrationUrl('https://ultrametric.ai/productarena')).toBe(
-      '/productarena/auth/login?screen_hint=sign-up&return_to=https%3A%2F%2Fultrametric.ai%2Fproductarena',
+    expect(registrationUrl('https://ultrametric.ai')).toBe(
+      '/auth/login?screen_hint=sign-up&return_to=https%3A%2F%2Fultrametric.ai',
     )
   })
 })
@@ -75,7 +75,7 @@ describe('session store state machine', () => {
     subscribeSession(listener)
     expect(await settledSession()).toEqual({ state: 'authenticated', email: 'founder@ultrametric.ai' })
     expect(listener).toHaveBeenCalled()
-    expect(fetchMock).toHaveBeenCalledWith('/productarena/auth/me', {
+    expect(fetchMock).toHaveBeenCalledWith('/auth/me', {
       credentials: 'include',
     })
   })
@@ -107,7 +107,7 @@ describe('session store state machine', () => {
     subscribeSession(() => {})
     await settledSession()
     // (an authenticated resolve also kicks off the one watchlist sync GET — filter to /auth/me)
-    expect(fetchMock.mock.calls.filter(([url]) => url === '/productarena/auth/me')).toHaveLength(1)
+    expect(fetchMock.mock.calls.filter(([url]) => url === '/auth/me')).toHaveLength(1)
   })
 
   it('kicks off exactly one watchlist sync and one stack sync when authenticated, none when anonymous', async () => {
@@ -116,8 +116,8 @@ describe('session store state machine', () => {
     subscribeSession(() => {})
     await settledSession()
     await vi.waitFor(() => {
-      expect(authed.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(1)
-      expect(authed.mock.calls.filter(([url]) => url === '/productarena/api/my-stack')).toHaveLength(1)
+      expect(authed.mock.calls.filter(([url]) => url === '/api/watchlist')).toHaveLength(1)
+      expect(authed.mock.calls.filter(([url]) => url === '/api/my-stack')).toHaveLength(1)
     })
 
     resetSessionForTests()
@@ -125,8 +125,8 @@ describe('session store state machine', () => {
     vi.stubGlobal('fetch', anon)
     subscribeSession(() => {})
     await settledSession()
-    expect(anon.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(0)
-    expect(anon.mock.calls.filter(([url]) => url === '/productarena/api/my-stack')).toHaveLength(0)
+    expect(anon.mock.calls.filter(([url]) => url === '/api/watchlist')).toHaveLength(0)
+    expect(anon.mock.calls.filter(([url]) => url === '/api/my-stack')).toHaveLength(0)
   })
 })
 
@@ -138,8 +138,8 @@ describe('fetchLogoutUrl', () => {
   it('returns the worker logout route with an encoded return_to — no network round-trip', async () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
-    await expect(fetchLogoutUrl('https://ultrametric.ai/productarena')).resolves.toBe(
-      '/productarena/auth/logout?return_to=https%3A%2F%2Fultrametric.ai%2Fproductarena',
+    await expect(fetchLogoutUrl('https://ultrametric.ai')).resolves.toBe(
+      '/auth/logout?return_to=https%3A%2F%2Fultrametric.ai',
     )
     expect(fetchMock).not.toHaveBeenCalled()
   })

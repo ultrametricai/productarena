@@ -1,17 +1,21 @@
 // Watchlist primitives — the ☆/★ star (components/WatchButton.tsx) and /watchlist page persist
 // starred product ids to localStorage under one key, and, for logged-in readers, sync them to
-// the account via the worker's session-gated GET/PUT /productarena/api/watchlist (see
+// the account via the worker's session-gated GET/PUT /api/watchlist (see
 // infra/cloudflare-proxy/worker.js "Watchlist API"). localStorage stays the source the UI reads
 // (instant, offline-safe); the server copy makes the list follow the account across devices.
 // The sync is strictly additive and fail-open: anonymous readers, the vercel.app origin (no
 // worker), or any network/storage failure just leave the list device-local.
 // Pure helpers (parse/toggle/merge) are separated from the browser bits so they're unit-testable.
 
+// NOTE: the 'pa-' prefix (here and on every other localStorage key/event: pa-my-stack,
+// pa-jurisdiction, pa-process-lens:*, pa-admin, …) is legacy-named from the pre-rebrand
+// ProductArena era. It stays deliberately — renaming storage keys would wipe readers' saved
+// watchlists and stacks.
 export const WATCHLIST_KEY = 'pa-watchlist'
 
 // Same-origin path to the worker route (like lib/session.ts's AUTH_BASE — the cookie flows with
 // no CORS at all; on origins without the worker the fetch 404s and sync stays off).
-export const WATCHLIST_API = '/productarena/api/watchlist'
+export const WATCHLIST_API = '/api/watchlist'
 
 // Same-tab change notifications: localStorage's native 'storage' event only fires in OTHER
 // tabs, so writers also dispatch this custom event for stars/list views in the current tab.

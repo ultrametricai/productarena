@@ -461,7 +461,7 @@ export function parseStoredStack(raw: string | null): string[] {
 // is a MAP { arenaId: productId[] } — an ORDERED list of picks per arena, first = primary —
 // only ids the catalog actually judges in that arena. It follows lib/watchlist.ts verbatim:
 // localStorage is the source the UI reads (instant, offline-safe); for logged-in readers it
-// syncs to the worker's session-gated GET/PUT /productarena/api/my-stack
+// syncs to the worker's session-gated GET/PUT /api/my-stack
 // (infra/cloudflare-proxy/worker.js "My Stack API", KV key stack:<user id>). Anonymous
 // readers, worker-less origins, and any network failure just leave the stack device-local.
 //
@@ -472,7 +472,7 @@ export function parseStoredStack(raw: string | null): string[] {
 export type StackMap = Record<string, string[]>
 
 export const STACK_KEY = 'pa-account-stack'
-export const STACK_API = '/productarena/api/my-stack'
+export const STACK_API = '/api/my-stack'
 // Same-tab change event — localStorage's 'storage' event only fires in OTHER tabs.
 export const STACK_EVENT = 'pa-account-stack-change'
 export const MAX_STACK_ARENAS = 100
