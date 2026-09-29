@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
+import InstallBanner from "@/components/InstallBanner";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
 import MobileNav from "@/components/MobileNav";
@@ -405,6 +406,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             inside overflow-x-auto wrappers would push the whole page wider than the viewport
             on phones instead of scrolling inside their wrapper. */}
         <main id="main" className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
+        {/* Sitewide install banner (founder 2026-09-29): the /v2 bottom module — the CLI/MCP
+            product's three install methods — closes every content page, above the footer. */}
+        <InstallBanner />
         {/* Sitewide footer — the landing site's footer, ported here as THE standard footer
             (founder 2026-09-29: one footer sitewide, like the top bar). Structure/copy follow
             the landing: wordmark + tagline, © + the made-from icons, and the landing link row
