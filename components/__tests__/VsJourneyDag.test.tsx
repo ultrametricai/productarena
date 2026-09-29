@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
-// VsJourneyDag — the journey DAG strip (founder ask 2026-09-29: the graph ON TOP of the terminal
-// output). What must hold:
+// VsJourneyDag — the journey DAG viewer (founder ask 2026-09-29; round-4 rework: taller, no
+// horizontal scroll, reveal-on-reach + zoom-out fit). What must hold:
 //   - the strip has NO timers of its own — everything derives from the shared rows/revealed state;
-//   - pre-run the FULL journey skeleton renders dim (every node pending) — the graph shows what
-//     WILL run, deterministic from the composed rows;
+//   - REVEAL-ON-REACH: pre-run ONLY the first node renders (dim); upcoming nodes are NOT shown —
+//     each appears when the reveal reaches its task row, so visible count == reached count;
+//   - NO horizontal scroll: the row is w-full flex (no overflow-x, no w-max) — clusters/nodes
+//     flex-shrink to fit, the zoom TIER steps chrome down as nodes accumulate (titles hide below
+//     the md tier for non-active nodes; icons and aria-labels stay), and the ACTIVE node keeps
+//     full size (data-dag-size="full") with its pulse;
 //   - nodes light progressively as the terminal reveal passes them (pending → active → done),
 //     with exactly the node whose rows are printing carrying the active state;
 //   - seeded mid-run events and semi-auto pauses render as diamond markers attached under the
@@ -16,7 +20,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
 import VsJourneyDag, {
   activeDagTaskId,
+  dagNodeReached,
   dagNodeState,
+  dagTierShowsTitle,
+  dagVisibleTaskIds,
+  dagZoomTier,
   deriveJourneyDag,
   type VsDagSourceRow,
 } from '@/components/VsJourneyDag'
@@ -119,6 +127,35 @@ describe('deriveJourneyDag — pure derivation', () => {
     expect(activeDagTaskId(clusters, 8)).toBe('site_001')
     expect(activeDagTaskId(clusters, UNIT_ROWS.length)).toBe(null) // run complete — nothing active
   })
+
+  it('reveal-on-reach (round 4): a node is visible once the reveal reaches its task row; pre-run only the FIRST node shows', () => {
+    const { clusters } = deriveJourneyDag(UNIT_ROWS)
+    const [a] = clusters[0].nodes
+    const [b] = clusters[1].nodes
+    expect(dagNodeReached(a, 0)).toBe(false)
+    expect(dagNodeReached(a, 1)).toBe(true) // its task row is the next to print — the cluster started
+    expect(dagNodeReached(b, 6)).toBe(false) // upcoming — never shown early
+    expect(dagNodeReached(b, 7)).toBe(true)
+    // Pre-run fallback: nothing reached → exactly the journey's first node, dim.
+    expect(dagVisibleTaskIds(clusters, 0)).toEqual(new Set(['form_001']))
+    expect(dagVisibleTaskIds(clusters, 2)).toEqual(new Set(['form_001']))
+    expect(dagVisibleTaskIds(clusters, 7)).toEqual(new Set(['form_001', 'site_001']))
+    expect(dagVisibleTaskIds(clusters, UNIT_ROWS.length)).toEqual(new Set(['form_001', 'site_001']))
+  })
+
+  it('zoom tiers step down with the visible count; titles hide below md (icons stay)', () => {
+    expect(dagZoomTier(1)).toBe('xl')
+    expect(dagZoomTier(5)).toBe('xl')
+    expect(dagZoomTier(6)).toBe('md')
+    expect(dagZoomTier(9)).toBe('md')
+    expect(dagZoomTier(10)).toBe('sm')
+    expect(dagZoomTier(14)).toBe('sm')
+    expect(dagZoomTier(15)).toBe('xs')
+    expect(dagTierShowsTitle('xl')).toBe(true)
+    expect(dagTierShowsTitle('md')).toBe(true)
+    expect(dagTierShowsTitle('sm')).toBe(false)
+    expect(dagTierShowsTitle('xs')).toBe(false)
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -126,7 +163,7 @@ describe('deriveJourneyDag — pure derivation', () => {
 // ---------------------------------------------------------------------------
 
 describe('VsJourneyDag — rendering', () => {
-  it('renders the full dim skeleton at revealed=0 and never starts a reveal clock of its own', () => {
+  it('pre-run renders ONLY the first node, dim, and never starts a reveal clock of its own', () => {
     // No interval, ever — the strip only derives from rows/revealed (React itself may schedule
     // setTimeout work, so the interval primitive is the attributable assertion; the integration
     // suite below additionally proves the strip stays frozen while the shared ticker is stopped).
@@ -137,24 +174,78 @@ describe('VsJourneyDag — rendering', () => {
     } finally {
       spy.mockRestore()
     }
+    // Reveal-on-reach (round 4): upcoming nodes are NOT shown — only the journey's first node,
+    // dim (pending); the upcoming cluster doesn't render either.
     const nodes = screen.getByTestId('vs-journeydag').querySelectorAll('[data-testid^="vs-dag-node-"]')
-    expect(nodes.length).toBe(2)
-    for (const n of nodes) expect(n.getAttribute('data-dag-state')).toBe('pending')
-    // Skeleton = no vendor dots, event marker present but dim (it shows what WILL run).
+    expect(nodes.length).toBe(1)
+    expect(screen.getByTestId('vs-dag-node-form_001').getAttribute('data-dag-state')).toBe('pending')
+    expect(screen.queryByTestId('vs-dag-node-site_001')).toBeNull()
+    expect(screen.getAllByTestId('vs-dag-cluster')).toHaveLength(1)
+    // No vendor dots yet; the first node's event marker is present but dim.
     expect(screen.queryByTestId('vs-dag-vendor-best-legal')).toBeNull()
     expect(screen.getByTestId('vs-dag-marker-event').className).toContain('fuchsia-400/30')
   })
 
-  it('lights nodes with the reveal: active pulses emerald, done fills; the vendor logo dot attaches once its step printed', () => {
+  it('lights nodes with the reveal: active pulses emerald at FULL size, done fills; upcoming stays hidden; the vendor logo dot attaches once its step printed', () => {
     const { rerender } = render(<VsJourneyDag rows={UNIT_ROWS} revealed={2} running />)
-    expect(screen.getByTestId('vs-dag-node-form_001').getAttribute('data-dag-state')).toBe('active')
-    expect(screen.getByTestId('vs-dag-node-form_001').className).toContain('emerald')
-    expect(screen.getByTestId('vs-dag-node-site_001').getAttribute('data-dag-state')).toBe('pending')
+    const activeNode = screen.getByTestId('vs-dag-node-form_001')
+    expect(activeNode.getAttribute('data-dag-state')).toBe('active')
+    expect(activeNode.getAttribute('data-dag-size')).toBe('full') // the active node keeps full size
+    expect(activeNode.className).toContain('emerald')
+    expect(screen.queryByTestId('vs-dag-node-site_001')).toBeNull() // upcoming — not reached yet
     expect(screen.queryByTestId('vs-dag-vendor-best-legal')).toBeNull() // top-pick step not printed yet
     rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={6} running />)
     expect(screen.getByTestId('vs-dag-node-form_001').getAttribute('data-dag-state')).toBe('done')
+    expect(screen.queryByTestId('vs-dag-node-site_001')).toBeNull() // still one row short of reached
     expect(screen.getByTestId('vs-dag-vendor-best-legal')).toBeTruthy()
     expect(screen.getByTestId('vs-dag-marker-event').className).toContain('fuchsia-400/90') // event revealed
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={8} running />)
+    expect(screen.getByTestId('vs-dag-node-site_001').getAttribute('data-dag-state')).toBe('active')
+  })
+
+  it('zoom-fit invariants: no horizontal scroll (w-full row, no overflow-x), non-active nodes flex-shrink, visible == reached', () => {
+    for (const revealed of [0, 2, 6, 8, UNIT_ROWS.length]) {
+      const view = render(<VsJourneyDag rows={UNIT_ROWS} revealed={revealed} running={false} />)
+      const strip = screen.getByTestId('vs-journeydag-strip')
+      expect(strip.className).not.toContain('overflow-x') // the viewer never scrolls sideways
+      const row = strip.querySelector('ol')!
+      expect(row.className).toContain('w-full') // …because the row always fits the container
+      expect(row.className).not.toContain('w-max')
+      const nodes = Array.from(strip.querySelectorAll<HTMLElement>('[data-testid^="vs-dag-node-"]'))
+      // Visible node count == reached count (pre-run: the single dim first node).
+      const { clusters } = deriveJourneyDag(UNIT_ROWS)
+      const reached = dagVisibleTaskIds(clusters, revealed)
+      expect(nodes.length).toBe(reached.size)
+      for (const n of nodes) {
+        if (n.getAttribute('data-dag-size') === 'full') continue // the active node is flex-none
+        // Every non-active node sits in a shrinkable flex cell — the fit mechanism.
+        expect(n.parentElement!.parentElement!.className).toContain('flex-1')
+        expect(n.parentElement!.parentElement!.className).toContain('min-w-0')
+      }
+      view.unmount()
+    }
+  })
+
+  it('at compressed tiers the non-active titles hide (icons + aria-labels stay); the active node keeps its title', () => {
+    // A 12-node journey (one cluster per node) pushes the tier to 'sm' once traversed.
+    const many: VsDagSourceRow[] = []
+    for (let i = 0; i < 12; i++) {
+      const t = task(`task_${i}`, `Process ${i}`)
+      many.push({ kind: 'phase', key: `phase-${i}`, title: `Phase ${i}`, chainId: 'ship-v1', chainName: 'Ship v1', note: null })
+      many.push({ kind: 'task', key: `task-task_${i}`, task: t })
+      many.push({ kind: 'step', key: `step-task_${i}-0`, step: t.steps[0], top: null, outNote: null, outMinutes: 10 })
+    }
+    // Reveal into the LAST node's span: 11 done + 1 active = 12 visible → tier 'sm'.
+    render(<VsJourneyDag rows={many} revealed={many.length - 1} running />)
+    expect(screen.getByTestId('vs-journeydag').getAttribute('data-dag-tier')).toBe('sm')
+    const active = screen.getByTestId('vs-dag-node-task_11')
+    expect(active.getAttribute('data-dag-state')).toBe('active')
+    expect(active.getAttribute('data-dag-size')).toBe('full')
+    expect(active.textContent).toContain('Process 11') // the active node stays legible
+    const done = screen.getByTestId('vs-dag-node-task_3')
+    expect(done.textContent).not.toContain('Process 3') // compressed: title hidden…
+    expect(done.getAttribute('aria-label')).toBe('Process 3') // …accessible name stays
+    expect(done.querySelector('[aria-hidden]')).toBeTruthy() // …and the icon stays
   })
 
   it('renders pause diamonds and pulses the one the run is waiting on', () => {
@@ -175,7 +266,7 @@ describe('VsJourneyDag — rendering', () => {
 
   it('node click calls onNodeClick with the process id (the parent scrolls the terminal)', () => {
     const onNodeClick = vi.fn()
-    render(<VsJourneyDag rows={UNIT_ROWS} revealed={0} running={false} onNodeClick={onNodeClick} />)
+    render(<VsJourneyDag rows={UNIT_ROWS} revealed={UNIT_ROWS.length} running={false} onNodeClick={onNodeClick} />)
     fireEvent.click(screen.getByTestId('vs-dag-node-site_001'))
     expect(onNodeClick).toHaveBeenCalledWith('site_001')
     // The secondary ↗ links the real process page.
@@ -252,18 +343,23 @@ beforeEach(() => {
   window.history.replaceState(null, '', '/')
 })
 
-describe('VsJourneyDag inside VirtualStartup — the live strip above the terminal', () => {
-  it('pre-run: the full default-journey skeleton renders dim above the terminal (13 nodes, all pending)', () => {
+describe('VsJourneyDag inside VirtualStartup — the live viewer above the terminal', () => {
+  it('pre-run: ONLY the first node renders, dim, above the terminal (upcoming nodes hidden — reveal-on-reach)', () => {
     renderIt()
     // The strip precedes the terminal in document order — it sits on top of the output.
     const strip = screen.getByTestId('vs-journeydag')
     const term = screen.getByTestId('vs-terminal')
     expect(strip.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    expect(dagNodes().length).toBe(13) // the default combo's composed journey, before any run
+    expect(dagNodes().length).toBe(1) // the journey's first node only — nothing upcoming shows
     expect(new Set(dagStates())).toEqual(new Set(['pending']))
+    // The taller, never-scrolling viewer (round 4): fixed height classes, no overflow-x.
+    const body = screen.getByTestId('vs-journeydag-strip')
+    expect(body.className).toContain('h-[140px]')
+    expect(body.className).toContain('sm:h-[200px]')
+    expect(body.className).not.toContain('overflow-x')
   })
 
-  it('lights up progressively with the terminal reveal (never its own timers): some done, at most one active, all done at completion', () => {
+  it('reveals + lights progressively with the terminal reveal (never its own timers): visible == traversed, at most one active, whole journey fitted at completion', () => {
     renderIt()
     vi.useFakeTimers()
     try {
@@ -274,8 +370,11 @@ describe('VsJourneyDag inside VirtualStartup — the live strip above the termin
       const mid = dagStates()
       expect(mid.filter((s) => s === 'done').length).toBeGreaterThan(0)
       expect(mid.filter((s) => s === 'active').length).toBeLessThanOrEqual(1)
-      expect(mid.filter((s) => s === 'pending').length).toBeGreaterThan(0)
-      // With the ticker stopped, nothing advances — the strip has no clock of its own.
+      // Reveal-on-reach mid-run: every visible node has been reached (at most the one just
+      // reached is still pending), and the upcoming tail is NOT rendered yet.
+      expect(mid.filter((s) => s === 'pending').length).toBeLessThanOrEqual(1)
+      expect(mid.length).toBeLessThan(13)
+      // With the ticker stopped, nothing advances (nothing new appears) — no clock of its own.
       const frozen = dagStates()
       fireEvent.click(screen.getByRole('button', { name: /stop/i }))
       act(() => {
@@ -286,6 +385,8 @@ describe('VsJourneyDag inside VirtualStartup — the live strip above the termin
       act(() => {
         vi.runAllTimers()
       })
+      // Completed run: the WHOLE traversed journey is visible and fitted — all 13 nodes done.
+      expect(dagStates()).toHaveLength(13)
       expect(new Set(dagStates())).toEqual(new Set(['done']))
     } finally {
       vi.useRealTimers()
@@ -311,6 +412,10 @@ describe('VsJourneyDag inside VirtualStartup — the live strip above the termin
 
   it('semi-auto: pause markers render for unasserted decisions, and each in-run pick redraws ONLY the unrevealed tail (lit nodes keep identity and order)', () => {
     renderIt()
+    // Entity is DEFAULT-ASSERTED (founder round 4, item 5) — clear it back to Not set so the
+    // run asks it in-run like the other decisions this test answers.
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     // Every unasserted decision (plus the naming card) is a diamond on the strip before the run.
     expect(screen.getAllByTestId('vs-dag-marker-pause').length).toBeGreaterThan(0)
