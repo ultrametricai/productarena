@@ -174,6 +174,9 @@ const pickDecision = (id: string, optionName: string | RegExp) => {
 // The trigger's title carries the asserted option's full label (or 'not set').
 const decisionTitle = (id: string) => screen.getByTestId(`vs-decision-${id}`).getAttribute('title') ?? ''
 const rhythmSection = () => screen.getByText('The operating rhythm').closest('section')!
+// The journey DAG strip (components/VsJourneyDag.tsx, 2026-09-29) mirrors the process and phase
+// titles above the terminal, so journey-composition assertions scope to the terminal body.
+const termBody = () => within(screen.getByTestId('vs-terminal-body'))
 const showYearTab = () => fireEvent.click(within(rhythmSection()).getByRole('button', { name: 'Year one' }))
 
 // URL state is a real contract here (?preset / ?yc) — start every test from a clean URL.
@@ -207,11 +210,11 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
   it('defaults to the C-Corp seed journey with judged top-vendor pills and day markers', () => {
     renderIt()
     showAll()
-    expect(screen.getByText('Incorporate C-Corp')).toBeTruthy()
+    expect(termBody().getByText('Incorporate C-Corp')).toBeTruthy()
     expect(screen.queryByText('Set up an LLC')).toBeNull()
-    expect(screen.getByText('Founder agreement & equity split')).toBeTruthy()
-    expect(screen.getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
-    expect(screen.getByText('Set up subscription billing')).toBeTruthy()
+    expect(termBody().getByText('Founder agreement & equity split')).toBeTruthy()
+    expect(termBody().getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
+    expect(termBody().getByText('Set up subscription billing')).toBeTruthy()
     expect(screen.queryByText('Send an invoice')).toBeNull()
     // The judged top vendor renders as a link to its product page with its step score.
     const pill = screen.getByRole('link', { name: /best legal · 83/i })
@@ -227,7 +230,7 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     // Choice change resets the timeline — nothing revealed until re-run.
     expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
     showAll()
-    expect(screen.getByText('Set up an LLC')).toBeTruthy()
+    expect(termBody().getByText('Set up an LLC')).toBeTruthy()
     expect(screen.queryByText('Incorporate C-Corp')).toBeNull()
 
     pickDecision('funding', 'Bootstrap')
@@ -236,7 +239,7 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     showAll()
     expect(screen.queryByText('Raise pre-seed (SAFEs)')).toBeNull()
     expect(screen.queryByText('Founder agreement & equity split')).toBeNull()
-    expect(screen.getByText('Send an invoice')).toBeTruthy()
+    expect(termBody().getByText('Send an invoice')).toBeTruthy()
     expect(screen.queryByText('Set up subscription billing')).toBeNull()
   })
 
@@ -244,10 +247,10 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     renderIt()
     showAll()
     // Defaults: hire yes (playbook in), enterprise no, PH yes, name-first.
-    expect(screen.getByText('Hire first employee')).toBeTruthy()
+    expect(termBody().getByText('Hire first employee')).toBeTruthy()
     expect(screen.queryByText('Complete SOC 2 Type II')).toBeNull()
-    expect(screen.getByText('Launch on Product Hunt & directories')).toBeTruthy()
-    expect(screen.getByText('Set up a password manager')).toBeTruthy() // compliance chain always runs
+    expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // compliance chain always runs
 
     pickDecision('hire', 'Stay founders-only')
     pickDecision('enterprise', 'Chase the enterprise deal')
@@ -258,8 +261,8 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     expect(screen.getAllByText('Complete SOC 2 Type II').length).toBeGreaterThan(0)
     expect(screen.queryByText('Launch on Product Hunt & directories')).toBeNull()
     // Build-first: the ship-v1 phase renders before name & brand in document order.
-    const build = screen.getByText('Build & ship v1')
-    const name = screen.getByText('Name & brand')
+    const build = termBody().getByText('Build & ship v1')
+    const name = termBody().getByText('Name & brand')
     expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })
@@ -451,7 +454,7 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     renderIt()
     showAll()
     const notSet = screen.getByTestId('vs-terminal-body').textContent
-    expect(screen.getByText('Incorporate C-Corp')).toBeTruthy()
+    expect(termBody().getByText('Incorporate C-Corp')).toBeTruthy()
     // Re-run with every decision explicitly asserted to its default value: same rows (each
     // assertion resets the terminal; the final showAll replays the full journey).
     for (const [id, name] of [
@@ -510,12 +513,12 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     showAll()
     // The naming step's artifact carries the identity (terminal body; the panel mirrors it).
     expect(within(screen.getByTestId('vs-terminal-body')).getAllByText(/Holofield, Inc\./).length).toBeGreaterThan(0)
-    expect(screen.getByText('Send an invoice')).toBeTruthy()
+    expect(termBody().getByText('Send an invoice')).toBeTruthy()
     expect(screen.queryByText('Set up subscription billing')).toBeNull()
     expect(screen.queryByText('Launch on Product Hunt & directories')).toBeNull()
     expect(screen.getAllByText('Complete SOC 2 Type II').length).toBeGreaterThan(0)
-    const build = screen.getByText('Build & ship v1')
-    const name = screen.getByText('Name & brand')
+    const build = termBody().getByText('Build & ship v1')
+    const name = termBody().getByText('Name & brand')
     expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
@@ -564,7 +567,7 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     // PILL still shows its own name — scope to the terminal body).
     expect(within(screen.getByTestId('vs-terminal-body')).queryByText(/Holofield/)).toBeNull()
     expect(screen.queryByText('Founder agreement & equity split')).toBeNull()
-    expect(screen.getByText('Send an invoice')).toBeTruthy()
+    expect(termBody().getByText('Send an invoice')).toBeTruthy()
   })
 })
 
@@ -604,8 +607,8 @@ describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on th
     expect(decisionTitle('product')).toContain('not set')
     expect(decisionTitle('team')).toContain('not set')
     showAll()
-    expect(screen.getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
-    expect(screen.getByText('Hire first employee')).toBeTruthy()
+    expect(termBody().getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
+    expect(termBody().getByText('Hire first employee')).toBeTruthy()
   })
 
   it('Bootstrapped asserts bootstrap + invoice-billed + founders-only: the journey drops the raise and the hire, bills by invoice', () => {
@@ -618,7 +621,7 @@ describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on th
     showAll()
     expect(screen.queryByText('Raise pre-seed (SAFEs)')).toBeNull()
     expect(screen.queryByText('Hire first employee')).toBeNull()
-    expect(screen.getByText('Send an invoice')).toBeTruthy()
+    expect(termBody().getByText('Send an invoice')).toBeTruthy()
     expect(screen.queryByText('Set up subscription billing')).toBeNull()
   })
 
@@ -851,8 +854,8 @@ describe('VirtualStartup — YC batch mode', () => {
     const artifact = deal.closest('[data-testid="vs-artifact"]')!
     expect((artifact as HTMLElement).getAttribute('data-synthetic')).toBe('true')
     // Demo-Day timing: the raise phase renders after launch day in document order.
-    const raise = screen.getByText('Raise the seed')
-    const launch = screen.getByText('Launch day')
+    const raise = termBody().getByText('Raise the seed')
+    const launch = termBody().getByText('Launch day')
     expect(launch.compareDocumentPosition(raise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     // Named once in the mode disclosure and once on the relocated phase itself.
     expect(screen.getAllByText(/compresses to Demo-Day timing/)).toHaveLength(2)

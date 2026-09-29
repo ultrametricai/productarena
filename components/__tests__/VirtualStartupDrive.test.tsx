@@ -226,7 +226,8 @@ describe('semi-auto — the run pauses at each unasserted decision and asks inli
     renderIt()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd({ ...DEFAULT_ANSWERS, entity: 'llc', team: 'solo', funding: 'bootstrap' }, null)
-    expect(screen.getByText('Set up an LLC')).toBeTruthy()
+    // Scoped to the terminal body — the journey DAG strip mirrors the process titles above it.
+    expect(within(screen.getByTestId('vs-terminal-body')).getByText('Set up an LLC')).toBeTruthy()
     expect(screen.queryByText('Incorporate C-Corp')).toBeNull()
     expect(screen.queryByText('Founder agreement & equity split')).toBeNull()
     expect(screen.queryByText('Raise pre-seed (SAFEs)')).toBeNull()
