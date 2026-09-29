@@ -1,14 +1,15 @@
 {
-  "hash": "74cf456c48fb3a42cd78ef43f1992b41ba2830e75b22f4d33aee31af83ec4468",
+  "hash": "ce2daa2e3196c7d73544a3d9f1467da6d83a3072af7487f1b7c29055a4bf5496",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe documents a seller-side catalog feed (CSV) containing product/variant rows with price and availability fields, plus checkout completion via shared payment tokens and delegated checkout webhooks, and agent-builder docs describe 'product feed ingestion' so agents can present offers and checkout. However, the mechanism is a seller-pushed feed into Stripe's index rather than a documented universal read/query API that any developer/agent can call to fetch offer data for an arbitrary listed product, and it's gated behind private preview, onboarding agreements (OCA), and US/Canada/EU-only availability. Missing for 10: a documented public read/query endpoint or protocol response schema for agents to pull offer data on demand, and independent/hands-on confirmation of catalog read access working end-to-end.",
+    "rationale": "Stripe's ACS lets sellers publish a structured catalog (CSV feed with product/variant/price/availability rows) that agent-side integrations can ingest, and checkout completion is surfaced via shared payment tokens / checkout sessions, giving developers a path to read offer data and reach checkout. But the read/discovery path is not an open universal API — it requires seller onboarding, region gating (US/Canada/select EU only), an explicit Open Commerce Agreement between agent and seller, and much of it (embedded checkout, agent-as-intermediary) is still private preview. Missing for 10: a public, unauthenticated read endpoint for arbitrary listed products, confirmation that variant/availability data is queryable in real time (vs daily/15-min batch feeds), and evidence the checkout-link discovery works outside gated OCA relationships.",
     "evidenceIds": [
       "stripe-ac-supp-seller-catalog-feed",
+      "stripe-agentic-commerce-docs-14",
+      "stripe-agentic-commerce-docs-29",
       "stripe-ac-supp-embedded-checkout-oca",
-      "stripe-ac-supp-acp-custom-checkout",
       "stripe-ac-supp-chat-commerce"
     ],
     "productId": "stripe-agentic-commerce",
