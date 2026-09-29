@@ -38,14 +38,6 @@ export default function TechnologiesPage() {
           {result.totalArenas} arenas: how many products ship it, how much more agent-ready the shippers are, and how far it
           reaches across markets. Pros and cons are editorial; every number is recomputable from the committed evidence.
         </p>
-        <p className="mt-2 text-xs text-zinc-500">
-          &ldquo;Readiness lift&rdquo; is the mean AGENT-READY score of products shipping a surface minus those without —
-          correlation, not causation. Per-capability product lists live on the{' '}
-          <Link href="/global" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
-            capability adoption
-          </Link>{' '}
-          pages.
-        </p>
       </div>
 
       <ControlSurfacesTable surfaces={result.surfaces} emerging={result.emerging} />

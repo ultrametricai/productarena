@@ -300,15 +300,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
               </Link>
-              {/* Founder 2026-09-24 ("i don't see /technologies"): Control surfaces gets a
-                  top-level entry — a dropdown-only link wasn't discoverable. */}
-              <Link
-                href="/technologies"
-                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
-              >
-                <GeoMark seed="technologies" title="Technologies — API, MCP, CLI & other control surfaces, ranked from fleet-wide judged evidence" size={13} className="hidden text-zinc-500 sm:inline-flex" />
-                Technologies
-              </Link>
+              {/* Technologies moved back under Explore → More views (founder 2026-09-29,
+                  reversing the 2026-09-24 top-level entry). */}
               {/* geo: every Explore destination wears its deterministic concept mark
                   (components/GeoMark.tsx), the same mark it wears on its own page header. */}
               {/* Founder 2026-09-21: the ranking entries come in TWO labeled groups so it's
