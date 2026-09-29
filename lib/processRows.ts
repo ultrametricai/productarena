@@ -96,20 +96,31 @@ function derivedVendorsFor(t: ProcessTask, seed?: { id: string; label: string; a
 
 // ---- Playbook rows (founder 2026-09-29: "combine playbooks and all processes into one table
 // so we have one view for the processes under the process search"): the curated chains
-// (journeys/chains.json) serialized for the SAME table the process rows render in — a leading
-// 'Playbooks' group in the grouped default, distinct playbook rows in the flat sorted view.
+// (journeys/chains.json) serialized for the SAME table the process rows render in. Founder
+// 2026-09-29 follow-up ("we don't need to say 'playbook' on those playbooks… playbooks are
+// still processes"): no category label and no leading group — in the grouped default each
+// chain row folds into its DOMINANT area (the area of its first constituent process) at that
+// constituent's timeOrder position; the flat sorted view keeps its interleaving semantics.
 // Server-side like buildProcessRows so the client table never imports the node-only loaders.
 export function buildPlaybookRows(): PlaybookRow[] {
   return loadChains().map((chain) => {
     const tasks = chainTasks(chain)
     const nodes = tasks.flatMap((t) => t.dag.nodes)
     const ceiling = computeCeiling(nodes)
+    // The dominant area: where the chain's journey STARTS — its first constituent process's
+    // phase resolved through the same curated phase→area map every process row uses.
+    const dominantArea = areaOf(tasks[0].phase)
     return {
       id: chain.id,
       title: chain.name,
       tagline: chain.tagline,
       icon: chainIcon(chain.id),
       href: `/processes/chains/${chain.id}`,
+      dominantArea,
+      areaRank: areaRank(dominantArea),
+      // The chain's aggregate timeline position — its first constituent's timeOrder, so the
+      // grouped view slots it into the area right where a founder actually starts it.
+      timeOrder: tasks[0].timeOrder,
       // The constituent processes as icon chips (the old playbooks table's 'Processes' column),
       // plus their phases so the table's phase filter can honestly scope playbooks too.
       processes: tasks.map((t) => ({ id: t.id, icon: processIcon(t.id), title: t.title, phase: t.phase })),

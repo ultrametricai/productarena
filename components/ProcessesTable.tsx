@@ -27,10 +27,14 @@ import { readParams, setParams } from '@/lib/urlState'
 // switches to the flat sorted table; a subtle "grouped by area" reset pill returns. The
 // grouped view is the no-param default — the ?order= URL contract below is unchanged.
 //
-// ONE combined view (founder 2026-09-29): the curated end-to-end playbooks are rows in this
-// same table — a leading 'Playbooks' group in the grouped default, and distinct playbook rows
-// (chip + tagline + route strip) in the flat view, interleaved where the sort applies to their
-// aggregate ceiling/steps/title and appended after the processes on the per-process orderings.
+// ONE combined view (founder 2026-09-29): the curated end-to-end chains are rows in this same
+// table. Founder follow-up the same day ("we don't need to say 'playbook' on those playbooks…
+// playbooks are still processes — just more abstract or general processes with higher
+// complexity"): no 'playbook' chip and no leading group — in the grouped default each chain row
+// folds into its DOMINANT area (its first constituent process's area) at that constituent's
+// timeOrder position; the constituent icon chips + route-dot strip signal composition without a
+// category label. The flat view keeps its semantics: interleaved where the sort applies to the
+// aggregate ceiling/steps/title, appended after the processes on the per-process orderings.
 // The /processes page passes `playbooks`; surfaces that omit it (the homepage's process mode)
 // render exactly the process-only table they always did.
 //
@@ -73,7 +77,7 @@ export interface ProcessRow {
   vendors: Array<{ id: string; label: string; arena: string | null; hasLogo: boolean }>
 }
 
-// A curated end-to-end playbook (journeys/chains.json) as a row in the SAME table (founder
+// A curated end-to-end chain (journeys/chains.json) as a row in the SAME table (founder
 // 2026-09-29: one view for the processes under the process search — the separate playbooks
 // section is gone). Serialized server-side by lib/processRows.ts buildPlaybookRows.
 export interface PlaybookRow {
@@ -82,6 +86,13 @@ export interface PlaybookRow {
   tagline: string
   icon: string
   href: string
+  // The dominant area — the area of the chain's FIRST constituent process (founder 2026-09-29:
+  // playbooks are still processes, so a chain row folds into an area group, not its own group)
+  // — with its lifecycle rank and that first constituent's timeOrder, all resolved server-side,
+  // so the grouped view slots the row into the area at its journey position.
+  dominantArea: string
+  areaRank: number
+  timeOrder: number
   // The constituent processes (icon chips in the Phase column) and their distinct phases —
   // the phase filter scopes playbooks by membership, not by a single phase they don't have.
   processes: Array<{ id: string; icon: string; title: string; phase: string }>
@@ -347,26 +358,36 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
   }
 
   // The grouped view's area sections: filtered rows bucketed by area, areas in founder-lifecycle
-  // order (areaRank rides on every row), rows in timeOrder within each area, plus the header
-  // stats (count + the area's average agent ceiling). The phase filter above collapses this to
-  // the matching area(s) for free — filtered already only holds that phase's rows.
+  // order (areaRank rides on every row), rows in timeOrder within each area. Chain rows fold
+  // into their DOMINANT area (founder 2026-09-29: playbooks are still processes — no leading
+  // 'Playbooks' group) at their first constituent's timeOrder; on a timeOrder tie the plain
+  // process leads (a chain shares its first constituent's timeOrder, so the constituent reads
+  // first, then the chain that starts with it), chain–chain ties resolve by title. The phase
+  // filter above collapses this to the matching area(s) for free — filtered/filteredPlaybooks
+  // already only hold that phase's rows.
   const groups = useMemo(() => {
     if (!grouped) return null
-    const byArea = new Map<string, ProcessRow[]>()
-    for (const r of filtered) {
-      const bucket = byArea.get(r.area)
-      if (bucket) bucket.push(r)
-      else byArea.set(r.area, [r])
+    const byArea = new Map<string, { areaRank: number; items: FlatItem[] }>()
+    const add = (area: string, areaRank: number, item: FlatItem) => {
+      const bucket = byArea.get(area)
+      if (bucket) bucket.items.push(item)
+      else byArea.set(area, { areaRank, items: [item] })
     }
-    return [...byArea.values()]
-      .map((rs) => ({
-        area: rs[0].area,
-        areaRank: rs[0].areaRank,
-        avgPct: Math.round(rs.reduce((sum, r) => sum + r.pct, 0) / rs.length),
-        rows: [...rs].sort((a, b) => a.timeOrder - b.timeOrder),
+    for (const r of filtered) add(r.area, r.areaRank, { kind: 'process', row: r })
+    for (const p of filteredPlaybooks) add(p.dominantArea, p.areaRank, { kind: 'playbook', row: p })
+    return [...byArea.entries()]
+      .map(([area, g]) => ({
+        area,
+        areaRank: g.areaRank,
+        items: [...g.items].sort(
+          (a, b) =>
+            a.row.timeOrder - b.row.timeOrder
+            || (a.kind === b.kind ? 0 : a.kind === 'process' ? -1 : 1)
+            || a.row.title.localeCompare(b.row.title),
+        ),
       }))
       .sort((a, b) => a.areaRank - b.areaRank)
-  }, [filtered, grouped])
+  }, [filtered, filteredPlaybooks, grouped])
 
   // Which ordering the adaptive metric column shows.
   const metric: Metric = (['order', 'cadence', 'annoyance', 'risk', 'growth'] as const).includes(column as Metric)
@@ -461,25 +482,20 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
     )
   }
 
-  // One playbook row — visually distinct from a process row (the 'playbook' chip + tagline +
-  // per-step route strip) but living under the same columns: constituent-process chips where a
-  // process shows its phase, the aggregate ceiling, agent/total steps with the route dots, and
-  // an honest dash on the per-process metric axes it doesn't have.
+  // One chain row — no category label (founder 2026-09-29: "we don't need to say 'playbook'…
+  // playbooks are still processes"): the tagline, multi-icon constituent chips, and per-step
+  // route strip naturally signal composition under the same columns — constituent-process chips
+  // where a process shows its phase, the aggregate ceiling, agent/total steps with the route
+  // dots, and an honest dash on the per-process metric axes it doesn't have.
   function playbookRow(p: PlaybookRow): ReactNode {
     return (
       <tr key={`playbook-${p.id}`} className="transition hover:bg-zinc-800/70">
         <td className="max-w-[260px] px-2 py-2">
           <span className="flex items-center gap-1.5">
-            <IconChip icon={p.icon} title={`${p.title} — end-to-end playbook`} />
+            <IconChip icon={p.icon} title={`${p.title} — multi-process`} />
             <Link href={p.href} className="font-medium hover:text-emerald-300">
               {p.title}
             </Link>
-            <span
-              className="shrink-0 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-1.5 py-px text-[10px] text-emerald-300"
-              title="End-to-end playbook — several processes run back to back as one walkthrough"
-            >
-              playbook
-            </span>
           </span>
           <p className="mt-0.5 text-xs text-zinc-500">{p.tagline}</p>
         </td>
@@ -500,7 +516,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
           <span className="flex items-center gap-1.5 whitespace-nowrap font-mono text-xs tabular-nums text-zinc-400">
             <Link
               href={p.href}
-              title={`${p.agentSteps} of ${p.totalSteps} combined steps are agent-runnable — open the start-to-finish playbook`}
+              title={`${p.agentSteps} of ${p.totalSteps} combined steps are agent-runnable — open the start-to-finish walkthrough`}
               className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
             >
               {p.agentSteps}/{p.totalSteps}
@@ -517,12 +533,12 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
           </span>
         </td>
         <td className="whitespace-nowrap px-2 py-2">
-          <span className="text-xs text-zinc-600" title="Curated playbook — the per-process orderings (timeline, cadence, annoyance, risk, growth) don't apply; playbooks rank by their aggregate ceiling">
+          <span className="text-xs text-zinc-600" title="Multi-process row — the constituent processes carry the timeline/cadence/annoyance/risk/growth values; the combined row ranks by its aggregate ceiling">
             —
           </span>
         </td>
         <td className="hidden px-2 py-2 lg:table-cell">
-          <Link href={p.href} className="text-[10px] text-zinc-500 transition hover:text-emerald-300" title="A playbook spans the software of each process it runs — open it for the per-step options">
+          <Link href={p.href} className="text-[10px] text-zinc-500 transition hover:text-emerald-300" title="A multi-process row spans the software of each process it runs — open it for the per-step options">
             see per-step →
           </Link>
         </td>
@@ -593,50 +609,35 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
-            {/* Grouped default: playbooks lead as their own group (founder 2026-09-29 — the
-                simplest honest read: a playbook spans areas, so it doesn't belong to one),
-                header stats matching the area headers, rows in curated journeys order. */}
-            {groups !== null && filteredPlaybooks.length > 0 && (
-              <Fragment>
-                <tr className="bg-zinc-900/50">
-                  <th colSpan={6} scope="colgroup" className="px-2 pb-1.5 pt-3 text-left font-normal">
-                    <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                      <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">Playbooks</span>
-                      <span className="text-[11px] text-zinc-500">
-                        {filteredPlaybooks.length} {filteredPlaybooks.length === 1 ? 'end-to-end playbook' : 'end-to-end playbooks'}
-                      </span>
-                    </span>
-                  </th>
-                </tr>
-                {filteredPlaybooks.map(playbookRow)}
-              </Fragment>
-            )}
+            {/* Grouped default (founder 2026-09-29: playbooks are still processes — chain rows
+                fold into their dominant area at their timeline position, no leading group). */}
             {groups !== null
               ? groups.map((g) => (
                   <Fragment key={g.area}>
-                    {/* Area header: friendly name + process count + the area's average agent
-                        ceiling as a quiet stat. colSpan spans whatever columns the breakpoint
-                        shows (hidden columns collapse it), so the header reads fine at the
-                        homepage width and in the mobile edge-to-edge table. */}
+                    {/* Area header: friendly name + row count (chain rows count as processes —
+                        founder 2026-09-29). colSpan spans whatever columns the breakpoint shows
+                        (hidden columns collapse it), so the header reads fine at the homepage
+                        width and in the mobile edge-to-edge table. */}
                     <tr className="bg-zinc-900/50">
                       <th colSpan={6} scope="colgroup" className="px-2 pb-1.5 pt-3 text-left font-normal">
                         <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                           <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">{g.area}</span>
                           <span className="text-[11px] text-zinc-500">
-                            {g.rows.length} {g.rows.length === 1 ? 'process' : 'processes'}
+                            {g.items.length} {g.items.length === 1 ? 'process' : 'processes'}
                           </span>
                         </span>
                       </th>
                     </tr>
-                    {g.rows.map(processRow)}
+                    {g.items.map((it) => (it.kind === 'playbook' ? playbookRow(it.row) : processRow(it.row)))}
                   </Fragment>
                 ))
               : flatItems.map((it) => (it.kind === 'playbook' ? playbookRow(it.row) : processRow(it.row)))}
             {sorted.length === 0 && filteredPlaybooks.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-zinc-500">
-                  {/* Echo the active filters — same convention as the product tables. */}
-                  No {playbooks.length > 0 ? 'processes or playbooks' : 'processes'} match{query.trim() ? <> &ldquo;{query}&rdquo;</> : ''}{phase !== 'all' ? ` in the ${phase} phase` : ''}.
+                  {/* Echo the active filters — same convention as the product tables. One
+                      vocabulary (founder 2026-09-29): chain rows are processes too. */}
+                  No processes match{query.trim() ? <> &ldquo;{query}&rdquo;</> : ''}{phase !== 'all' ? ` in the ${phase} phase` : ''}.
                 </td>
               </tr>
             )}

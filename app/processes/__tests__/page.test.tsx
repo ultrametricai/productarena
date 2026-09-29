@@ -1,46 +1,61 @@
 // @vitest-environment jsdom
 // The combined /processes view (founder 2026-09-29: "combine playbooks and all processes into
-// one table so we have one view for the processes under the process search"): the separate
-// playbooks section is gone — playbooks are rows in the same table, and the fat search matches
-// them too. The VS card and the route-dot legend stay.
+// one table so we have one view for the processes under the process search"), with the same-day
+// vocabulary follow-up ("we don't need to say 'playbook' on those playbooks… playbooks are
+// still processes"): chain rows fold into their dominant area — no 'Playbooks' group, no chip,
+// heading 'All processes', one unified search count. The VS card and the route-dot legend stay.
 import { render, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProcessesPage from '@/app/processes/page'
-import { buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
+import { areaOf, buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
-describe('/processes — one combined playbooks + processes table', () => {
-  it('renders ONE table: playbooks lead as a group, every process follows; the old separate section is gone', () => {
+describe('/processes — one combined table, one processes vocabulary', () => {
+  it("renders ONE table under the 'All processes' heading; chain rows fold into their dominant area (no 'Playbooks' group or label)", () => {
     const { container } = render(<ProcessesPage />)
 
     // Exactly one table on the page (the old page rendered a second, playbooks-only table).
     expect(container.querySelectorAll('table').length).toBe(1)
     expect(within(container).queryByText('End-to-end playbooks')).toBeNull()
-    expect(within(container).getByText('Playbooks & all processes')).toBeDefined()
+    expect(within(container).queryByText('Playbooks & all processes')).toBeNull()
+    expect(within(container).getByText('All processes')).toBeDefined()
 
     const table = container.querySelector('table') as HTMLElement
     const playbooks = buildPlaybookRows()
     const { rows } = buildProcessRows()
-    // The leading Playbooks group header, then every playbook + every process as rows.
-    expect(within(table).getByText('Playbooks')).toBeDefined()
+    // No leading 'Playbooks' group header and no 'playbook' chip — one vocabulary.
+    expect(within(table).queryByText('Playbooks')).toBeNull()
+    expect(within(table).queryByText('playbook')).toBeNull()
     expect(table.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(playbooks.length + rows.length)
-    // Each playbook row links to its chain page from inside the one table.
+    // Each chain row links to its chain page from inside the one table, folded into its
+    // dominant area (its group header precedes the row).
+    const trs = [...table.querySelectorAll('tbody tr')]
     for (const p of playbooks) {
-      expect(table.querySelector(`a[href="${p.href}"]`), `playbook ${p.id} must link to its chain page`).not.toBeNull()
+      expect(table.querySelector(`a[href="${p.href}"]`), `chain ${p.id} must link to its chain page`).not.toBeNull()
+      const rowIdx = trs.findIndex((tr) => tr.querySelector(`a[href="${p.href}"]`) !== null)
+      const headerIdx = trs.findIndex((tr) => tr.querySelector('th') !== null && tr.textContent?.includes(p.dominantArea))
+      expect(headerIdx, `chain ${p.id} must sit under its dominant area "${p.dominantArea}"`).toBeGreaterThanOrEqual(0)
+      expect(headerIdx).toBeLessThan(rowIdx)
     }
     // A process row is unchanged next to them.
     expect(table.querySelector(`a[href="/processes/${rows[0].slug}"]`)).not.toBeNull()
   })
 
-  it('the fat search covers both kinds and the legend + Virtual Startup card stay', () => {
+  it('every chain row carries its dominant area (first constituent) and that constituent timeOrder', () => {
+    for (const p of buildPlaybookRows()) {
+      expect(p.dominantArea).toBe(areaOf(p.processes[0].phase))
+      expect(p.timeOrder).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it('the fat search counts chains in the one processes N; the legend + Virtual Startup card stay', () => {
     const { container } = render(<ProcessesPage />)
     const playbooks = buildPlaybookRows()
     const { rows } = buildProcessRows()
 
     const input = within(container).getByLabelText('Search processes') as HTMLInputElement
-    expect(input.placeholder).toContain(`${rows.length} company processes`)
-    expect(input.placeholder).toContain(`${playbooks.length} playbook`)
+    expect(input.placeholder).toBe(`Search ${rows.length + playbooks.length} processes — payroll, SOC 2, EIN…`)
 
-    // The route-dot legend (explains the playbook rows' strips) and the VS card survive.
+    // The route-dot legend (explains the multi-process rows' strips) and the VS card survive.
     expect(within(container).getByText('agent-runnable')).toBeDefined()
     expect(within(container).getByText('legal signature')).toBeDefined()
     expect(within(container).getByText('🐣 Virtual Startup').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
