@@ -3,8 +3,8 @@
 // corpus — a newly added phase without a curated area must fail HERE, loudly, not render a
 // stray or missing group in production.
 import { describe, expect, it } from 'vitest'
-import { loadProcesses } from '@/lib/processes'
-import { AREA_ORDER, areaOf, areaRank, buildProcessRows, PHASE_AREA } from '@/lib/processRows'
+import { chainTasks, computeCeiling, loadChains, loadProcesses } from '@/lib/processes'
+import { AREA_ORDER, areaOf, areaRank, buildPlaybookRows, buildProcessRows, PHASE_AREA } from '@/lib/processRows'
 
 describe('phase → area display map (lib/processRows.ts)', () => {
   it('is total over the live corpus: every phase maps to exactly one curated area', () => {
@@ -34,6 +34,44 @@ describe('phase → area display map (lib/processRows.ts)', () => {
     for (const r of rows) {
       expect(r.area).toBe(areaOf(r.phase))
       expect(r.areaRank).toBe(areaRank(r.area))
+    }
+  })
+})
+
+// The combined-table playbook rows (founder 2026-09-29): the curated chains serialized for the
+// same table the process rows render in — aggregate ceiling, constituent processes, route strip.
+describe('playbook rows (buildPlaybookRows)', () => {
+  it('serializes every curated chain with its chain-page href and aggregate agent ceiling', () => {
+    const chains = loadChains()
+    const byId = new Map(buildPlaybookRows().map((p) => [p.id, p]))
+    expect(byId.size).toBe(chains.length)
+    expect(chains.length).toBeGreaterThan(0)
+    for (const chain of chains) {
+      const p = byId.get(chain.id)
+      expect(p, `chain ${chain.id} must build a playbook row`).toBeDefined()
+      const nodes = chainTasks(chain).flatMap((t) => t.dag.nodes)
+      const ceiling = computeCeiling(nodes)
+      expect(p!.href).toBe(`/processes/chains/${chain.id}`)
+      expect(p!.title).toBe(chain.name)
+      expect(p!.tagline).toBe(chain.tagline)
+      expect(p!.pct).toBe(ceiling.pct)
+      expect(p!.agentSteps).toBe(ceiling.agentSteps)
+      expect(p!.totalSteps).toBe(nodes.length)
+    }
+  })
+
+  it('carries the constituent processes in chain order, their distinct phases, and one route-strip dot per step', () => {
+    const chains = new Map(loadChains().map((c) => [c.id, c]))
+    for (const p of buildPlaybookRows()) {
+      const chain = chains.get(p.id)!
+      expect(p.processes.map((t) => t.id)).toEqual(chain.taskIds)
+      const tasks = chainTasks(chain)
+      // phases = the distinct constituent phases (the table's phase-filter contract for playbooks).
+      expect(new Set(p.phases)).toEqual(new Set(tasks.map((t) => t.phase)))
+      const nodes = tasks.flatMap((t) => t.dag.nodes)
+      expect(p.steps.length).toBe(nodes.length)
+      expect(p.steps.map((s) => s.route)).toEqual(nodes.map((n) => n.route))
+      expect(p.steps.map((s) => s.legalSignature)).toEqual(nodes.map((n) => n.legalSignature ?? false))
     }
   })
 })

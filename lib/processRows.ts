@@ -1,12 +1,12 @@
-import type { ProcessRow } from '@/components/ProcessesTable'
+import type { PlaybookRow, ProcessRow } from '@/components/ProcessesTable'
 import { loadCategory } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
 import { isShutdown } from '@/lib/shutdown'
-import { processIcon } from '@/lib/processIcons'
+import { chainIcon, processIcon } from '@/lib/processIcons'
 import { crossArenaStepRankings, processLeaderboard, stepRanking } from '@/lib/processRankings'
 import {
-  CADENCE_META, cadenceRank, loadProcesses, phaseRank, processSlug, taskCeiling,
-  type ProcessTask, VENDOR_ARENA, vendorLabel, vendorProductId,
+  CADENCE_META, cadenceRank, chainTasks, computeCeiling, loadChains, loadProcesses, phaseRank,
+  processSlug, taskCeiling, type ProcessTask, VENDOR_ARENA, vendorLabel, vendorProductId,
 } from '@/lib/processes'
 
 // Server-side builder for the "all processes" table rows — extracted from app/processes/page.tsx
@@ -92,6 +92,37 @@ function derivedVendorsFor(t: ProcessTask, seed?: { id: string; label: string; a
     }
   }
   return out
+}
+
+// ---- Playbook rows (founder 2026-09-29: "combine playbooks and all processes into one table
+// so we have one view for the processes under the process search"): the curated chains
+// (journeys/chains.json) serialized for the SAME table the process rows render in — a leading
+// 'Playbooks' group in the grouped default, distinct playbook rows in the flat sorted view.
+// Server-side like buildProcessRows so the client table never imports the node-only loaders.
+export function buildPlaybookRows(): PlaybookRow[] {
+  return loadChains().map((chain) => {
+    const tasks = chainTasks(chain)
+    const nodes = tasks.flatMap((t) => t.dag.nodes)
+    const ceiling = computeCeiling(nodes)
+    return {
+      id: chain.id,
+      title: chain.name,
+      tagline: chain.tagline,
+      icon: chainIcon(chain.id),
+      href: `/processes/chains/${chain.id}`,
+      // The constituent processes as icon chips (the old playbooks table's 'Processes' column),
+      // plus their phases so the table's phase filter can honestly scope playbooks too.
+      processes: tasks.map((t) => ({ id: t.id, icon: processIcon(t.id), title: t.title, phase: t.phase })),
+      phases: [...new Set(tasks.map((t) => t.phase))],
+      // Aggregate agent ceiling across every step of every process in the chain — what the
+      // combined table sorts playbooks by where a ceiling/steps sort is active.
+      pct: ceiling.pct,
+      agentSteps: ceiling.agentSteps,
+      totalSteps: ceiling.totalSteps,
+      // The route strip: one dot per step, capped client-side (legalSignature wears violet).
+      steps: nodes.map((n) => ({ label: n.label, route: n.route, legalSignature: n.legalSignature ?? false })),
+    }
+  })
 }
 
 export interface ProcessRowsBundle {
