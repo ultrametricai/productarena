@@ -93,9 +93,23 @@ describe('landing cutover routing', () => {
     }
   })
 
-  it('keeps the /v2 snapshot redirect home', async () => {
-    const resp = await get('/v2')
-    expect(resp.status).toBe(301)
-    expect(resp.headers.get('location')).toBe('https://ultrametric.ai/')
+  it("proxies /v2 and /v2/ to the product origin's /v2 (the ported CLI/MCP product page)", async () => {
+    // Replaces the old redirect-home: app/v2 now serves the page inside the sitewide layout.
+    // A Cloudflare ZONE rule still intercepts /v2 ahead of the worker in production; this
+    // mapping is what takes over the moment the founder removes it.
+    for (const path of ['/v2', '/v2/']) {
+      const calls = stubOriginFetch()
+      const resp = await get(path)
+      expect(resp.status).toBe(200)
+      expect(calls).toEqual([`${ORIGIN}/v2`])
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('passes deeper /v2/* paths through to the origin unchanged', async () => {
+    const calls = stubOriginFetch()
+    const resp = await get('/v2/opengraph-image?x=1')
+    expect(resp.status).toBe(200)
+    expect(calls).toEqual([`${ORIGIN}/v2/opengraph-image?x=1`])
   })
 })
