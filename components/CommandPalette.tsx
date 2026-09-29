@@ -56,8 +56,19 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
   // strongest direct-character match and always renders as row one; the static TYPE_ORDER only
   // governs the browse view and the remaining groups.
   const results = useMemo(() => {
-    const limited = filterSearchEntries(prepared, query).slice(0, MAX_RESULTS)
-    const best = query.trim() !== '' ? limited[0]?.type : undefined
+    const all = filterSearchEntries(prepared, query)
+    // Browse view (no query): the arena list alone fills the cap, so page entries never
+    // surface — Virtual Startup is pulled from the full set and pinned first (founder
+    // 2026-09-29); everything else keeps the standard TYPE_ORDER browse grouping.
+    if (query.trim() === '') {
+      const limited = all.slice(0, MAX_RESULTS)
+      const grouped = TYPE_ORDER.flatMap((type) => limited.filter((e) => e.type === type))
+      const vs = all.find((e) => e.href === '/virtual-startup')
+      if (!vs) return grouped
+      return [vs, ...grouped.filter((e) => e.href !== '/virtual-startup')].slice(0, MAX_RESULTS)
+    }
+    const limited = all.slice(0, MAX_RESULTS)
+    const best = limited[0]?.type
     const order = best ? [best, ...TYPE_ORDER.filter((t) => t !== best)] : TYPE_ORDER
     return order.flatMap((type) => limited.filter((e) => e.type === type))
   }, [prepared, query])
