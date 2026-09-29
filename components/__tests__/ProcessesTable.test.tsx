@@ -9,7 +9,7 @@
 // the flat sorted table (the param contract itself is unchanged).
 import { act, fireEvent, render, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
+import ProcessesTable, { type PlaybookRow, type ProcessRow } from '@/components/ProcessesTable'
 import { setGeoSelection } from '@/lib/geoPreference'
 
 const PATH = '/'
@@ -204,6 +204,103 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
     expect(within(container).queryByText('Growth & sales')).toBeNull()
     expect(within(container).queryByText('Run payroll')).toBeNull()
     expect(params().get('phase')).toBe('Formation') // URL contract untouched in the grouped view
+  })
+})
+
+describe('playbook rows in the combined table (founder 2026-09-29: one view under the search)', () => {
+  function playbook(over: Pick<PlaybookRow, 'id' | 'title'> & Partial<PlaybookRow>): PlaybookRow {
+    return {
+      tagline: 'From zero to a running company',
+      icon: '🚀',
+      href: `/processes/chains/${over.id}`,
+      // Titles deliberately distinct from ROWS' (IconChip renders its title as sr-only text —
+      // colliding names would make textContent probes ambiguous).
+      processes: [
+        { id: 'pick-a-name', icon: '🏷️', title: 'Pick a company name', phase: 'Formation' },
+        { id: 'file-delaware', icon: '🏛', title: 'File with Delaware', phase: 'Formation' },
+      ],
+      phases: ['Formation'],
+      pct: 70,
+      agentSteps: 7,
+      totalSteps: 10,
+      steps: [
+        { label: 'File the charter', route: 'agent' as const, legalSignature: false },
+        { label: 'Sign the incorporator consent', route: 'person' as const, legalSignature: true },
+      ],
+      ...over,
+    }
+  }
+  const PLAYBOOKS: PlaybookRow[] = [playbook({ id: 'company-in-a-day', title: 'Company in a day' })]
+  const mountWith = (playbooks = PLAYBOOKS) => render(<ProcessesTable rows={ROWS} phases={PHASES} playbooks={playbooks} />)
+  const rowTexts = (root: HTMLElement) => [...root.querySelectorAll('tbody tr')].map((tr) => tr.textContent ?? '')
+
+  it('grouped default: playbooks lead as their own group with count + avg ceiling, before the areas', () => {
+    const { container } = mountWith()
+    const texts = rowTexts(container)
+    const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
+    expect(at('Playbooks')).toBe(0)
+    expect(at('Company in a day')).toBe(1)
+    expect(at('Playbooks')).toBeLessThan(at('Starting up'))
+    const header = within(container).getByText('Playbooks').closest('tr') as HTMLElement
+    expect(header.textContent).toContain('1 end-to-end playbook')
+    expect(header.textContent).toContain('70%')
+  })
+
+  it('a playbook row is visually distinct and links to its chain page: chip, tagline, route strip, honest metric dash', () => {
+    const { container } = mountWith()
+    const tr = within(container).getByText('Company in a day').closest('tr') as HTMLElement
+    expect(within(tr).getByText('playbook')).toBeDefined() // the chip
+    expect(within(tr).getByText('Company in a day').closest('a')?.getAttribute('href')).toBe('/processes/chains/company-in-a-day')
+    expect(tr.textContent).toContain('From zero to a running company')
+    expect(tr.textContent).toContain('7/10') // aggregate agent/total steps
+    // The route strip: one dot per step, legalSignature wears violet.
+    expect(within(tr).getByTitle('File the charter — agent-runnable')).toBeDefined()
+    expect(within(tr).getByTitle('Sign the incorporator consent — legal signature (stays with a person)').className).toContain('bg-violet-400/80')
+    // No timeline/cadence/risk value to show — the metric cell is an honest dash.
+    expect(within(tr).getByText('—')).toBeDefined()
+    // Process rows are unchanged next to it (their own links intact).
+    expect(within(container).getByText('Run payroll').closest('a')?.getAttribute('href')).toBe('/processes/run-payroll')
+  })
+
+  it('a ceiling sort interleaves playbooks by their aggregate ceiling', () => {
+    const { container, getByRole } = mountWith()
+    fireEvent.click(getByRole('button', { name: 'Most automatable' }))
+    const texts = rowTexts(container)
+    const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
+    // pct desc: Run payroll 90 → playbook 70 → Incorporate 60 → bank 40.
+    expect(at('Run payroll')).toBeLessThan(at('Company in a day'))
+    expect(at('Company in a day')).toBeLessThan(at('Incorporate the company'))
+    expect(within(container).queryByText('Playbooks')).toBeNull() // flat — the group header is gone
+  })
+
+  it('a per-process ordering (risk) lists playbooks after the sorted processes — missing values last', () => {
+    const { container, getByRole } = mountWith()
+    fireEvent.click(getByRole('button', { name: 'Riskiest' }))
+    const texts = rowTexts(container)
+    expect(texts.findIndex((t) => t.includes('Company in a day'))).toBe(texts.length - 1)
+  })
+
+  it('the phase filter scopes playbooks by their constituent processes; the text filter matches name and taglines', () => {
+    const { container } = mountWith()
+    fireEvent.change(within(container).getByLabelText('Filter by phase'), { target: { value: 'Growth' } })
+    expect(within(container).queryByText('Playbooks')).toBeNull() // no Formation-only playbook in Growth
+    expect(within(container).queryByText('Company in a day')).toBeNull()
+    fireEvent.change(within(container).getByLabelText('Filter by phase'), { target: { value: 'Formation' } })
+    expect(within(container).getByText('Company in a day')).toBeDefined()
+
+    fireEvent.change(within(container).getByLabelText('Filter by phase'), { target: { value: 'all' } })
+    const search = within(container).getByLabelText('Filter products by name or vendor')
+    fireEvent.change(search, { target: { value: 'zero to a running' } }) // the tagline
+    expect(within(container).getByText('Company in a day')).toBeDefined()
+    expect(within(container).queryByText('Run payroll')).toBeNull()
+    fireEvent.change(search, { target: { value: 'zzz-no-match' } })
+    expect(container.textContent).toContain('No processes or playbooks match')
+  })
+
+  it('without a playbooks prop the table renders exactly the process-only view (homepage co-mount)', () => {
+    const { container } = mount()
+    expect(within(container).queryByText('Playbooks')).toBeNull()
+    expect(within(container).queryByText('playbook')).toBeNull()
   })
 })
 
