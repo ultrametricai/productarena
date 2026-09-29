@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadGiftDraft, loadGifts, parseGiftList, parsePrDraft, parseProductCell } from '@/lib/gifts'
@@ -39,7 +40,10 @@ describe('parsePrDraft', () => {
   })
 })
 
-describe('loadGifts against the real drafts/outreach tree', () => {
+// drafts/ was moved to private storage and untracked (repo strip, 2026-09-29 b47dc9332), so
+// the real-tree section only runs where the private outreach tree is present; clean clones
+// still exercise the parsers and tolerance paths above/below.
+describe.skipIf(!fs.existsSync(OUTREACH))('loadGifts against the real drafts/outreach tree', () => {
   const gifts = loadGifts()
   const byProduct = new Map(gifts.map((g) => [g.product, g]))
 
