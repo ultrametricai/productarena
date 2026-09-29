@@ -3,9 +3,9 @@
    JSON-RPC bodies, where `any` beats narrowing ceremony. */
 // Unit tests for the worker's hand-rolled remote MCP endpoint (JSON-RPC layer + tool shaping),
 // exercising handleJsonRpc with an injected fetchJson so no network or Workers runtime is
-// needed. The tool shapes must mirror the stdio package's (mcp/src/tools.ts) — see that
-// package's tests for the deeper per-tool coverage; this file focuses on the protocol layer
-// and one representative call per tool family.
+// needed. The tool shapes must mirror the stdio package's (now maintained in the dedicated
+// MCP/CLI repo) — see that package's tests for the deeper per-tool coverage; this file focuses
+// on the protocol layer and one representative call per tool family.
 import { describe, expect, it } from 'vitest'
 import { handleJsonRpc } from '../worker.js'
 
