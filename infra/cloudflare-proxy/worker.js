@@ -2095,6 +2095,14 @@ export default {
       }
       return Response.redirect(`https://ultrametric.ai${stripped}${url.search}`, 301)
     }
+    // 1b. /v2 is an old landing snapshot still live on the landing origin with the retired
+    //     header (founder 2026-09-29: one top bar sitewide) — it redirects home.
+    if (url.pathname === '/v2' || url.pathname.startsWith('/v2/')) {
+      return new Response(null, {
+        status: 301,
+        headers: { Location: 'https://ultrametric.ai/', 'Cache-Control': 'no-store' },
+      })
+    }
     // 2. The landing site (Astro) owns the homepage, its pages, and its asset dirs
     //    (passthrough to the zone origin). Root-path landing assets that collide with product
     //    paths (/logos/*, /favicon.png, standalone svg/jpg files) are handled by the 404
@@ -2158,11 +2166,13 @@ export default {
               el.remove()
             },
           })
+          // Founder 2026-09-29: the hero CTA drops straight into the simulator with a → arrow
+          // (label follows the destination; it briefly said "See the rankings").
           .on('a[href="#products"]', {
             element(el) {
-              el.setAttribute('href', '/overall')
+              el.setAttribute('href', '/virtual-startup')
             },
-            ...textReplace({ 'See the products': 'See the rankings' }),
+            ...textReplace({ 'See the products': 'Open the startup simulator', '↓': '→' }),
           })
           // Founder 2026-09-29: the landing's "Products" dropdown is gone — the header carries
           // the product top bar instead (same destinations as the /overall site nav). The
