@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
+import IconChip from '@/components/IconChip'
 import ProcessSimulator from '@/components/ProcessSimulator'
+import VsGeoSelector from '@/components/VsGeoSelector'
+import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
+import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
 import { formatMinutes, type SimStep, type VendorRole } from '@/lib/processSim'
 import { readParam, setParams } from '@/lib/urlState'
 import {
@@ -199,6 +203,32 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // band so the terminal sits above the fold). Short labels are DISPLAY ONLY — every option button
 // keeps its canonical full label as the accessible name (aria-label) and full label + corpus
 // mapping in the tooltip, so nothing about the decision semantics or the a11y/test contract moves.
+// Control icons (founder batch 2026-09-29, item 1): small leading icons so the setup band's
+// labeled rows and the nine decision groups read at a glance. House style — emoji through
+// components/IconChip.tsx (required tooltip naming the concept), reusing lib/icons.ts vocabulary
+// where the concept already has an icon (incorporation 📜, fundraising 🏦, billing 🧾,
+// compliance ⚖️). Icons are decoration on top of the existing labels: every control keeps its
+// canonical accessible name (the decision groups' aria-label, the options' full-label
+// aria-labels) — tests assert nothing moved.
+const ROW_ICONS: Record<'example' | 'founder' | 'geo' | 'decisions', { icon: string; title: string }> = {
+  example: { icon: '🏢', title: 'Example companies — one-tap preset setups' },
+  founder: { icon: '👤', title: 'Founder persona — who runs the simulated work' },
+  geo: { icon: '🌍', title: 'Country view — annotate the run with committed geo evidence' },
+  decisions: { icon: '🎛️', title: 'Starting decisions — which real processes make up the journey' },
+}
+
+const DECISION_ICONS: Record<keyof Choices, string> = {
+  entity: '📜',
+  team: '👥',
+  funding: '🏦',
+  product: '🧾',
+  ordering: '🔀',
+  hire: '🧑‍💼',
+  compliance: '⚖️',
+  enterprise: '🤝',
+  ph: '🚀',
+}
+
 const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<string, string> }> = {
   entity: { title: 'Entity', options: { 'c-corp': 'C-Corp', llc: 'LLC' } },
   team: { title: 'Team', options: { cofounders: 'Cofounders', solo: 'Solo' } },
@@ -220,6 +250,7 @@ export default function VirtualStartup({
   access,
   pricing,
   taskRisks,
+  vendorGeo = {},
 }: {
   chains: VsChain[]
   // Precomputed payload for every task any decision combo can reach, keyed by corpus task id.
@@ -237,6 +268,10 @@ export default function VirtualStartup({
   access: VsAccessMap
   pricing: VsPricingMap
   taskRisks: Record<string, number>
+  // In-sim GEO (founder batch 2026-09-29, item 2): committed (product, country) availability
+  // cells (lib/vendorGeo.ts vendorGeoLookup — non-US cells only, evidence or absent). Optional
+  // additive prop: {} = no vendor geo warnings ever render (honest degrade).
+  vendorGeo?: VendorGeoLookup
 }) {
   const [choices, setChoices] = useState<Choices>(DEFAULT_CHOICES)
   const [preset, setPreset] = useState<PresetId | null>(null)
@@ -249,6 +284,12 @@ export default function VirtualStartup({
   const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
   const [runSeed, setRunSeed] = useState(0)
   const [win, setWin] = useState<WindowTab>('d30')
+  // ── In-sim GEO selection (founder batch 2026-09-29): null = the 🇺🇸 US default (never stored,
+  // never in the URL), 'GLOBAL' = explicit geo-neutral (no marks), else a country. ANNOTATION
+  // ONLY, derived from committed data — it never changes rows, scores, ranks, or the clock, so
+  // switching mid-run simply annotates the already-revealed lines. VsGeoSelector owns the
+  // ?geo=/pa-geo sync (mount-read + writes), the same contract as components/GeoSwitcher.tsx.
+  const [geo, setGeo] = useState<GeoChoice | null>(null)
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -451,6 +492,56 @@ export default function VirtualStartup({
     setEventChoices((prev) => ({ ...prev, [eventId]: choiceId }))
   }
 
+  // ── In-sim GEO (2026-09-29): the selected non-US country, or null for both the US default and
+  // the explicit 🌐 Global choice — Global is geo-neutral by definition, so no marks render.
+  const geoCountry: GeoSelection | null = geo !== null && geo !== GEO_GLOBAL ? geo : null
+  // Whether a task's process is US-scoped (corpus geoScope 'us'/'us-state') — the only tasks the
+  // country marks and analog lines ever attach to.
+  const usScoped = (taskId: string) => {
+    const scope = tasks[taskId]?.geoScope
+    return scope === 'us' || scope === 'us-state'
+  }
+
+  // ── State-graph panel data (founder batch 2026-09-29, item 3) — DERIVED from the exact same
+  // revealed-row state the terminal prints from (no separate timers): the panel fills with the
+  // run, resets with clearRun, and replays deterministically with the rows.
+  const panel = useMemo(() => {
+    const artifacts: SyntheticArtifact[] = []
+    const vendors: TopVendorPick[] = []
+    const seenVendors = new Set<string>()
+    const events: VsPanelEvent[] = []
+    for (const row of rows.slice(0, revealed)) {
+      if (row.kind === 'artifact') {
+        artifacts.push(row.artifact)
+      } else if (row.kind === 'step' && row.top && !seenVendors.has(row.top.productId)) {
+        seenVendors.add(row.top.productId)
+        vendors.push(row.top)
+      } else if (row.kind === 'vsevent') {
+        const resolved = resolvedEventById.get(row.eventId)
+        if (resolved) {
+          events.push({
+            id: resolved.def.id,
+            title: resolved.def.title,
+            day: resolved.day,
+            choiceLabel: resolved.choice?.label ?? null,
+            outcome: resolved.choice?.outcome ?? null,
+          })
+        }
+      }
+    }
+    return { artifacts, vendors, events }
+  }, [rows, revealed, resolvedEventById])
+  const panelDecisions = useMemo(
+    () =>
+      DECISIONS.map((d) => ({
+        id: d.id,
+        title: d.title,
+        icon: DECISION_ICONS[d.id],
+        label: d.options.find((o) => o.value === choices[d.id])?.label ?? String(choices[d.id]),
+      })),
+    [choices],
+  )
+
   // The active persona's named simulation assumption prints in the band's info line (the compact
   // picker itself only carries the blurbs, in tooltips).
   const activePersona = VS_PERSONAS.find((p) => p.id === persona) ?? VS_PERSONAS[0]
@@ -569,7 +660,10 @@ export default function VirtualStartup({
             / Decisions), one content column, and a footer bar holding the company info + the Run
             CTA. Rows keep horizontal scroll on mobile, wrap from sm up. */}
         <div className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">Example</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
+            <IconChip icon={ROW_ICONS.example.icon} title={ROW_ICONS.example.title} className="mr-1" />
+            Example
+          </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: identity
                 stays SIMULATED-chipped on the pill itself; the product tagline rides in the
@@ -618,7 +712,10 @@ export default function VirtualStartup({
           </div>
           {/* v3: founder persona — a persona change is a new run (the event stream is seeded
               by it). */}
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">Founder</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
+            <IconChip icon={ROW_ICONS.founder.icon} title={ROW_ICONS.founder.title} className="mr-1" />
+            Founder
+          </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             <VsPersonaPicker
               persona={persona}
@@ -629,11 +726,25 @@ export default function VirtualStartup({
               }}
             />
           </div>
+          {/* The in-sim Geo row (founder batch 2026-09-29, item 2): 🌐 Global · 🇺🇸 USA (default)
+              · 🇬🇧 UK · 🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR — the same ?geo=/pa-geo contract the process and
+              product pages read (components/VsGeoSelector.tsx). Annotation only: a selection
+              never changes rows, scores, ranks, or the simulated clock. */}
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
+            <IconChip icon={ROW_ICONS.geo.icon} title={ROW_ICONS.geo.title} className="mr-1" />
+            Geo
+          </span>
+          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+            <VsGeoSelector value={geo} onChange={setGeo} />
+          </div>
           {/* The nine starting decisions as a tight segmented strip — short labels, current
               value highlighted, canonical full label as the accessible name and full label +
               corpus mapping in the tooltip. Each choice still only swaps, reorders, or skips
               corpus processes. */}
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:self-start sm:pt-1.5 sm:text-right">Decisions</span>
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:self-start sm:pt-1.5 sm:text-right">
+            <IconChip icon={ROW_ICONS.decisions.icon} title={ROW_ICONS.decisions.title} className="mr-1" />
+            Decisions
+          </span>
           <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {DECISIONS.map((d) => (
             <div
@@ -642,6 +753,7 @@ export default function VirtualStartup({
               aria-label={d.title}
               className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
             >
+              <IconChip icon={DECISION_ICONS[d.id]} title={`${d.title} — starting decision`} className="mr-1 text-[11px]" />
               <span className="mr-1 text-[10px] uppercase tracking-wider text-zinc-300">{DECISION_SHORT[d.id].title}</span>
               {d.options.map((o) => {
                 const active = choices[d.id] === o.value
@@ -779,6 +891,19 @@ export default function VirtualStartup({
         </details>
       </section>
 
+      {/* The state graph + the terminal (founder batch 2026-09-29, item 3): the compact tabbed
+          panel of objects-coming-into-existence sits ABOVE the terminal on mobile (capped
+          scroll box, terminal stays dominant) and BESIDE it — a narrow left column — from lg
+          up. Both render off the same revealed-row state; nothing here has its own timer. */}
+      <div className="space-y-3 lg:grid lg:grid-cols-[minmax(240px,300px)_minmax(0,1fr)] lg:items-start lg:gap-3 lg:space-y-0">
+      <VsStateGraph
+        started={revealed > 0}
+        artifacts={panel.artifacts}
+        vendors={panel.vendors}
+        decisions={panelDecisions}
+        events={panel.events}
+      />
+
       {/* The terminal — the page's visual centerpiece (founder ask 2026-09-28: "have the
           terminal at the top so it prints the timeline in that terminal up top"). The run
           prints INSIDE this fixed-height viewport with terminal-follow autoscroll, so the page
@@ -836,6 +961,14 @@ export default function VirtualStartup({
                 )
               }
               if (row.kind === 'task') {
+                // In-sim GEO (2026-09-29): under a non-US selection, a US-scoped process prints
+                // its committed country analog (processes/corpus.json geoNotes — summary +
+                // verified actionUrl, the ProcessGeoBanner data) or the honest "no mapping yet".
+                // Annotation only, and never for 🌐 Global / the US default (geoCountry null).
+                const geoNote =
+                  geoCountry !== null && usScoped(row.task.id)
+                    ? { meta: GEO_PREF_META[geoCountry], note: (row.task.geoNotes ?? []).find((n) => n.country === geoCountry) ?? null }
+                    : null
                 return (
                   <li key={row.key} className="pt-2">
                     <Link
@@ -844,6 +977,27 @@ export default function VirtualStartup({
                     >
                       {row.task.title}
                     </Link>
+                    {geoNote &&
+                      (geoNote.note ? (
+                        <p data-testid="vs-geo-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                          <span aria-hidden className="mr-1">{geoNote.meta.flag}</span>
+                          in {geoNote.meta.prose} this is: <span className="text-zinc-400">{geoNote.note.summary}</span>{' '}
+                          <a
+                            href={geoNote.note.actionUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-400/90 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-300"
+                            title={`${geoNote.meta.label} — the canonical portal for this work (verified live)`}
+                          >
+                            {geoNote.note.actionLabel} ↗
+                          </a>
+                        </p>
+                      ) : (
+                        <p data-testid="vs-geo-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                          <span aria-hidden className="mr-1">🇺🇸</span>
+                          no {geoNote.meta.label} mapping yet — this process is US-specific
+                        </p>
+                      ))}
                   </li>
                 )
               }
@@ -856,10 +1010,29 @@ export default function VirtualStartup({
               }
               if (row.kind === 'step') {
                 const badge = routeBadge(row.step)
+                // In-sim GEO (2026-09-29): under a non-US selection, steps of US-scoped
+                // processes carry the quiet 🇺🇸 mark (the components/GeoStepMark.tsx language),
+                // and a top judged pick whose committed jurisdictions/vendor-geo.json cell says
+                // 'unavailable' there prints its honest warning — recorded note verbatim, source
+                // linked, scores and ranks untouched.
+                const stepUsScoped = geoCountry !== null && usScoped(row.step.taskId)
+                const geoCell =
+                  geoCountry !== null && row.top ? vendorGeo[row.top.productId]?.[geoCountry] ?? null : null
+                const geoWarn = geoCell?.status === 'unavailable' ? geoCell : null
                 return (
                   <li key={row.key} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 pl-4 text-sm text-zinc-400">
                     <span className={`rounded border px-1.5 py-px text-[10px] ${badge.cls}`}>{badge.text}</span>
                     <span className="text-zinc-300">{row.step.label}</span>
+                    {stepUsScoped && geoCountry !== null && (
+                      <span
+                        aria-hidden
+                        data-testid="vs-geo-step-mark"
+                        className="text-[10px] opacity-60"
+                        title={`US-specific step — this flow is written around US law/agencies; you are viewing the run from ${GEO_PREF_META[geoCountry].prose}`}
+                      >
+                        🇺🇸
+                      </span>
+                    )}
                     <span className="font-mono text-[11px] text-zinc-600">
                       {formatMinutes(row.step.estimatedMinutes)}
                       {row.step.async ? ' ⏳' : ''}
@@ -886,6 +1059,21 @@ export default function VirtualStartup({
                       >
                         {row.top.name} · {row.top.score.toFixed(0)}
                       </Link>
+                    )}
+                    {geoWarn && row.top && geoCountry !== null && (
+                      <span data-testid="vs-geo-vendor-warning" className="w-full pl-1 text-[11px] leading-snug text-amber-300/90">
+                        <span aria-hidden className="mr-1">⚠</span>
+                        {row.top.name} — unavailable in {GEO_PREF_META[geoCountry].prose}: {geoWarn.note}{' '}
+                        <a
+                          href={geoWarn.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-amber-300/70 underline decoration-amber-400/40 underline-offset-2 hover:text-amber-200"
+                          title="The vendor's own page this availability row rests on (verified live)"
+                        >
+                          source ↗
+                        </a>
+                      </span>
                     )}
                   </li>
                 )
@@ -960,6 +1148,7 @@ export default function VirtualStartup({
           </span>
         </div>
       </section>
+      </div>
       </div>
 
       {/* The operating rhythm the company now runs, once the launch journey lands — first 30

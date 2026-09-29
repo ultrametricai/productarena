@@ -5,7 +5,9 @@ import {
   buildSimSteps, CADENCE_META, loadChains, loadProcesses, processSlug, taskCeiling, vendorRoles,
   type ProcessTask,
 } from '@/lib/processes'
+import { hasLogo } from '@/lib/logos'
 import { stepRanking } from '@/lib/processRankings'
+import { vendorGeoLookup } from '@/lib/vendorGeo'
 import {
   buildEventExamples, buildYearCandidates, unionTaskIds, VS_CHAIN_IDS,
   type RouteMix, type VirtualTaskPayload, type VsChain, type YearTaskSource,
@@ -68,11 +70,30 @@ export default function VirtualStartupPage() {
         const ranking = stepRanking(task.id, node)
         const top = ranking?.vendors[0]
         return top
-          ? { productId: top.productId, name: top.name, score: top.score, arenaId: ranking.arenaId, arenaName: ranking.arenaName }
+          ? {
+              productId: top.productId,
+              name: top.name,
+              score: top.score,
+              arenaId: ranking.arenaId,
+              arenaName: ranking.arenaName,
+              // Resolved here (lib/logos.ts needs node:fs) so the client state panel can render
+              // the real logo chip (components/ProductLogoView.tsx).
+              hasLogo: hasLogo(top.productId),
+            }
           : null
       }),
+      // The corpus GEO dimension + curated per-country analogs — the in-sim geo annotations
+      // (components/VirtualStartup.tsx) read these; committed data only, straight through.
+      geoScope: task.geoScope,
+      geoNotes: task.geoNotes ?? [],
     }
   }
+
+  // Committed (product, country) availability cells for every vendor the sim can surface — the
+  // step top picks plus every swappable role alternative (lib/vendorGeo.ts vendorGeoLookup:
+  // non-US cells only, products without rows simply absent — evidence or nothing).
+  const vsProductIds = new Set<string>()
+  for (const t of Object.values(tasks)) for (const top of t.tops) if (top) vsProductIds.add(top.productId)
 
   // Year-one operating rhythm candidates: the whole corpus reshaped (cadence labels from the
   // same CADENCE_META /processes/operating-rhythm uses), selected/gated by lib/virtualStartup's
@@ -95,6 +116,7 @@ export default function VirtualStartupPage() {
   const eventExamples = buildEventExamples(yearSources)
 
   const roles = vendorRoles(unionTasks)
+  for (const role of roles) for (const alt of role.alternatives) vsProductIds.add(alt.id)
 
   return (
     <div className="space-y-10">
@@ -120,6 +142,7 @@ export default function VirtualStartupPage() {
         access={buildVsAccess(roles)}
         pricing={buildVsPricing(roles)}
         taskRisks={buildVsTaskRisks()}
+        vendorGeo={vendorGeoLookup(vsProductIds)}
       />
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
