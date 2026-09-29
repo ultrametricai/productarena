@@ -382,13 +382,13 @@ describe('year one — the operating rhythm, derived from live corpus cadence', 
     })
     expect(resolveYearMonths({ taskId: 'tax_001', cadence: 'annual' }, DEFAULT_CHOICES).months).toEqual([3])
     // An annual the corpus does NOT date (the 1120): seeded month inside the year, deterministic,
-    // and carrying the note the UI renders the SIMULATED chip from.
+    // and carrying the note the UI styles as seeded (fuchsia + data-synthetic, no visible label).
     const seeded = resolveYearMonths({ taskId: 'tax_002', cadence: 'annual' }, DEFAULT_CHOICES)
     expect(seeded.monthSource).toBe('seeded')
     expect(seeded.months.length).toBe(1)
     expect(seeded.months[0]).toBeGreaterThanOrEqual(1)
     expect(seeded.months[0]).toBeLessThanOrEqual(12)
-    expect(seeded.monthNote).toContain('simulated')
+    expect(seeded.monthNote).toContain('seeded')
     expect(resolveYearMonths({ taskId: 'tax_002', cadence: 'annual' }, DEFAULT_CHOICES)).toEqual(seeded)
   })
 
@@ -532,9 +532,9 @@ describe('YC batch mode — calibration, published deal, honesty', () => {
     }
   })
 
-  it('the batch shape is disclosed simulated/non-affiliated; office hours is synthetic, never a corpus process', () => {
+  it('the batch shape is disclosed synthetic/non-affiliated; office hours is synthetic, never a corpus process', () => {
     expect(YC_BATCH.disclosure).toContain('not affiliated with or endorsed by Y Combinator')
-    expect(YC_BATCH.disclosure.toLowerCase()).toContain('simulated')
+    expect(YC_BATCH.disclosure.toLowerCase()).toContain('synthetic')
     expect(YC_BATCH.officeHours.runsPerBatch).toBe(YC_BATCH.weeks)
     const titles = new Set([...corpusById.values()].map((t) => t.title))
     expect(titles.has(YC_BATCH.officeHours.title)).toBe(false)

@@ -1,8 +1,8 @@
 // Virtual Startup v3 (founder-approved 2026-09-28) — the run layer on top of lib/virtualStartup:
 //   1. vendor picks change outcomes (agent-surface picks run at corpus "agent speed"; picks with
 //      no MCP/CLI surface fall back to founder-hours — a DISCLOSED simulation assumption);
-//   2. founder personas shift which person-routed work is DIY vs delegated (each modifier a
-//      named, displayed simulation assumption);
+//   2. founder axes (Technical × Experience — orthogonal, composable) shift which person-routed
+//      work is DIY vs delegated (each modifier a named, displayed simulation assumption);
 //   3. seeded mid-run events, each grounded in a real corpus process and gated by plausibility
 //      (corpus risk scores + the run's decisions), with deterministic branching choices;
 //   4. the scorecard + a compact shareable ?run= permalink that replays the exact run.
@@ -11,13 +11,14 @@
 // (access verdicts, rankings, corpus minutes, published pricing) is never blended silently with
 // simulation constants — every constant below is exported, named, and rendered in the UI with
 // the words "simulation assumption" (VS_ASSUMPTIONS; tests enforce the phrase). Everything here
-// is pure and client-safe (no node builtins); deterministic from (combo, preset, persona, seed):
-// zero runtime LLM, every derived number recomputable from committed data.
+// is pure and client-safe (no node builtins); deterministic from (combo, preset, founder axes,
+// seed): zero runtime LLM, every derived number recomputable from committed data.
 
 import type { StepRoute, VendorRole } from './processSim'
 import {
   comboKey,
   DECISIONS,
+  DEFAULT_CHOICES,
   gateActive,
   presetById,
   type Choices,
@@ -56,8 +57,8 @@ export function hasAgentSurface(surface: VsAccessSurface | undefined): boolean {
 // Simulation assumptions — named constants, disclosed in the UI, tested for the phrase
 // ---------------------------------------------------------------------------
 
-// A step an agent cannot run (the picked vendor has no judged MCP/CLI surface, or a persona
-// pushes it onto the founder) takes this multiple of the corpus estimate. A simulation
+// A step an agent cannot run (the picked vendor has no judged MCP/CLI surface, or a founder
+// axis pushes it onto the founder) takes this multiple of the corpus estimate. A simulation
 // assumption, NOT judged data — the corpus estimates assume the recorded (agent) path.
 export const FOUNDER_HOURS_MULTIPLIER = 3
 
@@ -80,50 +81,106 @@ export const VS_ASSUMPTIONS: ReadonlyArray<{ id: string; text: string }> = [
 ] as const
 
 // ---------------------------------------------------------------------------
-// Founder personas
+// Founder axes (founder batch 2026-09-29, item 4)
 // ---------------------------------------------------------------------------
+// The old three mutually-exclusive personas (solo-technical / non-technical / second-timer)
+// tangled two independent dimensions — and duplicated founder-count, which is ALREADY the
+// 'Cofounders vs Solo founder' decision. The founder layer is now two orthogonal axes:
+//   Technical  — technical (baseline) vs non-technical (engineering steps at founder-hours);
+//   Experience — first-timer (baseline) vs second-timer (legal/finance steps at ×0.5).
+// The two axis modifiers COMPOSE (a non-technical second-timer applies both; a step that
+// qualified for both would multiply both) — each still a named, displayed simulation assumption.
+// No solo assumption lives here: team size is the Team decision's business alone.
 
-export type VsPersonaId = 'solo-technical' | 'non-technical' | 'second-timer'
+export type VsTechnicalAxis = 'technical' | 'non-technical'
+export type VsExperienceAxis = 'first-timer' | 'second-timer'
 
-export interface VsPersona {
-  id: VsPersonaId
+export interface VsFounderAxes {
+  technical: VsTechnicalAxis
+  experience: VsExperienceAxis
+}
+
+export const DEFAULT_FOUNDER_AXES: VsFounderAxes = { technical: 'technical', experience: 'first-timer' }
+
+export interface VsAxisOption<V extends string = string> {
+  value: V
   label: string
-  // The matching data/icp-types.json lens where one exists (solo-technical-founder,
-  // non-technical-operator) — a cross-reference, not a data dependency; null where the corpus
-  // has no such lens (second-timer) and the persona is defined here editorially.
-  icpId: string | null
+  // Compact picker text (the canonical `label` stays the accessible name).
+  short: string
   blurb: string
-  // The persona's named modifier, phrased as a visible simulation assumption; null for the
-  // baseline persona (no modifier).
+  // The matching data/icp-types.json lens where one exists — a cross-reference, not a data
+  // dependency; null where the corpus has no such lens and the option is defined editorially.
+  icpId: string | null
+  // The option's named modifier, phrased as a visible simulation assumption; null = baseline.
   assumption: string | null
 }
 
-export const VS_PERSONAS: VsPersona[] = [
+export const VS_TECHNICAL_OPTIONS: VsAxisOption<VsTechnicalAxis>[] = [
   {
-    id: 'solo-technical',
-    label: 'Solo technical founder',
-    icpId: 'solo-technical-founder',
+    value: 'technical',
+    label: 'Technical founder',
+    short: 'Technical',
     blurb: 'builds the product themselves — the corpus baseline, no modifier',
+    icpId: null,
     assumption: null,
   },
   {
-    id: 'non-technical',
+    value: 'non-technical',
     label: 'Non-technical founder',
-    icpId: 'non-technical-operator',
+    short: 'Non-technical',
     blurb: 'delegates or grinds through the engineering work',
+    icpId: 'non-technical-operator',
     assumption: VS_ASSUMPTIONS.find((a) => a.id === 'persona-non-technical')!.text,
   },
+]
+
+export const VS_EXPERIENCE_OPTIONS: VsAxisOption<VsExperienceAxis>[] = [
   {
-    id: 'second-timer',
-    label: 'Second-time founder',
+    value: 'first-timer',
+    label: 'First-time founder',
+    short: 'First-timer',
+    blurb: 'signing all of this paper for the first time — the corpus baseline, no modifier',
     icpId: null,
+    assumption: null,
+  },
+  {
+    value: 'second-timer',
+    label: 'Second-time founder',
+    short: 'Second-timer',
     blurb: 'has incorporated, raised, and signed all of this before',
+    icpId: null,
     assumption: VS_ASSUMPTIONS.find((a) => a.id === 'persona-second-timer')!.text,
   },
 ]
 
-export function personaById(id: string | null): VsPersona | null {
-  return VS_PERSONAS.find((p) => p.id === id) ?? null
+// The active axes' named simulation assumptions (0–2 lines), in axis order.
+export function founderAssumptions(axes: VsFounderAxes): string[] {
+  const out: string[] = []
+  const tech = VS_TECHNICAL_OPTIONS.find((o) => o.value === axes.technical)
+  const exp = VS_EXPERIENCE_OPTIONS.find((o) => o.value === axes.experience)
+  if (tech?.assumption) out.push(tech.assumption)
+  if (exp?.assumption) out.push(exp.assumption)
+  return out
+}
+
+// v1 → v2 migration: the legacy mutually-exclusive persona ids map onto exact axis pairs, so a
+// shared v1 ?run= keeps decoding (and, via founderSeedToken below, keeps drawing the same
+// event stream it always did).
+export const LEGACY_PERSONA_AXES: Record<string, VsFounderAxes> = {
+  'solo-technical': { technical: 'technical', experience: 'first-timer' },
+  'non-technical': { technical: 'non-technical', experience: 'first-timer' },
+  'second-timer': { technical: 'technical', experience: 'second-timer' },
+}
+
+// The founder token inside the event seed key — deterministic from the axis pair. The three
+// pairs a legacy persona maps to keep their ORIGINAL v1 tokens on purpose: a shared v1 run link
+// replays with the exact event stream it was shared with. Only the previously unreachable
+// fourth combination gets a new token.
+export function founderSeedToken(axes: VsFounderAxes): string {
+  if (axes.technical === 'technical') {
+    return axes.experience === 'first-timer' ? 'solo-technical' : 'second-timer'
+  }
+  return axes.experience === 'first-timer' ? 'non-technical' : 'non-technical+second-timer'
 }
 
 // The chains whose steps count as "engineering" for the non-technical modifier — the build
@@ -143,7 +200,7 @@ export function isLegalFinanceTask(taskId: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Outcome math — vendor picks + persona drive the simulated time
+// Outcome math — vendor picks + founder axes drive the simulated time
 // ---------------------------------------------------------------------------
 
 // One journey step flattened for the outcome model. `key` is `${taskId}:${stepIndex}` — the
@@ -196,8 +253,8 @@ export function journeyOutcomeInputs(
 }
 
 // The launch day the raw corpus estimates give (pre-launch prefix, unmodified) — the event
-// engine's day span, deliberately independent of picks/persona so the drawn events stay
-// deterministic from (combo, preset, persona, seed) alone.
+// engine's day span, deliberately independent of picks/axes so the drawn events stay
+// deterministic from (combo, preset, founder axes, seed) alone.
 export function corpusLaunchDay(inputs: OutcomeStepInput[]): number {
   const phaseIds: Array<{ id: string }> = []
   for (const s of inputs) {
@@ -216,7 +273,7 @@ export function corpusLaunchDay(inputs: OutcomeStepInput[]): number {
 
 export interface StepOutcome {
   key: string
-  // Effective simulated minutes after the stack/persona rules below.
+  // Effective simulated minutes after the stack/axis rules below.
   minutes: number
   // True when the step runs at agent speed: an agent-routed step whose picked vendor has a
   // judged MCP/CLI surface, or an agent-routed step not served by any swappable role (tooling
@@ -248,21 +305,23 @@ function dayOfMinutes(mins: number): number {
   return Math.floor(mins / (60 * 24)) + 1
 }
 
-// The whole outcome for one stack: deterministic from (journey, picks, persona) over the
-// serialized canonical access verdicts. Rules, in order (multipliers never stack — a step is
-// either agent-speed, founder-hours, or persona-scaled):
+// The whole outcome for one stack: deterministic from (journey, picks, founder axes) over the
+// serialized canonical access verdicts. Rules, in order:
 //   - agent-routed, served by a role, pick has MCP/CLI full|partial  → corpus minutes as-is;
-//   - agent-routed, served, pick lacks an agent surface              → ×FOUNDER_HOURS_MULTIPLIER;
+//   - agent-routed, served, pick lacks an agent surface              → ×FOUNDER_HOURS_MULTIPLIER
+//     (founder-hours applies once — the axis modifiers below never re-scale it);
 //   - agent-routed, unserved (no swappable role for its arena)       → unchanged;
-//   - non-agent steps                                                → unchanged, then personas:
+//   - non-agent steps                                                → unchanged, then the axes:
 //   - non-technical: engineering-chain steps not agent-run           → ×FOUNDER_HOURS_MULTIPLIER;
 //   - second-timer: legal/finance steps not agent-run                → ×SECOND_TIMER_MULTIPLIER.
+// The two AXIS modifiers compose multiplicatively on a step that qualifies for both (a
+// non-technical second-timer applies both rules; each names itself in the note).
 export function computeStackOutcome(
   inputs: OutcomeStepInput[],
   selections: Record<string, string>,
   roles: VendorRole[],
   access: VsAccessMap,
-  personaId: VsPersonaId,
+  founder: VsFounderAxes,
 ): StackOutcome {
   const roleByArena = new Map(roles.map((r) => [r.arenaId, r]))
   const steps: StepOutcome[] = []
@@ -304,13 +363,23 @@ export function computeStackOutcome(
       }
     }
 
-    if (!agentRun && personaId === 'non-technical' && ENGINEERING_CHAIN_IDS.includes(s.chainId) && note === null) {
-      minutes = s.estimatedMinutes * FOUNDER_HOURS_MULTIPLIER
-      note = `founder-hours ×${FOUNDER_HOURS_MULTIPLIER} — non-technical founder on an engineering step (simulation assumption)`
-    }
-    if (!agentRun && personaId === 'second-timer' && isLegalFinanceTask(s.taskId) && note === null) {
-      minutes = s.estimatedMinutes * SECOND_TIMER_MULTIPLIER
-      note = `×${SECOND_TIMER_MULTIPLIER} — second-time founder on a legal/finance step (simulation assumption)`
+    // The founder axes — only on steps not agent-run and not already at vendor-fallback
+    // founder-hours (that multiplier applies once). The two axis rules compose.
+    if (!agentRun && note === null) {
+      let axisMultiplier = 1
+      const axisNotes: string[] = []
+      if (founder.technical === 'non-technical' && ENGINEERING_CHAIN_IDS.includes(s.chainId)) {
+        axisMultiplier *= FOUNDER_HOURS_MULTIPLIER
+        axisNotes.push(`founder-hours ×${FOUNDER_HOURS_MULTIPLIER} — non-technical founder on an engineering step (simulation assumption)`)
+      }
+      if (founder.experience === 'second-timer' && isLegalFinanceTask(s.taskId)) {
+        axisMultiplier *= SECOND_TIMER_MULTIPLIER
+        axisNotes.push(`×${SECOND_TIMER_MULTIPLIER} — second-time founder on a legal/finance step (simulation assumption)`)
+      }
+      if (axisNotes.length > 0) {
+        minutes = s.estimatedMinutes * axisMultiplier
+        note = axisNotes.join(' · ')
+      }
     }
 
     if (agentRun) agentRunSteps += 1
@@ -415,7 +484,7 @@ export const COFOUNDER_NEGOTIATION_WAIT_DAYS = 14
 export const OUTAGE_ROLLBACK_WAIT_DAYS = 1
 
 const waitAssumption = (days: number, what: string) =>
-  `simulation assumption — ${what} is modeled as ${days} simulated day${days === 1 ? '' : 's'}; the corpus carries no duration for it`
+  `simulation assumption — ${what} is modeled as ${days} sim day${days === 1 ? '' : 's'}; the corpus carries no duration for it`
 
 export const VS_EVENTS: VsEventDef[] = [
   {
@@ -443,8 +512,8 @@ export const VS_EVENTS: VsEventDef[] = [
       {
         id: 'decline',
         label: 'Decline — ship first',
-        effect: { kind: 'lose-deal', note: 'the simulated enterprise deal is lost — no SOC 2, no pilot' },
-        outcome: 'launch date holds, but the simulated enterprise deal is gone (scorecard hit)',
+        effect: { kind: 'lose-deal', note: 'the virtual enterprise deal is lost — no SOC 2, no pilot' },
+        outcome: 'launch date holds, but the virtual enterprise deal is gone (scorecard hit)',
       },
     ],
   },
@@ -476,7 +545,7 @@ export const VS_EVENTS: VsEventDef[] = [
           days: PROCESSOR_REVIEW_WAIT_DAYS,
           assumption: waitAssumption(PROCESSOR_REVIEW_WAIT_DAYS, 'a processor account review'),
         },
-        outcome: `payouts resume after ${PROCESSOR_REVIEW_WAIT_DAYS} simulated days`,
+        outcome: `payouts resume after ${PROCESSOR_REVIEW_WAIT_DAYS} sim days`,
       },
     ],
   },
@@ -507,7 +576,7 @@ export const VS_EVENTS: VsEventDef[] = [
           days: COFOUNDER_NEGOTIATION_WAIT_DAYS,
           assumption: waitAssumption(COFOUNDER_NEGOTIATION_WAIT_DAYS, 'a negotiated equity buyback'),
         },
-        outcome: `terms settle after ${COFOUNDER_NEGOTIATION_WAIT_DAYS} simulated days of negotiation`,
+        outcome: `terms settle after ${COFOUNDER_NEGOTIATION_WAIT_DAYS} sim days of negotiation`,
       },
     ],
   },
@@ -538,7 +607,7 @@ export const VS_EVENTS: VsEventDef[] = [
           days: TRADEMARK_RESPONSE_WAIT_DAYS,
           assumption: waitAssumption(TRADEMARK_RESPONSE_WAIT_DAYS, 'a counsel response and coexistence negotiation'),
         },
-        outcome: `the mark survives after ${TRADEMARK_RESPONSE_WAIT_DAYS} simulated days of back-and-forth`,
+        outcome: `the mark survives after ${TRADEMARK_RESPONSE_WAIT_DAYS} sim days of back-and-forth`,
       },
     ],
   },
@@ -569,7 +638,7 @@ export const VS_EVENTS: VsEventDef[] = [
           days: OUTAGE_ROLLBACK_WAIT_DAYS,
           assumption: waitAssumption(OUTAGE_ROLLBACK_WAIT_DAYS, 'a rollback and next-day relaunch'),
         },
-        outcome: `stable again after ${OUTAGE_ROLLBACK_WAIT_DAYS} simulated day`,
+        outcome: `stable again after ${OUTAGE_ROLLBACK_WAIT_DAYS} sim day`,
       },
     ],
   },
@@ -592,16 +661,17 @@ export function eligibleVsEvents(
   )
 }
 
-// The event stream's seed — (combo, preset, persona, seed) exactly as the founder spec names,
-// plus the YC calibration flag (it changes the journey the events land on).
+// The event stream's seed — (combo, preset, founder axes, seed) exactly as the founder spec
+// names, plus the YC calibration flag (it changes the journey the events land on). The founder
+// token is deterministic from the axis pair (legacy-stable — see founderSeedToken).
 export function eventSeedKey(
   choices: Choices,
   preset: PresetId | null,
   yc: boolean,
-  persona: VsPersonaId,
+  founder: VsFounderAxes,
   seed: number,
 ): string {
-  return `vs:events:${comboKey(choices)}|p:${preset ?? '-'}|yc:${yc ? '1' : '0'}|f:${persona}|s:${seed}`
+  return `vs:events:${comboKey(choices)}|p:${preset ?? '-'}|yc:${yc ? '1' : '0'}|f:${founderSeedToken(founder)}|s:${seed}`
 }
 
 export interface DrawnVsEvent {
@@ -786,11 +856,43 @@ export function computeBurn(
 // Shareable permalink — the whole run state in one compact URL-safe param
 // ---------------------------------------------------------------------------
 
+// The reader's ASSERTED decisions only (dropdown 'Not set' = absent key). The journey always
+// composes over the effective combo `{ ...DEFAULT_CHOICES, ...asserted }` — an unasserted
+// decision runs exactly the default branch, and the URL state omits it.
+export type AssertedChoices = Partial<Choices>
+
+// The effective combo an asserted state composes — the single place 'Not set = default' lives.
+export function effectiveChoices(asserted: AssertedChoices): Choices {
+  return { ...DEFAULT_CHOICES, ...asserted }
+}
+
+// How the run plays: 'auto' = decisions asserted upfront, the journey plays through; 'semi' =
+// the run pauses at each unasserted decision's first affected row and asks the reader inline.
+export type VsDriveMode = 'auto' | 'semi'
+
+// The reader-typed company name (semi-auto naming card). Sanitized before it touches state or
+// the URL: control characters and angle brackets stripped, whitespace collapsed, length-capped —
+// never HTML, never multiline.
+export const VS_COMPANY_NAME_MAX = 40
+
+export function sanitizeVsCompanyName(raw: string): string {
+  return raw
+    .replace(/\s+/g, ' ')
+    .replace(/[\u0000-\u001f\u007f<>]/g, '')
+    .trim()
+    .slice(0, VS_COMPANY_NAME_MAX)
+    .trim()
+}
+
 export interface VsRunState {
-  choices: Choices
+  // Asserted decisions only — unasserted ones compose as DEFAULT_CHOICES and stay out of the URL.
+  choices: AssertedChoices
   preset: PresetId | null
   yc: boolean
-  persona: VsPersonaId
+  founder: VsFounderAxes
+  mode: VsDriveMode
+  // The reader-typed company name (semi-auto naming card), or null for the autopilot name.
+  companyName: string | null
   // Explicit per-arena vendor picks (arenaId → productId); defaults are omitted by callers.
   picks: Record<string, string>
   // Event decisions (eventId → choiceId).
@@ -816,6 +918,42 @@ export function decodeCombo(raw: string): Choices | null {
     out[d.id] = opt.value
   }
   return out as Choices
+}
+
+// Asserted combo ⇄ digit-or-dot string: '.' = unasserted (composes as the default), a digit =
+// the asserted option index — so the URL literally omits unasserted decisions (v2 codec).
+export function encodeAssertedCombo(asserted: AssertedChoices): string {
+  return DECISIONS.map((d) => {
+    const v = asserted[d.id]
+    if (v === undefined) return '.'
+    const i = d.options.findIndex((o) => o.value === v)
+    return String(Math.max(0, i))
+  }).join('')
+}
+
+export function decodeAssertedCombo(raw: string): AssertedChoices | null {
+  if (raw.length !== DECISIONS.length) return null
+  const out: Partial<Record<keyof Choices, string>> = {}
+  for (const [i, d] of DECISIONS.entries()) {
+    if (raw[i] === '.') continue
+    const opt = d.options[raw.charCodeAt(i) - 48]
+    if (!opt) return null
+    out[d.id] = opt.value
+  }
+  return out as AssertedChoices
+}
+
+// Founder axes ⇄ two-char token ('t'|'n' + '1'|'2'); 't1' is the default and omitted.
+function encodeFounderAxes(axes: VsFounderAxes): string {
+  return (axes.technical === 'technical' ? 't' : 'n') + (axes.experience === 'first-timer' ? '1' : '2')
+}
+
+function decodeFounderAxes(raw: string): VsFounderAxes | null {
+  if (raw.length !== 2) return null
+  const technical = raw[0] === 't' ? 'technical' : raw[0] === 'n' ? 'non-technical' : null
+  const experience = raw[1] === '1' ? 'first-timer' : raw[1] === '2' ? 'second-timer' : null
+  if (technical === null || experience === null) return null
+  return { technical, experience }
 }
 
 // Minimal base64url (RFC 4648 §5, unpadded) over UTF-8 — pure so the codec round-trips
@@ -856,14 +994,19 @@ function fromBase64Url(s: string): string | null {
   }
 }
 
-const RUN_STATE_VERSION = 1
+// v2 (founder batch 2026-09-29): founder AXES replace the persona id, the combo digits gain the
+// '.' unasserted marker, and the drive mode rides along. v1 payloads still decode — see below.
+const RUN_STATE_VERSION = 2
 
 // Compact-key JSON → base64url. Empty maps and defaults are dropped for a shorter link.
 export function encodeRunState(state: VsRunState): string {
-  const compact: Record<string, unknown> = { v: RUN_STATE_VERSION, c: encodeCombo(state.choices) }
+  const compact: Record<string, unknown> = { v: RUN_STATE_VERSION, c: encodeAssertedCombo(state.choices) }
   if (state.preset) compact.p = state.preset
   if (state.yc) compact.y = 1
-  if (state.persona !== 'solo-technical') compact.f = state.persona
+  const axes = encodeFounderAxes(state.founder)
+  if (axes !== 't1') compact.f = axes
+  if (state.mode === 'semi') compact.m = 's'
+  if (state.companyName) compact.n = sanitizeVsCompanyName(state.companyName)
   if (Object.keys(state.picks).length > 0) compact.k = state.picks
   if (Object.keys(state.eventChoices).length > 0) compact.e = state.eventChoices
   if (state.seed !== 0) compact.s = state.seed
@@ -874,8 +1017,11 @@ const isStringRecord = (v: unknown): v is Record<string, string> =>
   typeof v === 'object' && v !== null && !Array.isArray(v) &&
   Object.values(v).every((x) => typeof x === 'string')
 
-// Defensive decode: anything malformed (bad base64, wrong version, unknown combo/persona/
+// Defensive decode: anything malformed (bad base64, unknown version, unknown combo/founder/
 // preset, non-string picks) resolves to null and the UI falls back to the default view.
+// v1 payloads (full combo digits, legacy persona ids, no drive mode) are accepted and migrated:
+// every v1 decision is asserted (that's what the old links carried), the persona id maps onto
+// its axis pair (LEGACY_PERSONA_AXES), and the mode is 'auto' — shared links keep replaying.
 export function decodeRunState(raw: string | null): VsRunState | null {
   if (!raw) return null
   const json = fromBase64Url(raw)
@@ -888,17 +1034,25 @@ export function decodeRunState(raw: string | null): VsRunState | null {
   }
   if (typeof parsed !== 'object' || parsed === null) return null
   const o = parsed as Record<string, unknown>
-  if (o.v !== RUN_STATE_VERSION || typeof o.c !== 'string') return null
-  const choices = decodeCombo(o.c)
+  if ((o.v !== 1 && o.v !== RUN_STATE_VERSION) || typeof o.c !== 'string') return null
+  const legacy = o.v === 1
+  const choices: AssertedChoices | null = legacy ? decodeCombo(o.c) : decodeAssertedCombo(o.c)
   if (!choices) return null
   const preset = typeof o.p === 'string' ? presetById(o.p)?.id ?? null : null
   if (typeof o.p === 'string' && preset === null) return null
-  const persona = typeof o.f === 'string' ? personaById(o.f)?.id ?? null : 'solo-technical'
-  if (persona === null) return null
+  let founder: VsFounderAxes | null = DEFAULT_FOUNDER_AXES
+  if (typeof o.f === 'string') founder = legacy ? LEGACY_PERSONA_AXES[o.f] ?? null : decodeFounderAxes(o.f)
+  else if (o.f !== undefined) founder = null
+  if (founder === null) return null
+  const mode: VsDriveMode | null = legacy || o.m === undefined ? 'auto' : o.m === 's' ? 'semi' : null
+  if (mode === null) return null
+  // The typed company name re-sanitizes on decode — a tampered param can't smuggle markup in.
+  if (o.n !== undefined && typeof o.n !== 'string') return null
+  const companyName = typeof o.n === 'string' ? sanitizeVsCompanyName(o.n) || null : null
   const picks = o.k === undefined ? {} : isStringRecord(o.k) ? o.k : null
   const eventChoices = o.e === undefined ? {} : isStringRecord(o.e) ? o.e : null
   if (picks === null || eventChoices === null) return null
   const seed = o.s === undefined ? 0 : typeof o.s === 'number' && Number.isFinite(o.s) ? o.s : null
   if (seed === null) return null
-  return { choices, preset, yc: o.y === 1, persona, picks, eventChoices, seed }
+  return { choices, preset, yc: o.y === 1, founder, mode, companyName, picks, eventChoices, seed }
 }

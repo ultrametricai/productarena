@@ -283,7 +283,7 @@ export const YC_BATCH = {
   weeks: 12,
   calendar: 'kickoff week 1 · weekly group office hours · Demo Day ~week 12',
   disclosure:
-    'Calibrated to the publicly known YC batch shape — simulated, not affiliated with or endorsed by Y Combinator.',
+    'Calibrated to the publicly known YC batch shape — synthetic, not affiliated with or endorsed by Y Combinator.',
   // The synthetic recurring row for the rhythm views. NOT a corpus process; rendered with the
   // SIMULATED chip, never linked to a process page, and excluded from corpus-derived stats.
   officeHours: {
@@ -492,6 +492,10 @@ export interface TopVendorPick {
   // client state panel can render the real logo chip (components/ProductLogoView.tsx). Optional
   // additive field (2026-09-29): absent = initial-letter fallback, nothing else changes.
   hasLogo?: boolean
+  // The step ranking's next 1–2 vendors after the top pick (lib/processRankings.ts stepRanking,
+  // serialized server-side), so the terminal can show the recommended pick's runners-up. Optional
+  // additive field (2026-09-29): absent = no runners-up fragment renders.
+  runnersUp?: Array<{ productId: string; name: string; score: number }>
 }
 
 export interface VirtualTaskPayload {
@@ -562,11 +566,14 @@ export interface SynthCompany {
 // The virtual company's identity, deterministic from the decision combo. Its own seed stream so
 // the name never shifts when the artifact set changes. A preset identity overrides the seeded
 // name deterministically (a fixed constant) — entity suffix and slug still derive the same way.
-export function synthCompany(choices: Choices, identity?: SynthIdentity | null): SynthCompany {
+// `seedCombo` (additive, 2026-09-29) pins the NAME seed to a different combo than the live one —
+// semi-auto drive mode uses it so mid-run decision assertions never rewrite an already-printed
+// name; the entity suffix still follows the live choices.
+export function synthCompany(choices: Choices, identity?: SynthIdentity | null, seedCombo?: Choices): SynthCompany {
   const name = identity
     ? identity.name
     : (() => {
-        const rng = mulberry32(hashSeed(`vs:name:${comboKey(choices)}`))
+        const rng = mulberry32(hashSeed(`vs:name:${comboKey(seedCombo ?? choices)}`))
         return `${pick(rng, NAME_ROOTS)}${pick(rng, NAME_TAILS)}`
       })()
   return {
@@ -670,6 +677,13 @@ export interface ArtifactOpts {
   // YC mode: the standard PUBLISHED YC deal replaces the generic fund_001 SAFE numbers. The rng
   // stream is still consumed identically, so every OTHER artifact stays byte-identical.
   yc?: boolean
+  // Additive (2026-09-29, semi-auto drive mode): pin the rng/name seed to this combo instead of
+  // the live one. Semi-auto passes DEFAULT_CHOICES so a mid-run decision assertion never
+  // rewrites an already-printed seeded value (the stream is consumed in journey order, and the
+  // journey only changes AFTER the paused row) — the generators still read the LIVE choices for
+  // choice-driven content (entity suffix, cap-table holder count), which the pause schedule
+  // accounts for. Omitted = today's behavior, byte for byte.
+  seedCombo?: Choices
 }
 
 // Every artifact for one journey, keyed by task id. Deterministic: the rng stream is seeded by
@@ -680,8 +694,8 @@ export function buildJourneyArtifacts(
   taskIds: string[],
   opts: ArtifactOpts = {},
 ): Record<string, SyntheticArtifact[]> {
-  const co = synthCompany(choices, opts.identity ?? null)
-  const rng = mulberry32(hashSeed(`vs:artifacts:${comboKey(choices)}`))
+  const co = synthCompany(choices, opts.identity ?? null, opts.seedCombo)
+  const rng = mulberry32(hashSeed(`vs:artifacts:${comboKey(opts.seedCombo ?? choices)}`))
   const out: Record<string, SyntheticArtifact[]> = {}
   for (const taskId of taskIds) {
     const gen = ARTIFACT_GENERATORS[taskId]
@@ -903,7 +917,7 @@ export function resolveYearMonths(
   return {
     months: [1 + Math.floor(rng() * 12)],
     monthSource: 'seeded',
-    monthNote: 'annual — scheduled month is simulated (the corpus dates this annually, not to a month)',
+    monthNote: 'annual — scheduled month is seeded (the corpus dates this annually, not to a month)',
   }
 }
 

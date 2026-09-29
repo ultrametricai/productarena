@@ -7,9 +7,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadChains, loadProcesses, processSlug, vendorRoles } from '@/lib/processes'
+import { stepRanking } from '@/lib/processRankings'
 import type { VendorRole } from '@/lib/processSim'
 import {
   allChoiceCombos,
+  DECISIONS,
   DEFAULT_CHOICES,
   journeyPhases,
   journeyTaskIds,
@@ -25,28 +27,45 @@ import {
   computeStackOutcome,
   corpusLaunchDay,
   decodeRunState,
+  DEFAULT_FOUNDER_AXES,
   drawVsEvents,
+  effectiveChoices,
   eligibleVsEvents,
+  encodeAssertedCombo,
+  decodeAssertedCombo,
   encodeCombo,
   decodeCombo,
   encodeRunState,
   eventSeedKey,
+  founderAssumptions,
+  founderSeedToken,
   FOUNDER_HOURS_MULTIPLIER,
   hasAgentSurface,
   journeyOutcomeInputs,
   launchPhaseIdOf,
+  LEGACY_PERSONA_AXES,
   optimalSelections,
-  personaById,
   resolveVsEvents,
+  sanitizeVsCompanyName,
   SECOND_TIMER_MULTIPLIER,
   taskMinutesById,
   VS_ASSUMPTIONS,
+  VS_COMPANY_NAME_MAX,
   VS_EVENTS,
-  VS_PERSONAS,
+  VS_EXPERIENCE_OPTIONS,
+  VS_TECHNICAL_OPTIONS,
   type OutcomeStepInput,
   type VsAccessMap,
+  type VsFounderAxes,
   type VsRunState,
 } from '@/lib/virtualStartupRun'
+
+// The four axis combinations (founder batch 2026-09-29, item 4) — technical/first is the
+// baseline (no modifier), the other three carry composable modifiers.
+const TECH_FIRST: VsFounderAxes = { technical: 'technical', experience: 'first-timer' }
+const NONTECH_FIRST: VsFounderAxes = { technical: 'non-technical', experience: 'first-timer' }
+const TECH_SECOND: VsFounderAxes = { technical: 'technical', experience: 'second-timer' }
+const NONTECH_SECOND: VsFounderAxes = { technical: 'non-technical', experience: 'second-timer' }
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
@@ -99,10 +118,10 @@ const input = (key: string, over: Partial<OutcomeStepInput> = {}): OutcomeStepIn
 describe('outcome math — vendor picks change outcomes', () => {
   it('agent step served by a surface-bearing pick runs at agent speed; a surface-less pick falls back to founder-hours', () => {
     const inputs = [input('qs_021:0', { arenaId: 'payments' })]
-    const withSurface = computeStackOutcome(inputs, { payments: 'square' }, ROLES, ACCESS, 'solo-technical')
+    const withSurface = computeStackOutcome(inputs, { payments: 'square' }, ROLES, ACCESS, TECH_FIRST)
     expect(withSurface.steps[0]).toMatchObject({ minutes: 10, agentRun: true, note: null })
 
-    const withoutSurface = computeStackOutcome(inputs, { payments: 'stripe' }, ROLES, ACCESS, 'solo-technical')
+    const withoutSurface = computeStackOutcome(inputs, { payments: 'stripe' }, ROLES, ACCESS, TECH_FIRST)
     expect(withoutSurface.steps[0].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER)
     expect(withoutSurface.steps[0].agentRun).toBe(false)
     // The multiplier is never dressed as judged data.
@@ -115,7 +134,7 @@ describe('outcome math — vendor picks change outcomes', () => {
       input('a:1', { route: 'person' }),
       input('a:2', { route: 'form' }),
     ]
-    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, 'solo-technical')
+    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, TECH_FIRST)
     expect(o.steps.map((s) => s.minutes)).toEqual([10, 10, 10])
     expect(o.steps.map((s) => s.agentRun)).toEqual([true, false, false])
     expect(o.agentRunPct).toBe(33)
@@ -123,14 +142,14 @@ describe('outcome math — vendor picks change outcomes', () => {
 
   it('defaults apply when the reader picked nothing (the role default is the pick)', () => {
     const inputs = [input('qs_021:0', { arenaId: 'payments' })]
-    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, 'solo-technical')
+    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, TECH_FIRST)
     // stripe (default) has no surface in this fixture → founder-hours.
     expect(o.steps[0].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER)
   })
 
   it('all-manual baseline and founder-hours saved derive from the same disclosed multiplier', () => {
     const inputs = [input('a:0'), input('a:1', { route: 'person', estimatedMinutes: 20 })]
-    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, 'solo-technical')
+    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, TECH_FIRST)
     expect(o.totalMinutes).toBe(30)
     expect(o.allManualMinutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER + 20)
     expect(o.founderHoursSavedMinutes).toBe(o.allManualMinutes - o.totalMinutes)
@@ -142,7 +161,7 @@ describe('outcome math — vendor picks change outcomes', () => {
       input('a:1', { phaseId: 'launch', estimatedMinutes: 1440 }),
       input('a:2', { phaseId: 'enterprise', estimatedMinutes: 14400 }),
     ]
-    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, 'solo-technical')
+    const o = computeStackOutcome(inputs, {}, ROLES, ACCESS, TECH_FIRST)
     expect(o.launchMinutes).toBe(2880)
     expect(o.launchDay).toBe(3)
     expect(o.totalMinutes).toBe(2880 + 14400)
@@ -155,8 +174,8 @@ describe('outcome math — vendor picks change outcomes', () => {
       journeyPhases(DEFAULT_CHOICES, vsChains),
       Object.fromEntries(union.map((id) => [id, payloadFor(id)])),
     )
-    const a = computeStackOutcome(inputs, { payments: 'square' }, liveRoles, liveAccess, 'second-timer')
-    const b = computeStackOutcome(inputs, { payments: 'square' }, liveRoles, liveAccess, 'second-timer')
+    const a = computeStackOutcome(inputs, { payments: 'square' }, liveRoles, liveAccess, TECH_SECOND)
+    const b = computeStackOutcome(inputs, { payments: 'square' }, liveRoles, liveAccess, TECH_SECOND)
     expect(a).toEqual(b)
   })
 })
@@ -166,7 +185,7 @@ describe('personas', () => {
     const eng = input('prod_006:0', { chainId: 'ship-v1', route: 'person' })
     const engAgent = input('prod_006:1', { chainId: 'ship-v1' }) // agent, unserved → agent-run
     const other = input('qs_023:0', { chainId: 'company-launch', route: 'person' })
-    const o = computeStackOutcome([eng, engAgent, other], {}, ROLES, ACCESS, 'non-technical')
+    const o = computeStackOutcome([eng, engAgent, other], {}, ROLES, ACCESS, NONTECH_FIRST)
     expect(o.steps[0].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER)
     expect(o.steps[0].note).toContain('simulation assumption')
     expect(o.steps[1].minutes).toBe(10) // agent-run — the modifier never applies
@@ -177,24 +196,57 @@ describe('personas', () => {
     const legal = input('legal_002:0', { route: 'person' })
     const founderAgreement = input('startup_002:0', { route: 'person' })
     const nonLegal = input('brand_001:0', { route: 'person' })
-    const o = computeStackOutcome([legal, founderAgreement, nonLegal], {}, ROLES, ACCESS, 'second-timer')
+    const o = computeStackOutcome([legal, founderAgreement, nonLegal], {}, ROLES, ACCESS, TECH_SECOND)
     expect(o.steps[0].minutes).toBe(10 * SECOND_TIMER_MULTIPLIER)
     expect(o.steps[0].note).toContain('simulation assumption')
     expect(o.steps[1].minutes).toBe(10 * SECOND_TIMER_MULTIPLIER)
     expect(o.steps[2].minutes).toBe(10)
   })
 
-  it('every persona modifier is a named, disclosed simulation assumption; icp cross-references are real lenses', () => {
+  it('the two axis modifiers COMPOSE: a non-technical second-timer applies both, and a step qualifying for both multiplies both', () => {
+    // A run under non-technical + second-timer: engineering steps ×3 AND legal steps ×0.5.
+    const eng = input('prod_006:0', { chainId: 'ship-v1', route: 'person' })
+    const legal = input('legal_002:0', { route: 'person' })
+    const both = input('legal_002:1', { chainId: 'ship-v1', route: 'person' }) // hypothetically both
+    const o = computeStackOutcome([eng, legal, both], {}, ROLES, ACCESS, NONTECH_SECOND)
+    expect(o.steps[0].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER)
+    expect(o.steps[1].minutes).toBe(10 * SECOND_TIMER_MULTIPLIER)
+    // Both rules on one step: the multipliers stack (×3 × ×0.5), and BOTH name themselves.
+    expect(o.steps[2].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER * SECOND_TIMER_MULTIPLIER)
+    expect(o.steps[2].note).toContain('non-technical founder on an engineering step')
+    expect(o.steps[2].note).toContain('second-time founder on a legal/finance step')
+  })
+
+  it('the vendor-fallback founder-hours multiplier applies once — axis modifiers never re-scale it', () => {
+    // legal-ish agent step served by a surface-less pick: ×3 from the vendor fallback, and the
+    // second-timer axis does not stack on top (identical to the legacy persona behavior, so a
+    // migrated v1 run link replays the same clock).
+    const legalAgent = input('legal_002:0', { arenaId: 'payments' })
+    const o = computeStackOutcome([legalAgent], { payments: 'stripe' }, ROLES, ACCESS, NONTECH_SECOND)
+    expect(o.steps[0].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER)
+    expect(o.steps[0].note).toContain('no judged MCP/CLI agent surface')
+  })
+
+  it('every axis modifier is a named, disclosed simulation assumption; icp cross-references are real lenses; no solo axis exists', () => {
     const icpIds = new Set(
       (JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'icp-types.json'), 'utf8')) as Array<{ id: string }>).map((t) => t.id),
     )
-    expect(VS_PERSONAS).toHaveLength(3)
-    for (const p of VS_PERSONAS) {
-      if (p.assumption !== null) expect(p.assumption).toContain('simulation assumption')
-      if (p.icpId !== null) expect(icpIds.has(p.icpId)).toBe(true)
+    expect(VS_TECHNICAL_OPTIONS.map((o) => o.value)).toEqual(['technical', 'non-technical'])
+    expect(VS_EXPERIENCE_OPTIONS.map((o) => o.value)).toEqual(['first-timer', 'second-timer'])
+    for (const o of [...VS_TECHNICAL_OPTIONS, ...VS_EXPERIENCE_OPTIONS]) {
+      if (o.assumption !== null) expect(o.assumption).toContain('simulation assumption')
+      if (o.icpId !== null) expect(icpIds.has(o.icpId)).toBe(true)
+      // Founder-count is the Team decision's business — no axis mentions 'solo'.
+      expect(o.label.toLowerCase()).not.toContain('solo')
+      expect(o.blurb.toLowerCase()).not.toContain('solo')
     }
-    expect(personaById('non-technical')?.assumption).toBeTruthy()
-    expect(personaById('nope')).toBeNull()
+    // founderAssumptions composes: baseline none, single axes one, both two (in axis order).
+    expect(founderAssumptions(TECH_FIRST)).toEqual([])
+    expect(founderAssumptions(NONTECH_FIRST)).toHaveLength(1)
+    expect(founderAssumptions(TECH_SECOND)).toHaveLength(1)
+    const both = founderAssumptions(NONTECH_SECOND)
+    expect(both).toHaveLength(2)
+    for (const a of both) expect(a).toContain('simulation assumption')
     for (const a of VS_ASSUMPTIONS) expect(a.text).toContain('simulation assumption')
   })
 })
@@ -213,8 +265,8 @@ describe('optimal stack — computed, judged-surface-bearing', () => {
   it('the agents-first optimal stack never launches later than the reader stack (live corpus, default combo)', () => {
     const tasks = Object.fromEntries(union.map((id) => [id, payloadFor(id)]))
     const inputs = journeyOutcomeInputs(journeyPhases(DEFAULT_CHOICES, vsChains), tasks)
-    const yours = computeStackOutcome(inputs, {}, liveRoles, liveAccess, 'solo-technical')
-    const optimal = computeStackOutcome(inputs, optimalSelections(liveRoles, liveAccess), liveRoles, liveAccess, 'solo-technical')
+    const yours = computeStackOutcome(inputs, {}, liveRoles, liveAccess, TECH_FIRST)
+    const optimal = computeStackOutcome(inputs, optimalSelections(liveRoles, liveAccess), liveRoles, liveAccess, TECH_FIRST)
     expect(optimal.launchMinutes).toBeLessThanOrEqual(yours.launchMinutes)
     expect(optimal.agentRunSteps).toBeGreaterThanOrEqual(yours.agentRunSteps)
   })
@@ -291,11 +343,11 @@ describe('event engine — grounded, gated, seeded, deterministic', () => {
     expect(eligibleVsEvents(DEFAULT_CHOICES, journey, lowRisks).filter((e) => e.minRisk > 1)).toHaveLength(0)
   })
 
-  it('draws 2–4 events deterministically from (combo, preset, yc, persona, seed); persona and seed are part of the key', () => {
+  it('draws 2–4 events deterministically from (combo, preset, yc, founder axes, seed); the axis pair and seed key the stream', () => {
     const journey = journeyTaskIds(DEFAULT_CHOICES, vsChains)
     const eligible = eligibleVsEvents(DEFAULT_CHOICES, journey, liveRisks)
     expect(eligible.length).toBeGreaterThanOrEqual(2)
-    const key = eventSeedKey(DEFAULT_CHOICES, null, false, 'solo-technical', 0)
+    const key = eventSeedKey(DEFAULT_CHOICES, null, false, TECH_FIRST, 0)
     const a = drawVsEvents(eligible, key, 30)
     const b = drawVsEvents(eligible, key, 30)
     expect(a).toEqual(b)
@@ -303,10 +355,25 @@ describe('event engine — grounded, gated, seeded, deterministic', () => {
     expect(a.length).toBeLessThanOrEqual(4)
     for (const d of a) expect(d.day).toBeGreaterThanOrEqual(2)
     expect([...a].sort((x, y) => x.day - y.day).map((d) => d.def.id)).toEqual(a.map((d) => d.def.id))
-    // Persona and seed change the seed key (the founder spec: persona is part of the seed).
-    expect(eventSeedKey(DEFAULT_CHOICES, null, false, 'second-timer', 0)).not.toBe(key)
-    expect(eventSeedKey(DEFAULT_CHOICES, null, false, 'solo-technical', 1)).not.toBe(key)
+    // The axis pair and the seed change the seed key deterministically.
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, TECH_SECOND, 0)).not.toBe(key)
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, NONTECH_FIRST, 0)).not.toBe(key)
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, NONTECH_SECOND, 0)).not.toBe(key)
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, TECH_FIRST, 1)).not.toBe(key)
     expect(drawVsEvents([], key, 30)).toEqual([])
+  })
+
+  it('the founder seed token is legacy-stable: the three v1 persona ids map to their original tokens, so shared v1 links draw the same events', () => {
+    expect(founderSeedToken(TECH_FIRST)).toBe('solo-technical')
+    expect(founderSeedToken(NONTECH_FIRST)).toBe('non-technical')
+    expect(founderSeedToken(TECH_SECOND)).toBe('second-timer')
+    // The previously unreachable fourth combination gets its own (new) deterministic token.
+    expect(founderSeedToken(NONTECH_SECOND)).toBe('non-technical+second-timer')
+    // …and the legacy map covers exactly the three v1 ids, onto those exact pairs.
+    expect(LEGACY_PERSONA_AXES['solo-technical']).toEqual(TECH_FIRST)
+    expect(LEGACY_PERSONA_AXES['non-technical']).toEqual(NONTECH_FIRST)
+    expect(LEGACY_PERSONA_AXES['second-timer']).toEqual(TECH_SECOND)
+    expect(Object.keys(LEGACY_PERSONA_AXES)).toHaveLength(3)
   })
 
   it('resolves choices deterministically: real corpus minutes, named wait constants, lost deals, and arena re-picks', () => {
@@ -386,34 +453,91 @@ describe('event engine — grounded, gated, seeded, deterministic', () => {
 // Permalink codec
 // ---------------------------------------------------------------------------
 
-describe('permalink — the whole run state round-trips through ?run=', () => {
+describe('permalink — the whole run state round-trips through ?run= (v2), and v1 links still decode', () => {
   const state: VsRunState = {
-    choices: { ...DEFAULT_CHOICES, entity: 'llc', team: 'solo' },
+    // Asserted decisions only — the two the reader touched; everything else stays 'Not set'.
+    choices: { entity: 'llc', team: 'solo' },
     preset: 'hardware',
     yc: true,
-    persona: 'second-timer',
+    founder: TECH_SECOND,
+    mode: 'semi',
+    companyName: 'Perchline Labs',
     picks: { payments: 'square', accounting: 'xero' },
     eventChoices: { 'soc2-demand': 'decline', 'processor-review': 'wait' },
     seed: 7,
   }
 
-  it('round-trips every field, and the param is URL-safe', () => {
+  const tamper = (o: Record<string, unknown>) => {
+    const json = JSON.stringify(o)
+    const bytes = new TextEncoder().encode(json)
+    const b64 = Buffer.from(bytes).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    return decodeRunState(b64)
+  }
+
+  it('round-trips every field (asserted-only decisions, founder axes, drive mode, typed name), and the param is URL-safe', () => {
     const encoded = encodeRunState(state)
     expect(encoded).toMatch(/^[A-Za-z0-9\-_]+$/)
     expect(decodeRunState(encoded)).toEqual(state)
   })
 
-  it('round-trips the default state compactly (defaults omitted)', () => {
-    const def: VsRunState = { choices: DEFAULT_CHOICES, preset: null, yc: false, persona: 'solo-technical', picks: {}, eventChoices: {}, seed: 0 }
+  it('round-trips the default state compactly (defaults omitted, nothing asserted)', () => {
+    const def: VsRunState = {
+      choices: {},
+      preset: null,
+      yc: false,
+      founder: DEFAULT_FOUNDER_AXES,
+      mode: 'auto',
+      companyName: null,
+      picks: {},
+      eventChoices: {},
+      seed: 0,
+    }
     const encoded = encodeRunState(def)
     expect(decodeRunState(encoded)).toEqual(def)
     expect(encoded.length).toBeLessThan(encodeRunState(state).length)
   })
 
-  it('combo digits round-trip for every decision combo', () => {
+  it('URL elision: unasserted decisions encode as dots and decode back absent; explicitly asserting the DEFAULT value serializes it', () => {
+    expect(encodeAssertedCombo({})).toBe('.'.repeat(DECISIONS.length))
+    expect(decodeAssertedCombo('.'.repeat(DECISIONS.length))).toEqual({})
+    // Explicitly picking the default's value asserts it — a digit, not a dot.
+    const assertedDefault = { entity: DEFAULT_CHOICES.entity }
+    const enc = encodeAssertedCombo(assertedDefault)
+    expect(enc[0]).not.toBe('.')
+    expect(decodeAssertedCombo(enc)).toEqual(assertedDefault)
+    // 'Not set' composes exactly the default branch.
+    expect(effectiveChoices({})).toEqual(DEFAULT_CHOICES)
+    expect(effectiveChoices({ entity: 'llc' })).toEqual({ ...DEFAULT_CHOICES, entity: 'llc' })
+  })
+
+  it('combo digits round-trip for every decision combo (fully asserted and legacy full-combo alike)', () => {
     for (const combo of allChoiceCombos()) {
       expect(decodeCombo(encodeCombo(combo))).toEqual(combo)
+      expect(decodeAssertedCombo(encodeAssertedCombo(combo))).toEqual(combo)
     }
+  })
+
+  it('accepts v1 payloads: full combo asserted, legacy persona ids mapped onto the axis pairs, mode auto — shared links keep replaying', () => {
+    const v1 = (persona?: string) =>
+      tamper({
+        v: 1,
+        c: encodeCombo({ ...DEFAULT_CHOICES, entity: 'llc' }),
+        ...(persona ? { f: persona } : {}),
+        k: { payments: 'square' },
+        s: 3,
+      })
+    const migrated = v1('second-timer')!
+    expect(migrated.choices).toEqual({ ...DEFAULT_CHOICES, entity: 'llc' }) // v1 asserted everything
+    expect(migrated.founder).toEqual(TECH_SECOND)
+    expect(migrated.mode).toBe('auto')
+    expect(migrated.companyName).toBeNull()
+    expect(migrated.picks).toEqual({ payments: 'square' })
+    expect(migrated.seed).toBe(3)
+    expect(v1('non-technical')!.founder).toEqual(NONTECH_FIRST)
+    expect(v1('solo-technical')!.founder).toEqual(TECH_FIRST)
+    expect(v1()!.founder).toEqual(DEFAULT_FOUNDER_AXES)
+    // …and the migrated axes reproduce the v1 event stream (legacy-stable seed token).
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, migrated.founder, 3)).toContain('|f:second-timer|')
   })
 
   it('rejects garbage defensively (null, never a crash or a half-applied state)', () => {
@@ -421,19 +545,27 @@ describe('permalink — the whole run state round-trips through ?run=', () => {
     expect(decodeRunState('')).toBeNull()
     expect(decodeRunState('%%%not-base64url%%%')).toBeNull()
     expect(decodeRunState('aGVsbG8')).toBeNull() // valid base64url, not our JSON
-    // Wrong version / unknown persona / unknown preset / malformed picks.
-    const tamper = (o: Record<string, unknown>) => {
-      const json = JSON.stringify(o)
-      const bytes = new TextEncoder().encode(json)
-      const b64 = Buffer.from(bytes).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-      return decodeRunState(b64)
-    }
-    expect(tamper({ v: 99, c: encodeCombo(DEFAULT_CHOICES) })).toBeNull()
+    // Wrong version / unknown founder token / unknown preset / malformed picks / bad mode / name.
+    expect(tamper({ v: 99, c: encodeAssertedCombo(DEFAULT_CHOICES) })).toBeNull()
+    expect(tamper({ v: 2, c: 'zzzzzzzzz' })).toBeNull()
     expect(tamper({ v: 1, c: 'zzzzzzzzz' })).toBeNull()
-    expect(tamper({ v: 1, c: encodeCombo(DEFAULT_CHOICES), f: 'ceo' })).toBeNull()
-    expect(tamper({ v: 1, c: encodeCombo(DEFAULT_CHOICES), p: 'unicorn' })).toBeNull()
-    expect(tamper({ v: 1, c: encodeCombo(DEFAULT_CHOICES), k: { a: 1 } })).toBeNull()
-    expect(tamper({ v: 1, c: encodeCombo(DEFAULT_CHOICES), s: 'NaN' })).toBeNull()
+    expect(tamper({ v: 1, c: encodeCombo(DEFAULT_CHOICES), f: 'ceo' })).toBeNull() // unknown legacy persona
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), f: 'x9' })).toBeNull() // unknown axis token
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), f: 'second-timer' })).toBeNull() // v1 id in a v2 payload
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), m: 'warp' })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), n: 7 })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), p: 'unicorn' })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), k: { a: 1 } })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), s: 'NaN' })).toBeNull()
+  })
+
+  it('the typed company name is sanitized on both encode and decode — no markup, no control chars, capped length', () => {
+    expect(sanitizeVsCompanyName('  Perch<script>alert(1)</script>\u0007 Labs  ')).toBe('Perchscriptalert(1)/script Labs')
+    expect(sanitizeVsCompanyName('a'.repeat(200))).toHaveLength(VS_COMPANY_NAME_MAX)
+    expect(sanitizeVsCompanyName('   ')).toBe('')
+    expect(sanitizeVsCompanyName('Tab\tand\nnewline')).toBe('Tab and newline')
+    const dirty = encodeRunState({ ...state, companyName: ' <b>Evil</b>\u0000Co ' })
+    expect(decodeRunState(dirty)!.companyName).toBe('bEvil/bCo')
   })
 })
 
@@ -476,6 +608,31 @@ describe('server payloads — canonical verdicts, cited pricing, corpus risks', 
       }
     }
     expect(facts).toBeGreaterThan(0)
+  })
+
+  it('stepRanking carries runners-up behind the recommended pick — the terminal tops serialization is pinned to real judged data', () => {
+    // The page serializes tops as ranking.vendors[0] (recommended) + vendors.slice(1, 3)
+    // (runners-up). Pin against the live corpus: at least one union step has ≥2 ranked vendors,
+    // and every runner-up row is a real (id, name, finite score) triple in judged order.
+    let covered = 0
+    for (const t of unionTasks) {
+      for (const node of t.dag.nodes) {
+        const ranking = stepRanking(t.id, node, DATA_DIR)
+        if (!ranking || ranking.vendors.length < 2) continue
+        covered += 1
+        const runners = ranking.vendors.slice(1, 3)
+        expect(runners.length).toBeGreaterThanOrEqual(1)
+        expect(runners.length).toBeLessThanOrEqual(2)
+        for (const v of runners) {
+          expect(v.productId.length).toBeGreaterThan(0)
+          expect(v.name.length).toBeGreaterThan(0)
+          expect(Number.isFinite(v.score)).toBe(true)
+        }
+        // Judged order: the recommended pick outranks its runners-up.
+        expect(ranking.vendors[0].score).toBeGreaterThanOrEqual(runners[0].score)
+      }
+    }
+    expect(covered).toBeGreaterThan(0)
   })
 
   it('buildVsTaskRisks mirrors the committed corpus risk axis', () => {
