@@ -206,7 +206,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // exactly one section (enforced by lib/__tests__/arenaSections.test.ts), so grouping is a pure
   // regrouping of `categories` — nothing is added or lost.
   const categoryById = new Map(categories.map((c) => [c.id, c]));
-  const arenaMenuSections = loadArenaSections().map((section) => ({
+  // The Overall (all-products) rankings view leads the Arenas dropdown (founder 2026-09-29) —
+  // it's the cross-arena leaderboard the per-arena entries below drill into.
+  const arenaMenuSections = [
+    { name: "", items: [{ id: "overall", name: "Overall — every product ranked", label: "all arenas", icon: "⭐", href: "/overall" }] },
+    ...loadArenaSections().map((section) => ({
     name: section.name,
     items: section.arenaIds.flatMap((id): ArenaMenuItem[] => {
       const c = categoryById.get(id);
@@ -214,7 +218,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: (arenaIcons as Record<string, string>)[c.id] }]
         : [];
     }),
-  }));
+    })),
+  ];
   const stars = await fetchStarCount();
   // The two full global rankings (see app/rankings/*) aren't arenas, but they're arena-shaped
   // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
