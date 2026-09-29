@@ -1,55 +1,89 @@
 'use client'
 
-import { VS_PERSONAS, type VsPersonaId } from '@/lib/virtualStartupRun'
+import {
+  VS_EXPERIENCE_OPTIONS,
+  VS_TECHNICAL_OPTIONS,
+  type VsAxisOption,
+  type VsFounderAxes,
+} from '@/lib/virtualStartupRun'
 
-// Compact founder-persona segment for the Virtual Startup setup band (founder ask 2026-09-28:
-// "make the examples, decisions and 'who is the founder' much more compact, so we can see the
-// terminal above the fold"). A persona shifts which person-routed work is DIY vs delegated in
-// the SIMULATED time model only (lib/virtualStartupRun.ts computeStackOutcome) — it never changes
-// a judged verdict or a corpus estimate. The three options render as small segmented buttons:
+// The founder picker (founder batch 2026-09-29, item 4): the old three mutually-exclusive
+// personas untangled into TWO tiny segmented pairs under the setup band's Founder label —
+// Technical (technical / non-technical) × Experience (first-timer / second-timer). Founder-count
+// stays where it belongs: the Team decision ('Cofounders vs Solo founder'); no solo assumption
+// lives here. An axis shifts which person-routed work is DIY vs delegated in the run's time
+// model only (lib/virtualStartupRun.ts computeStackOutcome — the two modifiers compose) — it
+// never changes a judged verdict or a corpus estimate. Options render as small pill buttons:
 // short visible labels, the canonical full label as the accessible name, and the blurb in the
-// tooltip (components/InstantTooltip.tsx upgrades every title= site-wide). The active persona's
-// named simulation assumption prints in the band's info line (components/VirtualStartup.tsx),
+// tooltip (components/InstantTooltip.tsx upgrades every title= site-wide). The active axes'
+// named simulation assumptions print in the band's info lines (components/VirtualStartup.tsx),
 // and the full blurbs + icp-lens cross-references live in the band's "full setup guide" expand.
-const SHORT_LABEL: Record<VsPersonaId, string> = {
-  'solo-technical': 'Solo technical',
-  'non-technical': 'Non-technical',
-  'second-timer': 'Second-timer',
+
+function AxisPair<V extends string>({
+  name,
+  options,
+  value,
+  onSelect,
+}: {
+  name: string
+  options: VsAxisOption<V>[]
+  value: V
+  onSelect: (v: V) => void
+}) {
+  return (
+    <span role="group" aria-label={name} className="flex shrink-0 items-center gap-0.5">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          data-testid={`vs-persona-${o.value}`}
+          aria-pressed={o.value === value}
+          aria-label={o.label}
+          title={`${o.label} — ${o.blurb}`}
+          onClick={() => onSelect(o.value)}
+          className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
+            o.value === value
+              ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+              : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+          }`}
+        >
+          {o.short}
+        </button>
+      ))}
+    </span>
+  )
 }
 
 export default function VsPersonaPicker({
-  persona,
+  axes,
   onSelect,
 }: {
-  persona: VsPersonaId
-  onSelect: (id: VsPersonaId) => void
+  axes: VsFounderAxes
+  onSelect: (axes: VsFounderAxes) => void
 }) {
   return (
     <span
       data-testid="vs-persona-picker"
       role="group"
       aria-label="Who is the founder?"
-      className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
+      className="flex shrink-0 items-center gap-1.5"
     >
       {/* No visible label — the setup band's grid label column says "Founder" (2026-09-28). */}
-      {VS_PERSONAS.map((p) => (
-        <button
-          key={p.id}
-          type="button"
-          data-testid={`vs-persona-${p.id}`}
-          aria-pressed={p.id === persona}
-          aria-label={p.label}
-          title={`${p.label} — ${p.blurb}`}
-          onClick={() => onSelect(p.id)}
-          className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
-            p.id === persona
-              ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-              : 'border-transparent text-zinc-300 hover:text-zinc-100'
-          }`}
-        >
-          {SHORT_LABEL[p.id]}
-        </button>
-      ))}
+      <AxisPair
+        name="Technical background"
+        options={VS_TECHNICAL_OPTIONS}
+        value={axes.technical}
+        onSelect={(technical) => onSelect({ ...axes, technical })}
+      />
+      <span aria-hidden className="text-zinc-700">
+        ·
+      </span>
+      <AxisPair
+        name="Founder experience"
+        options={VS_EXPERIENCE_OPTIONS}
+        value={axes.experience}
+        onSelect={(experience) => onSelect({ ...axes, experience })}
+      />
     </span>
   )
 }

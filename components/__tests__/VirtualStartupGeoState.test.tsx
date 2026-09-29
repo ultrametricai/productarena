@@ -155,12 +155,20 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
       expect(screen.getByRole('group', { name })).toBeTruthy()
     }
     expect(screen.getByRole('group', { name: 'Who is the founder?' })).toBeTruthy()
-    expect(screen.getByRole('group', { name: 'Country view' })).toBeTruthy()
-    // Options keep their canonical full labels as accessible names (spot checks; the compact-
-    // band suite sweeps all 18).
-    for (const name of ['Delaware C-Corp', 'Raise a seed', 'Launch on Product Hunt', 'Solo founder']) {
+    // The founder axes (2026-09-29, item 4): two tiny segmented pairs inside the Founder group.
+    expect(screen.getByRole('group', { name: 'Technical background' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Founder experience' })).toBeTruthy()
+    for (const name of ['Technical founder', 'Non-technical founder', 'First-time founder', 'Second-time founder']) {
       expect(screen.getByRole('button', { name })).toBeTruthy()
     }
+    expect(screen.getByRole('group', { name: 'Country view' })).toBeTruthy()
+    // Decision options keep their canonical full labels as accessible names inside the open
+    // dropdown listboxes (spot checks; the compact-band suite sweeps all 18).
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    expect(screen.getByRole('option', { name: 'Delaware C-Corp' })).toBeTruthy()
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    fireEvent.click(screen.getByTestId('vs-decision-team'))
+    expect(screen.getByRole('option', { name: 'Solo founder' })).toBeTruthy()
   })
 
   it('the row labels and every decision group lead with a tooltipped icon (house rule: no unexplained icon)', () => {
@@ -168,7 +176,7 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     const band = screen.getByTestId('vs-setup')
     for (const title of [
       'Example companies — one-tap preset setups',
-      'Founder persona — who runs the simulated work',
+      'Founder — the who/where cluster: the two founder axes plus the country view',
       'Country view — annotate the run with committed geo evidence',
       'Starting decisions — which real processes make up the journey',
     ]) {
@@ -265,7 +273,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
 })
 
 describe('VirtualStartup — the state-graph panel', () => {
-  it('is empty pre-run with a placeholder, fills live with the reveal, mirrors the artifact stream (SIMULATED chips kept), and resets', () => {
+  it('is empty pre-run with a placeholder, fills live with the reveal, mirrors the artifact stream (data-synthetic kept), and resets', () => {
     vi.useFakeTimers()
     try {
       renderIt()
@@ -281,14 +289,16 @@ describe('VirtualStartup — the state-graph panel', () => {
       act(() => { vi.runAllTimers() })
       const final = screen.getAllByTestId('vs-sg-artifact')
       expect(final.length).toBeGreaterThan(mid)
-      // The Company tab mirrors the terminal's artifact stream exactly, honesty tag included.
+      // The Company tab mirrors the terminal's artifact stream exactly — every node carrying
+      // the structural data-synthetic attribute (the visible chip is gone, 2026-09-29).
       expect(final).toHaveLength(within(screen.getByTestId('vs-terminal-body')).getAllByTestId('vs-artifact').length)
-      for (const node of final) expect(within(node).getByText(/^simulated$/i)).toBeTruthy()
+      for (const node of final) expect(node.getAttribute('data-synthetic')).toBe('true')
     } finally {
       vi.useRealTimers()
     }
     // A decision change resets the panel together with the terminal.
-    fireEvent.click(screen.getByRole('button', { name: 'LLC' }))
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    fireEvent.click(screen.getByRole('option', { name: 'LLC' }))
     expect(screen.getByTestId('vs-sg-placeholder')).toBeTruthy()
     expect(screen.queryAllByTestId('vs-sg-artifact')).toHaveLength(0)
   })
@@ -304,16 +314,27 @@ describe('VirtualStartup — the state-graph panel', () => {
     expect(vendor.textContent).toContain('Startup banking · top judged · 88')
   })
 
-  it('Decisions tab lists the nine starting choices with their current full labels', () => {
+  it('Decisions tab shows BOTH founder axes plus the nine choices, with pending/asserted state', () => {
     renderIt()
     showAll()
     fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
     const decisions = screen.getAllByTestId('vs-sg-decision')
-    expect(decisions).toHaveLength(9)
+    expect(decisions).toHaveLength(11) // 2 founder axes + 9 decisions
     const text = decisions.map((d) => d.textContent).join(' | ')
-    expect(text).toContain('Delaware C-Corp')
-    expect(text).toContain('Raise a seed')
-    expect(text).toContain('Launch on Product Hunt')
+    // The axes lead (item 5: the panel shows both).
+    expect(text).toContain('Technical founder')
+    expect(text).toContain('First-time founder')
+    // Unasserted decisions show the composed default and say they are not set…
+    expect(text).toContain('Delaware C-Corp · not set')
+    expect(text).toContain('Raise a seed · not set')
+    // …and an asserted one drops the marker (the assertion resets the run; re-run to refill).
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    fireEvent.click(screen.getByRole('option', { name: 'Delaware C-Corp' }))
+    showAll()
+    fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
+    const after = screen.getAllByTestId('vs-sg-decision').map((d) => d.textContent).join(' | ')
+    expect(after).toContain('Delaware C-Corp')
+    expect(after).not.toContain('Delaware C-Corp · not set')
   })
 
   it('mid-run events land in the Decisions tab as pending, then resolve with the chosen branch', () => {
@@ -325,7 +346,7 @@ describe('VirtualStartup — the state-graph panel', () => {
     const pending = screen.getByTestId('vs-sg-event')
     expect(pending.textContent).toContain('Payment processor account review')
     expect(pending.textContent).toContain('pending decision')
-    expect(within(pending).getByText(/^simulated$/i)).toBeTruthy()
+    expect(pending.getAttribute('data-synthetic')).toBe('true')
     // Decide the branch on the terminal's event card — the panel resolves off the same state.
     fireEvent.click(screen.getByTestId('vs-event-choice-processor-review-wait'))
     expect(screen.getByTestId('vs-sg-event').textContent).toContain('→ Wait out the review')

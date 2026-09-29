@@ -28,7 +28,7 @@ import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualSt
 export const metadata: Metadata = {
   title: 'Virtual Startup — Ultrametric',
   description:
-    'Pick the starting decisions — or a one-tap example company (software, hardware, biotech) or YC batch mode — and watch a simulated startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step, clearly-labeled synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
+    'Open startup simulator — pick the starting decisions (or drive it semi-auto, deciding as the run reaches each fork) and watch a virtual startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step with its runners-up, synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
 }
 
 // DAG route mix of one corpus process — the year view's per-row honesty payload.
@@ -79,6 +79,11 @@ export default function VirtualStartupPage() {
               // Resolved here (lib/logos.ts needs node:fs) so the client state panel can render
               // the real logo chip (components/ProductLogoView.tsx).
               hasLogo: hasLogo(top.productId),
+              // The next 1–2 ranked vendors (same judged stepRanking, additive 2026-09-29) — the
+              // terminal prints them muted after the '(recommended)' pick.
+              runnersUp: ranking.vendors
+                .slice(1, 3)
+                .map((v) => ({ productId: v.productId, name: v.name, score: v.score })),
             }
           : null
       }),
@@ -124,13 +129,9 @@ export default function VirtualStartupPage() {
         {/* No breadcrumb eyebrow (founder 2026-09-28) — the title stands alone; /processes is
             linked from the outro below. */}
         <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Virtual Startup</h1>
-        {/* One-line hero (founder 2026-09-28: terminal above the fold; same day: no loud
-            "simulated" chips up top) — generated artifacts keep their tags inside the terminal,
-            and the fuller explanation lives in the setup band's "full setup guide" expand. */}
-        <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400">
-          A virtual company runs the real founder-process corpus — every step routed agent /
-          manual / human, vendors from the judged rankings, time estimates the corpus&apos;s own.
-        </p>
+        {/* Plain one-line subtitle (founder 2026-09-29) — the fuller explanation lives in the
+            setup band's "full setup guide" expand. */}
+        <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400">Open startup simulator</p>
       </section>
 
       <VirtualStartup

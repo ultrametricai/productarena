@@ -9,8 +9,9 @@ import type { SyntheticArtifact, TopVendorPick } from '@/lib/virtualStartup'
 // beside, on wide screens) the terminal that fills as the run progresses — the OBJECTS coming
 // into existence. Three tabs:
 //   Company   — the SyntheticArtifact stream (entity, EIN, bank account, name/logo/site …),
-//               each still visibly SIMULATED inside the panel (the honesty tag travels with the
-//               artifact, never just with the terminal);
+//               each carrying the structural data-synthetic="true" attribute and the fuchsia
+//               generated-artifact styling (founder 2026-09-29: no visible 'simulated' label
+//               anywhere on the page — the honesty invariant is the attribute, tests assert it);
 //   Vendors   — each judged top vendor collected as the journey hits its step: logo, name,
 //               arena, and why it's there (the top JUDGED vendor with its step score — the same
 //               provenance as the terminal pill; nothing re-ranked);
@@ -25,6 +26,9 @@ export interface VsPanelDecision {
   title: string
   icon: string
   label: string
+  // Semi-auto drive: 'asserted' = the reader set it (or an axis, always set); 'default' = still
+  // 'Not set', composing the default branch; 'pending' = the paused run is asking it right now.
+  state?: 'asserted' | 'default' | 'pending'
 }
 
 export interface VsPanelEvent {
@@ -37,16 +41,6 @@ export interface VsPanelEvent {
 }
 
 type PanelTab = 'company' | 'vendors' | 'decisions'
-
-// Same visible synthetic-data label as the terminal's (components/VirtualStartup.tsx SimChip) —
-// restated here so the panel's artifacts carry the tag standalone; tests assert one per node.
-function SimChip() {
-  return (
-    <span className="shrink-0 rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300">
-      simulated
-    </span>
-  )
-}
 
 export default function VsStateGraph({
   started,
@@ -119,10 +113,10 @@ export default function VsStateGraph({
                 <li
                   key={`${a.taskId}-${i}`}
                   data-testid="vs-sg-artifact"
-                  className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px]"
+                  data-synthetic="true"
+                  className="flex flex-wrap items-center gap-x-2 gap-y-0.5 border-l-2 border-fuchsia-400/40 pl-2 text-[12px]"
                 >
-                  <SimChip />
-                  <span className="text-zinc-400">{a.label}:</span>
+                  <span className="text-fuchsia-300/90">{a.label}:</span>
                   <span className="min-w-0 truncate font-mono text-[11px] text-zinc-200" title={a.value}>{a.value}</span>
                 </li>
               ))}
@@ -156,18 +150,24 @@ export default function VsStateGraph({
           <div className="space-y-1.5">
             <ul className="space-y-1">
               {decisions.map((d) => (
-                <li key={d.id} data-testid="vs-sg-decision" className="flex items-baseline gap-2 text-[12px]">
+                <li key={d.id} data-testid="vs-sg-decision" data-decision-state={d.state ?? 'asserted'} className="flex items-baseline gap-2 text-[12px]">
                   <span aria-hidden className="shrink-0">{d.icon}</span>
                   <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-500">{d.title}</span>
-                  <span className="text-zinc-300">{d.label}</span>
+                  <span className={d.state === 'pending' ? 'text-amber-300/90' : d.state === 'default' ? 'text-zinc-500' : 'text-zinc-300'}>
+                    {d.label}
+                  </span>
                 </li>
               ))}
             </ul>
             {events.length > 0 && (
               <ul className="space-y-1 border-t border-zinc-800/70 pt-1.5">
                 {events.map((e) => (
-                  <li key={e.id} data-testid="vs-sg-event" className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[12px]">
-                    <SimChip />
+                  <li
+                    key={e.id}
+                    data-testid="vs-sg-event"
+                    data-synthetic="true"
+                    className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 border-l-2 border-fuchsia-400/40 pl-2 text-[12px]"
+                  >
                     <span className="shrink-0 font-mono text-[10px] text-zinc-600">day {e.day}</span>
                     <span className="text-zinc-300">{e.title}</span>
                     {e.choiceLabel ? (
