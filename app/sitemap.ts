@@ -28,6 +28,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/methodology`, lastModified: now },
     { url: `${SITE_URL}/terms`, lastModified: now },
     { url: `${SITE_URL}/privacy`, lastModified: now },
+    // Company pages ported from the retired Astro landing (founder 2026-09-29, one top bar
+    // sitewide). The landing homepage itself is the SITE_URL root entry above (the worker maps
+    // '/' → /home; app/home's canonical is the root, so /home is deliberately not listed).
+    { url: `${SITE_URL}/company`, lastModified: now },
+    { url: `${SITE_URL}/tos`, lastModified: now },
     { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
