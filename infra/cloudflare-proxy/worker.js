@@ -2117,13 +2117,14 @@ export default {
       }
       return Response.redirect(`https://ultrametric.ai${stripped}${url.search}`, 301)
     }
-    // 1b. /v2 is an old landing snapshot still live on the landing origin with the retired
-    //     header (founder 2026-09-29: one top bar sitewide) — it redirects home.
-    if (url.pathname === '/v2' || url.pathname.startsWith('/v2/')) {
-      return new Response(null, {
-        status: 301,
-        headers: { Location: 'https://ultrametric.ai/', 'Cache-Control': 'no-store' },
-      })
+    // 1b. /v2 — the dedicated Ultrametric CLI/MCP product page, ported into the product app
+    //     (app/v2) so it shares the sitewide top bar (founder 2026-09-29; it replaces the old
+    //     redirect-home). '/v2' and '/v2/' both proxy to the origin's /v2; deeper /v2/* paths
+    //     fall through to the proxy unchanged (Next serves its own assets). NOTE: a Cloudflare
+    //     ZONE rule still intercepts /v2 ahead of this worker and serves the retired landing
+    //     origin's snapshot — this mapping takes effect the moment the founder removes it.
+    if (url.pathname === '/v2/') {
+      url.pathname = '/v2'
     }
     // 2. The landing pages are ported INTO the product app (founder 2026-09-29: "the top bar
     //    we use should be constant through the site") — the separate Astro landing origin, its

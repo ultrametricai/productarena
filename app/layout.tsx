@@ -20,7 +20,7 @@ import arenaIcons from "@/data/arena-icons.json";
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
-import { buildChainEntries, buildPageEntries, buildSearchIndex, buildStackEntries, type SearchEntry } from "@/lib/search-index";
+import { buildChainEntries, buildPageEntries, buildSearchIndex, buildStackEntries, V2_PRODUCT_ENTRY, type SearchEntry } from "@/lib/search-index";
 import { loadAiStacks } from "@/lib/aiStacks";
 import { loadChains } from "@/lib/processes";
 import searchAliases from "@/data/search-aliases.json";
@@ -239,6 +239,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },
     ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
     ...buildPageEntries(pageAliases),
+    // The company's own CLI/MCP product page (app/v2) — a `product` row in the palette.
+    V2_PRODUCT_ENTRY,
     // End-to-end playbooks (process chains) — searchable by name and by the journey phrases
     // people actually type ("raise a seed round", "launch on product hunt").
     ...buildChainEntries(loadChains(), pageAliases),

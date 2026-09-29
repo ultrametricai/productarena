@@ -143,6 +143,16 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/tos', label: 'Terms of Service', sublabel: 'The Ultrametric, Inc. terms of service' },
 ]
 
+// The dedicated Ultrametric CLI/MCP product page (app/v2, ported from the /v2 landing origin
+// 2026-09-29). A `product` entry — it's the company's own product, not a site view — defined
+// here (not inline in the layout) so the palette test can assert its presence.
+export const V2_PRODUCT_ENTRY: SearchEntry = {
+  type: 'product',
+  label: 'Ultrametric CLI/MCP',
+  sublabel: 'Start and run your company from any agent',
+  href: '/v2',
+}
+
 export function buildPageEntries(keywords?: Record<string, string[]>): SearchEntry[] {
   return PAGE_DEFS.map((p) => {
     const aliases = keywords?.[p.href]
