@@ -66,6 +66,11 @@ describe('playbook rows (buildPlaybookRows)', () => {
       const chain = chains.get(p.id)!
       expect(p.processes.map((t) => t.id)).toEqual(chain.taskIds)
       const tasks = chainTasks(chain)
+      // Dominant area (founder 2026-09-29: playbooks are still processes — the grouped table
+      // folds a chain into the area of its FIRST constituent, at that constituent's timeOrder).
+      expect(p.dominantArea).toBe(areaOf(tasks[0].phase))
+      expect(p.areaRank).toBe(areaRank(p.dominantArea))
+      expect(p.timeOrder).toBe(tasks[0].timeOrder)
       // phases = the distinct constituent phases (the table's phase-filter contract for playbooks).
       expect(new Set(p.phases)).toEqual(new Set(tasks.map((t) => t.phase)))
       const nodes = tasks.flatMap((t) => t.dag.nodes)

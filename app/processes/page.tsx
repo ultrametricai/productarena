@@ -25,8 +25,10 @@ export default function ProcessesPage() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           Going agentic with company processes
         </h1>
-        {/* The fat search matches playbooks too (founder 2026-09-29) — playbook rows carry the
-            chain-page href, the aggregate ceiling, and phase:'playbook' so the word finds them. */}
+        {/* The fat search matches the end-to-end chains too (founder 2026-09-29) — chain rows
+            carry the chain-page href, the aggregate ceiling, and the invisible 'playbook'
+            pseudo-phase so typing the word still finds them (the visible copy never says it —
+            founder same-day: "we don't need to say 'playbook'… playbooks are still processes"). */}
         <FatProcessSearch
           rows={[
             ...tableRows.map((r) => ({ href: `/processes/${r.slug}`, title: r.title, icon: r.icon, phase: r.phase, pct: r.pct })),
@@ -39,13 +41,15 @@ export default function ProcessesPage() {
       </section>
 
       {/* ONE view under the search (founder 2026-09-29: "combine playbooks and all processes
-          into one table") — the end-to-end playbooks lead as their own group, every process
-          follows grouped by area; the old separate playbooks section is gone. */}
+          into one table"; same-day follow-up: "we don't need to say 'playbook'… playbooks are
+          still processes") — every row grouped by area, the end-to-end chains folded into their
+          dominant area; the old separate playbooks section AND the 'Playbooks' vocabulary are
+          gone from this UI. */}
       <section className="space-y-3">
         <div>
-          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Playbooks &amp; all processes</h2>
+          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">All processes</h2>
           {/* Founder 2026-09-23: "this dots coloring is just not known by the user" — a visible
-              legend for the playbook rows' per-step route dots, matching ProcessesTable's
+              legend for the multi-process rows' per-step route dots, matching ProcessesTable's
               ROUTE_DOT + the legalSignature violet. */}
           <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-zinc-500">
             <span className="flex items-center gap-1.5" title="An agent can run this step today via a recorded API/MCP/CLI path">
@@ -72,7 +76,7 @@ export default function ProcessesPage() {
           <span className="font-medium text-zinc-200">🐣 Virtual Startup</span>
           <span className="text-sm text-zinc-400">
             pick the starting decisions — entity, team, funding, business model — and watch a
-            simulated company run these real playbooks day by day
+            simulated company run these real processes day by day
           </span>
           <span className="text-sm text-emerald-400">→</span>
         </Link>

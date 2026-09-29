@@ -206,12 +206,18 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
   })
 })
 
-describe('playbook rows in the combined table (founder 2026-09-29: one view under the search)', () => {
+describe('chain rows in the combined table (founder 2026-09-29: one view under the search; the same-day follow-up drops the "playbook" vocabulary — chain rows fold into their dominant area)', () => {
   function playbook(over: Pick<PlaybookRow, 'id' | 'title'> & Partial<PlaybookRow>): PlaybookRow {
     return {
       tagline: 'From zero to a running company',
       icon: '🚀',
       href: `/processes/chains/${over.id}`,
+      // Dominant area = the FIRST constituent's area; timeOrder = that constituent's timeOrder.
+      // Set to 'Starting up' at timeOrder 1 so the grouped test proves the fold: the chain ties
+      // with Incorporate (timeOrder 1) and the plain process leads on a tie.
+      dominantArea: 'Starting up',
+      areaRank: 0,
+      timeOrder: 1,
       // Titles deliberately distinct from ROWS' (IconChip renders its title as sr-only text —
       // colliding names would make textContent probes ambiguous).
       processes: [
@@ -233,22 +239,28 @@ describe('playbook rows in the combined table (founder 2026-09-29: one view unde
   const mountWith = (playbooks = PLAYBOOKS) => render(<ProcessesTable rows={ROWS} phases={PHASES} playbooks={playbooks} />)
   const rowTexts = (root: HTMLElement) => [...root.querySelectorAll('tbody tr')].map((tr) => tr.textContent ?? '')
 
-  it('grouped default: playbooks lead as their own group with count, before the areas', () => {
+  it('grouped default: the chain row folds into its dominant area at its first-constituent timeOrder — no leading Playbooks group, no playbook label', () => {
     const { container } = mountWith()
     const texts = rowTexts(container)
     const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
-    expect(at('Playbooks')).toBe(0)
-    expect(at('Company in a day')).toBe(1)
-    expect(at('Playbooks')).toBeLessThan(at('Starting up'))
-    const header = within(container).getByText('Playbooks').closest('tr') as HTMLElement
-    expect(header.textContent).toContain('1 end-to-end playbook')
-    expect(header.textContent).not.toContain('%') // avg ceiling dropped (founder 2026-09-29)
+    // No 'Playbooks' group header and no 'playbook' chip anywhere — one vocabulary.
+    expect(within(container).queryByText('Playbooks')).toBeNull()
+    expect(within(container).queryByText('playbook')).toBeNull()
+    // Inside 'Starting up' (its dominant area): Incorporate (timeOrder 1, plain process leads
+    // the tie) → Company in a day (timeOrder 1) → Open a bank account (timeOrder 2).
+    expect(at('Starting up')).toBeLessThan(at('Company in a day'))
+    expect(at('Incorporate the company')).toBeLessThan(at('Company in a day'))
+    expect(at('Company in a day')).toBeLessThan(at('Open a bank account'))
+    expect(at('Company in a day')).toBeLessThan(at('Growth & sales')) // inside the area, not after it
+    // The area header counts the chain row as a process (playbooks are still processes).
+    const header = within(container).getByText('Starting up').closest('tr') as HTMLElement
+    expect(header.textContent).toContain('3 processes')
   })
 
-  it('a playbook row is visually distinct and links to its chain page: chip, route strip, honest metric dash', () => {
+  it('a chain row keeps its composition signals and links to its chain page: constituent chips, route strip, honest metric dash — no category chip', () => {
     const { container } = mountWith()
     const tr = within(container).getByText('Company in a day').closest('tr') as HTMLElement
-    expect(within(tr).getByText('playbook')).toBeDefined() // the chip
+    expect(within(tr).queryByText('playbook')).toBeNull() // the chip is gone (founder 2026-09-29)
     expect(within(tr).getByText('Company in a day').closest('a')?.getAttribute('href')).toBe('/processes/chains/company-in-a-day')
     expect(tr.textContent).toContain('7/10') // aggregate agent/total steps
     // The route strip: one dot per step, legalSignature wears violet.
@@ -260,29 +272,28 @@ describe('playbook rows in the combined table (founder 2026-09-29: one view unde
     expect(within(container).getByText('Run payroll').closest('a')?.getAttribute('href')).toBe('/processes/run-payroll')
   })
 
-  it('a ceiling sort interleaves playbooks by their aggregate ceiling', () => {
+  it('a ceiling sort interleaves chain rows by their aggregate ceiling (flat semantics unchanged)', () => {
     const { container, getByRole } = mountWith()
     fireEvent.click(getByRole('button', { name: 'Most automatable' }))
     const texts = rowTexts(container)
     const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
-    // pct desc: Run payroll 90 → playbook 70 → Incorporate 60 → bank 40.
+    // pct desc: Run payroll 90 → chain 70 → Incorporate 60 → bank 40.
     expect(at('Run payroll')).toBeLessThan(at('Company in a day'))
     expect(at('Company in a day')).toBeLessThan(at('Incorporate the company'))
-    expect(within(container).queryByText('Playbooks')).toBeNull() // flat — the group header is gone
+    expect(within(container).queryByText('Starting up')).toBeNull() // flat — no group headers
   })
 
-  it('a per-process ordering (risk) lists playbooks after the sorted processes — missing values last', () => {
+  it('a per-process ordering (risk) lists chain rows after the sorted processes — missing values last', () => {
     const { container, getByRole } = mountWith()
     fireEvent.click(getByRole('button', { name: 'Riskiest' }))
     const texts = rowTexts(container)
     expect(texts.findIndex((t) => t.includes('Company in a day'))).toBe(texts.length - 1)
   })
 
-  it('the phase filter scopes playbooks by their constituent processes; the text filter matches name and taglines', () => {
+  it('the phase filter scopes chain rows by their constituent processes; the text filter matches name and taglines', () => {
     const { container } = mountWith()
     fireEvent.change(within(container).getByLabelText('Filter by phase'), { target: { value: 'Growth' } })
-    expect(within(container).queryByText('Playbooks')).toBeNull() // no Formation-only playbook in Growth
-    expect(within(container).queryByText('Company in a day')).toBeNull()
+    expect(within(container).queryByText('Company in a day')).toBeNull() // Formation-only chain filtered out
     fireEvent.change(within(container).getByLabelText('Filter by phase'), { target: { value: 'Formation' } })
     expect(within(container).getByText('Company in a day')).toBeDefined()
 
@@ -292,7 +303,9 @@ describe('playbook rows in the combined table (founder 2026-09-29: one view unde
     expect(within(container).getByText('Company in a day')).toBeDefined()
     expect(within(container).queryByText('Run payroll')).toBeNull()
     fireEvent.change(search, { target: { value: 'zzz-no-match' } })
-    expect(container.textContent).toContain('No processes or playbooks match')
+    // One vocabulary in the empty state too — chain rows are processes.
+    expect(container.textContent).toContain('No processes match')
+    expect(container.textContent).not.toContain('playbooks')
   })
 
   it('without a playbooks prop the table renders exactly the process-only view (homepage co-mount)', () => {
