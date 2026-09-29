@@ -265,15 +265,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl flex-nowrap items-center justify-between gap-x-3 px-3 py-3 sm:gap-x-4 sm:px-5 sm:py-4">
-            <div className="flex shrink-0 items-baseline gap-2">
-              {/* Sole brand since the 2026-09-28 rebrand: the ultrametric wordmark IS the site,
-                  so it links home (the old Product▸Arena mark + "/" separator are gone). */}
-              <Link
-                href="/"
-                className="font-display text-lg font-bold tracking-tight transition hover:text-emerald-300"
-                title="Ultrametric home"
-              >
-                ultrametric
+            <div className="flex shrink-0 items-center gap-2">
+              {/* One top-bar standard sitewide (founder 2026-09-29): the landing's wordmark SVG
+                  leads the product bar too, so ultrametric.ai/ and the product pages share the
+                  same header. Links home (the landing). */}
+              <Link href="/" className="flex shrink-0 items-center transition hover:opacity-80" title="Ultrametric home">
+                {/* eslint-disable-next-line @next/next/no-img-element -- static svg wordmark */}
+                <img src="/ultrametric-wordmark.svg" alt="ultrametric" className="h-3 w-auto sm:h-3.5" />
               </Link>
             </div>
             {/* Primary IA: Arenas (the product), Explore (every secondary view: global rankings,

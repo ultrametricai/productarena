@@ -2177,13 +2177,19 @@ export default {
           // <details> element is the nav's only dropdown; links hide progressively on mobile.
           .on('nav details', {
             element(el) {
+              // Inline styles, not utility classes: the landing's Tailwind build is purged, so
+              // injected class names don't exist in its CSS. Pill style mirrors the product
+              // header (app/layout.tsx nav links) — one top-bar standard (founder 2026-09-29).
+              const pill =
+                'display:inline-block;border:1px solid #27272a;border-radius:0.5rem;padding:0.25rem 0.625rem;font-size:0.75rem;line-height:1rem;color:#d4d4d8;text-decoration:none;white-space:nowrap'
+              const link = (href, label) => `<a href="${href}" style="${pill}">${label}</a>`
               el.replace(
-                `<div class="flex items-center gap-5 text-sm text-zinc-400">
-                   <a href="/virtual-startup" class="hidden md:inline hover:text-zinc-300 transition-colors">Virtual Startup</a>
-                   <a href="/arenas" class="hidden sm:inline hover:text-zinc-300 transition-colors">Arenas</a>
-                   <a href="/processes" class="hidden sm:inline hover:text-zinc-300 transition-colors">Processes</a>
-                   <a href="/technologies" class="hidden md:inline hover:text-zinc-300 transition-colors">Technologies</a>
-                   <a href="/overall" class="hover:text-zinc-300 transition-colors">Rankings</a>
+                `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.375rem">
+                   ${link('/virtual-startup', 'Virtual Startup')}
+                   ${link('/arenas', 'Arenas')}
+                   ${link('/processes', 'Processes')}
+                   ${link('/technologies', 'Technologies')}
+                   ${link('/overall', 'Rankings')}
                  </div>`,
                 { html: true },
               )
