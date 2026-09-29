@@ -1,11 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   GEO_COUNTRIES,
+  GEO_GLOBAL,
   GEO_PREF_META,
   GEO_SCOPE_GLYPH,
   getGeoSelection,
   parseGeo,
+  parseGeoChoice,
   serializeGeo,
+  serializeGeoChoice,
   setGeoSelection,
   subscribeGeoSelection,
 } from '@/lib/geoPreference'
@@ -42,6 +45,34 @@ describe('?geo= codec', () => {
     for (const c of ['UK', 'IN', 'DE', 'FR'] as const) {
       expect(parseGeo(serializeGeo(c))).toBe(c)
     }
+  })
+})
+
+// The 'global' token (Virtual Startup batch 2026-09-29) — ADDITIVE: parseGeo/serializeGeo above
+// are untouched (a stray ?geo=global on a process page still collapses to the null default,
+// which is exactly what geo-neutral means there), and only the choice-level codec knows it.
+describe('the GeoChoice codec (countries + the explicit 🌐 Global)', () => {
+  it('parses every country exactly like parseGeo, plus the global token (case-insensitive)', () => {
+    expect(parseGeoChoice('uk')).toBe('UK')
+    expect(parseGeoChoice(' de ')).toBe('DE')
+    expect(parseGeoChoice('global')).toBe(GEO_GLOBAL)
+    expect(parseGeoChoice('GLOBAL')).toBe(GEO_GLOBAL)
+    // The default and junk still collapse to null — never an invalid choice in state.
+    expect(parseGeoChoice('us')).toBeNull()
+    expect(parseGeoChoice(null)).toBeNull()
+    expect(parseGeoChoice('narnia')).toBeNull()
+  })
+
+  it('serializes canonically and round-trips; the base parseGeo NEVER learns the token', () => {
+    expect(serializeGeoChoice(GEO_GLOBAL)).toBe('global')
+    expect(serializeGeoChoice('UK')).toBe('uk')
+    expect(serializeGeoChoice(null)).toBeNull()
+    for (const c of ['UK', 'IN', 'DE', 'FR', GEO_GLOBAL] as const) {
+      expect(parseGeoChoice(serializeGeoChoice(c))).toBe(c)
+    }
+    // Default byte-identical guarantee for existing consumers: a stored/URL 'global' is the
+    // null default to every parseGeo call site (banner, marks, annotations render nothing).
+    expect(parseGeo('global')).toBeNull()
   })
 })
 

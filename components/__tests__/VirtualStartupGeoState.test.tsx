@@ -1,0 +1,334 @@
+// @vitest-environment jsdom
+// The 2026-09-29 founder batch at the DOM level:
+//   1. control icons — decoration only, every accessible name unchanged;
+//   2. the in-sim Geo row — the US default stays byte-identical (and 🌐 Global is geo-neutral),
+//      while a country selection annotates the run from COMMITTED data only, pinned here against
+//      the real repo evidence (processes/corpus.json geoNotes for form_001 → UK Companies House;
+//      jurisdictions/vendor-geo.json mercury → unavailable in the UK);
+//   3. the state-graph panel — fills/resets off the SAME revealed-row state as the terminal,
+//      artifacts stay visibly SIMULATED inside it, tabs carry the run's objects.
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import VirtualStartup from '@/components/VirtualStartup'
+import { setGeoSelection, type GeoAnalogNote, type VendorGeoLookup } from '@/lib/geoPreference'
+import type { SimStep } from '@/lib/processSim'
+import { vendorGeoLookup } from '@/lib/vendorGeo'
+import type { VirtualTaskPayload, VsChain } from '@/lib/virtualStartup'
+
+// ── REAL committed evidence, loaded from the repo — these tests pin the rendered lines to the
+// exact data files the honesty contract cites, so a silent data drift fails loudly here.
+interface CorpusGeoSlice {
+  id: string
+  geoScope: 'global' | 'us' | 'us-state'
+  geoNotes?: GeoAnalogNote[]
+}
+const corpus = JSON.parse(
+  readFileSync(path.join(process.cwd(), 'processes', 'corpus.json'), 'utf8'),
+) as CorpusGeoSlice[]
+const corpusById = new Map(corpus.map((t) => [t.id, t]))
+const FORM_001 = corpusById.get('form_001')!
+const QS_023 = corpusById.get('qs_023')!
+const VENDOR_GEO: VendorGeoLookup = vendorGeoLookup(['mercury'])
+
+const step = (taskId: string, label: string, over: Partial<SimStep> = {}): SimStep => ({
+  taskId,
+  taskTitle: taskId,
+  label,
+  route: 'agent',
+  vendor: null,
+  vendorLabel: null,
+  arenaId: null,
+  choiceArenaId: null,
+  calls: [],
+  toolCall: null,
+  approvalRequired: false,
+  legalSignature: false,
+  riskLevel: null,
+  estimatedMinutes: 10,
+  async: false,
+  gap: null,
+  ...over,
+})
+
+const task = (id: string, title: string, over: Partial<VirtualTaskPayload> = {}): VirtualTaskPayload => ({
+  id,
+  title,
+  slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+  phase: 'formation',
+  description: `${title} description`,
+  steps: [step(id, `${title} — step 1`)],
+  tops: [null],
+  ...over,
+})
+
+// journeyPhases resolves every VS_CHAIN_IDS chain, so the fixture must cover all ten.
+const CHAINS: VsChain[] = [
+  { id: 'name-the-company', name: 'Name the company', taskIds: ['brand_001'] },
+  { id: 'company-launch', name: 'Company launch', taskIds: ['form_001', 'startup_002', 'qs_023'] },
+  { id: 'raise-a-seed-round', name: 'Raise a seed round', taskIds: ['fund_001'] },
+  { id: 'set-up-compliance', name: 'Set up compliance (SOC 2-lite)', taskIds: ['ops_005'] },
+  { id: 'ship-v1', name: 'Ship v1', taskIds: ['prod_006'] },
+  { id: 'launch-website', name: 'Launch the website', taskIds: ['site_001'] },
+  { id: 'get-paid', name: 'Get paid', taskIds: ['qs_021', 'growth_001', 'sales_002'] },
+  { id: 'first-hire', name: 'First hire', taskIds: ['hr_001', 'hr_002'] },
+  { id: 'launch-on-product-hunt', name: 'Launch on Product Hunt', taskIds: ['growth_010'] },
+  { id: 'land-the-enterprise-deal', name: 'Land the enterprise deal', taskIds: ['comp_002'] },
+]
+
+const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
+  [
+    task('brand_001', 'Generate a company name'),
+    // The REAL geo dimension: form_001 is US-scoped with curated country analogs (UK →
+    // Companies House); qs_023 is US-scoped with (currently) no UK analog — the honest gap.
+    task('form_001', 'Incorporate C-Corp', {
+      geoScope: FORM_001.geoScope,
+      geoNotes: FORM_001.geoNotes ?? [],
+    }),
+    task('startup_002', 'Founder agreement & equity split'),
+    task('qs_023', 'Open a business bank account', {
+      geoScope: QS_023.geoScope,
+      geoNotes: QS_023.geoNotes ?? [],
+      steps: [step('qs_023', 'Open the account', { arenaId: 'startup-banking' })],
+      // Mercury as the step's judged top pick — the vendor the committed geo evidence covers.
+      tops: [
+        { productId: 'mercury', name: 'Mercury', score: 88, arenaId: 'startup-banking', arenaName: 'Startup banking' },
+      ],
+    }),
+    task('fund_001', 'Raise pre-seed (SAFEs)'),
+    task('ops_005', 'Set up a password manager'),
+    task('prod_006', 'Set up a code hosting org'),
+    task('site_001', 'Generate a website'),
+    task('qs_021', 'Connect a payment processor'),
+    task('growth_001', 'Set up subscription billing'),
+    task('sales_002', 'Send an invoice'),
+    task('hr_001', 'Hire first employee'),
+    task('hr_002', 'Run payroll'),
+    task('growth_010', 'Launch on Product Hunt & directories'),
+    task('comp_002', 'Complete SOC 2 Type II'),
+  ].map((t) => [t.id, t]),
+)
+
+const renderIt = (over: Partial<Parameters<typeof VirtualStartup>[0]> = {}) =>
+  render(
+    <VirtualStartup
+      chains={CHAINS}
+      tasks={TASKS}
+      roles={[]}
+      yearCandidates={[]}
+      eventExamples={[]}
+      access={{}}
+      pricing={{}}
+      taskRisks={{}}
+      vendorGeo={VENDOR_GEO}
+      {...over}
+    />,
+  )
+
+const showAll = () => {
+  vi.useFakeTimers()
+  try {
+    fireEvent.click(screen.getByRole('button', { name: /run this startup|run it again/i }))
+    act(() => {
+      vi.runAllTimers()
+    })
+  } finally {
+    vi.useRealTimers()
+  }
+}
+
+// URL, storage AND the shared per-tab geo store are real contracts here — reset all three.
+beforeEach(() => {
+  window.history.replaceState(null, '', '/')
+  window.localStorage.clear()
+  setGeoSelection(null)
+})
+
+describe('VirtualStartup — control icons never move an accessible name', () => {
+  it('every decision group, its options, the persona group, and the geo row keep their canonical names', () => {
+    renderIt()
+    for (const name of [
+      'Entity', 'Team', 'Funding', 'Business model', 'What comes first',
+      'First hire', 'Compliance posture', 'Enterprise motion', 'Directory launch',
+    ]) {
+      expect(screen.getByRole('group', { name })).toBeTruthy()
+    }
+    expect(screen.getByRole('group', { name: 'Who is the founder?' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Country view' })).toBeTruthy()
+    // Options keep their canonical full labels as accessible names (spot checks; the compact-
+    // band suite sweeps all 18).
+    for (const name of ['Delaware C-Corp', 'Raise a seed', 'Launch on Product Hunt', 'Solo founder']) {
+      expect(screen.getByRole('button', { name })).toBeTruthy()
+    }
+  })
+
+  it('the row labels and every decision group lead with a tooltipped icon (house rule: no unexplained icon)', () => {
+    renderIt()
+    const band = screen.getByTestId('vs-setup')
+    for (const title of [
+      'Example companies — one-tap preset setups',
+      'Founder persona — who runs the simulated work',
+      'Country view — annotate the run with committed geo evidence',
+      'Starting decisions — which real processes make up the journey',
+    ]) {
+      expect(within(band).getByTitle(title)).toBeTruthy()
+    }
+    const entity = screen.getByRole('group', { name: 'Entity' })
+    expect(within(entity).getByTitle('Entity — starting decision')).toBeTruthy()
+    const launch = screen.getByRole('group', { name: 'Directory launch' })
+    expect(within(launch).getByTitle('Directory launch — starting decision')).toBeTruthy()
+  })
+})
+
+describe('VirtualStartup — the in-sim Geo row', () => {
+  it('default (and 🌐 Global) render the run byte-identically: no marks, no analogs, no warnings', () => {
+    renderIt()
+    showAll()
+    const term = screen.getByTestId('vs-terminal-body')
+    const baseline = term.innerHTML
+    expect(screen.queryByTestId('vs-geo-analog')).toBeNull()
+    expect(screen.queryByTestId('vs-geo-analog-missing')).toBeNull()
+    expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
+    expect(screen.queryByTestId('vs-geo-vendor-warning')).toBeNull()
+    expect(window.location.search).not.toContain('geo')
+    // A country annotates the already-printed run (annotation only, no reset)…
+    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    expect(term.innerHTML).not.toBe(baseline)
+    // …and stepping back to the USA default — or to explicit Global — restores the exact bytes.
+    fireEvent.click(screen.getByTestId('vs-geo-usa'))
+    expect(term.innerHTML).toBe(baseline)
+    expect(window.location.search).not.toContain('geo')
+    fireEvent.click(screen.getByTestId('vs-geo-global'))
+    expect(term.innerHTML).toBe(baseline)
+  })
+
+  it('UK: the committed form_001 analog prints (Companies House + verified actionUrl); unmapped stays honest; steps carry the mark', () => {
+    // Pin the committed data this test rests on — a corpus drift fails here, visibly.
+    const ukNote = (FORM_001.geoNotes ?? []).find((n) => n.country === 'UK')!
+    expect(FORM_001.geoScope).toBe('us')
+    expect(ukNote.summary).toContain('Companies House')
+    expect(QS_023.geoScope).toBe('us')
+    expect((QS_023.geoNotes ?? []).some((n) => n.country === 'UK')).toBe(false)
+
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    expect(window.location.search).toContain('geo=uk')
+    expect(window.localStorage.getItem('pa-geo')).toBe('uk')
+    showAll()
+    const analog = screen.getByTestId('vs-geo-analog')
+    expect(analog.textContent).toContain('in the United Kingdom this is:')
+    expect(analog.textContent).toContain('Companies House')
+    expect(within(analog).getByRole('link').getAttribute('href')).toBe(ukNote.actionUrl)
+    // qs_023 has no UK analog — said plainly, never fabricated.
+    const missing = screen.getByTestId('vs-geo-analog-missing')
+    expect(missing.textContent).toContain('no United Kingdom mapping yet')
+    // Both US-scoped processes' steps carry the quiet 🇺🇸 mark; global tasks carry none.
+    expect(screen.getAllByTestId('vs-geo-step-mark')).toHaveLength(2)
+  })
+
+  it('mercury+UK: the committed unavailability prints verbatim with its source; the judged pill and score never move', () => {
+    const cell = VENDOR_GEO['mercury']?.UK
+    expect(cell?.status).toBe('unavailable') // pinned against jurisdictions/vendor-geo.json
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    showAll()
+    const warn = screen.getByTestId('vs-geo-vendor-warning')
+    expect(warn.textContent).toContain('Mercury — unavailable in the United Kingdom')
+    expect(warn.textContent).toContain(cell!.note)
+    expect(within(warn).getByRole('link', { name: /source/ }).getAttribute('href')).toBe(cell!.sourceUrl)
+    // Honesty line: annotation only — the judged top-vendor pill still renders, score intact.
+    expect(screen.getByRole('link', { name: /Mercury · 88/ })).toBeTruthy()
+    // Global is geo-neutral: the warning (and every mark) is gone, and the token round-trips.
+    fireEvent.click(screen.getByTestId('vs-geo-global'))
+    expect(screen.queryByTestId('vs-geo-vendor-warning')).toBeNull()
+    expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
+    expect(window.location.search).toContain('geo=global')
+    expect(window.localStorage.getItem('pa-geo')).toBe('global')
+  })
+
+  it('?geo=uk is read on mount — the interop contract with the process/product pages', () => {
+    window.history.replaceState(null, '', '/?geo=uk')
+    renderIt()
+    expect(screen.getByTestId('vs-geo-uk').getAttribute('aria-pressed')).toBe('true')
+    showAll()
+    expect(screen.getByTestId('vs-geo-analog')).toBeTruthy()
+  })
+
+  it('the stored pa-geo copy (incl. global) is read on mount when the URL carries nothing', () => {
+    window.localStorage.setItem('pa-geo', 'global')
+    renderIt()
+    expect(screen.getByTestId('vs-geo-global').getAttribute('aria-pressed')).toBe('true')
+    showAll()
+    expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
+  })
+})
+
+describe('VirtualStartup — the state-graph panel', () => {
+  it('is empty pre-run with a placeholder, fills live with the reveal, mirrors the artifact stream (SIMULATED chips kept), and resets', () => {
+    vi.useFakeTimers()
+    try {
+      renderIt()
+      expect(screen.getByTestId('vs-sg-placeholder')).toBeTruthy()
+      expect(screen.queryAllByTestId('vs-sg-artifact')).toHaveLength(0)
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => { vi.advanceTimersByTime(240 * 12) })
+      // Mid-run: the placeholder is gone and the panel is already filling — same reveal state
+      // as the terminal, no separate timers.
+      expect(screen.queryByTestId('vs-sg-placeholder')).toBeNull()
+      const mid = screen.getAllByTestId('vs-sg-artifact').length
+      expect(mid).toBeGreaterThan(0)
+      act(() => { vi.runAllTimers() })
+      const final = screen.getAllByTestId('vs-sg-artifact')
+      expect(final.length).toBeGreaterThan(mid)
+      // The Company tab mirrors the terminal's artifact stream exactly, honesty tag included.
+      expect(final).toHaveLength(within(screen.getByTestId('vs-terminal-body')).getAllByTestId('vs-artifact').length)
+      for (const node of final) expect(within(node).getByText(/^simulated$/i)).toBeTruthy()
+    } finally {
+      vi.useRealTimers()
+    }
+    // A decision change resets the panel together with the terminal.
+    fireEvent.click(screen.getByRole('button', { name: 'LLC' }))
+    expect(screen.getByTestId('vs-sg-placeholder')).toBeTruthy()
+    expect(screen.queryAllByTestId('vs-sg-artifact')).toHaveLength(0)
+  })
+
+  it('Vendors tab collects the judged picks as the journey hits their steps — name, arena, provenance, product link', () => {
+    renderIt()
+    showAll()
+    fireEvent.click(screen.getByTestId('vs-sg-tab-vendors'))
+    const vendor = screen.getByTestId('vs-sg-vendor')
+    expect(within(vendor).getByRole('link', { name: 'Mercury' }).getAttribute('href')).toBe(
+      '/arena/startup-banking/product/mercury',
+    )
+    expect(vendor.textContent).toContain('Startup banking · top judged · 88')
+  })
+
+  it('Decisions tab lists the nine starting choices with their current full labels', () => {
+    renderIt()
+    showAll()
+    fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
+    const decisions = screen.getAllByTestId('vs-sg-decision')
+    expect(decisions).toHaveLength(9)
+    const text = decisions.map((d) => d.textContent).join(' | ')
+    expect(text).toContain('Delaware C-Corp')
+    expect(text).toContain('Raise a seed')
+    expect(text).toContain('Launch on Product Hunt')
+  })
+
+  it('mid-run events land in the Decisions tab as pending, then resolve with the chosen branch', () => {
+    // qs_021 clears the processor-review risk floor (minRisk 2, no decision gates) and is the
+    // only eligible event in this fixture — the seeded draw always contains exactly it.
+    renderIt({ taskRisks: { qs_021: 2 } })
+    showAll()
+    fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
+    const pending = screen.getByTestId('vs-sg-event')
+    expect(pending.textContent).toContain('Payment processor account review')
+    expect(pending.textContent).toContain('pending decision')
+    expect(within(pending).getByText(/^simulated$/i)).toBeTruthy()
+    // Decide the branch on the terminal's event card — the panel resolves off the same state.
+    fireEvent.click(screen.getByTestId('vs-event-choice-processor-review-wait'))
+    expect(screen.getByTestId('vs-sg-event').textContent).toContain('→ Wait out the review')
+    expect(screen.getByTestId('vs-sg-event').textContent).not.toContain('pending decision')
+  })
+})
