@@ -91,7 +91,7 @@ export default function ProcessSimulator({
           {multiTask ? 'Simulate this playbook' : 'Simulate this process'}
         </h2>
         <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-          simulated dry run from the mapped process — no real calls are made
+          synthetic dry run from the mapped process — no real calls are made
         </span>
       </div>
 

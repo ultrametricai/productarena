@@ -5,6 +5,8 @@ import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProcessSimulator from '@/components/ProcessSimulator'
+import ProductLogoView from '@/components/ProductLogoView'
+import VsDecisionSelect from '@/components/VsDecisionSelect'
 import VsGeoSelector from '@/components/VsGeoSelector'
 import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
 import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
@@ -31,7 +33,9 @@ import {
   yearStats,
   type Choices,
   type EventExample,
+  type JourneyStats,
   type PresetId,
+  type SynthIdentity,
   type SyntheticArtifact,
   type TopVendorPick,
   type VirtualTaskPayload,
@@ -41,8 +45,9 @@ import {
   type YearCandidate,
   type YearRow,
 } from '@/lib/virtualStartup'
-// ── v3 run layer (founder-approved 2026-09-28): vendor picks drive outcomes, founder personas,
-// seeded corpus-grounded events, scorecard + shareable ?run= permalink. All logic lives in
+// ── v3 run layer (founder-approved 2026-09-28, axes redesign + drive modes 2026-09-29): vendor
+// picks drive outcomes, founder AXES (Technical × Experience), seeded corpus-grounded events,
+// scorecard + shareable ?run= permalink, auto/semi-auto drive. All logic lives in
 // lib/virtualStartupRun.ts (pure, deterministic); the UI pieces are separate components.
 import VsEventCard from '@/components/VsEventCard'
 import VsPersonaPicker from '@/components/VsPersonaPicker'
@@ -52,16 +57,27 @@ import {
   corpusLaunchDay,
   decodeRunState,
   drawVsEvents,
+  DEFAULT_FOUNDER_AXES,
+  effectiveChoices,
   eligibleVsEvents,
   eventSeedKey,
+  founderAssumptions,
   journeyOutcomeInputs,
+  sanitizeVsCompanyName,
+  VS_COMPANY_NAME_MAX,
   optimalSelections,
   resolveVsEvents,
   taskMinutesById,
   computeBurn,
-  VS_PERSONAS,
+  VS_EXPERIENCE_OPTIONS,
+  VS_TECHNICAL_OPTIONS,
+  type AssertedChoices,
+  type DrawnVsEvent,
+  type OutcomeStepInput,
+  type StackOutcome,
   type VsAccessMap,
-  type VsPersonaId,
+  type VsDriveMode,
+  type VsFounderAxes,
   type VsPricingMap,
   type VsRunState,
 } from '@/lib/virtualStartupRun'
@@ -86,21 +102,133 @@ type Row =
   | { kind: 'phase'; key: string; title: string; chainId: string; chainName: string; note: string | null }
   | { kind: 'task'; key: string; task: VirtualTaskPayload }
   | { kind: 'day'; key: string; day: number }
-  // v3: outNote names the outcome-model rule applied to this step's simulated minutes (null =
+  // v3: outNote names the outcome-model rule applied to this step's sim minutes (null =
   // corpus estimate as-is); outMinutes is the effective clock advance the day markers use.
   | { kind: 'step'; key: string; step: SimStep; top: TopVendorPick | null; outNote: string | null; outMinutes: number }
   | { kind: 'artifact'; key: string; artifact: SyntheticArtifact }
-  // v3: a seeded mid-run event, printed inside the terminal flow at its simulated day.
-  | { kind: 'vsevent'; key: string; eventId: string }
+  // v3: a seeded mid-run event, printed inside the terminal flow at its drawn day.
+  | { kind: 'vsevent'; key: string; eventId: string; day: number }
 
-// The visible synthetic-data label — rendered beside EVERY generated artifact (and the company
-// banner). Tests assert one of these per artifact node; nothing synthetic ships without it.
-function SimChip() {
-  return (
-    <span className="shrink-0 rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300">
-      simulated
-    </span>
+// ---------------------------------------------------------------------------
+// Pure run assembly — shared by the live terminal AND the semi-auto pause schedule (which builds
+// per-option variant row lists to find each unasserted decision's first affected row).
+// ---------------------------------------------------------------------------
+
+interface RunArgs {
+  choices: Choices // the EFFECTIVE combo (asserted over DEFAULT_CHOICES)
+  chains: VsChain[]
+  tasks: Record<string, VirtualTaskPayload>
+  roles: VendorRole[]
+  access: VsAccessMap
+  founder: VsFounderAxes
+  picks: Record<string, string>
+  identity: SynthIdentity | null
+  preset: PresetId | null
+  yc: boolean
+  seed: number
+  taskRisks: Record<string, number>
+  // Semi-auto: pin the synthetic name/artifact seed to DEFAULT_CHOICES so a mid-run decision
+  // assertion never rewrites an already-printed seeded value (lib/virtualStartup.ts ArtifactOpts).
+  seedCombo?: Choices
+}
+
+interface RunBuild {
+  rows: Row[]
+  steps: SimStep[]
+  stats: JourneyStats
+  outcome: StackOutcome
+  outcomeInputs: OutcomeStepInput[]
+  drawnEvents: DrawnVsEvent[]
+}
+
+function buildRunRows(args: RunArgs): RunBuild {
+  const { choices, chains, tasks, roles, access, founder, picks, identity, preset, yc, seed, taskRisks } = args
+  const phases = journeyPhases(choices, chains, { yc })
+  const outcomeInputs = journeyOutcomeInputs(phases, tasks)
+  const outcome = computeStackOutcome(outcomeInputs, picks, roles, access, founder)
+  // Seeded, corpus-grounded, plausibility-gated events; deterministic from (combo, preset, yc,
+  // founder axes, seed) — the day span comes from the raw corpus estimates so vendor picks never
+  // reshuffle which events fire.
+  const drawnEvents = drawVsEvents(
+    eligibleVsEvents(choices, phases.flatMap((p) => p.taskIds), taskRisks),
+    eventSeedKey(choices, preset, yc, founder, seed),
+    corpusLaunchDay(outcomeInputs),
   )
+  const taskIds = phases.flatMap((p) => p.taskIds)
+  const artifacts = buildJourneyArtifacts(choices, taskIds, { identity, yc, seedCombo: args.seedCombo })
+  const rows: Row[] = []
+  const steps: SimStep[] = []
+  let cum = 0
+  let lastDay = 0
+  // Seeded mid-run events print inside the terminal flow at their drawn day (drawnEvents is
+  // day-sorted, so this is a simple cursor flush).
+  let evIdx = 0
+  const flushEvents = (uptoDay: number) => {
+    while (evIdx < drawnEvents.length && drawnEvents[evIdx].day <= uptoDay) {
+      const ev = drawnEvents[evIdx]
+      rows.push({ kind: 'vsevent', key: `vsevent-${ev.def.id}`, eventId: ev.def.id, day: ev.day })
+      evIdx += 1
+    }
+  }
+  for (const phase of phases) {
+    rows.push({ kind: 'phase', key: `phase-${phase.id}`, title: phase.title, chainId: phase.chainId, chainName: phase.chainName, note: phase.note })
+    for (const taskId of phase.taskIds) {
+      const task = tasks[taskId]
+      if (!task) continue // defensive: the server precomputes the full union, so this never fires
+      rows.push({ kind: 'task', key: `task-${taskId}`, task })
+      task.steps.forEach((step, i) => {
+        const day = dayOf(cum)
+        if (day !== lastDay) {
+          flushEvents(day - 1)
+          lastDay = day
+          rows.push({ kind: 'day', key: `day-${day}-${taskId}-${i}`, day })
+          flushEvents(day)
+        }
+        // The clock advances by the outcome model's effective minutes (picks + founder axes,
+        // disclosed simulation assumptions) — falling back to the raw corpus estimate.
+        const outStep = outcome.steps[steps.length]
+        const outMinutes = outcome.minutesByKey[`${taskId}:${i}`] ?? step.estimatedMinutes
+        rows.push({ kind: 'step', key: `step-${taskId}-${i}`, step, top: task.tops[i] ?? null, outNote: outStep?.note ?? null, outMinutes })
+        steps.push(step)
+        cum += outMinutes
+      })
+      for (const [j, artifact] of (artifacts[taskId] ?? []).entries()) {
+        rows.push({ kind: 'artifact', key: `artifact-${taskId}-${j}`, artifact })
+      }
+    }
+  }
+  flushEvents(Number.POSITIVE_INFINITY)
+  return { rows, steps, stats: journeyStats(steps), outcome, outcomeInputs, drawnEvents }
+}
+
+// Canonical serialization of everything a printed row shows — the semi-auto pause schedule
+// compares variant row lists with this, so "first affected row" means the first row a decision's
+// assertion could VISIBLY change (structure, step clock, top pick, artifact text, event day).
+function rowSignature(row: Row): string {
+  switch (row.kind) {
+    case 'phase':
+      return JSON.stringify([row.kind, row.key, row.title, row.note])
+    case 'step':
+      return JSON.stringify([row.kind, row.key, row.outMinutes, row.outNote, row.top?.productId ?? null])
+    case 'artifact':
+      return JSON.stringify([row.kind, row.key, row.artifact.label, row.artifact.value])
+    case 'vsevent':
+      return JSON.stringify([row.kind, row.key, row.day])
+    default:
+      return JSON.stringify([row.kind, row.key])
+  }
+}
+
+// First index where the two variant row lists differ. 0 (= ask at Run-press, nothing printed
+// yet) when a decision changes nothing the terminal ever prints (the founder-approved upfront
+// fallback) — asking it any time is then safe by construction.
+function firstDifferingRow(a: Row[], b: Row[]): number {
+  const n = Math.min(a.length, b.length)
+  for (let i = 0; i < n; i++) {
+    if (rowSignature(a[i]) !== rowSignature(b[i])) return i
+  }
+  if (a.length !== b.length) return n
+  return 0
 }
 
 function routeBadge(step: SimStep): { text: string; cls: string } {
@@ -111,9 +239,11 @@ function routeBadge(step: SimStep): { text: string; cls: string } {
 }
 
 // One rhythm row of the year-one calendar: the process, its cadence, the 12-month strip, and
-// its route mix / agent ceiling. Seeded (non-corpus) calendar slots carry the SIMULATED chip.
+// its route mix / agent ceiling. Seeded (non-corpus) calendar slots keep the fuchsia styling +
+// the structural data-synthetic attribute (no visible label — founder 2026-09-29).
 function YearRhythmRow({ row }: { row: YearRow }) {
   const active = new Set(row.months)
+  const seeded = row.monthSource === 'seeded'
   return (
     <tr data-testid="vs-year-row" data-month-source={row.monthSource} className="align-top">
       <td className="max-w-[260px] py-2 pr-3">
@@ -121,8 +251,10 @@ function YearRhythmRow({ row }: { row: YearRow }) {
           {row.title}
         </Link>
         {row.monthNote && (
-          <p className="mt-0.5 flex flex-wrap items-center gap-1 text-[10px] text-zinc-500">
-            {row.monthSource === 'seeded' && <SimChip />}
+          <p
+            data-synthetic={seeded ? 'true' : undefined}
+            className={`mt-0.5 flex flex-wrap items-center gap-1 text-[10px] ${seeded ? 'text-fuchsia-300/80' : 'text-zinc-500'}`}
+          >
             {row.monthNote}
           </p>
         )}
@@ -212,7 +344,7 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // aria-labels) — tests assert nothing moved.
 const ROW_ICONS: Record<'example' | 'founder' | 'geo' | 'decisions', { icon: string; title: string }> = {
   example: { icon: '🏢', title: 'Example companies — one-tap preset setups' },
-  founder: { icon: '👤', title: 'Founder persona — who runs the simulated work' },
+  founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
   geo: { icon: '🌍', title: 'Country view — annotate the run with committed geo evidence' },
   decisions: { icon: '🎛️', title: 'Starting decisions — which real processes make up the journey' },
 }
@@ -229,12 +361,16 @@ const DECISION_ICONS: Record<keyof Choices, string> = {
   ph: '🚀',
 }
 
+// Visible display titles only — every dropdown keeps its canonical DECISIONS title as the group
+// accessible name, and every option its canonical full label. Renames for clarity (founder
+// addendum 2026-09-29): 'Order' → 'Start with' (name-first vs build-first read wrong), 'Model' →
+// 'Business model' (could read as an AI model).
 const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<string, string> }> = {
   entity: { title: 'Entity', options: { 'c-corp': 'C-Corp', llc: 'LLC' } },
   team: { title: 'Team', options: { cofounders: 'Cofounders', solo: 'Solo' } },
   funding: { title: 'Funding', options: { seed: 'Seed', bootstrap: 'Bootstrap' } },
-  product: { title: 'Model', options: { subscriptions: 'SaaS', invoices: 'Invoices' } },
-  ordering: { title: 'Order', options: { 'name-first': 'Name', 'build-first': 'Build' } },
+  product: { title: 'Business model', options: { subscriptions: 'SaaS', invoices: 'Invoices' } },
+  ordering: { title: 'Start with', options: { 'name-first': 'Name', 'build-first': 'Build' } },
   hire: { title: 'Hire', options: { yes: 'Yes', no: 'No' } },
   compliance: { title: 'Compliance', options: { now: 'Early', later: 'Later' } },
   enterprise: { title: 'Enterprise', options: { no: 'No', yes: 'Yes' } },
@@ -273,17 +409,30 @@ export default function VirtualStartup({
   // additive prop: {} = no vendor geo warnings ever render (honest degrade).
   vendorGeo?: VendorGeoLookup
 }) {
-  const [choices, setChoices] = useState<Choices>(DEFAULT_CHOICES)
+  // ── The ASSERTED decisions only (dropdowns; 'Not set' = absent key). The journey always
+  // composes over the EFFECTIVE combo below — an unasserted decision runs the default branch
+  // and stays out of the ?run= state. Presets/YC assert their combos explicitly.
+  const [asserted, setAsserted] = useState<AssertedChoices>({})
   const [preset, setPreset] = useState<PresetId | null>(null)
   const [yc, setYc] = useState(false)
-  // ── v3 state: founder persona, the reader's vendor picks (shared with ProcessSimulator below,
-  // controlled), decided event branches, and the run seed — together with the combo/preset/yc
-  // this is the WHOLE run state the ?run= permalink encodes.
-  const [persona, setPersona] = useState<VsPersonaId>('solo-technical')
+  // ── v3 state: founder AXES (Technical × Experience — orthogonal, composable), the reader's
+  // vendor picks (shared with ProcessSimulator below, controlled), decided event branches, the
+  // drive mode, the typed company name (semi-auto naming card; null = autopilot), and the run
+  // seed — together with the asserted combo/preset/yc this is the WHOLE run state the ?run=
+  // permalink encodes.
+  const [founder, setFounder] = useState<VsFounderAxes>(DEFAULT_FOUNDER_AXES)
+  const [mode, setMode] = useState<VsDriveMode>('auto')
+  const [companyName, setCompanyName] = useState<string | null>(null)
   const [picks, setPicks] = useState<Record<string, string>>({})
   const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
   const [runSeed, setRunSeed] = useState(0)
   const [win, setWin] = useState<WindowTab>('d30')
+  // ── Semi-auto drive state: what the paused run is waiting on (a decision card or the naming
+  // card), plus whether it already handled naming; manual pause is the title-bar control.
+  const [waitingOn, setWaitingOn] = useState<keyof Choices | 'name' | null>(null)
+  const [named, setNamed] = useState(false)
+  const [manualPause, setManualPause] = useState(false)
+  const [nameDraft, setNameDraft] = useState('')
   // ── In-sim GEO selection (founder batch 2026-09-29): null = the 🇺🇸 US default (never stored,
   // never in the URL), 'GLOBAL' = explicit geo-neutral (no marks), else a country. ANNOTATION
   // ONLY, derived from committed data — it never changes rows, scores, ranks, or the clock, so
@@ -293,6 +442,11 @@ export default function VirtualStartup({
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  // Mirrors read by the reveal ticker (it must check the semi-auto pause schedule SYNCHRONOUSLY
+  // before each printed row — an effect would let a fake-timer test tick past the pause point).
+  const revealedRef = useRef(0)
+  const rowsLenRef = useRef(0)
+  const pauseAtRef = useRef<Array<{ id: keyof Choices | 'name'; at: number }>>([])
   // The terminal viewport (founder ask 2026-09-28): the run prints INSIDE this fixed-height
   // scroll box, so the page never grows mid-run. followRef is the terminal-follow flag — pinned
   // to the newest line unless the reader scrolled up inside the terminal; scrolling back to
@@ -332,55 +486,59 @@ export default function VirtualStartup({
     if (!p && !ycOn) return
     if (p) setPreset(p.id)
     if (ycOn) setYc(true)
-    const base = p ? p.choices : DEFAULT_CHOICES
-    setChoices(ycOn ? applyYcCalibration(base) : base)
+    // Presets/YC ASSERT their combos explicitly (dropdowns leave 'Not set' otherwise).
+    if (p) setAsserted(ycOn ? applyYcCalibration(p.choices) : { ...p.choices })
+    else setAsserted((a) => ({ ...a, ...YC_CALIBRATION }))
     // Mount-only: the URL is the INITIAL view.
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // ── v3: one-time ?run= restore — a run link carries the WHOLE state (combo, preset, yc,
-  // persona, picks, event choices, seed) and replays the exact run, so it wins over ?preset/?yc
-  // (this effect runs after the one above; a malformed param decodes to null and changes nothing).
+  // ── v3: one-time ?run= restore — a run link carries the WHOLE state (asserted decisions,
+  // preset, yc, founder axes, drive mode, typed company name, picks, event choices, seed) and
+  // replays the exact run, so it wins over ?preset/?yc (this effect runs after the one above;
+  // a malformed param decodes to null and changes nothing).
   /* eslint-disable react-hooks/set-state-in-effect -- same one-time post-hydration URL sync
      contract as the preset/yc effect above. */
   useEffect(() => {
     const run = decodeRunState(readParam('run'))
     if (!run) return
-    setChoices(run.choices)
+    setAsserted(run.choices)
     setPreset(run.preset)
     setYc(run.yc)
-    setPersona(run.persona)
+    setFounder(run.founder)
+    setMode(run.mode)
+    setCompanyName(run.companyName)
+    if (run.companyName) setNamed(true)
     setPicks(run.picks)
     setEventChoices(run.eventChoices)
     setRunSeed(run.seed)
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const identity = useMemo(() => presetById(preset)?.company ?? null, [preset])
+  // The EFFECTIVE combo: unasserted decisions compose exactly the default branch.
+  const choices = useMemo(() => effectiveChoices(asserted), [asserted])
+  const identity = useMemo(() => {
+    const presetIdentity = presetById(preset)?.company ?? null
+    // The typed company name (semi-auto naming card) overrides — descriptor stays the preset's.
+    if (companyName) return { name: companyName, descriptor: presetIdentity?.descriptor ?? '' }
+    return presetIdentity
+  }, [preset, companyName])
   const key = `${comboKey(choices)}|yc:${yc ? '1' : '0'}`
-  const co = useMemo(() => synthCompany(choices, identity), [choices, identity])
-  const phases = useMemo(() => journeyPhases(choices, chains, { yc }), [choices, chains, yc])
+  // Semi-auto pins the synthetic name/artifact seed to the default combo so mid-run decision
+  // assertions never rewrite an already-printed seeded value (see buildRunRows/RunArgs).
+  const seedCombo = mode === 'semi' ? DEFAULT_CHOICES : undefined
+  const co = useMemo(() => synthCompany(choices, identity, seedCombo), [choices, identity, seedCombo])
 
-  // ── v3 outcome model (lib/virtualStartupRun.ts): the reader's picks + persona recompute the
-  // simulated clock over the same corpus estimates — the day markers below use these minutes.
-  const outcomeInputs = useMemo(() => journeyOutcomeInputs(phases, tasks), [phases, tasks])
-  const outcome = useMemo(
-    () => computeStackOutcome(outcomeInputs, picks, roles, access, persona),
-    [outcomeInputs, picks, roles, access, persona],
+  // ── The whole run, assembled by the shared pure builder (rows, steps, outcome model, drawn
+  // events) — the semi-auto pause schedule below reuses the same builder for per-option variants.
+  const runArgs = useMemo<Omit<RunArgs, 'choices'>>(
+    () => ({ chains, tasks, roles, access, founder, picks, identity, preset, yc, seed: runSeed, taskRisks, seedCombo }),
+    [chains, tasks, roles, access, founder, picks, identity, preset, yc, runSeed, taskRisks, seedCombo],
   )
+  const run = useMemo(() => buildRunRows({ ...runArgs, choices }), [runArgs, choices])
+  const { rows, steps, stats, outcomeInputs, drawnEvents } = run
+
   const optimalPicks = useMemo(() => optimalSelections(roles, access), [roles, access])
-  // ── v3 event engine: seeded, corpus-grounded, plausibility-gated; deterministic from
-  // (combo, preset, yc, persona, seed) — the day span comes from the raw corpus estimates so
-  // vendor picks never reshuffle which events fire.
-  const drawnEvents = useMemo(
-    () =>
-      drawVsEvents(
-        eligibleVsEvents(choices, phases.flatMap((p) => p.taskIds), taskRisks),
-        eventSeedKey(choices, preset, yc, persona, runSeed),
-        corpusLaunchDay(outcomeInputs),
-      ),
-    [choices, phases, taskRisks, preset, yc, persona, runSeed, outcomeInputs],
-  )
   const taskMinutes = useMemo(() => taskMinutesById(tasks), [tasks])
   const eventResolution = useMemo(
     () => resolveVsEvents(drawnEvents, eventChoices, { roles, selections: picks, taskMinutes, chains }),
@@ -393,60 +551,43 @@ export default function VirtualStartup({
     [picks, eventResolution],
   )
   const finalOutcome = useMemo(
-    () => computeStackOutcome(outcomeInputs, effectivePicks, roles, access, persona),
-    [outcomeInputs, effectivePicks, roles, access, persona],
+    () => computeStackOutcome(outcomeInputs, effectivePicks, roles, access, founder),
+    [outcomeInputs, effectivePicks, roles, access, founder],
   )
   const optimalOutcome = useMemo(
-    () => computeStackOutcome(outcomeInputs, optimalPicks, roles, access, persona),
-    [outcomeInputs, optimalPicks, roles, access, persona],
+    () => computeStackOutcome(outcomeInputs, optimalPicks, roles, access, founder),
+    [outcomeInputs, optimalPicks, roles, access, founder],
   )
 
-  const { rows, steps, stats } = useMemo(() => {
-    const taskIds = phases.flatMap((p) => p.taskIds)
-    const artifacts = buildJourneyArtifacts(choices, taskIds, { identity, yc })
-    const rows: Row[] = []
-    const steps: SimStep[] = []
-    let cum = 0
-    let lastDay = 0
-    // v3: seeded mid-run events print inside the terminal flow at their simulated day
-    // (drawnEvents is day-sorted, so this is a simple cursor flush).
-    let evIdx = 0
-    const flushEvents = (uptoDay: number) => {
-      while (evIdx < drawnEvents.length && drawnEvents[evIdx].day <= uptoDay) {
-        rows.push({ kind: 'vsevent', key: `vsevent-${drawnEvents[evIdx].def.id}`, eventId: drawnEvents[evIdx].def.id })
-        evIdx += 1
-      }
+  // ── Semi-auto pause schedule: for every still-unasserted decision, the first row index at
+  // which its two options' fully recomposed runs differ (structure, clock, artifact text, event
+  // placement — rowSignature). The ticker pauses BEFORE printing that row, so an assertion only
+  // ever recomposes the unrevealed tail. Decisions whose pause row is already behind the cursor
+  // have honestly passed — they stay on their default and are never re-asked. The naming card
+  // gets the same treatment: its pause row is the first row that CHANGES when the company name
+  // does (compared via two sentinel identities), i.e. where the name comes into existence.
+  const pauseSchedule = useMemo(() => {
+    if (mode !== 'semi') return []
+    // A decision that only APPENDS rows (e.g. the enterprise motion's final phase) first
+    // differs one past the current composition's end — cap at the last printable row so the
+    // run still pauses (one row early is always invariant-safe: that row is common to both
+    // variants). 0 = asked at Run-press, before anything prints.
+    const cap = Math.max(0, rows.length - 1)
+    const out: Array<{ id: keyof Choices | 'name'; at: number }> = []
+    for (const d of DECISIONS) {
+      if (asserted[d.id] !== undefined) continue
+      const [a, b] = d.options.map(
+        (o) => buildRunRows({ ...runArgs, choices: effectiveChoices({ ...asserted, [d.id]: o.value }) }).rows,
+      )
+      out.push({ id: d.id, at: Math.min(firstDifferingRow(a, b), cap) })
     }
-    for (const phase of phases) {
-      rows.push({ kind: 'phase', key: `phase-${phase.id}`, title: phase.title, chainId: phase.chainId, chainName: phase.chainName, note: phase.note })
-      for (const taskId of phase.taskIds) {
-        const task = tasks[taskId]
-        if (!task) continue // defensive: the server precomputes the full union, so this never fires
-        rows.push({ kind: 'task', key: `task-${taskId}`, task })
-        task.steps.forEach((step, i) => {
-          const day = dayOf(cum)
-          if (day !== lastDay) {
-            flushEvents(day - 1)
-            lastDay = day
-            rows.push({ kind: 'day', key: `day-${day}-${taskId}-${i}`, day })
-            flushEvents(day)
-          }
-          // v3: the clock advances by the outcome model's effective minutes (picks + persona,
-          // disclosed simulation assumptions) — falling back to the raw corpus estimate.
-          const outStep = outcome.steps[steps.length]
-          const outMinutes = outcome.minutesByKey[`${taskId}:${i}`] ?? step.estimatedMinutes
-          rows.push({ kind: 'step', key: `step-${taskId}-${i}`, step, top: task.tops[i] ?? null, outNote: outStep?.note ?? null, outMinutes })
-          steps.push(step)
-          cum += outMinutes
-        })
-        for (const [j, artifact] of (artifacts[taskId] ?? []).entries()) {
-          rows.push({ kind: 'artifact', key: `artifact-${taskId}-${j}`, artifact })
-        }
-      }
+    if (!named && companyName === null) {
+      const withName = (name: string) =>
+        buildRunRows({ ...runArgs, identity: { name, descriptor: identity?.descriptor ?? '' }, choices }).rows
+      out.push({ id: 'name', at: Math.min(firstDifferingRow(withName('Aaaa'), withName('Bbbb')), cap) })
     }
-    flushEvents(Number.POSITIVE_INFINITY)
-    return { rows, steps, stats: journeyStats(steps) }
-  }, [phases, tasks, choices, identity, yc, outcome, drawnEvents])
+    return out
+  }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length])
 
   // Only the roles whose arena the selected journey actually touches — the transcript resolves
   // picks via step.arenaId / step.choiceArenaId, so this filter loses nothing it uses.
@@ -460,11 +601,12 @@ export default function VirtualStartup({
   }, [roles, steps])
 
   // Year one — deterministic from the same decision combo (seeded months for annuals the
-  // corpus doesn't date; those render with the SIMULATED chip).
+  // corpus doesn't date; those keep the fuchsia styling + data-synthetic).
   const year = useMemo(() => {
-    const rhythm = yearRows(choices, phases.flatMap((p) => p.taskIds), yearCandidates)
+    const journeyTasks = journeyPhases(choices, chains, { yc }).flatMap((p) => p.taskIds)
+    const rhythm = yearRows(choices, journeyTasks, yearCandidates)
     return { rhythm, stats: yearStats(rhythm) }
-  }, [choices, phases, yearCandidates])
+  }, [choices, chains, yc, yearCandidates])
 
   // First 30 / first 90 days — the same rhythm rows sliced by cadence-math day intervals; the
   // launch journey's own day span comes from the corpus estimates (dayOf(stats.totalMinutes)).
@@ -485,8 +627,8 @@ export default function VirtualStartup({
   )
   const burn = useMemo(() => computeBurn(journeyRoles, effectivePicks, pricing), [journeyRoles, effectivePicks, pricing])
   const runState: VsRunState = useMemo(
-    () => ({ choices, preset, yc, persona, picks, eventChoices, seed: runSeed }),
-    [choices, preset, yc, persona, picks, eventChoices, runSeed],
+    () => ({ choices: asserted, preset, yc, founder, mode, companyName, picks, eventChoices, seed: runSeed }),
+    [asserted, preset, yc, founder, mode, companyName, picks, eventChoices, runSeed],
   )
   function chooseEventBranch(eventId: string, choiceId: string) {
     setEventChoices((prev) => ({ ...prev, [eventId]: choiceId }))
@@ -531,24 +673,62 @@ export default function VirtualStartup({
     }
     return { artifacts, vendors, events }
   }, [rows, revealed, resolvedEventById])
-  const panelDecisions = useMemo(
-    () =>
-      DECISIONS.map((d) => ({
+  // The Decisions tab: BOTH founder axes first (item 5), then the nine decisions with their
+  // pending-vs-asserted state (semi-auto shows what the run still owes you).
+  const panelDecisions = useMemo(() => {
+    const techLabel = VS_TECHNICAL_OPTIONS.find((o) => o.value === founder.technical)?.label ?? founder.technical
+    const expLabel = VS_EXPERIENCE_OPTIONS.find((o) => o.value === founder.experience)?.label ?? founder.experience
+    const axes = [
+      { id: 'founder-technical', title: 'Founder', icon: '👤', label: techLabel, state: 'asserted' as const },
+      { id: 'founder-experience', title: 'Experience', icon: '🎓', label: expLabel, state: 'asserted' as const },
+    ]
+    const decisions = DECISIONS.map((d) => {
+      const label = d.options.find((o) => o.value === choices[d.id])?.label ?? String(choices[d.id])
+      const state = asserted[d.id] !== undefined ? ('asserted' as const) : waitingOn === d.id ? ('pending' as const) : ('default' as const)
+      return {
         id: d.id,
         title: d.title,
         icon: DECISION_ICONS[d.id],
-        label: d.options.find((o) => o.value === choices[d.id])?.label ?? String(choices[d.id]),
-      })),
-    [choices],
-  )
+        label: state === 'asserted' ? label : state === 'pending' ? 'deciding…' : `${label} · not set`,
+        state,
+      }
+    })
+    return [...axes, ...decisions]
+  }, [choices, asserted, founder, waitingOn])
 
-  // The active persona's named simulation assumption prints in the band's info line (the compact
+  // The active axes' named simulation assumptions print in the band's info lines (the compact
   // picker itself only carries the blurbs, in tooltips).
-  const activePersona = VS_PERSONAS.find((p) => p.id === persona) ?? VS_PERSONAS[0]
+  const activeAssumptions = founderAssumptions(founder)
 
-  // The title-bar run identity: "agentloop — virtual run" style, derived from the (SIMULATED)
-  // company display name — lowercased, entity suffix dropped, terminal-slugged.
-  const termName = co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  // The title-bar run identity — pre-naming it's a neutral prompt: the company name comes into
+  // existence AT the run's naming step (founder addendum 2026-09-29), so until the revealed rows
+  // contain a name-bearing artifact the prompt reads `new-startup`.
+  const nameRowIndex = useMemo(
+    () => rows.findIndex((r) => r.kind === 'artifact' && r.artifact.label === 'Company name'),
+    [rows],
+  )
+  const nameExists = nameRowIndex !== -1 && revealed > nameRowIndex
+  const termName = nameExists
+    ? co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    : 'new-startup'
+
+  // ── The reveal ticker (shared by Run, manual resume, and semi-auto resume). It checks the
+  // pause schedule SYNCHRONOUSLY before printing each row: in semi-auto, when the NEXT row is
+  // some unasserted decision's (or the naming card's) first affected row, the run stops and the
+  // terminal presents the card — so an assertion only ever recomposes the unrevealed tail. The
+  // ticker reads mirrors (refs) synced post-commit: rows/schedule only ever change from event
+  // handlers, whose renders flush before the next 240ms tick.
+  useEffect(() => {
+    rowsLenRef.current = rows.length
+    pauseAtRef.current = pauseSchedule
+  }, [rows, pauseSchedule])
+
+  function pauseDue(at: number): keyof Choices | 'name' | null {
+    for (const p of pauseAtRef.current) {
+      if (p.at === at) return p.id
+    }
+    return null
+  }
 
   function stop() {
     if (timer.current) clearInterval(timer.current)
@@ -556,11 +736,34 @@ export default function VirtualStartup({
     setRunning(false)
   }
 
+  function startTicker() {
+    if (timer.current) clearInterval(timer.current)
+    setRunning(true)
+    setManualPause(false)
+    timer.current = setInterval(() => {
+      const at = revealedRef.current
+      const waitFor = pauseDue(at)
+      if (waitFor !== null) {
+        stop()
+        setWaitingOn(waitFor)
+        return
+      }
+      const next = at + 1
+      revealedRef.current = next
+      setRevealed(next)
+      if (next >= rowsLenRef.current) stop()
+    }, CADENCE_MS)
+  }
+
   // Empty the terminal and re-arm the follow — every decision/preset/mode change and every
   // restart goes through here so the viewport starts clean at its top.
   function clearRun() {
     stop()
     setRevealed(0)
+    revealedRef.current = 0
+    setWaitingOn(null)
+    setManualPause(false)
+    setNameDraft('')
     followRef.current = true
     pendingTopRef.current = false
     if (termRef.current) termRef.current.scrollTop = 0
@@ -581,28 +784,23 @@ export default function VirtualStartup({
     followRef.current = el.scrollTop + el.clientHeight >= el.scrollHeight - FOLLOW_SLACK_PX
   }
 
-  function showAll() {
-    stop()
-    followRef.current = false
-    if (revealed >= rows.length) {
-      // Already fully printed — the reveal effect won't re-fire, scroll directly.
-      if (termRef.current) termRef.current.scrollTop = 0
-      return
-    }
-    pendingTopRef.current = true
-    setRevealed(rows.length)
-  }
-
-  function pickChoice(id: keyof Choices, value: string) {
+  function pickChoice(id: keyof Choices, value: string | null) {
     clearRun()
     clearRunState()
     // Manual toggle: the preset no longer describes the combo — ?preset clears, the combo stays.
     setPreset(null)
     // A manual value contradicting the YC calibration turns YC mode off; other toggles keep it.
+    // Clearing back to 'Not set' composes the default — contradiction is judged on that value.
     const calibrated = (YC_CALIBRATION as Partial<Record<keyof Choices, string>>)[id]
-    const nextYc = yc && (calibrated === undefined || calibrated === value)
+    const nextEffective = value ?? DEFAULT_CHOICES[id]
+    const nextYc = yc && (calibrated === undefined || calibrated === nextEffective)
     setYc(nextYc)
-    setChoices((c) => ({ ...c, [id]: value }) as Choices)
+    setAsserted((a) => {
+      const next: Record<string, string> = { ...(a as Record<string, string>) }
+      if (value === null) delete next[id]
+      else next[id] = value
+      return next as AssertedChoices
+    })
     setParams({ preset: null, yc: nextYc ? '1' : null })
   }
 
@@ -610,8 +808,9 @@ export default function VirtualStartup({
     clearRun()
     clearRunState()
     setPreset(p.id)
-    // YC mode applies ON TOP of any preset — the calibration wins where they disagree.
-    setChoices(yc ? applyYcCalibration(p.choices) : p.choices)
+    // A preset ASSERTS its whole combo; YC mode applies ON TOP — the calibration wins where
+    // they disagree.
+    setAsserted(yc ? applyYcCalibration(p.choices) : { ...p.choices })
     setParams({ preset: p.id })
   }
 
@@ -620,24 +819,60 @@ export default function VirtualStartup({
     clearRunState()
     const next = !yc
     setYc(next)
-    if (next) setChoices((c) => applyYcCalibration(c))
+    // YC mode ASSERTS its calibration keys on top of whatever is asserted.
+    if (next) setAsserted((a) => ({ ...a, ...YC_CALIBRATION }))
     else {
-      // Leaving YC mode with a preset active restores that preset's own combo.
+      // Leaving YC mode with a preset active restores that preset's own (fully asserted) combo.
       const p = presetById(preset)
-      if (p) setChoices(p.choices)
+      if (p) setAsserted({ ...p.choices })
     }
     setParams({ yc: next ? '1' : null })
   }
 
-  function start() {
+  function setDriveMode(next: VsDriveMode) {
+    if (next === mode) return
     clearRun()
-    setRunning(true)
-    let i = 0
-    timer.current = setInterval(() => {
-      i += 1
-      setRevealed(i)
-      if (i >= rows.length) stop()
-    }, CADENCE_MS)
+    clearRunState()
+    setMode(next)
+  }
+
+  function start() {
+    // A RESTART in semi-auto clears assertions (and the typed name) back to 'Not set' — a fresh
+    // interactive run. The FIRST press keeps whatever the URL/permalink asserted, so replaying a
+    // semi-auto link with everything asserted plays straight through.
+    const isRestart = revealed > 0
+    clearRun()
+    if (mode === 'semi' && isRestart) {
+      setAsserted({})
+      setCompanyName(null)
+      setNamed(false)
+      clearRunState()
+    }
+    startTicker()
+  }
+
+  // ── Semi-auto in-run assertions: a decision card pick asserts the decision (the dropdown
+  // syncs, the ?run= state serializes it) and the run resumes; the journey recomposes from the
+  // paused row on (printed rows never change — the pause landed before the first affected row).
+  function decideInRun(id: keyof Choices, value: string) {
+    setAsserted((a) => ({ ...a, [id]: value }) as AssertedChoices)
+    setWaitingOn(null)
+    startTicker()
+  }
+
+  // The decision the semi-auto run is currently waiting on (null in auto / while running /
+  // when it's the naming card).
+  const waitingDecision =
+    waitingOn !== null && waitingOn !== 'name' ? DECISIONS.find((x) => x.id === waitingOn) ?? null : null
+
+  // The naming card: a typed name (sanitized) or the autopilot's seeded name (empty/skip).
+  function nameInRun(raw: string | null) {
+    const clean = raw === null ? '' : sanitizeVsCompanyName(raw)
+    setCompanyName(clean === '' ? null : clean)
+    setNamed(true)
+    setNameDraft('')
+    setWaitingOn(null)
+    startTicker()
   }
 
   return (
@@ -665,9 +900,9 @@ export default function VirtualStartup({
             Example
           </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
-            {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: identity
-                stays SIMULATED-chipped on the pill itself; the product tagline rides in the
-                tooltip; the hardware/biotech corpus disclosure is the amber ⓘ. */}
+            {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: the
+                product tagline rides in the tooltip; the hardware/biotech corpus disclosure is
+                the amber ⓘ. */}
             {VS_PRESETS.map((p) => {
               const active = preset === p.id
               return (
@@ -694,101 +929,119 @@ export default function VirtualStartup({
               )
             })}
             {/* YC batch mode — a calibration applied on top of any setup, never a new process;
-                its full disclosure prints in the info line below while the mode is on. */}
+                its full disclosure prints in the info line below while the mode is on. The pill
+                leads with the house YC mark (components/YcBadge.tsx: the YC orange square) —
+                aria-hidden decoration, the accessible name stays 'YC batch mode'. */}
             <button
               type="button"
               data-testid="vs-yc-toggle"
+              aria-label="YC batch mode"
               aria-pressed={yc}
               onClick={toggleYc}
-              title="Calibrates any setup to the publicly known YC batch shape — Demo-Day raise, launch-early pressure. Simulated; not affiliated with or endorsed by Y Combinator."
-              className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
+              title="Calibrates any setup to the publicly known YC batch shape — Demo-Day raise, launch-early pressure. Synthetic; not affiliated with or endorsed by Y Combinator."
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
                 yc
                   ? 'border-orange-400/60 bg-orange-400/10 text-orange-300'
                   : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
               }`}
             >
+              <span
+                aria-hidden
+                data-testid="vs-yc-mark"
+                className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] bg-[#f26522] text-[9px] font-semibold text-white"
+              >
+                Y
+              </span>
               YC batch mode
             </button>
           </div>
-          {/* v3: founder persona — a persona change is a new run (the event stream is seeded
-              by it). */}
+          {/* The who/where cluster (founder batch 2026-09-29, item 4): the two founder AXES
+              (Technical × Experience — a change is a new run, the event stream is seeded by the
+              axis pair) with the in-sim Geo row adjacent: 🌐 Global · 🇺🇸 USA (default) · 🇬🇧 UK ·
+              🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR — the same ?geo=/pa-geo contract the process and product
+              pages read (components/VsGeoSelector.tsx), annotation only: a selection never
+              changes rows, scores, ranks, or the clock. */}
           <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
             <IconChip icon={ROW_ICONS.founder.icon} title={ROW_ICONS.founder.title} className="mr-1" />
             Founder
           </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             <VsPersonaPicker
-              persona={persona}
-              onSelect={(id) => {
+              axes={founder}
+              onSelect={(next) => {
                 clearRun()
                 clearRunState()
-                setPersona(id)
+                setFounder(next)
               }}
             />
-          </div>
-          {/* The in-sim Geo row (founder batch 2026-09-29, item 2): 🌐 Global · 🇺🇸 USA (default)
-              · 🇬🇧 UK · 🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR — the same ?geo=/pa-geo contract the process and
-              product pages read (components/VsGeoSelector.tsx). Annotation only: a selection
-              never changes rows, scores, ranks, or the simulated clock. */}
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
-            <IconChip icon={ROW_ICONS.geo.icon} title={ROW_ICONS.geo.title} className="mr-1" />
-            Geo
-          </span>
-          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+            <span aria-hidden className="text-zinc-700">
+              |
+            </span>
+            <IconChip icon={ROW_ICONS.geo.icon} title={ROW_ICONS.geo.title} />
             <VsGeoSelector value={geo} onChange={setGeo} />
           </div>
-          {/* The nine starting decisions as a tight segmented strip — short labels, current
-              value highlighted, canonical full label as the accessible name and full label +
-              corpus mapping in the tooltip. Each choice still only swaps, reorders, or skips
-              corpus processes. */}
+          {/* The nine starting decisions as compact dropdowns (founder addendum 2026-09-29) —
+              the house listbox pattern, each with a 'Not set' initial state that composes the
+              default branch and stays out of the URL. Canonical accessible names throughout;
+              the micro-labels are visibly non-interactive (item 3). Each choice still only
+              swaps, reorders, or skips corpus processes. */}
           <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:self-start sm:pt-1.5 sm:text-right">
             <IconChip icon={ROW_ICONS.decisions.icon} title={ROW_ICONS.decisions.title} className="mr-1" />
             Decisions
           </span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {DECISIONS.map((d) => (
-            <div
+            <VsDecisionSelect
               key={d.id}
-              role="group"
-              aria-label={d.title}
-              className="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-800/80 bg-zinc-900/30 py-0.5 pl-2 pr-1"
-            >
-              <IconChip icon={DECISION_ICONS[d.id]} title={`${d.title} — starting decision`} className="mr-1 text-[11px]" />
-              <span className="mr-1 text-[10px] uppercase tracking-wider text-zinc-300">{DECISION_SHORT[d.id].title}</span>
-              {d.options.map((o) => {
-                const active = choices[d.id] === o.value
-                return (
-                  <button
-                    key={o.value}
-                    type="button"
-                    onClick={() => pickChoice(d.id, o.value)}
-                    aria-label={o.label}
-                    title={`${o.label} — ${o.detail}`}
-                    aria-pressed={active}
-                    className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
-                      active
-                        ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-                        : 'border-transparent text-zinc-300 hover:text-zinc-100'
-                    }`}
-                  >
-                    {DECISION_SHORT[d.id].options[o.value]}
-                  </button>
-                )
-              })}
-            </div>
+              decision={d}
+              shortTitle={DECISION_SHORT[d.id].title}
+              shortOptions={DECISION_SHORT[d.id].options}
+              icon={DECISION_ICONS[d.id]}
+              value={asserted[d.id]}
+              onSelect={(value) => pickChoice(d.id, value)}
+            />
           ))}
           </div>
         </div>
 
-        {/* Footer bar: the virtual company + run size on the left, the Run CTA on the right
-            (founder 2026-09-25: CTA before any timeline content). The skip-animation link is
-            gone (founder 2026-09-28); the loud SIMULATED chips left the band the same day —
-            "virtual company" says it in prose, and the honesty tags stay where they're
-            load-bearing: the terminal title bar and every generated artifact inside the run. */}
+        {/* Footer bar: the drive-mode control + the Run CTA (founder 2026-09-25: CTA before any
+            timeline content; addendum 2026-09-29: the company name is NOT shown upfront — it
+            comes into existence at the run's naming step, so no pre-run company line). */}
         <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-2 border-t border-zinc-800/70 pt-2.5 text-xs">
-          <span className="text-zinc-500">Your virtual company:</span>
-          <span className="font-medium text-zinc-200">{co.display}</span>
-          {co.descriptor && <span className="text-zinc-400">— making {co.descriptor}</span>}
+          {/* Drive mode (founder addendum 2026-09-29): Auto plays the whole journey from the
+              asserted setup; Semi-auto pauses at each unasserted decision's first affected row
+              and asks inline in the terminal. */}
+          <div role="group" aria-label="Drive mode" className="flex items-center gap-1">
+            <span className="text-[10px] uppercase tracking-wider text-zinc-500">Drive:</span>
+            <button
+              type="button"
+              data-testid="vs-mode-auto"
+              aria-pressed={mode === 'auto'}
+              onClick={() => setDriveMode('auto')}
+              title="Auto — assert the decisions upfront (or leave defaults) and the whole journey plays through"
+              className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
+                mode === 'auto'
+                  ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+              }`}
+            >
+              Auto
+            </button>
+            <button
+              type="button"
+              data-testid="vs-mode-semi"
+              aria-pressed={mode === 'semi'}
+              onClick={() => setDriveMode('semi')}
+              title="Semi-auto — you make each 'Not set' decision as the run reaches it: the terminal pauses and asks inline; decisions whose branch point already passed stay on their default"
+              className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
+                mode === 'semi'
+                  ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+              }`}
+            >
+              Semi-auto
+            </button>
+          </div>
           <button
             type="button"
             onClick={start}
@@ -806,17 +1059,17 @@ export default function VirtualStartup({
             </span>
           </p>
         )}
-        {activePersona?.assumption && (
-          <p data-testid="vs-persona-assumption" className="mt-1.5 text-[11px] leading-snug text-amber-300/90">
-            {activePersona.assumption}
+        {activeAssumptions.map((assumption) => (
+          <p key={assumption} data-testid="vs-persona-assumption" className="mt-1.5 text-[11px] leading-snug text-amber-300/90">
+            {assumption}
           </p>
-        )}
+        ))}
 
         {/* The "setup" expand — the previous verbose card copy for readers who want the
             explanations, in one place and off the critical path to the terminal. */}
         <details className="mt-2">
           <summary className="cursor-pointer select-none text-[11px] text-zinc-500 transition hover:text-zinc-300">
-            full setup guide — what the example companies, decisions, and founder personas mean
+            full setup guide — what the example companies, decisions, founder axes, and drive modes mean
           </summary>
           <div className="mt-3 grid gap-x-6 gap-y-4 text-[13px] text-zinc-400 sm:grid-cols-2">
             <div>
@@ -824,7 +1077,7 @@ export default function VirtualStartup({
               <p className="mt-1 text-[11px] text-zinc-500">
                 One tap prefills every decision with a themed example company — then hit ▶ Run.
                 Change any decision afterwards and the setup stays, but the preset deselects.
-                Identities are fixed, clearly-fictional, and always tagged simulated.
+                Identities are fixed, clearly fictional, and impossible-real by construction.
               </p>
               <ul className="mt-1.5 space-y-1.5">
                 {VS_PRESETS.map((p) => (
@@ -844,29 +1097,36 @@ export default function VirtualStartup({
               </p>
               <h3 className="mt-3 text-[10px] uppercase tracking-widest text-zinc-500">Who is the founder?</h3>
               <p className="mt-1 text-[11px] text-zinc-500">
-                The persona shifts which steps the founder grinds through by hand in the simulated
-                clock — it never changes a judged verdict or a corpus estimate, only the disclosed
-                multipliers.
+                Two independent axes — Technical × Experience — shift which steps the founder
+                grinds through by hand on the run&apos;s clock; the two modifiers compose (a
+                non-technical second-timer applies both). An axis never changes a judged verdict
+                or a corpus estimate, only the disclosed multipliers. Founder count is the Team
+                decision, not a founder axis.
               </p>
-              <ul className="mt-1.5 space-y-1.5">
-                {VS_PERSONAS.map((p) => (
-                  <li key={p.id}>
-                    <span className="text-zinc-300">{p.label}</span> — {p.blurb}
-                    {p.icpId && (
-                      <>
-                        {' '}· matches the{' '}
-                        <Link href={`/icp/${p.icpId}`} className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-                          {p.icpId}
-                        </Link>{' '}
-                        buyer lens
-                      </>
-                    )}
-                    {p.assumption && (
-                      <span className="block text-[11px] leading-snug text-amber-300/90">{p.assumption}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              {[
+                { name: 'Technical', options: VS_TECHNICAL_OPTIONS },
+                { name: 'Experience', options: VS_EXPERIENCE_OPTIONS },
+              ].map((axis) => (
+                <ul key={axis.name} className="mt-1.5 space-y-1.5">
+                  {axis.options.map((o) => (
+                    <li key={o.value}>
+                      <span className="text-zinc-300">{o.label}</span> — {o.blurb}
+                      {o.icpId && (
+                        <>
+                          {' '}· matches the{' '}
+                          <Link href={`/icp/${o.icpId}`} className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+                            {o.icpId}
+                          </Link>{' '}
+                          buyer lens
+                        </>
+                      )}
+                      {o.assumption && (
+                        <span className="block text-[11px] leading-snug text-amber-300/90">{o.assumption}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ))}
             </div>
             <div>
               <h3 className="text-[10px] uppercase tracking-widest text-zinc-500">Starting decisions</h3>
@@ -874,6 +1134,9 @@ export default function VirtualStartup({
                 Each choice selects which real processes and playbooks make up the journey —
                 nothing is invented, options only swap, reorder, or skip corpus processes. Same
                 choices, same company: everything synthetic is deterministic from the decisions.
+                A decision left &lsquo;Not set&rsquo; composes exactly the default branch and stays
+                out of the run link; in Semi-auto drive the run pauses and asks you each
+                still-unset decision inline, right before its first affected line.
               </p>
               <ul className="mt-1.5 space-y-1.5">
                 {DECISIONS.map((d) => (
@@ -922,11 +1185,30 @@ export default function VirtualStartup({
             {termName}
           </code>
           {/* Founder 2026-09-29 terminal declutter: no 'virtual run' suffix, no title-bar chip,
-              no 'idle' — the status only speaks while something happens; the honesty tags live
-              on every generated artifact (terminal + state panel). */}
+              no 'idle', no completion label — the status only speaks while the run needs it
+              ('running…', 'paused', or semi-auto's 'waiting on you…'). */}
           <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-            {running ? 'running…' : revealed > 0 && done ? '✓ complete' : ''}
+            {running ? 'running…' : manualPause ? 'paused' : waitingOn !== null ? 'waiting on you…' : ''}
           </span>
+          {/* Manual pause/resume (founder addendum 2026-09-29) — both drive modes; hidden while a
+              semi-auto card already holds the run (answering the card is the only way onward). */}
+          {(running || manualPause) && (
+            <button
+              type="button"
+              data-testid="vs-terminal-pause"
+              onClick={() => {
+                if (running) {
+                  stop()
+                  setManualPause(true)
+                } else {
+                  startTicker()
+                }
+              }}
+              className="shrink-0 rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-zinc-400 transition hover:border-emerald-400/50 hover:text-emerald-300"
+            >
+              {running ? '⏸ pause' : '▶ resume'}
+            </button>
+          )}
         </div>
 
         <div
@@ -1050,13 +1332,52 @@ export default function VirtualStartup({
                       <span className="text-[11px] text-amber-300/90" title="A human signs off before this runs">⏸ approval</span>
                     )}
                     {row.top && (
-                      <Link
-                        href={`/arena/${row.top.arenaId}/product/${row.top.productId}`}
-                        title={`Top judged vendor for this step — ${row.top.arenaName}, scored over the step's mapped stories`}
-                        className="rounded-full border border-zinc-700 px-2 py-px text-[11px] text-zinc-300 hover:border-emerald-400/60 hover:text-emerald-300"
-                      >
-                        {row.top.name} · {row.top.score.toFixed(0)}
-                      </Link>
+                      <>
+                        {/* The recommended (top judged) pick, logo inline (founder batch
+                            2026-09-29, item 1: ProductLogoView ~14px, hasLogo serialized per
+                            pick — mono aesthetic kept, fixed size so nothing jumps). */}
+                        <Link
+                          href={`/arena/${row.top.arenaId}/product/${row.top.productId}`}
+                          title={`Top judged vendor for this step — ${row.top.arenaName}, scored over the step's mapped stories`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-px text-[11px] text-zinc-300 hover:border-emerald-400/60 hover:text-emerald-300"
+                        >
+                          <ProductLogoView
+                            product={{ id: row.top.productId, name: row.top.name }}
+                            size={14}
+                            hasLogo={row.top.hasLogo === true}
+                          />
+                          {row.top.name} · {row.top.score.toFixed(0)}
+                        </Link>
+                        <span className="text-[10px] text-zinc-500">(recommended)</span>
+                        {/* The step ranking's runners-up + the arena behind the choice (founder
+                            addendum 2026-09-29) — a quiet trailing fragment, judged order kept. */}
+                        <span data-testid="vs-step-runnersup" className="text-[10px] text-zinc-600">
+                          {(row.top.runnersUp ?? []).length > 0 && (
+                            <>
+                              {'then '}
+                              {(row.top.runnersUp ?? []).map((r, i) => (
+                                <span key={r.productId}>
+                                  {i > 0 && ', '}
+                                  <Link
+                                    href={`/arena/${row.top!.arenaId}/product/${r.productId}`}
+                                    className="hover:text-emerald-300"
+                                  >
+                                    {r.name} · {r.score.toFixed(0)}
+                                  </Link>
+                                </span>
+                              ))}
+                              {' — '}
+                            </>
+                          )}
+                          <Link
+                            href={`/arena/${row.top.arenaId}`}
+                            title={`${row.top.arenaName} — the judged arena behind this pick`}
+                            className="hover:text-emerald-300"
+                          >
+                            arena →
+                          </Link>
+                        </span>
+                      </>
                     )}
                     {geoWarn && row.top && geoCountry !== null && (
                       <span data-testid="vs-geo-vendor-warning" className="w-full pl-1 text-[11px] leading-snug text-amber-300/90">
@@ -1077,7 +1398,7 @@ export default function VirtualStartup({
                 )
               }
               if (row.kind === 'vsevent') {
-                // v3: a seeded mid-run event interrupts the terminal flow — SIMULATED-chipped,
+                // v3: a seeded mid-run event interrupts the terminal flow — data-synthetic,
                 // grounded in a real corpus process, with deterministic branching choices.
                 const resolved = resolvedEventById.get(row.eventId)
                 if (!resolved) return null
@@ -1095,18 +1416,101 @@ export default function VirtualStartup({
                 )
               }
               return (
+                // A generated artifact — the fuchsia styling IS the visual marker and the
+                // structural data-synthetic attribute IS the honesty invariant (founder
+                // 2026-09-29: no visible 'simulated' label; tests assert the attribute per node).
                 <li
                   key={row.key}
                   data-testid="vs-artifact"
+                  data-synthetic="true"
                   className="ml-8 flex flex-wrap items-center gap-2 rounded-lg border border-fuchsia-400/20 bg-fuchsia-400/5 px-2.5 py-1 text-[13px]"
                 >
-                  <SimChip />
-                  <span className="text-zinc-400">{row.artifact.label}:</span>
+                  <span className="text-fuchsia-300/90">{row.artifact.label}:</span>
                   <span className="font-mono text-xs text-zinc-200">{row.artifact.value}</span>
                 </li>
               )
             })}
           </ol>
+          {/* ── Semi-auto cards: the paused run asks the NEXT unasserted decision (or the company
+              name) inline, in the mid-run event card's visual language. The pause landed BEFORE
+              the first row the answer could change, so printed lines never move. */}
+          {waitingDecision && (
+            <div
+              data-testid="vs-run-decision"
+              className="my-2 rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
+            >
+              <p className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
+                <span className="font-medium text-zinc-200">{waitingDecision.title}</span>
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Decision: ${waitingDecision.title}`}>
+                {waitingDecision.options.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    data-testid={`vs-run-decision-${waitingDecision.id}-${o.value}`}
+                    aria-label={o.label}
+                    title={`${o.label} — ${o.detail}`}
+                    onClick={() => decideInRun(waitingDecision.id, o.value)}
+                    className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-[11px] text-zinc-500">
+                the run waits here — your pick asserts this decision (the dropdown and the run
+                link pick it up) and the journey recomposes from this line on
+              </p>
+            </div>
+          )}
+          {waitingOn === 'name' && (
+            <div
+              data-testid="vs-run-naming"
+              className="my-2 rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
+            >
+              <p className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
+                <span className="font-medium text-zinc-200">Name the company</span>
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  data-testid="vs-run-naming-input"
+                  aria-label="Company name"
+                  value={nameDraft}
+                  maxLength={VS_COMPANY_NAME_MAX}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') nameInRun(nameDraft)
+                  }}
+                  placeholder="type a name…"
+                  className="w-44 rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400/60 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  data-testid="vs-run-naming-use"
+                  onClick={() => nameInRun(nameDraft)}
+                  className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                >
+                  Use this name
+                </button>
+                <button
+                  type="button"
+                  data-testid="vs-run-naming-skip"
+                  onClick={() => nameInRun(null)}
+                  title="Let the autopilot name it — the seeded synthetic name prints as the naming step's artifact"
+                  className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 transition hover:border-zinc-600 hover:text-zinc-200"
+                >
+                  Autopilot name
+                </button>
+              </div>
+              <p className="mt-1.5 text-[11px] text-zinc-500">
+                the typed name flows into every downstream artifact and the terminal title
+                (sanitized), and rides in the run link — empty means the autopilot names it
+              </p>
+            </div>
+          )}
           {running && <span aria-hidden className="animate-pulse text-emerald-400">▋</span>}
           {/* The completion summary prints as the terminal's final output — the page below the
               terminal only ever grows AFTER the run completes (the rhythm section under it). */}
@@ -1119,7 +1523,7 @@ export default function VirtualStartup({
                 {stats.approvals} approval gate{stats.approvals === 1 ? '' : 's'}
               </p>
               <p className="mt-1 text-[11px] text-zinc-500">
-                Corpus time estimate: {formatMinutes(stats.totalMinutes)} (~{dayOf(stats.totalMinutes)} simulated days,
+                Corpus time estimate: {formatMinutes(stats.totalMinutes)} (~{dayOf(stats.totalMinutes)} sim days,
                 incl. {stats.asyncSteps} async wait{stats.asyncSteps === 1 ? '' : 's'}) — from each step&apos;s recorded
                 estimate, not invented.
               </p>
@@ -1133,7 +1537,7 @@ export default function VirtualStartup({
               optimal={optimalOutcome}
               resolution={eventResolution}
               burn={burn}
-              personaId={persona}
+              founder={founder}
               runState={runState}
             />
           )}
@@ -1176,7 +1580,7 @@ export default function VirtualStartup({
                   operating rhythm
                 </Link>
                 . Monthly and quarterly slots are cadence math; the tax dates are the corpus&apos;s own; fuchsia
-                slots are seeded demo scheduling, tagged simulated.
+                slots are seeded demo scheduling, not corpus dates.
               </p>
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
@@ -1198,10 +1602,9 @@ export default function VirtualStartup({
                   </thead>
                   <tbody className="divide-y divide-zinc-800/70">
                     {yc && (
-                      <tr data-testid="vs-yc-oh-row" className="align-top">
+                      <tr data-testid="vs-yc-oh-row" data-synthetic="true" className="align-top">
                         <td className="max-w-[260px] py-2 pr-3">
-                          <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-zinc-300">
-                            <SimChip />
+                          <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-fuchsia-300/90">
                             {YC_BATCH.officeHours.title}
                           </span>
                           <p className="mt-0.5 text-[10px] text-zinc-500">
@@ -1283,10 +1686,9 @@ export default function VirtualStartup({
                       </thead>
                       <tbody className="divide-y divide-zinc-800/70">
                         {yc && (
-                          <tr data-testid="vs-yc-oh-window-row" className="align-top">
+                          <tr data-testid="vs-yc-oh-window-row" data-synthetic="true" className="align-top">
                             <td className="max-w-[260px] py-2 pr-3">
-                              <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-zinc-300">
-                                <SimChip />
+                              <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-fuchsia-300/90">
                                 {YC_BATCH.officeHours.title}
                               </span>
                               <p className="mt-0.5 text-[10px] text-zinc-500">synthetic YC-mode row — not a corpus process</p>

@@ -5,8 +5,9 @@ import { formatMinutes } from '@/lib/processSim'
 import type { ResolvedVsEvent } from '@/lib/virtualStartupRun'
 
 // One mid-run event card, printed INSIDE the Virtual Startup terminal flow (v3 upgrade 3).
-// Honesty contract: the event is SIMULATED (visible chip — the same label contract as the
-// artifacts) but grounded in a REAL corpus process ("grounded in:" links its process page) and
+// Honesty contract: the event is synthetic — carried structurally by data-synthetic="true"
+// (founder 2026-09-29: no visible 'simulated' label anywhere on the page; tests assert the
+// attribute) — but grounded in a REAL corpus process ("grounded in:" links its process page) and
 // gated by that process's committed risk score plus the run's decisions. Both branches are
 // deterministic: real corpus minutes, or a wait constant that names itself a simulation
 // assumption. Choices re-toggle freely — the run recomputes, nothing is hidden state.
@@ -26,13 +27,12 @@ export default function VsEventCard({
 }) {
   const { def, day, choice } = event
   return (
-    <div data-testid="vs-run-event" className="my-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[13px]">
+    <div
+      data-testid="vs-run-event"
+      data-synthetic="true"
+      className="my-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[13px]"
+    >
       <p className="flex flex-wrap items-center gap-1.5">
-        <span
-          className="shrink-0 rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300"
-        >
-          simulated
-        </span>
         <span className="font-mono text-[10px] uppercase tracking-widest text-amber-300/90">⚡ event · day {day}</span>
         <span className="font-medium text-zinc-200">{def.title}</span>
       </p>

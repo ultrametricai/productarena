@@ -6,13 +6,15 @@ import { setParams } from '@/lib/urlState'
 import { dayOf } from '@/lib/virtualStartup'
 import {
   encodeRunState,
+  founderAssumptions,
   FOUNDER_HOURS_MULTIPLIER,
-  personaById,
   VS_ASSUMPTIONS,
+  VS_EXPERIENCE_OPTIONS,
+  VS_TECHNICAL_OPTIONS,
   type StackOutcome,
   type VsBurnSummary,
   type VsEventResolution,
-  type VsPersonaId,
+  type VsFounderAxes,
   type VsRunState,
 } from '@/lib/virtualStartupRun'
 
@@ -24,32 +26,33 @@ import {
 //     extractions), cited per vendor; vendors without extracted pricing say so honestly;
 //   - founder-hours saved — vs the all-manual baseline, same disclosed multiplier;
 //   - events survived — the run's decided branches.
-// The whole run state is shareable: "copy run link" encodes (combo, preset, yc, persona, picks,
-// event choices, seed) into a compact ?run= param that replays this exact run.
+// The whole run state is shareable: "copy run link" encodes (asserted decisions, preset, yc,
+// founder axes, drive mode, picks, event choices, seed) into a compact ?run= param that replays
+// this exact run. The scorecard itself is synthetic output — data-synthetic="true", no visible
+// 'simulated' label (founder 2026-09-29).
 export default function VsScorecard({
   outcome,
   optimal,
   resolution,
   burn,
-  personaId,
+  founder,
   runState,
 }: {
   outcome: StackOutcome
   optimal: StackOutcome
   resolution: VsEventResolution
   burn: VsBurnSummary
-  personaId: VsPersonaId
+  founder: VsFounderAxes
   runState: VsRunState
 }) {
   const [copied, setCopied] = useState(false)
-  const persona = personaById(personaId)
+  const techLabel = VS_TECHNICAL_OPTIONS.find((o) => o.value === founder.technical)?.label
+  const expLabel = VS_EXPERIENCE_OPTIONS.find((o) => o.value === founder.experience)?.label
   const launchDay = dayOf(outcome.launchMinutes + resolution.deltaMinutes)
   const savedHours = Math.round(outcome.founderHoursSavedMinutes / 60)
+  const activeAxisAssumptions = new Set(founderAssumptions(founder))
   const assumptions = VS_ASSUMPTIONS.filter(
-    (a) =>
-      a.id === 'founder-hours' ||
-      (a.id === 'persona-non-technical' && personaId === 'non-technical') ||
-      (a.id === 'persona-second-timer' && personaId === 'second-timer'),
+    (a) => a.id === 'founder-hours' || activeAxisAssumptions.has(a.text),
   )
 
   async function copyRunLink() {
@@ -67,13 +70,16 @@ export default function VsScorecard({
   }
 
   return (
-    <div data-testid="vs-scorecard" className="mt-4 border-t border-zinc-800 pt-3 text-[13px] text-zinc-300">
+    <div
+      data-testid="vs-scorecard"
+      data-synthetic="true"
+      className="mt-4 border-t border-zinc-800 pt-3 text-[13px] text-zinc-300"
+    >
       <p className="flex flex-wrap items-center gap-1.5">
         <span className="font-semibold tracking-tight text-zinc-200">Run scorecard</span>
-        <span className="shrink-0 rounded border border-fuchsia-400/50 px-1 py-px text-[9px] uppercase tracking-widest text-fuchsia-300">
-          simulated
+        <span className="text-[11px] text-zinc-500">
+          founder: {techLabel} · {expLabel}
         </span>
-        {persona && <span className="text-[11px] text-zinc-500">persona: {persona.label}</span>}
       </p>
 
       {/* The stack-vs-optimal comparison line (v3 upgrade 1). */}
@@ -114,7 +120,7 @@ export default function VsScorecard({
             <>
               <span className="font-mono tabular-nums">
                 {resolution.decided}/{resolution.events.length} decided
-                {resolution.dealsLost > 0 && ` · ${resolution.dealsLost} simulated deal${resolution.dealsLost === 1 ? '' : 's'} lost`}
+                {resolution.dealsLost > 0 && ` · ${resolution.dealsLost} virtual deal${resolution.dealsLost === 1 ? '' : 's'} lost`}
               </span>
               <ul className="mt-0.5 space-y-0.5 pl-4 text-[11px] text-zinc-500">
                 {resolution.events.map((e) => (
@@ -128,10 +134,10 @@ export default function VsScorecard({
         </li>
       </ul>
 
-      {/* Simulated burn — published pricing only, cited; gaps stay gaps. */}
+      {/* Burn — published pricing only, cited; gaps stay gaps. */}
       <div data-testid="vs-score-burn" className="mt-3">
         <p className="text-zinc-500">
-          Simulated burn — from vendors&rsquo; published pricing (lib-extracted, cited per vendor):
+          Burn — from vendors&rsquo; published pricing (lib-extracted, cited per vendor):
         </p>
         {burn.monthlyUsd !== null && burn.monthlyUsd > 0 ? (
           <p className="mt-0.5 font-mono tabular-nums">
@@ -197,7 +203,8 @@ export default function VsScorecard({
           <span aria-live="polite">{copied ? 'Copied ✓' : 'copy run link'}</span>
         </button>
         <span className="text-[11px] text-zinc-500">
-          the link replays this exact run — decisions, persona, vendor picks, event choices, seed
+          the link replays this exact run — decisions, founder axes, drive mode, vendor picks,
+          event choices, seed
         </span>
       </div>
     </div>

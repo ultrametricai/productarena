@@ -94,7 +94,7 @@ describe('role cards (closed state)', () => {
 
   it('keeps the honesty string verbatim', () => {
     const { getByText } = render(tree)
-    expect(getByText('simulated dry run from the mapped process — no real calls are made')).toBeTruthy()
+    expect(getByText('synthetic dry run from the mapped process — no real calls are made')).toBeTruthy()
   })
 })
 
@@ -184,7 +184,7 @@ describe('static-HTML contract (SSR ↔ client defaults)', () => {
     const ssr = renderToString(tree)
     expect(ssr).toContain('Mercury')
     expect(ssr).toContain('Gusto')
-    expect(ssr).toContain('simulated dry run from the mapped process — no real calls are made')
+    expect(ssr).toContain('synthetic dry run from the mapped process — no real calls are made')
     expect(ssr).not.toContain('role="listbox"')
     const container = document.createElement('div')
     container.innerHTML = ssr
