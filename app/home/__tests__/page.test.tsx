@@ -12,21 +12,11 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     expect(cta.getAttribute('href')).toBe('/virtual-startup')
   })
 
-  it('renders the original large AFK and Foreloop product cards with their destinations', () => {
+  it('renders no products section (founder 2026-09-29: removed twice, stays gone)', () => {
     render(<HomePage />)
-    // The landing's large cards, restored (founder addendum 2026-09-29): eyebrow, display
-    // title, mono subtitle, and the Explore CTA row.
-    const afk = screen.getByRole('link', { name: /Explore AFK/ })
-    expect(afk.getAttribute('href')).toBe('/company')
-    expect(afk.textContent).toContain('Away From Keyboard')
-    expect(afk.textContent).toContain('Automate running your startup.')
-    const foreloop = screen.getByRole('link', { name: /Explore Foreloop/ })
-    expect(foreloop.getAttribute('href')).toBe('https://foreloop.com')
-    expect(foreloop.getAttribute('rel')).toContain('noopener')
-    expect(foreloop.textContent).toContain('Automate building your product.')
-    expect(screen.getByText('Products for the new way of working')).toBeDefined()
-    // The founder-removed #products anchor stays gone.
-    expect(document.getElementById('products')).toBeNull()
+    expect(screen.queryByText(/Products for the new way of working/i)).toBeNull()
+    expect(screen.queryByText(/Away From Keyboard/i)).toBeNull()
+    expect(screen.queryByText(/Foreloop/i)).toBeNull()
   })
 
   it('keeps the static hero fallback in the server markup (canvas is client-only)', () => {

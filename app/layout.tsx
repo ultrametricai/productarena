@@ -6,6 +6,7 @@ import AccountMenu from "@/components/AccountMenu";
 import LogoWordmark from "@/components/fx/LogoWordmark";
 import { FooterAttractor } from "@/components/fx/lazy";
 import InstallBanner from "@/components/InstallBanner";
+import InstallNavAction from "@/components/InstallNavAction";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
 import MobileNav from "@/components/MobileNav";
@@ -169,10 +170,10 @@ export const metadata: Metadata = {
   },
   title: "Ultrametric",
   description:
-    "Ultrametric — the unbiased, evidence-based arena for software in the AI era. Evidence in, rankings out.",
+    "Automation for the startup — step-by-step founder processes your agent can run, evidence-graded tool rankings, open startup logic, and a simulator that runs a company's first year.",
   openGraph: {
     title: "Ultrametric",
-    description: "The unbiased, evidence-based arena for software in the AI era.",
+    description: "Automation for the startup: agent-runnable founder processes, evidence-graded tool rankings, and the open startup repo.",
     url: SITE_URL,
     siteName: "Ultrametric",
     type: "website",
@@ -181,7 +182,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ultrametric",
-    description: "The unbiased, evidence-based arena for software in the AI era.",
+    description: "Automation for the startup: agent-runnable founder processes, evidence-graded tool rankings, and the open startup repo.",
     images: [`${SITE_URL}/og5.png`],
   },
 };
@@ -353,13 +354,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   page headers/sections), hidden on the smallest screens to keep the row tight. */}
               {/* /everything is deliberately unlisted (founder call: "don't show the everything
                   page") — the route stays alive so old links don't 404, but nothing links to it. */}
-              <a
-                href="#install"
-                className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
-                title="Install Ultrametric — agent prompt, CLI, or MCP (bottom of every page)"
-              >
-                Install
-              </a>
+              <InstallNavAction />
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"

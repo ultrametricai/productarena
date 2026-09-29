@@ -153,36 +153,8 @@ export default function HomePage() {
       </section>
 
       {/* Products — the original large cards (no #products id, per founder ask 2026-09-29). */}
-      <section className="border-t border-zinc-800/60">
-        <div className="mx-auto max-w-5xl px-6 py-20 sm:px-8 sm:py-28 md:px-12">
-          <p className="mb-12 text-center font-mono text-[0.6875rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
-            Products for the new way of working
-          </p>
-          <div className="grid gap-5 md:grid-cols-2">
-            <ProductCard
-              href="/company"
-              accent="emerald"
-              eyebrow="Found"
-              title="AFK"
-              subtitle="Away From Keyboard"
-              lead="Automate running your startup."
-              body="Incorporation, banking, payroll, cap table, compliance — AI agents handle the operational busywork, you keep the sign-off."
-              cta="Explore AFK"
-            />
-            <ProductCard
-              href="https://foreloop.com"
-              external
-              accent="sky"
-              eyebrow="Develop"
-              title="Foreloop"
-              subtitle="foreloop.com"
-              lead="Automate building your product."
-              body="An engine that runs development end to end — planning, coding, review, and feedback loops that keep shipping while you step away."
-              cta="Explore Foreloop"
-            />
-          </div>
-        </div>
-      </section>
+      {/* Products section removed (founder 2026-09-29, second ask — the fidelity
+          restoration had brought it back): homepage = hero + backed-by-builders. */}
 
       <BackedByBuilders />
     </div>

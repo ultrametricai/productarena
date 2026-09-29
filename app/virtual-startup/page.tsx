@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   // and every internal id/testid keeps the vs/virtual-startup vocabulary.
   title: 'Startup sim — Ultrametric',
   description:
-    'Open startup simulator — pick the starting decisions (or drive it semi-auto, deciding as the run reaches each fork) and watch a virtual startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step with its runners-up, synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
+    'Open startup simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',
 }
 
 // DAG route mix of one corpus process — the year view's per-row honesty payload.
