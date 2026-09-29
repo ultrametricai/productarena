@@ -789,9 +789,6 @@ export default function VirtualStartup({
           <span className="text-zinc-500">Your virtual company:</span>
           <span className="font-medium text-zinc-200">{co.display}</span>
           {co.descriptor && <span className="text-zinc-400">— making {co.descriptor}</span>}
-          <span className="text-zinc-500">
-            · {phases.length} phases · {steps.length} steps · corpus estimate {formatMinutes(stats.totalMinutes)}
-          </span>
           <button
             type="button"
             onClick={start}
@@ -922,11 +919,13 @@ export default function VirtualStartup({
           </span>
           <code className="min-w-0 truncate font-mono text-xs text-zinc-300">
             <span className="mr-1.5 select-none text-emerald-400">$</span>
-            {termName} — virtual run
+            {termName}
           </code>
-          <SimChip />
+          {/* Founder 2026-09-29 terminal declutter: no 'virtual run' suffix, no title-bar chip,
+              no 'idle' — the status only speaks while something happens; the honesty tags live
+              on every generated artifact (terminal + state panel). */}
           <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-            {running ? 'running…' : revealed > 0 && done ? '✓ complete' : 'idle'}
+            {running ? 'running…' : revealed > 0 && done ? '✓ complete' : ''}
           </span>
         </div>
 
@@ -938,8 +937,7 @@ export default function VirtualStartup({
         >
           {revealed === 0 && (
             <p className="text-zinc-500">
-              <span aria-hidden className="mr-1.5 select-none text-emerald-400">$</span>
-              press ▶ Run this startup — the journey prints here, step by step
+              <span aria-hidden className="select-none text-emerald-400">$</span>
             </p>
           )}
           <ol className="space-y-1.5">
@@ -1141,12 +1139,6 @@ export default function VirtualStartup({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-zinc-800 px-3 py-1.5 text-[10px] text-zinc-500">
-          <span>real processes & judged vendors · fuchsia-tagged data is simulated</span>
-          <span className="ml-auto shrink-0 font-mono tabular-nums">
-            {Math.min(revealed, rows.length)}/{rows.length} lines
-          </span>
-        </div>
       </section>
       </div>
       </div>
@@ -1157,9 +1149,6 @@ export default function VirtualStartup({
         <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="font-display text-lg font-semibold tracking-tight">The operating rhythm</h2>
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              the recurring runs (&ldquo;cron jobs&rdquo;) the company now owns
-            </span>
           </div>
           <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Rhythm window">
             {RHYTHM_TABS.map((t) => (
@@ -1319,10 +1308,6 @@ export default function VirtualStartup({
                       </tbody>
                     </table>
                   </div>
-                  <p className="mt-3 text-xs text-zinc-500">
-                    Annual processes carry no day here — the simulation&apos;s day 1 isn&apos;t anchored to a
-                    calendar date, so they live on the Year one view (where the corpus&apos;s own tax dates show).
-                  </p>
                 </>
               )
             })()

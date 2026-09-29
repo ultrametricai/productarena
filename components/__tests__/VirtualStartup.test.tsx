@@ -181,14 +181,13 @@ describe('VirtualStartup — synthetic labeling invariant', () => {
     }
   })
 
-  it('marks the run as simulated before the timeline even runs (terminal title bar)', () => {
-    // Founder 2026-09-28: the loud chips left the setup band — the pre-run honesty marker now
-    // lives on the terminal chrome itself, which is visible idle before any run.
+  it('carries no simulated chrome pre-run; every generated artifact still wears the tag', () => {
+    // Founder 2026-09-29 terminal declutter: no chip on the title bar or band — the honesty
+    // tags live exclusively on generated artifacts (asserted per-node in the invariant above).
     renderIt()
-    const banner = screen.getByText(/your virtual company/i).closest('div')!
-    expect(within(banner).queryByText(/^simulated$/i)).toBeNull()
-    const terminal = screen.getByTestId('vs-terminal')
-    expect(within(terminal).getByText(/^simulated$/i)).toBeTruthy()
+    expect(screen.queryByText(/^simulated$/i)).toBeNull()
+    showAll()
+    expect(screen.getAllByTestId('vs-artifact').length).toBeGreaterThan(0)
   })
 })
 
@@ -321,7 +320,8 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
     // Quarterlies and annuals don't land inside 30 days.
     expect(section.queryByText('Board meeting prep')).toBeNull()
     expect(section.queryByText('File DE franchise tax')).toBeNull()
-    expect(section.getByText(/Annual processes carry no day here/)).toBeTruthy()
+    // The annual-processes explainer was removed (founder 2026-09-29) — annuals simply absent.
+    expect(section.queryByText(/Annual processes carry no day here/)).toBeNull()
   })
 
   it('first 90 days: monthlies ×3 and the quarterly board prep lands at day 90', () => {
@@ -505,14 +505,15 @@ describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run 
     vi.useRealTimers()
   })
 
-  it('renders the terminal chrome idle before any run: SIMULATED title bar, placeholder prompt, no rows', () => {
+  it('renders the terminal chrome bare before any run: no chip, no idle label, no placeholder copy', () => {
+    // Founder 2026-09-29 declutter: pre-run the terminal shows only the prompt cursor; the
+    // status strip speaks only while running or complete.
     renderIt()
     const term = screen.getByTestId('vs-terminal')
-    // The title bar carries the run identity, its own SIMULATED chip, and the idle status.
-    expect(within(term).getByText(/^simulated$/i)).toBeTruthy()
-    expect(within(term).getByText(/press ▶ Run this startup/)).toBeTruthy()
+    expect(within(term).queryByText(/^simulated$/i)).toBeNull()
+    expect(within(term).queryByText(/press ▶ Run this startup/)).toBeNull()
     expect(within(term).queryAllByTestId('vs-artifact')).toHaveLength(0)
-    expect(screen.getByTestId('vs-terminal-status').textContent).toBe('idle')
+    expect(screen.getByTestId('vs-terminal-status').textContent).toBe('')
   })
 
   it('the run prints INSIDE the terminal body; the page below it does not grow until completion', () => {
@@ -575,7 +576,7 @@ describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run 
     // Restart: the terminal clears back to the placeholder prompt, scrolled to the top.
     fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
     expect(within(body).queryAllByTestId('vs-artifact')).toHaveLength(0)
-    expect(within(body).getByText(/press ▶ Run this startup/)).toBeTruthy()
+    expect(within(body).queryByText(/press ▶ Run this startup/)).toBeNull()
     expect(body.scrollTop).toBe(0)
   })
 })

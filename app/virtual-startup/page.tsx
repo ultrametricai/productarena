@@ -145,14 +145,6 @@ export default function VirtualStartupPage() {
         vendorGeo={vendorGeoLookup(vsProductIds)}
       />
 
-      <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
-        <p>
-          Every process here has its own page with the full step-by-step, evidence and simulator —{' '}
-          <Link href="/processes" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-            browse all processes →
-          </Link>
-        </p>
-      </section>
     </div>
   )
 }
