@@ -598,7 +598,9 @@ describe('VirtualStartup — YC batch mode', () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
     showAll()
-    const deal = screen.getByText(/\$125,000 for 7% \+ \$375,000/)
+    // Scoped to the terminal body — the state-graph panel (2026-09-29) mirrors the artifact
+    // (with its own SIMULATED chip, covered by its suite), so the page-wide query would double.
+    const deal = within(screen.getByTestId('vs-terminal-body')).getByText(/\$125,000 for 7% \+ \$375,000/)
     const artifact = deal.closest('[data-testid="vs-artifact"]')!
     expect(within(artifact as HTMLElement).getByText(/^simulated$/i)).toBeTruthy()
     // Demo-Day timing: the raise phase renders after launch day in document order.
