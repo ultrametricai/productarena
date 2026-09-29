@@ -150,6 +150,13 @@ const showAllAuto = () => {
   }
 }
 
+// Entity is DEFAULT-ASSERTED (founder round 4, item 5) — a default semi-auto run never asks it;
+// tests that want the entity card first clear the dropdown back to 'Not set' (clearEntity).
+const clearEntity = () => {
+  fireEvent.click(screen.getByTestId('vs-decision-entity'))
+  fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
+}
+
 const DEFAULT_ANSWERS: Record<string, string> = {
   entity: 'c-corp',
   team: 'cofounders',
@@ -222,8 +229,10 @@ describe('semi-auto — the run pauses at each unasserted decision and asks inli
   })
 
   it('a full semi-auto run answering non-default values matches the same combo in auto structurally (tasks and steps)', () => {
-    // Semi: pick LLC + solo + bootstrap when asked, defaults elsewhere.
+    // Semi: pick LLC + solo + bootstrap when asked, defaults elsewhere. Entity is
+    // DEFAULT-ASSERTED — clear it first so the run asks it like the others.
     renderIt()
+    clearEntity()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd({ ...DEFAULT_ANSWERS, entity: 'llc', team: 'solo', funding: 'bootstrap' }, null)
     // Scoped to the terminal body — the journey DAG strip mirrors the process titles above it.
@@ -236,16 +245,18 @@ describe('semi-auto — the run pauses at each unasserted decision and asks inli
     expect(screen.getByTestId('vs-decision-team').getAttribute('title')).toContain('Solo founder')
   })
 
-  it('restart in semi-auto clears assertions back to Not set (and the typed name), and asks again', () => {
+  it('restart in semi-auto clears assertions back to Not set (default-asserted entity resets to asserted), and asks again', () => {
     renderIt()
+    clearEntity()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd(DEFAULT_ANSWERS, 'Rocket Co')
     expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('Delaware C-Corp')
-    // Restart: everything back to Not set, and the first card returns.
+    // Restart: everything back to Not set — except DEFAULT-ASSERTED entity, which resets to
+    // its asserted default (never to 'Not set') — and the first card returns.
     vi.useFakeTimers()
     try {
       fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
-      expect(screen.getByTestId('vs-decision-entity').textContent).toContain('Not set')
+      expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
       expect(screen.getByTestId('vs-decision-ordering').textContent).toContain('Not set')
       act(() => {
         vi.advanceTimersByTime(240)
@@ -286,6 +297,7 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(window.navigator, 'clipboard', { value: { writeText }, configurable: true })
     renderIt()
+    clearEntity() // default-asserted otherwise — the run would never ask entity
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd({ ...DEFAULT_ANSWERS, entity: 'llc' }, 'Perch Labs')
     fireEvent.click(screen.getByTestId('vs-copy-run-link'))

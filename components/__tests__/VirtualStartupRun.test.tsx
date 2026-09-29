@@ -285,11 +285,10 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     fireEvent.click(screen.getByTestId('vs-persona-non-technical'))
     // The vs-persona-assumption info lines are gone from the band…
     expect(screen.queryByTestId('vs-persona-assumption')).toBeNull()
-    // …but the explanation stays reachable: the pill's tooltip names the assumption, and the
-    // full-setup-guide expand keeps it verbatim.
+    // …but the explanation stays reachable: the pill's tooltip names the assumption (the
+    // full-setup-guide expand is gone — founder round 4, item 1 — tooltips ARE the surface).
     expect(screen.getByTestId('vs-persona-non-technical').getAttribute('title')).toContain('simulation assumption')
-    const details = screen.getByText(/full setup guide/i).closest('details')!
-    expect((details as HTMLElement).textContent).toContain('simulation assumption')
+    expect(screen.queryByText(/full setup guide/i)).toBeNull()
   })
 
   it('a Vendors-tab pick drives the outcome model (controlled selections): the MCP-surfaced vendor removes the founder-hours badge', () => {
@@ -383,14 +382,16 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
     expect(decoded.eventChoices['processor-review']).toBe('wait')
     expect(decoded.founder).toEqual(DEFAULT_FOUNDER_AXES)
     expect(decoded.mode).toBe('auto')
-    // Nothing was asserted in the dropdowns — the link omits every decision ('Not set').
-    expect(decoded.choices).toEqual({})
+    // Nothing was touched in the dropdowns — the link omits every 'Not set' decision and
+    // carries exactly the DEFAULT-ASSERTED entity (asserted from the first render).
+    expect(decoded.choices).toEqual({ entity: 'c-corp' })
   })
 
   it('a malformed ?run= is ignored (default view, no crash)', () => {
     window.history.replaceState(null, '', '/?run=!!!garbage!!!')
     renderIt()
-    // Default view: nothing asserted, the entity dropdown reads 'Not set'.
-    expect(screen.getByTestId('vs-decision-entity').textContent).toContain('Not set')
+    // Default view: entity keeps its DEFAULT-ASSERTED value, everything else reads 'Not set'.
+    expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
+    expect(screen.getByTestId('vs-decision-team').textContent).toContain('Not set')
   })
 })

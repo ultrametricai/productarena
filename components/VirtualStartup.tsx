@@ -18,6 +18,7 @@ import {
   buildJourneyArtifacts,
   dayOf,
   DECISIONS,
+  DEFAULT_ASSERTED,
   DEFAULT_CHOICES,
   eventRows,
   journeyPhases,
@@ -379,7 +380,8 @@ const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<str
   hire: { title: 'Hire', options: { yes: 'Yes', no: 'No' } },
   compliance: { title: 'Compliance', options: { now: 'Early', later: 'Later' } },
   enterprise: { title: 'Enterprise', options: { no: 'No', yes: 'Yes' } },
-  ph: { title: 'Launch', options: { yes: 'PH', no: 'Quiet' } },
+  // Launch options (founder round 4, item 7): venue-flavored public launches + Stealth mode.
+  ph: { title: 'Launch', options: { yes: 'PH', no: 'Stealth', 'show-hn': 'HN', waitlist: 'Waitlist' } },
 }
 
 export default function VirtualStartup({
@@ -416,8 +418,11 @@ export default function VirtualStartup({
 }) {
   // ── The ASSERTED decisions only (dropdowns; 'Not set' = absent key). The journey always
   // composes over the EFFECTIVE combo below — an unasserted decision runs the default branch
-  // and stays out of the ?run= state. Presets/YC assert their combos explicitly.
-  const [asserted, setAsserted] = useState<AssertedChoices>({})
+  // and stays out of the ?run= state. Presets/YC assert their combos explicitly. DEFAULT-
+  // ASSERTED decisions (founder round 4, item 5: entity starts asserted at 'Delaware C-Corp')
+  // begin asserted — the dropdown shows the value, semi-auto never asks them, and clearing back
+  // to 'Not set' stays one click away.
+  const [asserted, setAsserted] = useState<AssertedChoices>({ ...DEFAULT_ASSERTED })
   const [preset, setPreset] = useState<PresetId | null>(null)
   // Funding scenario pill (round 3, item 1): shares the ?preset= param namespace with the
   // company presets (the codec extends compatibly), asserts only its partial combo, no identity.
@@ -504,9 +509,10 @@ export default function VirtualStartup({
     if (sc) setScenario(sc.id)
     if (ycOn) setYc(true)
     // Presets/YC ASSERT their combos explicitly (dropdowns leave 'Not set' otherwise); a
-    // scenario asserts only its partial combo (the YC calibration wins where they disagree).
+    // scenario asserts only its partial combo on top of the current (default-asserted) state
+    // (the YC calibration wins where they disagree).
     if (p) setAsserted(ycOn ? applyYcCalibration(p.choices) : { ...p.choices })
-    else if (sc) setAsserted(ycOn ? { ...sc.asserts, ...YC_CALIBRATION } : { ...sc.asserts })
+    else if (sc) setAsserted((a) => (ycOn ? { ...a, ...sc.asserts, ...YC_CALIBRATION } : { ...a, ...sc.asserts }))
     else setAsserted((a) => ({ ...a, ...YC_CALIBRATION }))
     // Mount-only: the URL is the INITIAL view.
   }, [])
@@ -521,7 +527,9 @@ export default function VirtualStartup({
   useEffect(() => {
     const run = decodeRunState(readParam('run'))
     if (!run) return
-    setAsserted(run.choices)
+    // DEFAULT-ASSERTED decisions underlay the link's choices: a ?run= may elide entity (old
+    // links encode it as '.') and still replay with it asserted — semi-auto never asks it.
+    setAsserted({ ...DEFAULT_ASSERTED, ...run.choices })
     setPreset(run.preset)
     // A run link carries the asserted decisions themselves, never a scenario pill — the pill is
     // one-tap input chrome, so any scenario a stray ?preset= set deselects here.
@@ -926,12 +934,13 @@ export default function VirtualStartup({
 
   function start() {
     // A RESTART in semi-auto clears assertions (and the typed name) back to 'Not set' — a fresh
-    // interactive run. The FIRST press keeps whatever the URL/permalink asserted, so replaying a
+    // interactive run (DEFAULT-ASSERTED decisions reset to their asserted defaults, never to
+    // 'Not set'). The FIRST press keeps whatever the URL/permalink asserted, so replaying a
     // semi-auto link with everything asserted plays straight through.
     const isRestart = revealed > 0
     clearRun()
     if (mode === 'semi' && isRestart) {
-      setAsserted({})
+      setAsserted({ ...DEFAULT_ASSERTED })
       setCompanyName(null)
       setNamed(false)
       clearRunState()
@@ -968,10 +977,10 @@ export default function VirtualStartup({
       {/* ── The compact setup band (founder ask 2026-09-28: "make the examples, decisions and
           'who is the founder' much more compact, so we can see the terminal above the fold").
           Same state, same URL params, same determinism as the verbose cards it replaces — the
-          explanations moved into tooltips (components/InstantTooltip.tsx upgrades every title=)
-          and the "full setup guide" expand at the band's foot. The hardware/biotech honesty
-          disclosures stay reachable BEFORE any run via the amber ⓘ on the pill (tooltip +
-          screen-reader text; tests assert it) and verbatim in the expand. The band and the
+          explanations live in tooltips (components/InstantTooltip.tsx upgrades every title=);
+          the "full setup guide" expand is gone (founder round 4, item 1). The hardware/biotech
+          honesty disclosures stay reachable BEFORE any run via the amber ⓘ on the pill (tooltip
+          + screen-reader text; tests assert it). The band and the
           terminal share a tight space-y-3 group so the terminal's top edge lands above the fold
           (~420px on a 1440×900 desktop, within ~50vh of the component top on mobile); the old
           mobile-sticky run bar is gone because the run now prints inside the fixed terminal at
@@ -1256,94 +1265,14 @@ export default function VirtualStartup({
           </p>
         )}
         {/* No amber assumption lines in the band (founder round 3, item 2): the axis pills'
-            tooltips and the full-setup-guide expand below carry the named simulation
-            assumptions; the outcome surfaces (sim badges, scorecard) still disclose them
-            per-line where they apply. */}
+            tooltips carry the named simulation assumptions; the outcome surfaces (sim badges,
+            scorecard) still disclose them per-line where they apply. */}
 
-        {/* The "setup" expand — the previous verbose card copy for readers who want the
-            explanations, in one place and off the critical path to the terminal. */}
-        <details className="mt-2">
-          <summary className="cursor-pointer select-none text-[11px] text-zinc-500 transition hover:text-zinc-300">
-            full setup guide — what the example companies, decisions, founder axes, and drive modes mean
-          </summary>
-          <div className="mt-3 grid gap-x-6 gap-y-4 text-[13px] text-zinc-400 sm:grid-cols-2">
-            <div>
-              <h3 className="text-[10px] uppercase tracking-widest text-zinc-500">Example companies</h3>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                One tap prefills every decision with a themed example company — then hit ▶ Run.
-                Change any decision afterwards and the setup stays, but the preset deselects.
-                Identities are fixed, clearly fictional, and impossible-real by construction.
-              </p>
-              <ul className="mt-1.5 space-y-1.5">
-                {VS_PRESETS.map((p) => (
-                  <li key={p.id}>
-                    <span className="text-zinc-300">{p.label} — {p.company.name}</span>: {p.product},{' '}
-                    {p.company.descriptor}.
-                    {p.disclosure && (
-                      <span className="block text-[11px] leading-snug text-amber-300/90">{p.disclosure}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-2 text-[11px] text-zinc-500">
-                YC batch mode calibrates any setup to the publicly known YC batch shape — Demo-Day
-                raise, launch-early pressure — applied on top of the current decisions, never a
-                new process.
-              </p>
-              <h3 className="mt-3 text-[10px] uppercase tracking-widest text-zinc-500">Who is the founder?</h3>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                Two independent axes — Technical × Experience — shift which steps the founder
-                grinds through by hand on the run&apos;s clock; the two modifiers compose (a
-                non-technical second-timer applies both). An axis never changes a judged verdict
-                or a corpus estimate, only the disclosed multipliers. Founder count is the Team
-                decision, not a founder axis.
-              </p>
-              {[
-                { name: 'Technical', options: VS_TECHNICAL_OPTIONS },
-                { name: 'Experience', options: VS_EXPERIENCE_OPTIONS },
-              ].map((axis) => (
-                <ul key={axis.name} className="mt-1.5 space-y-1.5">
-                  {axis.options.map((o) => (
-                    <li key={o.value}>
-                      <span className="text-zinc-300">{o.label}</span> — {o.blurb}
-                      {o.icpId && (
-                        <>
-                          {' '}· matches the{' '}
-                          <Link href={`/icp/${o.icpId}`} className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-                            {o.icpId}
-                          </Link>{' '}
-                          buyer lens
-                        </>
-                      )}
-                      {o.assumption && (
-                        <span className="block text-[11px] leading-snug text-amber-300/90">{o.assumption}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ))}
-            </div>
-            <div>
-              <h3 className="text-[10px] uppercase tracking-widest text-zinc-500">Starting decisions</h3>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                Each choice selects which real processes and playbooks make up the journey —
-                nothing is invented, options only swap, reorder, or skip corpus processes. Same
-                choices, same company: everything synthetic is deterministic from the decisions.
-                A decision left &lsquo;Not set&rsquo; composes exactly the default branch and stays
-                out of the run link; in Semi-auto drive the run pauses and asks you each
-                still-unset decision inline, right before its first affected line.
-              </p>
-              <ul className="mt-1.5 space-y-1.5">
-                {DECISIONS.map((d) => (
-                  <li key={d.id}>
-                    <span className="text-zinc-300">{d.title}.</span>{' '}
-                    {d.options.map((o) => `${o.label}: ${o.detail}`).join(' · ')}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </details>
+        {/* The 'full setup guide' expander is GONE (founder round 4, item 1): the tooltips ARE
+            the explanation surface — every honesty line it carried lives on a control's title=:
+            the hardware/biotech corpus disclosures on the preset pills' amber ⓘ, the axis
+            simulation assumptions on the persona pills, and every decision's corpus mapping on
+            its dropdown options. */}
       </section>
 
       {/* The journey DAG strip (founder ask 2026-09-29, emphatic): an always-visible horizontal
