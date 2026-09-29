@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import {
   GEO_GLOBAL,
   GEO_GLOBAL_META,
@@ -15,31 +15,43 @@ import {
 } from '@/lib/geoPreference'
 import { readParam, setParams } from '@/lib/urlState'
 
-// The Virtual Startup's in-sim Geo row (founder batch 2026-09-29, item 2): 🌐 Global · 🇺🇸 USA
-// (default) · 🇬🇧 UK · 🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR. Same contract as components/GeoSwitcher.tsx —
+// The Virtual Startup's in-sim Geo control (founder batch 2026-09-29, round 4, item 3): a
+// DROPDOWN, not toggle pills — the house listbox pattern (components/VsDecisionSelect.tsx /
+// SimRolePicker.tsx, never a native <select>). Closed, the trigger shows the CURRENT country
+// (flag + name, default 🇺🇸 USA); open, the list is 🌐 Global · 🇺🇸 USA · 🇬🇧 UK · 🇮🇳 India ·
+// 🇩🇪 Germany · 🇫🇷 France. The STATE CONTRACT is exactly the pill row's (GeoSwitcher doctrine):
 // the ?geo= param + the pa-geo localStorage copy, read on MOUNT ONLY so the static HTML stays
-// byte-identical — plus the one extra token this surface needs: 'global', the explicit
-// geo-neutral choice (lib/geoPreference.ts GEO_GLOBAL, additive). Interop is deliberate: a UK
-// pick here is the same ?geo=uk / pa-geo=uk the process and product pages read, and this row
-// seeds the shared per-tab store (countries only — 'global' maps to the null store state, which
-// is exactly what geo-neutral means to every existing consumer).
+// byte-identical, plus the 'global' token (lib/geoPreference.ts GEO_GLOBAL, additive). Interop
+// is deliberate: a UK pick here is the same ?geo=uk / pa-geo=uk the process and product pages
+// read, and the control seeds the shared per-tab store (countries only — 'global' maps to the
+// null store state, which is exactly what geo-neutral means to every existing consumer).
 //
 // Honesty (the GeoSwitcher doctrine, verbatim): switching countries never re-ranks or recomputes
 // a judged number — every in-sim geo annotation is derived from committed evidence (process
 // geoNotes, jurisdictions/vendor-geo.json), and unsupported countries are said to be unmapped,
 // never guessed.
 
-// The row's pills in display order: Global first, then the canonical US→UK→IN→DE→FR country set.
-const PILLS: Array<{ choice: GeoChoice | null; code: string; flag: string; title: string }> = [
+interface GeoOption {
+  choice: GeoChoice | null
+  code: string // testid suffix + compact trigger text
+  name: string // the visible list label
+  flag: string
+  title: string
+}
+
+// List order: Global first, then the canonical US→UK→IN→DE→FR country set.
+const OPTIONS: GeoOption[] = [
   {
     choice: GEO_GLOBAL,
     code: 'Global',
+    name: 'Global',
     flag: GEO_GLOBAL_META.flag,
     title: 'Global — a geo-neutral run: no country marks, no analogs; judged data unchanged',
   },
   ...GEO_COUNTRIES.map((c) => ({
     choice: c === 'US' ? null : c,
     code: c === 'US' ? 'USA' : c,
+    name: c === 'US' ? 'USA' : c === 'UK' ? 'UK' : GEO_PREF_META[c].label,
     flag: GEO_PREF_META[c].flag,
     title:
       c === 'US'
@@ -55,6 +67,12 @@ export default function VsGeoSelector({
   value: GeoChoice | null
   onChange: (next: GeoChoice | null) => void
 }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const activeOptionRef = useRef<HTMLButtonElement>(null)
+  const listboxId = useId()
+
   // One-time post-hydration sync FROM the URL and the stored preference (external systems), the
   // GeoSwitcher contract: the static HTML must render the US default, so this cannot be an
   // initializer (hydration mismatch); it runs once. (The setter is the parent's state setter,
@@ -74,6 +92,28 @@ export default function VsGeoSelector({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Close on any click/tap outside while open (SimRolePicker contract).
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (e: MouseEvent | PointerEvent) => {
+      if (rootRef.current && e.target instanceof Node && !rootRef.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [open])
+
+  // Keyboard flow: Enter on the trigger opens, focus lands on the current state, Enter picks.
+  useEffect(() => {
+    if (open) activeOptionRef.current?.focus()
+  }, [open])
+
+  function close(refocus: boolean) {
+    setOpen(false)
+    if (refocus) triggerRef.current?.focus()
+  }
+
   const apply = (next: GeoChoice | null) => {
     setGeoSelection(next === GEO_GLOBAL ? null : next)
     const serialized = serializeGeoChoice(next)
@@ -81,31 +121,85 @@ export default function VsGeoSelector({
     if (serialized === null) window.localStorage.removeItem(GEO_STORAGE_KEY)
     else window.localStorage.setItem(GEO_STORAGE_KEY, serialized)
     onChange(next)
+    close(true)
   }
 
+  const current = OPTIONS.find((o) => o.choice === value) ?? OPTIONS.find((o) => o.choice === null)!
+
   return (
-    <div data-testid="vs-geo-row" role="group" aria-label="Country view" className="flex shrink-0 items-center gap-0.5">
-      {PILLS.map((p) => {
-        const active = value === p.choice
-        return (
-          <button
-            key={p.code}
-            type="button"
-            data-testid={`vs-geo-${p.code.toLowerCase()}`}
-            onClick={() => apply(p.choice)}
-            title={p.title}
-            aria-pressed={active}
-            className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
-              active
-                ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <span aria-hidden className="mr-1">{p.flag}</span>
-            {p.code}
-          </button>
-        )
-      })}
+    <div
+      ref={rootRef}
+      data-testid="vs-geo-row"
+      role="group"
+      aria-label="Country view"
+      className="relative flex shrink-0 items-center"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && open) {
+          e.stopPropagation()
+          close(true)
+        }
+      }}
+    >
+      <button
+        ref={triggerRef}
+        type="button"
+        data-testid="vs-geo-trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listboxId : undefined}
+        onClick={() => setOpen((v) => !v)}
+        title={current.title}
+        className={`flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
+          open
+            ? 'border-emerald-400/60 bg-emerald-400/5 text-zinc-100'
+            : 'border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:text-zinc-100'
+        }`}
+      >
+        <span aria-hidden>{current.flag}</span>
+        {current.name}
+        <span aria-hidden className="text-[9px] text-zinc-500">
+          ▾
+        </span>
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          id={listboxId}
+          aria-label="Country view options"
+          className="absolute left-0 top-full z-30 mt-1 min-w-[160px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+        >
+          {OPTIONS.map((o) => {
+            const active = value === o.choice
+            return (
+              <li key={o.code} role="presentation">
+                <button
+                  ref={active ? activeOptionRef : undefined}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  data-testid={`vs-geo-${o.code.toLowerCase()}`}
+                  title={o.title}
+                  onClick={() => apply(o.choice)}
+                  className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
+                    active
+                      ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
+                      : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
+                  }`}
+                >
+                  <span aria-hidden>{o.flag}</span>
+                  <span className="min-w-0 flex-1">{o.name}</span>
+                  {active && (
+                    <span aria-hidden className="shrink-0 text-emerald-300">
+                      ✓
+                    </span>
+                  )}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </div>
   )
 }
