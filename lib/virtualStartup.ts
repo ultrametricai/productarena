@@ -37,7 +37,13 @@ export type OrderingChoice = 'name-first' | 'build-first'
 export type HireChoice = 'yes' | 'no'
 export type ComplianceChoice = 'now' | 'later'
 export type EnterpriseChoice = 'yes' | 'no'
-export type PhLaunchChoice = 'yes' | 'no'
+// Launch options (founder batch 2026-09-29, round 4, item 7). Codec compat rules the values:
+// 'yes' (Product Hunt) and 'no' (Stealth mode — the old Quiet launch, relabeled) keep their
+// original tokens and option indices so every shared digit-codec permalink replays unchanged;
+// 'show-hn' and 'waitlist' are APPENDED. Honesty: the venue options share the SAME real
+// launch-on-product-hunt corpus playbook with the venue named (no invented steps); stealth
+// genuinely skips the launch chain — ongoing operations continue.
+export type PhLaunchChoice = 'yes' | 'no' | 'show-hn' | 'waitlist'
 
 export interface Choices {
   entity: EntityChoice
@@ -61,6 +67,15 @@ export const DEFAULT_CHOICES: Choices = {
   compliance: 'now',
   enterprise: 'no',
   ph: 'yes',
+}
+
+// DEFAULT-ASSERTED decisions (founder batch 2026-09-29, round 4, item 5): decisions that start
+// ASSERTED at their listed value instead of 'Not set' — the dropdown shows the value, semi-auto
+// never asks them, and the ?run= codec simply serializes them like any assertion (the digit
+// codec needs no change; a decoded link overlays this map so old '.'-elided links compose the
+// same asserted state). A per-decision list so more decisions can move here later.
+export const DEFAULT_ASSERTED: Partial<Choices> = {
+  entity: 'c-corp',
 }
 
 export interface DecisionOption {
@@ -89,7 +104,9 @@ export interface DecisionDef {
 //   compliance — the set-up-compliance chain ALWAYS runs; the choice is placement: early
 //                (right after formation/raise) vs deferred (after launch)
 //   enterprise — the land-the-enterprise-deal chain appended as the final phase on yes
-//   ph         — the launch-on-product-hunt chain included on yes
+//   ph         — the launch-on-product-hunt chain included for every public launch (Product
+//                Hunt / Show HN / Waitlist — same corpus playbook, venue named in the phase
+//                note); Stealth mode ('no') skips the chain entirely
 export const DECISIONS: DecisionDef[] = [
   {
     id: 'entity',
@@ -157,10 +174,15 @@ export const DECISIONS: DecisionDef[] = [
   },
   {
     id: 'ph',
-    title: 'Directory launch',
+    title: 'Launch',
+    // Option ORDER is codec ('yes'/'no' keep indices 0/1; new venues appended — see
+    // PhLaunchChoice). Show HN and Waitlist run the SAME real launch playbook with the venue
+    // named in the journey (venue-flavored, never new corpus steps); Stealth skips it.
     options: [
-      { value: 'yes', label: 'Launch on Product Hunt', detail: 'includes the launch-on-product-hunt playbook (email capture, assets, submission)' },
-      { value: 'no', label: 'Quiet launch', detail: 'no directory launch — the launch-on-product-hunt playbook is skipped' },
+      { value: 'yes', label: 'Product Hunt', detail: 'includes the launch-on-product-hunt playbook (email capture, assets, submission)' },
+      { value: 'no', label: 'Stealth mode', detail: 'no public launch — the launch playbook is skipped; ongoing operations continue' },
+      { value: 'show-hn', label: 'Show HN', detail: 'the same real launch-on-product-hunt playbook, aimed at a Show HN post — venue only, identical corpus steps' },
+      { value: 'waitlist', label: 'Waitlist launch', detail: 'the same real launch-on-product-hunt playbook — its email-capture step opens the waitlist; venue only, identical corpus steps' },
     ],
   },
 ]
@@ -179,7 +201,7 @@ export function allChoiceCombos(): Choices[] {
             for (const hire of ['yes', 'no'] as const)
               for (const compliance of ['now', 'later'] as const)
                 for (const enterprise of ['yes', 'no'] as const)
-                  for (const ph of ['yes', 'no'] as const)
+                  for (const ph of ['yes', 'no', 'show-hn', 'waitlist'] as const)
                     combos.push({ entity, funding, product, team, ordering, hire, compliance, enterprise, ph })
   return combos
 }
@@ -478,7 +500,20 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
       : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped',
   )
   if (choices.hire === 'yes') push('hire', 'First hire', 'first-hire')
-  if (choices.ph === 'yes') push('launch', 'Launch day', 'launch-on-product-hunt')
+  // Any PUBLIC launch runs the same real launch playbook — the venue options only name where
+  // it aims (honesty: no invented corpus steps); Stealth mode ('no') skips the chain.
+  if (choices.ph !== 'no')
+    push(
+      'launch',
+      'Launch day',
+      'launch-on-product-hunt',
+      undefined,
+      choices.ph === 'show-hn'
+        ? 'Show HN — the same launch playbook, aimed at a Show HN post (venue only; identical corpus steps)'
+        : choices.ph === 'waitlist'
+          ? 'waitlist launch — the same launch playbook; the email-capture step opens the waitlist (venue only; identical corpus steps)'
+          : null,
+    )
   if (choices.compliance === 'later') compliancePhase()
   // YC calibration: the same raise chain, at Demo-Day timing — the end of the batch.
   if (choices.funding === 'seed' && yc) raisePhase()
@@ -684,7 +719,16 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
   }],
   fin_002: () => [{ label: 'First close', value: 'month 1 reconciled · payout matched' }],
   growth_003: ({ co }) => [{ label: 'Email list', value: `1 subscriber — founder@${co.slug}.example` }],
-  growth_010: ({ co }) => [{ label: 'Launch day', value: `"${co.name}" queued on the directories · assets uploaded` }],
+  // Venue-flavored (2026-09-29 launch options): the same corpus step, the chosen venue named.
+  growth_010: ({ co, choices }) => [{
+    label: 'Launch day',
+    value:
+      choices.ph === 'show-hn'
+        ? `"${co.name}" queued as a Show HN post · assets uploaded`
+        : choices.ph === 'waitlist'
+          ? `waitlist for "${co.name}" opened · assets uploaded`
+          : `"${co.name}" queued on the directories · assets uploaded`,
+  }],
   // First-hire playbook (2026-09-25 toggle wave).
   hr_001: () => [{ label: 'Offer', value: 'offer #001 signed — Engineer 1 joins' }],
   legal_003: () => [{ label: 'IP assignment', value: 'PIIA signed · 1 employee, all founders on file' }],

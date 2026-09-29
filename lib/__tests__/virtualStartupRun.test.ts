@@ -214,7 +214,7 @@ describe('personas', () => {
     // Both rules on one step: the multipliers stack (×3 × ×0.5), and BOTH name themselves.
     expect(o.steps[2].minutes).toBe(10 * FOUNDER_HOURS_MULTIPLIER * SECOND_TIMER_MULTIPLIER)
     expect(o.steps[2].note).toContain('non-technical founder on an engineering step')
-    expect(o.steps[2].note).toContain('second-time founder on a legal/finance step')
+    expect(o.steps[2].note).toContain('repeat entrepreneur on a legal/finance step')
   })
 
   it('the vendor-fallback founder-hours multiplier applies once — axis modifiers never re-scale it', () => {
@@ -233,6 +233,17 @@ describe('personas', () => {
     )
     expect(VS_TECHNICAL_OPTIONS.map((o) => o.value)).toEqual(['technical', 'non-technical'])
     expect(VS_EXPERIENCE_OPTIONS.map((o) => o.value)).toEqual(['first-timer', 'second-timer'])
+    // Display rename (2026-09-29): 'Repeat entrepreneur' everywhere visible; the internal
+    // 'second-timer' value/token/codec char never moved (asserted above and in the codec suite).
+    const repeat = VS_EXPERIENCE_OPTIONS.find((o) => o.value === 'second-timer')!
+    expect(repeat.label).toBe('Repeat entrepreneur')
+    expect(repeat.short).toBe('Repeat entrepreneur')
+    expect(repeat.assumption).toContain('repeat entrepreneur')
+    for (const o of [...VS_TECHNICAL_OPTIONS, ...VS_EXPERIENCE_OPTIONS]) {
+      for (const s of [o.label, o.short, o.blurb, o.assumption ?? '']) {
+        expect(s.toLowerCase()).not.toContain('second-time')
+      }
+    }
     for (const o of [...VS_TECHNICAL_OPTIONS, ...VS_EXPERIENCE_OPTIONS]) {
       if (o.assumption !== null) expect(o.assumption).toContain('simulation assumption')
       if (o.icpId !== null) expect(icpIds.has(o.icpId)).toBe(true)
@@ -515,6 +526,23 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
       expect(decodeCombo(encodeCombo(combo))).toEqual(combo)
       expect(decodeAssertedCombo(encodeAssertedCombo(combo))).toEqual(combo)
     }
+  })
+
+  it('launch-option codec compat (2026-09-29, item 7): old ph digits 0/1 still decode to Product Hunt / stealth; the new venues append as 2/3', () => {
+    const phIndex = DECISIONS.findIndex((d) => d.id === 'ph')
+    const withPhDigit = (digit: string) => {
+      const base = encodeCombo(DEFAULT_CHOICES).split('')
+      base[phIndex] = digit
+      return base.join('')
+    }
+    // Exactly the pre-extension mapping: a shared old link's digit means what it always meant.
+    expect(decodeCombo(withPhDigit('0'))!.ph).toBe('yes')
+    expect(decodeCombo(withPhDigit('1'))!.ph).toBe('no')
+    // The appended venues take the next digits — and unknown digits still reject defensively.
+    expect(decodeCombo(withPhDigit('2'))!.ph).toBe('show-hn')
+    expect(decodeCombo(withPhDigit('3'))!.ph).toBe('waitlist')
+    expect(decodeCombo(withPhDigit('4'))).toBeNull()
+    expect(decodeAssertedCombo(withPhDigit('3'))!.ph).toBe('waitlist')
   })
 
   it('accepts v1 payloads: full combo asserted, legacy persona ids mapped onto the axis pairs, mode auto — shared links keep replaying', () => {

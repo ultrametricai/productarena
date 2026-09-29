@@ -62,7 +62,9 @@ export function hasAgentSurface(surface: VsAccessSurface | undefined): boolean {
 // assumption, NOT judged data — the corpus estimates assume the recorded (agent) path.
 export const FOUNDER_HOURS_MULTIPLIER = 3
 
-// A second-time founder moves faster through paper they have signed before.
+// A repeat entrepreneur moves faster through paper they have signed before. (Display rename
+// 2026-09-29: 'Second-timer' → 'Repeat entrepreneur' everywhere VISIBLE; the internal
+// 'second-timer' ids/tokens are permalink codec surface and never change.)
 export const SECOND_TIMER_MULTIPLIER = 0.5
 
 export const VS_ASSUMPTIONS: ReadonlyArray<{ id: string; text: string }> = [
@@ -76,7 +78,7 @@ export const VS_ASSUMPTIONS: ReadonlyArray<{ id: string; text: string }> = [
   },
   {
     id: 'persona-second-timer',
-    text: `simulation assumption — a second-time founder runs legal/finance steps at ×${SECOND_TIMER_MULTIPLIER} (they have signed this paper before), unless an agent already runs them`,
+    text: `simulation assumption — a repeat entrepreneur runs legal/finance steps at ×${SECOND_TIMER_MULTIPLIER} (they have signed this paper before), unless an agent already runs them`,
   },
 ] as const
 
@@ -144,9 +146,11 @@ export const VS_EXPERIENCE_OPTIONS: VsAxisOption<VsExperienceAxis>[] = [
     assumption: null,
   },
   {
+    // Display-only rename (founder 2026-09-29): 'Repeat entrepreneur' — the internal value,
+    // seed token, and codec char stay 'second-timer'/'2' for permalink compat.
     value: 'second-timer',
-    label: 'Second-time founder',
-    short: 'Second-timer',
+    label: 'Repeat entrepreneur',
+    short: 'Repeat entrepreneur',
     blurb: 'has incorporated, raised, and signed all of this before',
     icpId: null,
     assumption: VS_ASSUMPTIONS.find((a) => a.id === 'persona-second-timer')!.text,
@@ -374,7 +378,7 @@ export function computeStackOutcome(
       }
       if (founder.experience === 'second-timer' && isLegalFinanceTask(s.taskId)) {
         axisMultiplier *= SECOND_TIMER_MULTIPLIER
-        axisNotes.push(`×${SECOND_TIMER_MULTIPLIER} — second-time founder on a legal/finance step (simulation assumption)`)
+        axisNotes.push(`×${SECOND_TIMER_MULTIPLIER} — repeat entrepreneur on a legal/finance step (simulation assumption)`)
       }
       if (axisNotes.length > 0) {
         minutes = s.estimatedMinutes * axisMultiplier
