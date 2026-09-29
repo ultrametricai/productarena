@@ -20,6 +20,7 @@ import {
   CORPUS_ANNUAL_MONTHS,
   dayOf,
   DECISIONS,
+  DEFAULT_ASSERTED,
   DEFAULT_CHOICES,
   EVENT_EXAMPLES,
   eventRows,
@@ -84,9 +85,9 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })
 
-  it('covers all 512 decision combos (nine binary toggles)', () => {
-    expect(combos.length).toBe(512)
-    expect(new Set(combos.map(comboKey)).size).toBe(512)
+  it('covers all 1024 decision combos (eight binary toggles × the four-way launch decision)', () => {
+    expect(combos.length).toBe(1024)
+    expect(new Set(combos.map(comboKey)).size).toBe(1024)
     expect(DECISIONS.length).toBe(9)
   })
 
@@ -152,7 +153,7 @@ describe('decision → journey mapping (against the live corpus)', () => {
       const last = phases[phases.length - 1].chainId
       if (combo.enterprise === 'yes') expect(last).toBe('land-the-enterprise-deal')
       else if (combo.compliance === 'later') expect(last).toBe('set-up-compliance')
-      else if (combo.ph === 'yes') expect(last).toBe('launch-on-product-hunt')
+      else if (combo.ph !== 'no') expect(last).toBe('launch-on-product-hunt')
     }
   })
 
@@ -195,12 +196,48 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('directory launch: the launch-on-product-hunt chain appears only on yes', () => {
+  it('launch: every PUBLIC launch option runs the launch chain; Stealth mode skips it', () => {
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
-      // growth_010 (the PH submission) lives only in that chain among the journey chains.
-      expect(ids.includes('growth_010')).toBe(combo.ph === 'yes')
-      expect(journeyPhases(combo, chains).some((p) => p.chainId === 'launch-on-product-hunt')).toBe(combo.ph === 'yes')
+      // growth_010 (the launch submission) lives only in that chain among the journey chains.
+      expect(ids.includes('growth_010')).toBe(combo.ph !== 'no')
+      expect(journeyPhases(combo, chains).some((p) => p.chainId === 'launch-on-product-hunt')).toBe(combo.ph !== 'no')
+    }
+  })
+
+  it('launch options (2026-09-29, item 7): venue options are venue-FLAVORED only — identical corpus task ids to the Product Hunt path; the venue is named in the phase note; option order pins the codec', () => {
+    const ph = DECISIONS.find((d) => d.id === 'ph')!
+    // Codec compat: 'yes'/'no' keep indices 0/1 (old digits map to the same options); new
+    // venues are appended.
+    expect(ph.options.map((o) => o.value)).toEqual(['yes', 'no', 'show-hn', 'waitlist'])
+    expect(ph.options.map((o) => o.label)).toEqual(['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'])
+    for (const base of [DEFAULT_CHOICES, { ...DEFAULT_CHOICES, enterprise: 'yes' as const }]) {
+      const phIds = journeyTaskIds({ ...base, ph: 'yes' }, chains)
+      for (const venue of ['show-hn', 'waitlist'] as const) {
+        const combo = { ...base, ph: venue }
+        // HONESTY: the same corpus playbook, task for task — nothing invented for the venue.
+        expect(journeyTaskIds(combo, chains)).toEqual(phIds)
+        const note = journeyPhases(combo, chains).find((p) => p.chainId === 'launch-on-product-hunt')!.note!
+        expect(note).toContain('the same launch playbook')
+        expect(note).toContain(venue === 'show-hn' ? 'Show HN' : 'waitlist')
+        // The launch-day artifact names the venue, stays simulated and deterministic.
+        const arts = buildJourneyArtifacts(combo, journeyTaskIds(combo, chains))
+        expect(arts.growth_010?.[0].value).toContain(venue === 'show-hn' ? 'Show HN' : 'waitlist')
+        expect(arts.growth_010?.[0].simulated).toBe(true)
+      }
+      // Stealth genuinely skips the chain — and the run still ends (operations continue).
+      const stealth = journeyPhases({ ...base, ph: 'no' }, chains)
+      expect(stealth.some((p) => p.chainId === 'launch-on-product-hunt')).toBe(false)
+      expect(stealth.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('DEFAULT-ASSERTED decisions (item 5): a per-decision list of valid options — entity starts asserted at c-corp', () => {
+    expect(DEFAULT_ASSERTED).toEqual({ entity: 'c-corp' })
+    for (const [id, value] of Object.entries(DEFAULT_ASSERTED)) {
+      const d = DECISIONS.find((x) => x.id === id)
+      expect(d, `DEFAULT_ASSERTED names unknown decision "${id}"`).toBeTruthy()
+      expect(d!.options.map((o) => o.value)).toContain(value)
     }
   })
 

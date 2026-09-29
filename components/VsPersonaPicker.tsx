@@ -17,9 +17,9 @@ import {
 // short visible labels, the canonical full label as the accessible name, and the blurb — plus
 // the option's named simulation assumption where one applies — in the tooltip
 // (components/InstantTooltip.tsx upgrades every title= site-wide). The band prints no amber
-// assumption lines (founder round 3, 2026-09-29): the tooltip and the band's "full setup guide"
-// expand carry the explanations, and the run's outcome surfaces disclose the assumptions where
-// they actually apply.
+// assumption lines (founder round 3, 2026-09-29) and the setup-guide expand is gone (round 4,
+// item 1): the tooltips ARE the explanation surface, and the run's outcome surfaces disclose
+// the assumptions where they actually apply.
 
 function AxisPair<V extends string>({
   name,

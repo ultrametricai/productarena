@@ -138,6 +138,14 @@ const showAll = () => {
   }
 }
 
+// The Geo control is a house-listbox dropdown (founder round 4, item 3): open the trigger,
+// click the country option (same ?geo=/pa-geo/store contract as the pill row it replaces).
+const pickGeo = (code: string) => {
+  fireEvent.click(screen.getByTestId('vs-geo-trigger'))
+  fireEvent.click(screen.getByTestId(`vs-geo-${code}`))
+}
+const geoTriggerText = () => screen.getByTestId('vs-geo-trigger').textContent ?? ''
+
 // URL, storage AND the shared per-tab geo store are real contracts here — reset all three.
 beforeEach(() => {
   window.history.replaceState(null, '', '/')
@@ -150,7 +158,7 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     renderIt()
     for (const name of [
       'Entity', 'Team', 'Funding', 'Business model', 'What comes first',
-      'First hire', 'Compliance posture', 'Enterprise motion', 'Directory launch',
+      'First hire', 'Compliance posture', 'Enterprise motion', 'Launch',
     ]) {
       expect(screen.getByRole('group', { name })).toBeTruthy()
     }
@@ -158,7 +166,8 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     // The founder axes (2026-09-29, item 4): two tiny segmented pairs inside the Founder group.
     expect(screen.getByRole('group', { name: 'Technical background' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Founder experience' })).toBeTruthy()
-    for (const name of ['Technical founder', 'Non-technical founder', 'First-time founder', 'Second-time founder']) {
+    // 'Second-timer' → 'Repeat entrepreneur' (founder round 4, item 6) — display-only rename.
+    for (const name of ['Technical founder', 'Non-technical founder', 'First-time founder', 'Repeat entrepreneur']) {
       expect(screen.getByRole('button', { name })).toBeTruthy()
     }
     expect(screen.getByRole('group', { name: 'Country view' })).toBeTruthy()
@@ -184,8 +193,30 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     }
     const entity = screen.getByRole('group', { name: 'Entity' })
     expect(within(entity).getByTitle('Entity — starting decision')).toBeTruthy()
-    const launch = screen.getByRole('group', { name: 'Directory launch' })
-    expect(within(launch).getByTitle('Directory launch — starting decision')).toBeTruthy()
+    const launch = screen.getByRole('group', { name: 'Launch' })
+    expect(within(launch).getByTitle('Launch — starting decision')).toBeTruthy()
+  })
+})
+
+describe('VirtualStartup — the Geo dropdown (founder round 4, item 3: a house listbox, not pills)', () => {
+  it('closed, the trigger shows the current country (default 🇺🇸 USA); open, the list is Global/USA/UK/India/Germany/France', () => {
+    renderIt()
+    const trigger = screen.getByTestId('vs-geo-trigger')
+    expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
+    expect(trigger.textContent).toContain('🇺🇸')
+    expect(trigger.textContent).toContain('USA')
+    fireEvent.click(trigger)
+    const list = screen.getByRole('listbox', { name: 'Country view options' })
+    expect(within(list).getAllByRole('option').map((o) => o.textContent?.replace('✓', ''))).toEqual([
+      '🌐Global', '🇺🇸USA', '🇬🇧UK', '🇮🇳India', '🇩🇪Germany', '🇫🇷France',
+    ])
+    expect(screen.getByTestId('vs-geo-usa').getAttribute('aria-selected')).toBe('true')
+    // Picking a country closes the list and the trigger takes its flag + name.
+    fireEvent.click(screen.getByTestId('vs-geo-in'))
+    expect(screen.queryByRole('listbox')).toBeNull()
+    expect(geoTriggerText()).toContain('🇮🇳')
+    expect(geoTriggerText()).toContain('India')
+    expect(window.location.search).toContain('geo=in')
   })
 })
 
@@ -201,13 +232,13 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(screen.queryByTestId('vs-geo-vendor-warning')).toBeNull()
     expect(window.location.search).not.toContain('geo')
     // A country annotates the already-printed run (annotation only, no reset)…
-    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    pickGeo('uk')
     expect(term.innerHTML).not.toBe(baseline)
     // …and stepping back to the USA default — or to explicit Global — restores the exact bytes.
-    fireEvent.click(screen.getByTestId('vs-geo-usa'))
+    pickGeo('usa')
     expect(term.innerHTML).toBe(baseline)
     expect(window.location.search).not.toContain('geo')
-    fireEvent.click(screen.getByTestId('vs-geo-global'))
+    pickGeo('global')
     expect(term.innerHTML).toBe(baseline)
   })
 
@@ -220,7 +251,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect((QS_023.geoNotes ?? []).some((n) => n.country === 'UK')).toBe(false)
 
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    pickGeo('uk')
     expect(window.location.search).toContain('geo=uk')
     expect(window.localStorage.getItem('pa-geo')).toBe('uk')
     showAll()
@@ -239,7 +270,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     const cell = VENDOR_GEO['mercury']?.UK
     expect(cell?.status).toBe('unavailable') // pinned against jurisdictions/vendor-geo.json
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-geo-uk'))
+    pickGeo('uk')
     showAll()
     const warn = screen.getByTestId('vs-geo-vendor-warning')
     expect(warn.textContent).toContain('Mercury — unavailable in the United Kingdom')
@@ -248,7 +279,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     // Honesty line: annotation only — the judged top-vendor pill still renders, score intact.
     expect(screen.getByRole('link', { name: /Mercury · 88/ })).toBeTruthy()
     // Global is geo-neutral: the warning (and every mark) is gone, and the token round-trips.
-    fireEvent.click(screen.getByTestId('vs-geo-global'))
+    pickGeo('global')
     expect(screen.queryByTestId('vs-geo-vendor-warning')).toBeNull()
     expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
     expect(window.location.search).toContain('geo=global')
@@ -258,7 +289,10 @@ describe('VirtualStartup — the in-sim Geo row', () => {
   it('?geo=uk is read on mount — the interop contract with the process/product pages', () => {
     window.history.replaceState(null, '', '/?geo=uk')
     renderIt()
-    expect(screen.getByTestId('vs-geo-uk').getAttribute('aria-pressed')).toBe('true')
+    expect(geoTriggerText()).toContain('UK')
+    fireEvent.click(screen.getByTestId('vs-geo-trigger'))
+    expect(screen.getByTestId('vs-geo-uk').getAttribute('aria-selected')).toBe('true')
+    fireEvent.click(screen.getByTestId('vs-geo-trigger')) // close before the run
     showAll()
     expect(screen.getByTestId('vs-geo-analog')).toBeTruthy()
   })
@@ -266,7 +300,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
   it('the stored pa-geo copy (incl. global) is read on mount when the URL carries nothing', () => {
     window.localStorage.setItem('pa-geo', 'global')
     renderIt()
-    expect(screen.getByTestId('vs-geo-global').getAttribute('aria-pressed')).toBe('true')
+    expect(geoTriggerText()).toContain('Global')
     showAll()
     expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
   })
@@ -324,17 +358,19 @@ describe('VirtualStartup — the state-graph panel', () => {
     // The axes lead (item 5: the panel shows both).
     expect(text).toContain('Technical founder')
     expect(text).toContain('First-time founder')
-    // Unasserted decisions show the composed default and say they are not set…
-    expect(text).toContain('Delaware C-Corp · not set')
+    // Unasserted decisions show the composed default and say they are not set — while the
+    // DEFAULT-ASSERTED entity (founder round 4, item 5) reads asserted from the first render.
     expect(text).toContain('Raise a seed · not set')
-    // …and an asserted one drops the marker (the assertion resets the run; re-run to refill).
-    fireEvent.click(screen.getByTestId('vs-decision-entity'))
-    fireEvent.click(screen.getByRole('option', { name: 'Delaware C-Corp' }))
+    expect(text).toContain('Delaware C-Corp')
+    expect(text).not.toContain('Delaware C-Corp · not set')
+    // …and asserting one drops the marker (the assertion resets the run; re-run to refill).
+    fireEvent.click(screen.getByTestId('vs-decision-funding'))
+    fireEvent.click(screen.getByRole('option', { name: 'Raise a seed' }))
     showAll()
     fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
     const after = screen.getAllByTestId('vs-sg-decision').map((d) => d.textContent).join(' | ')
-    expect(after).toContain('Delaware C-Corp')
-    expect(after).not.toContain('Delaware C-Corp · not set')
+    expect(after).toContain('Raise a seed')
+    expect(after).not.toContain('Raise a seed · not set')
   })
 
   it('mid-run events land in the Decisions tab as pending, then resolve with the chosen branch', () => {

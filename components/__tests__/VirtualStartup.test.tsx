@@ -254,7 +254,7 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
 
     pickDecision('hire', 'Stay founders-only')
     pickDecision('enterprise', 'Chase the enterprise deal')
-    pickDecision('ph', 'Quiet launch')
+    pickDecision('ph', 'Stealth mode')
     pickDecision('ordering', 'Build first')
     showAll()
     expect(screen.queryByText('Hire first employee')).toBeNull()
@@ -264,6 +264,45 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     const build = termBody().getByText('Build & ship v1')
     const name = termBody().getByText('Name & brand')
     expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+})
+
+describe('VirtualStartup — launch options (founder round 4, item 7)', () => {
+  it('Show HN runs the SAME launch playbook with the venue named; the launch-day artifact says Show HN', () => {
+    renderIt()
+    pickDecision('ph', 'Show HN')
+    showAll()
+    // The launch chain still runs — same corpus process, venue-flavored copy only.
+    expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
+    expect(termBody().getByText(/Show HN — the same launch playbook/)).toBeTruthy()
+    const launchArtifact = screen
+      .getAllByTestId('vs-artifact')
+      .find((a) => /Launch day/.test(a.textContent ?? ''))!
+    expect(launchArtifact.textContent).toContain('Show HN')
+    expect(launchArtifact.getAttribute('data-synthetic')).toBe('true')
+  })
+
+  it('Waitlist launch runs the same playbook (email capture = the waitlist) with the venue note', () => {
+    renderIt()
+    pickDecision('ph', 'Waitlist launch')
+    showAll()
+    expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
+    expect(termBody().getByText(/waitlist launch — the same launch playbook/)).toBeTruthy()
+    const launchArtifact = screen
+      .getAllByTestId('vs-artifact')
+      .find((a) => /Launch day/.test(a.textContent ?? ''))!
+    expect(launchArtifact.textContent).toContain('waitlist')
+  })
+
+  it('Stealth mode genuinely skips the launch chain — no launch phase, ongoing operations continue', () => {
+    renderIt()
+    pickDecision('ph', 'Stealth mode')
+    showAll()
+    expect(screen.queryByText('Launch on Product Hunt & directories')).toBeNull()
+    expect(screen.queryByText('Launch day')).toBeNull()
+    // The run still completes and the operating rhythm still opens (ops continue post-stealth).
+    expect(within(screen.getByTestId('vs-terminal-body')).getByText(/journey complete/)).toBeTruthy()
+    expect(screen.getByText('The operating rhythm')).toBeTruthy()
   })
 })
 
@@ -388,8 +427,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     // No pre-run company line (founder addendum 2026-09-29): the name comes into existence at
     // the run's naming step, so the band never announces a company upfront.
     expect(within(band).queryByText(/your virtual company/i)).toBeNull()
-    // Every decision renders as a listbox dropdown starting at 'Not set'; opening it exposes
-    // the canonical full labels as option accessible names, plus the explicit Not-set row.
+    // Every decision renders as a listbox dropdown starting at 'Not set' — EXCEPT the
+    // DEFAULT-ASSERTED entity (founder round 4, item 5), which starts asserted at
+    // 'Delaware C-Corp'; opening a dropdown exposes the canonical full labels as option
+    // accessible names, plus the explicit Not-set row.
     const optionNames: Record<string, string[]> = {
       entity: ['Delaware C-Corp', 'LLC'],
       team: ['Cofounders', 'Solo founder'],
@@ -399,15 +440,19 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
       hire: ['Make the first hire', 'Stay founders-only'],
       compliance: ['Compliance early', 'Compliance later'],
       enterprise: ['Not yet', 'Chase the enterprise deal'],
-      ph: ['Launch on Product Hunt', 'Quiet launch'],
+      // Launch options (founder round 4, item 7): venue-flavored public launches + stealth.
+      ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'],
     }
     for (const [id, names] of Object.entries(optionNames)) {
       const trigger = within(band).getByTestId(`vs-decision-${id}`)
       expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
-      expect(trigger.textContent).toContain('Not set')
+      if (id === 'entity') expect(trigger.textContent).toContain('C-Corp') // default-asserted
+      else expect(trigger.textContent).toContain('Not set')
       fireEvent.click(trigger)
       for (const name of names) expect(screen.getByRole('option', { name })).toBeTruthy()
-      expect(screen.getByTestId(`vs-decision-${id}-notset`).getAttribute('aria-selected')).toBe('true')
+      expect(screen.getByTestId(`vs-decision-${id}-notset`).getAttribute('aria-selected')).toBe(
+        id === 'entity' ? 'false' : 'true',
+      )
       fireEvent.click(trigger) // close before the next one
     }
     // The band precedes the terminal in document order — the terminal sits right under it.
@@ -444,9 +489,24 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     fireEvent.click(screen.getByTestId('vs-decision-enterprise-notset'))
     expect(decisionTitle('enterprise')).toContain('not set')
     // Explicitly asserting the DEFAULT'S value is an assertion, not a no-op.
-    pickDecision('entity', 'Delaware C-Corp')
+    pickDecision('team', 'Cofounders')
+    expect(decisionTitle('team')).toContain('Cofounders')
+    expect(decisionTitle('team')).not.toContain('not set')
+  })
+
+  it("entity is DEFAULT-ASSERTED (founder round 4, item 5): starts asserted at 'Delaware C-Corp', never asked, and one click clears it back to Not set", () => {
+    renderIt()
+    // Asserted from the first render — not the 'not set' phrasing.
     expect(decisionTitle('entity')).toContain('Delaware C-Corp')
     expect(decisionTitle('entity')).not.toContain('not set')
+    expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
+    // The assertion composes the C-Corp branch, exactly as if the reader had picked it.
+    showAll()
+    expect(termBody().getByText('Incorporate C-Corp')).toBeTruthy()
+    // The reader can still unassert it (the mechanism, not a lock).
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
+    expect(decisionTitle('entity')).toContain('not set')
   })
 
   it("'Not set' composes exactly the default branch — the journey is identical to the default combo", () => {
@@ -460,7 +520,7 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     for (const [id, name] of [
       ['entity', 'Delaware C-Corp'], ['team', 'Cofounders'], ['funding', 'Raise a seed'],
       ['product', 'SaaS subscriptions'], ['ordering', 'Name first'], ['hire', 'Make the first hire'],
-      ['compliance', 'Compliance early'], ['enterprise', 'Not yet'], ['ph', 'Launch on Product Hunt'],
+      ['compliance', 'Compliance early'], ['enterprise', 'Not yet'], ['ph', 'Product Hunt'],
     ] as const) {
       pickDecision(id, name)
     }
@@ -468,14 +528,20 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.getByTestId('vs-terminal-body').textContent).toBe(notSet)
   })
 
-  it('the full setup guide expand carries the verbose explanations, disclosures verbatim included', () => {
-    renderIt()
-    const details = screen.getByText(/full setup guide/i).closest('details')!
-    const guide = within(details as HTMLElement)
-    expect(guide.getByText(/hardware-specific steps \(regulatory, manufacturing\)/)).toBeTruthy()
-    expect(guide.getByText(/biotech-specific steps \(regulatory, trials, manufacturing\)/)).toBeTruthy()
-    expect(guide.getByText(/never changes? a judged verdict/)).toBeTruthy()
-    expect(guide.getByText(/nothing is invented/)).toBeTruthy()
+  it("the 'full setup guide' expander is GONE (founder round 4, item 1) — the honesty copy lives on in tooltips", () => {
+    const { container } = renderIt()
+    expect(screen.queryByText(/full setup guide/i)).toBeNull()
+    expect(container.querySelector('details')).toBeNull() // no disclosure widget in the band
+    // The explanations survive as tooltips: the preset ⓘ carries the corpus disclosure…
+    const disclosures = screen.getAllByTestId('vs-preset-disclosure')
+    expect(disclosures.length).toBe(2)
+    for (const d of disclosures) expect(d.getAttribute('title')).toContain('same real software-company process corpus')
+    // …the axis pills carry their named simulation assumptions…
+    expect(screen.getByTestId('vs-persona-non-technical').getAttribute('title')).toContain('simulation assumption')
+    expect(screen.getByTestId('vs-persona-second-timer').getAttribute('title')).toContain('simulation assumption')
+    // …and each decision option keeps its corpus mapping in its option tooltip.
+    fireEvent.click(screen.getByTestId('vs-decision-funding'))
+    expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toContain('Raise a seed round')
   })
 })
 
@@ -830,7 +896,7 @@ describe('VirtualStartup — YC batch mode', () => {
     const disclosure = screen.getByTestId('vs-yc-disclosure')
     expect(disclosure.textContent).toContain('not affiliated with or endorsed by Y Combinator')
     // Launch-early calibration: PH on, build-first, seed raise — asserted in the dropdowns.
-    expect(decisionTitle('ph')).toContain('Launch on Product Hunt')
+    expect(decisionTitle('ph')).toContain('Product Hunt')
     expect(decisionTitle('ordering')).toContain('Build first')
     expect(decisionTitle('funding')).toContain('Raise a seed')
   })
@@ -888,10 +954,10 @@ describe('VirtualStartup — YC batch mode', () => {
     expect(window.location.search).toContain('preset=hardware')
     expect(window.location.search).toContain('yc=1')
     // Calibration overrides the preset where they disagree (hardware has PH off).
-    expect(decisionTitle('ph')).toContain('Launch on Product Hunt')
+    expect(decisionTitle('ph')).toContain('Product Hunt')
     // Turning YC off restores the preset's own combo.
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
-    expect(decisionTitle('ph')).toContain('Quiet launch')
+    expect(decisionTitle('ph')).toContain('Stealth mode')
     expect(window.location.search).not.toContain('yc=1')
   })
 
@@ -901,7 +967,7 @@ describe('VirtualStartup — YC batch mode', () => {
     expect(screen.getByTestId('vs-yc-disclosure')).toBeTruthy()
     expect(decisionTitle('ordering')).toContain('Build first')
     // Contradicting the calibration (quiet launch) turns the mode off and clears ?yc.
-    pickDecision('ph', 'Quiet launch')
+    pickDecision('ph', 'Stealth mode')
     expect(screen.queryByTestId('vs-yc-disclosure')).toBeNull()
     expect(window.location.search).not.toContain('yc=1')
     // A non-calibration pick keeps the mode on.
