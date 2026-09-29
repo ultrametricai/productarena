@@ -2150,28 +2150,20 @@ export default {
               if (m) el.setAttribute('href', m[1] && m[1] !== '/' ? m[1] : '/overall')
             },
           })
-          // The landing's #products card still ships the retired ProductArena brand — recast it
-          // as the Open Source / open-startup-repo card until the landing repo updates
-          // (founder 2026-09-28). The card's link goes to the GitHub repo, the ranking surfaces
-          // stay one click in from there (and from the header link).
-          .on('section#products a[href="/overall"]', {
+          // Founder 2026-09-29: the #products section is gone from the homepage entirely (the
+          // earlier card-recast handlers went with it); the hero's "See the products ↓" anchor
+          // retargets to the rankings so it doesn't point at a removed section.
+          .on('section#products', {
             element(el) {
-              el.setAttribute('href', 'https://github.com/ultrametricai/ultrametric')
-              el.setAttribute('target', '_blank')
-              el.setAttribute('rel', 'noopener noreferrer')
+              el.remove()
             },
           })
-          .on('section#products h2', textReplace({ ProductArena: 'Open Source' }))
-          .on(
-            'section#products p',
-            textReplace({
-              'ultrametric.ai/productarena': 'github.com/ultrametricai/ultrametric',
-              'The evidence-based software arena.': 'The open startup repo.',
-              'Rankings for the AI era — products crawled, probed, and judged on how agent-ready they are, with a citation behind every verdict and a contest button on every score.':
-                'Source-backed founder processes and journeys, jurisdiction rule cards, open cap-table math, and evidence-graded rankings of 570+ tools — every record cited, dated, testable, and open to PRs from founders anywhere.',
-            }),
-          )
-          .on('section#products span', textReplace({ 'Enter the arena': 'Explore the repo' }))
+          .on('a[href="#products"]', {
+            element(el) {
+              el.setAttribute('href', '/overall')
+            },
+            ...textReplace({ 'See the products': 'See the rankings' }),
+          })
           // Founder 2026-09-29: the landing's "Products" dropdown is gone — the header carries
           // the product top bar instead (same destinations as the /overall site nav). The
           // <details> element is the nav's only dropdown; links hide progressively on mobile.
@@ -2190,6 +2182,8 @@ export default {
                    ${link('/processes', 'Processes')}
                    ${link('/technologies', 'Technologies')}
                    ${link('/overall', 'Rankings')}
+                   ${link('/stacks', 'Stacks')}
+                   ${link('https://github.com/ultrametricai/ultrametric', 'GitHub ↗')}
                  </div>`,
                 { html: true },
               )
