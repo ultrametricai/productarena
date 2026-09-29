@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import BackedByBuilders from '@/components/BackedByBuilders'
-import DissolveHeading from '@/components/fx/DissolveHeading'
 import { HeroFractal } from '@/components/fx/lazy'
 
 // The company landing homepage, ported from the retired Astro landing site into the product
@@ -15,7 +14,7 @@ import { HeroFractal } from '@/components/fx/lazy'
 // - Hero: full-bleed, viewport-height, with the WebGL Newton-fractal backdrop
 //   (components/fx/HeroFractalCanvas.tsx — original shader recovered) over the static
 //   .cb-fallback gradient (which stays as the no-WebGL / pre-hydration state), and the
-//   char-melt "dissolve" on the h1 (components/fx/DissolveHeading.tsx).
+//   static h1 (the char-melt dissolve was retired by founder ask, 2026-09-29).
 // - Products: the original large AFK/Foreloop cards (eyebrow, display-black title, mono
 //   subtitle, hover hairline + glow, circle-arrow CTA row).
 // - The two deliberate differences from the retired page (both founder-ordered 2026-09-29):
@@ -134,20 +133,21 @@ export default function HomePage() {
           <p className="mb-6 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.35em] text-zinc-300 sm:text-xs">
             Redefining work in the AI phase transition
           </p>
-          <DissolveHeading className="font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-8xl">
+          {/* Static h1 (founder 2026-09-29: no per-char shifting) — DissolveHeading retired here. */}
+          <h1 className="font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-8xl">
             Automating
             <br />
             the startup
-          </DissolveHeading>
+          </h1>
           <p className="mt-8 max-w-xl text-base leading-relaxed text-zinc-300 sm:text-lg">
             The next great companies will run themselves — operations, code, and all. We&apos;re building the
-            products that let you create from anywhere.
+            products that let you focus on creating and skip the automatable.
           </p>
           <Link
             href="/virtual-startup"
             className="mt-12 inline-flex min-h-11 items-center gap-2 rounded-full border border-zinc-700/80 bg-zinc-950/40 px-6 py-2.5 text-sm text-zinc-200 backdrop-blur-sm transition-colors hover:border-zinc-500 hover:text-white"
           >
-            Open the startup simulator <span aria-hidden>→</span>
+            Test it <span aria-hidden>→</span>
           </Link>
         </div>
       </section>
