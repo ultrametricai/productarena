@@ -14,10 +14,12 @@ import {
 // lives here. An axis shifts which person-routed work is DIY vs delegated in the run's time
 // model only (lib/virtualStartupRun.ts computeStackOutcome — the two modifiers compose) — it
 // never changes a judged verdict or a corpus estimate. Options render as small pill buttons:
-// short visible labels, the canonical full label as the accessible name, and the blurb in the
-// tooltip (components/InstantTooltip.tsx upgrades every title= site-wide). The active axes'
-// named simulation assumptions print in the band's info lines (components/VirtualStartup.tsx),
-// and the full blurbs + icp-lens cross-references live in the band's "full setup guide" expand.
+// short visible labels, the canonical full label as the accessible name, and the blurb — plus
+// the option's named simulation assumption where one applies — in the tooltip
+// (components/InstantTooltip.tsx upgrades every title= site-wide). The band prints no amber
+// assumption lines (founder round 3, 2026-09-29): the tooltip and the band's "full setup guide"
+// expand carry the explanations, and the run's outcome surfaces disclose the assumptions where
+// they actually apply.
 
 function AxisPair<V extends string>({
   name,
@@ -39,7 +41,7 @@ function AxisPair<V extends string>({
           data-testid={`vs-persona-${o.value}`}
           aria-pressed={o.value === value}
           aria-label={o.label}
-          title={`${o.label} — ${o.blurb}`}
+          title={`${o.label} — ${o.blurb}${o.assumption ? ` (${o.assumption})` : ''}`}
           onClick={() => onSelect(o.value)}
           className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
             o.value === value
