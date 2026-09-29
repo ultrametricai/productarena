@@ -26,7 +26,9 @@ import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualSt
 // the SIMULATED label — see lib/virtualStartup.ts for the honesty contract.
 
 export const metadata: Metadata = {
-  title: 'Virtual Startup — Ultrametric',
+  // Display name 'Startup sim' (founder addendum 2026-09-29) — the route stays /virtual-startup,
+  // and every internal id/testid keeps the vs/virtual-startup vocabulary.
+  title: 'Startup sim — Ultrametric',
   description:
     'Open startup simulator — pick the starting decisions (or drive it semi-auto, deciding as the run reaches each fork) and watch a virtual startup run the real founder-process corpus: every step routed agent / manual / human, the top judged vendor per step with its runners-up, synthetic artifacts, and the first-30-days / first-90-days / year-one operating rhythm the company then runs.',
 }
@@ -125,13 +127,15 @@ export default function VirtualStartupPage() {
 
   return (
     <div className="space-y-10">
-      <section className="mx-auto max-w-3xl text-center">
+      {/* Left-aligned hero (founder addendum 2026-09-29): title at the content edge, arena-page
+          style — no centered/mx-auto treatment. */}
+      <section>
         {/* No breadcrumb eyebrow (founder 2026-09-28) — the title stands alone; /processes is
             linked from the outro below. */}
-        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Virtual Startup</h1>
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Startup sim</h1>
         {/* Plain one-line subtitle (founder 2026-09-29) — the fuller explanation lives in the
             setup band's "full setup guide" expand. */}
-        <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-400">Open startup simulator</p>
+        <p className="mt-2 max-w-2xl text-sm text-zinc-400">Open startup simulator</p>
       </section>
 
       <VirtualStartup
