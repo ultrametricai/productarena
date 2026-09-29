@@ -10,7 +10,7 @@ import { loadProcesses, vendorLabel, VENDOR_ARENA, type DagNode } from './proces
 // data/spike-queue.json, data/arena-roadmap.json, data/vendor-news.json, .github/workflows —
 // and returns plain serializable rows for components/OpsDashboard.tsx. None of it is secret
 // (copy-data.mjs already mirrors all of data/ world-readable); the /ops admin gate is about
-// FOCUS, not secrecy. Reads are deliberately TOLERANT (the /queue page's lib/gifts.ts
+// FOCUS, not secrecy. Reads are deliberately TOLERANT (the /queue page's
 // convention): a missing optional file degrades to an honest empty section, never a build
 // failure. All functions take a data-dir override so tests run on small fixture dirs.
 

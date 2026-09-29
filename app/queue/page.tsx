@@ -7,7 +7,7 @@ import path from 'node:path'
 // its header for the ranking formula and churn policy). Deliberately not in app/sitemap.ts,
 // the header nav, Explore menu, command palette (lib/search-index.ts PAGE_DEFS), search
 // aliases, or llms.txt, and noindexed below: this is operational state for the founder,
-// reachable only by typing the URL — the /gifts precedent. Everything rendered here is
+// reachable only by typing the URL (the house unlisted-page pattern). Everything rendered here is
 // verbatim from data/spike-queue.json; this page surfaces queue state, it never invents any.
 // NOTE data/spike-queue.json is also world-readable at /data/spike-queue.json (copy-data.mjs
 // mirrors all of data/) — unadvertised, not private, and it contains nothing sensitive.
@@ -50,7 +50,7 @@ interface SpikeQueue {
   queue: SpikeEntry[]
 }
 
-// Tolerant read (the lib/gifts.ts convention): before the engine's first run the file may not
+// Tolerant read (house convention for unlisted pages): before the engine's first run the file may not
 // exist — the page degrades to an honest empty state rather than failing the build.
 function loadQueue(): SpikeQueue | null {
   try {
