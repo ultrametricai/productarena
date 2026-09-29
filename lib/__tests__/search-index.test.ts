@@ -49,12 +49,12 @@ describe('buildSearchIndex', () => {
     expect(buildSearchIndex([])).toEqual([])
   })
 
-  it('exports the /v2 CLI/MCP product entry the layout feeds the ⌘K palette', () => {
+  it('exports the /get-started CLI/MCP product entry the layout feeds the ⌘K palette', () => {
     expect(V2_PRODUCT_ENTRY).toEqual({
       type: 'product',
       label: 'Ultrametric CLI/MCP',
       sublabel: 'Start and run your company from any agent',
-      href: '/v2',
+      href: '/get-started',
     })
   })
 

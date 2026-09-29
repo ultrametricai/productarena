@@ -32,14 +32,14 @@ export const metadata: Metadata = {
   title: 'Ultrametric — Start and run your company from any agent',
   description:
     'Step-by-step managed processes to let your agent handle incorporating, hiring, payroll, and more. Start on your laptop, approve from your phone.',
-  alternates: { canonical: 'https://ultrametric.ai/v2' },
+  alternates: { canonical: 'https://ultrametric.ai/get-started' },
   robots: { index: false, follow: false },
   openGraph: {
     title: 'Ultrametric — Start and run your company from any agent',
     description:
       'Step-by-step managed processes to let your agent handle incorporating, hiring, payroll, and more. Start on your laptop, approve from your phone.',
     type: 'website',
-    url: 'https://ultrametric.ai/v2',
+    url: 'https://ultrametric.ai/get-started',
   },
   twitter: {
     card: 'summary_large_image',

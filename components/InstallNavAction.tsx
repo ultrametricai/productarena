@@ -23,7 +23,7 @@ export default function InstallNavAction() {
 
   return (
     <span className="hidden shrink-0 items-center gap-1 sm:flex">
-      <Link href="/v2" className="text-sm text-zinc-300 transition hover:text-emerald-300" title="Install Ultrametric — agent prompt, CLI, or MCP">
+      <Link href="/get-started" className="text-sm text-zinc-300 transition hover:text-emerald-300" title="Install Ultrametric — agent prompt, CLI, or MCP">
         Install
       </Link>
       <button

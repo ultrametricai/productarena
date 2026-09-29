@@ -5,8 +5,8 @@ import { SITE_URL } from '@/lib/site'
 describe('sitemap registration', () => {
   const urls = new Set(sitemap().map((e) => e.url))
 
-  it('lists the ported company pages, including the /v2 CLI/MCP product page', () => {
-    for (const path of ['/company', '/tos', '/v2']) {
+  it('lists the ported company pages, including the /get-started CLI/MCP product page', () => {
+    for (const path of ['/company', '/tos', '/get-started']) {
       expect(urls.has(`${SITE_URL}${path}`)).toBe(true)
     }
   })

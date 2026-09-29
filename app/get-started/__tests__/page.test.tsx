@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import V2Page, { metadata } from '@/app/v2/page'
+import V2Page, { metadata } from '@/app/get-started/page'
 
 describe('the /v2 Ultrametric CLI/MCP product page (ported from the landing origin)', () => {
   it('renders the hero heading and subtitle verbatim', () => {
@@ -75,9 +75,9 @@ describe('the /v2 Ultrametric CLI/MCP product page (ported from the landing orig
     expect(screen.queryByText('Your AI native company starts here')).toBeNull()
   })
 
-  it('keeps the live page metadata: title, canonical /v2, and noindex,nofollow preserved', () => {
+  it('keeps the live page metadata: title, canonical /get-started, and noindex,nofollow preserved', () => {
     expect(metadata.title).toBe('Ultrametric — Start and run your company from any agent')
-    expect(metadata.alternates?.canonical).toBe('https://ultrametric.ai/v2')
+    expect(metadata.alternates?.canonical).toBe('https://ultrametric.ai/get-started')
     // The live /v2 ships noindex,nofollow — PRESERVED until the founder flips it.
     expect(metadata.robots).toEqual({ index: false, follow: false })
   })

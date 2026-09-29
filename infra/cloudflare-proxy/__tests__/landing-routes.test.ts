@@ -93,23 +93,19 @@ describe('landing cutover routing', () => {
     }
   })
 
-  it("proxies /v2 and /v2/ to the product origin's /v2 (the ported CLI/MCP product page)", async () => {
-    // Replaces the old redirect-home: app/v2 now serves the page inside the sitewide layout.
+  it('301s /v2 and /v2/ to /get-started (founder 2026-09-29 rename)', async () => {
     // A Cloudflare ZONE rule still intercepts /v2 ahead of the worker in production; this
-    // mapping is what takes over the moment the founder removes it.
+    // redirect takes over the moment the founder removes it.
     for (const path of ['/v2', '/v2/']) {
-      const calls = stubOriginFetch()
       const resp = await get(path)
-      expect(resp.status).toBe(200)
-      expect(calls).toEqual([`${ORIGIN}/v2`])
-      vi.unstubAllGlobals()
+      expect(resp.status).toBe(301)
+      expect(resp.headers.get('location')).toBe('https://ultrametric.ai/get-started')
     }
   })
 
-  it('passes deeper /v2/* paths through to the origin unchanged', async () => {
-    const calls = stubOriginFetch()
+  it('301s deeper /v2/* paths to /get-started with the query intact', async () => {
     const resp = await get('/v2/opengraph-image?x=1')
-    expect(resp.status).toBe(200)
-    expect(calls).toEqual([`${ORIGIN}/v2/opengraph-image?x=1`])
+    expect(resp.status).toBe(301)
+    expect(resp.headers.get('location')).toBe('https://ultrametric.ai/get-started?x=1')
   })
 })
