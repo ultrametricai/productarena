@@ -3,6 +3,8 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
+import LogoWordmark from "@/components/fx/LogoWordmark";
+import { FooterAttractor } from "@/components/fx/lazy";
 import InstallBanner from "@/components/InstallBanner";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
@@ -269,11 +271,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex shrink-0 items-center gap-2">
               {/* One top-bar standard sitewide (founder 2026-09-29): the landing's wordmark SVG
                   leads the product bar too, so ultrametric.ai/ and the product pages share the
-                  same header. Links home (the landing). */}
-              <Link href="/" className="flex shrink-0 items-center transition hover:opacity-80" title="Ultrametric home">
-                {/* eslint-disable-next-line @next/next/no-img-element -- static svg wordmark */}
-                <img src="/ultrametric-wordmark.svg" alt="ultrametric" className="h-3 w-auto sm:h-3.5" />
-              </Link>
+                  same header. Links home (the landing). Carries the landing nav's restored
+                  hover effect — Julia-set canvas + shine sweep masked to the letterforms
+                  (components/fx/LogoWordmark.tsx), identical on every page. */}
+              <LogoWordmark />
             </div>
             {/* Primary IA: Arenas (the product), Explore (every secondary view: global rankings,
                 buyer lenses, methodology/pipeline/proofs/MCP), then the three tools (Stacks,
@@ -392,7 +393,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* w-full + min-w-0: body is a column flex container, so without min-w-0 this flex
             item's automatic minimum width tracks its content's min-content width — wide tables
             inside overflow-x-auto wrappers would push the whole page wider than the viewport
-            on phones instead of scrolling inside their wrapper. */}
+            on phones instead of scrolling inside their wrapper. The landing homepage
+            (app/home) breaks out of this box full-bleed with a w-screen wrapper — the
+            scrollbar-gutter overflow that 100vw implies is clipped at the viewport by the
+            html { overflow-x: clip } rule in globals.css (clipping here on main would cut the
+            full-bleed hero at the 7xl box on wide screens). */}
         <main id="main" className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
         {/* Sitewide install banner (founder 2026-09-29): the /v2 bottom module — the CLI/MCP
             product's three install methods — closes every content page, above the footer. */}
@@ -400,9 +405,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Sitewide footer — the landing site's footer, ported here as THE standard footer
             (founder 2026-09-29: one footer sitewide, like the top bar). Structure/copy follow
             the landing: wordmark + tagline, © + the made-from icons, and the landing link row
-            (𝕏 / Privacy / Terms → /tos; Company processes/Foreloop/Rankings dropped 2026-09-29). Per founder:
-            no RSS link, no /changelog link. The landing's strange-attractor canvas and the
-            copyright/icon popup animations are dropped; the graph-paper grid stays (pure CSS). */}
+(𝕏 / Privacy / Terms → /tos; Company processes/Foreloop/Rankings dropped 2026-09-29). Per
+            founder: no RSS link, no /changelog link. The landing's strange-attractor canvas is
+            RESTORED (founder 2026-09-29: "the homepage has lost its animations") — it plots over
+            the graph-paper grid exactly as on the landing (components/fx/FooterAttractorCanvas
+            .tsx, lazily mounted client-only). The copyright/icon popup animations stay dropped. */}
         <footer className="relative border-t border-zinc-800 py-16 sm:py-24">
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -415,6 +422,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             }}
             aria-hidden
           />
+          {/* The attractor canvas plots over the grid; the top fade (as on the landing) keeps
+              the point cloud from butting against the footer's border-t. */}
+          <FooterAttractor />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-zinc-950 to-transparent" aria-hidden />
           <div className="relative z-10 mx-auto max-w-7xl px-5">
             <div className="mb-8">
               {/* eslint-disable-next-line @next/next/no-img-element -- static svg wordmark */}

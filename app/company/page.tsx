@@ -2,14 +2,18 @@
    site (public/logos/*); no remote loader or resizing needed. */
 import type { Metadata } from 'next'
 import BackedByBuilders from '@/components/BackedByBuilders'
+import { JuliaHero } from '@/components/fx/lazy'
 
 // The AFK "Company processes" product page, ported from the retired Astro landing site
 // (https://ultrametric.ai/company) into the product app so it shares app/layout.tsx — one top
 // bar sitewide (founder 2026-09-29). The worker 301s the old /afk path here.
 //
 // Fidelity notes vs the live landing:
-// - The Julia-set WebGL hero backdrop is replaced by the landing's own graph-paper grid plus
-//   a static radial gradient (its reduced-motion/no-WebGL posture).
+// - The Julia-set WebGL hero backdrop is RESTORED (founder 2026-09-29: "the homepage has lost
+//   its animations") as components/fx/JuliaHeroCanvas.tsx — a re-implementation (the original
+//   compiled chunk is no longer fetchable and unarchived), same visual family as the recovered
+//   wordmark Julia (z² + c, |c| = 0.7885), dark/subtle/emerald-tinted. The graph-paper grid +
+//   static radial gradient below stay as the no-WebGL / reduced-motion / pre-hydration state.
 // - The animated DAG walkthrough (script-injected process steps, clickable tabs/sidebar) is
 //   rendered as a static frame of the same mock: the workspace shell with the Integrations
 //   panel (its only fully static panel) visible.
@@ -110,7 +114,8 @@ export default function CompanyPage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden pb-16 pt-16 sm:pb-24 sm:pt-24">
-        {/* Graph-paper grid + static radial gradient (the Julia-set canvas's static stand-in) */}
+        {/* Graph-paper grid + static radial gradient: the Julia canvas's fallback (no WebGL,
+            pre-hydration) — the animated backdrop fades in over it once a frame renders. */}
         <div className="pointer-events-none absolute inset-0 opacity-[0.06]" aria-hidden>
           <div
             className="absolute inset-0"
@@ -121,6 +126,7 @@ export default function CompanyPage() {
             }}
           />
         </div>
+        <JuliaHero />
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: 'radial-gradient(65% 60% at 50% 42%, rgb(9 9 11 / 78%) 0%, rgb(9 9 11 / 40%) 55%, rgb(9 9 11 / 0%) 100%)' }}

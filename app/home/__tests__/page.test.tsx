@@ -12,13 +12,32 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     expect(cta.getAttribute('href')).toBe('/virtual-startup')
   })
 
-  it('renders the AFK and Foreloop product cards with their destinations', () => {
+  it('renders the original large AFK and Foreloop product cards with their destinations', () => {
     render(<HomePage />)
-    const afk = screen.getByRole('link', { name: /Company processes/ })
+    // The landing's large cards, restored (founder addendum 2026-09-29): eyebrow, display
+    // title, mono subtitle, and the Explore CTA row.
+    const afk = screen.getByRole('link', { name: /Explore AFK/ })
     expect(afk.getAttribute('href')).toBe('/company')
-    const foreloop = screen.getByRole('link', { name: /Product development/ })
+    expect(afk.textContent).toContain('Away From Keyboard')
+    expect(afk.textContent).toContain('Automate running your startup.')
+    const foreloop = screen.getByRole('link', { name: /Explore Foreloop/ })
     expect(foreloop.getAttribute('href')).toBe('https://foreloop.com')
     expect(foreloop.getAttribute('rel')).toContain('noopener')
+    expect(foreloop.textContent).toContain('Automate building your product.')
+    expect(screen.getByText('Products for the new way of working')).toBeDefined()
+    // The founder-removed #products anchor stays gone.
+    expect(document.getElementById('products')).toBeNull()
+  })
+
+  it('keeps the static hero fallback in the server markup (canvas is client-only)', () => {
+    const { container } = render(<HomePage />)
+    // The .cb-fallback gradient is the SSG/no-WebGL/reduced-motion state; the WebGL canvas
+    // lazy-mounts client-only (components/fx/lazy.tsx) and overlays it.
+    const fallback = container.querySelector('.cb-fallback')
+    expect(fallback).not.toBeNull()
+    // jsdom's CSS parser drops the layered radial-gradient functions from the shorthand, so
+    // assert the surviving base layer (#09090b) — enough to prove the inline gradient is set.
+    expect(fallback?.getAttribute('style')).toContain('rgb(9, 9, 11)')
   })
 
   it('renders the Backed by builders grid with logos and faces', () => {
