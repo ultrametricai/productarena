@@ -272,6 +272,46 @@ from a terminal", "generate and edit images in conversation") — never benchmar
   Mistral (Vibe for Code) all now ship curl-installed terminal coding agents — three honest
   bring-up candidates queued for one wave.
 
+## Wave 4 (2026-09-29): Ultrametric — the owner-product family (founder ask: "try to include Ultrametric into our rankings, for the official CLI/MCP we are building over at /v2")
+
+The maximum-scrutiny case: this is the maintainers' OWN company (governance/REVIEW_POLICY.md
+owner-product rules — affiliation disclosure on every surface, favorable outcomes need
+over-justification). Everything below was crawl-verified on 2026-09-29; no capability is taken
+from our own roadmap language. **Honest verdict: no judged bring-up.** The product the founder
+asked about does not publicly exist yet, and the surfaces that DO exist have no arena where they
+honestly compete. New `ultrametric` family (`/family/ultrametric`, tagline carries the disclosure);
+Foreloop and AFK stamped `familyId`.
+
+What exists publicly today (every URL fetched, statuses recorded):
+
+- npm `ultrametric-cli` and `ultrametric-mcp`: **registry 404 — unpublished.** The packages moved
+  to a dedicated private repo (github.com/ultrametricai/ultrametric-cli and …/ultrametric-mcp both
+  404 keyless); FOUNDER-ASKS already records the move as "publishes happen from there".
+- The retired first-party MCP: `POST https://ultrametric.ai/mcp` → **410**
+  `{"error":"gone","message":"The ProductArena MCP server is retired… A first-party Ultrametric
+  MCP is coming."}` (worker handler from the 2026-09-23 retirement); GET /mcp 307s home. A
+  recorded honest negative, not a capability.
+- The data API is real and live: `/data/categories.json` 200 (50,894 B), `/openapi.json` 200
+  ("Ultrametric Data API", read-only static JSON, keyless), `/llms.txt` 200 (34,314 B).
+- npm `ultrametric` 0.4.1 (published 2026-09-24) is live — but it is the **company-records CLI**
+  ("company setup guidance and reusable company records for your active AI agent"), a different
+  product from the /v2 rankings CLI/MCP despite sharing the npm scope. Not conflated. (Its
+  npmjs.com page 403s keyless — the platform bot-block convention from assistant-plugins.json;
+  the registry API is the verified source.)
+
+| Line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Foreloop | software-factory (+ product-feedback) | **judged** (existing, #7/10 and #4/4) | Already judged with affiliation disclosure and the 2026-09-21 adversarial bias audit (14 cells corrected). One family line, software-factory ref — same product judged in two arenas is one line (Devin precedent). |
+| AFK | workflow-automation | **judged** (existing, #11/11) | Honest pre-launch last place stands. |
+| Ultrametric Rankings & Data API | mcp-infrastructure? ai-search-apis? api-platforms? search-infra? **No, all.** | page-only | mcp-infrastructure needs a live MCP surface (ours 410s); ai-search-apis is web search for agents; api-platforms ranks API clients/gateways; search-infra ranks search engines. What's live is a read-only single-source export of this site's own rankings — the Stripe Sigma / Data Pipeline precedent — and any verdict on our own platform would be self-refereeing. |
+| Ultrametric CLI & MCP (the /v2 product) | mcp-infrastructure? **Not yet.** | page-only | Nothing to judge: npm 404 × 2, repo private, endpoint 410. Listing it as judged would be fabricated capability on our own product — the exact thing the owner-product policy exists to prevent. Watchlist: first-priority bring-up into mcp-infrastructure when a live endpoint + published package exist, with the mandatory adversarial bias audit (foreloop/afk flip-reversion precedent). |
+| Ultrametric (company-records CLI, npm `ultrametric`) | legal-ops? agent-skills? **No.** | page-only | Shipped and real, but legal-ops ranks incorporation/filing platforms — guidance + records would na out of nearly every story (Mercury SAFEs precedent) — and agent-skills ranks skill collections/catalogs, not one vendor-scoped setup tool. Also out of the founder ask's scope; kept distinct per its own npm description. |
+
+Stale-evidence note for the next AFK spike: `data/spike-queue.json`'s AFK entry records "no
+llms.txt on https://ultrametric.ai (recorded absence)" from 2026-09-25 — `/llms.txt` now serves
+200. Left untouched here (recorded evidence is never rewritten); the next spike pass should
+re-probe and supersede it.
+
 ## Mechanics (for the next person)
 
 - `lib/schemas.ts`: `Product.familyId` (optional, display-only, never in the judge's cellHash —
