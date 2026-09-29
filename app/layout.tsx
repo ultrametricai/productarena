@@ -283,7 +283,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 buyer lenses, methodology/pipeline/proofs/MCP), then the three tools (Stacks,
                 Processes, Compare), GitHub, and search. One menu for all secondary destinations
                 instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
-            <nav className="flex flex-nowrap items-center gap-1.5 text-sm text-zinc-400 sm:flex-wrap sm:gap-3">
+            <nav className="flex flex-nowrap items-center gap-3 text-sm text-zinc-400 sm:flex-wrap sm:gap-6">
               {/* Founder 2026-09-29: Virtual Startup leads the nav, LEFT of Arenas. Founder
                   2026-09-23: Arenas sits LEFT of Processes. Founder 2026-09-24: the dropdowns
                   and buttons are desktop-only — mobile gets the ☰ MobileNav. */}
