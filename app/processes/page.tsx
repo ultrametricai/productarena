@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import FatProcessSearch from '@/components/FatProcessSearch'
-import GeoSwitcher from '@/components/GeoSwitcher'
 import ProcessesTable from '@/components/ProcessesTable'
 import { buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
@@ -37,9 +36,6 @@ export default function ProcessesPage() {
         {/* The global geo switcher (founder GEO ask 2026-09-28, lib/geoPreference.ts): with a
             non-US country selected every process row below wears its geoScope glyph — the US
             default view is byte-identical to before. */}
-        <div className="mt-4 flex justify-center">
-          <GeoSwitcher />
-        </div>
       </section>
 
       {/* ONE view under the search (founder 2026-09-29: "combine playbooks and all processes
@@ -48,13 +44,6 @@ export default function ProcessesPage() {
       <section className="space-y-3">
         <div>
           <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Playbooks &amp; all processes</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            One controller over the full corpus — end-to-end playbooks (several processes run
-            back to back, each with a combined agent ceiling and its own start-to-finish
-            simulator) lead, every founder process follows. Sort by how automatable a process
-            is, filter by phase or software, click through for the step-by-step and the
-            simulator.
-          </p>
           {/* Founder 2026-09-23: "this dots coloring is just not known by the user" — a visible
               legend for the playbook rows' per-step route dots, matching ProcessesTable's
               ROUTE_DOT + the legalSignature violet. */}

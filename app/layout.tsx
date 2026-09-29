@@ -289,17 +289,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href="/virtual-startup"
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
-                <GeoMark seed="virtual-startup" title="Startup sim — run a synthetic company through the real process corpus" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Startup sim
               </Link>
               <span className="hidden sm:block">
-                <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
+                <ArenaMenu sections={arenaMenuSections} searchable />
               </span>
               <Link
                 href="/processes"
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
-                <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
               </Link>
               {/* Technologies moved back under Explore → More views (founder 2026-09-29,
@@ -314,7 +312,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <span className="hidden sm:block">
               <ArenaMenu
                 title="Explore"
-                triggerIcon={<GeoMark seed="explore" title="Explore — global rankings, lenses, docs" size={13} className="hidden text-zinc-500 sm:inline-flex" />}
                 geo
                 sections={[
                   {

@@ -67,7 +67,7 @@ describe('mount applies URL params (invalids fall back silently)', () => {
   it('pristine URL renders the default view: grouped by area, no column sorted, all phases', () => {
     const { container } = mount()
     expect(within(container).getByText('Starting up')).toBeDefined()
-    expect(thFor(container, 'Current agent ceiling')?.getAttribute('aria-sort')).toBe('none')
+    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('none')
     expect((within(container).getByLabelText('Filter by phase') as HTMLSelectElement).value).toBe('all')
   })
 
@@ -98,7 +98,7 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     setUrl('?order=vibes&phase=Retirement')
     const { container } = mount()
     expect(within(container).getByText('Starting up')).toBeDefined() // still grouped
-    expect(thFor(container, 'Current agent ceiling')?.getAttribute('aria-sort')).toBe('none')
+    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('none')
     expect((within(container).getByLabelText('Filter by phase') as HTMLSelectElement).value).toBe('all')
   })
 
@@ -106,7 +106,7 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     setUrl('?order=pct')
     const { container } = mount()
     expect(within(container).queryByText('Starting up')).toBeNull() // flat, no area headers
-    expect(thFor(container, 'Current agent ceiling')?.getAttribute('aria-sort')).toBe('descending')
+    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('descending')
   })
 })
 
@@ -158,7 +158,7 @@ describe('interactions write params; defaults remove them', () => {
 })
 
 describe('grouped-by-area default view (founder 2026-09-28)', () => {
-  it('renders area headers in lifecycle order with counts + avg ceiling, rows in timeOrder within each area', () => {
+  it('renders area headers in lifecycle order with counts, rows in timeOrder within each area', () => {
     const { container } = mount()
     // Areas in AREA_ORDER (areaRank), rows re-sorted by timeOrder inside 'Starting up'
     // (incorporate timeOrder 1 before bank timeOrder 2, despite the array order).
@@ -166,13 +166,12 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
       'Starting up', 'Incorporate the company', 'Open a bank account',
       'Growth & sales', 'Run payroll',
     ])
-    // Header stats: count + the area's average agent ceiling as a quiet stat.
+    // Header stats: count only (avg ceiling dropped — founder 2026-09-29).
     const startingUp = within(container).getByText('Starting up').closest('tr') as HTMLElement
     expect(startingUp.textContent).toContain('2 processes')
-    expect(startingUp.textContent).toContain('50%') // (40 + 60) / 2
+    expect(startingUp.textContent).not.toContain('%')
     const growth = within(container).getByText('Growth & sales').closest('tr') as HTMLElement
     expect(growth.textContent).toContain('1 process')
-    expect(growth.textContent).toContain('90%')
   })
 
   it('a rank-by preset switches to the flat sorted table; the reset pill returns to grouped and clears ?order=', () => {
@@ -184,7 +183,7 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
 
     fireEvent.click(getByRole('button', { name: /grouped by area/ }))
     expect(within(container).getByText('Starting up')).toBeDefined() // grouped again
-    expect(thFor(container, 'Current agent ceiling')?.getAttribute('aria-sort')).toBe('none')
+    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('none')
     expect(params().get('order')).toBeNull()
   })
 
@@ -234,7 +233,7 @@ describe('playbook rows in the combined table (founder 2026-09-29: one view unde
   const mountWith = (playbooks = PLAYBOOKS) => render(<ProcessesTable rows={ROWS} phases={PHASES} playbooks={playbooks} />)
   const rowTexts = (root: HTMLElement) => [...root.querySelectorAll('tbody tr')].map((tr) => tr.textContent ?? '')
 
-  it('grouped default: playbooks lead as their own group with count + avg ceiling, before the areas', () => {
+  it('grouped default: playbooks lead as their own group with count, before the areas', () => {
     const { container } = mountWith()
     const texts = rowTexts(container)
     const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
@@ -243,15 +242,14 @@ describe('playbook rows in the combined table (founder 2026-09-29: one view unde
     expect(at('Playbooks')).toBeLessThan(at('Starting up'))
     const header = within(container).getByText('Playbooks').closest('tr') as HTMLElement
     expect(header.textContent).toContain('1 end-to-end playbook')
-    expect(header.textContent).toContain('70%')
+    expect(header.textContent).not.toContain('%') // avg ceiling dropped (founder 2026-09-29)
   })
 
-  it('a playbook row is visually distinct and links to its chain page: chip, tagline, route strip, honest metric dash', () => {
+  it('a playbook row is visually distinct and links to its chain page: chip, route strip, honest metric dash', () => {
     const { container } = mountWith()
     const tr = within(container).getByText('Company in a day').closest('tr') as HTMLElement
     expect(within(tr).getByText('playbook')).toBeDefined() // the chip
     expect(within(tr).getByText('Company in a day').closest('a')?.getAttribute('href')).toBe('/processes/chains/company-in-a-day')
-    expect(tr.textContent).toContain('From zero to a running company')
     expect(tr.textContent).toContain('7/10') // aggregate agent/total steps
     // The route strip: one dot per step, legalSignature wears violet.
     expect(within(tr).getByTitle('File the charter — agent-runnable')).toBeDefined()
@@ -315,9 +313,10 @@ describe('geoScope glyphs under a geo selection (founder GEO ask 2026-09-28)', (
 
   it('no selection: no glyphs — the default view is untouched (rows and order unchanged)', () => {
     const { container } = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} />)
-    for (const glyph of ['🌐', '🏛']) expect(container.textContent).not.toContain(glyph)
-    // 🇺🇸 appears nowhere either — the row titles are the only cell contents.
-    expect(container.textContent).not.toContain('🇺🇸')
+    // Scoped to the table body: the controls row carries a static 🌐 by the geo selector now.
+    const body = container.querySelector('tbody') as HTMLElement
+    for (const glyph of ['🌐', '🏛']) expect(body.textContent).not.toContain(glyph)
+    expect(body.textContent).not.toContain('🇺🇸')
   })
 
   it('a non-US selection shows each row its scope glyph (🌐 / 🇺🇸 / 🏛) without re-sorting', () => {
@@ -331,6 +330,6 @@ describe('geoScope glyphs under a geo selection (founder GEO ask 2026-09-28)', (
     // Annotation only — the timeOrder grouping is exactly the no-selection order.
     expect(cells.map((c) => c.textContent?.includes('Open a bank account') ? 'bank' : c.textContent?.includes('Incorporate') ? 'inc' : 'ein')).toEqual(['bank', 'inc', 'ein'])
     act(() => setGeoSelection(null))
-    expect(container.textContent).not.toContain('🌐')
+    expect((container.querySelector('tbody') as HTMLElement).textContent).not.toContain('🌐')
   })
 })

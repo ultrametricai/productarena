@@ -6,6 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import GeoSwitcher from '@/components/GeoSwitcher'
 import TableControls from '@/components/TableControls'
 import { useGeoSelection } from '@/components/useGeoSelection'
 import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
@@ -532,6 +533,12 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
   return (
     <div className="space-y-3">
       <TableControls
+        after={
+          <span className="flex items-center gap-1.5">
+            <span aria-hidden>🌐</span>
+            <GeoSwitcher />
+          </span>
+        }
         presets={PRESETS}
         activeColumn={column}
         // In the grouped default no preset is "on" — the pills light up only once the reader
@@ -577,7 +584,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="A real startup operating process, mapped step by step">Process</span></SortableTh>
               <SortableTh col="phase" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
-              <SortableTh col="pct" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Current agent ceiling</span></SortableTh>
+              <SortableTh col="pct" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Agent ceiling</span></SortableTh>
               <SortableTh col="steps" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}
@@ -598,15 +605,6 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
                       <span className="text-[11px] text-zinc-500">
                         {filteredPlaybooks.length} {filteredPlaybooks.length === 1 ? 'end-to-end playbook' : 'end-to-end playbooks'}
                       </span>
-                      <span
-                        className="ml-auto whitespace-nowrap text-[11px] text-zinc-500"
-                        title={`Average combined agent ceiling across ${filteredPlaybooks.length === 1 ? 'this playbook' : 'these playbooks'}`}
-                      >
-                        avg ceiling{' '}
-                        <span className="font-mono text-emerald-300/80">
-                          {Math.round(filteredPlaybooks.reduce((sum, p) => sum + p.pct, 0) / filteredPlaybooks.length)}%
-                        </span>
-                      </span>
                     </span>
                   </th>
                 </tr>
@@ -626,12 +624,6 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
                           <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">{g.area}</span>
                           <span className="text-[11px] text-zinc-500">
                             {g.rows.length} {g.rows.length === 1 ? 'process' : 'processes'}
-                          </span>
-                          <span
-                            className="ml-auto whitespace-nowrap text-[11px] text-zinc-500"
-                            title={`Average agent ceiling across this area's ${g.rows.length === 1 ? 'process' : 'processes'}`}
-                          >
-                            avg ceiling <span className="font-mono text-emerald-300/80">{g.avgPct}%</span>
                           </span>
                         </span>
                       </th>
