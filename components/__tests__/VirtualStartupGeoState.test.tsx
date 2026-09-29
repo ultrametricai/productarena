@@ -175,7 +175,7 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     renderIt()
     const band = screen.getByTestId('vs-setup')
     for (const title of [
-      'Example companies — one-tap preset setups',
+      'Scenario — one-tap setups: example companies and funding scenarios',
       'Founder — the who/where cluster: the two founder axes plus the country view',
       'Country view — annotate the run with committed geo evidence',
       'Starting decisions — which real processes make up the journey',

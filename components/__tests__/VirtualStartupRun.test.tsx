@@ -280,10 +280,31 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     for (const li of items) expect(li.textContent).toContain('simulation assumption')
   })
 
-  it('persona modifiers are picked with the setup controls and disclosed as simulation assumptions', () => {
+  it('an axis pick prints NO amber band line (founder round 3, item 2) — the pill tooltip carries the named simulation assumption', () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-persona-non-technical'))
-    expect(screen.getByTestId('vs-persona-assumption').textContent).toContain('simulation assumption')
+    // The vs-persona-assumption info lines are gone from the band…
+    expect(screen.queryByTestId('vs-persona-assumption')).toBeNull()
+    // …but the explanation stays reachable: the pill's tooltip names the assumption, and the
+    // full-setup-guide expand keeps it verbatim.
+    expect(screen.getByTestId('vs-persona-non-technical').getAttribute('title')).toContain('simulation assumption')
+    const details = screen.getByText(/full setup guide/i).closest('details')!
+    expect((details as HTMLElement).textContent).toContain('simulation assumption')
+  })
+
+  it('a Vendors-tab pick drives the outcome model (controlled selections): the MCP-surfaced vendor removes the founder-hours badge', () => {
+    renderIt()
+    // Baseline: the default stripe pick has no judged agent surface → founder-hours badge.
+    showAll()
+    expect(screen.getByTestId('vs-step-outnote')).toBeTruthy()
+    // Fix the payments vendor on the controller's Vendors tab (SimRolePicker listbox).
+    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
+    const panel = screen.getByTestId('vs-tabpanel-vendors')
+    fireEvent.click(within(panel).getByRole('button', { name: /Stripe/ }))
+    fireEvent.click(within(panel).getByRole('option', { name: /Square/ }))
+    // Rerun: square carries a judged MCP surface, so the step runs at agent speed — no badge.
+    showAll()
+    expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
   })
 })
 

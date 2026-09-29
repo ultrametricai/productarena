@@ -29,10 +29,12 @@ import {
   presetById,
   resolveYearMonths,
   RUNS_PER_YEAR,
+  scenarioById,
   synthCompany,
   unionTaskIds,
   VS_CHAIN_IDS,
   VS_PRESETS,
+  VS_SCENARIOS,
   WINDOW_INTERVAL_DAYS,
   windowRows,
   YC_BATCH,
@@ -477,6 +479,44 @@ describe('preset example companies (founder ask 2026-09-25)', () => {
     expect(presetById('biotech')?.company.name).toBe('Demovax')
     expect(presetById('nope')).toBeNull()
     expect(presetById(null)).toBeNull()
+  })
+})
+
+describe('funding scenarios (founder round 3, 2026-09-29: VC backed vs Bootstrapped)', () => {
+  it('two scenarios spanning both sides of the funding decision; every asserted value is an existing DECISIONS option', () => {
+    expect(VS_SCENARIOS.map((s) => s.id)).toEqual(['vc-backed', 'bootstrapped'])
+    expect(VS_SCENARIOS.map((s) => s.asserts.funding).sort()).toEqual(['bootstrap', 'seed'])
+    for (const s of VS_SCENARIOS) {
+      // A scenario is about the funding decision first — that key is always asserted.
+      expect(s.asserts.funding).toBeDefined()
+      for (const [k, v] of Object.entries(s.asserts)) {
+        const d = DECISIONS.find((x) => x.id === k)
+        expect(d, `scenario ${s.id} asserts an unknown decision "${k}"`).toBeTruthy()
+        expect(d!.options.map((o) => o.value)).toContain(v)
+      }
+      // A PARTIAL combo by design (unlike a company preset): some decisions stay unasserted.
+      expect(Object.keys(s.asserts).length).toBeLessThan(DECISIONS.length)
+    }
+  })
+
+  it('the pill tooltip documents the mapping — it names every asserted option by its full DECISIONS label', () => {
+    for (const s of VS_SCENARIOS) {
+      for (const [k, v] of Object.entries(s.asserts)) {
+        const label = DECISIONS.find((x) => x.id === k)!.options.find((o) => o.value === v)!.label
+        expect(s.tooltip, `scenario ${s.id} tooltip must document "${label}"`).toContain(label)
+      }
+      // …and says the rest of the setup is untouched (partial-assert honesty).
+      expect(s.tooltip).toContain('Every other decision keeps its current setting')
+    }
+  })
+
+  it('scenarioById resolves ids, rejects junk, and the ?preset= namespace never collides with company presets', () => {
+    expect(scenarioById('vc-backed')?.label).toBe('VC backed')
+    expect(scenarioById('bootstrapped')?.label).toBe('Bootstrapped')
+    expect(scenarioById('nope')).toBeNull()
+    expect(scenarioById(null)).toBeNull()
+    for (const p of VS_PRESETS) expect(scenarioById(p.id)).toBeNull()
+    for (const s of VS_SCENARIOS) expect(presetById(s.id)).toBeNull()
   })
 })
 

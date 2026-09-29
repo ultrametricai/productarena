@@ -568,6 +568,160 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
   })
 })
 
+// Funding scenarios (founder round 3, 2026-09-29, item 1): the setup row is 'Scenario', and two
+// one-tap pills — VC backed / Bootstrapped — assert the funding decision plus the calibrations
+// that sensibly follow it (a PARTIAL combo, tooltip-documented), sharing the ?preset= param
+// namespace with the company presets.
+describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on the Scenario row', () => {
+  it("the row label reads 'Scenario' (not 'Example'), and both pills carry the mapping tooltip", () => {
+    renderIt()
+    const band = screen.getByTestId('vs-setup')
+    expect(within(band).getByTitle('Scenario — one-tap setups: example companies and funding scenarios')).toBeTruthy()
+    expect(within(band).queryByTitle('Example companies — one-tap preset setups')).toBeNull()
+    expect(band.textContent).toContain('Scenario')
+    const vc = within(band).getByTestId('vs-scenario-vc-backed')
+    const boot = within(band).getByTestId('vs-scenario-bootstrapped')
+    // The tooltip documents the exact key → DECISIONS-option mapping (founder ask).
+    expect(vc.getAttribute('title')).toContain('Raise a seed')
+    expect(vc.getAttribute('title')).toContain('Delaware C-Corp')
+    expect(vc.getAttribute('title')).toContain('Make the first hire')
+    expect(boot.getAttribute('title')).toContain('Bootstrap')
+    expect(boot.getAttribute('title')).toContain('Invoice-billed services')
+    expect(boot.getAttribute('title')).toContain('Stay founders-only')
+    // The company preset pills are unchanged otherwise.
+    expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
+  })
+
+  it('VC backed asserts funding + entity + hire, leaves everything else Not set, and writes ?preset=vc-backed', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-scenario-vc-backed'))
+    expect(window.location.search).toContain('preset=vc-backed')
+    expect(screen.getByTestId('vs-scenario-vc-backed').getAttribute('aria-pressed')).toBe('true')
+    expect(decisionTitle('funding')).toContain('Raise a seed')
+    expect(decisionTitle('entity')).toContain('Delaware C-Corp')
+    expect(decisionTitle('hire')).toContain('Make the first hire')
+    // Partial assert: decisions outside the scenario stay Not set (they compose defaults).
+    expect(decisionTitle('product')).toContain('not set')
+    expect(decisionTitle('team')).toContain('not set')
+    showAll()
+    expect(screen.getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
+    expect(screen.getByText('Hire first employee')).toBeTruthy()
+  })
+
+  it('Bootstrapped asserts bootstrap + invoice-billed + founders-only: the journey drops the raise and the hire, bills by invoice', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    expect(window.location.search).toContain('preset=bootstrapped')
+    expect(decisionTitle('funding')).toContain('Bootstrap')
+    expect(decisionTitle('product')).toContain('Invoice-billed services')
+    expect(decisionTitle('hire')).toContain('Stay founders-only')
+    showAll()
+    expect(screen.queryByText('Raise pre-seed (SAFEs)')).toBeNull()
+    expect(screen.queryByText('Hire first employee')).toBeNull()
+    expect(screen.getByText('Send an invoice')).toBeTruthy()
+    expect(screen.queryByText('Set up subscription billing')).toBeNull()
+  })
+
+  it('?preset=vc-backed round-trips: read on mount, pill pressed, the partial combo asserted', () => {
+    window.history.replaceState(null, '', '/?preset=vc-backed')
+    renderIt()
+    expect(screen.getByTestId('vs-scenario-vc-backed').getAttribute('aria-pressed')).toBe('true')
+    expect(decisionTitle('funding')).toContain('Raise a seed')
+    expect(decisionTitle('entity')).toContain('Delaware C-Corp')
+    expect(decisionTitle('product')).toContain('not set')
+    // The shared param namespace: no company preset lights up.
+    for (const id of ['software', 'hardware', 'biotech']) {
+      expect(screen.getByTestId(`vs-preset-${id}`).getAttribute('aria-pressed')).toBe('false')
+    }
+  })
+
+  it('a scenario composes OVER a company preset (pill swaps, other assertions survive); a manual change clears the scenario', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-preset-hardware'))
+    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    expect(window.location.search).toContain('preset=bootstrapped')
+    expect(screen.getByTestId('vs-preset-hardware').getAttribute('aria-pressed')).toBe('false')
+    // Scenario keys override; the hardware combo's other keys stay asserted.
+    expect(decisionTitle('funding')).toContain('Bootstrap')
+    expect(decisionTitle('ordering')).toContain('Build first')
+    // A manual decision change deselects the scenario and clears ?preset (the pickChoice rule).
+    pickDecision('team', 'Solo founder')
+    expect(window.location.search).not.toContain('preset')
+    expect(screen.getByTestId('vs-scenario-bootstrapped').getAttribute('aria-pressed')).toBe('false')
+    expect(decisionTitle('funding')).toContain('Bootstrap')
+  })
+
+  it('YC interplay: Bootstrapped contradicts the calibration and turns YC off; VC backed keeps it; YC-on over Bootstrapped deselects the pill', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-yc-toggle'))
+    expect(window.location.search).toContain('yc=1')
+    fireEvent.click(screen.getByTestId('vs-scenario-vc-backed'))
+    expect(screen.getByTestId('vs-yc-toggle').getAttribute('aria-pressed')).toBe('true')
+    expect(window.location.search).toContain('yc=1')
+    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    expect(screen.getByTestId('vs-yc-toggle').getAttribute('aria-pressed')).toBe('false')
+    expect(window.location.search).not.toContain('yc=1')
+    expect(decisionTitle('funding')).toContain('Bootstrap')
+    // Turning YC back on over Bootstrapped: the calibration wins, the scenario pill deselects.
+    fireEvent.click(screen.getByTestId('vs-yc-toggle'))
+    expect(screen.getByTestId('vs-scenario-bootstrapped').getAttribute('aria-pressed')).toBe('false')
+    expect(window.location.search).not.toContain('preset')
+    expect(decisionTitle('funding')).toContain('Raise a seed')
+  })
+})
+
+// The controller tabs (founder round 3, item 3): Setup | Vendors on the setup band. WAI-ARIA
+// tab semantics, default Setup, the chosen tab never persisted in the URL; the embedded dry-run
+// transcript (the old 'Simulate this playbook' section) is gone from this page entirely.
+describe('VirtualStartup — the controller tabs (Setup | Vendors)', () => {
+  it('accessible tabs: role=tablist, two tabs, Setup selected by default, panels wired via aria-controls', () => {
+    renderIt()
+    const band = screen.getByTestId('vs-setup')
+    const tablist = within(band).getByRole('tablist', { name: 'Virtual startup controller' })
+    const tabs = within(tablist).getAllByRole('tab')
+    expect(tabs).toHaveLength(2)
+    const [setup, vendors] = tabs
+    expect(setup.textContent).toContain('Setup')
+    expect(vendors.textContent).toContain('Vendors')
+    expect(setup.getAttribute('aria-selected')).toBe('true')
+    expect(vendors.getAttribute('aria-selected')).toBe('false')
+    expect(setup.getAttribute('aria-controls')).toBe('vs-tabpanel-setup')
+    expect(vendors.getAttribute('aria-controls')).toBe('vs-tabpanel-vendors')
+    // Roving tabIndex: only the selected tab is in the Tab order.
+    expect(setup.getAttribute('tabindex')).toBe('0')
+    expect(vendors.getAttribute('tabindex')).toBe('-1')
+    // Setup content shows; the vendors panel exists but is hidden.
+    expect(within(band).getByTestId('vs-decision-entity')).toBeTruthy()
+    expect((document.getElementById('vs-tabpanel-setup') as HTMLElement).hidden).toBe(false)
+    expect((document.getElementById('vs-tabpanel-vendors') as HTMLElement).hidden).toBe(true)
+  })
+
+  it('switching to Vendors swaps the panels, arrow keys move between tabs, and the chosen tab never touches the URL', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
+    expect(screen.getByTestId('vs-tab-vendors').getAttribute('aria-selected')).toBe('true')
+    expect((document.getElementById('vs-tabpanel-setup') as HTMLElement).hidden).toBe(true)
+    expect((document.getElementById('vs-tabpanel-vendors') as HTMLElement).hidden).toBe(false)
+    // This fixture passes roles=[] — the panel says so honestly instead of an empty grid.
+    expect(screen.getByTestId('vs-vendors-empty')).toBeTruthy()
+    expect(window.location.search).toBe('')
+    // Arrow keys (roving tabIndex): ArrowLeft returns to Setup.
+    fireEvent.keyDown(screen.getByTestId('vs-tab-vendors'), { key: 'ArrowLeft' })
+    expect(screen.getByTestId('vs-tab-setup').getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByTestId('vs-tab-setup').getAttribute('tabindex')).toBe('0')
+    expect(screen.getByTestId('vs-tab-vendors').getAttribute('tabindex')).toBe('-1')
+    expect(window.location.search).toBe('')
+  })
+
+  it("the embedded dry-run transcript is gone: no 'Simulate this playbook' section, no second run surface", () => {
+    renderIt()
+    expect(screen.queryByText(/simulate this playbook/i)).toBeNull()
+    expect(screen.queryByText(/synthetic dry run from the mapped process/i)).toBeNull()
+    // Exactly one run control on the page: the band's Run CTA.
+    expect(screen.getAllByRole('button', { name: /run this startup/i })).toHaveLength(1)
+  })
+})
+
 // jsdom does no real layout or scrolling, so the follow logic is tested against a fake scroll
 // box: fixed scrollHeight/clientHeight, and a scrollTop that stores assignments (jsdom's own
 // scrollTop setter is a no-op, which would make every pin-to-bottom invisible).

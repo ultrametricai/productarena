@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
-import ProcessSimulator from '@/components/ProcessSimulator'
 import ProductLogoView from '@/components/ProductLogoView'
+import SimRolePicker from '@/components/SimRolePicker'
 import VsDecisionSelect from '@/components/VsDecisionSelect'
 import VsGeoSelector from '@/components/VsGeoSelector'
 import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
@@ -15,7 +15,6 @@ import { readParam, setParams } from '@/lib/urlState'
 import {
   applyYcCalibration,
   buildJourneyArtifacts,
-  comboKey,
   dayOf,
   DECISIONS,
   DEFAULT_CHOICES,
@@ -24,8 +23,10 @@ import {
   journeyStats,
   MONTH_LABELS,
   presetById,
+  scenarioById,
   synthCompany,
   VS_PRESETS,
+  VS_SCENARIOS,
   windowRows,
   YC_BATCH,
   YC_CALIBRATION,
@@ -35,12 +36,14 @@ import {
   type EventExample,
   type JourneyStats,
   type PresetId,
+  type ScenarioId,
   type SynthIdentity,
   type SyntheticArtifact,
   type TopVendorPick,
   type VirtualTaskPayload,
   type VsChain,
   type VsPreset,
+  type VsScenario,
   type WindowRow,
   type YearCandidate,
   type YearRow,
@@ -61,7 +64,6 @@ import {
   effectiveChoices,
   eligibleVsEvents,
   eventSeedKey,
-  founderAssumptions,
   journeyOutcomeInputs,
   sanitizeVsCompanyName,
   VS_COMPANY_NAME_MAX,
@@ -89,8 +91,8 @@ import {
 // When the launch journey completes, a year-one operating-rhythm calendar shows the recurring
 // runs ("cron jobs") the company now owns, derived from the corpus cadence axis. Everything is
 // precomputed/deterministic; the ~cadenced reveal is presentation only (the same pattern as
-// components/ProcessSimulator.tsx, which is also reused below for the full dry-run transcript
-// over the selected journey).
+// components/ProcessSimulator.tsx on the per-process pages — this page's role pickers live in
+// the controller's Vendors tab; the embedded dry-run transcript was dropped 2026-09-29).
 
 const CADENCE_MS = 240
 
@@ -342,8 +344,10 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // compliance ⚖️). Icons are decoration on top of the existing labels: every control keeps its
 // canonical accessible name (the decision groups' aria-label, the options' full-label
 // aria-labels) — tests assert nothing moved.
-const ROW_ICONS: Record<'example' | 'founder' | 'geo' | 'decisions', { icon: string; title: string }> = {
-  example: { icon: '🏢', title: 'Example companies — one-tap preset setups' },
+const ROW_ICONS: Record<'scenario' | 'founder' | 'geo' | 'decisions', { icon: string; title: string }> = {
+  // 'Example' → 'Scenario' (founder batch 2026-09-29, round 3, item 1) — the row now holds the
+  // company presets AND the funding scenarios; the pills themselves are unchanged otherwise.
+  scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and funding scenarios' },
   founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
   geo: { icon: '🌍', title: 'Country view — annotate the run with committed geo evidence' },
   decisions: { icon: '🎛️', title: 'Starting decisions — which real processes make up the journey' },
@@ -414,7 +418,15 @@ export default function VirtualStartup({
   // and stays out of the ?run= state. Presets/YC assert their combos explicitly.
   const [asserted, setAsserted] = useState<AssertedChoices>({})
   const [preset, setPreset] = useState<PresetId | null>(null)
+  // Funding scenario pill (round 3, item 1): shares the ?preset= param namespace with the
+  // company presets (the codec extends compatibly), asserts only its partial combo, no identity.
+  const [scenario, setScenario] = useState<ScenarioId | null>(null)
   const [yc, setYc] = useState(false)
+  // The controller tab (round 3, item 3): Setup (scenario/founder/geo/decisions rows) vs
+  // Vendors (fix a vendor per role before/independent of the run). Default Setup; deliberately
+  // NOT persisted in the URL — the chosen tab is ephemeral chrome, the picks themselves ride
+  // the ?run= permalink.
+  const [tab, setTab] = useState<'setup' | 'vendors'>('setup')
   // ── v3 state: founder AXES (Technical × Experience — orthogonal, composable), the reader's
   // vendor picks (shared with ProcessSimulator below, controlled), decided event branches, the
   // drive mode, the typed company name (semi-auto naming card; null = autopilot), and the run
@@ -481,13 +493,19 @@ export default function VirtualStartup({
      (external system). The static HTML must render the default view, so this cannot be a
      useState initializer (hydration mismatch); it runs once and renders at most one extra pass. */
   useEffect(() => {
+    // ?preset= holds either a company preset id or a funding scenario id (one shared namespace —
+    // the codec extends compatibly; junk values resolve to null in both and are ignored).
     const p = presetById(readParam('preset'))
+    const sc = scenarioById(readParam('preset'))
     const ycOn = readParam('yc') === '1'
-    if (!p && !ycOn) return
+    if (!p && !sc && !ycOn) return
     if (p) setPreset(p.id)
+    if (sc) setScenario(sc.id)
     if (ycOn) setYc(true)
-    // Presets/YC ASSERT their combos explicitly (dropdowns leave 'Not set' otherwise).
+    // Presets/YC ASSERT their combos explicitly (dropdowns leave 'Not set' otherwise); a
+    // scenario asserts only its partial combo (the YC calibration wins where they disagree).
     if (p) setAsserted(ycOn ? applyYcCalibration(p.choices) : { ...p.choices })
+    else if (sc) setAsserted(ycOn ? { ...sc.asserts, ...YC_CALIBRATION } : { ...sc.asserts })
     else setAsserted((a) => ({ ...a, ...YC_CALIBRATION }))
     // Mount-only: the URL is the INITIAL view.
   }, [])
@@ -504,6 +522,9 @@ export default function VirtualStartup({
     if (!run) return
     setAsserted(run.choices)
     setPreset(run.preset)
+    // A run link carries the asserted decisions themselves, never a scenario pill — the pill is
+    // one-tap input chrome, so any scenario a stray ?preset= set deselects here.
+    setScenario(null)
     setYc(run.yc)
     setFounder(run.founder)
     setMode(run.mode)
@@ -523,7 +544,6 @@ export default function VirtualStartup({
     if (companyName) return { name: companyName, descriptor: presetIdentity?.descriptor ?? '' }
     return presetIdentity
   }, [preset, companyName])
-  const key = `${comboKey(choices)}|yc:${yc ? '1' : '0'}`
   // Semi-auto pins the synthetic name/artifact seed to the default combo so mid-run decision
   // assertions never rewrite an already-printed seeded value (see buildRunRows/RunArgs).
   const seedCombo = mode === 'semi' ? DEFAULT_CHOICES : undefined
@@ -589,8 +609,8 @@ export default function VirtualStartup({
     return out
   }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length])
 
-  // Only the roles whose arena the selected journey actually touches — the transcript resolves
-  // picks via step.arenaId / step.choiceArenaId, so this filter loses nothing it uses.
+  // Only the roles whose arena the selected journey actually touches — the Vendors tab (and the
+  // outcome model, which resolves picks via step.arenaId / step.choiceArenaId) loses nothing.
   const journeyRoles = useMemo(() => {
     const arenas = new Set<string>()
     for (const s of steps) {
@@ -599,6 +619,12 @@ export default function VirtualStartup({
     }
     return roles.filter((r) => arenas.has(r.arenaId))
   }, [roles, steps])
+  // How many journey roles the reader has re-picked away from the default — the Vendors tab's
+  // quiet count badge.
+  const vendorOverrides = useMemo(
+    () => journeyRoles.filter((r) => picks[r.arenaId] !== undefined && picks[r.arenaId] !== r.defaultProductId).length,
+    [journeyRoles, picks],
+  )
 
   // Year one — deterministic from the same decision combo (seeded months for annuals the
   // corpus doesn't date; those keep the fuchsia styling + data-synthetic).
@@ -696,10 +722,6 @@ export default function VirtualStartup({
     return [...axes, ...decisions]
   }, [choices, asserted, founder, waitingOn])
 
-  // The active axes' named simulation assumptions print in the band's info lines (the compact
-  // picker itself only carries the blurbs, in tooltips).
-  const activeAssumptions = founderAssumptions(founder)
-
   // The title-bar run identity — pre-naming it's a neutral prompt: the company name comes into
   // existence AT the run's naming step (founder addendum 2026-09-29), so until the revealed rows
   // contain a name-bearing artifact the prompt reads `new-startup`.
@@ -787,8 +809,10 @@ export default function VirtualStartup({
   function pickChoice(id: keyof Choices, value: string | null) {
     clearRun()
     clearRunState()
-    // Manual toggle: the preset no longer describes the combo — ?preset clears, the combo stays.
+    // Manual toggle: the preset/scenario no longer describes the combo — ?preset clears, the
+    // combo stays.
     setPreset(null)
+    setScenario(null)
     // A manual value contradicting the YC calibration turns YC mode off; other toggles keep it.
     // Clearing back to 'Not set' composes the default — contradiction is judged on that value.
     const calibrated = (YC_CALIBRATION as Partial<Record<keyof Choices, string>>)[id]
@@ -808,10 +832,33 @@ export default function VirtualStartup({
     clearRun()
     clearRunState()
     setPreset(p.id)
-    // A preset ASSERTS its whole combo; YC mode applies ON TOP — the calibration wins where
-    // they disagree.
+    // A preset ASSERTS its whole combo (so any scenario pill deselects); YC mode applies ON
+    // TOP — the calibration wins where they disagree.
+    setScenario(null)
     setAsserted(yc ? applyYcCalibration(p.choices) : { ...p.choices })
     setParams({ preset: p.id })
+  }
+
+  // Whether a scenario's partial combo contradicts the YC calibration (bootstrapped does — YC
+  // forces the raise): the same contradiction rule pickChoice applies to manual toggles.
+  function scenarioConflictsYc(s: VsScenario): boolean {
+    return Object.entries(YC_CALIBRATION).some(([k, v]) => {
+      const want = s.asserts[k as keyof Choices]
+      return want !== undefined && want !== v
+    })
+  }
+
+  function applyScenario(s: VsScenario) {
+    clearRun()
+    clearRunState()
+    setScenario(s.id)
+    // A scenario replaces the company preset pill (same ?preset= slot) but asserts only its own
+    // keys — the rest of the current setup (including a preset's already-asserted combo) stays.
+    setPreset(null)
+    const nextYc = yc && !scenarioConflictsYc(s)
+    setYc(nextYc)
+    setAsserted((a) => ({ ...a, ...s.asserts, ...(nextYc ? YC_CALIBRATION : {}) }) as AssertedChoices)
+    setParams({ preset: s.id, yc: nextYc ? '1' : null })
   }
 
   function toggleYc() {
@@ -819,14 +866,21 @@ export default function VirtualStartup({
     clearRunState()
     const next = !yc
     setYc(next)
+    const sc = scenarioById(scenario)
+    // Turning YC on over a contradicting scenario (Bootstrapped — YC forces the raise) deselects
+    // the scenario pill: the calibration wins, and the pill would no longer describe the combo.
+    const dropScenario = next && sc !== null && scenarioConflictsYc(sc)
+    if (dropScenario) setScenario(null)
     // YC mode ASSERTS its calibration keys on top of whatever is asserted.
     if (next) setAsserted((a) => ({ ...a, ...YC_CALIBRATION }))
     else {
-      // Leaving YC mode with a preset active restores that preset's own (fully asserted) combo.
+      // Leaving YC mode with a preset active restores that preset's own (fully asserted) combo;
+      // with a scenario active it re-asserts the scenario's partial combo on top.
       const p = presetById(preset)
       if (p) setAsserted({ ...p.choices })
+      else if (sc) setAsserted((a) => ({ ...a, ...sc.asserts }) as AssertedChoices)
     }
-    setParams({ yc: next ? '1' : null })
+    setParams(dropScenario ? { yc: '1', preset: null } : { yc: next ? '1' : null })
   }
 
   function setDriveMode(next: VsDriveMode) {
@@ -890,14 +944,63 @@ export default function VirtualStartup({
           the very top of the page — Run/Restart is one flick away, never a long timeline away. */}
       <div className="space-y-3">
       <section data-testid="vs-setup" aria-label="Set up the virtual startup" className="rounded-2xl border border-zinc-800 p-3">
+        {/* The controller tabs (founder round 3, item 3): Setup — the scenario/founder/geo/
+            decisions rows — and Vendors — fix a vendor per market role before/independent of
+            the run (the picks flow through the same controlled-selections contract into the
+            outcome model). WAI-ARIA tabs: role=tablist/tab/tabpanel, aria-selected, roving
+            tabIndex, arrow keys; default Setup; the chosen tab is NOT persisted in the URL.
+            The footer (drive mode + Run CTA) sits below the panels, reachable from both. */}
+        <div
+          role="tablist"
+          aria-label="Virtual startup controller"
+          className="mb-2.5 flex items-center gap-1 border-b border-zinc-800/70 pb-2"
+          onKeyDown={(e) => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+            e.preventDefault()
+            const next = tab === 'setup' ? 'vendors' : 'setup'
+            setTab(next)
+            document.getElementById(`vs-tab-${next}`)?.focus()
+          }}
+        >
+          {(
+            [
+              { id: 'setup', label: 'Setup' },
+              { id: 'vendors', label: 'Vendors' },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`vs-tab-${t.id}`}
+              data-testid={`vs-tab-${t.id}`}
+              aria-selected={tab === t.id}
+              aria-controls={`vs-tabpanel-${t.id}`}
+              tabIndex={tab === t.id ? 0 : -1}
+              onClick={() => setTab(t.id)}
+              className={`rounded-full border px-3 py-1 text-xs transition ${
+                tab === t.id
+                  ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+              }`}
+            >
+              {t.label}
+              {t.id === 'vendors' && vendorOverrides > 0 && (
+                <span className="ml-1 text-[10px] text-zinc-500">· {vendorOverrides}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
         {/* The control panel as a labeled form grid (founder 2026-09-28: the crammed single-row
-            band was "poorly designed layout wise") — one aligned label column (Example / Founder
+            band was "poorly designed layout wise") — one aligned label column (Scenario / Founder
             / Decisions), one content column, and a footer bar holding the company info + the Run
             CTA. Rows keep horizontal scroll on mobile, wrap from sm up. */}
+        <div role="tabpanel" id="vs-tabpanel-setup" aria-labelledby="vs-tab-setup" hidden={tab !== 'setup'}>
         <div className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
           <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
-            <IconChip icon={ROW_ICONS.example.icon} title={ROW_ICONS.example.title} className="mr-1" />
-            Example
+            <IconChip icon={ROW_ICONS.scenario.icon} title={ROW_ICONS.scenario.title} className="mr-1" />
+            Scenario
           </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
             {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: the
@@ -925,6 +1028,29 @@ export default function VirtualStartup({
                       <span className="sr-only">{p.disclosure}</span>
                     </span>
                   )}
+                </button>
+              )
+            })}
+            {/* Funding scenarios (round 3, item 1): one-tap pills asserting the funding decision
+                plus the calibrations that sensibly follow — the tooltip documents the exact
+                key → DECISIONS-option mapping. Partial asserts: everything else keeps its
+                current setting (so they compose with a company preset, which deselects). */}
+            <span aria-hidden className="text-zinc-700">|</span>
+            {VS_SCENARIOS.map((s) => {
+              const active = scenario === s.id
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  data-testid={`vs-scenario-${s.id}`}
+                  aria-pressed={active}
+                  onClick={() => applyScenario(s)}
+                  title={s.tooltip}
+                  className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
+                    active ? 'border-emerald-400/60 bg-emerald-400/10 text-zinc-200' : 'border-zinc-800 text-zinc-300 hover:border-zinc-600'
+                  }`}
+                >
+                  {s.label}
                 </button>
               )
             })}
@@ -1003,6 +1129,38 @@ export default function VirtualStartup({
           ))}
           </div>
         </div>
+        </div>
+
+        {/* Vendor preselection (round 3, item 3): the SimRolePicker grid over the journey's
+            swappable market roles — the reader FIXES a vendor per role and the pick drives the
+            outcome model above (recommended steps keep the judged ranking; the clock, scorecard,
+            and burn follow the pick). The embedded dry-run transcript is deliberately GONE from
+            this page (the per-process pages keep theirs) — the terminal above IS this page's
+            transcript. */}
+        <div role="tabpanel" id="vs-tabpanel-vendors" aria-labelledby="vs-tab-vendors" data-testid="vs-tabpanel-vendors" hidden={tab !== 'vendors'}>
+          <p className="text-[11px] leading-snug text-zinc-500">
+            Fix a vendor per market role, before or independent of the run — the picks drive the
+            run&apos;s clock, scorecard, and burn (recommended lines keep the judged ranking).
+            Roles follow the selected journey; each process page keeps its full dry-run
+            transcript.
+          </p>
+          {journeyRoles.length > 0 ? (
+            <div className="mt-2.5 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {journeyRoles.map((role) => (
+                <SimRolePicker
+                  key={role.arenaId}
+                  role={role}
+                  selectedId={picks[role.arenaId] ?? role.defaultProductId}
+                  onSelect={(id) => setPicks((s) => ({ ...s, [role.arenaId]: id }))}
+                />
+              ))}
+            </div>
+          ) : (
+            <p data-testid="vs-vendors-empty" className="mt-2 text-[11px] text-zinc-600">
+              no swappable market roles in this journey
+            </p>
+          )}
+        </div>
 
         {/* Footer bar: the drive-mode control + the Run CTA (founder 2026-09-25: CTA before any
             timeline content; addendum 2026-09-29: the company name is NOT shown upfront — it
@@ -1059,11 +1217,10 @@ export default function VirtualStartup({
             </span>
           </p>
         )}
-        {activeAssumptions.map((assumption) => (
-          <p key={assumption} data-testid="vs-persona-assumption" className="mt-1.5 text-[11px] leading-snug text-amber-300/90">
-            {assumption}
-          </p>
-        ))}
+        {/* No amber assumption lines in the band (founder round 3, item 2): the axis pills'
+            tooltips and the full-setup-guide expand below carry the named simulation
+            assumptions; the outcome surfaces (sim badges, scorecard) still disclose them
+            per-line where they apply. */}
 
         {/* The "setup" expand — the previous verbose card copy for readers who want the
             explanations, in one place and off the critical path to the terminal. */}
@@ -1737,18 +1894,10 @@ export default function VirtualStartup({
         </section>
       )}
 
-      {/* The reused playbook simulator over the exact selected journey — swap any market role and
-          the transcript stays honest about whose API was actually recorded. Keyed by the decision
-          combo so its transcript resets with the journey. v3: the role picks are CONTROLLED —
-          the same picks drive the outcome model (day markers, scorecard, burn) above. */}
-      <ProcessSimulator
-        key={key}
-        steps={steps}
-        roles={journeyRoles}
-        multiTask
-        selections={picks}
-        onSelectionsChange={setPicks}
-      />
+      {/* The embedded ProcessSimulator section is gone (founder round 3, item 3): the vendor
+          role pickers moved into the controller's Vendors tab above, and the dry-run transcript
+          was dropped from this page entirely — the terminal IS this page's transcript, and every
+          per-process page keeps its own ProcessSimulator. */}
     </div>
   )
 }
