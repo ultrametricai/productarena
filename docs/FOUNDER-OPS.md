@@ -18,6 +18,7 @@ workspace, never here.
 | `sources/` | Primary authorities: provision locators, issue dates, checked dates |
 | `jurisdictions/` | Registry + overlays; exact-dimension matching, unknown = unsupported |
 | `business-logic/` | Cited, deterministic calculations (cap table first) |
+| `resources/` | Curated canonical startup resources + the distilled startup laws (cited) |
 | `vendors/` | The evidence layer + the scenario-scoped review interchange format |
 | `connectors/` | Optional vendor/government integrations behind approval gates |
 | `templates/` | Contribution starting points |
