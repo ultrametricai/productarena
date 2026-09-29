@@ -8,6 +8,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import SimRolePicker from '@/components/SimRolePicker'
 import VsDecisionSelect from '@/components/VsDecisionSelect'
 import VsGeoSelector from '@/components/VsGeoSelector'
+import VsJourneyDag, { type VsDagPause } from '@/components/VsJourneyDag'
 import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
 import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
 import { formatMinutes, type SimStep, type VendorRole } from '@/lib/processSim'
@@ -722,6 +723,39 @@ export default function VirtualStartup({
     return [...axes, ...decisions]
   }, [choices, asserted, founder, waitingOn])
 
+  // ── Journey DAG strip inputs (founder ask 2026-09-29: "the DAG visualization UI unit … on top
+  // of the terminal output") — the strip derives everything from the SAME rows/revealed state the
+  // terminal prints from (no timers of its own). The semi-auto pause schedule and the drawn
+  // events reach it as markers; a recomposition re-derives the strip, and because the pause lands
+  // before the first affected row, already-lit nodes never change.
+  const dagPauses = useMemo<VsDagPause[]>(
+    () =>
+      mode !== 'semi'
+        ? []
+        : pauseSchedule.map((p) => ({
+            id: p.id,
+            at: p.at,
+            label: p.id === 'name' ? 'Name the company' : DECISIONS.find((d) => d.id === p.id)?.title ?? p.id,
+          })),
+    [mode, pauseSchedule],
+  )
+  const dagEventTitles = useMemo(() => {
+    const out: Record<string, string> = {}
+    for (const e of eventResolution.events) out[e.def.id] = e.def.title
+    return out
+  }, [eventResolution])
+  // DAG node click → scroll the terminal to that process's first printed row (the primary action;
+  // the node's small ↗ links the /processes page). Unrevealed rows aren't in the DOM yet — the
+  // click is honestly a no-op until the process prints. Jumping unpins the terminal follow.
+  function scrollTermToTask(taskId: string) {
+    const term = termRef.current
+    if (!term) return
+    const el = term.querySelector<HTMLElement>(`[data-vs-row="task-${taskId}"]`)
+    if (!el) return
+    followRef.current = false
+    term.scrollTop = Math.max(0, el.getBoundingClientRect().top - term.getBoundingClientRect().top + term.scrollTop - 8)
+  }
+
   // The title-bar run identity — pre-naming it's a neutral prompt: the company name comes into
   // existence AT the run's naming step (founder addendum 2026-09-29), so until the revealed rows
   // contain a name-bearing artifact the prompt reads `new-startup`.
@@ -1312,6 +1346,21 @@ export default function VirtualStartup({
         </details>
       </section>
 
+      {/* The journey DAG strip (founder ask 2026-09-29, emphatic): an always-visible horizontal
+          graph of the run — one node per process, clustered/colored by phase — sitting ON TOP of
+          the terminal output as its own full-width band (the VsStateGraph tabs keep their place
+          below/beside the terminal untouched). Pre-run it renders the full journey skeleton dim;
+          it lights up node by node off the same rows/revealed state as everything else. */}
+      <VsJourneyDag
+        rows={rows}
+        revealed={revealed}
+        running={running}
+        waitingOn={waitingOn}
+        pauses={dagPauses}
+        eventTitles={dagEventTitles}
+        onNodeClick={scrollTermToTask}
+      />
+
       {/* The state graph + the terminal (founder batch 2026-09-29, item 3): the compact tabbed
           panel of objects-coming-into-existence sits ABOVE the terminal on mobile (capped
           scroll box, terminal stays dominant) and BESIDE it — a narrow left column — from lg
@@ -1411,7 +1460,8 @@ export default function VirtualStartup({
                     ? { meta: GEO_PREF_META[geoCountry], note: (row.task.geoNotes ?? []).find((n) => n.country === geoCountry) ?? null }
                     : null
                 return (
-                  <li key={row.key} className="pt-2">
+                  // data-vs-row: the journey DAG strip's click-to-scroll target (scrollTermToTask).
+                  <li key={row.key} data-vs-row={row.key} className="pt-2">
                     <Link
                       href={`/processes/${row.task.slug}`}
                       className="text-[13px] font-medium text-zinc-300 hover:text-emerald-300"
