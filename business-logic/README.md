@@ -1,7 +1,7 @@
-# Business logic — reusable, testable calculations
+# Business logic — decision support, calculations, calendars, comparisons
 
-Reusable computations and decision support, separate from law (`rules/`) and the vendor
-evidence layer (`vendors/`, `data/`). Every module must ship a contract, version, explicit assumptions,
+Reusable business logic — decision support, calculations, calendars, and comparisons — separate
+from law (`rules/`) and the vendor evidence layer (`vendors/`, `data/`). Every module must ship a contract, version, explicit assumptions,
 worked examples reproduced from cited public sources, deterministic tests, and explicit
 jurisdiction dependencies. Business logic may propose a result; it must never silently
 authorize a tax election, equity grant, bank transfer, contract, or vendor disclosure. A module
