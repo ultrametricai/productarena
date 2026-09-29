@@ -497,7 +497,8 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
               {p.title}
             </Link>
           </span>
-          <p className="mt-0.5 text-xs text-zinc-500">{p.tagline}</p>
+          {/* No tagline (founder 2026-09-29: titles are self-evident) — the field stays as
+              search-matching data only. */}
         </td>
         <td className="hidden px-2 py-2 md:table-cell">
           {/* Where a process shows its one phase, a playbook spans several processes — the old
@@ -538,8 +539,8 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
           </span>
         </td>
         <td className="hidden px-2 py-2 lg:table-cell">
-          <Link href={p.href} className="text-[10px] text-zinc-500 transition hover:text-emerald-300" title="A multi-process row spans the software of each process it runs — open it for the per-step options">
-            see per-step →
+          <Link href={p.href} className="whitespace-nowrap text-sm font-medium text-emerald-400 transition hover:text-emerald-300" title="A multi-process row spans the software of each process it runs — open it for the per-step options">
+            Go to process →
           </Link>
         </td>
       </tr>
