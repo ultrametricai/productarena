@@ -34,6 +34,33 @@ export const GEO_PREF_META: Record<GeoCountry, { label: string; flag: string; pr
 export const GEO_PARAM = 'geo'
 export const GEO_STORAGE_KEY = 'pa-geo'
 
+// ---------------------------------------------------------------------------------------------
+// The explicit geo-neutral choice (founder Virtual-Startup batch 2026-09-29: the in-sim Geo row
+// offers 🌐 Global alongside the five countries). ADDITIVE ONLY: nothing above changes —
+// GeoSelection, parseGeo, serializeGeo and every existing consumer keep their exact semantics,
+// so the default view stays byte-identical everywhere. 'global' is a real ?geo=/pa-geo token
+// (shareable, stored), but the SHARED store still only carries countries: a global choice maps
+// to the null store state, which is exactly what geo-neutral means to every existing consumer
+// (process banner/marks/annotations render nothing) — no invented sixth country anywhere.
+
+export const GEO_GLOBAL = 'GLOBAL' as const
+/** A Geo-row choice: a non-default country, or the explicit geo-neutral 'GLOBAL'. */
+export type GeoChoice = GeoSelection | typeof GEO_GLOBAL
+
+export const GEO_GLOBAL_META = { label: 'Global', flag: '🌐', prose: 'a geo-neutral view' } as const
+
+/** parseGeo plus the 'global' token — everything else (incl. 'us') behaves exactly as parseGeo. */
+export function parseGeoChoice(raw: string | null): GeoChoice | null {
+  if (raw && raw.trim().toUpperCase() === GEO_GLOBAL) return GEO_GLOBAL
+  return parseGeo(raw)
+}
+
+/** serializeGeo plus 'global' — null for the US default (param deleted, storage cleared). */
+export function serializeGeoChoice(choice: GeoChoice | null): string | null {
+  if (choice === GEO_GLOBAL) return 'global'
+  return serializeGeo(choice)
+}
+
 // The /processes-index scope glyphs (only visible while a non-US country is selected): every
 // corpus process carries a required geoScope (lib/processes.ts) — 🌐 the work is the same
 // everywhere, 🇺🇸 written around US federal law/agencies, 🏛 a US state is the counterparty.

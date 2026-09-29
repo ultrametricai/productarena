@@ -21,6 +21,7 @@
 //   - fake identifiers are constructed to be impossible-real: EIN "00-0000000" (no real EIN
 //     starts 00), domains on the RFC 2606-reserved .example TLD, all-zero file/routing numbers.
 
+import type { GeoAnalogNote } from './geoPreference'
 import type { Cadence, SimStep } from './processSim'
 
 // ---------------------------------------------------------------------------
@@ -487,6 +488,10 @@ export interface TopVendorPick {
   score: number
   arenaId: string
   arenaName: string
+  // Whether a committed logo file exists (lib/logos.ts, resolved server-side — node:fs), so the
+  // client state panel can render the real logo chip (components/ProductLogoView.tsx). Optional
+  // additive field (2026-09-29): absent = initial-letter fallback, nothing else changes.
+  hasLogo?: boolean
 }
 
 export interface VirtualTaskPayload {
@@ -498,6 +503,11 @@ export interface VirtualTaskPayload {
   steps: SimStep[]
   // Parallel to steps: the step's top judged vendor, or null.
   tops: (TopVendorPick | null)[]
+  // The corpus GEO dimension (lib/processes.ts geoScope) + curated per-country analogs, passed
+  // through for the in-sim geo annotations (founder batch 2026-09-29). Optional additive fields:
+  // absent = no geo annotation ever renders for the task (honest degrade, never a guess).
+  geoScope?: 'global' | 'us' | 'us-state'
+  geoNotes?: GeoAnalogNote[]
 }
 
 // ---------------------------------------------------------------------------
