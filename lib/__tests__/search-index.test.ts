@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildSearchIndex, type SearchIndexSource } from '@/lib/search-index'
+import { buildSearchIndex, V2_PRODUCT_ENTRY, type SearchIndexSource } from '@/lib/search-index'
 
 const sources: SearchIndexSource[] = [
   {
@@ -47,6 +47,15 @@ describe('buildSearchIndex', () => {
 
   it('produces no entries for an empty source list', () => {
     expect(buildSearchIndex([])).toEqual([])
+  })
+
+  it('exports the /v2 CLI/MCP product entry the layout feeds the ⌘K palette', () => {
+    expect(V2_PRODUCT_ENTRY).toEqual({
+      type: 'product',
+      label: 'Ultrametric CLI/MCP',
+      sublabel: 'Start and run your company from any agent',
+      href: '/v2',
+    })
   })
 
   it('accepts a CategoryData-shaped source (extra fields ignored structurally)', () => {

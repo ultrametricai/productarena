@@ -33,6 +33,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // '/' → /home; app/home's canonical is the root, so /home is deliberately not listed).
     { url: `${SITE_URL}/company`, lastModified: now },
     { url: `${SITE_URL}/tos`, lastModified: now },
+    // The Ultrametric CLI/MCP product page, ported from the /v2 landing origin (2026-09-29).
+    // Listed per founder registration ask even though the page still ships the live page's
+    // noindex,nofollow — the robots meta wins until the founder flips it (see app/v2/page.tsx).
+    { url: `${SITE_URL}/v2`, lastModified: now },
     { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
