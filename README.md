@@ -35,7 +35,12 @@ is designed to be extended by founders everywhere, one pull request at a time:
 > [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other
 > founders find this, and every record here is open for you to audit, contest, or extend.
 
-![Ultrametric](https://ultrametric.ai/opengraph-image)
+![The Virtual Startup mid-run — a simulated company executing the real founder-process corpus, every step routed agent / manual form / human, vendors from the judged rankings](docs/assets/virtual-startup.png)
+
+*The [Virtual Startup](https://ultrametric.ai/virtual-startup) mid-run: a simulated company
+(every artifact visibly SIMULATED) executing the real corpus — incorporation filings, 83(b)
+elections, EIN — with each step routed agent / manual form / human and vendors drawn from the
+judged rankings.*
 
 Live site: https://ultrametric.ai (rankings at [/overall](https://ultrametric.ai/overall))
 
