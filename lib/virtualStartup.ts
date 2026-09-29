@@ -256,6 +256,50 @@ export function presetById(id: string | null): VsPreset | null {
 }
 
 // ---------------------------------------------------------------------------
+// Funding scenarios (founder batch 2026-09-29, round 3, item 1: "'VC backed' vs 'Bootstrapped'")
+// — one-tap pills on the setup band's Scenario row, preset-pill mechanics: exclusive highlight,
+// the SAME ?preset= param (the codec extends compatibly — company preset ids and scenario ids
+// share one namespace and never collide), deselected by any manual decision change. Unlike a
+// company preset a scenario asserts only its OWN keys (a partial combo — the funding decision
+// plus the calibrations that sensibly follow it) and carries no fixed identity: every other
+// decision keeps whatever the reader (or a company preset) already set. Every asserted value is
+// an existing DECISIONS option — a scenario invents nothing; the pill tooltip documents the
+// exact key → option mapping (the founder's "document the mapping in the pill tooltips").
+// ---------------------------------------------------------------------------
+
+export type ScenarioId = 'vc-backed' | 'bootstrapped'
+
+export interface VsScenario {
+  id: ScenarioId
+  label: string
+  // The decisions this scenario asserts — a partial combo over existing DECISIONS options only.
+  asserts: Partial<Choices>
+  // The visible mapping documentation (rides in the pill's title/tooltip).
+  tooltip: string
+}
+
+export const VS_SCENARIOS: VsScenario[] = [
+  {
+    id: 'vc-backed',
+    label: 'VC backed',
+    asserts: { funding: 'seed', entity: 'c-corp', hire: 'yes' },
+    tooltip:
+      'VC backed — asserts Funding: Raise a seed (the real raise-a-seed-round playbook), plus the calibrations that follow institutional money — Entity: Delaware C-Corp (the standard vehicle investors fund, form_001) and First hire: Make the first hire (the seed pays for it, the first-hire playbook). Every other decision keeps its current setting.',
+  },
+  {
+    id: 'bootstrapped',
+    label: 'Bootstrapped',
+    asserts: { funding: 'bootstrap', product: 'invoices', hire: 'no' },
+    tooltip:
+      'Bootstrapped — asserts Funding: Bootstrap (no fundraise phase), plus the calibrations that follow self-funding — Business model: Invoice-billed services (revenue from day one, sales_002) and First hire: Stay founders-only (until revenue supports one). Every other decision keeps its current setting.',
+  },
+]
+
+export function scenarioById(id: string | null): VsScenario | null {
+  return VS_SCENARIOS.find((s) => s.id === id) ?? null
+}
+
+// ---------------------------------------------------------------------------
 // YC batch mode (founder ask 2026-09-25) — calibrates the SAME real corpus journey to the
 // publicly known YC batch shape. Honesty rules: only real corpus processes, rearranged; the
 // standard PUBLISHED deal replaces the generic seed numbers in the SYNTHETIC artifacts (still
