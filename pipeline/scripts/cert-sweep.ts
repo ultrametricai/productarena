@@ -1,6 +1,6 @@
 // Weekly certification sweep (.github/workflows/cert-sweep.yml) — keeps /certified
 // self-sustaining with the same keyless conformance suite vendors run themselves
-// (cli/src/certify.ts, protocol in docs/CERTIFICATION.md). Two passes:
+// (pipeline/scripts/certify.ts, protocol in docs/CERTIFICATION.md). Two passes:
 //
 //   1. Re-verify every currently certified product against its committed report's target.
 //      Pass at the same level        → refresh (new date + report) only when the certification
@@ -28,7 +28,7 @@
 // registry (the workflow does both).
 import fs from 'node:fs'
 import path from 'node:path'
-import { runCertify, type CertReport } from '../../cli/src/certify'
+import { runCertify, type CertReport } from './certify'
 import { certificationExpires, CertificationsArraySchema, type Certification } from '../../lib/certifications'
 import { ProductSchema } from '../../lib/schemas'
 import { DATA_DIR, readCategories, readJson, writeJson } from '../paths'

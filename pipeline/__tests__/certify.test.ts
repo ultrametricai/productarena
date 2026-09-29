@@ -14,7 +14,7 @@ import {
   type CertifyFetcher,
   type CertifyFetchResult,
   type CertReport,
-} from '../certify'
+} from '../scripts/certify'
 
 // ---------------------------------------------------------------------------
 // Mock-fetcher harness: a route table keyed by "<METHOD> <url>"; anything unrouted 404s.

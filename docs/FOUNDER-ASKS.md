@@ -165,7 +165,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Payments roster expansion (Checkout.com, Mollie, Airwallex, Paddle, Lemon Squeezy, Polar) | shipped 2026-09-15 — 5 arena rows (Polar debuts #2 @ 42.9; Lemon Squeezy = Stripe family entry, acquired 2024 → Stripe Managed Payments) |
 | Docusaurus gift PR | blocked (Meta CLA needs founder signature) |
 | Greptile pre-review of gift PRs | blocked (needs Greptile installed on ultrametricai org — founder to confirm) |
-| npm publishes (mcp/, cli/) + MCP registry submissions | blocked (founder-side npm publish) |
+| npm publishes (ultrametric-mcp, ultrametric-cli) + MCP registry submissions | superseded 2026-09-29 — the MCP/CLI packages moved to their own dedicated repo; publishes happen from there |
 | Show HN + X thread launch | blocked (founder go + posting) |
 | GitHub social preview upload (public/og2.png) | blocked (founder — repo Settings) |
 | Google Search Console: add domain property for ultrametric.ai (DNS TXT), submit both sitemaps | blocked (founder Google account) |

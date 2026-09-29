@@ -1,11 +1,12 @@
-// `ultrametric-cli certify <url>` — the self-serve Agent-Ready conformance suite (see
-// docs/CERTIFICATION.md in the main repo). Every check is keyless, read-only, and runs
-// against the vendor's own public surfaces, mirroring the pipeline's probe conventions
-// (pipeline/stages/probe.ts): llms.txt, docs .md mirrors, OpenAPI, an MCP initialize
-// handshake, robots.txt, and a structured-errors spot check.
+// The Agent-Ready conformance suite — the same suite vendors run self-serve via
+// `ultrametric-cli certify <url>` (the CLI lives in its own repo; this is the maintainer-side
+// implementation the weekly cert-sweep runs, protocol in docs/CERTIFICATION.md). Every check is
+// keyless, read-only, and runs against the vendor's own public surfaces, mirroring the
+// pipeline's probe conventions (pipeline/stages/probe.ts): llms.txt, docs .md mirrors, OpenAPI,
+// an MCP initialize handshake, robots.txt, and a structured-errors spot check.
 //
 // Pure by construction: all network access goes through an injectable CertifyFetcher so the
-// whole suite is unit-testable without touching the network (cli/src/__tests__/certify.test.ts).
+// whole suite is unit-testable without touching the network (pipeline/__tests__/certify.test.ts).
 // Every response is digested (sha256) into the report so a maintainer re-run can be compared
 // check-by-check against a vendor-submitted cert-report.json.
 import { createHash } from 'node:crypto'

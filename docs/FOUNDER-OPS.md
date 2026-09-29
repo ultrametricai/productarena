@@ -19,12 +19,18 @@ workspace, never here.
 | `jurisdictions/` | Registry + overlays; exact-dimension matching, unknown = unsupported |
 | `business-logic/` | Cited, deterministic calculations (cap table first) |
 | `vendors/` | The evidence layer + the scenario-scoped review interchange format |
-| `connectors/` | Optional vendor/government integrations behind approval gates |
 | `templates/` | Contribution starting points |
 | `schemas/` | JSON Schema contracts for processes, rules, sources, vendor reviews |
 | `fixtures/` | Fictional companies and events only |
-| `apps/` | Map of the site / CLI / MCP / worker surfaces |
 | `governance/` | Review policy, evidence doctrine, agent policy, security |
+
+The surfaces over the corpus live beside it: the Next.js site at `app/` (+ `components/`,
+`lib/`, `public/`) and the Cloudflare edge worker at `infra/cloudflare-proxy/` (zone routing,
+auth, watchlist/stack APIs, live MCP probes). The Ultrametric MCP server and CLI packages moved
+to their own dedicated repo (2026-09-29). Optional vendor/government integrations, if ever
+added, follow the adapter rules in the service-boundary section below — behind scopes, vaults,
+dry-run, idempotency, and a named human approval for any external effect; no connector may
+become a default vendor route.
 
 Record semantics (from the starter, binding): process IDs are stable and `version` changes on
 substantive edits; `rule_ids` resolve to rule cards which resolve to primary sources with exact
@@ -57,8 +63,10 @@ structure and semantic invariants; it does not prove laws true or implement a ca
   (`pipeline/__tests__/vendorReviews.test.ts`). Still open from the original stage-2 sketch:
   folding process geo-scope into `rules/`, and the on-site workflow-layer surface (a
   `/founder-ops` or per-process "legal layer" view).
-- **Stage 3.** Physically move the site/CLI/MCP/worker under `apps/` as workspace packages.
-  Deploy-infra churn only; deliberately last.
+- **Stage 3 — retired 2026-09-29.** The original plan (physically move the site/CLI/MCP/worker
+  under `apps/` as workspace packages) is moot: the MCP/CLI packages moved to their own
+  dedicated repo, and the site (`app/`) and edge worker (`infra/cloudflare-proxy/`) stay at
+  their current paths. Nothing about the corpus contract ever depended on it.
 
 ## Suggested service boundary (unchanged from the starter)
 

@@ -110,12 +110,9 @@ markdown, schema-validated in CI, usable without running any code:
 | [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
 | [`templates/`](templates/) | Blank, schema-valid starting points for contributions | — |
 | [`governance/`](governance/) | Review policy + maturity ladder, evidence doctrine, agent policy, security | — |
-| [`connectors/`](connectors/) | Optional vendor/government integrations — always behind human-approval gates | adapter rules in the README there |
-| [`apps/`](apps/) | Map of the surfaces (site, CLI, MCP, edge worker) | — |
 | `data/` | The arena evidence layer: per-arena products, stories, verdicts, evidence packs, fingerprinted rankings | `recompute-check` (bit-identical determinism) |
 | `app/`, `components/`, `lib/` | The Next.js site (~5,900 static pages) over the corpus | typecheck, lint, ~2,000 vitest tests |
 | `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
-| `cli/`, `mcp/` | `ultrametric-cli`, `ultrametric-mcp` packages | — |
 | `infra/` | Cloudflare edge worker (routing, auth, live MCP probes) | 120 worker tests |
 | `docs/` | Architecture ([FOUNDER-OPS.md](docs/FOUNDER-OPS.md)), scoring companions, program docs | — |
 
@@ -190,9 +187,9 @@ are at `/data/<arena>/rankings.json` per arena.*
                                                         │
                                         ┌───────────────┼────────────────┐
                                         ▼               ▼                ▼
-                                  static site      /data JSON API   MCP server
-                                  ultrametric.ai + llms.md/txt (mcp/)
-                                                     + /openapi.json
+                                  static site      /data JSON API   agent surfaces
+                                  ultrametric.ai                    llms.txt + llms.md
+                                                                    + /openapi.json
 ```
 
 ## The arenas
@@ -855,8 +852,8 @@ Ultrametric is built to be read by agents, not just browsed by humans:
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
 - **MCP / CLI** — retired as offerings (2026-09-23): Ultrametric is not served over its own
-  MCP server or CLI; a first-party Ultrametric MCP + API is coming instead. The `mcp/` and
-  `cli/` workspaces remain in-repo for that successor work but are not published entry points.
+  MCP server or CLI; a first-party Ultrametric MCP + API is coming instead. The MCP/CLI
+  packages moved to their own dedicated repo (2026-09-29) and are not published entry points.
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking

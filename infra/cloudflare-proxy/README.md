@@ -66,8 +66,8 @@ Design notes:
 - **Methods** — `initialize`, `ping`, `tools/list`, `tools/call`. Everything else gets a clean
   JSON-RPC `-32601`. Batches get `-32600` (batching was removed in protocol 2025-06-18).
   Notifications (no `id`) get `202` with an empty body.
-- **Tools** — the same eight as the stdio `productarena-mcp` npm package (`mcp/` in the repo;
-  keep the two in sync): `list_arenas`, `get_rankings`, `get_product`, `get_verdict`,
+- **Tools** — the same eight as the stdio `productarena-mcp` npm package (now maintained in
+  the dedicated MCP/CLI repo; keep the two in sync): `list_arenas`, `get_rankings`, `get_product`, `get_verdict`,
   `search_products`, `compare`, `get_stacks`, `top_products`. Tool-level failures (unknown
   ids, bad params, upstream hiccups) come back as tool results with `isError: true` so the
   calling agent can self-correct.

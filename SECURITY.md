@@ -31,7 +31,6 @@ In scope:
 - The pipeline (`pipeline/`) — crawl, extract, normalize, collect-community, probe, judge,
   derive stages — including SSRF/injection risks from fetching third-party vendor pages, and
   handling of the `ANTHROPIC_API_KEY`.
-- The MCP server (`mcp/`).
 - GitHub Actions workflows in `.github/workflows/` (e.g. `contest-check.yml`), including how
   they handle repository secrets and untrusted issue input.
 

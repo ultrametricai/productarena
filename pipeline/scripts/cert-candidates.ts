@@ -6,7 +6,7 @@
 //
 // Pure data → data: no network, no LLM, no keys. The weekly cert-sweep
 // (pipeline/scripts/cert-sweep.ts, .github/workflows/cert-sweep.yml) consumes this queue and
-// re-runs the live conformance suite (cli/src/certify.ts) against each candidate; run it
+// re-runs the live conformance suite (pipeline/scripts/certify.ts) against each candidate; run it
 // standalone to inspect the queue:
 //
 //   pnpm tsx pipeline/scripts/cert-candidates.ts

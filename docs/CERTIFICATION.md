@@ -6,7 +6,9 @@ own product in one command, covering the surfaces agents actually depend on. Pas
 **dated certification** with the machine-verifiable report attached — public, re-runnable by
 anyone, and expiring after 180 days.
 
-The current implementation: the suite is `ultrametric-cli certify` (`cli/src/certify.ts`), the
+The current implementation: the suite is `ultrametric-cli certify` (the CLI lives in its own
+repo; the maintainer-side implementation the weekly sweep runs is
+`pipeline/scripts/certify.ts`), the
 registry is `data/<arena>/certifications.json` (`CertificationSchema` in
 `lib/certifications.ts`, loaded tolerant-optionally by `lib/data.ts`), the public listing is
 [/certified](https://ultrametric.ai/certified), intake is the
@@ -95,7 +97,7 @@ Not listed yet? [Request the product](../.github/ISSUE_TEMPLATE/request-a-produc
 
 - **The suite is the certification.** No judgment calls, no partial credit, no negotiated
   exceptions: the levels are pure functions of check statuses (`certificationLevel` in
-  `cli/src/certify.ts`), and the code is public.
+  `pipeline/scripts/certify.ts`), and the code is public.
 - **Failing runs are not secrets.** We don't publish a registry of failures (this program
   certifies, Prove-It disputes), but a maintainer re-run that contradicts a submitted report
   is discussed in the open, on the submission issue.
