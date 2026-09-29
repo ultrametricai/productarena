@@ -107,7 +107,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [showAll, setShowAll] = useState(false)
   // Deep-table quick filters (founder 2026-09-23: "more powerful aspects of controlling the
   // table rankings") — each is a URL-shareable toggle; off is the default and elided.
-  const [ossOnly, setOssOnly] = useState(false)
   const [ycOnly, setYcOnly] = useState(false)
   // MCP toggle removed (founder 2026-09-28: "we don't need MCP as a toggle on the main page")
   // — the Access column still shows each product's MCP glyph; old ?mcp=1 links are ignored.
@@ -135,7 +134,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     setDirection(dir === 'asc' || dir === 'desc' ? dir : defaultDirectionFor(col))
     const arena = p.get('arena')
     if (arena !== null && arenas.some((a) => a.id === arena)) setArenaId(arena)
-    if (p.get('oss') === '1') setOssOnly(true)
     if (p.get('yc') === '1') setYcOnly(true)
     const q = p.get('q')
     if (q !== null && q !== '') setQuery(q)
@@ -150,10 +148,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   )
   const byArena = useMemo(() => {
     let rows_ = filterMegaRowsByArena(companyRows, arenaId)
-    if (ossOnly) rows_ = rows_.filter((r) => r.type === 'oss')
     if (ycOnly) rows_ = rows_.filter((r) => !!r.ycBatch)
     return rows_
-  }, [companyRows, arenaId, ossOnly, ycOnly])
+  }, [companyRows, arenaId, ycOnly])
   // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
   // the selected arena when one is chosen — a reader picking an arena wants that arena's
   // standings, not each product's position in the site-wide list.
@@ -211,7 +208,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
           <span className="flex items-center gap-1.5">
             {(
               [
-                { key: 'oss', label: 'OSS', on: ossOnly, set: setOssOnly, title: 'Only open-source products' },
                 { key: 'yc', label: 'YC', on: ycOnly, set: setYcOnly, title: 'Only Y Combinator companies' },
               ] as const
             ).map((f) => (

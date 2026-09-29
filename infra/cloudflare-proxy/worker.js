@@ -2172,15 +2172,23 @@ export default {
             }),
           )
           .on('section#products span', textReplace({ 'Enter the arena': 'Explore the repo' }))
-          // Header products menu + footer still carry the retired brand name — the surface they
-          // link to (/overall) is the rankings, so say that.
-          .on(
-            'nav span',
-            textReplace({
-              ProductArena: 'Rankings',
-              'The evidence-based software arena': 'Evidence-graded software rankings',
-            }),
-          )
+          // Founder 2026-09-29: the landing's "Products" dropdown is gone — the header carries
+          // the product top bar instead (same destinations as the /overall site nav). The
+          // <details> element is the nav's only dropdown; links hide progressively on mobile.
+          .on('nav details', {
+            element(el) {
+              el.replace(
+                `<div class="flex items-center gap-5 text-sm text-zinc-400">
+                   <a href="/virtual-startup" class="hidden md:inline hover:text-zinc-300 transition-colors">Virtual Startup</a>
+                   <a href="/arenas" class="hidden sm:inline hover:text-zinc-300 transition-colors">Arenas</a>
+                   <a href="/processes" class="hidden sm:inline hover:text-zinc-300 transition-colors">Processes</a>
+                   <a href="/technologies" class="hidden md:inline hover:text-zinc-300 transition-colors">Technologies</a>
+                   <a href="/overall" class="hover:text-zinc-300 transition-colors">Rankings</a>
+                 </div>`,
+                { html: true },
+              )
+            },
+          })
           .on('footer a', textReplace({ ProductArena: 'Rankings' }))
           .transform(resp)
       }
