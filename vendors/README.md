@@ -26,3 +26,18 @@ included), the committed pricing facts, the rankings dimensions, and the affilia
 disclosures — owner products always carry theirs. Regeneration is byte-identical
 (`pipeline/__tests__/vendorReviews.test.ts`), so external consumers get the evidence layer in
 the interchange shape without scraping the site.
+
+## What you can contribute here
+
+- **A hands-on vendor review** — copy `templates/vendor-review.json` into `vendors/reviews/`,
+  fill the rubric above (who tested, when, what you actually did, dated cost basis,
+  limitations, an exit/export test), and disclose every affiliation. Gate:
+  `npx vitest run __tests__/founder-ops.test.ts` (schema:
+  `schemas/vendor-review.schema.json`).
+- **Evidence for a judged product** — new doc pages, changelogs, or community sources belong
+  in `data/<arena>/` via the pipeline (see the root README's Contributing section and
+  CONTRIBUTING.md); the pipeline re-judges only the cells whose evidence changed.
+- **Never hand-edit `reviews/generated/`** — those records are emitted deterministically from
+  the committed arena data; fix the underlying data and re-run
+  `pnpm tsx pipeline/scripts/generate-vendor-reviews.ts`. Gate:
+  `npx vitest run pipeline/__tests__/vendorReviews.test.ts` (byte-identical regeneration).

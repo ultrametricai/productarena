@@ -15,3 +15,16 @@ the "Where it works" line on product pages. Evidence only, deliberately not a sc
 Site-side overlays that still live beside the site code: the process pages' CA/multi-state
 conditional steps (`lib/jurisdictions.ts`, `?juris=` toggle) and the geo-scope work marking
 which operational processes are US-centric vs global (`geoScope` in `processes/corpus.json`).
+
+## What you can contribute here
+
+- **Vendor availability in your country** — add rows to `jurisdictions/vendor-geo.json`:
+  `{productId, country, status: available|unavailable|partial, sourceUrl, note}`. The source
+  must be the vendor's own page (or an official register) stating the fact; honest negatives
+  ("US entities only") are as valuable as positives. These rows drive the geo switcher and
+  "Where it works" on product pages. Gate: `npx vitest run lib/__tests__/vendorGeo.test.ts`
+  (or `pnpm test`).
+- **Register a new jurisdiction** — add it to `registry.json` with an explicit, narrow scope
+  statement before contributing `rules/<CODE>/` cards or workflows for it. Unknown dimension
+  combinations must stay `unsupported` — never widen a scope to make a match work. Gate:
+  `npx vitest run __tests__/founder-ops.test.ts`.

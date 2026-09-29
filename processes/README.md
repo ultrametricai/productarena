@@ -25,3 +25,19 @@ paths only: `lib/processes.ts` `loadProcesses()` reads `processes/corpus.json`, 
 founder-ops workflow validator (`lib/founderOps.ts`) deliberately skips `corpus.json` when it
 walks this tree (the corpus has its own schema and gates). The two layers now live side by
 side under this directory as promised.
+
+## What you can contribute here
+
+- **A country analog for a process** — add a `geoNotes` entry to the process in
+  `processes/corpus.json`: `{country, summary, actionUrl, actionLabel}` with a live, official
+  actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). This renders in the
+  top-of-page geo banner and the "Outside the US" block. Gate: `pnpm test` (corpus loader +
+  schema tests).
+- **A new jurisdiction-scoped workflow** — copy `templates/process.json` into
+  `processes/<domain>/<jurisdiction>/`, narrow the applicability dimensions, reference rule
+  cards in `rules/<CODE>/`, gate every external effect on a named human approval, add a
+  fictional fixture in `fixtures/`, and record honest maturity in `catalog/coverage.json`.
+  Gate: `npx vitest run __tests__/founder-ops.test.ts`.
+- **Corrections to an operational process** — step routing (agent / manual form / human),
+  agent ceilings, or time estimates in `corpus.json`, with a source or reproduction for the
+  claim. Gate: `pnpm test`.

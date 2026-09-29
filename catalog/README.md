@@ -22,3 +22,16 @@ claim a country is covered because a few playbooks exist — see `governance/REV
 
 Coverage in `coverage.json` tracks only the jurisdiction-scoped workflow layer. The operational
 corpus and the arenas publish their own coverage honestly on their own pages.
+
+## What you can contribute here
+
+- **An honest coverage entry** — when you land a jurisdiction-scoped workflow, record it in
+  `catalog/coverage.json` at `draft` or `demonstration` maturity (`reviewed` requires a named
+  domain expert; see `governance/REVIEW_POLICY.md`). Never mark a country covered because one
+  workflow exists — the known-gaps field is part of the record.
+- **Taxonomy gaps** — a missing domain or lifecycle stage in `domains.json`, with the founder
+  scenario that exposes it. Domains without playbooks are welcome; they are how gaps stay
+  visible.
+
+Gate for both: `npx vitest run __tests__/founder-ops.test.ts` (`lib/founderOps.ts` coverage
+checks).

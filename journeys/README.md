@@ -16,3 +16,15 @@ reads `journeys/chains.json`; loaders, fingerprints, and determinism gates uncha
 Journey records referencing jurisdiction-scoped workflows from `processes/` when a leg is
 legal-rigor territory (e.g. the equity-grant leg pointing at `equity.us-de.83b-election`)
 remain future work.
+
+## What you can contribute here
+
+- **A new chain** — add an entry to `journeys/chains.json` linking existing process IDs from
+  `processes/corpus.json` into a founder-visible path (a country-specific incorporation →
+  launch sequence, a wind-down, a first-enterprise-deal path). Every referenced process must
+  already exist; chains never invent steps.
+- **Fixes to an existing chain** — reordering, a missing leg, or a better description, with
+  the reasoning in the PR.
+
+Gate for both: `pnpm test` (`lib/__tests__/processes.test.ts` loads and cross-checks every
+chain against the corpus).
