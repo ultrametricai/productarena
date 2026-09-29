@@ -26,11 +26,11 @@ import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualSt
 // the SIMULATED label — see lib/virtualStartup.ts for the honesty contract.
 
 export const metadata: Metadata = {
-  // One title (founder round 4, item 2): 'Open startup simulator' — the route stays
+  // One title (founder 2026-09-29, latest wording): 'Startup Simulator' — the route stays
   // /virtual-startup, and every internal id/testid keeps the vs/virtual-startup vocabulary.
-  title: 'Open startup simulator — Ultrametric',
+  title: 'Startup Simulator — Ultrametric',
   description:
-    'Open startup simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',
+    'Startup Simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',
 }
 
 // DAG route mix of one corpus process — the year view's per-row honesty payload.
@@ -131,9 +131,9 @@ export default function VirtualStartupPage() {
           style — no centered/mx-auto treatment. */}
       <section>
         {/* ONE title (founder round 4, item 2): the h1+subtitle pair collapsed into the single
-            'Open startup simulator' h1 — no breadcrumb eyebrow, no subtitle; the explanations
+            'Startup Simulator' h1 — no breadcrumb eyebrow, no subtitle; the explanations
             live in the setup band's tooltips. */}
-        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Open startup simulator</h1>
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Startup Simulator</h1>
       </section>
 
       <VirtualStartup
