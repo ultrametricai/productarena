@@ -2072,14 +2072,36 @@ export async function handleMyStack(request, env) {
   return authJson(200, { ok: true, stack })
 }
 
+// Retired-landing /process/<slug> guides whose product /processes/<slug> equivalent has a
+// DIFFERENT slug (left: landing slug, right: corpus slug per lib/processes.ts processSlug()),
+// plus the app-specific guides with no corpus equivalent (mapped to '' → the /processes
+// index). Every other crawled landing slug matches the corpus slug byte-for-byte and passes
+// through unchanged — see the routing block in fetch() below.
+const PROCESS_SLUG_RENAMES = {
+  'close-the-books': 'bookkeeping-close',
+  'get-an-ein': 'get-ein',
+  'file-a-trademark': 'file-trademark',
+  'file-delaware-franchise-tax': 'file-de-franchise-tax',
+  'generate-a-company-website': 'generate-a-website',
+  'hire-your-first-employee': 'hire-first-employee',
+  'incorporate-a-delaware-c-corp': 'incorporate-c-corp',
+  'send-an-nda': 'send-nda',
+  // AFK-app-specific guides — no corpus equivalent; land on the corpus index.
+  'extract-ultrametric-context': '',
+  'list-capabilities': '',
+  'list-my-tasks': '',
+  'summarize-my-company': '',
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
 
     // ── Ultrametric rebrand cutover (founder 2026-09-28) ─────────────────────────────────
-    // The product moved from ultrametric.ai/productarena/* to the root of ultrametric.ai —
-    // EXCEPT the homepage (founder, same day): '/' stays the company landing site, and the
-    // product's index page ("Open rankings for the AI era") serves at /overall for now.
+    // The product moved from ultrametric.ai/productarena/* to the root of ultrametric.ai.
+    // '/' serves the company landing homepage — since 2026-09-29 ported into the product app
+    // itself (app/home, block 2 below) — and the product's index page ("Open rankings for the
+    // AI era") serves at /overall for now.
     // 1. Legacy /productarena URLs 301 without the prefix — every old deep link, badge embed,
     //    and indexed page keeps working; the bare product URL goes to /overall.
     if (url.pathname === '/productarena' || url.pathname.startsWith('/productarena/')) {
@@ -2103,106 +2125,31 @@ export default {
         headers: { Location: 'https://ultrametric.ai/', 'Cache-Control': 'no-store' },
       })
     }
-    // 2. The landing site (Astro) owns the homepage, its pages, and its asset dirs
-    //    (passthrough to the zone origin). Root-path landing assets that collide with product
-    //    paths (/logos/*, /favicon.png, standalone svg/jpg files) are handled by the 404
-    //    fallback after the product proxy below.
-    const LANDING_PREFIXES = ['/company', '/tos', '/process', '/afk', '/_astro', '/faces']
-    if (
-      url.pathname === '/' ||
-      LANDING_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))
-    ) {
-      // Cache heal (2026-09-28): during the ~30-min window before landing-asset routing landed,
-      // some POPs cached 404s for landing paths — a non-OK GET gets one cache-busted retry
-      // (different cache key → guaranteed origin fetch) and the stale entry evicted.
-      let resp = await fetch(request)
-      if (!resp.ok && request.method === 'GET') {
-        const healUrl = new URL(request.url)
-        healUrl.searchParams.set('cf-heal', String(Date.now()))
-        const fresh = await fetch(new Request(healUrl.toString(), request))
-        if (fresh.ok) {
-          ctx?.waitUntil?.(caches.default.delete(request.url).catch(() => {}))
-          resp = fresh
-        }
-      }
-      // The landing's header still links the retired brand URL (https://ultrametric.ai/
-      // productarena) — rewrite those hrefs in-flight to the live product paths until the
-      // landing repo itself is updated (founder 2026-09-28: "the products link … should get
-      // to the overall page"). Direct hrefs also sidestep browsers that cached the old 301.
-      const contentType = resp.headers.get('content-type') ?? ''
-      if (contentType.includes('text/html')) {
-        // Buffered per-element text replacer: HTMLRewriter delivers text in arbitrary chunks,
-        // so accumulate until lastInTextNode before matching (long strings straddle chunks).
-        const textReplace = (map) => {
-          let buffer = ''
-          return {
-            text(t) {
-              buffer += t.text
-              if (!t.lastInTextNode) {
-                t.remove()
-                return
-              }
-              let out = buffer
-              buffer = ''
-              for (const [from, to] of Object.entries(map)) out = out.split(from).join(to)
-              t.replace(out, { html: false })
-            },
-          }
-        }
-        return new HTMLRewriter()
-          .on('a', {
-            element(el) {
-              const href = el.getAttribute('href')
-              if (!href) return
-              const m = href.match(/^(?:https:\/\/ultrametric\.ai)?\/productarena(\/.*)?$/)
-              if (m) el.setAttribute('href', m[1] && m[1] !== '/' ? m[1] : '/overall')
-            },
-          })
-          // Founder 2026-09-29: the #products section is gone from the homepage entirely (the
-          // earlier card-recast handlers went with it); the hero's "See the products ↓" anchor
-          // retargets to the rankings so it doesn't point at a removed section.
-          .on('section#products', {
-            element(el) {
-              el.remove()
-            },
-          })
-          // Founder 2026-09-29: the hero CTA drops straight into the simulator with a → arrow
-          // (label follows the destination; it briefly said "See the rankings").
-          .on('a[href="#products"]', {
-            element(el) {
-              el.setAttribute('href', '/virtual-startup')
-            },
-            ...textReplace({ 'See the products': 'Open the startup simulator', '↓': '→' }),
-          })
-          // Founder 2026-09-29: the landing's "Products" dropdown is gone — the header carries
-          // the product top bar instead (same destinations as the /overall site nav). The
-          // <details> element is the nav's only dropdown; links hide progressively on mobile.
-          .on('nav details', {
-            element(el) {
-              // Inline styles, not utility classes: the landing's Tailwind build is purged, so
-              // injected class names don't exist in its CSS. Pill style mirrors the product
-              // header (app/layout.tsx nav links) — one top-bar standard (founder 2026-09-29).
-              const pill =
-                'display:inline-block;border:1px solid #27272a;border-radius:0.5rem;padding:0.25rem 0.625rem;font-size:0.75rem;line-height:1rem;color:#d4d4d8;text-decoration:none;white-space:nowrap'
-              const link = (href, label) => `<a href="${href}" style="${pill}">${label}</a>`
-              el.replace(
-                `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.375rem">
-                   ${link('/virtual-startup', 'Virtual Startup')}
-                   ${link('/arenas', 'Arenas')}
-                   ${link('/processes', 'Processes')}
-                   ${link('/technologies', 'Technologies')}
-                   ${link('/overall', 'Rankings')}
-                   ${link('/stacks', 'Stacks')}
-                   ${link('https://github.com/ultrametricai/ultrametric', 'GitHub ↗')}
-                 </div>`,
-                { html: true },
-              )
-            },
-          })
-          .on('footer a', textReplace({ ProductArena: 'Rankings' }))
-          .transform(resp)
-      }
-      return resp
+    // 2. The landing pages are ported INTO the product app (founder 2026-09-29: "the top bar
+    //    we use should be constant through the site") — the separate Astro landing origin, its
+    //    HTMLRewriter header-injection shims, and its asset passthroughs (/_astro, /faces) are
+    //    all retired. '/' serves the ported landing homepage (app/home) via the same
+    //    pathname-rewrite trick as /overall below; /company and /tos are ordinary product
+    //    routes now and just fall through to the proxy. Old Astro-only paths 301:
+    if (url.pathname === '/') {
+      url.pathname = '/home'
+    }
+    // 2a. /afk (the AFK product page's original path) → its ported home.
+    if (url.pathname === '/afk' || url.pathname.startsWith('/afk/')) {
+      return Response.redirect(`https://ultrametric.ai/company${url.search}`, 301)
+    }
+    // 2b. The /process/* landing guides are superseded by the product /processes corpus.
+    //     84 of the 96 crawled landing slugs match a corpus slug (or alias) exactly and keep
+    //     their slug; PROCESS_SLUG_RENAMES maps the renamed ones and sends the app-specific
+    //     guides with no corpus equivalent to the index. Unknown slugs pass through unchanged
+    //     (the corpus route 404s them, same end state as the retired landing origin).
+    if (url.pathname === '/process' || url.pathname.startsWith('/process/')) {
+      const slug = url.pathname.slice('/process/'.length).replace(/\/+$/, '')
+      const mapped = Object.prototype.hasOwnProperty.call(PROCESS_SLUG_RENAMES, slug)
+        ? PROCESS_SLUG_RENAMES[slug]
+        : slug
+      const target = mapped ? `/processes/${mapped}` : '/processes'
+      return Response.redirect(`https://ultrametric.ai${target}${url.search}`, 301)
     }
     // 3. /overall serves the product homepage (the Next app's index at the origin root).
     if (url.pathname === '/overall' || url.pathname === '/overall/') {
@@ -2241,15 +2188,6 @@ export default {
       body: request.body,
       redirect: 'manual',
     })
-    // Landing-asset fallback: the Astro landing site references root-path assets whose
-    // prefixes the product also uses (/logos/*, /favicon.png, top-level svg/jpg…). When the
-    // product origin 404s a GET for a file-looking path, retry against the zone origin so
-    // landing pages stay styled. Product misses for real product assets still 404 (the
-    // fallback's own 404 is returned).
-    if (resp.status === 404 && request.method === 'GET' && /\.[a-z0-9]+$/i.test(url.pathname)) {
-      const fallback = await fetch(request)
-      if (fallback.ok) return fallback
-    }
     // Rewrite any absolute redirects back onto ultrametric.ai
     const headers = new Headers(resp.headers)
     const loc = headers.get('location')

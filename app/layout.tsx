@@ -405,42 +405,86 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             inside overflow-x-auto wrappers would push the whole page wider than the viewport
             on phones instead of scrolling inside their wrapper. */}
         <main id="main" className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
-        <footer className="border-t border-zinc-800 py-6">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
-            <span>© 2026 Ultrametric Inc</span>
-            {/* flex-wrap: at narrow widths (375px) this link row is wider than the viewport and
-                was the page's only source of horizontal scroll. */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-              <Link href="/terms" className="hover:text-emerald-300">
-                Terms
-              </Link>
-              <Link href="/privacy" className="hover:text-emerald-300">
-                Privacy
-              </Link>
-              <Link href="/pipeline" className="hover:text-emerald-300">
-                Testing pipeline
-              </Link>
-              <Link href="/proofs" className="hover:text-emerald-300">
-                Recorded proofs
-              </Link>
-              {/* Founder 2026-09-15: no separate "Test your product" footer link — adding a
-                  product IS the test. /submit (the quick scanner) stays reachable from the
-                  CONTRIBUTING flow, just not from the footer. */}
-              <a
-                href="https://github.com/ultrametricai/ultrametric/blob/main/CONTRIBUTING.md#3-add-your-product"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-300"
-                title="Add your product via PR — one entry in data/<arena>/products.json (CONTRIBUTING.md)"
-              >
-                Add your product →
-              </a>
-              <Link href="/llms.txt" className="hover:text-emerald-300">
-                For agents: /llms.txt
-              </Link>
-              <Link href="/feed.xml" className="hover:text-emerald-300">
-                RSS
-              </Link>
+        {/* Sitewide footer — the landing site's footer, ported here as THE standard footer
+            (founder 2026-09-29: one footer sitewide, like the top bar). Structure/copy follow
+            the landing: wordmark + tagline, © + the made-from icons, and the landing link row
+            (Company processes / Foreloop / Rankings / 𝕏 / Privacy / Terms → /tos). Per founder:
+            no RSS link, no /changelog link. The landing's strange-attractor canvas and the
+            copyright/icon popup animations are dropped; the graph-paper grid stays (pure CSS). */}
+        <footer className="relative border-t border-zinc-800 py-16 sm:py-24">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.05]"
+            style={{
+              backgroundImage:
+                'linear-gradient(90deg, rgb(161 161 170) 1px, transparent 1px), linear-gradient(0deg, rgb(161 161 170) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+              WebkitMaskImage: 'radial-gradient(34% 70% at 50% 52%, black, transparent)',
+              maskImage: 'radial-gradient(34% 70% at 50% 52%, black, transparent)',
+            }}
+            aria-hidden
+          />
+          <div className="relative z-10 mx-auto max-w-7xl px-5">
+            <div className="mb-8">
+              {/* eslint-disable-next-line @next/next/no-img-element -- static svg wordmark */}
+              <img src="/ultrametric-wordmark.svg" alt="Ultrametric logo" className="h-4 w-auto" loading="lazy" />
+              <p className="mt-1 text-sm text-zinc-500">Applied intelligence for companies and beyond.</p>
+            </div>
+            <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+              <div className="flex flex-wrap items-center gap-1 text-sm text-zinc-500">
+                <span>© 2026 Ultrametric.</span>
+                <span className="mx-2 hidden sm:inline">·</span>
+                <span className="flex items-center gap-1">
+                  <span>Made from</span>
+                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M3 18h18M5 18V10M19 18V10M5 10l2-6h10l2 6M8 10V7M12 10V4M16 10V7M5 14h14" />
+                    </svg>
+                  </span>
+                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M2 20l5-8 4 5 3-4 8 7" />
+                    </svg>
+                  </span>
+                  <span>&amp;</span>
+                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                    </svg>
+                  </span>
+                </span>
+              </div>
+              {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
+                  viewport and becomes the page's only source of horizontal scroll. */}
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-zinc-500">
+                <Link href="/company" className="transition-colors hover:text-zinc-300">
+                  Company processes
+                </Link>
+                <a
+                  href="https://foreloop.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-zinc-300"
+                >
+                  Foreloop
+                </a>
+                <Link href="/overall" className="transition-colors hover:text-zinc-300">
+                  Rankings
+                </Link>
+                <a
+                  href="https://x.com/ultrametricai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-zinc-300"
+                >
+                  𝕏
+                </a>
+                <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+                  Privacy
+                </Link>
+                <Link href="/tos" className="transition-colors hover:text-zinc-300">
+                  Terms
+                </Link>
+              </div>
             </div>
           </div>
         </footer>

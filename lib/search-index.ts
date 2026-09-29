@@ -138,6 +138,9 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/stacks/builder', label: 'Stack builder', sublabel: 'Build your own evidence-backed stack' },
   { href: '/my-stack', label: 'My stack', sublabel: 'Enter your stack, get evidence-based upgrades' },
   { href: '/stacks/battle', label: 'Battle of the stacks', sublabel: 'Two stacks, side by side' },
+  // Company pages ported from the retired Astro landing (founder 2026-09-29).
+  { href: '/company', label: 'Company processes (Ultrametric)', sublabel: 'Build an AI native business — the AFK product page' },
+  { href: '/tos', label: 'Terms of Service', sublabel: 'The Ultrametric, Inc. terms of service' },
 ]
 
 export function buildPageEntries(keywords?: Record<string, string[]>): SearchEntry[] {
