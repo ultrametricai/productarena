@@ -103,23 +103,23 @@ markdown, schema-validated in CI, usable without running any code:
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
-| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage | `lib/founderOps.ts` coverage checks |
-| [`journeys/`](journeys/) | `chains.json` — 24 multi-process founder paths | corpus schema + loader tests |
-| [`processes/`](processes/) | `corpus.json` (123 operational processes: DAGs, routing, geo scope, time estimates) + jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`, …) | `schemas/rule.schema.json` + validator |
-| [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
-| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited) | exact-dimension matching; unknown = `unsupported`, never guessed |
+| [`processes/`](processes/) | `corpus.json` (123 operational processes: DAGs, routing, geo scope, time estimates) + jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
 | [`business-logic/`](business-logic/) | Index of the open business-logic modules — decision support, calculations, calendars, comparisons (code in `lib/openstartup/`) | worked-example + property tests |
 | [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product (578) | `schemas/vendor-review.schema.json`, deterministic regeneration |
+| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited) | exact-dimension matching; unknown = `unsupported`, never guessed |
+| [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
 | [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews | drift-gated against the zod source |
-| [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
+| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage | `lib/founderOps.ts` coverage checks |
+| [`journeys/`](journeys/) | `chains.json` — 24 multi-process founder paths | corpus schema + loader tests |
 | [`templates/`](templates/) | Blank, schema-valid starting points for contributions | — |
+| [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
 | [`governance/`](governance/) | Review policy + maturity ladder, evidence doctrine, agent policy, security | — |
 | `data/` | The arena evidence layer: per-arena products, stories, verdicts, evidence packs, fingerprinted rankings | `recompute-check` (bit-identical determinism) |
-| `app/`, `components/`, `lib/` | The Next.js site (~5,900 static pages) over the corpus | typecheck, lint, ~2,000 vitest tests |
 | `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
 | `infra/` | Cloudflare edge worker (routing, auth, live MCP probes) | 120 worker tests |
 | `docs/` | Architecture ([FOUNDER-OPS.md](docs/FOUNDER-OPS.md)), scoring companions, program docs | — |
+| `app/`, `components/`, `lib/` | The Next.js site (~5,900 static pages) over the corpus | typecheck, lint, ~2,000 vitest tests |
 
 Record semantics that bind everything (from [docs/FOUNDER-OPS.md](docs/FOUNDER-OPS.md)):
 stable IDs with versioned edits; every legal statement resolves to a primary source with an
