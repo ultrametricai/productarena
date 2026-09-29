@@ -285,7 +285,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   and buttons are desktop-only — mobile gets the ☰ MobileNav. */}
               <Link
                 href="/virtual-startup"
-                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
+                className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="virtual-startup" title="Startup sim — run a synthetic company through the real process corpus" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Startup sim
@@ -295,7 +295,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </span>
               <Link
                 href="/processes"
-                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
+                className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
                 <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
@@ -333,6 +333,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                       { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
                       { id: "yc", name: "YC batches", label: "ranking", href: "/yc" },
                       { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
+                      { id: "stacks", name: "Stacks", label: "tool", href: "/stacks" },
+                      { id: "compare", name: "Compare", label: "tool", href: "/compare" },
                       { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
                       { id: "stack-battle", name: "Battle of the stacks", label: "tool", href: "/stacks/battle" },
                       { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
@@ -348,22 +350,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </span>
               {/* The three tools + the power view each wear their GeoMark (same seed as their
                   page headers/sections), hidden on the smallest screens to keep the row tight. */}
-              <Link
-                href="/stacks"
-                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
-              >
-                <GeoMark seed="stacks" title="Stacks — proven product combinations" size={13} className="hidden text-zinc-500 sm:inline-flex" />
-                Stacks
-              </Link>
-                            <Link
-                href="/compare"
-                className="hidden shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 sm:flex"
-              >
-                <GeoMark seed="compare" title="Compare — side-by-side product comparison" size={13} className="hidden text-zinc-500 sm:inline-flex" />
-                Compare
-              </Link>
               {/* /everything is deliberately unlisted (founder call: "don't show the everything
                   page") — the route stays alive so old links don't 404, but nothing links to it. */}
+              <a
+                href="#install"
+                className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
+                title="Install Ultrametric — agent prompt, CLI, or MCP (bottom of every page)"
+              >
+                Install
+              </a>
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"
@@ -405,7 +400,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Sitewide footer — the landing site's footer, ported here as THE standard footer
             (founder 2026-09-29: one footer sitewide, like the top bar). Structure/copy follow
             the landing: wordmark + tagline, © + the made-from icons, and the landing link row
-            (Company processes / Foreloop / Rankings / 𝕏 / Privacy / Terms → /tos). Per founder:
+            (𝕏 / Privacy / Terms → /tos; Company processes/Foreloop/Rankings dropped 2026-09-29). Per founder:
             no RSS link, no /changelog link. The landing's strange-attractor canvas and the
             copyright/icon popup animations are dropped; the graph-paper grid stays (pure CSS). */}
         <footer className="relative border-t border-zinc-800 py-16 sm:py-24">
@@ -453,20 +448,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
                   viewport and becomes the page's only source of horizontal scroll. */}
               <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-zinc-500">
-                <Link href="/company" className="transition-colors hover:text-zinc-300">
-                  Company processes
-                </Link>
-                <a
-                  href="https://foreloop.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-zinc-300"
-                >
-                  Foreloop
-                </a>
-                <Link href="/overall" className="transition-colors hover:text-zinc-300">
-                  Rankings
-                </Link>
                 <a
                   href="https://x.com/ultrametricai"
                   target="_blank"

@@ -1169,8 +1169,7 @@ export default function VirtualStartup({
           {/* Drive mode (founder addendum 2026-09-29): Auto plays the whole journey from the
               asserted setup; Semi-auto pauses at each unasserted decision's first affected row
               and asks inline in the terminal. */}
-          <div role="group" aria-label="Drive mode" className="flex items-center gap-1">
-            <span className="text-[10px] uppercase tracking-wider text-zinc-500">Drive:</span>
+          <div role="group" aria-label="Drive mode" className="ml-auto flex items-center gap-1">
             <button
               type="button"
               data-testid="vs-mode-auto"
@@ -1200,13 +1199,18 @@ export default function VirtualStartup({
               Semi-auto
             </button>
           </div>
+          {/* Founder 2026-09-29: mode pills sit right beside the button (no 'Drive' word), and
+              a running sim can be STOPPED — the primary button flips to Stop while running. */}
           <button
             type="button"
-            onClick={start}
-            disabled={running}
-            className="ml-auto rounded-full bg-emerald-500 px-6 py-2 font-display text-base font-semibold tracking-tight text-zinc-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 disabled:opacity-60"
+            onClick={() => (running ? stop() : start())}
+            className={`rounded-full px-6 py-2 font-display text-base font-semibold tracking-tight transition ${
+              running
+                ? 'border border-red-400/60 bg-red-400/10 text-red-300 hover:bg-red-400/20'
+                : 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400'
+            }`}
           >
-            {running ? 'Running…' : done ? '▶ Run it again' : '▶ Run this startup'}
+            {running ? '⏹ Stop' : done ? '▶ Run it again' : '▶ Run this startup'}
           </button>
         </div>
         {yc && (

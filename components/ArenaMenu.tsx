@@ -117,7 +117,7 @@ export default function ArenaMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}
-        className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+        className="flex cursor-pointer items-center gap-1 text-sm text-zinc-300 transition hover:text-emerald-300"
       >
         {triggerIcon}
         {title}

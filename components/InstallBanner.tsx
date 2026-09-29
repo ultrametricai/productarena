@@ -31,7 +31,7 @@ export default function InstallBanner() {
   }
 
   return (
-    <section aria-label="Set up Ultrametric" className="border-t border-zinc-800">
+    <section id="install" aria-label="Set up Ultrametric" className="scroll-mt-4 border-t border-zinc-800">
       <div className="mx-auto max-w-7xl px-5 py-10">
         <h2 className="font-display text-xl font-semibold tracking-tight">Your AI native company starts here</h2>
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Install method">
