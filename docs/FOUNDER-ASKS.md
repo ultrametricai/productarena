@@ -185,6 +185,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Top bar Arenas menu renders off-screen left | in progress (founder 2026-09-28) |
 | "Simulate this playbook" section: too many nested boxes, tighten UI | in progress (founder 2026-09-28) |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
+| Include Ultrametric in the rankings (the official CLI/MCP being built at /v2) | in-lane (ultrametric-family) 2026-09-29 — honest outcome: **page-only, no judged entry**. Crawl-verified: npm ultrametric-cli + ultrametric-mcp 404 (unpublished, dedicated repo private), POST /mcp 410 (retired offering — recorded negative), data API live (categories.json/openapi.json/llms.txt all 200) but it's a single-source export of our own rankings (Stripe Sigma/Data Pipeline precedent) and self-judging our own platform would be self-refereeing. New `/family/ultrametric` (disclosure in tagline): Foreloop + AFK judged refs, Rankings & Data API + CLI/MCP + company-records npm `ultrametric` as page-only lines with recorded reasons; CLI/MCP flagged as the first mcp-infrastructure bring-up (with owner-product bias audit) once a live endpoint + published packages exist. Full decision table in docs/product-families.md Wave 4 |
 
 ## Shipped (recent — see git log for full history)
 
