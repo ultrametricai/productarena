@@ -18,7 +18,7 @@ import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { confidenceFor } from '@/lib/confidence'
 import type { PricingCell } from '@/lib/pricing'
-import { battleSlug, isGroupUntested, isThemeUntested, type CategoryData } from '@/lib/data-helpers'
+import { isGroupUntested, isThemeUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
   type ArenaTableRow,
@@ -146,21 +146,6 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
     return map
   }, [data])
 
-  // Products whose vendor announced a shutdown (lib/shutdown.ts): the row stays, tagged, but
-  // the "vs …" affordance never SUGGESTS one as the rival to compare against.
-  const shutdownIds = useMemo(
-    () => new Set(data.products.filter((p) => p.shutdown).map((p) => p.id)),
-    [data],
-  )
-
-  // Battle slugs are ordered by each product's position in data.products (see
-  // lib/data.ts's battleSlug + how rankings.battles is built in lib/scoring.ts), not
-  // alphabetically — replicate that exact ordering here so the link always resolves.
-  function orderByProduct(x: string, y: string): [string, string] {
-    const idx = (id: string) => data.products.findIndex((p) => p.id === id)
-    return idx(x) <= idx(y) ? [x, y] : [y, x]
-  }
-
   function handleSort(col: ArenaTableColumn) {
     if (col === column) {
       setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
@@ -187,7 +172,9 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
       />
 
       <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-xl sm:border">
-        <table className="w-full border-collapse text-sm">
+        {/* The visible "Leaderboard" heading dropped (founder 2026-09-30: self-evident); the
+            aria-label keeps an accessible name on the table itself. */}
+        <table aria-label={`${data.category.name} rankings`} className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} className="w-8">
@@ -243,10 +230,6 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
             {sorted.map((row) => {
               const product = productById.get(row.productId)!
               const rank = rankOf.get(row.productId) ?? sorted.length
-              // Suggested rival: the best-ranked OTHER product that isn't shutting down.
-              const rival = data.rankings.leaderboard.find(
-                (e) => e.productId !== row.productId && !shutdownIds.has(e.productId),
-              )
               return (
                 <tr key={row.productId} className="transition hover:bg-zinc-800/70">
                   <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
@@ -277,16 +260,10 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       )}
                       {/* BusinessModelChip removed (founder 2026-09-24: too much info in the
                           ranking rows) — the model still shows on the product page. */}
+                      {/* Per-row "vs …" battle link removed (founder 2026-09-30) — battles stay
+                          reachable from /overall's Leading battles cards and the /vs/ routes. */}
                       <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
                     </div>
-                    {rival && (
-                      <Link
-                        href={`/arena/${data.category.id}/battle/${battleSlug(...orderByProduct(row.productId, rival.productId))}`}
-                        className="mt-1 inline-block text-[10px] text-zinc-500 hover:text-emerald-300"
-                      >
-                        vs {productById.get(rival.productId)?.name} ↗
-                      </Link>
-                    )}
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex items-center gap-1.5">
@@ -345,7 +322,10 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                     ) : row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
-                    {data.popularity[row.productId]?.stars !== undefined || data.popularity[row.productId]?.npmWeekly !== undefined || data.popularity[row.productId]?.pypiWeekly !== undefined ? (
+                    {/* PyPI installs dropped from the leaderboard's popularity display (founder
+                        2026-09-30) — the data stays committed and still shows on product pages;
+                        a pypi-only product falls through to the PopularTag / empty cell. */}
+                    {data.popularity[row.productId]?.stars !== undefined || data.popularity[row.productId]?.npmWeekly !== undefined ? (
                       productById.get(row.productId)?.urls.github ? (
                         <a href={productById.get(row.productId)!.urls.github} target="_blank" rel="noopener noreferrer" title="Open the GitHub repo" className="hover:text-emerald-300">
                           <MomentumChip popularity={data.popularity[row.productId]} compact />
@@ -394,10 +374,14 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                     <AgentAccessGlyphs data={data} productId={row.productId} />
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
+                    {/* showDisputed={false}: no 'disputed' datum inside the leaderboard (founder
+                        2026-09-30, display only) — the dispute data stays committed and still
+                        shows on the product page this chip links to. */}
                     <VerificationMixChip
                       data={data}
                       productId={row.productId}
                       href={`/arena/${data.category.id}/product/${row.productId}#story-verdicts`}
+                      showDisputed={false}
                     />
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">

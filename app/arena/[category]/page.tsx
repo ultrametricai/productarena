@@ -11,7 +11,6 @@ import arenaIcons from '@/data/arena-icons.json'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
 import { humanizeTheme } from '@/lib/icons'
-import { categoryFreshness } from '@/lib/freshness'
 import { hotReasonsForCategory } from '@/lib/hotProducts'
 import { hasLogo } from '@/lib/logos'
 import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
@@ -121,7 +120,6 @@ export async function generateMetadata({
 export default async function ArenaPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params
   const data = loadCategory(category)
-  const freshness = categoryFreshness(data)
   // Computed server-side and passed down as a plain prop: ArenaTable/StoryMatrix are client
   // components, so they can't call lib/logos.ts's fs-based hasLogo() themselves (see
   // components/ProductLogoView.tsx for why).
@@ -172,17 +170,9 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           {data.category.name}
         </h1>
         <p className="mt-2 text-zinc-400">{data.category.description}</p>
-        <p className="mt-2 text-xs text-zinc-400">
-          <a
-            href="#story-matrix"
-            title="The full story matrix — every judged (product, story) product user story below"
-            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-          >
-            {data.stories.length} user stories · {data.verdicts.length} judged cells
-          </a>{' '}
-          · updated {data.rankings.generatedAt.slice(0, 10)}
-          {freshness && <> · Evidence as of {freshness}</>}
-        </p>
+        {/* The header's story/verdict-count + freshness stats line was removed (founder
+            2026-09-30) — the story matrix below speaks for itself and every verdict still
+            links to its dated evidence. */}
         <p className="mt-2 flex flex-wrap gap-x-4 text-xs">
           {/* Buyer checklist + Procurement report links removed (founder 2026-09-25: "remove
               access for now") — the /checklist and /report routes stay alive for old links,
@@ -198,13 +188,9 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           )}
         </p>
       </div>
-      <div>
-        <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
-          <GeoMark seed="leaderboard" title="Leaderboard — every product ranked by evidence" size={18} className="text-zinc-500" />
-          Leaderboard
-        </h2>
-        <ArenaTable data={data} logoMap={logoMap} pricing={pricing} hotReasons={Object.keys(hotReasons).length > 0 ? hotReasons : undefined} />
-      </div>
+      {/* No "Leaderboard" heading (founder 2026-09-30: self-evident — the ranked table opens
+          the page); the table itself carries an aria-label so it keeps an accessible name. */}
+      <ArenaTable data={data} logoMap={logoMap} pricing={pricing} hotReasons={Object.keys(hotReasons).length > 0 ? hotReasons : undefined} />
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
       <div id="story-matrix" className="scroll-mt-4">

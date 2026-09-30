@@ -11,11 +11,16 @@ import { verificationMix } from '@/lib/verification'
 // `href` (optional) links the figure to where the per-story verification actually lives — the
 // product page's #story-verdicts table (its Verification column shows every cell's level).
 // Callers must NOT set it inside another link.
-export default function VerificationMixChip({ data, productId, href }: { data: CategoryData; productId: string; href?: string }) {
+//
+// `showDisputed` (default true): leaderboards pass false (founder 2026-09-30: no 'disputed'
+// datum inside the ranking tables) — the disputed cells still count toward the denominator
+// (hiding them from the total WOULD move the verified ratio, which we never do); only the red
+// suffix and the tooltip's disputed line stop rendering. Product pages keep the full display.
+export default function VerificationMixChip({ data, productId, href, showDisputed = true }: { data: CategoryData; productId: string; href?: string; showDisputed?: boolean }) {
   const mix = verificationMix(data, productId)
   const verified = mix.tested + mix.corroborated
   const total = verified + mix['vendor-claim'] + mix.disputed
-  const title = `Verification — probed by us: ${mix.tested} · community-corroborated: ${mix.corroborated} · vendor claim only: ${mix['vendor-claim']} · disputed: ${mix.disputed}. "Verified" = probed or corroborated.${href ? ' Click for the per-story verification column.' : ' See legend.'}`
+  const title = `Verification — probed by us: ${mix.tested} · community-corroborated: ${mix.corroborated} · vendor claim only: ${mix['vendor-claim']}${showDisputed ? ` · disputed: ${mix.disputed}` : ''}. "Verified" = probed or corroborated.${href ? ' Click for the per-story verification column.' : ' See legend.'}`
   if (total === 0) {
     return <span title={title} className="text-xs text-zinc-500">—</span>
   }
@@ -23,7 +28,7 @@ export default function VerificationMixChip({ data, productId, href }: { data: C
     <span title={title} className="whitespace-nowrap text-xs tabular-nums">
       <span className="text-emerald-400">{verified}</span>
       <span className="text-zinc-500">/{total} verified</span>
-      {mix.disputed > 0 && <span className="text-red-400"> · {mix.disputed} disputed</span>}
+      {showDisputed && mix.disputed > 0 && <span className="text-red-400"> · {mix.disputed} disputed</span>}
     </span>
   )
   if (!href) return chip
