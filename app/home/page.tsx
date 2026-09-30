@@ -124,8 +124,9 @@ export default function HomePage() {
           ending where the sitewide InstallBanner ("Your AI native company starts here",
           app/layout.tsx) takes over, then the footer. */}
       <BackedByBuilders />
-      <HomeRankingsMini rows={topRankings} />
+      {/* Processes above the vendor rankings (founder 2026-09-30 reorder). */}
       <HomeProcessesMini rows={topProcesses} />
+      <HomeRankingsMini rows={topRankings} />
       {/* The get-started hero renders as an h2 section here — the landing hero above owns h1. */}
       <div className="border-t border-zinc-800/60">
         <GetStartedHeroSection headingLevel="h2" />

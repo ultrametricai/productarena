@@ -52,14 +52,15 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     expect(screen.getByAltText('Photo of Jude Gomila').getAttribute('src')).toBe('/faces/jude-gomila.jpg')
   })
 
-  it('renders the founder 2026-09-30 section flow in order: hero → builders → Rankings → processes → get-started content', () => {
+  it('renders the founder 2026-09-30 section flow in order: hero → builders → processes → vendor rankings → get-started content', () => {
     const { container } = render(<HomePage />)
-    // One marker per section, in expected document order.
+    // One marker per section, in expected document order (founder reorder 2026-09-30:
+    // processes ABOVE the vendor rankings).
     const markers = [
       screen.getByRole('heading', { level: 1, name: /Automating\s*the startup/ }),
       screen.getByText('Backed by builders'),
-      screen.getByRole('heading', { level: 2, name: 'Rankings' }),
       screen.getByRole('heading', { level: 2, name: 'Automating founder processes' }),
+      screen.getByRole('heading', { level: 2, name: 'Open vendor rankings' }),
       screen.getByRole('heading', { level: 2, name: 'Start and run your company from any agent' }),
       screen.getByRole('heading', { level: 2, name: 'Works across the agents you already use' }),
     ]
@@ -94,11 +95,18 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     expect(section).not.toBeNull()
     const rows = section.querySelectorAll('tbody tr')
     expect(rows.length).toBe(HOME_PROCESSES_COUNT)
-    // Every row links to its process page and carries an agent-ceiling bar.
+    // Every row links to its process page and carries an agent-ceiling bar; the icon renders
+    // through IconGlyph as the house SVG, never as a raw `pi:` token (founder bug 2026-09-30).
     for (const row of rows) {
       expect(row.querySelector('a')?.getAttribute('href')).toMatch(/^\/processes\/[a-z0-9-]+$/)
       expect(row.querySelector('[role="img"]')?.getAttribute('aria-label')).toMatch(/% of steps agent-runnable$/)
+      expect(row.textContent).not.toContain('pi:')
+      expect(row.querySelector('a svg')).not.toBeNull()
     }
+    // The Vendor column rides along (founder 2026-09-30): header present, and at least one row
+    // carries a ?via= lens chip into its process.
+    expect(within(section).getByText('Vendor')).toBeDefined()
+    expect(section.querySelector('tbody a[href*="?via="]')).not.toBeNull()
     const see = within(section).getByRole('link', { name: 'See processes →' })
     expect(see.getAttribute('href')).toBe('/processes')
   })

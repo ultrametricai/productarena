@@ -17,11 +17,10 @@ export default function HomeRankingsMini({ rows }: { rows: MegaTableRow[] }) {
     <section aria-labelledby="home-rankings-heading" className="border-t border-zinc-800/60 py-16 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-8 md:px-12">
         <h2 id="home-rankings-heading" className="font-display text-balance text-3xl font-medium tracking-tight sm:text-4xl">
-          Rankings
+          Open vendor rankings
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          Every product judged on evidence — can your agent reach it, and how good is it overall? The top{' '}
-          {HOME_RANKINGS_COUNT} across all arenas:
+          We tested the vendors so you don&rsquo;t have to. The top {HOME_RANKINGS_COUNT} across all arenas:
         </p>
         <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-[15px]">
