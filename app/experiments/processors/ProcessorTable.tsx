@@ -213,7 +213,7 @@ export default function ProcessorTable() {
                   ) : (
                     <span title={c.clockNote}>
                       {c.maxClockGhz.toFixed(1)}
-                      <span className="text-zinc-600"> GHz</span>
+                      <span className="text-zinc-500"> GHz</span>
                     </span>
                   )}
                 </td>
@@ -226,14 +226,14 @@ export default function ProcessorTable() {
                   ) : (
                     <span title={c.tdpNote}>
                       {c.tdpW}
-                      <span className="text-zinc-600"> W</span>
+                      <span className="text-zinc-500"> W</span>
                     </span>
                   )}
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
                   <span title={c.memBwNote}>
                     {c.memBwGBs.toLocaleString()}
-                    <span className="text-zinc-600"> GB/s</span>
+                    <span className="text-zinc-500"> GB/s</span>
                     {c.memBwNote?.startsWith('Derived') && (
                       <span className="ml-1 font-sans text-[10px] text-zinc-500" title={c.memBwNote}>
                         drv
@@ -257,7 +257,7 @@ export default function ProcessorTable() {
                   ) : (
                     <>
                       {c.maxMemGB}
-                      <span className="text-zinc-600"> GB</span>
+                      <span className="text-zinc-500"> GB</span>
                     </>
                   )}
                 </td>

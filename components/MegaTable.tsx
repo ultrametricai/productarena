@@ -328,7 +328,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.naDimensions?.includes('agentReady') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface of its own. The Overall score still applies.">n/a</span>
+                      <span className="text-zinc-500" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface of its own. The Overall score still applies.">n/a</span>
                     ) : row.agentReadyUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
                         untested
@@ -337,23 +337,23 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       <span className="text-zinc-500">n/a</span>
                     ) : (
                       <span className="flex items-center gap-1.5 whitespace-nowrap">
-                        <span>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></span>
+                        <span>{row.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></span>
                         <TrendArrow delta={row.agentReadyTrendDelta} metric="agent-readiness" />
                       </span>
                     )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                     {row.naDimensions?.includes('agenticApp') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class. The Overall score still applies.">n/a</span>
+                      <span className="text-zinc-500" title="Not meaningful for this arena's product class. The Overall score still applies.">n/a</span>
                     ) : row.agenticAppUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
-                    ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 lg:table-cell">
                     {row.naDimensions?.includes('apiQuality') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no API of its own. The Overall score still applies.">n/a</span>
+                      <span className="text-zinc-500" title="Not meaningful for this arena's product class — a physical part has no API of its own. The Overall score still applies.">n/a</span>
                     ) : row.apiUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
                         untested
@@ -361,7 +361,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     ) : row.apiQuality === null ? (
                       <span className="text-zinc-500">n/a</span>
                     ) : (
-                      <>{row.apiQuality.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                      <>{row.apiQuality.toFixed(0)}<span className="text-zinc-500">/100</span></>
                     )}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">

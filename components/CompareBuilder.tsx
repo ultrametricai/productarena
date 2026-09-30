@@ -87,7 +87,7 @@ function ScoreCell({ value, winner }: { value: number | null; winner: boolean })
   return (
     <span className={`font-mono tabular-nums ${winner ? 'font-semibold text-emerald-300' : 'text-zinc-300'}`}>
       {value.toFixed(0)}
-      <span className={winner ? 'text-emerald-300/50' : 'text-zinc-600'}>/100</span>
+      <span className={winner ? 'text-emerald-300/50' : 'text-zinc-500'}>/100</span>
     </span>
   )
 }
@@ -128,7 +128,7 @@ function StoryCellView({ cell, product, storyId }: { cell: StoryCellState; produ
       {cell.verdict !== 'none' && cell.verdict !== 'na' && (
         <span className="font-mono text-xs tabular-nums text-zinc-400 transition group-hover:text-emerald-300">
           {formatQuality(cell.quality)}
-          <span className="text-zinc-600">/10</span>
+          <span className="text-zinc-500">/10</span>
         </span>
       )}
       {/* link=false: this whole cell is already an anchor — nested anchors are invalid. */}

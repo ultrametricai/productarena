@@ -74,7 +74,7 @@ export default function GrowthDriverProcessesPage() {
                 </td>
                 <td className="px-3 py-2">
                   <span className="font-mono tabular-nums text-emerald-300">{r.growthImpact}</span>
-                  <span className="text-zinc-600">/5</span>
+                  <span className="text-zinc-500">/5</span>
                   <span aria-hidden className="ml-2 tracking-tighter text-emerald-400/70">{'▮'.repeat(r.growthImpact)}</span>
                 </td>
                 <td className="px-3 py-2 text-zinc-300">{r.phase}</td>

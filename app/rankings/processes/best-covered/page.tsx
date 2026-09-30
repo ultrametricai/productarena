@@ -125,13 +125,13 @@ export default function BestCoveredProcessesPage() {
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-emerald-300">
                   {r.top ? (
-                    <>{r.top.processScore}<span className="text-zinc-600">/100</span></>
+                    <>{r.top.processScore}<span className="text-zinc-500">/100</span></>
                   ) : (
                     <span className="font-sans text-xs italic text-zinc-500">unscored</span>
                   )}
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
-                  {r.rankableSteps}<span className="text-zinc-600">/{r.totalSteps}</span>
+                  {r.rankableSteps}<span className="text-zinc-500">/{r.totalSteps}</span>
                 </td>
               </tr>
             ))}

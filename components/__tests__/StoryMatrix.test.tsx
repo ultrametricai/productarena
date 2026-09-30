@@ -31,4 +31,21 @@ describe('StoryMatrix', () => {
     const expectedCount = data.stories.filter((s) => s.persona === persona).length
     expect(screen.getByText(`${expectedCount}/${data.stories.length} stories shown`, { exact: false })).toBeDefined()
   })
+
+  it('shows the action-primitives theme under its plain-language name (founder 2026-09-30)', () => {
+    const data = loadCategory('browser-agents', path.resolve(__dirname, '../../data'))
+    render(<StoryMatrix data={data} logoMap={{}} />)
+    expect(screen.getAllByText('Agent actions').length).toBeGreaterThan(0)
+    expect(screen.queryByText('Action primitives')).toBeNull()
+  })
+
+  it('keeps group section names (the "Caching" label) at the readable secondary tier', () => {
+    // Founder 2026-09-30: group section names rendered very dark grey on black. Labels that
+    // name a section sit at zinc-400 (secondary), never zinc-500/600.
+    const data = loadCategory('browser-agents', path.resolve(__dirname, '../../data'))
+    render(<StoryMatrix data={data} logoMap={{}} />)
+    for (const label of screen.getAllByText('Caching')) {
+      expect(label.className).toContain('text-zinc-400')
+    }
+  })
 })

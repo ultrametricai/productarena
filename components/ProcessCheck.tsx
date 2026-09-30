@@ -102,9 +102,9 @@ export default function ProcessCheck({
           <>
             {' '}at avg{' '}
             <span className="tabular-nums text-emerald-400">{check.avgYours.toFixed(0)}</span>
-            <span className="text-zinc-600">/100</span> vs best{' '}
+            <span className="text-zinc-500">/100</span> vs best{' '}
             <span className="tabular-nums text-emerald-400">{(check.avgBest ?? 0).toFixed(0)}</span>
-            <span className="text-zinc-600">/100</span>
+            <span className="text-zinc-500">/100</span>
             <span className="text-zinc-500"> on those steps</span>
           </>
         )}
@@ -143,7 +143,7 @@ export default function ProcessCheck({
                   >
                     {s.yours.score.toFixed(0)}
                   </span>
-                  <span className="text-zinc-600">/100</span>
+                  <span className="text-zinc-500">/100</span>
                   <span className="mx-1.5 text-zinc-700">·</span>
                   best:{' '}
                   <Link
@@ -153,7 +153,7 @@ export default function ProcessCheck({
                     {s.best.name}
                   </Link>{' '}
                   <span className="font-mono tabular-nums text-zinc-300">{s.best.score.toFixed(0)}</span>
-                  <span className="text-zinc-600">/100</span>
+                  <span className="text-zinc-500">/100</span>
                 </span>
               )}
             </div>

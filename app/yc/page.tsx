@@ -97,7 +97,7 @@ export default function YcIndexPage() {
                   ) : (
                     <>
                       {batch.leader.agentReady.toFixed(0)}
-                      <span className="text-zinc-600">/100</span>
+                      <span className="text-zinc-500">/100</span>
                     </>
                   )}
                 </td>

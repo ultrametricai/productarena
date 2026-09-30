@@ -163,11 +163,11 @@ export default function BestApiRankingPage() {
                   ) : row.apiQuality === null ? (
                     <span className="font-sans text-xs text-zinc-500">n/a</span>
                   ) : (
-                    <>{row.apiQuality.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                    <>{row.apiQuality.toFixed(0)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
-                  {row.agentReady === null ? <span className="font-sans text-xs text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                  {row.agentReady === null ? <span className="font-sans text-xs text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                 </td>
                 <td className="hidden px-3 py-2 md:table-cell">
                   <AgentAccessGlyphs data={row.data} productId={row.product.id} />

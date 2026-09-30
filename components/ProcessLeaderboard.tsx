@@ -119,7 +119,7 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
                     title={`Step score from judged verdicts on the ${s.storyCount} stories mapped to this step — expand the step block below for the citations`}
                   >
                     {s.score.toFixed(0)}
-                    <span className="text-zinc-600">/100 · {s.storyCount} stories</span>
+                    <span className="text-zinc-500">/100 · {s.storyCount} stories</span>
                   </span>
                 </li>
               ))}

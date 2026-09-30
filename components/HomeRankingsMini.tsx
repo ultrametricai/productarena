@@ -64,7 +64,7 @@ export default function HomeRankingsMini({ rows }: { rows: MegaTableRow[] }) {
                     ) : (
                       <span className="whitespace-nowrap">
                         {row.agentReady.toFixed(0)}
-                        <span className="text-zinc-600">/100</span>
+                        <span className="text-zinc-500">/100</span>
                       </span>
                     )}
                   </td>

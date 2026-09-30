@@ -122,7 +122,7 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
                     {dim === null ? (
                       <span className="font-sans text-xs italic text-zinc-500">n/a</span>
                     ) : (
-                      <>{dim.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                      <>{dim.toFixed(0)}<span className="text-zinc-500">/100</span></>
                     )}
                   </td>
                 ))}

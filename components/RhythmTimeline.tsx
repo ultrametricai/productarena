@@ -47,7 +47,7 @@ export default function RhythmTimeline({ rows }: { rows: RhythmRow[] }) {
   return (
     <div className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
       {/* Month axis — spans the same track as every row's SVG. */}
-      <div className="flex items-center gap-3 text-[9px] uppercase text-zinc-600">
+      <div className="flex items-center gap-3 text-[9px] uppercase text-zinc-500">
         <span className="w-24 shrink-0 sm:w-28" />
         <span aria-hidden className="flex flex-1 justify-between font-mono">
           {MONTHS.map((m, i) => (
@@ -63,7 +63,7 @@ export default function RhythmTimeline({ rows }: { rows: RhythmRow[] }) {
             <div
               key={row.cadence}
               title={`${row.label} — ${row.count} ${row.count === 1 ? 'process' : 'processes'} on this rhythm`}
-              className={`flex items-center gap-3 ${row.cadence === 'daily' ? 'text-emerald-400' : 'text-zinc-600'}`}
+              className={`flex items-center gap-3 ${row.cadence === 'daily' ? 'text-emerald-400' : 'text-zinc-500'}`}
             >
               <span className="w-24 shrink-0 text-[10px] uppercase tracking-widest text-zinc-400 sm:w-28">
                 {row.label}

@@ -34,7 +34,7 @@ const GRADE_CLASS: Record<EverythingRow['grade'], string> = {
   A: 'text-emerald-300',
   B: 'text-emerald-400/80',
   C: 'text-zinc-400',
-  D: 'text-zinc-600',
+  D: 'text-zinc-500',
 }
 
 function fmt(v: number | null): string {
@@ -90,7 +90,7 @@ function CatalogRow({ row }: { row: EverythingRow }) {
           ['A', api],
         ].map(([label, char]) => (
           <span key={label} className="flex-1">
-            <span className="text-zinc-600">{label}</span>
+            <span className="text-zinc-500">{label}</span>
             <span className={GLYPH_CLASS[char] ?? 'text-zinc-600'}>{char}</span>
           </span>
         ))}

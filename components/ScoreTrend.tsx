@@ -36,9 +36,9 @@ function TrendRow({ label, series }: { label: string; series: SeriesPoint[] }) {
         label={`${label} trend: ${first.value} on ${shortDate(first.date)} to ${last.value} on ${shortDate(last.date)}`}
       />
       <span className="text-xs tabular-nums text-zinc-400">
-        {first.value.toFixed(0)} <span className="text-zinc-600">({shortDate(first.date)})</span>
+        {first.value.toFixed(0)} <span className="text-zinc-500">({shortDate(first.date)})</span>
         <span aria-hidden className="mx-1 text-zinc-600">→</span>
-        <span className="text-zinc-200">{last.value.toFixed(0)}</span> <span className="text-zinc-600">({shortDate(last.date)})</span>
+        <span className="text-zinc-200">{last.value.toFixed(0)}</span> <span className="text-zinc-500">({shortDate(last.date)})</span>
       </span>
     </div>
   )

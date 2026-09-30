@@ -57,7 +57,7 @@ export default function ComparePage() {
                   const p = productById.get(id)!
                   return (
                     <span key={id} className="inline-flex items-center gap-1.5">
-                      {i > 0 && <span className="text-zinc-600">vs</span>}
+                      {i > 0 && <span className="text-zinc-500">vs</span>}
                       <ProductLogoView product={{ id: p.id, name: p.name }} size={16} hasLogo={p.hasLogo} />
                       {p.name}
                     </span>

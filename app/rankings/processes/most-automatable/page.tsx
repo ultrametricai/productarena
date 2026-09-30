@@ -108,7 +108,7 @@ export default function MostAutomatableProcessesPage() {
                   </div>
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
-                  {r.agentSteps}<span className="text-zinc-600">/{r.totalSteps}</span>
+                  {r.agentSteps}<span className="text-zinc-500">/{r.totalSteps}</span>
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums">
                   {(sigs.get(r.slug) ?? 0) > 0 ? (

@@ -96,7 +96,7 @@ export default function ProcessVendorPicker({ steps, lensKey }: { steps: Process
           }
           return (
             <div key={arena.arenaId} className="flex flex-wrap items-center gap-1.5">
-              <span className="w-32 shrink-0 truncate text-[10px] uppercase tracking-wide text-zinc-600" title={`${arena.arenaName} — the market serving this stream's steps`}>
+              <span className="w-32 shrink-0 truncate text-[10px] uppercase tracking-wide text-zinc-500" title={`${arena.arenaName} — the market serving this stream's steps`}>
                 {arena.arenaName}
               </span>
               {visible.map((v) => {

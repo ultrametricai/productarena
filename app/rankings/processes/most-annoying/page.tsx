@@ -77,7 +77,7 @@ export default function MostAnnoyingProcessesPage() {
                 </td>
                 <td className="px-3 py-2">
                   <span className="font-mono tabular-nums text-amber-300">{r.annoyance}</span>
-                  <span className="text-zinc-600">/5</span>
+                  <span className="text-zinc-500">/5</span>
                   <span aria-hidden className="ml-2 tracking-tighter text-amber-400/70">{'▮'.repeat(r.annoyance)}</span>
                 </td>
                 <td className="px-3 py-2 text-zinc-300">{r.cadenceLabel}</td>

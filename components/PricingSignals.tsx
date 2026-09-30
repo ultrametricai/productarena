@@ -78,7 +78,7 @@ export default function PricingSignals({ entry }: { entry?: ProductPricing }) {
               >
                 source ↗
               </a>
-              <span className="text-[10px] text-zinc-600">as of {fact.fetchedAt.slice(0, 10)}</span>
+              <span className="text-[10px] text-zinc-500">as of {fact.fetchedAt.slice(0, 10)}</span>
             </li>
           ))}
         </ul>

@@ -81,12 +81,12 @@ export default function RiskiestProcessesPage() {
                 </td>
                 <td className="px-3 py-2">
                   <span className="font-mono tabular-nums text-rose-300">{r.risk}</span>
-                  <span className="text-zinc-600">/5</span>
+                  <span className="text-zinc-500">/5</span>
                   <span aria-hidden className="ml-2 tracking-tighter text-rose-400/70">{'▮'.repeat(r.risk)}</span>
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
                   {r.totalSteps - r.agentSteps}
-                  <span className="text-zinc-600">/{r.totalSteps}</span>
+                  <span className="text-zinc-500">/{r.totalSteps}</span>
                 </td>
               </tr>
             ))}

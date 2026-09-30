@@ -33,7 +33,7 @@ export default function AccountNav() {
                     : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-emerald-300'
                 }`}
               >
-                <span aria-hidden className={active ? 'text-emerald-400' : 'text-zinc-600'}>
+                <span aria-hidden className={active ? 'text-emerald-400' : 'text-zinc-500'}>
                   {s.icon}
                 </span>
                 {s.label}

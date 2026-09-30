@@ -245,7 +245,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
 
       {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
       <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
-        <span className="text-[10px] uppercase tracking-widest text-zinc-600">For agents</span>{' '}
+        <span className="text-[10px] uppercase tracking-widest text-zinc-400">For agents</span>{' '}
         <Link
           href={processManifestPath(slug)}
           className="text-zinc-400 hover:text-emerald-300"

@@ -64,7 +64,7 @@ function ScoreCell({
 }) {
   if (na) {
     return (
-      <span className="text-zinc-600" title={NA_CELL_TITLE}>
+      <span className="text-zinc-500" title={NA_CELL_TITLE}>
         n/a
       </span>
     )
@@ -78,7 +78,7 @@ function ScoreCell({
       className="hover:text-emerald-300"
     >
       {value.toFixed(0)}
-      <span className="text-zinc-600">/100</span>
+      <span className="text-zinc-500">/100</span>
     </Link>
   )
 }
@@ -173,7 +173,7 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
                       className="hover:text-emerald-300"
                     >
                       {row.aiEra.toFixed(0)}
-                      <span className="text-zinc-600">/100</span>
+                      <span className="text-zinc-500">/100</span>
                     </Link>
                   )}
                 </td>

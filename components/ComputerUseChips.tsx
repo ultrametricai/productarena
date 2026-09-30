@@ -48,7 +48,7 @@ export default function ComputerUseChips({ taskId, nodeId }: { taskId: string; n
           <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{o.score.toFixed(0)}</span>
         </Link>
       ))}
-      <span className="text-[10px] text-zinc-600">assisted, still human-owned</span>
+      <span className="text-[10px] text-zinc-500">assisted, still human-owned</span>
     </span>
   )
 }

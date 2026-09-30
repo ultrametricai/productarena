@@ -135,21 +135,21 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
                       unscored
                     </span>
                   ) : (
-                    <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                    <>{row.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                   {row.agenticApp === null ? (
                     <span className="font-sans text-xs italic text-zinc-500">unscored</span>
                   ) : (
-                    <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                    <>{row.agenticApp.toFixed(0)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
                   {row.aiEra === null ? (
                     <span className="font-sans text-xs italic text-zinc-500">unscored</span>
                   ) : (
-                    <>{row.aiEra.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                    <>{row.aiEra.toFixed(0)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
               </tr>

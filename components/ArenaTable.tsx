@@ -120,7 +120,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
   // arenas): render n/a instead of a number, before any untested check.
   const naDims = new Set(data.category.naDimensions ?? [])
   const naCell = (
-    <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The Overall score still applies; see the arena methodology note.">
+    <span className="text-zinc-500" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The Overall score still applies; see the arena methodology note.">
       n/a
     </span>
   )
@@ -287,14 +287,14 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
-                    ) : row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    ) : row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                     {naDims.has('agenticApp') ? naCell : isGroupUntested(data, row.productId, 'agentic-features') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
-                    ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
                     {naDims.has('apiQuality') ? naCell : isGroupUntested(data, row.productId, 'api-quality') ? (
@@ -304,7 +304,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                     ) : row.apiQuality === null ? (
                       <span className="text-zinc-500">n/a</span>
                     ) : (
-                      <>{row.apiQuality.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                      <>{row.apiQuality.toFixed(0)}<span className="text-zinc-500">/100</span></>
                     )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
@@ -312,14 +312,14 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       <span className="font-sans text-xs italic text-zinc-500" title="No openness evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
-                    ) : row.openness === null ? <span className="text-zinc-500">n/a</span> : <>{row.openness.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    ) : row.openness === null ? <span className="text-zinc-500">n/a</span> : <>{row.openness.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
                     {isThemeUntested(data, row.productId, 'automation-depth') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No automation-depth evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
-                    ) : row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    ) : row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
                     {/* PyPI installs dropped from the leaderboard's popularity display (founder

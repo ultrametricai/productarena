@@ -135,7 +135,7 @@ export default function EverythingPage() {
                 className="w-16 shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
                 title={`Agent ceiling: ${p.agentSteps} of ${p.totalSteps} steps agent-runnable today — see the step-by-step verdict`}
               >
-                {p.pct}% <span className="text-zinc-600">{p.agentSteps}/{p.totalSteps}</span>
+                {p.pct}% <span className="text-zinc-500">{p.agentSteps}/{p.totalSteps}</span>
               </Link>
               <span className="hidden w-40 shrink-0 gap-1.5 truncate text-[11px] text-zinc-500 md:flex">
                 {p.vendors.map((v) =>
@@ -214,7 +214,7 @@ export default function EverythingPage() {
                     <Link href={link.href} className="text-zinc-300 hover:text-emerald-300">
                       {link.label}
                     </Link>
-                    {link.note && <span className="text-zinc-600"> — {link.note}</span>}
+                    {link.note && <span className="text-zinc-500"> — {link.note}</span>}
                   </li>
                 ))}
               </ul>
