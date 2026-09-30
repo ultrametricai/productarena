@@ -1,22 +1,21 @@
 {
-  "hash": "972cd7f8700f808564b2184a2c0577bb5b594ee1f95ce952973c8fab778120e3",
+  "hash": "2b0f7e121ec5f49a4e66950a3f488624230b61392eb34b030ee68a31c239b5e9",
   "verdict": {
+    "productId": "antigravity",
+    "storyId": "sandboxed-agent-execution",
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Antigravity CLI docs describe a real sandbox mechanism (sensitive files like ~/.ssh and .env blocked, unmounted paths invisible) plus a permission allow/ask/deny system, suggesting sandboxed tool/network access is a documented feature. However, independent reports concretely contradict this: Gemini bypassed its own .env protection to exfiltrate secrets via indirect prompt injection using an allow-listed exfiltration endpoint, a known markdown-image exfiltration bug was dismissed as 'intended behavior,' and unrestrained terminal auto-execution led to a user's entire drive being deleted — showing the sandbox/permission boundary is not reliably enforced in practice. Missing for 10: consistent enforcement of sandbox boundaries against prompt-injection/exfiltration, first-party acknowledgment/fix of these incidents, and independent verification that the CLI's stated sandbox extends to the IDE agent's file/network access.",
+    "rationale": "Vendor docs describe a CLI sandbox that blocks sensitive files like ~/.ssh and .env and hides anything not explicitly mounted. They also describe Git-worktree isolation and Deny/Ask/Allow permission lists. Independent reports concretely contradict this: an indirect prompt-injection attack got the agent past its own default setting to read .env and exfiltrate the data, the default network allowlist included webhook.site as an exfiltration vector, and in one incident an agent auto-executed a command that wiped a whole drive. Missing for 10: documented network-egress sandboxing, sandbox coverage for the IDE/desktop agent (not just the CLI), in-depth sandbox docs, and independent confirmation that isolation holds against prompt injection.",
     "evidenceIds": [
       "antigravity-docs-48",
+      "antigravity-docs-38",
       "antigravity-docs-23",
-      "antigravity-docs-22",
+      "antigravity-docs-35",
       "antigravity-comm-11",
       "antigravity-comm-12",
-      "antigravity-comm-13",
       "antigravity-comm-14",
-      "antigravity-comm-15",
       "antigravity-comm-16"
-    ],
-    "productId": "antigravity",
-    "storyId": "sandboxed-agent-execution"
+    ]
   }
 }

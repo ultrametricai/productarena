@@ -1,15 +1,16 @@
 {
-  "hash": "c10a101c5b6f11166422d220f94f6672e1caa587e99adcece9dbc2b41817709d",
+  "hash": "cca83d20c83a82de5996de34eda33733a2d2ceb7392df14e91c8886aebf3d25d",
   "verdict": {
     "productId": "byteask",
     "storyId": "api-sandbox",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "ByteAsk documents sandbox execution modes (`--sandbox workspace-write` vs. read-only) and approval gating before changes are made, and a read-only run can still build/run under AddressSanitizer, suggesting isolated test execution. However, there is no explicit mention of a distinct 'production data' concept or a dedicated staging/sandbox environment separate from the live repo/gdb session. Missing for 10: explicit production-vs-sandbox data separation, independent verification that workspace-write mode never touches live/production systems, and hands-on confirmation of this behavior.",
+    "confidence": "medium",
+    "rationale": "ByteAsk documents sandbox policies: a read-only run can still build and run under AddressSanitizer, and `--sandbox workspace-write` is required before it writes files. It also asks for approval before acting and presents a diff for review before making permanent changes, so testing is gated rather than acting directly on your real state. However, the sandbox limits what the agent may touch in your own workspace; it is not an isolated test environment separated from production data, and the docs never describe what the sandbox isolates. Missing for 10: an isolated sandbox environment distinct from production data, documentation of sandbox isolation boundaries (network, filesystem, data), and independent or hands-on corroboration.",
     "evidenceIds": [
       "byteask-docs-20",
       "byteask-docs-17",
+      "byteask-docs-1",
       "byteask-docs-7",
       "byteask-docs-2"
     ]
