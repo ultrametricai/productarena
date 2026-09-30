@@ -10,7 +10,7 @@ import InstallMethods from '@/components/InstallMethods'
 export default function InstallBanner() {
   return (
     <section id="install" aria-label="Set up Ultrametric" className="scroll-mt-4 border-t border-zinc-800">
-      <div className="mx-auto max-w-7xl px-5 py-10">
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-5 py-10 text-center">
         <h2 className="font-display text-xl font-semibold tracking-tight">Your AI native company starts here</h2>
         <InstallMethods className="mt-4 w-full max-w-2xl" />
       </div>
