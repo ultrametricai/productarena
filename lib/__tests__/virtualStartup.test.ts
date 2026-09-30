@@ -3,9 +3,11 @@
 // real processes/corpus.json tasks selected via real journeys/chains.json chains, and every
 // synthetic artifact must be born labeled simulated and replay deterministically from the
 // decision combo.
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import searchAliases from '@/data/search-aliases.json'
+import { GEO_PREF_META } from '@/lib/geoPreference'
 import { CADENCE_META, loadChains, loadProcesses, processSlug, taskCeiling } from '@/lib/processes'
 import type { SimStep } from '@/lib/processSim'
 import { buildPageEntries } from '@/lib/search-index'
@@ -22,8 +24,14 @@ import {
   DECISIONS,
   DEFAULT_ASSERTED,
   DEFAULT_CHOICES,
+  defaultEntityFor,
+  ENTITY_META,
+  ENTITY_OPTIONS_BY_COUNTRY,
   EVENT_EXAMPLES,
   eventRows,
+  HIDDEN_DECISION_IDS,
+  likelyChoiceOrder,
+  orderByLikelyChoice,
   journeyPhases,
   journeyStats,
   journeyTaskIds,
@@ -85,9 +93,11 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })
 
-  it('covers all 1024 decision combos (eight binary toggles × the four-way launch decision)', () => {
-    expect(combos.length).toBe(1024)
-    expect(new Set(combos.map(comboKey)).size).toBe(1024)
+  it('covers every decision combo, derived straight from DECISIONS (8 entities × 5 models × 5 compliance options × the rest)', () => {
+    const expected = DECISIONS.reduce((acc, d) => acc * d.options.length, 1)
+    expect(expected).toBe(25600) // 8 × 2 × 5 × 2 × 2 × 2 × 5 × 2 × 4
+    expect(combos.length).toBe(expected)
+    expect(new Set(combos.map(comboKey)).size).toBe(expected)
     expect(DECISIONS.length).toBe(9)
   })
 
@@ -100,12 +110,55 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('entity: C-Corp runs form_001, LLC swaps in form_011 — never both', () => {
+  it('entity: only LLC swaps in form_011; every other entity — non-US ones included — runs form_001, never both', () => {
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
-      expect(ids.includes('form_001')).toBe(combo.entity === 'c-corp')
+      expect(ids.includes('form_001')).toBe(combo.entity !== 'llc')
       expect(ids.includes('form_011')).toBe(combo.entity === 'llc')
     }
+  })
+
+  it('country-aware entities (round 5, item 1): a non-US entity NEVER creates a corpus branch — task-identical to the C-Corp path; the country frame rides the phase note; codec order pins c-corp/llc at 0/1', () => {
+    const entity = DECISIONS.find((d) => d.id === 'entity')!
+    // Codec compat: the original values keep indices 0/1; non-US values are appended.
+    expect(entity.options.map((o) => o.value)).toEqual(['c-corp', 'llc', 'ltd', 'gmbh', 'ug', 'sas', 'sarl', 'pvt-ltd'])
+    // The dropdown roster follows the geo pick; each country's FIRST option is its default-asserted value.
+    expect(ENTITY_OPTIONS_BY_COUNTRY).toEqual({
+      US: ['c-corp', 'llc'], UK: ['ltd'], DE: ['gmbh', 'ug'], FR: ['sas', 'sarl'], IN: ['pvt-ltd'],
+    })
+    expect(defaultEntityFor('US')).toBe('c-corp')
+    expect(defaultEntityFor('UK')).toBe('ltd')
+    expect(defaultEntityFor('DE')).toBe('gmbh')
+    expect(defaultEntityFor('FR')).toBe('sas')
+    expect(defaultEntityFor('IN')).toBe('pvt-ltd')
+    // Every DECISIONS entity value exists in exactly one country roster, and vice versa.
+    const rosterValues = Object.values(ENTITY_OPTIONS_BY_COUNTRY).flat()
+    expect([...rosterValues].sort()).toEqual(entity.options.map((o) => o.value).sort())
+    // HONESTY: composition is byte-identical to the C-Corp path for every non-US entity.
+    const ccorpIds = journeyTaskIds({ ...DEFAULT_CHOICES, entity: 'c-corp' }, chains)
+    for (const value of ['ltd', 'gmbh', 'ug', 'sas', 'sarl', 'pvt-ltd'] as const) {
+      const combo = { ...DEFAULT_CHOICES, entity: value }
+      expect(journeyTaskIds(combo, chains)).toEqual(ccorpIds)
+      const note = journeyPhases(combo, chains).find((p) => p.id === 'form')!.note!
+      expect(note).toContain(ENTITY_META[value].label)
+      expect(note).toContain('same corpus incorporation composition')
+      expect(note).toContain('no steps invented')
+      expect(note).toContain(GEO_PREF_META[ENTITY_META[value].country].prose)
+      // The entity label follows the pick (company display suffix) and flavors the filing artifact.
+      const co = synthCompany(combo)
+      expect(co.display).toBe(`${co.name}${ENTITY_META[value].suffix}`)
+      const arts = buildJourneyArtifacts(combo, journeyTaskIds(combo, chains))
+      expect(arts.form_001?.[0].label).toBe(ENTITY_META[value].filing.label)
+      expect(arts.form_001?.[0].value).toContain(ENTITY_META[value].filing.register)
+      expect(arts.form_001?.[0].simulated).toBe(true)
+      // Impossible-real: the placeholder register numbers are all zeros (space-grouped for FR).
+      expect(arts.form_001?.[0].value).toMatch(/0{3,}/)
+      expect(arts.form_001?.[0].value).not.toMatch(/[1-9]/)
+    }
+    // The committed geoNotes analogs the entity frame leans on actually exist on form_001.
+    const form001 = corpusById.get('form_001')!
+    const noteCountries = new Set((form001.geoNotes ?? []).map((n) => n.country))
+    for (const c of ['UK', 'DE', 'FR', 'IN'] as const) expect(noteCountries.has(c), `form_001 geoNotes missing ${c}`).toBe(true)
   })
 
   it('team: the founder equity split (startup_002) rides only with cofounders', () => {
@@ -129,15 +182,51 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('business model forks the get-paid chain: growth_001 for subscriptions, sales_002 for invoices', () => {
+  it('business model forks the get-paid chain: growth_001 for subscriptions AND usage, sales_002 for invoices, spine-only for marketplace/e-commerce', () => {
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
-      expect(ids.includes('growth_001')).toBe(combo.product === 'subscriptions')
+      expect(ids.includes('growth_001')).toBe(combo.product === 'subscriptions' || combo.product === 'usage')
       expect(ids.includes('sales_002')).toBe(combo.product === 'invoices')
       // The shared spine of the chain stays regardless of the fork.
       expect(ids.includes('qs_021')).toBe(true)
       expect(ids.includes('fin_002')).toBe(true)
     }
+  })
+
+  it('new business models (round 5, item 2): usage is venue-noted billing on the SAME growth_001 steps; marketplace/e-commerce run the spine with the model named — nothing fabricated; codec order pins subscriptions/invoices at 0/1', () => {
+    const product = DECISIONS.find((d) => d.id === 'product')!
+    expect(product.options.map((o) => o.value)).toEqual(['subscriptions', 'invoices', 'marketplace', 'usage', 'ecommerce'])
+    // Usage-based: task-identical to SaaS subscriptions — usage is a billing mode, named only.
+    const saasIds = journeyTaskIds({ ...DEFAULT_CHOICES, product: 'subscriptions' }, chains)
+    const usage = { ...DEFAULT_CHOICES, product: 'usage' as const }
+    expect(journeyTaskIds(usage, chains)).toEqual(saasIds)
+    const usageNote = journeyPhases(usage, chains).find((p) => p.id === 'revenue')!.note!
+    expect(usageNote).toContain('usage-based')
+    expect(usageNote).toContain('identical corpus steps')
+    const usageArts = buildJourneyArtifacts(usage, journeyTaskIds(usage, chains))
+    expect(usageArts.growth_001?.[0].value).toContain('metered usage')
+    expect(usageArts.growth_001?.[0].simulated).toBe(true)
+    // Marketplace / e-commerce: the get-paid spine only — no billing fork, no invented steps.
+    for (const value of ['marketplace', 'ecommerce'] as const) {
+      const combo = { ...DEFAULT_CHOICES, product: value }
+      const ids = journeyTaskIds(combo, chains)
+      expect(ids.includes('qs_021')).toBe(true)
+      expect(ids.includes('fin_002')).toBe(true)
+      expect(ids.includes('growth_001')).toBe(false)
+      expect(ids.includes('sales_002')).toBe(false)
+      const note = journeyPhases(combo, chains).find((p) => p.id === 'revenue')!.note!
+      expect(note).toContain(value === 'marketplace' ? 'take-rate' : 'e-commerce')
+      // The honest absence is SAID, not papered over.
+      expect(note).toMatch(/no take-rate billing steps|no storefront step/)
+      const arts = buildJourneyArtifacts(combo, ids)
+      expect(arts.qs_021?.[0].value).toContain(value === 'marketplace' ? 'take-rate routing' : 'checkout live')
+    }
+    // The option details are honest about arena support: the marketplace/e-commerce corpus has
+    // no mapped steps for those arenas, and the details never claim any.
+    const detailOf = (v: string) => product.options.find((o) => o.value === v)!.detail
+    expect(detailOf('marketplace')).toContain('nothing is invented')
+    expect(detailOf('ecommerce')).toContain('no storefront step')
+    expect(detailOf('usage')).toContain('identical corpus steps')
   })
 
   it('ordering: name-first leads with name-the-company, build-first leads with ship-v1', () => {
@@ -175,15 +264,44 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('compliance: the set-up-compliance chain ALWAYS runs; the toggle only moves it', () => {
+  it('compliance: SOC 2/HIPAA/ISO run the set-up-compliance chain (early, or deferred on later); None genuinely skips it', () => {
     for (const combo of combos) {
       const phases = journeyPhases(combo, chains)
       const idx = (chainId: string) => phases.findIndex((p) => p.chainId === chainId)
       const c = idx('set-up-compliance')
+      if (combo.compliance === 'none') {
+        expect(c).toBe(-1)
+        continue
+      }
       expect(c).toBeGreaterThanOrEqual(0)
-      if (combo.compliance === 'now') expect(c).toBeLessThan(idx('launch-website'))
-      else expect(c).toBeGreaterThan(idx('get-paid'))
+      if (combo.compliance === 'later') expect(c).toBeGreaterThan(idx('get-paid'))
+      else expect(c).toBeLessThan(idx('launch-website')) // now / hipaa / iso — early placement
     }
+  })
+
+  it('compliance gets specific (round 5, item 3): HIPAA/ISO name the framework on the SAME chain steps — no fabricated corpus steps; codec order pins now/later at 0/1', () => {
+    const compliance = DECISIONS.find((d) => d.id === 'compliance')!
+    expect(compliance.options.map((o) => o.value)).toEqual(['now', 'later', 'none', 'hipaa', 'iso'])
+    expect(compliance.options.map((o) => o.label)).toEqual(['SOC 2 (early)', 'SOC 2 (deferred)', 'None', 'HIPAA', 'ISO 27001'])
+    const socIds = journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'now' }, chains)
+    for (const value of ['hipaa', 'iso'] as const) {
+      const combo = { ...DEFAULT_CHOICES, compliance: value }
+      // Task-identical to the SOC 2 early path — the framework is a name, never new steps.
+      expect(journeyTaskIds(combo, chains)).toEqual(socIds)
+      const note = journeyPhases(combo, chains).find((p) => p.id === 'compliance')!.note!
+      expect(note).toContain(value === 'hipaa' ? 'HIPAA' : 'ISO 27001')
+      expect(note).toContain('never fabricated')
+      // The comp_001 artifact names the framework honestly and stays SIMULATED.
+      const arts = buildJourneyArtifacts(combo, journeyTaskIds(combo, chains))
+      expect(arts.comp_001?.[0].label).toBe(value === 'hipaa' ? 'HIPAA readiness' : 'ISO 27001 readiness')
+      expect(arts.comp_001?.[0].value).toContain('no dedicated')
+      expect(arts.comp_001?.[0].simulated).toBe(true)
+    }
+    // 'None' skips the chain entirely — its tasks appear only via the enterprise motion (comp_002…).
+    const none = { ...DEFAULT_CHOICES, compliance: 'none' as const, enterprise: 'no' as const }
+    const noneIds = journeyTaskIds(none, chains)
+    const complianceChain = chains.find((c) => c.id === 'set-up-compliance')!
+    for (const tid of complianceChain.taskIds) expect(noneIds.includes(tid)).toBe(false)
   })
 
   it('enterprise: the land-the-enterprise-deal chain appears only on yes, as the final phase', () => {
@@ -308,7 +426,9 @@ describe('synthetic artifacts — labeled, deterministic, impossible-real', () =
       expect(byTask.form_002?.[0].value).toBe('00-0000000')
       expect(byTask.domain_002?.[0].value).toContain('.example')
       const co = synthCompany(combo)
-      expect(co.display.endsWith(combo.entity === 'llc' ? ' LLC' : ', Inc.')).toBe(true)
+      // The display suffix follows the entity decision — Inc./LLC and the round-5 country
+      // entities (Ltd / GmbH / UG / SAS / SARL / Pvt Ltd) alike.
+      expect(co.display.endsWith(ENTITY_META[combo.entity].suffix)).toBe(true)
       expect(byTask.brand_001?.[0].value).toBe(co.display)
     }
   })
@@ -467,9 +587,11 @@ describe('preset example companies (founder ask 2026-09-25)', () => {
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
       ordering: 'build-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'no',
     })
+    // Combo update (round 5, item 3): biotech asserts the HIPAA framing — the same
+    // set-up-compliance chain, framework named, run early.
     expect(c.biotech).toEqual({
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
-      ordering: 'name-first', hire: 'yes', compliance: 'now', enterprise: 'yes', ph: 'no',
+      ordering: 'name-first', hire: 'yes', compliance: 'hipaa', enterprise: 'yes', ph: 'no',
     })
   })
 
@@ -730,6 +852,75 @@ describe('first 30 / first 90 days — cadence-math slicing', () => {
   it('windows replay deterministically from the same rows', () => {
     expect(windowRows(rows, 30)).toEqual(windowRows(rows, 30))
     expect(windowRows(rows, 90)).toEqual(windowRows(rows, 90))
+  })
+})
+
+describe("'Start with' leaves the control panel (round 5, item 4)", () => {
+  it('ordering is the hidden decision: the DECISIONS entry (and codec slot) stays, composition keeps the default, presets/YC keep asserting it', () => {
+    expect(HIDDEN_DECISION_IDS).toEqual(['ordering'])
+    // The codec slot survives: the decision is still a DECISIONS entry with both options.
+    const ordering = DECISIONS.find((d) => d.id === 'ordering')!
+    expect(ordering.options.map((o) => o.value)).toEqual(['name-first', 'build-first'])
+    // Composition keeps the default when unasserted…
+    expect(DEFAULT_CHOICES.ordering).toBe('name-first')
+    // …and presets/YC still assert it internally.
+    expect(YC_CALIBRATION.ordering).toBe('build-first')
+    for (const p of VS_PRESETS) expect(['name-first', 'build-first']).toContain(p.choices.ordering)
+  })
+})
+
+describe("'Likely choice' ordering (round 5, item 7) — committed signals, presentation only", () => {
+  const p = (id: string, name: string, over: Partial<Parameters<typeof likelyChoiceOrder>[0][number]> = {}) => ({
+    id, name, curated: false, ...over,
+  })
+
+  it('tiers: curated clearly-popular first (measured counters, then A–Z inside the unranked set), then stars, then installs, then the judged input order', () => {
+    const order = likelyChoiceOrder([
+      p('bitbucket', 'Bitbucket'), // no signal — judged order kept at the tail
+      p('gitea', 'Gitea', { stars: 58195 }),
+      p('gitlab', 'GitLab', { curated: true }),
+      p('github', 'GitHub', { curated: true }),
+      p('some-sdk', 'Some SDK', { installs: 120000 }),
+      p('zzz-tool', 'ZZZ Tool'), // second signal-less product — stays after bitbucket (input order)
+    ])
+    expect(order).toEqual(['github', 'gitlab', 'gitea', 'some-sdk', 'bitbucket', 'zzz-tool'])
+    // Within the curated (unranked) tier, a measured counter outranks the alphabetical fallback.
+    expect(
+      likelyChoiceOrder([p('a-tool', 'A Tool', { curated: true }), p('z-tool', 'Z Tool', { curated: true, stars: 10 })]),
+    ).toEqual(['z-tool', 'a-tool'])
+  })
+
+  it('orderByLikelyChoice reorders presentation only: same members, same judged scores, unknown ids keep judged order at the tail; no order = judged order', () => {
+    const vendors = [
+      { productId: 'bitbucket', score: 80 },
+      { productId: 'gitea', score: 30 },
+      { productId: 'github', score: 24 },
+      { productId: 'gitlab', score: 18 },
+    ]
+    const ordered = orderByLikelyChoice(vendors, ['github', 'gitlab', 'gitea'])
+    expect(ordered.map((v) => v.productId)).toEqual(['github', 'gitlab', 'gitea', 'bitbucket'])
+    // NO rank fabrication: the judged scores ride along untouched.
+    expect(ordered.find((v) => v.productId === 'github')!.score).toBe(24)
+    expect([...ordered].sort((a, b) => b.score - a.score)[0].productId).toBe('bitbucket')
+    expect(orderByLikelyChoice(vendors, undefined)).toEqual(vendors)
+    expect(orderByLikelyChoice(vendors, [])).toEqual(vendors)
+  })
+})
+
+describe('repo CTA beside the title (round 5, item 6)', () => {
+  it('the page carries the GitHub-mark CTA to the open startup repo, new tab, right of the h1', () => {
+    const src = readFileSync(path.resolve(__dirname, '../../app/virtual-startup/page.tsx'), 'utf8')
+    expect(src).toContain('data-testid="vs-repo-cta"')
+    expect(src).toContain('href="https://github.com/ultrametricai/ultrametric"')
+    expect(src).toContain('Take part in the open startup repo →')
+    // New tab + the safe rel pair; the GitHub mark is an inline SVG (aria-hidden decoration).
+    const cta = src.slice(src.indexOf('vs-repo-cta'))
+    expect(cta).toContain('target="_blank"')
+    expect(cta).toContain('rel="noopener noreferrer"')
+    expect(cta).toContain('<svg aria-hidden')
+    // Beside the title: the CTA sits in the same section as (and after) the h1.
+    expect(src.indexOf('The open startup simulator</h1>')).toBeGreaterThan(-1)
+    expect(src.indexOf('vs-repo-cta')).toBeGreaterThan(src.indexOf('The open startup simulator</h1>'))
   })
 })
 
