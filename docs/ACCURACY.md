@@ -83,7 +83,12 @@ score built entirely from zero-evidence none/na cells renders italic *untested*,
 
 1. **story-runner PRs** — every refresh lands as a PR. Apply the re-judge stability policy
    before merging: a verdict flip citing NO evidence id new to the pack is re-roll noise —
-   revert it (`pipeline/scripts/revert-churn.ts` pattern, METHODOLOGY.md).
+   revert it (`pipeline/scripts/revert-churn.ts` pattern, METHODOLOGY.md). Exception: a
+   labeled judge-model migration wave (e.g. 2026-09-30, sonnet-5 → opus-5-5) is exempt — under
+   a judge change every flip cites no new evidence by construction, so the wave is labeled in
+   score-history/docs instead of reverted (README §7). Post-migration baselines: compare flips
+   against opus-5-5 verdicts, not sonnet-era ones, and expect far lower `na`/`disputed` rates
+   than the sonnet-era documentation of those frequencies.
 2. **accuracy-engine report PR** — merging it is what switches story-runner onto the new
    worst-stale ordering. Skim the flips section: anything shocking is worth a manual look
    before the keyed runs get there.

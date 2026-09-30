@@ -67,8 +67,10 @@ export default function MethodologyPage() {
         <div className={PILL}>
           <p className="font-semibold text-zinc-300">Bias disclosure</p>
           <p className="mt-1">
-            The judge model is made by Anthropic; the <span className={CODE}>ai-coding</span> arena includes its own
-            product. Full adversarial audit writeup on GitHub.
+            The judge is <span className={CODE}>claude-opus-5-5</span>, made by Anthropic; the{' '}
+            <span className={CODE}>ai-coding</span> arena includes its own product (migrated from{' '}
+            <span className={CODE}>claude-sonnet-5</span> 2026-09-30 with every favorable own-product flip
+            adversarially audited). Full audit writeups on GitHub.
           </p>
         </div>
         <div className={PILL}>
