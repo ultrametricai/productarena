@@ -16,8 +16,8 @@ is designed to be extended by founders everywhere, one pull request at a time:
 
 - **Processes & journeys** — 123 step-by-step founder processes and 24 chained playbooks, each
   step routed agent / manual form / human, with the honest **agent ceiling** (what an agent can
-  run today) and a [Virtual Startup](https://ultrametric.ai/virtual-startup) that replays the
-  whole corpus as a simulated company.
+  run today) and [The Open Startup](https://ultrametric.ai/virtual-startup) — a simulator that
+  replays the whole corpus as a simulated company.
 - **Rules & jurisdictions** — source-locked legal rule cards (statute/regulation locators,
   checked dates), a conservative planner that refuses what it cannot exactly match, and a
   growing geo layer: which processes are global vs US-centric, per-country analogs, and where
@@ -35,9 +35,9 @@ is designed to be extended by founders everywhere, one pull request at a time:
 > [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other
 > founders find this, and every record here is open for you to audit, contest, or extend.
 
-![The Virtual Startup mid-run — a simulated company executing the real founder-process corpus, every step routed agent / manual form / human, vendors from the judged rankings](docs/assets/virtual-startup.png)
+![The Open Startup mid-run — a simulated company executing the real founder-process corpus, every step routed agent / manual form / human, vendors from the judged rankings](docs/assets/virtual-startup.png)
 
-*The [Virtual Startup](https://ultrametric.ai/virtual-startup) mid-run: a simulated company
+*[The Open Startup](https://ultrametric.ai/virtual-startup) mid-run: a simulated company
 (every artifact visibly SIMULATED) executing the real corpus — incorporation filings, 83(b)
 elections, EIN — with each step routed agent / manual form / human and vendors drawn from the
 judged rankings.*
