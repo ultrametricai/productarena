@@ -296,7 +296,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href="/virtual-startup"
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
-                Startup sim
+                The Open Startup
               </Link>
               <span className="hidden sm:block">
                 <ArenaMenu sections={arenaMenuSections} searchable />

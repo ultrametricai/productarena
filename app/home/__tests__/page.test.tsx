@@ -8,7 +8,7 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     render(<HomePage />)
     expect(screen.getByRole('heading', { level: 1, name: /Automating\s*the startup/ })).toBeDefined()
     expect(screen.getByText('Redefining work in the AI phase transition')).toBeDefined()
-    const cta = screen.getByRole('link', { name: /Play with the automated startup/ })
+    const cta = screen.getByRole('link', { name: /Play with the open startup/ })
     expect(cta.getAttribute('href')).toBe('/virtual-startup')
   })
 

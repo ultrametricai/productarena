@@ -31,7 +31,7 @@ export const METHODS = [
       { prompt: true, text: 'npm install -g ultrametric' },
       { prompt: true, text: 'ultrametric init' },
     ],
-    note: 'Needs Node.js 22.12 or later. Adds the Ultrametric skill to Claude Code or Codex.',
+    note: null,
   },
   {
     id: 'mcp',
@@ -39,7 +39,7 @@ export const METHODS = [
     value: 'https://api.ultrametric.ai/mcp',
     copyName: 'Copy MCP server URL',
     lines: [{ text: 'https://api.ultrametric.ai/mcp' }],
-    note: 'Add it as a remote MCP server, then sign in.',
+    note: null,
   },
 ] as const
 

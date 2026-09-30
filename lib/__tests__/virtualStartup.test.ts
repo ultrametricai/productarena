@@ -738,7 +738,7 @@ describe('discoverability wiring', () => {
     const entry = buildPageEntries(searchAliases.pages as Record<string, string[]>).find(
       (e) => e.href === '/virtual-startup',
     )
-    expect(entry?.label).toBe('Startup sim')
+    expect(entry?.label).toBe('The Open Startup')
     expect(entry?.keywords).toContain('virtual startup')
   })
 })

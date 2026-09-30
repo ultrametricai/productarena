@@ -14,23 +14,19 @@ describe('the /v2 Ultrametric CLI/MCP product page (ported from the landing orig
     ).toBeDefined()
   })
 
-  it('renders the shared install module with the three methods and their notes', () => {
+  it('renders the shared install module with the three methods (notes removed — founder 2026-09-30)', () => {
     render(<V2Page />)
     const group = screen.getByRole('group', { name: 'Install method' })
     expect(group).toBeDefined()
     // Prompt is the default panel (the text also opens the demo's incorporate thread).
     expect(screen.getAllByText('set up https://ultrametric.ai/install').length).toBeGreaterThan(0)
-    // CLI: two $-prompted lines and the Node note.
+    // CLI: two $-prompted lines (notes removed — founder 2026-09-30).
     fireEvent.click(screen.getByRole('button', { name: 'CLI' }))
     expect(screen.getByText('npm install -g ultrametric')).toBeDefined()
     expect(screen.getByText('ultrametric init')).toBeDefined()
-    expect(
-      screen.getByText('Needs Node.js 22.12 or later. Adds the Ultrametric skill to Claude Code or Codex.'),
-    ).toBeDefined()
-    // MCP: the server URL and its note.
+    // MCP: the server URL.
     fireEvent.click(screen.getByRole('button', { name: 'MCP' }))
     expect(screen.getByText('https://api.ultrametric.ai/mcp')).toBeDefined()
-    expect(screen.getByText('Add it as a remote MCP server, then sign in.')).toBeDefined()
   })
 
   it('does NOT carry the #install anchor — the sitewide banner owns it', () => {

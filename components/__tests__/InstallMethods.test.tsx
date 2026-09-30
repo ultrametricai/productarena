@@ -26,7 +26,6 @@ describe('InstallMethods (the shared /v2 install module)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'CLI' }))
     expect(prompt.getAttribute('aria-pressed')).toBe('false')
     expect(screen.getByRole('button', { name: 'CLI' }).getAttribute('aria-pressed')).toBe('true')
-    expect(screen.getByText('Needs Node.js 22.12 or later. Adds the Ultrametric skill to Claude Code or Codex.')).toBeDefined()
   })
 
   it('copies the active method value and announces Copied via the aria-live label', async () => {
