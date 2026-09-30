@@ -47,7 +47,7 @@ export default function ClaimsSection({
         Claims vs evidence
       </h2>
       {integrity.score !== null && (
-        <p className="mb-1 font-mono text-xs tabular-nums text-zinc-300">
+        <p className="mb-1 text-xs tabular-nums text-zinc-300">
           {integrity.verified} of {testable} testable claims verified · {integrity.contradicted} contradicted
           {' → '}
           <Link

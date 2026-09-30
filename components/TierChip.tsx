@@ -31,7 +31,7 @@ export default function TierChip({
 }) {
   if (!tier || tier === 'unknown') return null
   const title = `${tierNote ? `${tierNote} — ` : ''}${TIER_TITLES[tier]}. Annotation from cited evidence only — never affects scores${link ? '; click for methodology' : ''}.`
-  const className = `inline-flex shrink-0 items-center rounded-full border px-1.5 py-px font-mono text-[10px] leading-4 ${TIER_STYLES[tier]}`
+  const className = `inline-flex shrink-0 items-center rounded-full border px-1.5 py-px text-[10px] leading-4 ${TIER_STYLES[tier]}`
   if (!link) {
     return (
       <span title={title} className={className}>

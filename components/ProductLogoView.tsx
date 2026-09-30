@@ -45,7 +45,7 @@ export default function ProductLogoView({
   return (
     <span
       aria-hidden
-      className="flex shrink-0 items-center justify-center rounded-lg bg-zinc-900 font-mono font-bold text-emerald-300 ring-1 ring-zinc-800"
+      className="flex shrink-0 items-center justify-center rounded-lg bg-zinc-900 font-bold text-emerald-300 ring-1 ring-zinc-800"
       style={{ width: size, height: size, fontSize: Math.round(size * 0.42) }}
     >
       {product.name.charAt(0).toUpperCase()}

@@ -90,7 +90,7 @@ export default function MissingStartupsPage() {
                 >
                   {g.title}
                 </Link>
-                <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">
+                <span className="text-[10px] uppercase tracking-wide text-zinc-500">
                   {g.arenaCount} {g.arenaCount === 1 ? 'arena' : 'arenas'}, zero coverage
                 </span>
               </li>
@@ -124,14 +124,14 @@ export default function MissingStartupsPage() {
             {/* The measurable inputs behind the score — plain numbers, every one hoverable. */}
             <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
               <span title="Fleet mean of the agent-ready index (how well agents can drive these products) — lower means more room">
-                agent-ready x̄ <span className="font-mono tabular-nums text-zinc-300">{fmt(arena.components.meanAgentReady)}</span>
+                agent-ready x̄ <span className="tabular-nums text-zinc-300">{fmt(arena.components.meanAgentReady)}</span>
               </span>
               <span title="Fleet mean of the Built-in AI index (how agentic the products themselves are) — lower means more room">
-                Built-in AI x̄ <span className="font-mono tabular-nums text-zinc-300">{fmt(arena.components.meanAiNative)}</span>
+                Built-in AI x̄ <span className="tabular-nums text-zinc-300">{fmt(arena.components.meanAiNative)}</span>
               </span>
               <span title="Share of applicable agent-access / agentic-features verdicts judged 'none' across the whole fleet">
                 agentic none-share{' '}
-                <span className="font-mono tabular-nums text-zinc-300">
+                <span className="tabular-nums text-zinc-300">
                   {arena.components.noneShare === null ? 'n/a' : `${Math.round(arena.components.noneShare * 100)}%`}
                 </span>
               </span>

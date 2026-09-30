@@ -69,7 +69,7 @@ export default function PredictionsPage() {
           />
           {productName(q.arena, productId)}
         </Link>{' '}
-        <span className="font-mono text-xs text-zinc-500">
+        <span className="text-xs tabular-nums text-zinc-500">
           ({role === 'challenger' ? '#2 at open' : '#1 at open'}
           {score !== null ? `, now ${score.toFixed(1)}` : ''})
         </span>
@@ -99,7 +99,7 @@ export default function PredictionsPage() {
 
       <section>
         <h2 className="font-display leading-[1.1] text-lg font-semibold">
-          Open questions <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{open.length}</span>
+          Open questions <span className="ml-1 text-xs font-normal text-zinc-500">{open.length}</span>
         </h2>
         {open.length === 0 ? (
           <p className="mt-2 text-sm italic text-zinc-500">No open questions — no arena is a close race right now.</p>
@@ -122,13 +122,13 @@ export default function PredictionsPage() {
                     const a = currentScore(q.arena, q.productA)
                     const b = currentScore(q.arena, q.productB)
                     return a !== null && b !== null ? (
-                      <span className="font-mono text-xs text-zinc-500" title="Absolute difference between the two products' current Overall scores — the margin the challenger has to close">current gap {Math.abs(b - a).toFixed(1)}</span>
+                      <span className="text-xs tabular-nums text-zinc-500" title="Absolute difference between the two products' current Overall scores — the margin the challenger has to close">current gap {Math.abs(b - a).toFixed(1)}</span>
                     ) : null
                   })()}
                 </div>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                   <span className="text-zinc-500">
-                    settles by <span className="font-mono text-zinc-400">{shortDate(q.settlesBy.slice(0, 10))}</span>
+                    settles by <span className="text-zinc-400">{shortDate(q.settlesBy.slice(0, 10))}</span>
                   </span>
                   <a
                     href={predictUrl(q)}
@@ -147,7 +147,7 @@ export default function PredictionsPage() {
 
       <section>
         <h2 className="font-display leading-[1.1] text-lg font-semibold">
-          Settled questions <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{settled.length}</span>
+          Settled questions <span className="ml-1 text-xs font-normal text-zinc-500">{settled.length}</span>
         </h2>
         {settled.length === 0 ? (
           <p className="mt-2 text-sm italic text-zinc-500">

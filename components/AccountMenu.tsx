@@ -79,7 +79,7 @@ export default function AccountMenu() {
         aria-label={email ? `Account — ${email}` : 'Account'}
         title={email ?? 'Account'}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-emerald-400/60 bg-emerald-400/10 font-mono text-[11px] font-medium text-emerald-300 transition hover:bg-emerald-400/20"
+        className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full border border-emerald-400/60 bg-emerald-400/10 text-[11px] font-medium text-emerald-300 transition hover:bg-emerald-400/20"
       >
         <span aria-hidden>{initial}</span>
       </button>

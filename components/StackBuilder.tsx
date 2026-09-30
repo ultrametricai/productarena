@@ -173,7 +173,7 @@ export default function StackBuilder({
             <div className="flex items-center gap-3">
               {readiness !== null && picks.length > 0 && (
                 <span
-                  className="font-mono text-sm tabular-nums text-zinc-300"
+                  className="text-sm tabular-nums text-zinc-300"
                   title="Mean of the picks' agent-ready scores — how drivable this stack is for an agent overall."
                 >
                   stack agent-readiness <span className="font-semibold text-emerald-300">{readiness.toFixed(1)}</span>

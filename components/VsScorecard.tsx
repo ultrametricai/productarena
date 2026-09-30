@@ -87,7 +87,7 @@ export default function VsScorecard({
       </p>
 
       {/* The stack-vs-optimal comparison line (v3 upgrade 1). */}
-      <p data-testid="vs-outcome-line" className="mt-2 font-mono text-xs text-emerald-300">
+      <p data-testid="vs-outcome-line" className="mt-2 text-xs text-emerald-300">
         Your stack: {outcome.agentRunPct}% agent-run → launch day {launchDay} · agents-first optimal
         stack: day {optimal.launchDay}
       </p>
@@ -100,18 +100,18 @@ export default function VsScorecard({
       <ul className="mt-3 space-y-1.5">
         <li data-testid="vs-score-launch">
           <span className="text-zinc-500">Time to launch:</span>{' '}
-          <span className="font-mono tabular-nums">day {launchDay}</span>
+          <span className="tabular-nums">day {launchDay}</span>
           {resolution.deltaMinutes > 0 && (
             <span className="text-[11px] text-zinc-500"> (incl. +{formatMinutes(resolution.deltaMinutes)} from event decisions)</span>
           )}
         </li>
         <li data-testid="vs-score-agentrun">
           <span className="text-zinc-500">Agent-run:</span>{' '}
-          <span className="font-mono tabular-nums">{outcome.agentRunSteps}/{outcome.totalSteps} steps ({outcome.agentRunPct}%)</span>
+          <span className="tabular-nums">{outcome.agentRunSteps}/{outcome.totalSteps} steps ({outcome.agentRunPct}%)</span>
         </li>
         <li data-testid="vs-score-saved">
           <span className="text-zinc-500">Founder-hours saved vs all-manual:</span>{' '}
-          <span className="font-mono tabular-nums">~{savedHours} h</span>{' '}
+          <span className="tabular-nums">~{savedHours} h</span>{' '}
           <span className="text-[11px] text-zinc-500">
             (all-manual = every agent step at ×{FOUNDER_HOURS_MULTIPLIER} founder-hours — simulation assumption)
           </span>
@@ -122,7 +122,7 @@ export default function VsScorecard({
             <span className="text-zinc-400">none drawn this run</span>
           ) : (
             <>
-              <span className="font-mono tabular-nums">
+              <span className="tabular-nums">
                 {resolution.decided}/{resolution.events.length} decided
                 {resolution.dealsLost > 0 && ` · ${resolution.dealsLost} virtual deal${resolution.dealsLost === 1 ? '' : 's'} lost`}
               </span>
@@ -144,7 +144,7 @@ export default function VsScorecard({
           Burn — from vendors&rsquo; published pricing (lib-extracted, cited per vendor):
         </p>
         {burn.monthlyUsd !== null && burn.monthlyUsd > 0 ? (
-          <p className="mt-0.5 font-mono tabular-nums">
+          <p className="mt-0.5 tabular-nums">
             ${burn.monthlyUsd}/mo <span className="text-[11px] text-zinc-500">(entry-plan sticker prices, summed as printed)</span>
           </p>
         ) : (

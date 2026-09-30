@@ -95,15 +95,15 @@ export default function ProcessCheck({
       {/* The headline: coverage × quality of THEIR stack on this process's rankable steps. */}
       <p className="text-sm text-zinc-300">
         Your stack covers{' '}
-        <span className="font-mono tabular-nums text-emerald-400">{check.coveredSteps}</span> of{' '}
-        <span className="font-mono tabular-nums">{check.rankableSteps}</span> rankable steps
+        <span className="tabular-nums text-emerald-400">{check.coveredSteps}</span> of{' '}
+        <span className="tabular-nums">{check.rankableSteps}</span> rankable steps
         <span className="text-zinc-500"> (of {totalSteps} total)</span>
         {check.avgYours !== null && (
           <>
             {' '}at avg{' '}
-            <span className="font-mono tabular-nums text-emerald-400">{check.avgYours.toFixed(0)}</span>
+            <span className="tabular-nums text-emerald-400">{check.avgYours.toFixed(0)}</span>
             <span className="text-zinc-600">/100</span> vs best{' '}
-            <span className="font-mono tabular-nums text-emerald-400">{(check.avgBest ?? 0).toFixed(0)}</span>
+            <span className="tabular-nums text-emerald-400">{(check.avgBest ?? 0).toFixed(0)}</span>
             <span className="text-zinc-600">/100</span>
             <span className="text-zinc-500"> on those steps</span>
           </>

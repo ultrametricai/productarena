@@ -30,7 +30,7 @@ export default function CertificationChip({ cert }: { cert: Certification }) {
         href={reportHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-mono text-[10px] text-emerald-400 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-200"
+        className="text-[10px] text-emerald-400 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-200"
       >
         report
       </a>

@@ -100,7 +100,7 @@ export default function PipelinePage() {
               <GeoMark seed={stat.id} title={stat.label} size={14} className="text-zinc-600" />
               {stat.label}
             </p>
-            <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400">{stat.value}</p>
+            <p className="mt-1 text-3xl font-bold tabular-nums text-emerald-400">{stat.value}</p>
             <p className="mt-1 text-xs text-zinc-500">{stat.sub}</p>
           </div>
         ))}
@@ -234,7 +234,7 @@ export default function PipelinePage() {
           </p>
           {sloDown.length === 0 ? (
             <p className="mt-4 rounded-xl border border-zinc-800 px-4 py-3 text-sm text-zinc-300">
-              <span className="font-mono text-emerald-400">all up</span> — every monitored agent
+              <span className="text-emerald-400">all up</span> — every monitored agent
               surface answered its last check.
             </p>
           ) : (

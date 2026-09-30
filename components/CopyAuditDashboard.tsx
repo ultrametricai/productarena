@@ -170,7 +170,7 @@ export default function CopyAuditDashboard({ audit }: { audit: CopyAudit }) {
           <section key={suggestion} className="space-y-4">
             <div className={`border-l-2 pl-3 ${meta.accent}`}>
               <h2 className="font-display text-xl font-bold tracking-tight">
-                {meta.title} <span className="font-mono text-sm font-normal text-zinc-500">({items.length})</span>
+                {meta.title} <span className="text-sm font-normal text-zinc-500">({items.length})</span>
               </h2>
               <p className="mt-0.5 text-xs text-zinc-500">{meta.blurb}</p>
             </div>

@@ -17,10 +17,10 @@ export default function VerificationMixChip({ data, productId, href }: { data: C
   const total = verified + mix['vendor-claim'] + mix.disputed
   const title = `Verification — probed by us: ${mix.tested} · community-corroborated: ${mix.corroborated} · vendor claim only: ${mix['vendor-claim']} · disputed: ${mix.disputed}. "Verified" = probed or corroborated.${href ? ' Click for the per-story verification column.' : ' See legend.'}`
   if (total === 0) {
-    return <span title={title} className="font-mono text-xs text-zinc-500">—</span>
+    return <span title={title} className="text-xs text-zinc-500">—</span>
   }
   const chip = (
-    <span title={title} className="whitespace-nowrap font-mono text-xs">
+    <span title={title} className="whitespace-nowrap text-xs tabular-nums">
       <span className="text-emerald-400">{verified}</span>
       <span className="text-zinc-500">/{total} verified</span>
       {mix.disputed > 0 && <span className="text-red-400"> · {mix.disputed} disputed</span>}

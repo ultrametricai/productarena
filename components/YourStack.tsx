@@ -254,9 +254,9 @@ export default function YourStack({
           {advice.stackScore !== null && (
             <p className="text-sm text-zinc-300">
               Stack score{' '}
-              <span className="font-mono tabular-nums text-emerald-400">{advice.stackScore.toFixed(0)}</span>
+              <span className="tabular-nums text-emerald-400">{advice.stackScore.toFixed(0)}</span>
               <span className="text-zinc-600">/100</span> vs best possible{' '}
-              <span className="font-mono tabular-nums text-emerald-400">{(advice.bestPossible ?? 0).toFixed(0)}</span>
+              <span className="tabular-nums text-emerald-400">{(advice.bestPossible ?? 0).toFixed(0)}</span>
               <span className="text-zinc-600">/100</span>
               <span className="ml-1 text-xs text-zinc-500">
                 — mean published Overall score of your scored picks vs those same arenas&rsquo; leaders.
@@ -328,11 +328,11 @@ export default function YourStack({
                   <p className="mt-1.5 text-xs text-zinc-400">
                     {p.paDelta !== null && p.paDelta > 0 ? (
                       <>
-                        Δ<span className="font-mono tabular-nums">{p.paDelta.toFixed(0)}</span> PA behind the
+                        Δ<span className="tabular-nums">{p.paDelta.toFixed(0)}</span> PA behind the
                         leader {p.leader.name}
                         {p.agentReadyDelta !== null && (
                           <>
-                            {' '}(agent-ready Δ<span className="font-mono tabular-nums">{p.agentReadyDelta.toFixed(0)}</span>)
+                            {' '}(agent-ready Δ<span className="tabular-nums">{p.agentReadyDelta.toFixed(0)}</span>)
                           </>
                         )}
                         .
@@ -351,7 +351,7 @@ export default function YourStack({
                           {u.product.name}
                         </Link>
                         {u.paDelta !== null && (
-                          <span className="font-mono tabular-nums" title={`PA ${scoreText(u.product.aiEra)} vs your ${scoreText(p.pick.aiEra)}${u.agentReadyDelta !== null ? `; agent-ready Δ${u.agentReadyDelta.toFixed(0)}` : ''}`}>
+                          <span className="tabular-nums" title={`PA ${scoreText(u.product.aiEra)} vs your ${scoreText(p.pick.aiEra)}${u.agentReadyDelta !== null ? `; agent-ready Δ${u.agentReadyDelta.toFixed(0)}` : ''}`}>
                             +{u.paDelta.toFixed(0)} PA
                           </span>
                         )}

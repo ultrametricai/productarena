@@ -170,7 +170,7 @@ export default function MostConnectedRankingPage() {
                         className="inline-flex items-center gap-1 rounded-full border border-zinc-800 px-2 py-0.5 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
                       >
                         {n.name}
-                        <span className="font-mono tabular-nums text-zinc-500">{n.mentions}</span>
+                        <span className="tabular-nums text-zinc-500">{n.mentions}</span>
                       </Link>
                     ))}
                   </span>

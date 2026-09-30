@@ -117,4 +117,22 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     // The get-started hero renders as an h2 here — the landing hero owns the page's only h1.
     expect(screen.getAllByRole('heading', { level: 1 }).length).toBe(1)
   })
+
+  it('font sweep (founder 2026-09-30): no mono body text on the homepage surfaces', () => {
+    const { container } = render(<HomePage />)
+    // Hero, backers, and agents-cards sections carry zero font-mono — mono stays only for the
+    // install module's copyable commands and the tables' numeric cells (tabular alignment).
+    const hero = container.querySelector('section')
+    expect(hero?.querySelector('.font-mono')).toBeNull()
+    const backers = screen.getByText('Backed by builders').closest('section')
+    expect(backers?.querySelector('.font-mono')).toBeNull()
+    const agents = document.querySelector('section[aria-labelledby="agents-heading"]')
+    expect(agents?.querySelector('.font-mono')).toBeNull()
+    // The processes mini table's only mono is CeilingBar's aligned percentage column; the
+    // titles/areas are body font.
+    const processes = document.querySelector('section[aria-labelledby="home-processes-heading"]') as HTMLElement
+    for (const el of processes.querySelectorAll('.font-mono')) {
+      expect(el.className).toContain('tabular-nums')
+    }
+  })
 })

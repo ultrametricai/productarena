@@ -94,7 +94,7 @@ export default function EverythingPage() {
     <div className="space-y-10">
       <header>
         <h1 className="font-display leading-[1.1] text-2xl font-bold tracking-tight">Everything</h1>
-        <p className="mt-1 font-mono text-xs tabular-nums text-zinc-500">
+        <p className="mt-1 text-xs tabular-nums text-zinc-500">
           {rows.length} products · {arenas.length} arenas · {processes.length} processes · {stacks.length} stacks ·{' '}
           {lenses.length} lenses — the whole catalog on one page.
         </p>
@@ -116,7 +116,7 @@ export default function EverythingPage() {
           <h2 className="font-display leading-[1.1] text-lg font-semibold tracking-tight">
             <Link href="/processes" className="hover:text-emerald-300">Processes</Link>
           </h2>
-          <span className="font-mono text-xs tabular-nums text-zinc-500">{processes.length}</span>
+          <span className="text-xs tabular-nums text-zinc-500">{processes.length}</span>
         </div>
         <p className="text-xs text-zinc-500">
           Founder operating processes with the % of steps an agent can run today (the agent ceiling).
@@ -159,7 +159,7 @@ export default function EverythingPage() {
           <h2 className="font-display leading-[1.1] text-lg font-semibold tracking-tight">
             <Link href="/stacks" className="hover:text-emerald-300">Stacks</Link>
           </h2>
-          <span className="font-mono text-xs tabular-nums text-zinc-500">{stacks.length}</span>
+          <span className="text-xs tabular-nums text-zinc-500">{stacks.length}</span>
         </div>
         <p className="text-xs text-zinc-500">Curated cross-arena bundles — every scored slot resolved live from current leaderboards.</p>
         <ul className="rounded-lg border border-zinc-800">
@@ -168,7 +168,7 @@ export default function EverythingPage() {
               <Link href={`/stacks#${s.id}`} className="w-40 shrink-0 truncate font-medium hover:text-emerald-300 sm:w-52">
                 {s.name}
               </Link>
-              <span className="w-14 shrink-0 font-mono text-xs tabular-nums text-zinc-500" title={`${s.slotCount} slots`}>
+              <span className="w-14 shrink-0 text-xs tabular-nums text-zinc-500" title={`${s.slotCount} slots`}>
                 {s.slotCount} slots
               </span>
               <span className="min-w-0 flex-1 truncate text-[11px] text-zinc-500">{s.picks.join(' · ')}</span>
@@ -183,7 +183,7 @@ export default function EverythingPage() {
           <h2 className="font-display leading-[1.1] text-lg font-semibold tracking-tight">
             <Link href="/icp" className="hover:text-emerald-300">ICP lenses</Link>
           </h2>
-          <span className="font-mono text-xs tabular-nums text-zinc-500">{lenses.length}</span>
+          <span className="text-xs tabular-nums text-zinc-500">{lenses.length}</span>
         </div>
         <p className="text-xs text-zinc-500">The same canonical verdicts re-weighted for ten different buyer types.</p>
         <ul className="rounded-lg border border-zinc-800">

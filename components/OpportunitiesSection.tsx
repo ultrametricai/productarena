@@ -86,7 +86,7 @@ export default function OpportunitiesSection({
               <VerdictBadge verdict={o.verdict} href={`#story-${o.storyId}`} hrefTitle="jump to the judged row below" />
               {o.verdict === 'partial' && (
                 <span
-                  className="font-mono text-xs tabular-nums text-zinc-400"
+                  className="text-xs tabular-nums text-zinc-400"
                   title={`Judged quality ${o.quality}/10 — the headroom is 10 − quality`}
                 >
                   q{o.quality}/10
@@ -99,7 +99,7 @@ export default function OpportunitiesSection({
                 moves {o.scoreLever}
               </span>
               <span
-                className="ml-auto font-mono text-xs tabular-nums text-zinc-500"
+                className="ml-auto text-xs tabular-nums text-zinc-500"
                 title={impactTitle(o)}
               >
                 impact {o.impact}

@@ -42,7 +42,7 @@ export default function ClaimsChip({ data, productId, href }: { data: CategoryDa
   const chip = (
     <span
       title={`${title}${linkable ? '. Click for the claim-by-claim breakdown.' : ''}`}
-      className="font-mono text-xs tabular-nums"
+      className="text-xs tabular-nums"
     >
       <span className={colorClass}>{score}</span>
       <span className="text-zinc-500">/100 integrity</span>

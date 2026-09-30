@@ -49,12 +49,12 @@ export default function ProcessYourVendor({
           You run <span className="font-medium">{yours.name}</span> —{' '}
           <span className="text-emerald-300">#{yours.rank}</span> for this process, {yours.stepsServed} of{' '}
           {rankableSteps} steps, score{' '}
-          <span className="font-mono tabular-nums text-emerald-300">{yours.processScore.toFixed(0)}</span>
+          <span className="tabular-nums text-emerald-300">{yours.processScore.toFixed(0)}</span>
         </span>
       </span>
       {!isLeader && leader && (
         <span className="text-zinc-400">
-          (#1 is {leader.name} at <span className="font-mono tabular-nums">{leader.processScore.toFixed(0)}</span>)
+          (#1 is {leader.name} at <span className="tabular-nums">{leader.processScore.toFixed(0)}</span>)
         </span>
       )}
       {moreMine > 0 && (

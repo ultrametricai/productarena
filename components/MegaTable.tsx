@@ -220,7 +220,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   f.set(!f.on)
                   setParams({ [f.key]: f.on ? null : '1' })
                 }}
-                className={`rounded-full border px-2 py-0.5 font-mono text-[10px] transition ${
+                className={`rounded-full border px-2 py-0.5 text-[10px] transition ${
                   f.on
                     ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
                     : 'border-zinc-800 text-zinc-500 hover:border-emerald-400/40 hover:text-emerald-300'

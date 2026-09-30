@@ -115,9 +115,9 @@ export default function OperatingRhythmPage() {
           that runs it.
         </p>
         <p className="mt-3 text-sm text-zinc-500">
-          <span className="font-mono tabular-nums text-emerald-300">{onCalendar}</span> processes live on
-          the calendar · <span className="font-mono tabular-nums text-zinc-300">{onTrigger}</span> fire on
-          a trigger · <span className="font-mono tabular-nums text-zinc-300">{setup}</span> are one-time
+          <span className="tabular-nums text-emerald-300">{onCalendar}</span> processes live on
+          the calendar · <span className="tabular-nums text-zinc-300">{onTrigger}</span> fire on
+          a trigger · <span className="tabular-nums text-zinc-300">{setup}</span> are one-time
           setup
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function OperatingRhythmPage() {
         <section key={g.cadence}>
           <h2 className="font-display leading-[1.1] flex items-baseline gap-2 text-xl font-semibold tracking-tight">
             {CADENCE_META[g.cadence].label}
-            <span className="font-mono text-sm tabular-nums text-zinc-500">×{g.tasks.length}</span>
+            <span className="text-sm tabular-nums text-zinc-500">×{g.tasks.length}</span>
           </h2>
           <p className="mt-1 text-sm text-zinc-400">{CADENCE_META[g.cadence].blurb}</p>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

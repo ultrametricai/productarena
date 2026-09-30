@@ -373,7 +373,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   />
                 </svg>
                 {stars !== null ? (
-                  <span className="flex items-center gap-1 font-mono text-emerald-400">
+                  <span className="flex items-center gap-1 tabular-nums text-emerald-400">
                     ★ {formatCompact(stars)}
                   </span>
                 ) : (

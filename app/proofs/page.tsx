@@ -110,7 +110,7 @@ export default function ProofsPage() {
                 >
                   {p.productName}
                 </Link>
-                <span className="ml-auto shrink-0 font-mono text-emerald-400">×{p.proofs.length}</span>
+                <span className="ml-auto shrink-0 tabular-nums text-emerald-400">×{p.proofs.length}</span>
               </li>
             ))}
           </ol>

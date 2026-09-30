@@ -101,7 +101,7 @@ export default function VsStateGraph({
             }`}
           >
             {t.label}
-            <span className="ml-1 font-mono text-[10px] tabular-nums opacity-70">{t.count}</span>
+            <span className="ml-1 text-[10px] tabular-nums opacity-70">{t.count}</span>
           </button>
         ))}
         <span className="ml-auto shrink-0 text-[9px] uppercase tracking-widest text-zinc-600">
@@ -208,7 +208,7 @@ export default function VsStateGraph({
                     data-synthetic="true"
                     className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 border-l-2 border-fuchsia-400/40 pl-2 text-[12px]"
                   >
-                    <span className="shrink-0 font-mono text-[10px] text-zinc-600">day {e.day}</span>
+                    <span className="shrink-0 text-[10px] text-zinc-600">day {e.day}</span>
                     <span className="text-zinc-300">{e.title}</span>
                     {e.choiceLabel ? (
                       <span className="text-[11px] text-zinc-500" title={e.outcome ?? undefined}>

@@ -42,7 +42,7 @@ export default function MomentumTrend({ series }: { series: MomentumSeries[] }) 
               height={16}
               label={`${label} trend: ${formatCompact(first.value)} on ${shortDate(first.date)} to ${formatCompact(last.value)} on ${shortDate(last.date)}`}
             />
-            <span className="font-mono text-[10px] text-zinc-500">
+            <span className="tabular-nums text-[10px] text-zinc-500">
               {label} <span className={delta > 0 ? 'text-emerald-400' : 'text-zinc-400'}>{fmtDelta(delta)}</span>
             </span>
           </span>
