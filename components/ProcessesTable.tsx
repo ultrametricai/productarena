@@ -104,17 +104,6 @@ export interface PlaybookRow {
   steps: Array<{ label: string; route: 'agent' | 'form' | 'person'; legalSignature: boolean }>
 }
 
-// Per-step route dots on playbook rows (same palette as the chain pages' strips). Person steps
-// read calm (sky), not negative red — founder 2026-09-21: a human step is "human or computer
-// use", not an error state.
-const ROUTE_DOT: Record<string, string> = {
-  agent: 'bg-emerald-400',
-  form: 'bg-amber-400',
-  person: 'bg-sky-400/80',
-}
-const routeDotTitle = (s: PlaybookRow['steps'][number]) =>
-  `${s.label} — ${s.legalSignature ? 'legal signature (stays with a person)' : s.route === 'agent' ? 'agent-runnable' : s.route === 'form' ? 'manual form' : 'human decision'}`
-
 type Column = 'title' | 'phase' | 'pct' | 'steps' | 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
 type Direction = 'asc' | 'desc'
 
@@ -522,15 +511,6 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
             >
               {p.agentSteps}/{p.totalSteps}
             </Link>
-            <span className="flex shrink-0 gap-0.5">
-              {p.steps.slice(0, 24).map((s, j) => (
-                <span
-                  key={j}
-                  title={routeDotTitle(s)}
-                  className={`h-1.5 w-1.5 rounded-full ${s.legalSignature ? 'bg-violet-400/80' : ROUTE_DOT[s.route]}`}
-                />
-              ))}
-            </span>
           </span>
         </td>
         <td className="whitespace-nowrap px-2 py-2">

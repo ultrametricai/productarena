@@ -257,15 +257,14 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
     expect(header.textContent).toContain('3 processes')
   })
 
-  it('a chain row keeps its composition signals and links to its chain page: constituent chips, route strip, honest metric dash — no category chip', () => {
+  it('a chain row keeps its composition signals and links to its chain page: constituent chips, honest metric dash — no category chip', () => {
     const { container } = mountWith()
     const tr = within(container).getByText('Company in a day').closest('tr') as HTMLElement
     expect(within(tr).queryByText('playbook')).toBeNull() // the chip is gone (founder 2026-09-29)
     expect(within(tr).getByText('Company in a day').closest('a')?.getAttribute('href')).toBe('/processes/chains/company-in-a-day')
     expect(tr.textContent).toContain('7/10') // aggregate agent/total steps
-    // The route strip: one dot per step, legalSignature wears violet.
-    expect(within(tr).getByTitle('File the charter — agent-runnable')).toBeDefined()
-    expect(within(tr).getByTitle('Sign the incorporator consent — legal signature (stays with a person)').className).toContain('bg-violet-400/80')
+    // Route-dot strip removed (founder 2026-09-29) — no per-step dots render.
+    expect(within(tr).queryByTitle('File the charter — agent-runnable')).toBeNull()
     // No timeline/cadence/risk value to show — the metric cell is an honest dash.
     expect(within(tr).getByText('—')).toBeDefined()
     // Process rows are unchanged next to it (their own links intact).

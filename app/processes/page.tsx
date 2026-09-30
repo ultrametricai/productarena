@@ -48,23 +48,7 @@ export default function ProcessesPage() {
       <section className="space-y-3">
         <div>
           <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">All processes</h2>
-          {/* Founder 2026-09-23: "this dots coloring is just not known by the user" — a visible
-              legend for the multi-process rows' per-step route dots, matching ProcessesTable's
-              ROUTE_DOT + the legalSignature violet. */}
-          <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-zinc-500">
-            <span className="flex items-center gap-1.5" title="An agent can run this step today via a recorded API/MCP/CLI path">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> agent-runnable
-            </span>
-            <span className="flex items-center gap-1.5" title="A form or portal a human fills in — no agent path recorded yet">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-400" /> manual form
-            </span>
-            <span className="flex items-center gap-1.5" title="A human decision or approval — deliberately not automated">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-sky-400/80" /> human decision
-            </span>
-            <span className="flex items-center gap-1.5" title="Requires a legally binding signature — always stays with a person">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-violet-400/80" /> legal signature
-            </span>
-          </p>
+          {/* Route-dot legend removed with the dots themselves (founder 2026-09-29). */}
         </div>
         <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} />
         {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,

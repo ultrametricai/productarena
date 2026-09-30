@@ -3,7 +3,7 @@
 // one table so we have one view for the processes under the process search"), with the same-day
 // vocabulary follow-up ("we don't need to say 'playbook' on those playbooks… playbooks are
 // still processes"): chain rows fold into their dominant area — no 'Playbooks' group, no chip,
-// heading 'All processes', one unified search count. The VS card and the route-dot legend stay.
+// heading 'All processes', one unified search count. The VS card stays; the legend is gone.
 import { render, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProcessesPage from '@/app/processes/page'
@@ -47,7 +47,7 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     }
   })
 
-  it('the fat search counts chains in the one processes N; the legend + Virtual Startup card stay', () => {
+  it('the fat search counts chains in the one processes N; the Virtual Startup card stays', () => {
     const { container } = render(<ProcessesPage />)
     const playbooks = buildPlaybookRows()
     const { rows } = buildProcessRows()
@@ -55,9 +55,8 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     const input = within(container).getByLabelText('Search processes') as HTMLInputElement
     expect(input.placeholder).toBe(`Search ${rows.length + playbooks.length} processes — payroll, SOC 2, EIN…`)
 
-    // The route-dot legend (explains the multi-process rows' strips) and the VS card survive.
-    expect(within(container).getByText('agent-runnable')).toBeDefined()
-    expect(within(container).getByText('legal signature')).toBeDefined()
+    // The route-dot legend was removed with the dots (founder 2026-09-29).
+    expect(within(container).queryByText('agent-runnable')).toBeNull()
     expect(within(container).getByText('🐣 Virtual Startup').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
   })
 })
