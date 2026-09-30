@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Shared control strip for the ranking tables (homepage MegaTable + per-arena ArenaTable) —
 // one component so "rank by" presets, the scope <select>, the text filter, and the live
@@ -8,6 +9,9 @@ import type { ReactNode } from 'react'
 export interface TableControlsPreset<C extends string> {
   col: C
   label: string
+  // Optional icon, shown in the dropdown variant (founder 2026-09-30: /processes rank-by as a
+  // single dropdown with icons).
+  icon?: string
 }
 
 function presetButtonClass(active: boolean): string {
@@ -28,6 +32,7 @@ export default function TableControls<C extends string>({
   query,
   onQuery,
   after,
+  presetsAsDropdown = false,
 }: {
   presets: Array<TableControlsPreset<C>>
   activeColumn: C
@@ -45,6 +50,9 @@ export default function TableControls<C extends string>({
   onQuery: (value: string) => void
   // Extra inline content at the end of the controls row (e.g. the arena table's legend link).
   after?: ReactNode
+  // Render the desktop presets as ONE house-listbox dropdown instead of the pill row
+  // (founder 2026-09-30, /processes) — mobile keeps its select either way.
+  presetsAsDropdown?: boolean
 }) {
   // Founder 2026-09-23: one line — rank-by presets left, scope + filter pushed right; narrow
   // viewports wrap naturally. Founder 2026-09-24 (mobile): below sm the preset pills collapse
@@ -64,22 +72,28 @@ export default function TableControls<C extends string>({
           {activePreset === undefined && <option value="">Rank by…</option>}
           {presets.map((p) => (
             <option key={p.col} value={p.col}>
-              {p.label}
+              {p.icon ? `${p.icon} ${p.label}` : p.label}
             </option>
           ))}
         </select>
         <span aria-hidden className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-emerald-400">▾</span>
       </span>
-      {presets.map((p) => (
-        <button
-          key={p.col}
-          type="button"
-          onClick={() => onPreset(p.col)}
-          className={`hidden sm:inline-block ${presetButtonClass(activeColumn === p.col && presetActive)}`}
-        >
-          {p.label}
-        </button>
-      ))}
+      {presetsAsDropdown ? (
+        <span className="hidden sm:inline-flex">
+          <PresetDropdown presets={presets} active={activePreset?.col ?? null} onPreset={onPreset} />
+        </span>
+      ) : (
+        presets.map((p) => (
+          <button
+            key={p.col}
+            type="button"
+            onClick={() => onPreset(p.col)}
+            className={`hidden sm:inline-block ${presetButtonClass(activeColumn === p.col && presetActive)}`}
+          >
+            {p.label}
+          </button>
+        ))
+      )}
       {/* Founder 2026-09-24 (mobile): the rank select and the arena scope share ONE line; the
           rank control keeps the width priority and the filter stays narrow, expanding on focus
           (a phone reader taps it before typing anyway). */}
@@ -115,5 +129,78 @@ export default function TableControls<C extends string>({
             the column tooltips carry the definitions; the chip was visual noise. */}
       </div>
     </div>
+  )
+}
+
+
+// The single rank-by dropdown (house listbox — GeoDropdown/SimRolePicker family, never a
+// native select on desktop). Closed button shows the active preset (icon + label) or 'Rank by'.
+function PresetDropdown<C extends string>({
+  presets,
+  active,
+  onPreset,
+}: {
+  presets: Array<TableControlsPreset<C>>
+  active: C | null
+  onPreset: (col: C) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (e: PointerEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+  const current = presets.find((p) => p.col === active) ?? null
+  return (
+    <span ref={rootRef} className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className={presetButtonClass(current !== null)}
+      >
+        {current ? `${current.icon ? `${current.icon} ` : ''}${current.label}` : 'Rank by'}{' '}
+        <span aria-hidden className="text-[10px] text-zinc-500">▾</span>
+      </button>
+      {open && (
+        <ul role="listbox" aria-label="Rank by" className="absolute left-0 z-40 mt-1 w-52 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl">
+          {presets.map((p) => {
+            const isActive = p.col === active
+            return (
+              <li key={p.col} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isActive}
+                  onClick={() => {
+                    onPreset(p.col)
+                    setOpen(false)
+                  }}
+                  className={`flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-xs transition ${
+                    isActive ? 'bg-emerald-400/10 text-emerald-300' : 'text-zinc-300 hover:bg-zinc-800 hover:text-emerald-300'
+                  }`}
+                >
+                  {p.icon && <span aria-hidden>{p.icon}</span>}
+                  {p.label}
+                  {isActive && <span aria-hidden className="ml-auto">✓</span>}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </span>
   )
 }

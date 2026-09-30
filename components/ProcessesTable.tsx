@@ -126,14 +126,14 @@ function paramToColumn(value: string | null): Column | null {
   return (ALL_COLUMNS as readonly string[]).includes(value) ? (value as Column) : null
 }
 
-const PRESETS: Array<{ col: Column; label: string }> = [
-  { col: 'pct', label: 'Most automatable' },
-  { col: 'steps', label: 'Most steps' },
-  { col: 'order', label: 'Founder timeline' },
-  { col: 'cadence', label: 'Regularity' },
-  { col: 'annoyance', label: 'Most annoying' },
-  { col: 'risk', label: 'Riskiest' },
-  { col: 'growth', label: 'Growth-focused' },
+const PRESETS: Array<{ col: Column; label: string; icon: string }> = [
+  { col: 'pct', label: 'Most automatable', icon: '⚡' },
+  { col: 'steps', label: 'Most steps', icon: '🪜' },
+  { col: 'order', label: 'Founder timeline', icon: '🗓️' },
+  { col: 'cadence', label: 'Regularity', icon: '🔁' },
+  { col: 'annoyance', label: 'Most annoying', icon: '😤' },
+  { col: 'risk', label: 'Riskiest', icon: '⚠️' },
+  { col: 'growth', label: 'Growth-focused', icon: '📈' },
 ]
 
 // The adaptive metric column: which of the five orderings it currently shows. Defaults to the
@@ -530,6 +530,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
   return (
     <div className="space-y-3">
       <TableControls
+        presetsAsDropdown
         after={<GeoDropdown />}
         presets={PRESETS}
         activeColumn={column}

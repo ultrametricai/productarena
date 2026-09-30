@@ -63,6 +63,15 @@ const thFor = (root: HTMLElement, label: string) =>
 
 beforeEach(() => setUrl(''))
 
+
+// The rank-by presets live in ONE dropdown now (founder 2026-09-30) — open it, pick the option.
+const pickPreset = (scope: { getByRole: (role: string, opts?: object) => HTMLElement }, label: string) => {
+  fireEvent.click(scope.getByRole('button', { name: /Rank by|Most automatable|Most steps|Founder timeline|Regularity|Most annoying|Riskiest|Growth-focused/ }))
+  // Scope to the LISTBOX — the mobile fallback <select>'s options share the role in jsdom.
+  const listbox = scope.getByRole('listbox', { name: 'Rank by' })
+  fireEvent.click(within(listbox).getByRole('option', { name: new RegExp(label) }))
+}
+
 describe('mount applies URL params (invalids fall back silently)', () => {
   it('pristine URL renders the default view: grouped by area, no column sorted, all phases', () => {
     const { container } = mount()
@@ -113,11 +122,11 @@ describe('mount applies URL params (invalids fall back silently)', () => {
 describe('interactions write params; defaults remove them', () => {
   it('an ordering preset writes ?order=, and the default preset removes it', () => {
     const { getByRole } = mount()
-    fireEvent.click(getByRole('button', { name: 'Riskiest' }))
+    pickPreset({ getByRole }, 'Riskiest')
     expect(params().get('order')).toBe('risk')
-    fireEvent.click(getByRole('button', { name: 'Founder timeline' }))
+    pickPreset({ getByRole }, 'Founder timeline')
     expect(params().get('order')).toBe('timeline') // human-readable alias, not order=order
-    fireEvent.click(getByRole('button', { name: 'Most automatable' })) // the default sort — param gone
+    pickPreset({ getByRole }, 'Most automatable') // the default sort — param gone
     expect(params().get('order')).toBeNull()
   })
 
@@ -148,7 +157,7 @@ describe('interactions write params; defaults remove them', () => {
   it("patches, never rebuilds: MegaTable's ?rank/?q and HomeModes' ?view survive (homepage co-mount)", () => {
     setUrl('?view=processes&rank=popularity&q=stripe')
     const { getByRole } = mount()
-    fireEvent.click(getByRole('button', { name: 'Growth-focused' }))
+    pickPreset({ getByRole }, 'Growth-focused')
     const p = params()
     expect(p.get('view')).toBe('processes')
     expect(p.get('rank')).toBe('popularity')
@@ -176,7 +185,7 @@ describe('grouped-by-area default view (founder 2026-09-28)', () => {
 
   it('a rank-by preset switches to the flat sorted table; the reset pill returns to grouped and clears ?order=', () => {
     const { container, getByRole } = mount()
-    fireEvent.click(getByRole('button', { name: 'Riskiest' }))
+    pickPreset({ getByRole }, 'Riskiest')
     expect(within(container).queryByText('Starting up')).toBeNull() // flat — headers gone
     expect(thFor(container, 'Risk')?.getAttribute('aria-sort')).toBe('descending')
     expect(params().get('order')).toBe('risk')
@@ -273,7 +282,7 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
 
   it('a ceiling sort interleaves chain rows by their aggregate ceiling (flat semantics unchanged)', () => {
     const { container, getByRole } = mountWith()
-    fireEvent.click(getByRole('button', { name: 'Most automatable' }))
+    pickPreset({ getByRole }, 'Most automatable')
     const texts = rowTexts(container)
     const at = (probe: string) => texts.findIndex((t) => t.includes(probe))
     // pct desc: Run payroll 90 → chain 70 → Incorporate 60 → bank 40.
@@ -284,7 +293,7 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
 
   it('a per-process ordering (risk) lists chain rows after the sorted processes — missing values last', () => {
     const { container, getByRole } = mountWith()
-    fireEvent.click(getByRole('button', { name: 'Riskiest' }))
+    pickPreset({ getByRole }, 'Riskiest')
     const texts = rowTexts(container)
     expect(texts.findIndex((t) => t.includes('Company in a day'))).toBe(texts.length - 1)
   })
