@@ -1,7 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import BackedByBuilders from '@/components/BackedByBuilders'
+import { GetStartedAgentsSection, GetStartedHeroSection } from '@/components/GetStartedSections'
+import HomeProcessesMini, { HOME_PROCESSES_COUNT } from '@/components/HomeProcessesMini'
+import HomeRankingsMini, { HOME_RANKINGS_COUNT } from '@/components/HomeRankingsMini'
 import { HeroFractal } from '@/components/fx/lazy'
+import { loadAll } from '@/lib/data'
+import { buildMegaTableRows } from '@/lib/megaTable'
+import { DEFAULT_COLUMN, DEFAULT_DIRECTION, sortMegaRows } from '@/lib/megaTableSort'
+import { buildProcessRows } from '@/lib/processRows'
 
 // The company landing homepage, ported from the retired Astro landing site into the product
 // app so every page shares app/layout.tsx — one top bar sitewide (founder 2026-09-29). The
@@ -41,7 +48,8 @@ export const metadata: Metadata = {
   },
 }
 
-// Static page — no data dependency.
+// Static page — the mini tables read the committed data/ + processes/ corpora at build time
+// (same loaders as /overall and /processes), never at request time.
 export const dynamic = 'force-static'
 
 // The landing hero's no-WebGL fallback gradient, verbatim (its .cb-fallback rule).
@@ -113,14 +121,29 @@ function ProductCard({
 }
 
 export default function HomePage() {
+  // The Rankings mini table (founder 2026-09-30): the TOP 15 of the /overall default companies
+  // view — same row builder, same default order (agent-ready desc, lib/megaTableSort.ts), family
+  // sub-products and secondary-arena duplicates excluded exactly as MegaTable's default view
+  // hides them — so rank i+1 here IS the rank on /overall.
+  const topRankings = sortMegaRows(
+    buildMegaTableRows(loadAll()).filter((r) => !r.isFamilySubProduct && !r.isSecondaryArena),
+    DEFAULT_COLUMN,
+    DEFAULT_DIRECTION,
+  ).slice(0, HOME_RANKINGS_COUNT)
+  // The processes mini table: ~20 rows from the same server-side rows /processes renders, in
+  // founder-timeline order (the "Founder timeline" preset's ordering).
+  const topProcesses = [...buildProcessRows().rows]
+    .sort((a, b) => a.timeOrder - b.timeOrder || a.title.localeCompare(b.title))
+    .slice(0, HOME_PROCESSES_COUNT)
   return (
     // Full-bleed breakout of the layout's max-w-7xl px-5 py-10 main: the landing ran its hero
     // and section rules edge-to-edge. -my-10 cancels main's vertical padding so the hero meets
     // the header and the last section meets the install banner. html is overflow-x: clip (see
     // globals.css) so w-screen can't introduce a scrollbar-width horizontal overflow.
     <div className="relative left-1/2 w-screen -translate-x-1/2 -my-10">
-      {/* Hero — viewport height minus the (non-fixed, unlike the landing's) product header. */}
-      <section className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden">
+      {/* Hero — ~70% viewport height (founder 2026-09-30, down from 100svh) minus the
+          (non-fixed, unlike the landing's) product header; content stays vertically centered. */}
+      <section className="relative flex min-h-[calc(70svh-4rem)] flex-col overflow-hidden">
         {/* Decorative WebGL backdrop — the original Newton-fractal flow, lazily mounted
             client-only. The .cb-fallback gradient is the SSG/no-WebGL/reduced-motion state. */}
         <div className="complex-backdrop pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -130,9 +153,8 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-0 bg-zinc-950/30" aria-hidden />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-zinc-950 to-transparent" aria-hidden />
         <div className="relative z-[1] mx-auto flex max-w-5xl flex-1 flex-col items-center justify-center px-6 pb-24 pt-24 text-center sm:px-8 md:px-12">
-          <p className="mb-6 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.35em] text-zinc-300 sm:text-xs">
-            Redefining work in the AI phase transition
-          </p>
+          {/* The "Redefining work in the AI phase transition" eyebrow was removed
+              (founder 2026-09-30). */}
           {/* Static h1 (founder 2026-09-29: no per-char shifting) — DissolveHeading retired here. */}
           <h1 className="font-display text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl md:text-8xl">
             Automating
@@ -154,9 +176,21 @@ export default function HomePage() {
 
       {/* Products — the original large cards (no #products id, per founder ask 2026-09-29). */}
       {/* Products section removed (founder 2026-09-29, second ask — the fidelity
-          restoration had brought it back): homepage = hero + backed-by-builders. */}
+          restoration had brought it back). */}
 
+      {/* Homepage flow after the hero (founder 2026-09-30): Backed by builders → Rankings
+          (top 15 of /overall) → Automating founder processes (~20 timeline-ordered rows) →
+          the /get-started content sections (shared components — one module, two pages) —
+          ending where the sitewide InstallBanner ("Your AI native company starts here",
+          app/layout.tsx) takes over, then the footer. */}
       <BackedByBuilders />
+      <HomeRankingsMini rows={topRankings} />
+      <HomeProcessesMini rows={topProcesses} />
+      {/* The get-started hero renders as an h2 section here — the landing hero above owns h1. */}
+      <div className="border-t border-zinc-800/60">
+        <GetStartedHeroSection headingLevel="h2" />
+      </div>
+      <GetStartedAgentsSection />
     </div>
   )
 }
