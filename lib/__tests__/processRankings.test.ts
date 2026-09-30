@@ -402,6 +402,61 @@ describe('end-to-end: launch-website chain (founder ask: key other vendors for e
   })
 })
 
+describe('LLM-first thinking steps (founder 2026-09-30: "validation of the idea is more likely to be done in ChatGPT, Claude, Grok etc first and maybe Notion after")', () => {
+  // The curated sweep: every step whose realistic first venue is a conversation with an
+  // assistant now has ai-assistants as its PRIMARY covering arena — the judged assistant
+  // rankings lead, nothing hand-ordered.
+  const LLM_FIRST_STEPS: Array<[string, string]> = [
+    ['startup_001', 'n1'], // draft problem hypothesis & target customer
+    ['brand_001', 'n1'], // generate name candidates
+    ['brand_001', 'n3'], // present ranked candidates
+    ['vendor_011', 'n1'], // define requirements and constraints
+    ['vendor_011', 'n2'], // research the market and shortlist
+    ['hr_001', 'n1'], // draft offer letter
+    ['hr_010', 'n5'], // draft the exec offer
+    ['legal_004', 'n1'], // draft SaaS agreement template
+    ['legal_004', 'n2'], // draft Terms of Service
+    ['legal_004', 'n3'], // draft Privacy Policy
+    ['scale_003', 'n1'], // draft handbook sections
+    ['fund_001', 'n4'], // draft investor outreach emails
+    ['growth_010', 'n1'], // prepare launch assets and copy
+    ['growth_011', 'n1'], // keyword and topic research
+    ['growth_011', 'n2'], // draft content with an agent
+  ]
+
+  it('every curated step covers to ai-assistants and carries a judged, non-empty assistant ranking', () => {
+    const byId = new Map(tasks().map((t) => [t.id, t]))
+    for (const [taskId, nodeId] of LLM_FIRST_STEPS) {
+      const node = byId.get(taskId)!.dag.nodes.find((n) => n.id === nodeId)!
+      expect(coveringArenaId(node), `${taskId}:${nodeId} should cover to ai-assistants`).toBe('ai-assistants')
+      const r = stepRanking(taskId, node, DATA_DIR)
+      expect(r, `${taskId}:${nodeId} should have a judged assistant ranking`).not.toBeNull()
+      expect(r!.arenaId).toBe('ai-assistants')
+      expect(r!.vendors.length).toBeGreaterThan(0)
+      // No stale extra ref may duplicate the primary arena (the mapping kinds stay honest).
+      expect((node.extraOptionRefs ?? []).some((x) => x.arenaId === 'ai-assistants')).toBe(false)
+    }
+  })
+
+  it('validate-the-idea: the sim prints an assistant as the judged top pick, and the Notion capture step follows', () => {
+    const task = tasks().find((t) => t.id === 'startup_001')!
+    const draft = task.dag.nodes.find((n) => n.id === 'n1')!
+    const r = stepRanking('startup_001', draft, DATA_DIR)!
+    // The top pick is whatever the judged ai-assistants ranking says — a real assistant
+    // product with runners-up, never a hand pick.
+    const assistantIds = new Set(
+      loadCategory('ai-assistants', DATA_DIR).products.map((p) => p.id),
+    )
+    expect(assistantIds.has(r.vendors[0].productId)).toBe(true)
+    expect(r.vendors.length).toBeGreaterThanOrEqual(2) // runners-up exist for the sim terminal
+    // "and maybe Notion after": the capture step covers to the arena where Notion is judged.
+    const capture = task.dag.nodes.find((n) => n.id === 'n1b')!
+    expect(capture.vendor).toBe('notion')
+    expect(coveringArenaId(capture)).toBe('project-management')
+    expect(stepRanking('startup_001', capture, DATA_DIR)).not.toBeNull()
+  })
+})
+
 describe('end-to-end: Incorporate C-Corp (company-launch playbook)', () => {
   it('step rankings + process leaderboard + a temporarily-human step with computer-use options', () => {
     const task = tasks().find((t) => t.id === 'form_001')!
