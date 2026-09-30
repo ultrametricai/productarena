@@ -37,6 +37,7 @@ export default function VsScorecard({
   burn,
   founder,
   runState,
+  userPickedArenas,
 }: {
   outcome: StackOutcome
   optimal: StackOutcome
@@ -44,6 +45,9 @@ export default function VsScorecard({
   burn: VsBurnSummary
   founder: VsFounderAxes
   runState: VsRunState
+  // Arena ids whose vendor the reader re-picked away from the default judged-top (founder
+  // addendum #3, 2026-09-29) — the burn lines label each vendor 'your pick' vs 'judged top'.
+  userPickedArenas?: ReadonlySet<string>
 }) {
   const [copied, setCopied] = useState(false)
   const techLabel = VS_TECHNICAL_OPTIONS.find((o) => o.value === founder.technical)?.label
@@ -153,8 +157,21 @@ export default function VsScorecard({
           {burn.lines
             .filter((l) => l.info !== null)
             .map((l) => (
-              <li key={`${l.arenaId}:${l.productId}`} data-testid="vs-burn-line" className="text-zinc-400">
-                {l.productName} ({l.arenaName}):{' '}
+              <li
+                key={`${l.arenaId}:${l.productId}`}
+                data-testid="vs-burn-line"
+                data-pick-source={userPickedArenas?.has(l.arenaId) ? 'user' : 'judged'}
+                className="text-zinc-400"
+              >
+                {l.productName} ({l.arenaName}){' '}
+                {/* Who chose this vendor (founder addendum #3): the reader's own pick vs the
+                    default judged-top — no score changes, the label is provenance only. */}
+                {userPickedArenas?.has(l.arenaId) ? (
+                  <span className="text-amber-300/90">[your pick]</span>
+                ) : (
+                  <span className="text-zinc-600">[judged top]</span>
+                )}
+                :{' '}
                 {l.info!.kind === 'fact' ? (
                   <>
                     <span className="font-mono">{l.info!.label}</span> {l.info!.unit} —{' '}

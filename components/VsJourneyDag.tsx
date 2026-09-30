@@ -1,33 +1,36 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
 import { chainIcon, processIcon } from '@/lib/processIcons'
 import type { SimStep } from '@/lib/processSim'
 import type { SyntheticArtifact, TopVendorPick, VirtualTaskPayload } from '@/lib/virtualStartup'
 
-// The journey DAG viewer (founder ask 2026-09-29; reworked round 4: "too vertically small and no
-// one will horizontally scroll… as it goes along, zoom out; don't show parts that are coming
-// up"): a TALLER (~200px desktop / ~140px mobile), never-horizontally-scrolling graph of the run
-// above the terminal — one node per PROCESS (chain task) in journey order, clustered and colored
-// by phase, hand-rolled SVG spine edges. The composed journey is strictly sequential
-// (lib/virtualStartup.ts journeyPhases returns time-ordered phases), so the spine is a single
-// left→right path with labeled phase clusters — no parallel lanes exist to draw, none invented.
+// The journey DAG viewer (founder ask 2026-09-29; reworked round 5: "use vertical space more —
+// it tries to stay in a horizontal-only mode and needs space"): a WRAPPING FLOW of the run above
+// the terminal — one node per PROCESS (chain task) in journey order, wrapping left→right,
+// top→bottom in reading order. Round 4's fisheye zoom (tier chrome, flex compression, fixed
+// 140/200px band) is GONE: every node renders at one comfortable FIXED size — icon + title
+// legible always — and the container grows vertically with content instead of squeezing nodes
+// horizontally. Beyond a cap of min(45vh, 380px) the strip scrolls vertically (never
+// horizontally), auto-pinned to the newest node while running with the same follow-slack
+// courtesy as the terminal (a reader scroll up unpins; back near the bottom re-pins).
 //
-// PROGRESSIVE REVEAL (round 4): upcoming nodes are NOT shown. Pre-run only the FIRST node
-// renders, dim; each node appears exactly when the reveal reaches its task row (dagNodeReached —
-// which also covers "its cluster started": the phase row prints one tick earlier). A completed
-// run shows the whole traversed journey, fitted.
+// CLUSTERS (round 5 call): box-frames fight wrapping — a frame either forbids its nodes from
+// wrapping mid-cluster or turns into a block that breaks reading order — so each phase renders
+// as a chain-tinted LABEL CHIP leading its first node in the flow; the chain hue also tints the
+// done-node fill, so cluster membership stays readable across wrapped rows.
 //
-// ZOOM-OUT FIT (round 4): the strip ALWAYS fits the container width — recomputed flex sizing,
-// not a CSS transform (crisper text, no blurry raster scaling). The row is w-full; each cluster
-// grows proportionally to its visible node count; every non-active node is flex-1/min-w-0 so the
-// traversed tail compresses evenly as nodes accumulate (a clean fisheye), while the ACTIVE node
-// stays flex-none at FULL size — pulsing, icon + title always legible. A zoom TIER derived from
-// the visible node count (dagZoomTier) steps node padding/icon size down and hides non-active
-// node titles below the 'sm' threshold — icons stay, accessible names stay (aria-label), and
-// the full title stays in the tooltip.
+// EDGES: within a row, a simple hand-rolled connector (short line + arrowhead, lit emerald once
+// traversed) leads every node after the first. Across a row-wrap the arrow would point at the
+// row edge, so a measured effect (offsetTop of the flow items — no deps, no timers) swaps the
+// wrapped item's leading connector for a subtle ↵ continuation hint instead.
+//
+// PROGRESSIVE REVEAL (kept from round 4): upcoming nodes are NOT shown. Pre-run only the FIRST
+// node renders, dim; each node appears exactly when the reveal reaches its task row
+// (dagNodeReached — which also covers "its cluster started": the phase row prints one tick
+// earlier). A completed run shows the whole traversed journey.
 //
 // LIVE state is DERIVED from the exact same revealed-row list the terminal and the state panel
 // print from (no timers of its own — tests assert it): a node is pending (dim outline) until the
@@ -183,7 +186,7 @@ export function activeDagTaskId(clusters: readonly VsDagCluster[], revealed: num
 }
 
 // ---------------------------------------------------------------------------
-// Progressive reveal + zoom tiers (founder round 4) — pure, exported for tests.
+// Progressive reveal (kept from round 4) + wrap detection (round 5) — pure, exported for tests.
 // ---------------------------------------------------------------------------
 
 // Reveal-on-reach: a node renders once the reveal has reached its task row (revealed ≥ rowStart —
@@ -209,22 +212,16 @@ export function dagVisibleTaskIds(clusters: readonly VsDagCluster[], revealed: n
   return out
 }
 
-// The zoom tier for a visible-node count: the whole traversed journey always fits the width
-// (flex does the fitting); the tier only steps the node CHROME down so compressed nodes stay
-// crisp — below 'md', non-active node titles hide (icons stay, aria-labels stay).
-export type VsDagZoomTier = 'xl' | 'md' | 'sm' | 'xs'
-
-export function dagZoomTier(visibleCount: number): VsDagZoomTier {
-  if (visibleCount <= 5) return 'xl'
-  if (visibleCount <= 9) return 'md'
-  if (visibleCount <= 14) return 'sm'
-  return 'xs'
-}
-
-// Whether a non-active node's title text renders at this tier (the active node ALWAYS shows its
-// title — it keeps full size regardless of tier).
-export function dagTierShowsTitle(tier: VsDagZoomTier): boolean {
-  return tier === 'xl' || tier === 'md'
+// Which flow items start a new visual row of the wrap, given their measured offsetTops in flow
+// order: an item whose top sits below its predecessor's began a wrapped row — its leading
+// connector renders as a ↵ continuation hint instead of an arrow into the row edge. Pure so
+// tests drive it directly; the component feeds it real offsetTop measurements in an effect.
+export function dagWrapStartIds(items: readonly { id: string; top: number }[]): Set<string> {
+  const out = new Set<string>()
+  for (let i = 1; i < items.length; i++) {
+    if (items[i].top > items[i - 1].top) out.add(items[i].id)
+  }
+  return out
 }
 
 // ---------------------------------------------------------------------------
@@ -234,55 +231,60 @@ export function dagTierShowsTitle(tier: VsDagZoomTier): boolean {
 // ---------------------------------------------------------------------------
 
 interface ChainStyle {
-  cluster: string // cluster border + label tint
-  label: string
+  chip: string // the cluster label chip leading the phase's first node
   done: string // filled node once every row printed
 }
 
 const CHAIN_STYLES: Record<string, ChainStyle> = {
-  'name-the-company': { cluster: 'border-sky-400/30', label: 'text-sky-300/80', done: 'border-sky-400/50 bg-sky-400/10 text-zinc-200' },
-  'company-launch': { cluster: 'border-violet-400/30', label: 'text-violet-300/80', done: 'border-violet-400/50 bg-violet-400/10 text-zinc-200' },
-  'raise-a-seed-round': { cluster: 'border-amber-400/30', label: 'text-amber-300/80', done: 'border-amber-400/50 bg-amber-400/10 text-zinc-200' },
-  'set-up-compliance': { cluster: 'border-teal-400/30', label: 'text-teal-300/80', done: 'border-teal-400/50 bg-teal-400/10 text-zinc-200' },
-  'ship-v1': { cluster: 'border-lime-400/30', label: 'text-lime-300/80', done: 'border-lime-400/50 bg-lime-400/10 text-zinc-200' },
-  'launch-website': { cluster: 'border-cyan-400/30', label: 'text-cyan-300/80', done: 'border-cyan-400/50 bg-cyan-400/10 text-zinc-200' },
-  'get-paid': { cluster: 'border-rose-400/30', label: 'text-rose-300/80', done: 'border-rose-400/50 bg-rose-400/10 text-zinc-200' },
-  'first-hire': { cluster: 'border-indigo-400/30', label: 'text-indigo-300/80', done: 'border-indigo-400/50 bg-indigo-400/10 text-zinc-200' },
-  'launch-on-product-hunt': { cluster: 'border-orange-400/30', label: 'text-orange-300/80', done: 'border-orange-400/50 bg-orange-400/10 text-zinc-200' },
-  'land-the-enterprise-deal': { cluster: 'border-purple-400/30', label: 'text-purple-300/80', done: 'border-purple-400/50 bg-purple-400/10 text-zinc-200' },
+  'name-the-company': { chip: 'border-sky-400/30 text-sky-300/80', done: 'border-sky-400/50 bg-sky-400/10 text-zinc-200' },
+  'company-launch': { chip: 'border-violet-400/30 text-violet-300/80', done: 'border-violet-400/50 bg-violet-400/10 text-zinc-200' },
+  'raise-a-seed-round': { chip: 'border-amber-400/30 text-amber-300/80', done: 'border-amber-400/50 bg-amber-400/10 text-zinc-200' },
+  'set-up-compliance': { chip: 'border-teal-400/30 text-teal-300/80', done: 'border-teal-400/50 bg-teal-400/10 text-zinc-200' },
+  'ship-v1': { chip: 'border-lime-400/30 text-lime-300/80', done: 'border-lime-400/50 bg-lime-400/10 text-zinc-200' },
+  'launch-website': { chip: 'border-cyan-400/30 text-cyan-300/80', done: 'border-cyan-400/50 bg-cyan-400/10 text-zinc-200' },
+  'get-paid': { chip: 'border-rose-400/30 text-rose-300/80', done: 'border-rose-400/50 bg-rose-400/10 text-zinc-200' },
+  'first-hire': { chip: 'border-indigo-400/30 text-indigo-300/80', done: 'border-indigo-400/50 bg-indigo-400/10 text-zinc-200' },
+  'launch-on-product-hunt': { chip: 'border-orange-400/30 text-orange-300/80', done: 'border-orange-400/50 bg-orange-400/10 text-zinc-200' },
+  'land-the-enterprise-deal': { chip: 'border-purple-400/30 text-purple-300/80', done: 'border-purple-400/50 bg-purple-400/10 text-zinc-200' },
 }
 
-const CHAIN_FALLBACK: ChainStyle = { cluster: 'border-zinc-700', label: 'text-zinc-400', done: 'border-zinc-600 bg-zinc-800 text-zinc-200' }
+const CHAIN_FALLBACK: ChainStyle = { chip: 'border-zinc-700 text-zinc-400', done: 'border-zinc-600 bg-zinc-800 text-zinc-200' }
 
 function chainStyle(chainId: string): ChainStyle {
   return CHAIN_STYLES[chainId] ?? CHAIN_FALLBACK
 }
 
-// Per-tier node chrome (non-active nodes; the active node always wears the 'xl' chrome).
-const TIER_NODE: Record<VsDagZoomTier, { pad: string; icon: string; title: string }> = {
-  xl: { pad: 'px-2 py-1.5', icon: 'text-base', title: 'text-[11px]' },
-  md: { pad: 'px-1.5 py-1', icon: 'text-sm', title: 'text-[10px]' },
-  sm: { pad: 'px-1 py-1', icon: 'text-sm', title: '' },
-  xs: { pad: 'px-0.5 py-0.5', icon: 'text-xs', title: '' },
-}
+// Follow-slack: how close (px) to the strip's bottom still counts as "at the bottom" — the same
+// courtesy as the terminal (components/VirtualStartup.tsx FOLLOW_SLACK_PX), so a stray one-line
+// scroll doesn't silently unpin the follow.
+const FOLLOW_SLACK_PX = 24
 
-// A hand-rolled spine edge: short line + arrowhead, lit emerald once the reveal traversed it
-// (its downstream node is active or done); narrower at compressed tiers so it never steals the
-// width the nodes are fitting into.
-function Edge({ lit, tier }: { lit: boolean; tier: VsDagZoomTier }) {
-  const w = tier === 'xl' || tier === 'md' ? 14 : tier === 'sm' ? 9 : 6
+// A hand-rolled in-row edge: short line + arrowhead at one FIXED size (no tiers — nodes never
+// compress anymore), lit emerald once the reveal traversed it (its downstream node is active or
+// done).
+function Edge({ lit }: { lit: boolean }) {
   return (
     <svg
       aria-hidden
-      width={w}
+      data-testid="vs-dag-edge"
+      width="16"
       height="8"
       viewBox="0 0 16 8"
-      preserveAspectRatio="none"
-      className="shrink-0 self-center"
+      className="mx-0.5 shrink-0 self-center"
     >
       <line x1="0" y1="4" x2="10" y2="4" strokeWidth="1.5" className={lit ? 'stroke-emerald-400/70' : 'stroke-zinc-700'} />
       <path d="M10 1 L15.5 4 L10 7 Z" className={lit ? 'fill-emerald-400/70' : 'fill-zinc-700'} />
     </svg>
+  )
+}
+
+// The across-a-wrap continuation hint: a subtle ↵ leading the first node of a wrapped row (an
+// arrow there would point at the row edge, not at its upstream node).
+function WrapHint() {
+  return (
+    <span aria-hidden data-testid="vs-dag-wrap-hint" className="mr-1 shrink-0 self-center text-[10px] leading-none text-zinc-600">
+      ↵
+    </span>
   )
 }
 
@@ -299,8 +301,7 @@ export default function VsJourneyDag({
   rows: VsDagSourceRow[]
   // How many rows the terminal has printed (the shared reveal counter).
   revealed: number
-  // Whether the reveal ticker is live — surfaced as a data attribute (the strip needs no
-  // follow-scroll anymore: it never overflows horizontally).
+  // Whether the reveal ticker is live — surfaced as a data attribute.
   running: boolean
   // The semi-auto pause the run is currently waiting on (decision id or 'name'); its marker pulses.
   waitingOn?: string | null
@@ -323,10 +324,55 @@ export default function VsJourneyDag({
     return m
   }, [markers])
 
-  // Progressive reveal + zoom (round 4): only reached nodes render (pre-run: the first node,
-  // dim); the tier steps chrome down as the traversed set grows so everything keeps fitting.
+  // Progressive reveal (kept): only reached nodes render (pre-run: the first node, dim).
   const visible = useMemo(() => dagVisibleTaskIds(clusters, revealed), [clusters, revealed])
-  const tier = dagZoomTier(visible.size)
+
+  // The capped scroll strip + its follow flag (round 5): the flow grows vertically with content
+  // up to min(45vh, 380px); past the cap it scrolls vertically, pinned to the newest (active)
+  // node — which is always the LAST rendered node, reveal order IS flow order — unless the
+  // reader scrolled up (the terminal's follow-slack courtesy). No timers: the pin runs off the
+  // shared reveal commit, the flag off real scroll events.
+  const stripRef = useRef<HTMLDivElement>(null)
+  const followRef = useRef(true)
+  useEffect(() => {
+    const el = stripRef.current
+    if (!el) return
+    // An emptied strip (restart / decision change) rests at its top and re-arms the follow.
+    if (revealed === 0) {
+      followRef.current = true
+      el.scrollTop = 0
+      return
+    }
+    // Pinning to the bottom keeps the active node visible: new nodes only ever append below.
+    if (followRef.current) el.scrollTop = el.scrollHeight
+  }, [revealed])
+
+  // Wrap detection: after every commit (any reveal/recompose can reflow the wrap), measure the
+  // flow items' offsetTops and mark the ones that start a wrapped row (their leading connector
+  // becomes a ↵ hint). jsdom reports every offsetTop as 0, so tests exercise the pure
+  // dagWrapStartIds instead.
+  const [wrapStarts, setWrapStarts] = useState<ReadonlySet<string>>(() => new Set())
+  const measureWraps = useCallback(() => {
+    const el = stripRef.current
+    if (!el) return
+    const items = Array.from(el.querySelectorAll<HTMLElement>('[data-dag-flow]')).map((it) => ({
+      id: it.getAttribute('data-dag-flow') ?? '',
+      top: it.offsetTop,
+    }))
+    const next = dagWrapStartIds(items)
+    // Layout measurement: wrap positions only exist AFTER the flow committed to the DOM; the
+    // set-equality guard makes the re-render converge in one extra pass.
+    setWrapStarts((cur) => (cur.size === next.size && [...next].every((id) => cur.has(id)) ? cur : next))
+  }, [])
+  // Deliberately dependency-less: it must re-measure after EVERY commit; the equality guard
+  // above makes it settle immediately when nothing moved.
+  useEffect(() => {
+    measureWraps()
+  })
+  useEffect(() => {
+    window.addEventListener('resize', measureWraps)
+    return () => window.removeEventListener('resize', measureWraps)
+  }, [measureWraps])
 
   function markerChip(m: VsDagMarker) {
     const revealedMarker = revealed > m.at
@@ -359,127 +405,112 @@ export default function VsJourneyDag({
     )
   }
 
+  // Flatten the visible flow once so "first item overall" and flow order are explicit.
+  const flow: Array<{ cluster: VsDagCluster; node: VsDagNode; leadsCluster: boolean }> = []
+  for (const cluster of clusters) {
+    const visibleNodes = cluster.nodes.filter((n) => visible.has(n.taskId))
+    visibleNodes.forEach((node, i) => flow.push({ cluster, node, leadsCluster: i === 0 }))
+  }
+
   return (
     <section
       data-testid="vs-journeydag"
-      data-dag-tier={tier}
       data-dag-running={running ? 'true' : undefined}
       aria-label="Journey map — the run as a graph"
       className="rounded-xl border border-zinc-800 bg-zinc-950/60"
     >
-      {/* Taller viewer (founder round 4): ~200px desktop / ~140px mobile, vertically centered.
-          NO horizontal scroll — the row below is w-full and flex-fits every visible node. */}
+      {/* The wrapping flow (round 5): natural height up to min(45vh, 380px), then VERTICAL
+          scroll only — never horizontal — auto-pinned to the newest node while following. */}
       <div
+        ref={stripRef}
         data-testid="vs-journeydag-strip"
-        className="flex h-[140px] items-center px-2 sm:h-[200px] sm:px-3"
+        onScroll={(e) => {
+          const el = e.currentTarget
+          followRef.current = el.scrollTop + el.clientHeight >= el.scrollHeight - FOLLOW_SLACK_PX
+        }}
+        className="max-h-[min(45vh,380px)] overflow-y-auto px-2 py-2 sm:px-3"
       >
-        <ol className="flex w-full min-w-0 items-center" aria-label="Journey phases">
-          {/* Run-press pauses (row 0, before any node) float at the strip's leading edge. */}
+        <ol className="flex w-full flex-wrap items-start gap-y-2" aria-label="Journey processes in run order">
+          {/* Run-press pauses (row 0, before any node) float at the flow's leading edge. */}
           {(markersByTask.get(null) ?? []).length > 0 && (
             <li className="mr-1 flex shrink-0 items-center gap-1 self-center">
               {(markersByTask.get(null) ?? []).map((m) => markerChip(m))}
             </li>
           )}
-          {clusters.map((cluster, ci) => {
+          {flow.map(({ cluster, node, leadsCluster }, fi) => {
             const style = chainStyle(cluster.chainId)
-            const visibleNodes = cluster.nodes.filter((n) => visible.has(n.taskId))
-            // Upcoming clusters are NOT shown (reveal-on-reach) — they appear as the run
-            // reaches their first process.
-            if (visibleNodes.length === 0) return null
-            const firstState = dagNodeState(visibleNodes[0], revealed)
-            const clusterHasActive = visibleNodes.some((n) => dagNodeState(n, revealed) === 'active')
+            const state = dagNodeState(node, revealed)
+            const isActive = state === 'active'
+            const pct = node.stepCount > 0 ? Math.round((node.agentSteps / node.stepCount) * 100) : 0
+            const nodeMarkers = markersByTask.get(node.taskId) ?? []
+            const vendorPrinted = node.vendor !== null && node.vendorRow !== -1 && revealed > node.vendorRow
             return (
-              <li
-                key={cluster.phaseKey}
-                className="flex min-w-0 items-center"
-                // Width shares out proportional to node count; a cluster holding the ACTIVE
-                // (full-size) node grows a little extra so its neighbors compress first.
-                style={{ flexGrow: visibleNodes.length + (clusterHasActive ? 1 : 0), flexShrink: 1, flexBasis: 0 }}
-              >
-                {ci > 0 && <Edge lit={firstState !== 'pending'} tier={tier} />}
-                <div
-                  data-testid="vs-dag-cluster"
-                  data-chain={cluster.chainId}
-                  className={`min-w-0 flex-1 rounded-lg border px-1 pb-1 pt-0.5 sm:px-1.5 ${style.cluster}`}
-                >
-                  <p
-                    className={`truncate text-[9px] uppercase tracking-wider ${style.label}`}
+              // Each flow item wraps as one unit: [connector | ↵] [cluster chip?] [node column].
+              <li key={node.taskId} data-dag-flow={node.taskId} className="flex shrink-0 items-start">
+                {fi > 0 && (wrapStarts.has(node.taskId) ? <WrapHint /> : <Edge lit={state !== 'pending'} />)}
+                {/* The phase's chain-tinted label chip leads its first node (round 5 call:
+                    box-frames fight wrapping; the chip + the chain-hued done fill carry the
+                    cluster grouping instead). */}
+                {leadsCluster && (
+                  <span
+                    data-testid="vs-dag-cluster"
+                    data-chain={cluster.chainId}
                     title={`${cluster.title} — from the ${cluster.chainName} playbook`}
+                    className={`mr-1 mt-1 inline-flex max-w-[140px] shrink-0 items-center gap-0.5 self-start rounded-full border px-1.5 py-0.5 text-[9px] uppercase leading-none tracking-wider ${style.chip}`}
                   >
-                    <span aria-hidden className="mr-0.5">{chainIcon(cluster.chainId)}</span>
-                    {cluster.title}
-                  </p>
-                  <div className="mt-0.5 flex min-w-0 items-start">
-                    {visibleNodes.map((node, ni) => {
-                      const state = dagNodeState(node, revealed)
-                      const isActive = state === 'active'
-                      const pct = node.stepCount > 0 ? Math.round((node.agentSteps / node.stepCount) * 100) : 0
-                      const nodeMarkers = markersByTask.get(node.taskId) ?? []
-                      const vendorPrinted = node.vendor !== null && node.vendorRow !== -1 && revealed > node.vendorRow
-                      // The active node keeps FULL size (fisheye: the traversed tail compresses
-                      // around it); everything else wears the tier chrome and flex-shrinks.
-                      const chrome = isActive ? TIER_NODE.xl : TIER_NODE[tier]
-                      const showTitle = isActive || dagTierShowsTitle(tier)
-                      return (
-                        <div key={node.taskId} className={`flex items-start ${isActive ? 'shrink-0' : 'min-w-0 flex-1'}`}>
-                          {ni > 0 && <Edge lit={state !== 'pending'} tier={tier} />}
-                          <div className="flex min-w-0 flex-1 flex-col items-center gap-0.5">
-                            <button
-                              type="button"
-                              data-testid={`vs-dag-node-${node.taskId}`}
-                              data-dag-state={state}
-                              data-dag-size={isActive ? 'full' : 'fit'}
-                              aria-label={node.title}
-                              title={`${node.title} — ${node.stepCount} step${node.stepCount === 1 ? '' : 's'}, ${node.agentSteps} agent-runnable (~${pct}% agent ceiling). Click to jump to it in the terminal.`}
-                              onClick={() => onNodeClick?.(node.taskId)}
-                              className={`flex w-full min-w-0 items-center justify-center gap-1 rounded-md border leading-none transition ${chrome.pad} ${
-                                isActive ? 'max-w-[160px]' : ''
-                              } ${
-                                state === 'done'
-                                  ? style.done
-                                  : isActive
-                                    ? 'animate-pulse border-emerald-400/70 text-zinc-100 ring-2 ring-emerald-400/50'
-                                    : 'border-zinc-800 text-zinc-600'
-                              }`}
-                            >
-                              <span aria-hidden className={`${chrome.icon} ${state === 'pending' ? 'opacity-50' : ''}`}>
-                                {processIcon(node.taskId)}
-                              </span>
-                              {showTitle && (
-                                <span className={`min-w-0 truncate ${isActive ? 'text-[11px]' : chrome.title}`}>{node.title}</span>
-                              )}
-                            </button>
-                            {/* Under-node row: the top judged pick's logo dot (once its step
-                                printed), the event/pause diamonds, and the ↗ process-page link. */}
-                            <span className="flex h-3.5 min-w-0 items-center gap-1">
-                              {vendorPrinted && node.vendor && (
-                                <span
-                                  data-testid={`vs-dag-vendor-${node.vendor.productId}`}
-                                  title={`${node.vendor.name} — top judged pick for this process's step`}
-                                >
-                                  <ProductLogoView
-                                    product={{ id: node.vendor.productId, name: node.vendor.name }}
-                                    size={12}
-                                    hasLogo={node.vendor.hasLogo}
-                                  />
-                                </span>
-                              )}
-                              {nodeMarkers.map((m) => markerChip(m))}
-                              <Link
-                                href={`/processes/${node.slug}`}
-                                data-testid={`vs-dag-open-${node.taskId}`}
-                                aria-label={`${node.title} — open the process page`}
-                                title={`${node.title} — open the process page`}
-                                className="text-[9px] leading-none text-zinc-700 transition hover:text-emerald-300"
-                              >
-                                ↗
-                              </Link>
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+                    <span aria-hidden>{chainIcon(cluster.chainId)}</span>
+                    <span className="truncate">{cluster.title}</span>
+                  </span>
+                )}
+                <div className="flex flex-col items-center gap-0.5">
+                  <button
+                    type="button"
+                    data-testid={`vs-dag-node-${node.taskId}`}
+                    data-dag-state={state}
+                    aria-label={node.title}
+                    title={`${node.title} — ${node.stepCount} step${node.stepCount === 1 ? '' : 's'}, ${node.agentSteps} agent-runnable (~${pct}% agent ceiling). Click to jump to it in the terminal.`}
+                    onClick={() => onNodeClick?.(node.taskId)}
+                    className={`flex max-w-[180px] items-center gap-1 rounded-md border px-2 py-1.5 leading-none transition ${
+                      state === 'done'
+                        ? style.done
+                        : isActive
+                          ? 'animate-pulse border-emerald-400/70 text-zinc-100 ring-2 ring-emerald-400/50'
+                          : 'border-zinc-800 text-zinc-600'
+                    }`}
+                  >
+                    <span aria-hidden className={`text-base ${state === 'pending' ? 'opacity-50' : ''}`}>
+                      {processIcon(node.taskId)}
+                    </span>
+                    {/* FIXED node chrome (round 5): the title always renders — no tier ever
+                        hides it, no fisheye ever shrinks it. */}
+                    <span className="min-w-0 truncate text-[11px]">{node.title}</span>
+                  </button>
+                  {/* Under-node row: the top judged pick's logo dot (once its step printed),
+                      the event/pause diamonds, and the ↗ process-page link. */}
+                  <span className="flex h-3.5 min-w-0 items-center gap-1">
+                    {vendorPrinted && node.vendor && (
+                      <span
+                        data-testid={`vs-dag-vendor-${node.vendor.productId}`}
+                        title={`${node.vendor.name} — top judged pick for this process's step`}
+                      >
+                        <ProductLogoView
+                          product={{ id: node.vendor.productId, name: node.vendor.name }}
+                          size={12}
+                          hasLogo={node.vendor.hasLogo}
+                        />
+                      </span>
+                    )}
+                    {nodeMarkers.map((m) => markerChip(m))}
+                    <Link
+                      href={`/processes/${node.slug}`}
+                      data-testid={`vs-dag-open-${node.taskId}`}
+                      aria-label={`${node.title} — open the process page`}
+                      title={`${node.title} — open the process page`}
+                      className="text-[9px] leading-none text-zinc-700 transition hover:text-emerald-300"
+                    >
+                      ↗
+                    </Link>
+                  </span>
                 </div>
               </li>
             )

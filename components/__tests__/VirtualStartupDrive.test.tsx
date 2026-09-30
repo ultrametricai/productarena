@@ -1,9 +1,12 @@
 // @vitest-environment jsdom
 // Drive modes (founder addenda 2026-09-29): Auto (assert upfront, play through — today's
 // behavior) vs Semi-auto (the run pauses at each still-unasserted decision's FIRST AFFECTED row
-// and asks inline; the naming card lets the reader type the company name). The invariants under
-// test:
+// and asks in the FIXED SLOT ABOVE the terminal — founder addendum: the reader never scrolls to
+// decide; the terminal flow keeps only a compact '⏸ waiting on you' marker. The naming card
+// lets the reader type the company name, same slot). The invariants under test:
 //   - pause-before-first-affected-row: no already-printed row ever changes after an in-run pick;
+//   - card placement: the decision/naming card renders between the DAG band and the terminal,
+//     never inside the scrolled output;
 //   - a semi-auto run answered with the default values is byte-identical to the auto default run;
 //   - the ?run= permalink carries the drive mode + typed name and replays;
 //   - restart in semi-auto clears assertions back to 'Not set';
@@ -185,7 +188,68 @@ describe('drive modes — auto is the default and plays through', () => {
   })
 })
 
-describe('semi-auto — the run pauses at each unasserted decision and asks inline', () => {
+describe('semi-auto — the run pauses at each unasserted decision and asks in the top slot', () => {
+  it('the pending card surfaces at the TOP — above the terminal, below the DAG band — with a compact wait marker inline (founder addendum 2026-09-29)', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-mode-semi'))
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => {
+        vi.advanceTimersByTime(240)
+      })
+      const card = screen.getByTestId('vs-run-decision')
+      const term = screen.getByTestId('vs-terminal')
+      const dag = screen.getByTestId('vs-journeydag')
+      // The card lives in the fixed slot between the DAG band and the terminal — NOT down at
+      // the bottom of the scrolled output.
+      expect(term.contains(card)).toBe(false)
+      expect(card.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(dag.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      // The inline position keeps only the compact one-liner.
+      const marker = screen.getByTestId('vs-run-wait-marker')
+      expect(term.contains(marker)).toBe(true)
+      expect(marker.textContent).toContain('waiting on you — decide above')
+      // Answering clears both the card and the marker; the run resumes as before.
+      fireEvent.click(screen.getByTestId('vs-run-decision-ordering-name-first'))
+      expect(screen.queryByTestId('vs-run-decision')).toBeNull()
+      expect(screen.queryByTestId('vs-run-wait-marker')).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('the naming card uses the same top slot (above the terminal, marker inline)', () => {
+    renderIt()
+    fireEvent.click(screen.getByTestId('vs-mode-semi'))
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      let naming: HTMLElement | null = null
+      for (let guard = 0; guard < 800 && naming === null; guard++) {
+        act(() => {
+          vi.advanceTimersByTime(240)
+        })
+        if (screen.queryByTestId('vs-run-decision')) {
+          const button = Object.entries(DEFAULT_ANSWERS)
+            .map(([id, value]) => screen.queryByTestId(`vs-run-decision-${id}-${value}`))
+            .find((b) => b !== null)
+          expect(button).toBeTruthy()
+          fireEvent.click(button!)
+          continue
+        }
+        naming = screen.queryByTestId('vs-run-naming')
+      }
+      expect(naming).toBeTruthy()
+      const term = screen.getByTestId('vs-terminal')
+      expect(term.contains(naming!)).toBe(false)
+      expect(naming!.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(term.contains(screen.getByTestId('vs-run-wait-marker'))).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('pauses immediately for the ordering decision (its options differ at row 0), status says waiting, the pick asserts + resumes', () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))

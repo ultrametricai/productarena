@@ -111,6 +111,10 @@ const ROLES: VendorRole[] = [
     alternatives: [
       { id: 'stripe', name: 'Stripe', agentReady: 90 },
       { id: 'square', name: 'Square', agentReady: 70 },
+      // paypal exists for the pick-your-vendors loop (founder addendum #3): a NON-default pick
+      // WITH extracted pricing, so the burn line labeling ('your pick') is observable — square
+      // deliberately stays unpriced (the honest-gap fixtures below depend on it).
+      { id: 'paypal', name: 'PayPal', agentReady: 61 },
     ],
   },
 ]
@@ -121,6 +125,7 @@ const ACCESS: VsAccessMap = {
   payments: {
     stripe: { mcp: 'none', cli: 'none' },
     square: { mcp: 'full', cli: 'na' },
+    paypal: { mcp: 'none', cli: 'none' },
   },
 }
 
@@ -138,6 +143,16 @@ const PRICING: VsPricingMap = {
       asOf: '2026-09-01',
     },
     // square deliberately absent — a picked vendor with no extracted pricing is an honest gap.
+    paypal: {
+      kind: 'fact',
+      label: '$30',
+      unit: 'per month',
+      tier: 'entry-paid',
+      amountUsd: 30,
+      monthly: true,
+      sourceUrl: 'https://paypal.example/pricing',
+      asOf: '2026-09-01',
+    },
   },
 }
 
@@ -337,6 +352,156 @@ describe('simulated burn — published pricing only, cited; gaps stay gaps', () 
     renderIt()
     showAll()
     expect(within(screen.getByTestId('vs-score-burn')).getByTestId('vs-burn-gap').textContent).toContain('no published pricing')
+  })
+})
+
+// The Vendors-tab role picker: open the SimRolePicker trigger (the aria-haspopup=listbox
+// button — never matched by name, the reset button's label also carries the vendor name) and
+// click an option.
+const pickVendorInTab = (optionName: RegExp) => {
+  fireEvent.click(screen.getByTestId('vs-tab-vendors'))
+  const panel = screen.getByTestId('vs-tabpanel-vendors')
+  const trigger = within(panel)
+    .getAllByRole('button')
+    .find((b) => b.getAttribute('aria-haspopup') === 'listbox')!
+  fireEvent.click(trigger)
+  fireEvent.click(within(panel).getByRole('option', { name: optionName }))
+}
+
+describe('pick your vendors and rerun (founder addenda #2/#3, 2026-09-29)', () => {
+  it('vendor picks PERSIST across ▶ Run it again — they are the reader\'s stack, not run state', () => {
+    renderIt()
+    showAll()
+    expect(screen.getByTestId('vs-step-outnote')).toBeTruthy() // default stripe: founder-hours
+    pickVendorInTab(/Square/)
+    showAll() // '▶ Run it again' — a plain restart
+    expect(screen.queryByTestId('vs-step-outnote')).toBeNull() // square's MCP surface applied
+    showAll() // and again — the pick still holds
+    expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
+    // The Vendors tab still shows the swap (count badge + swapped marker).
+    expect(screen.getByTestId('vs-tab-vendors').textContent).toContain('· 1')
+    expect(screen.getByTestId('vs-tabpanel-vendors').textContent).toContain('(swapped)')
+  })
+
+  it('swap-while-PAUSED (addendum #2): the printed transcript stays byte-stable, the DAG keeps its lit nodes, and resume uses the new vendor', () => {
+    renderIt()
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => {
+        vi.advanceTimersByTime(240 * 5)
+      })
+      fireEvent.click(screen.getByTestId('vs-terminal-pause')) // ⏸ — reveal frozen mid-run
+      const printed = screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML
+      const litNodes = Array.from(
+        screen.getByTestId('vs-journeydag').querySelectorAll('[data-testid^="vs-dag-node-"]'),
+      ).map((n) => `${n.getAttribute('data-testid')}:${n.getAttribute('data-dag-state')}`)
+      // The pickers stay usable while paused; the pick applies WITHOUT resetting the run…
+      pickVendorInTab(/Square/)
+      expect(screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML).toBe(printed)
+      expect(
+        Array.from(screen.getByTestId('vs-journeydag').querySelectorAll('[data-testid^="vs-dag-node-"]')).map(
+          (n) => `${n.getAttribute('data-testid')}:${n.getAttribute('data-dag-state')}`,
+        ),
+      ).toEqual(litNodes)
+      // …and resume continues with the new pick: the not-yet-printed payments step runs at
+      // agent speed (no founder-hours badge anywhere in the completed transcript).
+      fireEvent.click(screen.getByTestId('vs-terminal-pause')) // ▶ resume
+      act(() => {
+        vi.runAllTimers()
+      })
+      expect(screen.getByTestId('vs-terminal-body').textContent).toContain('journey complete')
+      expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('swap-while-STOPPED (⏹): the frozen transcript never rewrites; the next Run replays with the new pick', () => {
+    renderIt()
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => {
+        vi.advanceTimersByTime(240 * 5)
+      })
+      fireEvent.click(screen.getByRole('button', { name: /stop/i })) // ⏹ — reveal kept, ticker gone
+      const printed = screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML
+      pickVendorInTab(/Square/)
+      expect(screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML).toBe(printed)
+      // ⏹ has no resume — the Run press is a restart, and the pick rides into it.
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => {
+        vi.runAllTimers()
+      })
+      expect(screen.getByTestId('vs-terminal-body').textContent).toContain('journey complete')
+      expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('swap-while-RUNNING applies immediately at the same invariant (our call over pause-then-apply): printed prefix stable, tail picks it up', () => {
+    renderIt()
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => {
+        vi.advanceTimersByTime(240 * 3)
+      })
+      const printed = screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML
+      pickVendorInTab(/Square/) // no pause inserted — the reveal just keeps printing
+      expect(screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML).toBe(printed)
+      act(() => {
+        vi.runAllTimers()
+      })
+      expect(screen.getByTestId('vs-terminal-body').textContent).toContain('journey complete')
+      expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('the picks ride the ?run= permalink (round-trip through copy run link)', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(window.navigator, 'clipboard', { value: { writeText }, configurable: true })
+    renderIt()
+    pickVendorInTab(/Square/)
+    showAll()
+    fireEvent.click(screen.getByTestId('vs-copy-run-link'))
+    expect(await screen.findByText('Copied ✓')).toBeTruthy()
+    const param = new URL(writeText.mock.calls[0][0] as string).searchParams.get('run')!
+    expect(decodeRunState(param)!.picks).toEqual({ payments: 'square' })
+  })
+
+  it('the scorecard labels judged-top vs your-pick vendors, and the completion area offers the rerun affordance only when a pick differs', () => {
+    renderIt()
+    // Default run: every burn line is the judged top; no affordance (nothing swapped).
+    showAll()
+    expect(screen.getByTestId('vs-burn-line').getAttribute('data-pick-source')).toBe('judged')
+    expect(screen.getByTestId('vs-burn-line').textContent).toContain('[judged top]')
+    expect(screen.queryByTestId('vs-rerun-vendors')).toBeNull()
+    // Swap to PayPal (priced, non-default) and rerun: the burn line says it was YOUR pick.
+    pickVendorInTab(/PayPal/)
+    showAll()
+    const line = screen.getByTestId('vs-burn-line')
+    expect(line.textContent).toContain('PayPal')
+    expect(line.getAttribute('data-pick-source')).toBe('user')
+    expect(line.textContent).toContain('[your pick]')
+    // The honest loop line + affordance — one click reruns with the same picks.
+    const affordance = screen.getByTestId('vs-rerun-vendors')
+    expect(affordance.textContent).toContain('1 vendor role')
+    vi.useFakeTimers()
+    try {
+      fireEvent.click(screen.getByTestId('vs-rerun-vendors-btn'))
+      act(() => {
+        vi.runAllTimers()
+      })
+    } finally {
+      vi.useRealTimers()
+    }
+    expect(screen.getByTestId('vs-terminal-body').textContent).toContain('journey complete')
+    expect(screen.getByTestId('vs-burn-line').textContent).toContain('PayPal') // picks persisted
   })
 })
 
