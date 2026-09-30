@@ -488,7 +488,8 @@ function StoryRowPair({
                 <ScopeChip scope={row.scope} globalHref={row.globalHref} />
               </p>
               {row.group !== row.theme && (
-                <p className="mt-0.5 text-xs text-zinc-500">{humanizeTheme(row.group)}</p>
+                // Group NAME, not an annotation — readable tier (founder 2026-09-30 'Caching' ask).
+                <p className="mt-0.5 text-xs text-zinc-400">{humanizeTheme(row.group)}</p>
               )}
             </div>
           </div>
