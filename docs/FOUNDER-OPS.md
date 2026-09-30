@@ -12,7 +12,7 @@ workspace, never here.
 | Path | Purpose |
 | --- | --- |
 | `catalog/` | Domain taxonomy, lifecycle navigation, machine-readable coverage and gaps |
-| `journeys/` | Multi-process founder paths (chains; Virtual Startup is the live surface) |
+| `journeys/` | Multi-process founder paths (chains; The Open Startup is the live surface) |
 | `processes/` | Jurisdiction-scoped legal workflows + the operational corpus (two layers) |
 | `rules/<jurisdiction>/` | Canonical, dated legal rule cards with stable IDs |
 | `sources/` | Primary authorities: provision locators, issue dates, checked dates |

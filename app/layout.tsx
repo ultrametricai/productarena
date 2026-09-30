@@ -466,6 +466,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 >
                   𝕏
                 </a>
+                <Link href="/about" className="transition-colors hover:text-zinc-300">
+                  About
+                </Link>
                 <Link href="/privacy" className="transition-colors hover:text-zinc-300">
                   Privacy
                 </Link>

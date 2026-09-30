@@ -140,6 +140,7 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/stacks/battle', label: 'Battle of the stacks', sublabel: 'Two stacks, side by side' },
   // Company pages ported from the retired Astro landing (founder 2026-09-29).
   { href: '/company', label: 'Company processes (Ultrametric)', sublabel: 'Build an AI native business — the AFK product page' },
+  { href: '/about', label: 'About Ultrametric', sublabel: 'Who makes this, and the evidence doctrine' },
   { href: '/tos', label: 'Terms of Service', sublabel: 'The Ultrametric, Inc. terms of service' },
 ]
 

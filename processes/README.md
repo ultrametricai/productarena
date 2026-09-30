@@ -26,6 +26,86 @@ founder-ops workflow validator (`lib/founderOps.ts`) deliberately skips `corpus.
 walks this tree (the corpus has its own schema and gates). The two layers now live side by
 side under this directory as promised.
 
+## What a corpus record is
+
+One record per founder process: identity and classification (`phase`, `cadence`,
+`complexity`), an honest agent ceiling (`supportLevel` + `supportReason`), the vendors that can
+run it, the step DAG, and geo scoping. A trimmed real record (`form_002`, Get EIN):
+
+```jsonc
+{
+  "id": "form_002",
+  "title": "Get EIN",
+  "phase": "formation",
+  "cadence": "once",
+  "complexity": "simple",
+  "supportLevel": "manual_guide",
+  "supportReason": "IRS EIN application is a web form with no API. System provides step-by-step guidance and pre-fills company data.",
+  "vendors": ["irs", "stripe_atlas", "firstbase", "legalzoom"],
+  "dag": {
+    "nodes": [
+      { "id": "n2", "label": "Pre-fill EIN application data", "route": "agent", "estimatedMinutes": 1 },
+      { "id": "n3", "label": "Complete IRS SS-4 form online", "route": "form", "estimatedMinutes": 10 },
+      { "id": "n4", "label": "Store EIN in company records", "route": "agent", "estimatedMinutes": 1 }
+    ],
+    "edges": [{ "from": "n2", "to": "n3" }, { "from": "n3", "to": "n4" }]
+  },
+  "geoScope": "us",
+  "geoNotes": [{ "country": "IN", "summary": "PAN and TAN … are allotted automatically as part of the SPICe+ incorporation filing…", "actionUrl": "https://www.incometax.gov.in/iec/foportal/" } /* …UK/DE/FR analogs trimmed */]
+  // …contextNeeded, tags, time totals, annoyance/risk/growthImpact trimmed
+}
+```
+
+Every step carries a route: `agent` (an agent can run it), `form` (a manual web form — no
+API), `person` (human judgment or computer use), and `person` steps can additionally be marked
+`legalSignature` — the true human floor, a legally required signature/attestation.
+
+## A real process DAG
+
+This is `form_001` (Incorporate C-Corp) exactly as committed in `corpus.json` at
+`a4b656235` (2026-09-30) — the mermaid below is generated from that record's `dag.nodes` and
+`dag.edges`, nothing invented. Glyphs: 🤖 `agent` · 📝 `form` (manual web form) · 🧑 `person` ·
+✍ a `person` step with `legalSignature` (legally required human signature).
+
+```mermaid
+flowchart TD
+  n1["🧑 Choose formation service (10m)"]
+  n3["🤖 Check name availability (2m)"]
+  n4["📝 Submit incorporation filing (30m)"]
+  n5["🧑 Receive Certificate of Incorporation (~2d wait)"]
+  n6["📝 Prepare bylaws & initial resolutions (15m)"]
+  n6b["✍ Sign the bylaws and initial board consent (5m)"]
+  n7["📝 Prepare the founder stock issuance (10m)"]
+  n7b["✍ Founders sign the stock purchase agreements (5m)"]
+  n8a["✍ Sign the 83(b) election (5m)"]
+  n8["📝 File 83(b) election with the IRS (15m)"]
+  n1 --> n3 --> n4 --> n5 --> n6 --> n6b --> n7 --> n7b --> n8a --> n8
+  subgraph conditional["Jurisdiction-conditional steps (attached client-side by lib/jurisdictions.ts, never in static ranks)"]
+    jca1["📝 File the Statement and Designation by Foreign Corporation with the CA SOS (30m) — CA"]
+    jmu1["🧑 Appoint a registered agent in each operating state (15m) — multi-state"]
+  end
+  classDef agent fill:#0b2e22,stroke:#34d399,color:#d1fae5
+  classDef form fill:#2e230b,stroke:#fbbf24,color:#fef3c7
+  classDef person fill:#0b2233,stroke:#38bdf8,color:#e0f2fe
+  classDef sig fill:#230b33,stroke:#a78bfa,color:#ede9fe
+  class n3 agent
+  class n4,n6,n7,n8,jca1 form
+  class n1,n5,jmu1 person
+  class n6b,n7b,n8a sig
+```
+
+## How the site consumes this directory
+
+- `lib/processes.ts` `loadProcesses()` reads `corpus.json` at build time — it strips the
+  jurisdiction-conditional nodes (they only ever render client-side via the `?juris=` toggle,
+  so no judged number moves) and powers `/processes`, every `/processes/<slug>` page
+  (`components/ProcessDag.tsx` renders the DAG above with the same route colors), the process
+  rankings (`/rankings/processes/*`), and the open startup simulator at `/virtual-startup`.
+- `journeys/chains.json` links corpus process IDs into playbooks (see `journeys/README.md`).
+- `lib/founderOps.ts` validates the jurisdiction-scoped workflow layer (`equity/us-de/*`)
+  against `schemas/process.schema.json`, resolves its rule-card references into `rules/` and
+  `sources/`, and exposes the exact-dimension planner (`planFounderOps`).
+
 ## What you can contribute here
 
 - **A country analog for a process** — add a `geoNotes` entry to the process in

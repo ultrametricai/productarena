@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/arenas`, lastModified: now },
     ...loadArenaSections().map((s) => ({ url: `${SITE_URL}/arenas/${s.id}`, lastModified: now })),
     { url: `${SITE_URL}/methodology`, lastModified: now },
+    { url: `${SITE_URL}/about`, lastModified: now },
     { url: `${SITE_URL}/terms`, lastModified: now },
     { url: `${SITE_URL}/privacy`, lastModified: now },
     // Company pages ported from the retired Astro landing (founder 2026-09-29, one top bar
