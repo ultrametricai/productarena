@@ -263,7 +263,7 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
       // anything prints ("ask upfront at Run-press" emerges from the derived schedule).
       const card = screen.getByTestId('vs-run-decision')
       expect(within(card).getByRole('group', { name: 'Decision: What comes first' })).toBeTruthy()
-      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('waiting on you…')
+      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('')
       expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
       fireEvent.click(screen.getByTestId('vs-run-decision-ordering-name-first'))
       // The pick asserted the decision — the dropdown synced…

@@ -1367,10 +1367,6 @@ export default function VirtualStartup({
               </button>
             ))}
           </div>
-          <p className="mt-1.5 text-[11px] text-zinc-500">
-            the run waits below — your pick asserts this decision (the dropdown and the run
-            link pick it up) and the journey recomposes from the paused line on
-          </p>
         </div>
       )}
       {waitingOn === 'name' && (
@@ -1456,9 +1452,9 @@ export default function VirtualStartup({
           </code>
           {/* Founder 2026-09-29 terminal declutter: no 'virtual run' suffix, no title-bar chip,
               no 'idle', no completion label — the status only speaks while the run needs it
-              ('running…', 'paused', or semi-auto's 'waiting on you…'). */}
+              ('running…' or 'paused' — semi-auto waits show nothing; the pinned card IS the signal). */}
           <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-            {running ? 'running…' : manualPause ? 'paused' : waitingOn !== null ? 'waiting on you…' : ''}
+            {running ? 'running…' : manualPause ? 'paused' : ''}
           </span>
           {/* Manual pause/resume (founder addendum 2026-09-29) — both drive modes; hidden while a
               semi-auto card already holds the run (answering the card is the only way onward). */}
