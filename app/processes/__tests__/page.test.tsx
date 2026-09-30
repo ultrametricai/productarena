@@ -7,8 +7,10 @@
 // table stands alone under the search) and the default view is the flat FOUNDER-TIMELINE sort —
 // process rows in timeOrder, chain rows (no timeOrder of their own in the flat view) after them.
 import { render, within } from '@testing-library/react'
+import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import ProcessesPage from '@/app/processes/page'
+import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
 import { areaOf, buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
 describe('/processes — one combined table, one processes vocabulary', () => {
@@ -69,5 +71,39 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     // 'Virtual Startup' → 'The open startup simulator' (founder batch 2026-09-30, item 1) —
     // the route and internal vocabulary stay /virtual-startup.
     expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
+  })
+})
+
+describe('/processes defaults onto the GLOBAL view (founder 2026-09-30: "default /processes onto a global view — you can include the US specific ones in the first view")', () => {
+  it('the SERVER render is the global view — geo dropdown reads 🌐 Global, every row present and glyph-marked with the sharp scope set — no client flash', () => {
+    const ssr = renderToString(<ProcessesPage />)
+    const doc = document.createElement('div')
+    doc.innerHTML = ssr
+    // The geo dropdown's default (no-param, no-stored-pref) framing is 🌐 Global, in the static
+    // HTML itself (SSG honesty: the prop, not a mount effect, carries the default).
+    const geoTrigger = [...doc.querySelectorAll('button')].find((b) => b.title.includes('Where you operate'))
+    expect(geoTrigger?.textContent).toContain('Global')
+    expect(geoTrigger?.textContent).toContain('🌐')
+    expect(geoTrigger?.textContent).not.toContain('USA')
+    // "Include the US specific ones in the first view": the row set is the FULL corpus — the
+    // geo dimension annotates, never filters — and each row wears its scope glyph, the sharp
+    // set (🇺🇸 federal vs 🏛 state vs 🌐 global) from the server render on.
+    const { rows } = buildProcessRows()
+    const table = doc.querySelector('table') as HTMLElement
+    expect(table.querySelectorAll('tbody tr').length).toBe(rows.length + buildPlaybookRows().length)
+    const countByTitle = (label: string) => table.querySelectorAll(`span[title="${label}"]`).length
+    for (const scope of ['global', 'us', 'us-state'] as const) {
+      const expected = rows.filter((r) => r.geoScope === scope).length
+      expect(expected, `corpus should carry ${scope} rows for the pin to bite`).toBeGreaterThan(0)
+      expect(countByTitle(GEO_SCOPE_GLYPH[scope].label), `every ${scope} row glyph-marked`).toBe(expected)
+    }
+  })
+
+  it('the client render matches (hydrated default = Global framing, all rows still present)', () => {
+    const { container } = render(<ProcessesPage />)
+    const geoTrigger = [...container.querySelectorAll('button')].find((b) => b.title.includes('Where you operate'))
+    expect(geoTrigger?.textContent).toContain('Global')
+    const { rows } = buildProcessRows()
+    expect((container.querySelector('table') as HTMLElement).querySelectorAll('tbody tr').length).toBe(rows.length + buildPlaybookRows().length)
   })
 })

@@ -11,8 +11,9 @@
 // default) is the dropdown's TOP entry, shareable as ?order=grouped.
 import { act, fireEvent, render, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { renderToString } from 'react-dom/server'
 import ProcessesTable, { type PlaybookRow, type ProcessRow } from '@/components/ProcessesTable'
-import { setGeoSelection } from '@/lib/geoPreference'
+import { GEO_GLOBAL, setGeoSelection } from '@/lib/geoPreference'
 
 const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
@@ -389,5 +390,44 @@ describe('geoScope glyphs (founder GEO ask 2026-09-28; always-on defaults founde
     // Back to the default glyphs — us-state returns to the 🇺🇸 default.
     expect(cellFor(container, 'Incorporate the company')?.textContent).toContain('🇺🇸')
     expect(cellFor(container, 'Incorporate the company')?.textContent).not.toContain('🏛')
+  })
+
+  describe('the GLOBAL surface default (founder 2026-09-30: /processes opens on the global view — defaultGeo threads in from app/processes/page.tsx)', () => {
+    it('no selection: every row still renders (annotates, never filters) with the SHARP glyphs — 🌐 global, 🇺🇸 federal, 🏛 state — and the geo dropdown trigger reads Global', () => {
+      const { container, getByTitle } = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} defaultGeo={GEO_GLOBAL} />)
+      // Nothing filtered out: the US-specific rows are in the first view.
+      expect(container.querySelectorAll('tbody tr').length).toBe(GEO_ROWS.length)
+      expect(cellFor(container, 'Open a bank account')?.textContent).toContain('🌐')
+      expect(cellFor(container, 'Get an EIN')?.textContent).toContain('🇺🇸')
+      expect(cellFor(container, 'Incorporate the company')?.textContent).toContain('🏛')
+      expect(cellFor(container, 'Incorporate the company')?.textContent).not.toContain('🇺🇸')
+      // The dropdown's no-selection framing is 🌐 Global on this surface.
+      expect(getByTitle(/Where you operate/).textContent).toContain('Global')
+      // Annotation only — the timeOrder sort is untouched by the framing.
+      expect([...container.querySelectorAll('tbody td:first-child')].map((c) =>
+        c.textContent?.includes('Open a bank account') ? 'bank' : c.textContent?.includes('Incorporate') ? 'inc' : 'ein',
+      )).toEqual(['bank', 'inc', 'ein'])
+    })
+
+    it('SSR honesty: the server HTML already carries the global framing (Global trigger, 🏛 state glyph) — no mount flash', () => {
+      const ssr = renderToString(<ProcessesTable rows={GEO_ROWS} phases={PHASES} defaultGeo={GEO_GLOBAL} />)
+      expect(ssr).toContain('Global')
+      expect(ssr).toContain('🏛')
+      expect(ssr).toContain('US state-level process — a US state is the counterparty')
+    })
+
+    it('a country selection behaves exactly as before (sharp glyphs, dropdown shows the country); without defaultGeo the homepage surface keeps its 🇺🇸 defaults', () => {
+      const withGlobal = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} defaultGeo={GEO_GLOBAL} />)
+      act(() => setGeoSelection('UK'))
+      expect(cellFor(withGlobal.container, 'Incorporate the company')?.textContent).toContain('🏛')
+      expect(withGlobal.getByTitle(/Where you operate/).textContent).toContain('United Kingdom')
+      withGlobal.unmount()
+      act(() => setGeoSelection(null))
+      // The homepage's process mode (no defaultGeo) is byte-for-byte the pre-existing default.
+      const plain = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} />)
+      expect(cellFor(plain.container, 'Incorporate the company')?.textContent).toContain('🇺🇸')
+      expect(cellFor(plain.container, 'Incorporate the company')?.textContent).not.toContain('🏛')
+      expect(plain.getByTitle(/Where you operate/).textContent).toContain('USA')
+    })
   })
 })
