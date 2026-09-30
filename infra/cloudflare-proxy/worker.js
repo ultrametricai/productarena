@@ -33,8 +33,8 @@
 // "My Stack API" section).
 import { LIVE_PROBES } from './live-probes.generated.js'
 
-const ORIGIN = 'https://productarena.vercel.app'
-const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
+const ORIGIN = 'https://ultrametric.vercel.app'
+const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://ultrametric.vercel.app'])
 
 const MAX_BODY_BYTES = 128 * 1024
 const FETCH_TIMEOUT_MS = 6000

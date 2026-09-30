@@ -3,8 +3,8 @@
 The Cloudflare Worker on the `ultrametric.ai/productarena*` route. Its jobs:
 
 1. **Transparent proxy** — forwards everything to the Vercel deployment
-   (`productarena.vercel.app`, built with basePath `/productarena`), rewriting absolute
-   redirects back onto `ultrametric.ai`.
+   (`ultrametric.vercel.app`; the legacy `productarena.vercel.app` alias stays attached to the
+   same project as a fallback), rewriting absolute redirects back onto `ultrametric.ai`.
 2. **`POST /productarena/api/scan`** — the keyless "test my product" quick scan behind
    `/submit`. Deliberately paranoid (SSRF-hardened URL validation, capped redirects, bounded
    reads, 10 requests / 5 min per IP) — see the comments in `worker.js` before touching it.
