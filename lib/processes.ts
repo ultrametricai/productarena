@@ -667,6 +667,14 @@ export const VENDOR_ARENA: Record<string, string> = {
   google_cloud: 'cloud-platforms',
   azure: 'cloud-platforms',
   oracle_cloud: 'cloud-platforms',
+  // LLM-first thinking/drafting steps (founder 2026-09-30: "validation of the idea is more
+  // likely to be done in ChatGPT, Claude, Grok etc first and maybe Notion after") — the
+  // assistants are judged in ai-assistants, so these curated seeds resolve to live product
+  // pages and the derived rosters/rankings stay evidence-backed.
+  chatgpt: 'ai-assistants',
+  claude: 'ai-assistants',
+  gemini: 'ai-assistants',
+  grok: 'ai-assistants',
   // Launch-day email lane (founder 2026-09-23: "sendgrid, virtualpostmail, do an arena for
   // mail"): growth_005's transactional-email steps and the qs_044 mailing-address chips
   // graduate from the untracked allowlist; gmail is the email arena's scoped Google
@@ -752,6 +760,8 @@ const VENDOR_LABELS: Record<string, string> = {
   azure: 'Microsoft Azure',
   // 2026-09-23 VC-fund phase (title-case fallback misfires on this one).
   angellist: 'AngelList',
+  // 2026-09-30 LLM-first steps (title-case fallback misfires on this one).
+  chatgpt: 'ChatGPT',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives

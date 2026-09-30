@@ -469,6 +469,18 @@ describe('vendor -> arena mapping', () => {
     expect(payroll?.canonicalVendor).toBe('gusto')
     expect(payroll!.stepCount).toBeGreaterThan(0)
   })
+
+  it('LLM-first steps (founder 2026-09-30): validate-the-idea gains an ai-assistants role beside the Notion capture role', () => {
+    const idea = loadProcesses(DATA_DIR).find((t) => t.id === 'startup_001')!
+    const roles = vendorRoles([idea], DATA_DIR)
+    const assistants = roles.find((r) => r.arenaId === 'ai-assistants')
+    expect(assistants, 'the sim Vendors tab should offer the assistants role').toBeDefined()
+    expect(assistants!.stepCount).toBeGreaterThan(0)
+    expect(assistants!.alternatives.map((o) => o.id)).toContain(assistants!.defaultProductId)
+    // "and maybe Notion after" — the capture step keeps the arena where Notion is judged.
+    const pm = roles.find((r) => r.arenaId === 'project-management')
+    expect(pm?.canonicalVendor).toBe('notion')
+  })
 })
 
 describe('derived step options (optionsArenaId)', () => {
