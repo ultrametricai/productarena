@@ -66,8 +66,11 @@ export default function ProcessesPage() {
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
         <p>
-          Every mapped vendor traces to a live arena leaderboard — swap it for a rival on the
-          process page and the simulator reports exactly whose API was actually recorded.{' '}
+          {/* Stale-copy fix (SSOT audit 2026-09-30): the simulator left process pages on
+              2026-09-30 (chain pages keep it) — the footer now claims only what the process
+              page actually does. */}
+          Every mapped vendor traces to a live arena leaderboard — pick a vendor on the process
+          page and every step re-resolves to the calls actually recorded for it.{' '}
           <Link href="/" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
             See all rankings →
           </Link>

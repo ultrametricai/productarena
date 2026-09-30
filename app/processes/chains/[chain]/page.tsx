@@ -98,7 +98,9 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
           <span className="text-emerald-300">emerald = agent</span>,{' '}
           <span className="text-amber-300">amber = manual form/portal</span>,{' '}
           <span className="text-sky-300">sky = human or computer use</span>,{' '}
-          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate · ⏳ async wait.
+          {/* Stale-copy fix (SSOT audit 2026-09-30): the '⏳ async' chip left ProcessDag's step
+              blocks on 2026-09-30 — the legend advertises only what the diagram renders. */}
+          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate.
         </p>
         {/* Client-side lens banner over the WHOLE chain — one clicked vendor flows across every
             section. Renders nothing in the static HTML. */}

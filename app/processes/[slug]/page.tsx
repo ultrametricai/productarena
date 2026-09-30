@@ -184,7 +184,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           Route-coded block flow: <span className="text-emerald-300">emerald = agent</span>,{' '}
           <span className="text-amber-300">amber = manual form/portal</span>,{' '}
           <span className="text-sky-300">sky = human or computer use</span>,{' '}
-          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate · ⏳ async wait.
+          {/* Stale-copy fix (SSOT audit 2026-09-30): the '⏳ async' chip left the step blocks on
+              2026-09-30 (it survives inside method sub-steps) — the legend advertises only what
+              the diagram renders. */}
+          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate.
         </p>
         {/* Client-side lens banner (founder 2026-09-21: click a vendor → the process adapts to
             run via it). Renders nothing in the static HTML — hydrates in only for readers with
