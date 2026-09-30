@@ -442,6 +442,13 @@ export default function VirtualStartup({
   const [mode, setMode] = useState<VsDriveMode>('auto')
   const [companyName, setCompanyName] = useState<string | null>(null)
   const [picks, setPicks] = useState<Record<string, string>>({})
+  // Founder addendum #2 (2026-09-29, "stop the sim and change a vendor"): a MID-RUN vendor pick
+  // must recompose ONLY the unrevealed tail. Unlike semi-auto decisions there is no
+  // pause-before-first-affected-row guarantee — a pick can change already-printed step notes and
+  // day markers — so the pick handler PINS the printed prefix (the revealed slice of the display
+  // rows at pick time) and the composition below splices the fresh tail onto it. null = no pin
+  // (every non-pick recomposition path clears the run first, so the pin only ever exists mid-run).
+  const [pinnedPrefix, setPinnedPrefix] = useState<Row[] | null>(null)
   const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
   const [runSeed, setRunSeed] = useState(0)
   const [win, setWin] = useState<WindowTab>('d30')
@@ -565,7 +572,21 @@ export default function VirtualStartup({
     [chains, tasks, roles, access, founder, picks, identity, preset, yc, runSeed, taskRisks, seedCombo],
   )
   const run = useMemo(() => buildRunRows({ ...runArgs, choices }), [runArgs, choices])
-  const { rows, steps, stats, outcomeInputs, drawnEvents } = run
+  const { rows: composedRows, steps, stats, outcomeInputs, drawnEvents } = run
+  // The DISPLAY rows every surface below prints from: the fresh composition, or — after a
+  // mid-run vendor swap (founder addendum #2) — the pinned printed prefix with the fresh
+  // composition's tail spliced on from the same index (printed rows stay byte-stable; unrevealed
+  // steps pick up the new vendor's routing/outcome notes, day markers ahead re-derive). The
+  // outcome model (steps/stats/scorecard/burn) deliberately stays on the FRESH run — the clock
+  // and burn follow the pick, only the transcript's printed prefix is history.
+  const rows = useMemo<Row[]>(() => {
+    if (!pinnedPrefix || pinnedPrefix.length === 0) return composedRows
+    // A slower swap can shift a day marker the prefix already printed back into the fresh tail
+    // (same row key) — a row whose key the prefix holds has by definition already printed, so
+    // it drops from the tail rather than printing twice.
+    const printed = new Set(pinnedPrefix.map((r) => r.key))
+    return [...pinnedPrefix, ...composedRows.slice(pinnedPrefix.length).filter((r) => !printed.has(r.key))]
+  }, [composedRows, pinnedPrefix])
 
   const optimalPicks = useMemo(() => optimalSelections(roles, access), [roles, access])
   const taskMinutes = useMemo(() => taskMinutesById(tasks), [tasks])
@@ -628,12 +649,19 @@ export default function VirtualStartup({
     }
     return roles.filter((r) => arenas.has(r.arenaId))
   }, [roles, steps])
-  // How many journey roles the reader has re-picked away from the default — the Vendors tab's
-  // quiet count badge.
-  const vendorOverrides = useMemo(
-    () => journeyRoles.filter((r) => picks[r.arenaId] !== undefined && picks[r.arenaId] !== r.defaultProductId).length,
+  // The journey roles the reader has re-picked away from the default judged-top vendor — the
+  // Vendors tab's quiet count badge, the scorecard's user-picked labels, and the post-run
+  // "run again with your vendors" affordance (founder addendum #3) all read this.
+  const userPickedArenas = useMemo(
+    () =>
+      new Set(
+        journeyRoles
+          .filter((r) => picks[r.arenaId] !== undefined && picks[r.arenaId] !== r.defaultProductId)
+          .map((r) => r.arenaId),
+      ),
     [journeyRoles, picks],
   )
+  const vendorOverrides = userPickedArenas.size
 
   // Year one — deterministic from the same decision combo (seeded months for annuals the
   // corpus doesn't date; those keep the fuchsia styling + data-synthetic).
@@ -825,6 +853,7 @@ export default function VirtualStartup({
     stop()
     setRevealed(0)
     revealedRef.current = 0
+    setPinnedPrefix(null) // a fresh transcript has no pinned prefix (addendum #2)
     setWaitingOn(null)
     setManualPause(false)
     setNameDraft('')
@@ -961,6 +990,21 @@ export default function VirtualStartup({
   // when it's the naming card).
   const waitingDecision =
     waitingOn !== null && waitingOn !== 'name' ? DECISIONS.find((x) => x.id === waitingOn) ?? null : null
+
+  // ── Vendor picks (founder addenda #2/#3, 2026-09-29): the Vendors tab stays usable at ALL
+  // times — before a run, mid-run (stopped, paused, or even running), and after completion.
+  // MID-RUN (0 < revealed < rows.length) a pick applies IMMEDIATELY at the semi-auto invariant:
+  // the already-printed transcript is pinned byte-stable and only the unrevealed tail recomposes
+  // with the new vendor (no pause inserted, no reset — our call over pause-then-apply: the
+  // reveal simply keeps printing, or resumes, from the new composition). Outside a run (pre-run
+  // or completed) no pin is needed — the next run composes fresh from the picks, which PERSIST
+  // across '▶ Run it again' (they are the reader's stack, not run state).
+  function pickVendor(arenaId: string, productId: string) {
+    if (revealedRef.current > 0 && revealedRef.current < rows.length) {
+      setPinnedPrefix(rows.slice(0, revealedRef.current))
+    }
+    setPicks((s) => ({ ...s, [arenaId]: productId }))
+  }
 
   // The naming card: a typed name (sanitized) or the autopilot's seeded name (empty/skip).
   function nameInRun(raw: string | null) {
@@ -1182,10 +1226,12 @@ export default function VirtualStartup({
             transcript. */}
         <div role="tabpanel" id="vs-tabpanel-vendors" aria-labelledby="vs-tab-vendors" data-testid="vs-tabpanel-vendors" hidden={tab !== 'vendors'}>
           <p className="text-[11px] leading-snug text-zinc-500">
-            Fix a vendor per market role, before or independent of the run — the picks drive the
+            Fix a vendor per market role, before, during, or after the run — the picks drive the
             run&apos;s clock, scorecard, and burn (recommended lines keep the judged ranking).
-            Roles follow the selected journey; each process page keeps its full dry-run
-            transcript.
+            Swapping mid-run (stopped, paused, or live) never rewrites what already printed —
+            only the rest of the run picks up the new vendor — and your picks persist across
+            restarts, so you can pick your favorites and rerun. Roles follow the selected
+            journey; each process page keeps its full dry-run transcript.
           </p>
           {journeyRoles.length > 0 ? (
             <div className="mt-2.5 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -1194,7 +1240,7 @@ export default function VirtualStartup({
                   key={role.arenaId}
                   role={role}
                   selectedId={picks[role.arenaId] ?? role.defaultProductId}
-                  onSelect={(id) => setPicks((s) => ({ ...s, [role.arenaId]: id }))}
+                  onSelect={(id) => pickVendor(role.arenaId, id)}
                 />
               ))}
             </div>
@@ -1232,7 +1278,7 @@ export default function VirtualStartup({
               data-testid="vs-mode-semi"
               aria-pressed={mode === 'semi'}
               onClick={() => setDriveMode('semi')}
-              title="Semi-auto — you make each 'Not set' decision as the run reaches it: the terminal pauses and asks inline; decisions whose branch point already passed stay on their default"
+              title="Semi-auto — you make each 'Not set' decision as the run reaches it: the run pauses and asks in the card above the terminal; decisions whose branch point already passed stay on their default"
               className={`whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
                 mode === 'semi'
                   ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
@@ -1275,11 +1321,12 @@ export default function VirtualStartup({
             its dropdown options. */}
       </section>
 
-      {/* The journey DAG strip (founder ask 2026-09-29, emphatic): an always-visible horizontal
-          graph of the run — one node per process, clustered/colored by phase — sitting ON TOP of
-          the terminal output as its own full-width band (the VsStateGraph tabs keep their place
-          below/beside the terminal untouched). Pre-run it renders the full journey skeleton dim;
-          it lights up node by node off the same rows/revealed state as everything else. */}
+      {/* The journey DAG (founder ask 2026-09-29; round 5 "use vertical space more"): a WRAPPING
+          flow of the run — one fixed-size node per process, chain-tinted label chips marking the
+          phases — sitting ON TOP of the terminal output as its own full-width band (the
+          VsStateGraph tabs keep their place below/beside the terminal untouched). It grows
+          vertically with the reveal (capped, then scrolls itself) and lights up node by node off
+          the same rows/revealed state as everything else. */}
       <VsJourneyDag
         rows={rows}
         revealed={revealed}
@@ -1289,6 +1336,90 @@ export default function VirtualStartup({
         eventTitles={dagEventTitles}
         onNodeClick={scrollTermToTask}
       />
+
+      {/* ── The semi-auto pause slot (founder addendum #1, 2026-09-29): when the run is waiting
+          on the reader, the decision/naming card renders HERE — a fixed slot between the DAG
+          band and the terminal, always in view — instead of down at the bottom of the scrolled
+          terminal output (which keeps only a compact '⏸ waiting on you' marker). Same component
+          visuals, same testids, same resume/permalink semantics; the pause still landed BEFORE
+          the first row the answer could change, so printed lines never move. */}
+      {waitingDecision && (
+        <div
+          data-testid="vs-run-decision"
+          className="rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
+        >
+          <p className="flex flex-wrap items-center gap-1.5">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
+            <span className="font-medium text-zinc-200">{waitingDecision.title}</span>
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Decision: ${waitingDecision.title}`}>
+            {waitingDecision.options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                data-testid={`vs-run-decision-${waitingDecision.id}-${o.value}`}
+                aria-label={o.label}
+                title={`${o.label} — ${o.detail}`}
+                onClick={() => decideInRun(waitingDecision.id, o.value)}
+                className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[11px] text-zinc-500">
+            the run waits below — your pick asserts this decision (the dropdown and the run
+            link pick it up) and the journey recomposes from the paused line on
+          </p>
+        </div>
+      )}
+      {waitingOn === 'name' && (
+        <div
+          data-testid="vs-run-naming"
+          className="rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
+        >
+          <p className="flex flex-wrap items-center gap-1.5">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
+            <span className="font-medium text-zinc-200">Name the company</span>
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <input
+              type="text"
+              data-testid="vs-run-naming-input"
+              aria-label="Company name"
+              value={nameDraft}
+              maxLength={VS_COMPANY_NAME_MAX}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') nameInRun(nameDraft)
+              }}
+              placeholder="type a name…"
+              className="w-44 rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400/60 focus:outline-none"
+            />
+            <button
+              type="button"
+              data-testid="vs-run-naming-use"
+              onClick={() => nameInRun(nameDraft)}
+              className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+            >
+              Use this name
+            </button>
+            <button
+              type="button"
+              data-testid="vs-run-naming-skip"
+              onClick={() => nameInRun(null)}
+              title="Let the autopilot name it — the seeded synthetic name prints as the naming step's artifact"
+              className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 transition hover:border-zinc-600 hover:text-zinc-200"
+            >
+              Autopilot name
+            </button>
+          </div>
+          <p className="mt-1.5 text-[11px] text-zinc-500">
+            the typed name flows into every downstream artifact and the terminal title
+            (sanitized), and rides in the run link — empty means the autopilot names it
+          </p>
+        </div>
+      )}
 
       {/* The state graph + the terminal (founder batch 2026-09-29, item 3): the compact tabbed
           panel of objects-coming-into-existence sits ABOVE the terminal on mobile (capped
@@ -1571,85 +1702,14 @@ export default function VirtualStartup({
               )
             })}
           </ol>
-          {/* ── Semi-auto cards: the paused run asks the NEXT unasserted decision (or the company
-              name) inline, in the mid-run event card's visual language. The pause landed BEFORE
-              the first row the answer could change, so printed lines never move. */}
-          {waitingDecision && (
-            <div
-              data-testid="vs-run-decision"
-              className="my-2 rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
-            >
-              <p className="flex flex-wrap items-center gap-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
-                <span className="font-medium text-zinc-200">{waitingDecision.title}</span>
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Decision: ${waitingDecision.title}`}>
-                {waitingDecision.options.map((o) => (
-                  <button
-                    key={o.value}
-                    type="button"
-                    data-testid={`vs-run-decision-${waitingDecision.id}-${o.value}`}
-                    aria-label={o.label}
-                    title={`${o.label} — ${o.detail}`}
-                    onClick={() => decideInRun(waitingDecision.id, o.value)}
-                    className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-1.5 text-[11px] text-zinc-500">
-                the run waits here — your pick asserts this decision (the dropdown and the run
-                link pick it up) and the journey recomposes from this line on
-              </p>
-            </div>
-          )}
-          {waitingOn === 'name' && (
-            <div
-              data-testid="vs-run-naming"
-              className="my-2 rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-[13px]"
-            >
-              <p className="flex flex-wrap items-center gap-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-300">? decision</span>
-                <span className="font-medium text-zinc-200">Name the company</span>
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <input
-                  type="text"
-                  data-testid="vs-run-naming-input"
-                  aria-label="Company name"
-                  value={nameDraft}
-                  maxLength={VS_COMPANY_NAME_MAX}
-                  onChange={(e) => setNameDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') nameInRun(nameDraft)
-                  }}
-                  placeholder="type a name…"
-                  className="w-44 rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400/60 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  data-testid="vs-run-naming-use"
-                  onClick={() => nameInRun(nameDraft)}
-                  className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-                >
-                  Use this name
-                </button>
-                <button
-                  type="button"
-                  data-testid="vs-run-naming-skip"
-                  onClick={() => nameInRun(null)}
-                  title="Let the autopilot name it — the seeded synthetic name prints as the naming step's artifact"
-                  className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 transition hover:border-zinc-600 hover:text-zinc-200"
-                >
-                  Autopilot name
-                </button>
-              </div>
-              <p className="mt-1.5 text-[11px] text-zinc-500">
-                the typed name flows into every downstream artifact and the terminal title
-                (sanitized), and rides in the run link — empty means the autopilot names it
-              </p>
-            </div>
+          {/* ── Semi-auto pause marker (founder addendum #1, 2026-09-29: "surface the decision
+              at the TOP"): the full card renders in the fixed slot ABOVE the terminal (between
+              the DAG band and this viewport) so the reader never scrolls to decide; the inline
+              position in the flow keeps only this compact one-liner. */}
+          {waitingOn !== null && (
+            <p data-testid="vs-run-wait-marker" className="my-1 font-mono text-[11px] text-amber-300/90">
+              ⏸ waiting on you — decide above
+            </p>
           )}
           {running && <span aria-hidden className="animate-pulse text-emerald-400">▋</span>}
           {/* The completion summary prints as the terminal's final output — the page below the
@@ -1679,7 +1739,25 @@ export default function VirtualStartup({
               burn={burn}
               founder={founder}
               runState={runState}
+              userPickedArenas={userPickedArenas}
             />
+          )}
+          {/* Pick-your-vendors-and-rerun loop (founder addendum #3, 2026-09-29): when any pick
+              differs from the default judged-top, say so and make the loop one click — the
+              button IS a plain restart (picks persist across '▶ Run it again' by design). */}
+          {revealed > 0 && done && vendorOverrides > 0 && (
+            <p data-testid="vs-rerun-vendors" className="mt-2 text-[11px] text-zinc-500">
+              {vendorOverrides} vendor role{vendorOverrides === 1 ? '' : 's'} on your own picks —
+              they persist across restarts.{' '}
+              <button
+                type="button"
+                data-testid="vs-rerun-vendors-btn"
+                onClick={start}
+                className="rounded-full border border-zinc-800 px-2 py-0.5 text-[11px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                ▶ run again with your vendors
+              </button>
+            </p>
           )}
         </div>
 

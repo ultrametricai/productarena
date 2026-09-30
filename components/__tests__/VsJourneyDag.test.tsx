@@ -1,15 +1,22 @@
 // @vitest-environment jsdom
-// VsJourneyDag — the journey DAG viewer (founder ask 2026-09-29; round-4 rework: taller, no
-// horizontal scroll, reveal-on-reach + zoom-out fit). What must hold:
+// VsJourneyDag — the journey DAG viewer (founder ask 2026-09-29; round-5 rework: "use vertical
+// space more" — a wrapping flow of FIXED-size nodes replaces round 4's fisheye zoom). What must
+// hold:
 //   - the strip has NO timers of its own — everything derives from the shared rows/revealed state;
 //   - REVEAL-ON-REACH: pre-run ONLY the first node renders (dim); upcoming nodes are NOT shown —
 //     each appears when the reveal reaches its task row, so visible count == reached count;
-//   - NO horizontal scroll: the row is w-full flex (no overflow-x, no w-max) — clusters/nodes
-//     flex-shrink to fit, the zoom TIER steps chrome down as nodes accumulate (titles hide below
-//     the md tier for non-active nodes; icons and aria-labels stay), and the ACTIVE node keeps
-//     full size (data-dag-size="full") with its pulse;
+//   - WRAPPING FLOW: nodes render at one comfortable FIXED size (icon + title legible ALWAYS —
+//     no data-dag-size tiers, no title hiding) and wrap left→right, top→bottom in a flex-wrap
+//     row (no overflow-x, no w-max) — the container grows vertically with content;
+//   - HEIGHT CAP + FOLLOW: past min(45vh, 380px) the strip scrolls VERTICALLY only, auto-pinned
+//     to the newest (active) node while following, with the terminal's follow-slack courtesy
+//     (scroll up unpins; back near the bottom re-pins) — smoke-tested via a scrollTop mock;
+//   - EDGES: a simple in-row connector leads every node after the first; an item measured at the
+//     start of a wrapped row swaps it for a subtle ↵ hint (pure helper dagWrapStartIds — jsdom
+//     does no layout, so the swap itself is driven at the unit level);
+//   - cluster grouping survives as a chain-tinted label chip leading each phase's first node;
 //   - nodes light progressively as the terminal reveal passes them (pending → active → done),
-//     with exactly the node whose rows are printing carrying the active state;
+//     with exactly the node whose rows are printing carrying the active state (pulsing emerald);
 //   - seeded mid-run events and semi-auto pauses render as diamond markers attached under the
 //     node whose terminal region carries them (the awaited pause pulses);
 //   - clicking a node asks the parent to scroll the terminal to that process's first row (smoke);
@@ -22,9 +29,8 @@ import VsJourneyDag, {
   activeDagTaskId,
   dagNodeReached,
   dagNodeState,
-  dagTierShowsTitle,
   dagVisibleTaskIds,
-  dagZoomTier,
+  dagWrapStartIds,
   deriveJourneyDag,
   type VsDagSourceRow,
 } from '@/components/VsJourneyDag'
@@ -128,7 +134,7 @@ describe('deriveJourneyDag — pure derivation', () => {
     expect(activeDagTaskId(clusters, UNIT_ROWS.length)).toBe(null) // run complete — nothing active
   })
 
-  it('reveal-on-reach (round 4): a node is visible once the reveal reaches its task row; pre-run only the FIRST node shows', () => {
+  it('reveal-on-reach: a node is visible once the reveal reaches its task row; pre-run only the FIRST node shows', () => {
     const { clusters } = deriveJourneyDag(UNIT_ROWS)
     const [a] = clusters[0].nodes
     const [b] = clusters[1].nodes
@@ -143,24 +149,41 @@ describe('deriveJourneyDag — pure derivation', () => {
     expect(dagVisibleTaskIds(clusters, UNIT_ROWS.length)).toEqual(new Set(['form_001', 'site_001']))
   })
 
-  it('zoom tiers step down with the visible count; titles hide below md (icons stay)', () => {
-    expect(dagZoomTier(1)).toBe('xl')
-    expect(dagZoomTier(5)).toBe('xl')
-    expect(dagZoomTier(6)).toBe('md')
-    expect(dagZoomTier(9)).toBe('md')
-    expect(dagZoomTier(10)).toBe('sm')
-    expect(dagZoomTier(14)).toBe('sm')
-    expect(dagZoomTier(15)).toBe('xs')
-    expect(dagTierShowsTitle('xl')).toBe(true)
-    expect(dagTierShowsTitle('md')).toBe(true)
-    expect(dagTierShowsTitle('sm')).toBe(false)
-    expect(dagTierShowsTitle('xs')).toBe(false)
+  it('dagWrapStartIds (round 5): an item measured below its predecessor starts a wrapped row (its connector becomes the ↵ hint)', () => {
+    // One row: nothing wraps.
+    expect(dagWrapStartIds([{ id: 'a', top: 0 }, { id: 'b', top: 0 }, { id: 'c', top: 0 }])).toEqual(new Set())
+    // b and d each open a new visual row; c continues b's row.
+    expect(
+      dagWrapStartIds([
+        { id: 'a', top: 0 },
+        { id: 'b', top: 40 },
+        { id: 'c', top: 40 },
+        { id: 'd', top: 80 },
+      ]),
+    ).toEqual(new Set(['b', 'd']))
+    // Empty and single-item flows never wrap.
+    expect(dagWrapStartIds([])).toEqual(new Set())
+    expect(dagWrapStartIds([{ id: 'a', top: 120 }])).toEqual(new Set())
   })
 })
 
 // ---------------------------------------------------------------------------
-// Component level: rendering states, markers, vendor dot, click wiring, no own timers.
+// Component level: rendering states, wrap-flow invariants, follow scroll, markers, vendor dot,
+// click wiring, no own timers.
 // ---------------------------------------------------------------------------
+
+// jsdom does no real layout or scrolling, so the strip's follow logic runs against a fake
+// scroll box (the same precedent as VirtualStartup.test.tsx's terminal-follow suite).
+function mockScrollBox(el: HTMLElement, { scrollHeight, clientHeight }: { scrollHeight: number; clientHeight: number }) {
+  let top = 0
+  Object.defineProperty(el, 'scrollHeight', { configurable: true, get: () => scrollHeight })
+  Object.defineProperty(el, 'clientHeight', { configurable: true, get: () => clientHeight })
+  Object.defineProperty(el, 'scrollTop', {
+    configurable: true,
+    get: () => top,
+    set: (v: number) => { top = v },
+  })
+}
 
 describe('VsJourneyDag — rendering', () => {
   it('pre-run renders ONLY the first node, dim, and never starts a reveal clock of its own', () => {
@@ -174,8 +197,8 @@ describe('VsJourneyDag — rendering', () => {
     } finally {
       spy.mockRestore()
     }
-    // Reveal-on-reach (round 4): upcoming nodes are NOT shown — only the journey's first node,
-    // dim (pending); the upcoming cluster doesn't render either.
+    // Reveal-on-reach: upcoming nodes are NOT shown — only the journey's first node, dim
+    // (pending); the upcoming cluster's chip doesn't render either.
     const nodes = screen.getByTestId('vs-journeydag').querySelectorAll('[data-testid^="vs-dag-node-"]')
     expect(nodes.length).toBe(1)
     expect(screen.getByTestId('vs-dag-node-form_001').getAttribute('data-dag-state')).toBe('pending')
@@ -186,11 +209,10 @@ describe('VsJourneyDag — rendering', () => {
     expect(screen.getByTestId('vs-dag-marker-event').className).toContain('fuchsia-400/30')
   })
 
-  it('lights nodes with the reveal: active pulses emerald at FULL size, done fills; upcoming stays hidden; the vendor logo dot attaches once its step printed', () => {
+  it('lights nodes with the reveal: active pulses emerald, done fills; upcoming stays hidden; the vendor logo dot attaches once its step printed', () => {
     const { rerender } = render(<VsJourneyDag rows={UNIT_ROWS} revealed={2} running />)
     const activeNode = screen.getByTestId('vs-dag-node-form_001')
     expect(activeNode.getAttribute('data-dag-state')).toBe('active')
-    expect(activeNode.getAttribute('data-dag-size')).toBe('full') // the active node keeps full size
     expect(activeNode.className).toContain('emerald')
     expect(screen.queryByTestId('vs-dag-node-site_001')).toBeNull() // upcoming — not reached yet
     expect(screen.queryByTestId('vs-dag-vendor-best-legal')).toBeNull() // top-pick step not printed yet
@@ -203,13 +225,17 @@ describe('VsJourneyDag — rendering', () => {
     expect(screen.getByTestId('vs-dag-node-site_001').getAttribute('data-dag-state')).toBe('active')
   })
 
-  it('zoom-fit invariants: no horizontal scroll (w-full row, no overflow-x), non-active nodes flex-shrink, visible == reached', () => {
+  it('wrap-flow invariants: fixed-size nodes (no size tiers) in a flex-wrap row, vertical-only scroll, visible == reached, one connector per non-first node', () => {
     for (const revealed of [0, 2, 6, 8, UNIT_ROWS.length]) {
       const view = render(<VsJourneyDag rows={UNIT_ROWS} revealed={revealed} running={false} />)
       const strip = screen.getByTestId('vs-journeydag-strip')
-      expect(strip.className).not.toContain('overflow-x') // the viewer never scrolls sideways
+      // Vertical-only: capped natural height with internal Y scroll — NEVER a sideways scroll.
+      expect(strip.className).not.toContain('overflow-x')
+      expect(strip.className).toContain('overflow-y-auto')
+      expect(strip.className).toContain('max-h-[min(45vh,380px)]')
       const row = strip.querySelector('ol')!
-      expect(row.className).toContain('w-full') // …because the row always fits the container
+      expect(row.className).toContain('flex-wrap') // the flow wraps in reading order
+      expect(row.className).toContain('w-full')
       expect(row.className).not.toContain('w-max')
       const nodes = Array.from(strip.querySelectorAll<HTMLElement>('[data-testid^="vs-dag-node-"]'))
       // Visible node count == reached count (pre-run: the single dim first node).
@@ -217,17 +243,23 @@ describe('VsJourneyDag — rendering', () => {
       const reached = dagVisibleTaskIds(clusters, revealed)
       expect(nodes.length).toBe(reached.size)
       for (const n of nodes) {
-        if (n.getAttribute('data-dag-size') === 'full') continue // the active node is flex-none
-        // Every non-active node sits in a shrinkable flex cell — the fit mechanism.
-        expect(n.parentElement!.parentElement!.className).toContain('flex-1')
-        expect(n.parentElement!.parentElement!.className).toContain('min-w-0')
+        // FIXED size: no tier attribute, and each flow item is shrink-0 — it wraps as a unit
+        // instead of compressing.
+        expect(n.getAttribute('data-dag-size')).toBeNull()
+        expect(n.closest('[data-dag-flow]')!.className).toContain('shrink-0')
       }
+      // Edges: every node after the first carries exactly one leading connector (jsdom measures
+      // no layout → nothing registers as wrapped, so no ↵ hints render here).
+      const edges = strip.querySelectorAll('[data-testid="vs-dag-edge"]')
+      const hints = strip.querySelectorAll('[data-testid="vs-dag-wrap-hint"]')
+      expect(edges.length + hints.length).toBe(Math.max(0, nodes.length - 1))
       view.unmount()
     }
   })
 
-  it('at compressed tiers the non-active titles hide (icons + aria-labels stay); the active node keeps its title', () => {
-    // A 12-node journey (one cluster per node) pushes the tier to 'sm' once traversed.
+  it('nodes keep FULL fixed size at any count: icon + title legible always, no tier ever hides a title', () => {
+    // A 12-node journey (one cluster per node) — round 4 would have compressed this to the 'sm'
+    // tier and hidden every non-active title; round 5 must not.
     const many: VsDagSourceRow[] = []
     for (let i = 0; i < 12; i++) {
       const t = task(`task_${i}`, `Process ${i}`)
@@ -235,17 +267,44 @@ describe('VsJourneyDag — rendering', () => {
       many.push({ kind: 'task', key: `task-task_${i}`, task: t })
       many.push({ kind: 'step', key: `step-task_${i}-0`, step: t.steps[0], top: null, outNote: null, outMinutes: 10 })
     }
-    // Reveal into the LAST node's span: 11 done + 1 active = 12 visible → tier 'sm'.
+    // Reveal into the LAST node's span: 11 done + 1 active = 12 visible.
     render(<VsJourneyDag rows={many} revealed={many.length - 1} running />)
-    expect(screen.getByTestId('vs-journeydag').getAttribute('data-dag-tier')).toBe('sm')
+    expect(screen.getByTestId('vs-journeydag').getAttribute('data-dag-tier')).toBeNull() // tiers are gone
     const active = screen.getByTestId('vs-dag-node-task_11')
     expect(active.getAttribute('data-dag-state')).toBe('active')
-    expect(active.getAttribute('data-dag-size')).toBe('full')
-    expect(active.textContent).toContain('Process 11') // the active node stays legible
-    const done = screen.getByTestId('vs-dag-node-task_3')
-    expect(done.textContent).not.toContain('Process 3') // compressed: title hidden…
-    expect(done.getAttribute('aria-label')).toBe('Process 3') // …accessible name stays
-    expect(done.querySelector('[aria-hidden]')).toBeTruthy() // …and the icon stays
+    expect(active.textContent).toContain('Process 11')
+    for (let i = 0; i < 12; i++) {
+      const n = screen.getByTestId(`vs-dag-node-task_${i}`)
+      expect(n.textContent).toContain(`Process ${i}`) // every title renders — no compression tiers
+      expect(n.getAttribute('aria-label')).toBe(`Process ${i}`)
+      expect(n.querySelector('[aria-hidden]')).toBeTruthy() // the icon stays
+      expect(n.getAttribute('data-dag-size')).toBeNull()
+    }
+    // Every cluster chip renders too — grouping survives the wrap as leading chips.
+    expect(screen.getAllByTestId('vs-dag-cluster')).toHaveLength(12)
+  })
+
+  it('height cap + follow (smoke): pins to the newest node on each reveal, unpins when the reader scrolls up, re-pins within the slack', () => {
+    const { rerender } = render(<VsJourneyDag rows={UNIT_ROWS} revealed={2} running />)
+    const strip = screen.getByTestId('vs-journeydag-strip')
+    mockScrollBox(strip, { scrollHeight: 400, clientHeight: 200 })
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={3} running />)
+    expect(strip.scrollTop).toBe(400) // pinned to the bottom — the active node is always the newest
+    // The reader scrolls up mid-run → follow pauses; new reveals must not yank them back down.
+    strip.scrollTop = 50
+    fireEvent.scroll(strip)
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={6} running />)
+    expect(strip.scrollTop).toBe(50)
+    // Back within the slack of the bottom → follow re-engages on the next reveal.
+    strip.scrollTop = 190 // 190 + 200 ≥ 400 − 24
+    fireEvent.scroll(strip)
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={8} running />)
+    expect(strip.scrollTop).toBe(400)
+    // An emptied strip (restart) rests at its top and re-arms the follow.
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={0} running={false} />)
+    expect(strip.scrollTop).toBe(0)
+    rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={2} running />)
+    expect(strip.scrollTop).toBe(400)
   })
 
   it('renders pause diamonds and pulses the one the run is waiting on', () => {
@@ -352,14 +411,17 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
     expect(strip.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(dagNodes().length).toBe(1) // the journey's first node only — nothing upcoming shows
     expect(new Set(dagStates())).toEqual(new Set(['pending']))
-    // The taller, never-scrolling viewer (round 4): fixed height classes, no overflow-x.
+    // The wrapping flow (round 5): natural height capped at min(45vh, 380px) with vertical-only
+    // internal scroll — no fixed-height band, no sideways scroll.
     const body = screen.getByTestId('vs-journeydag-strip')
-    expect(body.className).toContain('h-[140px]')
-    expect(body.className).toContain('sm:h-[200px]')
+    expect(body.className).toContain('max-h-[min(45vh,380px)]')
+    expect(body.className).toContain('overflow-y-auto')
     expect(body.className).not.toContain('overflow-x')
+    expect(body.className).not.toContain('h-[140px]')
+    expect(body.querySelector('ol')!.className).toContain('flex-wrap')
   })
 
-  it('reveals + lights progressively with the terminal reveal (never its own timers): visible == traversed, at most one active, whole journey fitted at completion', () => {
+  it('reveals + lights progressively with the terminal reveal (never its own timers): visible == traversed, at most one active, whole journey shown at completion', () => {
     renderIt()
     vi.useFakeTimers()
     try {
@@ -385,9 +447,11 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
       act(() => {
         vi.runAllTimers()
       })
-      // Completed run: the WHOLE traversed journey is visible and fitted — all 13 nodes done.
+      // Completed run: the WHOLE traversed journey renders in the flow — all 13 nodes done,
+      // every title still legible (fixed node size, no tiers).
       expect(dagStates()).toHaveLength(13)
       expect(new Set(dagStates())).toEqual(new Set(['done']))
+      for (const n of dagNodes()) expect(n.textContent!.length).toBeGreaterThan(1) // icon + title
     } finally {
       vi.useRealTimers()
     }
