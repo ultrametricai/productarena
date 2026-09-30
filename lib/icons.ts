@@ -198,6 +198,17 @@ const THEME_EXACT: Record<string, string> = {
   'integrations-access': '🧩',
   'plans-locations': '🗺️',
   'trust-reliability': '🛡️',
+  // startup-law-firms arena (legal-practice vocabulary is new; 'ip-protection' would otherwise
+  // fall through to the fallback and 'fee-transparency' must not land on a generic pricing rule)
+  'formation-incorporation': '🏛️',
+  'venture-financing': '💰',
+  'ip-protection': '💡',
+  'employment-equity': '🧑‍💼',
+  'privacy-data-counsel': '🔏',
+  'cross-border-reach': '🌍',
+  'startup-program': '🎓',
+  'fee-transparency': '🧾',
+  'legal-tech-enablement': '⚙️',
 }
 
 // Emoji for a story theme id — every live theme in data/*/stories.json must resolve to a
@@ -392,6 +403,16 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'integrations-access': 'mail as data — public APIs for mail items, new-mail webhooks, bulk scan export',
   'plans-locations': 'what it costs where — transparent per-item pricing and location network breadth',
   'trust-reliability': 'who touches your mail — facility security, scan protection, human support',
+  // startup-law-firms arena
+  'formation-incorporation': 'day-zero counsel — incorporation, founder stock and vesting, 83(b) guidance',
+  'venture-financing': 'the fundraise — SAFEs and convertibles, priced rounds, both-sides market fluency',
+  'ip-protection': 'owning the invention — patent strategy, trademarks, IP litigation, open-source counseling',
+  'employment-equity': 'hiring people — offer and IP-assignment paperwork, option plans, executive comp',
+  'privacy-data-counsel': 'data as a legal problem — GDPR/CCPA counseling, incident response, regulator experience',
+  'cross-border-reach': 'more than one jurisdiction — own offices abroad, cross-border rounds, flips',
+  'startup-program': 'what the firm gives away — open document generators, published guides, accelerator programs',
+  'fee-transparency': 'what it costs — published startup packages, deferred-fee terms, stated engagement models',
+  'legal-tech-enablement': 'the firm as software — client portals, document automation, published AI tooling',
 }
 
 // Honest fallback for an arena-specific niche theme no bespoke line covers.

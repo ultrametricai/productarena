@@ -8,6 +8,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Startup lawyers arena with per-country rankings, Cooley to VLP for the US, rankings for IP issues | in-lane (startup-law-firms) 2026-09-30 — 15 firms (US 8 incl. Cooley+VLP; UK/DE/FR/IN via Bird & Bird, Osborne Clarke, YPOG, Gide, CAM, CMS IndusLaw, Trilegal); Wilson Sonsini + Taylor Wessing excluded (bot-wall keyless crawlers, iPostal1 precedent); 27 manual stories incl. 5-story ip-protection theme + ip-focused ICP lens; 74 vendor-geo rows; honest agent-readiness lows stand |
 | Supabase in developer databases, compared against neon | in-lane (supabase-serverless-databases) 2026-09-23 — second arena membership for the canonical supabase product (gmail-in-email pattern), judged on all 56 serverless-databases stories: #2 aiEra 50.1 vs neon #1 56.1 (agentReady 63.2 vs 82.2); /vs/supabase-vs-neon and CompareRivals rows come from rankings.json automatically, nothing hand-built; 61 evidence items (45 docs + 8 community + 5 keyless probes + 3 recorded runtime probes), one spike (+19 llms.txt URLs), churn settled (5 evidence-driven flips kept, 13 reverted), na-harmonize flipped clickhouse+planetscale privacy-no-training na→none (neon holds partial) |
 | Improvement run 1: mini horizontal DAG preview in "Who covers this process best" | in-lane (process-ux) |
 | Improvement run 2: don't show the step's top vendor twice (canonical chip hides when it's #1 in the ranked row) | in-flight (orchestrator) |
