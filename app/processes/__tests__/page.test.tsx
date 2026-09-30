@@ -2,22 +2,25 @@
 // The combined /processes view (founder 2026-09-29: "combine playbooks and all processes into
 // one table so we have one view for the processes under the process search"), with the same-day
 // vocabulary follow-up ("we don't need to say 'playbook' on those playbooks… playbooks are
-// still processes"): chain rows fold into their dominant area — no 'Playbooks' group, no chip,
-// heading 'All processes', one unified search count. The VS card stays; the legend is gone.
+// still processes"): chain rows in the one table — no 'Playbooks' group, no chip, one unified
+// search count, the VS card stays. Founder 2026-09-30: the 'All processes' heading is gone (the
+// table stands alone under the search) and the default view is the flat FOUNDER-TIMELINE sort —
+// process rows in timeOrder, chain rows (no timeOrder of their own in the flat view) after them.
 import { render, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProcessesPage from '@/app/processes/page'
 import { areaOf, buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
 describe('/processes — one combined table, one processes vocabulary', () => {
-  it("renders ONE table under the 'All processes' heading; chain rows fold into their dominant area (no 'Playbooks' group or label)", () => {
+  it("renders ONE table with no 'All processes' heading, flat in founder-timeline order, chain rows linked after the processes (no 'Playbooks' group or label)", () => {
     const { container } = render(<ProcessesPage />)
 
     // Exactly one table on the page (the old page rendered a second, playbooks-only table).
     expect(container.querySelectorAll('table').length).toBe(1)
     expect(within(container).queryByText('End-to-end playbooks')).toBeNull()
     expect(within(container).queryByText('Playbooks & all processes')).toBeNull()
-    expect(within(container).getByText('All processes')).toBeDefined()
+    // The heading is gone (founder 2026-09-30) — the table stands alone under the search.
+    expect(within(container).queryByText('All processes')).toBeNull()
 
     const table = container.querySelector('table') as HTMLElement
     const playbooks = buildPlaybookRows()
@@ -25,19 +28,25 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     // No leading 'Playbooks' group header and no 'playbook' chip — one vocabulary.
     expect(within(table).queryByText('Playbooks')).toBeNull()
     expect(within(table).queryByText('playbook')).toBeNull()
-    expect(table.querySelectorAll('tbody tr').length).toBeGreaterThanOrEqual(playbooks.length + rows.length)
-    // Each chain row links to its chain page from inside the one table, folded into its
-    // dominant area (its group header precedes the row).
+    // The default view is FLAT founder-timeline (founder 2026-09-30) — no area group headers.
+    expect(table.querySelectorAll('tbody th').length).toBe(0)
+    expect(table.querySelectorAll('tbody tr').length).toBe(playbooks.length + rows.length)
+    // Process rows lead in timeOrder; chain rows (no per-process timeOrder in the flat view)
+    // follow them, each linking to its chain page from inside the one table.
     const trs = [...table.querySelectorAll('tbody tr')]
+    const lastProcessIdx = Math.max(
+      ...rows.map((r) => trs.findIndex((tr) => tr.querySelector(`a[href="/processes/${r.slug}"]`) !== null)),
+    )
     for (const p of playbooks) {
-      expect(table.querySelector(`a[href="${p.href}"]`), `chain ${p.id} must link to its chain page`).not.toBeNull()
       const rowIdx = trs.findIndex((tr) => tr.querySelector(`a[href="${p.href}"]`) !== null)
-      const headerIdx = trs.findIndex((tr) => tr.querySelector('th') !== null && tr.textContent?.includes(p.dominantArea))
-      expect(headerIdx, `chain ${p.id} must sit under its dominant area "${p.dominantArea}"`).toBeGreaterThanOrEqual(0)
-      expect(headerIdx).toBeLessThan(rowIdx)
+      expect(rowIdx, `chain ${p.id} must link to its chain page`).toBeGreaterThanOrEqual(0)
+      expect(rowIdx, `chain ${p.id} must follow the timeline-sorted processes`).toBeGreaterThan(lastProcessIdx)
     }
-    // A process row is unchanged next to them.
-    expect(table.querySelector(`a[href="/processes/${rows[0].slug}"]`)).not.toBeNull()
+    // The first two process rows really are in founder-timeline order.
+    const byTime = [...rows].sort((a, b) => a.timeOrder - b.timeOrder)
+    const idxOf = (slug: string) => trs.findIndex((tr) => tr.querySelector(`a[href="/processes/${slug}"]`) !== null)
+    expect(idxOf(byTime[0].slug)).toBeLessThan(idxOf(byTime[byTime.length - 1].slug))
+    expect(idxOf(byTime[0].slug)).toBe(0)
   })
 
   it('every chain row carries its dominant area (first constituent) and that constituent timeOrder', () => {
