@@ -12,6 +12,7 @@ import VsJourneyDag, { type VsDagPause } from '@/components/VsJourneyDag'
 import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
 import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
 import { formatMinutes, type SimStep, type VendorRole } from '@/lib/processSim'
+import { ULTRAMETRIC_CLI_DISCLOSURE, ultrametricCliFor } from '@/lib/ultrametricCli'
 import { readParam, setParams } from '@/lib/urlState'
 import {
   applyYcCalibration,
@@ -715,9 +716,16 @@ export default function VirtualStartup({
     const vendors: TopVendorPick[] = []
     const seenVendors = new Set<string>()
     const events: VsPanelEvent[] = []
+    // Ultrametric CLI/MCP lines (founder ask 2026-09-30): the revealed processes our own shipped
+    // CLI can drive (curated lib/ultrametricCli.ts). Collected SEPARATELY from the judged
+    // vendors list — first-party, disclosed, never mixed into or reordering the judged picks.
+    const umCli: Array<{ taskId: string; title: string; command: string }> = []
     for (const row of rows.slice(0, revealed)) {
       if (row.kind === 'artifact') {
         artifacts.push(row.artifact)
+      } else if (row.kind === 'task') {
+        const um = ultrametricCliFor(row.task.id)
+        if (um) umCli.push({ taskId: row.task.id, title: row.task.title, command: um.command })
       } else if (row.kind === 'step' && row.top && !seenVendors.has(row.top.productId)) {
         seenVendors.add(row.top.productId)
         vendors.push(row.top)
@@ -734,7 +742,7 @@ export default function VirtualStartup({
         }
       }
     }
-    return { artifacts, vendors, events }
+    return { artifacts, vendors, events, umCli }
   }, [rows, revealed, resolvedEventById])
   // The Decisions tab: BOTH founder axes first (item 5), then the nine decisions with their
   // pending-vs-asserted state (semi-auto shows what the run still owes you).
@@ -1428,6 +1436,7 @@ export default function VirtualStartup({
         vendors={panel.vendors}
         decisions={panelDecisions}
         events={panel.events}
+        umCli={panel.umCli}
       />
 
       {/* The terminal — the page's visual centerpiece (founder ask 2026-09-28: "have the
@@ -1549,6 +1558,35 @@ export default function VirtualStartup({
                           no {geoNote.meta.label} mapping yet — this process is US-specific
                         </p>
                       ))}
+                    {/* Ultrametric CLI/MCP affordance (founder ask 2026-09-30) — OWNER PRODUCT,
+                        honesty-first: renders ONLY for the curated lib/ultrametricCli.ts map
+                        (live production catalog, verified 2026-09-30), sits on the process row
+                        (the CLI drives whole processes, not individual steps), never touches the
+                        judged step pills, and carries the visible first-party disclosure. "Drive"
+                        = the CLI/MCP serves the guide and saves records; the agent does the work. */}
+                    {(() => {
+                      const um = ultrametricCliFor(row.task.id)
+                      return (
+                        um && (
+                          <p
+                            data-testid="vs-um-cli"
+                            title={ULTRAMETRIC_CLI_DISCLOSURE}
+                            className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500"
+                          >
+                            <span aria-hidden className="mr-1 text-emerald-400/80">▸</span>
+                            drive this process from your agent via the{' '}
+                            <Link
+                              href="/get-started"
+                              className="text-emerald-400/90 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-300"
+                            >
+                              Ultrametric CLI/MCP
+                            </Link>{' '}
+                            — our own product: <code className="text-zinc-400">{um.command}</code>
+                            <span className="text-zinc-600"> · MCP {um.mcpTool} — guide + saved records; your agent does the work</span>
+                          </p>
+                        )
+                      )
+                    })()}
                   </li>
                 )
               }

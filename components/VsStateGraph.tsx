@@ -40,6 +40,15 @@ export interface VsPanelEvent {
   outcome: string | null
 }
 
+// A revealed process our own shipped Ultrametric CLI/MCP can drive (curated
+// lib/ultrametricCli.ts map). First-party and disclosed; rendered BELOW the judged vendors under
+// its own label, never mixed into, reordering, or counted with the judged picks.
+export interface VsUmCliLine {
+  taskId: string
+  title: string
+  command: string
+}
+
 type PanelTab = 'company' | 'vendors' | 'decisions'
 
 export default function VsStateGraph({
@@ -48,6 +57,7 @@ export default function VsStateGraph({
   vendors,
   decisions,
   events,
+  umCli = [],
 }: {
   // True once the run has revealed at least one row — pre-run the panel shows the placeholder.
   started: boolean
@@ -59,6 +69,8 @@ export default function VsStateGraph({
   decisions: VsPanelDecision[]
   // Revealed mid-run events with their resolution state.
   events: VsPanelEvent[]
+  // Revealed Ultrametric-driveable processes (ours, disclosed) — optional, additive (2026-09-30).
+  umCli?: VsUmCliLine[]
 }) {
   const [tab, setTab] = useState<PanelTab>('company')
 
@@ -123,29 +135,57 @@ export default function VsStateGraph({
             </ul>
           )
         ) : tab === 'vendors' ? (
-          vendors.length === 0 ? (
-            <p className="py-2 text-[11px] text-zinc-600">no judged vendor picked up yet — they collect as the journey hits their steps</p>
-          ) : (
-            <ul className="space-y-1.5">
-              {vendors.map((v) => (
-                <li key={v.productId} data-testid="vs-sg-vendor" className="flex items-center gap-2 text-[12px]">
-                  <ProductLogoView product={{ id: v.productId, name: v.name }} size={20} hasLogo={v.hasLogo === true} />
-                  <Link
-                    href={`/arena/${v.arenaId}/product/${v.productId}`}
-                    className="font-medium text-zinc-200 hover:text-emerald-300"
-                  >
-                    {v.name}
-                  </Link>
-                  <span
-                    className="min-w-0 truncate text-[11px] text-zinc-500"
-                    title={`Why picked: the top judged vendor for its step — ${v.arenaName}, scored over the step's mapped stories`}
-                  >
-                    {v.arenaName} · top judged · {v.score.toFixed(0)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )
+          <>
+            {vendors.length === 0 ? (
+              <p className="py-2 text-[11px] text-zinc-600">no judged vendor picked up yet — they collect as the journey hits their steps</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {vendors.map((v) => (
+                  <li key={v.productId} data-testid="vs-sg-vendor" className="flex items-center gap-2 text-[12px]">
+                    <ProductLogoView product={{ id: v.productId, name: v.name }} size={20} hasLogo={v.hasLogo === true} />
+                    <Link
+                      href={`/arena/${v.arenaId}/product/${v.productId}`}
+                      className="font-medium text-zinc-200 hover:text-emerald-300"
+                    >
+                      {v.name}
+                    </Link>
+                    <span
+                      className="min-w-0 truncate text-[11px] text-zinc-500"
+                      title={`Why picked: the top judged vendor for its step — ${v.arenaName}, scored over the step's mapped stories`}
+                    >
+                      {v.arenaName} · top judged · {v.score.toFixed(0)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {/* Ultrametric CLI/MCP block (founder ask 2026-09-30) — OWNER PRODUCT. Always BELOW
+                the judged list, under its own explicit first-party label, never counted in the
+                tab badge: an affordance ("you can drive this process through our CLI"), not a
+                pick. Curated map: lib/ultrametricCli.ts, verified against the live catalog. */}
+            {umCli.length > 0 && (
+              <div data-testid="vs-sg-umcli" className="mt-2 border-t border-zinc-800 pt-1.5">
+                <p className="text-[9px] uppercase tracking-widest text-zinc-600">
+                  first-party · Ultrametric CLI/MCP (ours) — not a judged pick
+                </p>
+                <ul className="mt-1 space-y-1">
+                  {umCli.map((u) => (
+                    <li key={u.taskId} data-testid="vs-sg-umcli-line" className="flex flex-wrap items-baseline gap-x-2 text-[11px]">
+                      <span className="text-zinc-300">{u.title}</span>
+                      <code className="font-mono text-[10px] text-emerald-300/80">{u.command}</code>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/get-started"
+                  className="mt-1 inline-block text-[10px] text-emerald-400/80 hover:text-emerald-300"
+                  title="Built by Ultrametric Inc, which also operates this site. It serves the process guide and saves run records — your agent does the work. It never affects the judged vendor picks."
+                >
+                  our CLI/MCP serves the guide + saves records; your agent does the work →
+                </Link>
+              </div>
+            )}
+          </>
         ) : (
           <div className="space-y-1.5">
             <ul className="space-y-1">
