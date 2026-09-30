@@ -37,7 +37,9 @@ export default function ClaimsChip({ data, productId, href }: { data: CategoryDa
     )
   }
 
-  const colorClass = contradicted > 0 ? 'text-red-400' : score === 100 ? 'text-emerald-400' : 'text-zinc-300'
+  // No red in table cells (founder 2026-09-30) — contradicted claims still count against the
+  // score and stay itemized in the tooltip/breakdown; the color just stops shouting.
+  const colorClass = score === 100 ? 'text-emerald-400' : 'text-zinc-300'
 
   const chip = (
     <span

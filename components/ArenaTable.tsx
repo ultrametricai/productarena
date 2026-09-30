@@ -222,7 +222,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
               {/* Founder 2026-09-23: an evidence column at the end — every ranking clicks
                   through to the receipt that produced it (the product's /score page). */}
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
-                <span title="The evidence behind this ranking — click a row's ⚖ for the full receipt: every story, verdict, and cited evidence item">Evidence</span>
+                <span title="The evidence behind this ranking — click a row's 'view' for the full receipt: every story, verdict, and cited evidence item">Evidence</span>
               </SortableTh>
             </tr>
           </thead>
@@ -391,14 +391,16 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       href={`/arena/${data.category.id}/product/${row.productId}#claims`}
                     />
                   </td>
-                  <td className="w-8 px-2 py-2 text-center">
+                  <td className="w-12 px-2 py-2 text-center">
+                    {/* Plain word, not a glyph (founder 2026-09-30: "the evidence column icon
+                        is unclear") — the cell says what clicking it does. */}
                     <Link
                       href={`/arena/${data.category.id}/product/${row.productId}/score`}
                       title={`The evidence behind ${product.name}'s ranking — every story, verdict, and cited evidence item, with the arithmetic`}
                       aria-label={`Evidence behind ${product.name}'s ranking`}
-                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
+                      className="inline-block rounded border border-zinc-800 px-1.5 text-[10px] leading-4 text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
                     >
-                      ⚖
+                      view
                     </Link>
                   </td>
                 </tr>

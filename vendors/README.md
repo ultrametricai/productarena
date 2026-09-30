@@ -8,6 +8,10 @@ transcripts; rankings carry HMAC-fingerprinted `_provenance` and recompute deter
 are disclosed on every surface and get adversarial bias audits; favorable flips without new
 evidence are reverted (`governance/REVIEW_POLICY.md`).
 
+Live views: every arena renders at
+[ultrametric.ai/arena/&lt;arena-id&gt;](https://ultrametric.ai/arenas) (index at `/arenas`), the
+cross-arena rankings at [ultrametric.ai/overall](https://ultrametric.ai/overall).
+
 ## How the layer fits together
 
 Committed counts as of 2026-09-30: 93 arenas, 578 evidence packs (32,083 dated evidence

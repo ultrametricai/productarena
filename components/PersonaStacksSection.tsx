@@ -21,11 +21,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
         <GeoMark seed="icp" title="Best by user type — persona-weighted winners" size={18} className="text-zinc-500" />
         Best by user type
       </h2>
-      <p className="mb-4 text-sm text-zinc-400">
-        Per persona, the product with the highest persona-weighted coverage over just that persona&apos;s stories —
-        not the same ranking as the overall Overall score leaderboard above.
-      </p>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {results.map((r) => {
           const winner = productById.get(r.winner!.productId)!
           const runnerUp = r.runnerUp ? productById.get(r.runnerUp.productId) : null

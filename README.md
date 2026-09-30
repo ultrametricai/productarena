@@ -60,7 +60,7 @@ Arena, product, and verdict counts above (and in the badge row) are regenerated 
 | What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — 123 processes grouped by area, each with its agent ceiling |
 | Chained playbooks (incorporate → launch, the VC raise, agent-run back office) | [/processes](https://ultrametric.ai/processes) playbooks |
 | Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
-| Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · per-arena leaderboards · [/compare](https://ultrametric.ai/compare) |
+| Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · [per-arena leaderboards](https://ultrametric.ai/arenas) (each arena at `/arena/<id>`) · [/compare](https://ultrametric.ai/compare) |
 | Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
 | Does this work outside the US? | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
 
