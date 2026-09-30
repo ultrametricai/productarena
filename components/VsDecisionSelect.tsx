@@ -25,6 +25,7 @@ export default function VsDecisionSelect({
   shortOptions,
   icon,
   value,
+  visibleValues,
   onSelect,
 }: {
   decision: DecisionDef
@@ -35,6 +36,11 @@ export default function VsDecisionSelect({
   icon: string
   // The ASSERTED value, or undefined for 'Not set' (composes as the default).
   value: string | undefined
+  // Optional DISPLAY roster (founder round 5, item 1: the Entity options follow the geo pick):
+  // only these option values render in the open list. Additive — absent = every option renders.
+  // The full decision stays the source of truth: the codec, the default lookup, and an asserted
+  // off-roster value (an old link's) all keep resolving against decision.options.
+  visibleValues?: readonly string[]
   // null clears back to 'Not set'; a string asserts that option.
   onSelect: (value: string | null) => void
 }) {
@@ -46,6 +52,7 @@ export default function VsDecisionSelect({
 
   const defaultOption = decision.options.find((o) => o.value === DEFAULT_CHOICES[decision.id])!
   const current = value === undefined ? null : decision.options.find((o) => o.value === value) ?? null
+  const listed = visibleValues ? decision.options.filter((o) => visibleValues.includes(o.value)) : decision.options
 
   // Close on any click/tap outside while open (SimRolePicker contract).
   useEffect(() => {
@@ -147,7 +154,7 @@ export default function VsDecisionSelect({
               )}
             </button>
           </li>
-          {decision.options.map((o) => {
+          {listed.map((o) => {
             const active = current?.value === o.value
             return (
               <li key={o.value} role="presentation">

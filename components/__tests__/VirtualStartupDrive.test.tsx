@@ -160,12 +160,13 @@ const clearEntity = () => {
   fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
 }
 
+// NOTE: no 'ordering' answer — the decision left the UI (round 5, item 4) and a semi-auto run
+// must never ask it; driveToEnd's guard fails loudly if an ordering card ever appears.
 const DEFAULT_ANSWERS: Record<string, string> = {
   entity: 'c-corp',
   team: 'cofounders',
   funding: 'seed',
   product: 'subscriptions',
-  ordering: 'name-first',
   hire: 'yes',
   compliance: 'now',
   enterprise: 'no',
@@ -195,23 +196,36 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     vi.useFakeTimers()
     try {
       fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
-      act(() => {
-        vi.advanceTimersByTime(240)
-      })
-      const card = screen.getByTestId('vs-run-decision')
+      // Advance to the first DECISION card (the naming card may pause first — answer it via
+      // autopilot; ordering is gone, so the run's first pauses derive from the other decisions).
+      let card: HTMLElement | null = null
+      for (let guard = 0; guard < 200 && card === null; guard++) {
+        act(() => {
+          vi.advanceTimersByTime(240)
+        })
+        if (screen.queryByTestId('vs-run-naming')) {
+          fireEvent.click(screen.getByTestId('vs-run-naming-skip'))
+          continue
+        }
+        card = screen.queryByTestId('vs-run-decision')
+      }
+      expect(card).toBeTruthy()
       const term = screen.getByTestId('vs-terminal')
       const dag = screen.getByTestId('vs-journeydag')
       // The card lives in the fixed slot between the DAG band and the terminal — NOT down at
       // the bottom of the scrolled output.
-      expect(term.contains(card)).toBe(false)
-      expect(card.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-      expect(dag.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(term.contains(card!)).toBe(false)
+      expect(card!.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(dag.compareDocumentPosition(card!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
       // The inline position keeps only the compact one-liner.
       const marker = screen.getByTestId('vs-run-wait-marker')
       expect(term.contains(marker)).toBe(true)
       expect(marker.textContent).toContain('waiting on you — decide above')
       // Answering clears both the card and the marker; the run resumes as before.
-      fireEvent.click(screen.getByTestId('vs-run-decision-ordering-name-first'))
+      const answer = Object.entries(DEFAULT_ANSWERS)
+        .map(([id, value]) => screen.queryByTestId(`vs-run-decision-${id}-${value}`))
+        .find((b) => b !== null)!
+      fireEvent.click(answer)
       expect(screen.queryByTestId('vs-run-decision')).toBeNull()
       expect(screen.queryByTestId('vs-run-wait-marker')).toBeNull()
     } finally {
@@ -250,33 +264,19 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     }
   })
 
-  it('pauses immediately for the ordering decision (its options differ at row 0), status says waiting, the pick asserts + resumes', () => {
+  it("the removed 'Start with' decision is NEVER asked in semi-auto (round 5, item 4) — the run completes on the name-first default; a decision pick asserts + resumes + syncs its dropdown", () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
-    vi.useFakeTimers()
-    try {
-      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
-      act(() => {
-        vi.advanceTimersByTime(240)
-      })
-      // Ordering reorders whole phases — its first affected row is 0, so the card shows before
-      // anything prints ("ask upfront at Run-press" emerges from the derived schedule).
-      const card = screen.getByTestId('vs-run-decision')
-      expect(within(card).getByRole('group', { name: 'Decision: What comes first' })).toBeTruthy()
-      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('')
-      expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
-      fireEvent.click(screen.getByTestId('vs-run-decision-ordering-name-first'))
-      // The pick asserted the decision — the dropdown synced…
-      expect(screen.getByTestId('vs-decision-ordering').textContent).toContain('Name')
-      expect(screen.getByTestId('vs-decision-ordering').getAttribute('title')).toContain('Name first')
-      // …and the run resumed.
-      act(() => {
-        vi.advanceTimersByTime(240 * 3)
-      })
-      expect(screen.getByTestId('vs-terminal-body').textContent).toContain('Name & brand')
-    } finally {
-      vi.useRealTimers()
-    }
+    // driveToEnd's guard fails loudly if a card with no provided answer (e.g. ordering) appears.
+    driveToEnd(DEFAULT_ANSWERS, null)
+    // No ordering control exists to sync; composition kept the name-first default.
+    expect(screen.queryByTestId('vs-decision-ordering')).toBeNull()
+    const body = screen.getByTestId('vs-terminal-body')
+    const name = within(body).getByText('Name & brand')
+    const build = within(body).getByText('Build & ship v1')
+    expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // The in-run picks asserted their decisions — the dropdowns synced (spot check).
+    expect(screen.getByTestId('vs-decision-team').getAttribute('title')).toContain('Cofounders')
   })
 
   it('a semi-auto run answered with the DEFAULT values prints byte-identical rows to the auto default run', () => {
@@ -321,11 +321,16 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     try {
       fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
       expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
-      expect(screen.getByTestId('vs-decision-ordering').textContent).toContain('Not set')
-      act(() => {
-        vi.advanceTimersByTime(240)
-      })
-      expect(screen.getByTestId('vs-run-decision')).toBeTruthy()
+      expect(screen.getByTestId('vs-decision-team').textContent).toContain('Not set')
+      // The first pause (a decision or the naming card) returns within a few rows.
+      let card: HTMLElement | null = null
+      for (let guard = 0; guard < 200 && card === null; guard++) {
+        act(() => {
+          vi.advanceTimersByTime(240)
+        })
+        card = screen.queryByTestId('vs-run-decision') ?? screen.queryByTestId('vs-run-naming')
+      }
+      expect(card).toBeTruthy()
     } finally {
       vi.useRealTimers()
     }

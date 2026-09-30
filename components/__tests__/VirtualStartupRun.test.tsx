@@ -253,21 +253,70 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     expect(badge.textContent).toContain(`${10 * FOUNDER_HOURS_MULTIPLIER} min`)
   })
 
-  it('the recommended pick prints with its logo, the (recommended) tag, ranked runners-up, and the arena link', () => {
+  it("the recommended pick prints with its logo, the '(recommended · judged)' tag, likely-led runners-up (judged scores), and the arena link", () => {
     renderIt()
     showAll()
     // The pill: ProductLogoView with the serialized hasLogo → a real <img> logo chip.
     const pill = screen.getByRole('link', { name: /Stripe · 90/ })
     expect(pill.getAttribute('href')).toBe('/arena/payments/product/stripe')
     expect(within(pill).getByAltText('Stripe logo')).toBeTruthy()
-    // The step row marks the pick recommended and trails the ranked runners-up + arena link.
+    // The step row marks the pick as the JUDGED recommendation (round 5, item 7 label) and
+    // trails the runners-up (serialized in likely-choice order server-side, judged scores kept)
+    // plus the arena link; the fragment names the ordering in its tooltip.
     const row = pill.closest('li')!
-    expect(within(row as HTMLElement).getByText('(recommended)')).toBeTruthy()
+    expect(within(row as HTMLElement).getByText('(recommended · judged)')).toBeTruthy()
+    expect(within(row as HTMLElement).queryByText('(recommended)')).toBeNull()
     const runners = within(row as HTMLElement).getByTestId('vs-step-runnersup')
+    expect(runners.textContent).toContain('likely')
+    expect(runners.getAttribute('title')).toContain('adoption/popularity')
+    expect(runners.getAttribute('title')).toContain('judged')
     expect(runners.textContent).toContain('Square · 70')
     expect(runners.textContent).toContain('PayPal · 61')
     expect(within(runners).getByRole('link', { name: /Square · 70/ }).getAttribute('href')).toBe('/arena/payments/product/square')
     expect(within(runners).getByRole('link', { name: 'arena →' }).getAttribute('href')).toBe('/arena/payments')
+  })
+
+  it("the Vendors tab offers the ordering toggle (Likely choice | Judged): likely leads with the committed signal order, judged restores the ladder, and the judged default wears '(recommended · judged)'", () => {
+    render(
+      <VirtualStartup
+        chains={CHAINS}
+        tasks={TASKS}
+        roles={ROLES}
+        yearCandidates={[]}
+        eventExamples={[]}
+        access={ACCESS}
+        pricing={PRICING}
+        taskRisks={RISKS}
+        // A committed likely order that inverts the ladder: paypal (curated-style signal) leads.
+        popularity={{
+          payments: {
+            order: ['paypal', 'square', 'stripe'],
+            signals: { paypal: 'clearly popular (curated set — unranked; alphabetical within)' },
+          },
+        }}
+      />,
+    )
+    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
+    // Likely choice is the default ordering.
+    expect(screen.getByTestId('vs-vendor-order-likely').getAttribute('aria-pressed')).toBe('true')
+    expect(screen.getByTestId('vs-vendor-order-judged').getAttribute('aria-pressed')).toBe('false')
+    const openPicker = () => fireEvent.click(screen.getByTitle('Change the Payments product for this dry run'))
+    openPicker()
+    let options = screen.getAllByRole('option')
+    expect(options.map((o) => o.textContent?.includes('PayPal') ? 'paypal' : o.textContent?.includes('Square') ? 'square' : 'stripe')).toEqual(['paypal', 'square', 'stripe'])
+    // The #N badge keeps the LADDER rank (identity, not list position): paypal leads but stays #3.
+    expect(options[0].textContent).toContain('#3')
+    // The signal label rides the row tooltip — the receipt behind the position.
+    expect(options[0].getAttribute('title')).toContain('clearly popular')
+    // The judged default keeps its judged-recommendation label whatever the order.
+    expect(options.find((o) => o.textContent?.includes('Stripe'))!.textContent).toContain('(recommended · judged)')
+    fireEvent.click(options[0]) // close by picking (paypal)
+    // Switch to Judged: the ladder order returns.
+    fireEvent.click(screen.getByTestId('vs-vendor-order-judged'))
+    openPicker()
+    options = screen.getAllByRole('option')
+    expect(options[0].textContent).toContain('Stripe')
+    expect(options[0].textContent).toContain('#1')
   })
 
   it('a top pick without a committed logo renders the initial-letter fallback (no layout-dependent absence)', () => {
@@ -295,14 +344,17 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     for (const li of items) expect(li.textContent).toContain('simulation assumption')
   })
 
-  it('an axis pick prints NO amber band line (founder round 3, item 2) — the pill tooltip carries the named simulation assumption', () => {
+  it('an axis pick prints NO amber band line (founder round 3, item 2) — the founder selector tooltips carry the named simulation assumption', () => {
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-persona-non-technical'))
+    // The single founder dropdown (addendum 2026-09-30): pick the non-technical first-timer combo.
+    fireEvent.click(screen.getByTestId('vs-persona-trigger'))
+    fireEvent.click(screen.getByTestId('vs-persona-non-technical-first-timer'))
+    expect(screen.getByTestId('vs-persona-trigger').textContent).toContain('Non-technical, first-time')
     // The vs-persona-assumption info lines are gone from the band…
     expect(screen.queryByTestId('vs-persona-assumption')).toBeNull()
-    // …but the explanation stays reachable: the pill's tooltip names the assumption (the
+    // …but the explanation stays reachable: the trigger's tooltip names the assumption (the
     // full-setup-guide expand is gone — founder round 4, item 1 — tooltips ARE the surface).
-    expect(screen.getByTestId('vs-persona-non-technical').getAttribute('title')).toContain('simulation assumption')
+    expect(screen.getByTestId('vs-persona-trigger').getAttribute('title')).toContain('simulation assumption')
     expect(screen.queryByText(/full setup guide/i)).toBeNull()
   })
 
@@ -525,8 +577,8 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
     renderIt()
     expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('LLC')
     expect(screen.getByTestId('vs-decision-funding').getAttribute('title')).toContain('Bootstrap')
-    expect(screen.getByTestId('vs-persona-second-timer').getAttribute('aria-pressed')).toBe('true')
-    expect(screen.getByTestId('vs-persona-technical').getAttribute('aria-pressed')).toBe('true')
+    // The restored axis pair shows as the single founder selector's combo (addendum 2026-09-30).
+    expect(screen.getByTestId('vs-persona-trigger').textContent).toContain('Technical, repeat entrepreneur')
     showAll()
     // square has a judged MCP surface — the payments step runs at agent speed, no sim badge.
     expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
