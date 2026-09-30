@@ -165,8 +165,8 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                       title={`Rank ${judged.rank} of ${judged.of} — the full ${judged.arenaName} leaderboard`}
                       className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
                     >
-                      Rank <span className="font-mono tabular-nums text-zinc-200">#{judged.rank}</span> of{' '}
-                      <span className="font-mono tabular-nums">{judged.of}</span>
+                      Rank <span className="tabular-nums text-zinc-200">#{judged.rank}</span> of{' '}
+                      <span className="tabular-nums">{judged.of}</span>
                     </Link>
                     {judged.paScore !== null && (
                       <>

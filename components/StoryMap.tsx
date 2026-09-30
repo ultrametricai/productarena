@@ -230,7 +230,7 @@ function DomainGroup({ group, rows, hints }: { group: string; rows: StoryVerdict
             {/* A stem header only earns its ink when the cluster is a *subset* of the box — a
                 lone stem cluster would just restate the group label above it. */}
             {c.label !== null && clusters.length > 1 && (
-              <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wide text-zinc-600">{c.label}</p>
+              <p className="mb-1.5 px-1 text-[10px] uppercase tracking-wide text-zinc-600">{c.label}</p>
             )}
             <ClusterFlow rows={c.storyIds.map((id) => byId.get(id)!)} edges={[]} rootId={c.rootId} hints={hints} />
           </div>

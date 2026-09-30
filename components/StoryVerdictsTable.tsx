@@ -534,14 +534,14 @@ function StoryRowPair({
         </td>
         <td className="px-3 py-2">
           {row.evidence.length === 0 ? (
-            <span className="font-mono text-xs tabular-nums italic text-zinc-600" title="No evidence collected for this story yet — the verdict rests on absence, which the pipeline re-checks on refresh">none yet</span>
+            <span className="font-sans text-xs tabular-nums italic text-zinc-600" title="No evidence collected for this story yet — the verdict rests on absence, which the pipeline re-checks on refresh">none yet</span>
           ) : (
           <button
             type="button"
             onClick={onToggle}
             aria-expanded={isOpen}
             aria-controls={detailsId}
-            className={`font-mono text-xs tabular-nums underline decoration-zinc-800 hover:text-emerald-300 ${row.evidence.length === 0 ? 'text-zinc-500' : 'text-zinc-300'}`}
+            className={`font-sans text-xs tabular-nums underline decoration-zinc-800 hover:text-emerald-300 ${row.evidence.length === 0 ? 'text-zinc-500' : 'text-zinc-300'}`}
           >
             {row.evidence.length} {row.evidence.length === 1 ? 'source' : 'sources'}
           </button>
@@ -568,7 +568,7 @@ function StoryRowPair({
                 ))}
                 {processLinks.length > 2 && (
                   <span
-                    className="rounded border border-zinc-800 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-zinc-500"
+                    className="rounded border border-zinc-800 px-1.5 py-0.5 font-sans text-[10px] tabular-nums text-zinc-500"
                     title={processLinks.slice(2).map((p) => p.title).join(' · ')}
                   >
                     +{processLinks.length - 2}

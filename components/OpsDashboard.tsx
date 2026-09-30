@@ -65,7 +65,7 @@ function shortDate(iso: string | null): string {
 function Headline({ label, value, title }: { label: string; value: string; title?: string }) {
   return (
     <div className="rounded-xl border border-zinc-800 px-4 py-3" title={title}>
-      <div className="font-mono text-xl font-bold tabular-nums text-zinc-100">{value}</div>
+      <div className="text-xl font-bold tabular-nums text-zinc-100">{value}</div>
       <div className="mt-0.5 text-[11px] uppercase tracking-wide text-zinc-500">{label}</div>
     </div>
   )

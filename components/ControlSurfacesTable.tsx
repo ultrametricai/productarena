@@ -71,19 +71,19 @@ function SurfaceDetails({ row }: { row: SurfaceRow }) {
           the committed verdicts (see lib/controlSurfaces.ts). */}
       <p className="text-xs text-zinc-400">
         Fleet evidence: shipped by{' '}
-        <span className="font-mono tabular-nums text-zinc-200">
+        <span className="tabular-nums text-zinc-200">
           {row.shipped}/{row.judged}
         </span>{' '}
         judged products ({fmt(row.shipRate)}% — {row.fullCount} full, {row.partialCount} partial verdicts), present in{' '}
-        <span className="font-mono tabular-nums text-zinc-200">
+        <span className="tabular-nums text-zinc-200">
           {row.arenasWithShipper}/{row.arenasJudged}
         </span>{' '}
         judged arenas.
         {row.readinessLift !== null && row.avgReadyWith !== null && row.avgReadyWithout !== null && (
           <>
             {' '}
-            Products shipping it average <span className="font-mono tabular-nums text-zinc-200">{fmt(row.avgReadyWith)}</span> AGENT-READY vs{' '}
-            <span className="font-mono tabular-nums text-zinc-200">{fmt(row.avgReadyWithout)}</span> without ({fmtLift(row.readinessLift)} lift —
+            Products shipping it average <span className="tabular-nums text-zinc-200">{fmt(row.avgReadyWith)}</span> AGENT-READY vs{' '}
+            <span className="tabular-nums text-zinc-200">{fmt(row.avgReadyWithout)}</span> without ({fmtLift(row.readinessLift)} lift —
             correlation, not causation).
           </>
         )}

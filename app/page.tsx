@@ -87,7 +87,7 @@ export default function Home() {
             the tabs is the only title; this pane opens straight with the numbers. */}
         <p className="max-w-2xl text-sm text-zinc-400">
           {processes.totalProcesses} founder processes mapped step-by-step — an agent can run{' '}
-          <span className="font-mono text-emerald-300">{processes.agentStepPct}%</span> of the steps
+          <span className="tabular-nums text-emerald-300">{processes.agentStepPct}%</span> of the steps
           today. Every step routed (agent / manual form / human), every vendor ranked from
           judged evidence. Sort by automatability, timeline, regularity, annoyance, risk, or growth.
         </p>

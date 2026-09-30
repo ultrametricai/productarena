@@ -44,7 +44,7 @@ export default function CoverageMapSection({ data, productId }: { data: Category
             <p className="flex flex-wrap items-center gap-2">
               <SurfaceChip surface={s} />
               <span
-                className="font-mono text-xs tabular-nums text-zinc-400"
+                className="text-xs tabular-nums text-zinc-400"
                 title={`${s.storyIds.length} of this product's covered stories cite evidence from this surface`}
               >
                 {s.storyIds.length} {s.storyIds.length === 1 ? 'story' : 'stories'}

@@ -51,9 +51,9 @@ export default function ProcessLensBanner({
         <span
           title={`Steps a selected/stack vendor has judged evidence on, of the page's rankable steps. Process score = sum of the resolved vendors' step scores over ALL ${summary.rankable} rankable steps (unserved steps count 0), normalized 0–100 — the leaderboard's own formula.`}
         >
-          serves <span className="font-mono tabular-nums text-emerald-300">{summary.served}</span> of{' '}
-          <span className="font-mono tabular-nums">{summary.rankable}</span> rankable steps · process score{' '}
-          <span className="font-mono tabular-nums text-emerald-300">{summary.score.toFixed(0)}</span>
+          serves <span className="tabular-nums text-emerald-300">{summary.served}</span> of{' '}
+          <span className="tabular-nums">{summary.rankable}</span> rankable steps · process score{' '}
+          <span className="tabular-nums text-emerald-300">{summary.score.toFixed(0)}</span>
         </span>
       </span>
       {lensPickCount > 0 && (

@@ -30,7 +30,7 @@ export default function MomentumChip({
   const title = `Popularity signal as of ${popularity.fetchedAt.slice(0, 10)} — sourced from public registries (GitHub/npm/PyPI), not part of the Overall score.`
 
   return (
-    <span title={title} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-zinc-400">
+    <span title={title} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs tabular-nums text-zinc-400">
       {popularity.stars !== undefined && (
         <span title="GitHub stars" className="text-zinc-300">★ {formatCompact(popularity.stars)}</span>
       )}

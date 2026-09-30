@@ -33,7 +33,7 @@ export default function VsEventCard({
       className="my-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[13px]"
     >
       <p className="flex flex-wrap items-center gap-1.5">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-amber-300/90">⚡ event · day {day}</span>
+        <span className="text-[10px] uppercase tracking-widest text-amber-300/90">⚡ event · day {day}</span>
         <span className="font-medium text-zinc-200">{def.title}</span>
       </p>
       <p className="mt-1 text-zinc-400">{def.blurb}</p>
@@ -73,7 +73,7 @@ export default function VsEventCard({
           )}
           {choice.effect.kind === 'lose-deal' && <p className="mt-0.5 text-red-300/90">{choice.effect.note}</p>}
           {event.deltaMinutes > 0 && (
-            <p className="mt-0.5 font-mono text-zinc-400">clock +{formatMinutes(event.deltaMinutes)}</p>
+            <p className="mt-0.5 tabular-nums text-zinc-400">clock +{formatMinutes(event.deltaMinutes)}</p>
           )}
         </div>
       ) : (

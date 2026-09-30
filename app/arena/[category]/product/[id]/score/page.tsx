@@ -71,7 +71,7 @@ function CellLedger({ cell, productHref }: { cell: BreakdownCell; productHref: s
       {/* The cell arithmetic, verbatim: points = weight × quality × verdict factor. An n/a cell
           has no arithmetic to show — it leaves BOTH sides of the dimension fraction. */}
       {na ? (
-        <p className="mt-1 font-mono text-xs tabular-nums text-zinc-500">
+        <p className="mt-1 text-xs tabular-nums text-zinc-500">
           n/a — not applicable to this product: excluded from numerator and denominator
         </p>
       ) : (
@@ -120,7 +120,7 @@ function DimensionSection({ dim, productHref }: { dim: DimensionBreakdown; produ
     >
       <h2 className="font-display leading-[1.1] flex flex-wrap items-baseline gap-x-3 text-lg font-semibold">
         {dim.label}
-        <span className="font-mono text-base tabular-nums text-emerald-300">
+        <span className="text-base tabular-nums text-emerald-300">
           {dim.score === null ? 'n/a' : <>{fmt1(dim.score)}<span className="text-zinc-600">/100</span></>}
         </span>
         <span className="text-xs font-normal text-zinc-500">×{fmt2(dim.weight)} of the PA blend</span>

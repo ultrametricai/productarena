@@ -21,7 +21,7 @@ export default function ProductFinePrint({
         title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the Overall score. Click for the judged story rows above."
         className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
       >
-        story coverage <span className="font-mono tabular-nums">{coverageScore.toFixed(1)}/100</span>
+        story coverage <span className="tabular-nums">{coverageScore.toFixed(1)}/100</span>
       </a>
     </p>
   )

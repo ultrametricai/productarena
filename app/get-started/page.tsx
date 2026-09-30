@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import InstallMethods from '@/components/InstallMethods'
-import V2DeviceStage from '@/components/V2DeviceStage'
+import { GetStartedAgentsSection, GetStartedHeroSection } from '@/components/GetStartedSections'
 
 // The dedicated Ultrametric CLI/MCP product page ("the /v2 product"), ported from the live
 // ultrametric.ai/v2 (old Astro landing origin, still served past our worker by a Cloudflare
@@ -52,21 +51,6 @@ export const metadata: Metadata = {
 // Static page — no data dependency.
 export const dynamic = 'force-static'
 
-const AGENT_CARDS: { title: string; body: string }[] = [
-  {
-    title: 'Keep your setup',
-    body: 'Your agent keeps its connections, plugins and context. No new app to learn.',
-  },
-  {
-    title: 'Switch models anytime',
-    body: 'Move to a new model the day it ships. Your company and work in progress come with you.',
-  },
-  {
-    title: 'No second AI bill',
-    body: 'Ultrametric runs no model. The work uses the AI plan you already pay for.',
-  },
-]
-
 export default function V2Page() {
   return (
     // Full-bleed breakout of the layout's max-w-7xl main (the app/home pattern): the live
@@ -74,45 +58,11 @@ export default function V2Page() {
     // header and the last section meet the sitewide install banner (this page's closing
     // module).
     <div className="relative left-1/2 w-screen -translate-x-1/2 -my-10">
-      {/* Hero */}
-      <section aria-labelledby="hero-heading" className="overflow-x-clip pb-20 pt-16 sm:pb-28 sm:pt-24">
-        <div className="mx-auto flex max-w-5xl flex-col items-center px-4 text-center sm:px-8 md:px-12">
-          <h1 id="hero-heading" className="font-display text-balance text-4xl font-medium tracking-tight sm:text-5xl md:text-6xl">
-            Start and run your company from any agent
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Step-by-step managed processes to let your agent handle incorporating, hiring, payroll, and more.
-          </p>
-          <div className="mt-10 w-full">
-            <InstallMethods />
-          </div>
-        </div>
-        {/* Laptop/phone process demo */}
-        <div className="mx-auto mt-16 max-w-6xl px-4 sm:mt-20 sm:px-8 md:px-12">
-          <V2DeviceStage />
-        </div>
-      </section>
-
-      {/* Works across the agents you already use */}
-      <section aria-labelledby="agents-heading" className="border-t border-zinc-800/60 py-24 sm:py-32">
-        <div className="mx-auto flex max-w-5xl flex-col items-center px-4 text-center sm:px-8 md:px-12">
-          <h2 id="agents-heading" className="font-display text-balance text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl">
-            Works across the agents you already use
-          </h2>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Most companies already use more than one AI provider. Start a process in one agent and finish it in
-            another, on your laptop or your phone.
-          </p>
-          <ul className="mt-14 grid w-full max-w-2xl gap-4 text-left lg:max-w-none lg:grid-cols-3">
-            {AGENT_CARDS.map((card) => (
-              <li key={card.title} className="flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-                <h3 className="font-display text-lg font-medium text-zinc-100">{card.title}</h3>
-                <p className="leading-relaxed text-zinc-400">{card.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* Hero copy + install module + device demo, then the agents cards — both shared with the
+          homepage's closing flow (components/GetStartedSections.tsx, founder 2026-09-30); the
+          hero heading is this page's h1. */}
+      <GetStartedHeroSection />
+      <GetStartedAgentsSection />
       {/* The page ends here: the live /v2's closing "Your AI native company starts here"
           module is the sitewide InstallBanner, rendered by app/layout.tsx right below. */}
     </div>

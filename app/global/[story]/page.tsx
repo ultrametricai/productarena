@@ -84,7 +84,7 @@ export default async function GlobalStoryPage({
       <section className="rounded-2xl border border-zinc-800 p-4">
         <p className="text-[10px] uppercase tracking-widest text-zinc-500">Adoption among tracked products</p>
         <p
-          className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400"
+          className="mt-1 text-3xl font-bold tabular-nums text-emerald-400"
           title="Share of tracked products carrying this story that pass it with a full or partial verdict"
         >
           {Number.isInteger(adoption.pct) ? adoption.pct : adoption.pct.toFixed(1)}%
@@ -166,7 +166,7 @@ export default async function GlobalStoryPage({
                     )}
                   </td>
                   <td className="px-3 py-2">
-                    <Link href={href} className="font-mono text-xs tabular-nums text-zinc-300 underline decoration-zinc-800 hover:text-emerald-300">
+                    <Link href={href} className="text-xs tabular-nums text-zinc-300 underline decoration-zinc-800 hover:text-emerald-300">
                       {cell.evidenceCount} {cell.evidenceCount === 1 ? 'source' : 'sources'}
                     </Link>
                   </td>

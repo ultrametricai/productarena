@@ -128,7 +128,7 @@ export default function StepApiCalls({
       )}
       {canonical.length > 0 && !vendors.some((v) => v.name === canonicalVendor) && (
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
             <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
             reference flow{canonicalVendor ? ` (${canonicalVendor})` : ''} · {canonical.length} call{canonical.length === 1 ? '' : 's'}
           </summary>

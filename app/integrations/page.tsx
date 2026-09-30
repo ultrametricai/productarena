@@ -104,7 +104,7 @@ export default function IntegrationsPage() {
               >
                 <ProductLogoView product={{ id: t.productId, name: t.name }} size={16} hasLogo={t.hasLogo} />
                 <span className="font-medium">{t.name}</span>
-                <span className="font-mono text-xs tabular-nums text-emerald-400" title={`${t.neighborCount} verified integration partners`}>
+                <span className="text-xs tabular-nums text-emerald-400" title={`${t.neighborCount} verified integration partners`}>
                   {t.neighborCount}
                 </span>
               </Link>
@@ -209,11 +209,11 @@ export default function IntegrationsPage() {
                   </Link>
                 </div>
                 {s.verified ? (
-                  <span className="shrink-0 rounded bg-emerald-400/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-300">
+                  <span className="shrink-0 rounded bg-emerald-400/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">
                     ✓ verified
                   </span>
                 ) : (
-                  <span className="shrink-0 rounded bg-zinc-800/60 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
+                  <span className="shrink-0 rounded bg-zinc-800/60 px-1.5 py-0.5 text-[10px] text-zinc-500">
                     no evidence yet
                   </span>
                 )}

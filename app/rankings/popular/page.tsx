@@ -200,7 +200,7 @@ export default function PopularRankingPage() {
 
       <section aria-label="hot right now" className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
         <h2 className="font-display leading-[1.1] text-lg font-semibold text-amber-300">
-          🔥 Hot right now <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{hot.length} products</span>
+          🔥 Hot right now <span className="ml-1 text-xs font-normal text-zinc-500">{hot.length} products</span>
         </h2>
         <p className="mt-1 text-xs text-zinc-500">
           Detected mechanically: top-decile star growth over the tracked window (with an absolute floor), or a very
@@ -217,7 +217,7 @@ export default function PopularRankingPage() {
                   <ProductCell row={row} />
                 </span>
                 <span className="shrink-0 text-right">
-                  <span className="block font-mono text-xs text-amber-300">{row.hot!.reason}</span>
+                  <span className="block text-xs text-amber-300">{row.hot!.reason}</span>
                   <span className="block text-[10px] text-zinc-500">{HOT_SOURCE_LABELS[row.hot!.source]}</span>
                 </span>
               </li>
@@ -228,7 +228,7 @@ export default function PopularRankingPage() {
 
       <section aria-label="github-tracked products by stars">
         <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold text-emerald-300">
-          ★ By GitHub stars <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{byStars.length} products</span>
+          ★ By GitHub stars <span className="ml-1 text-xs font-normal text-zinc-500">{byStars.length} products</span>
         </h2>
         <p className="mb-2 text-xs text-zinc-500">
           Every product with a tracked public repo — open source and open-repo commercial products alike; the counter
@@ -276,7 +276,7 @@ export default function PopularRankingPage() {
 
       <section aria-label="packages by weekly installs">
         <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold text-emerald-300">
-          ⇩ By weekly installs <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{byInstalls.length} products</span>
+          ⇩ By weekly installs <span className="ml-1 text-xs font-normal text-zinc-500">{byInstalls.length} products</span>
         </h2>
         <p className="mb-2 text-xs text-zinc-500">
           Products with a measured npm and/or PyPI package, ranked by combined weekly downloads — the two registries
@@ -323,7 +323,7 @@ export default function PopularRankingPage() {
       <section aria-label="clearly popular, no public counter">
         <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold text-zinc-200">
           Clearly popular — no public counter{' '}
-          <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{curated.length} products</span>
+          <span className="ml-1 text-xs font-normal text-zinc-500">{curated.length} products</span>
         </h2>
         <p className="mb-2 text-xs text-zinc-500">
           Household names (Mercury, Linear, Notion&hellip;) publish no stars or download counts, so there is nothing

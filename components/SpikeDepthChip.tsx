@@ -52,7 +52,7 @@ export default function SpikeDepthChip({ arenaId, productId }: { arenaId: string
     >
       <span aria-hidden className="text-[10px]">{deep ? '◉' : '◎'}</span>
       {label}
-      <span className="font-mono text-[10px] tabular-nums text-zinc-500">{count} ev</span>
+      <span className="text-[10px] tabular-nums text-zinc-500">{count} ev</span>
     </span>
   )
 }

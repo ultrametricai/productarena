@@ -31,7 +31,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
           const runnerUp = r.runnerUp ? productById.get(r.runnerUp.productId) : null
           return (
             <div key={r.persona} className="rounded-xl border border-zinc-800 p-5">
-              <p className="font-mono text-xs uppercase tracking-widest text-zinc-400">Best for {r.persona}</p>
+              <p className="text-xs uppercase tracking-widest text-zinc-400">Best for {r.persona}</p>
               <Link
                 href={`/arena/${data.category.id}/product/${winner.id}`}
                 className="mt-2 flex items-center gap-3 hover:text-emerald-300"
@@ -39,7 +39,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
                 <ProductLogo product={winner} size={32} />
                 <div>
                   <p className="font-semibold">{winner.name}</p>
-                  <p className="font-mono text-xs tabular-nums text-emerald-300">{r.winner!.score.toFixed(0)}/100</p>
+                  <p className="text-xs tabular-nums text-emerald-300">{r.winner!.score.toFixed(0)}/100</p>
                 </div>
               </Link>
               {runnerUp && (

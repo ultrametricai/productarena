@@ -129,7 +129,7 @@ export default function EverythingCatalog({
     <div className="space-y-2">
       {/* Facet bar — one horizontal strip: count, arena select, three toggles, view toggle, text filter. */}
       <div className="flex flex-wrap items-center gap-2">
-        <p className="mr-1 font-mono text-xs tabular-nums text-zinc-400" aria-live="polite">
+        <p className="mr-1 text-xs tabular-nums text-zinc-400" aria-live="polite">
           {visible.length} of {rows.length} products
         </p>
         <span className="relative inline-flex">
@@ -196,7 +196,7 @@ export default function EverythingCatalog({
                 <Link href={`/arena/${g.arenaId}`} className="truncate text-xs font-medium text-zinc-200 hover:text-emerald-300">
                   {g.arenaName}
                 </Link>
-                <span className="font-mono text-[10px] tabular-nums text-zinc-500">{g.rows.length}</span>
+                <span className="text-[10px] tabular-nums text-zinc-500">{g.rows.length}</span>
                 <span className="min-w-0 truncate text-[10px] text-zinc-500">
                   leader <span className="text-zinc-400">{g.leaderName}</span>
                 </span>

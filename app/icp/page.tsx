@@ -55,8 +55,8 @@ export default function IcpIndexPage() {
               {top && (
                 <p className="mt-1 text-xs text-zinc-500">
                   current #1: <span className="text-zinc-300">{top.productName}</span>{' '}
-                  <span className="font-mono text-emerald-400">{top.score.toFixed(0)}</span>
-                  <span className="font-mono">/100</span>
+                  <span className="tabular-nums text-emerald-400">{top.score.toFixed(0)}</span>
+                  <span>/100</span>
                 </p>
               )}
               <p className="mt-1 truncate text-[10px] uppercase tracking-wide text-zinc-600">

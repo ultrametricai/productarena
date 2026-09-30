@@ -168,7 +168,7 @@ export default function ArenaMenu({
                       )}
                       <span className="truncate">{item.name}</span>
                     </span>
-                    <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">
+                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">
                       {item.label}
                     </span>
                   </Link>
