@@ -1,5 +1,7 @@
-import type { GeoNote } from '@/lib/processes'
-import { GEO_COUNTRY_META } from '@/lib/processes'
+'use client'
+
+import { useGeoChoice } from '@/components/useGeoSelection'
+import { GEO_GLOBAL, GEO_PREF_META, type GeoAnalogNote } from '@/lib/geoPreference'
 
 // "Outside the US" (founder GEO ask 2026-09-28: "USA-centric processes vs global processes …
 // do spikes into India, UK, European countries"): the curated per-country analogs of a
@@ -8,16 +10,51 @@ import { GEO_COUNTRY_META } from '@/lib/processes'
 // expansion (founder ask 2026-09-29) flavored GLOBAL processes carry notes too, so the intro
 // stays honest per scope: US-scoped = "the real analogs", global = "the local flavor".
 // Documentation, not modeling: these notes never touch ceilings, rankings or the simulator,
-// and the block renders only for the processes that actually carry notes. Server component —
-// pure serializable props.
+// and the block renders only for the processes that actually carry notes.
+//
+// Client component since the 🌐 Global lens (founder 2026-09-30): under the explicit Global
+// choice the block collapses to AVAILABILITY ONLY — which countries carry a curated mapping,
+// with their portals, but none of the country-specific substance. The static HTML and the US
+// default render the full block byte-identically (the hook is null until the mount effect), a
+// manual country restores it unchanged. Props are the client-safe GeoAnalogNote shape —
+// structurally the corpus GeoNote, so the server page passes task.geoNotes straight through.
 export default function ProcessGeoNotes({
   notes,
   geoScope = 'us',
 }: {
-  notes: GeoNote[]
+  notes: GeoAnalogNote[]
   geoScope?: 'global' | 'us' | 'us-state'
 }) {
+  const geo = useGeoChoice()
   if (notes.length === 0) return null
+
+  if (geo === GEO_GLOBAL) {
+    return (
+      <section id="outside-the-us" className="scroll-mt-4">
+        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Outside the US</h2>
+        <p className="mt-1 text-sm text-zinc-400">
+          Global view — country specifics hidden. Curated mappings exist for{' '}
+          {notes.map((n, i) => (
+            <span key={n.country} className="whitespace-nowrap">
+              {i > 0 && ' · '}
+              <span aria-hidden className="mr-0.5">{GEO_PREF_META[n.country].flag}</span>
+              <a
+                href={n.actionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-300 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300"
+                title={`${GEO_PREF_META[n.country].label} — the canonical portal for this work (verified live)`}
+              >
+                {GEO_PREF_META[n.country].label} ↗
+              </a>
+            </span>
+          ))}
+          . Pick a country in the switcher above for the per-country detail.
+        </p>
+      </section>
+    )
+  }
+
   return (
     // Anchor target for the top geo banner's "all countries ↓" link (ProcessGeoBanner) — the
     // banner promotes ONE country's analog; the full multi-country detail stays down here.
@@ -30,7 +67,7 @@ export default function ProcessGeoNotes({
       </p>
       <ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {notes.map((n) => {
-          const meta = GEO_COUNTRY_META[n.country]
+          const meta = GEO_PREF_META[n.country]
           return (
             <li key={n.country} className="rounded-xl border border-zinc-800 px-4 py-3">
               <p className="text-sm font-medium text-zinc-200">

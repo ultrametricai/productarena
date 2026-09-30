@@ -1,7 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getGeoSelection, subscribeGeoSelection, type GeoSelection } from '@/lib/geoPreference'
+import {
+  getGeoChoice,
+  getGeoSelection,
+  subscribeGeoSelection,
+  type GeoChoice,
+  type GeoSelection,
+} from '@/lib/geoPreference'
 
 // The consumer half of the geo preference (lib/geoPreference.ts): every geo-aware component —
 // the process banner, step markers, vendor annotations, the product strip, the index glyphs —
@@ -21,6 +27,21 @@ export function useGeoSelection(): GeoSelection | null {
   useEffect(() => {
     setGeo(getGeoSelection())
     return subscribeGeoSelection(() => setGeo(getGeoSelection()))
+  }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
+  return geo
+}
+
+// The choice-level hook for the few GLOBAL-aware consumers (founder 2026-09-30: the process
+// page's generic view — ProcessGeoBanner, ProcessGeoNotes, JurisdictionToggle). Same
+// static-HTML/hydration contract: null (the US default) until the mount effect syncs.
+export function useGeoChoice(): GeoChoice | null {
+  const [geo, setGeo] = useState<GeoChoice | null>(null)
+  /* eslint-disable react-hooks/set-state-in-effect -- the same one-time post-hydration sync as
+     useGeoSelection above (an external store; a useState initializer would mismatch). */
+  useEffect(() => {
+    setGeo(getGeoChoice())
+    return subscribeGeoSelection(() => setGeo(getGeoChoice()))
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
   return geo
