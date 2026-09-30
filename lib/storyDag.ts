@@ -8,6 +8,7 @@
 // tests (lib/__tests__/storyDag.test.ts) pin the behavior on two real arenas' fixtures.
 
 import { stripPersonaPrefix } from './data-helpers'
+import { humanizeTheme } from './icons'
 
 // Tokens that never carry the capability: articles/pronouns/prepositions plus the generic lead
 // verbs mined titles open with ("have the agent…", "get automatic…", "see license…"). Dropping
@@ -105,9 +106,11 @@ export function clusterDomainStories(stories: ClusterableStory[]): DomainCluster
   })
 }
 
-// Taxonomy group/theme id → box header ("pay-runs" → "Pay runs").
+// Taxonomy group/theme id → box header ("pay-runs" → "Pay runs"). Defers to lib/icons.ts's
+// humanizeTheme — the site's one kebab-id humanizer — so plain-language display overrides
+// (e.g. 'action-primitives' → 'Agent actions') apply to story-map box headers too.
 export function tidyGroupLabel(group: string): string {
-  return capitalize(group.replace(/-/g, ' '))
+  return humanizeTheme(group)
 }
 
 // Kahn layering (same approach as components/ProcessDag.tsx's layerNodes, over bare ids): each

@@ -183,7 +183,7 @@ export default function MissingStartupsPage() {
                   <p className="mt-1 text-[10px] text-zinc-500">
                     +{arena.unservedStories.length - UNSERVED_DISPLAY_CAP} more —{' '}
                     <Link href={`/arena/${arena.arenaId}`} className="underline decoration-zinc-800 underline-offset-2 hover:text-emerald-300">
-                      see the arena matrix
+                      see the full list in the arena
                     </Link>
                   </p>
                 )}

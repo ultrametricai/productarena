@@ -171,8 +171,8 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         </h1>
         <p className="mt-2 text-zinc-400">{data.category.description}</p>
         {/* The header's story/verdict-count + freshness stats line was removed (founder
-            2026-09-30) — the story matrix below speaks for itself and every verdict still
-            links to its dated evidence. */}
+            2026-09-30) — the "What we tested" table below (internally: the story matrix)
+            speaks for itself and every verdict still links to its dated evidence. */}
         <p className="mt-2 flex flex-wrap gap-x-4 text-xs">
           {/* Buyer checklist + Procurement report links removed (founder 2026-09-25: "remove
               access for now") — the /checklist and /report routes stay alive for old links,
@@ -195,12 +195,12 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       <StacksSection data={data} />
       <div id="story-matrix" className="scroll-mt-4">
         <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
-          <GeoMark seed="story-matrix" title="Story matrix — every product × every judged story" size={18} className="text-zinc-500" />
-          Story matrix
+          <GeoMark seed="story-matrix" title="What we tested — every product × every judged story" size={18} className="text-zinc-500" />
+          What we tested
         </h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>
-      {/* Legend AFTER the last table it explains (story matrix) — founder principle: optimize
+      {/* Legend AFTER the last table it explains ("What we tested") — founder principle: optimize
           for first use, bulk value (the leaderboard) seen straight away, vocabulary below.
           Chip tooltips + StoryMatrix's #legend link cover mid-scroll lookups. */}
       <Legend />
@@ -228,7 +228,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
                 <p className="mt-1 text-xs text-zinc-500">
                   {a.productCount} products{a.leaderName ? ` · leader: ${a.leaderName}` : ''}
                 </p>
-                {a.sharedThemes.length > 0 && (<p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.map(humanizeTheme).join(', ')}</p>)}
+                {a.sharedThemes.length > 0 && (<p className="mt-1 truncate text-[11px] text-zinc-500">shares: {a.sharedThemes.map(humanizeTheme).join(', ')}</p>)}
               </Link>
             ))}
           </div>

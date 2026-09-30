@@ -29,7 +29,7 @@ export const DIMENSION_MEANINGS: Record<DimensionKey, string> = {
   apiQuality: 'The programmable surface once an agent is there — machine-readable spec, interactive docs, sandbox, versioning discipline.',
   openness: 'Can you leave, inspect, or self-host — data export, open source, portability.',
   agenticApp: 'Inside-out: how agentic the product itself is for its users — built-in assistants, autonomous features.',
-  automation: 'Depth of automation primitives — rules, scheduling, bulk operations, webhooks.',
+  automation: 'How deep automation goes — rules, scheduling, bulk operations, webhooks.',
 }
 
 // URL fragments for the /score page's per-dimension sections — the vendor-page pills deep-link
