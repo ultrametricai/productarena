@@ -57,7 +57,7 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
     ) : (
       <span className="font-mono tabular-nums text-zinc-200">
         {value.toFixed(1)}
-        <span className="text-zinc-600">/100</span>
+        <span className="text-zinc-500">/100</span>
         {count < of && <span className="ml-1 text-[10px] text-zinc-500">({count} of {of} scored)</span>}
       </span>
     )

@@ -105,14 +105,14 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
                       title={`Rank ${s.rank} of ${s.fieldSize} — the full ${s.arenaName} leaderboard`}
                       className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
                     >
-                      #{s.rank}<span className="text-zinc-600">/{s.fieldSize}</span>
+                      #{s.rank}<span className="text-zinc-500">/{s.fieldSize}</span>
                     </Link>
                   </td>
                   <td className="px-2 py-1.5">
                     <AiEraBadge value={s.paScore} size="xs" />
                   </td>
                   <td className="hidden px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
-                    {s.agentReady === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {s.agentReady === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></>}
                   </td>
                 </tr>
               ))}

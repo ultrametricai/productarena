@@ -177,7 +177,7 @@ export default function StackBuilder({
                   title="Mean of the picks' agent-ready scores — how drivable this stack is for an agent overall."
                 >
                   stack agent-readiness <span className="font-semibold text-emerald-300">{readiness.toFixed(1)}</span>
-                  <span className="text-zinc-600">/100</span>
+                  <span className="text-zinc-500">/100</span>
                 </span>
               )}
               <button
@@ -302,7 +302,7 @@ export default function StackBuilder({
                     {p.aName} <span aria-hidden className="text-zinc-600">↔</span>{' '}
                     <ProductLogoView product={{ id: p.bId, name: p.bName }} size={16} hasLogo={hasLogoById.get(p.bId) ?? false} />
                     {p.bName}
-                    <span className="text-[10px] uppercase tracking-wide text-zinc-600">no evidence found</span>
+                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">no evidence found</span>
                   </span>
                 ))}
               </div>

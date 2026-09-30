@@ -111,14 +111,14 @@ function formatBw(gbs: number): ReactNode {
     return (
       <>
         {(gbs / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}
-        <span className="text-zinc-600"> TB/s</span>
+        <span className="text-zinc-500"> TB/s</span>
       </>
     )
   }
   return (
     <>
       {gbs.toLocaleString()}
-      <span className="text-zinc-600"> GB/s</span>
+      <span className="text-zinc-500"> GB/s</span>
     </>
   )
 }
@@ -207,7 +207,7 @@ export default function GpuTable() {
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 font-mono tabular-nums text-zinc-300">
                   {g.vramGB}
-                  <span className="text-zinc-600"> GB</span>
+                  <span className="text-zinc-500"> GB</span>
                   <span className="ml-1 font-sans text-[10px] text-zinc-500">{g.vramType}</span>
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 font-mono tabular-nums text-zinc-300">
@@ -230,7 +230,7 @@ export default function GpuTable() {
                   ) : (
                     <span title={g.tdpNote}>
                       {g.tdpW.toLocaleString()}
-                      <span className="text-zinc-600"> W</span>
+                      <span className="text-zinc-500"> W</span>
                     </span>
                   )}
                 </td>

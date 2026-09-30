@@ -130,7 +130,7 @@ export default function CopyAuditDashboard({ audit }: { audit: CopyAudit }) {
         <h1 className="font-display mt-1 text-3xl font-bold leading-[1.1] tracking-tight">Copy audit</h1>
         <p className="mt-2 text-sm text-zinc-400">
           {audit.candidates.length} candidates · {counts.cut} cut / {counts.tighten} tighten / {counts.keep} keep
-          <span className="text-zinc-600"> · audited {audit.auditedAt} · review list only, edits happen at the source</span>
+          <span className="text-zinc-500"> · audited {audit.auditedAt} · review list only, edits happen at the source</span>
         </p>
       </div>
 
@@ -157,10 +157,10 @@ export default function CopyAuditDashboard({ audit }: { audit: CopyAudit }) {
             value={routePrefix}
             onChange={(e) => setRoutePrefix(e.target.value)}
             placeholder="/processes"
-            className="w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-600"
+            className="w-40 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-500"
           />
         </label>
-        <span className="text-xs text-zinc-600">{shown.length} shown</span>
+        <span className="text-xs text-zinc-500">{shown.length} shown</span>
       </div>
 
       {SUGGESTION_ORDER.map((suggestion) => {
@@ -175,7 +175,7 @@ export default function CopyAuditDashboard({ audit }: { audit: CopyAudit }) {
               <p className="mt-0.5 text-xs text-zinc-500">{meta.blurb}</p>
             </div>
             {items.length === 0 ? (
-              <p className="text-sm text-zinc-600">Nothing in this group matches the filters.</p>
+              <p className="text-sm text-zinc-400">Nothing in this group matches the filters.</p>
             ) : (
               <ul className="space-y-2">
                 {items.map((c) => (

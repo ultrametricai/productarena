@@ -108,7 +108,7 @@ export default function MethodologyPage() {
             <tr><td className="py-1.5 pr-3 text-zinc-500">API quality</td><td className="py-1.5 text-zinc-300">×0.20 — how good is that API surface</td></tr>
             <tr><td className="py-1.5 pr-3 text-zinc-500">openness</td><td className="py-1.5 text-zinc-300">×0.20 — self-host, export, read the source</td></tr>
             <tr><td className="py-1.5 pr-3 text-zinc-500">agentic app</td><td className="py-1.5 text-zinc-300">×0.15 — does the product act agentically itself</td></tr>
-            <tr><td className="py-1.5 pr-3 text-zinc-500">automation</td><td className="py-1.5 text-zinc-300">×0.15 — depth of rules/scheduling/bulk primitives</td></tr>
+            <tr><td className="py-1.5 pr-3 text-zinc-500">automation</td><td className="py-1.5 text-zinc-300">×0.15 — how deep rules, scheduling, and bulk automation go</td></tr>
           </tbody>
         </table>
         <p className="mt-3 text-xs text-zinc-400">

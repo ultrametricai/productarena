@@ -184,7 +184,7 @@ const CITE_META: Record<StepCite['verdict'], { icon: string; label: string; cls:
   full: { icon: '✓', label: 'full — the judged verdict says the vendor delivers this story', cls: 'text-emerald-400/90' },
   partial: { icon: '◐', label: 'partial — delivers with gaps', cls: 'text-emerald-300/70' },
   disputed: { icon: '~', label: 'disputed — the evidence disagrees', cls: 'text-amber-400/80' },
-  none: { icon: '✕', label: 'not delivered — judged, and the vendor does not deliver this story', cls: 'text-zinc-600' },
+  none: { icon: '✕', label: 'not delivered — judged, and the vendor does not deliver this story', cls: 'text-zinc-500' },
   na: { icon: '·', label: 'n/a — not applicable to this vendor, excluded from the score', cls: 'text-zinc-700' },
 }
 
@@ -307,14 +307,14 @@ function StepRankingRow({
           </p>
           {blocks.map((b) => (
             <div key={b.arenaId} className="space-y-0.5">
-              <p className="text-[10px] uppercase tracking-wide text-zinc-600">
+              <p className="text-[10px] uppercase tracking-wide text-zinc-500">
                 {b.arenaName}
                 {b.kind === 'extra' && ' (cross-arena)'}
               </p>
               <ul className="space-y-0.5">
                 {b.stories.map((s) => (
                   <li key={s.id} className="text-zinc-400">
-                    <span className="text-zinc-600">w{s.weight}</span> {s.title}
+                    <span className="text-zinc-500">w{s.weight}</span> {s.title}
                   </li>
                 ))}
               </ul>

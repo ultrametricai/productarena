@@ -74,7 +74,7 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
             {signature.length > 0 && <span className="mr-3 text-violet-300/90">✍ {signature.length} legally human — signature</span>}
             {irreducible.length > 0 && <span className="mr-3 text-sky-300/90">{irreducible.length} human or computer use</span>}
             {unclosed.length > 0 && <span className="text-amber-300/90">{unclosed.length} no workaround yet</span>}
-            <span className="ml-1 text-zinc-600">— details</span>
+            <span className="ml-1 text-zinc-500">— details</span>
           </summary>
         <div className="mt-2 space-y-2.5 text-sm text-zinc-400">
           {closable.length > 0 && (

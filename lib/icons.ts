@@ -10,9 +10,20 @@
 
 // ---------- Theme names ----------
 
+// Plain-language display overrides for theme/group ids whose literal humanization is jargon
+// (founder 2026-09-30: "'action primitives' means nothing to people"). The machine id stays
+// everywhere — URLs, schema fields, data files — only the display text changes, and it changes
+// in ONE place so every render site (matrix headers, product-page cards, checklists, battles,
+// markdown) stays consistent.
+const THEME_LABEL_OVERRIDES: Record<string, string> = {
+  'action-primitives': 'Agent actions',
+}
+
 // 'privacy-posture' → 'Privacy posture' — the ONLY user-facing spelling of a kebab-case
 // theme/group id (dashes never reach the UI). First word capitalized, the rest left as-is.
 export function humanizeTheme(theme: string): string {
+  const override = THEME_LABEL_OVERRIDES[theme]
+  if (override !== undefined) return override
   const words = theme.replace(/-/g, ' ')
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
@@ -280,6 +291,8 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'ci-cd': 'continuous integration and delivery — pipelines, runners, caching',
   'autonomous-implementation': 'end-to-end implementation by the agent — multi-file changes, task completion',
   'scale-parallelism': 'running many jobs at once — concurrency, fleets, queueing',
+  // Displayed as "Agent actions" (THEME_LABEL_OVERRIDES) — plain words for what it covers.
+  'action-primitives': 'what an agent can do on a page — click, type, and act on described elements',
   'running-agents': 'operating agents in production — sessions, persistence, recovery',
   'provisioning-lifecycle': 'creating, updating, and tearing down resources across their lifecycle',
   'plan-apply': 'the plan/apply loop — previewing infrastructure changes and applying them safely',

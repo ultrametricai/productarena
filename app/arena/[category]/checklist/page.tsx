@@ -57,7 +57,7 @@ const CHIP_STYLES: Record<Verdict['verdict'], string> = {
   partial: 'border-zinc-700 text-zinc-300 hover:border-emerald-400/60',
   disputed: 'border-red-400/50 text-red-300 hover:border-red-300',
   none: 'border-zinc-800 text-zinc-500 hover:border-emerald-400/60',
-  na: 'border-zinc-800/70 text-zinc-600 hover:border-zinc-700',
+  na: 'border-zinc-800/70 text-zinc-500 hover:border-zinc-700',
 }
 
 const CHIP_TITLES: Record<Verdict['verdict'], string> = {

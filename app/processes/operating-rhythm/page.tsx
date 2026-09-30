@@ -70,7 +70,7 @@ function ProcessCard({ task }: { task: ProcessTask }) {
               </span>
             ),
           )}
-          {vendors.length > 3 && <span className="text-[10px] text-zinc-600">+{vendors.length - 3}</span>}
+          {vendors.length > 3 && <span className="text-[10px] text-zinc-500">+{vendors.length - 3}</span>}
         </span>
       )}
     </div>

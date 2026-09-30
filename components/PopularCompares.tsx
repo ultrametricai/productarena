@@ -75,7 +75,7 @@ export default function PopularCompares({ products }: { products: CompareProduct
           >
             <ProductLogoView product={{ id: a.id, name: a.name }} size={16} hasLogo={a.hasLogo} />
             {a.name}
-            <span className="text-zinc-600">vs</span>
+            <span className="text-zinc-500">vs</span>
             <ProductLogoView product={{ id: b.id, name: b.name }} size={16} hasLogo={b.hasLogo} />
             {b.name}
           </a>

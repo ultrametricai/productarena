@@ -58,7 +58,7 @@ function CheckRow({ ok, label, note, noteRight }: { ok: boolean; label: string; 
         {ok ? '✓' : '!'}
       </span>
       <span className={ok ? 'text-zinc-300' : 'text-amber-400'}>{label}</span>
-      {note ? <span className={`text-[10px] text-zinc-600 ${noteRight ? 'ml-auto' : ''}`}>{note}</span> : null}
+      {note ? <span className={`text-[10px] text-zinc-500 ${noteRight ? 'ml-auto' : ''}`}>{note}</span> : null}
     </div>
   )
 }
@@ -171,7 +171,7 @@ export default function CompanyPage() {
             <div className="flex">
               <div className="hidden w-48 flex-shrink-0 flex-col border-r border-zinc-800/60 bg-zinc-950/40 sm:flex">
                 <div className="px-3 pb-2 pt-3">
-                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-600">Workspace</div>
+                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Workspace</div>
                   <div className="space-y-0.5">
                     {SIDEBAR_ITEMS.map((item) => (
                       <div
@@ -185,11 +185,11 @@ export default function CompanyPage() {
                   </div>
                 </div>
                 <div className="mt-auto px-3 pb-3">
-                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-600">Recent</div>
+                  <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Recent</div>
                   <div className="space-y-0.5">
-                    <div className="truncate px-2 py-1 text-[11px] text-zinc-600">Setup a company</div>
-                    <div className="truncate px-2 py-1 text-[11px] text-zinc-600">Connect Mercury</div>
-                    <div className="truncate px-2 py-1 text-[11px] text-zinc-600">Add co-founder</div>
+                    <div className="truncate px-2 py-1 text-[11px] text-zinc-500">Setup a company</div>
+                    <div className="truncate px-2 py-1 text-[11px] text-zinc-500">Connect Mercury</div>
+                    <div className="truncate px-2 py-1 text-[11px] text-zinc-500">Add co-founder</div>
                   </div>
                 </div>
               </div>
@@ -199,9 +199,9 @@ export default function CompanyPage() {
                   <div className="flex items-center gap-1.5 border-r border-zinc-800/60 bg-zinc-900/60 px-4 py-2 text-xs text-zinc-300">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     <span className="max-w-[140px] truncate">Setup a company</span>
-                    <span className="ml-1 text-zinc-600">&times;</span>
+                    <span className="ml-1 text-zinc-500">&times;</span>
                   </div>
-                  <div className="flex items-center gap-1.5 px-4 py-2 text-xs text-zinc-600">
+                  <div className="flex items-center gap-1.5 px-4 py-2 text-xs text-zinc-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
                     <span>New process</span>
                   </div>
@@ -215,7 +215,7 @@ export default function CompanyPage() {
                         <div key={name} className="flex items-center gap-2 rounded border border-zinc-800 bg-zinc-950/40 px-3 py-2">
                           <span className="h-2 w-2 rounded-full bg-emerald-400" />
                           <span className="text-zinc-300">{name}</span>
-                          <span className="ml-auto text-zinc-600">{role}</span>
+                          <span className="ml-auto text-zinc-500">{role}</span>
                         </div>
                       ))}
                     </div>
@@ -227,7 +227,7 @@ export default function CompanyPage() {
                         <div key={name} className="flex items-center gap-2 rounded border border-zinc-800/50 bg-zinc-950/20 px-3 py-2">
                           <span className="h-2 w-2 rounded-full bg-zinc-700" />
                           <span className="text-zinc-500">{name}</span>
-                          <span className="ml-auto text-zinc-700">{role}</span>
+                          <span className="ml-auto text-zinc-500">{role}</span>
                         </div>
                       ))}
                     </div>
@@ -382,31 +382,31 @@ export default function CompanyPage() {
                   <div className="flex items-center gap-2 rounded bg-zinc-900/40 px-2 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     <span className="flex-1 text-zinc-400">Read bank balance</span>
-                    <span className="text-[10px] text-zinc-600">Mercury</span>
+                    <span className="text-[10px] text-zinc-500">Mercury</span>
                     <span className="text-[10px] text-emerald-400">auto</span>
                   </div>
                   <div className="flex items-center gap-2 rounded bg-zinc-900/40 px-2 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     <span className="flex-1 text-zinc-400">List employees</span>
-                    <span className="text-[10px] text-zinc-600">Gusto</span>
+                    <span className="text-[10px] text-zinc-500">Gusto</span>
                     <span className="text-[10px] text-emerald-400">auto</span>
                   </div>
                   <div className="flex items-center gap-2 rounded border border-amber-900/30 bg-amber-950/20 px-2 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                     <span className="flex-1 text-zinc-200">Wire $12,400 to AWS</span>
-                    <span className="text-[10px] text-zinc-600">Mercury</span>
+                    <span className="text-[10px] text-zinc-500">Mercury</span>
                     <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[9px] text-emerald-400">Approved</span>
                   </div>
                   <div className="flex items-center gap-2 rounded border border-red-900/30 bg-red-950/20 px-2 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
                     <span className="flex-1 text-zinc-400 line-through">Delete option grant</span>
-                    <span className="text-[10px] text-zinc-600">Carta</span>
+                    <span className="text-[10px] text-zinc-500">Carta</span>
                     <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px] text-red-400">Denied</span>
                   </div>
                   <div className="flex items-center gap-2 rounded bg-zinc-900/40 px-2 py-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                     <span className="flex-1 text-zinc-400">Post notification</span>
-                    <span className="text-[10px] text-zinc-600">Slack</span>
+                    <span className="text-[10px] text-zinc-500">Slack</span>
                     <span className="text-[10px] text-emerald-400">auto</span>
                   </div>
                 </div>
@@ -424,17 +424,17 @@ export default function CompanyPage() {
                 <div className="space-y-1">
                   <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Company setup — 7 nodes</div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-600">1</span>
+                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-500">1</span>
                     <span className="flex h-4 flex-1 items-center rounded bg-emerald-500/20 px-1.5 text-[10px] text-emerald-400">Incorporate</span>
                     <span className="text-[9px] text-emerald-400">✓</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-600">2</span>
+                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-500">2</span>
                     <span className="flex h-4 flex-1 items-center rounded bg-emerald-500/20 px-1.5 text-[10px] text-emerald-400">Apply for EIN</span>
                     <span className="text-[9px] text-emerald-400">✓</span>
                   </div>
                   <div className="flex gap-1.5">
-                    <span className="w-5 shrink-0 pt-0.5 text-right text-[10px] text-zinc-600">3–5</span>
+                    <span className="w-5 shrink-0 pt-0.5 text-right text-[10px] text-zinc-500">3–5</span>
                     <div className="flex flex-1 gap-1">
                       <span className="flex h-4 flex-1 animate-pulse items-center rounded bg-cyan-500/20 px-1 text-[10px] text-cyan-400">Mercury</span>
                       <span className="flex h-4 flex-1 animate-pulse items-center rounded bg-cyan-500/20 px-1 text-[10px] text-cyan-400">Carta</span>
@@ -443,14 +443,14 @@ export default function CompanyPage() {
                     <span className="text-[9px] text-cyan-400">∥</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-600">6</span>
+                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-500">6</span>
                     <span className="flex h-4 flex-1 items-center rounded bg-zinc-800/60 px-1.5 text-[10px] text-zinc-500">Stripe connect</span>
-                    <span className="text-[9px] text-zinc-600">←3</span>
+                    <span className="text-[9px] text-zinc-500">←3</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-600">7</span>
+                    <span className="w-5 shrink-0 text-right text-[10px] text-zinc-500">7</span>
                     <span className="flex h-4 flex-1 items-center rounded bg-zinc-800/60 px-1.5 text-[10px] text-zinc-500">Evaluate</span>
-                    <span className="text-[9px] text-zinc-600">←all</span>
+                    <span className="text-[9px] text-zinc-500">←all</span>
                   </div>
                 </div>
               </div>

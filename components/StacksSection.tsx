@@ -45,7 +45,7 @@ export default function StacksSection({ data }: { data: CategoryData }) {
                   </div>
                   <a
                     href="#story-matrix"
-                    title="Which stories apply — the arena's full story matrix below"
+                    title="Which stories apply — the arena's full What-we-tested table below"
                     className="text-xs text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
                   >
                     {coverage.applicable}/{coverage.total} stories applicable

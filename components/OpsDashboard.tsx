@@ -186,7 +186,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
                             <Link href={`/arena/${a.arenaId}/product/${p.productId}`} className="text-amber-300 hover:text-amber-200">
                               {p.name}
                             </Link>
-                            <span className="text-zinc-600"> ({p.evidence})</span>
+                            <span className="text-zinc-500"> ({p.evidence})</span>
                           </span>
                         ))}
                   </td>
@@ -228,7 +228,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
                 <span key={r.id}>
                   {i > 0 && ' · '}
                   {r.name}
-                  <span className="text-zinc-600">
+                  <span className="text-zinc-500">
                     {' '}
                     ({r.status}
                     {r.tier !== null ? `, T${r.tier}` : ''})
@@ -251,7 +251,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
               {arenaCoverage.untrackedVendors.map((v) => (
                 <tr key={v.vendor} className="border-b border-zinc-900 last:border-0">
                   <td className="px-3 py-1.5 text-zinc-100">
-                    {v.label} <span className="font-mono text-xs text-zinc-600">{v.vendor}</span>
+                    {v.label} <span className="font-mono text-xs text-zinc-500">{v.vendor}</span>
                   </td>
                   <td className="px-3 py-1.5 font-mono tabular-nums">{v.steps}</td>
                   <td className="px-3 py-1.5 text-zinc-400">
@@ -260,7 +260,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
                         {v.impliedArena}
                       </Link>
                     ) : (
-                      <span className="text-zinc-600">no arena yet</span>
+                      <span className="text-zinc-500">no arena yet</span>
                     )}
                   </td>
                 </tr>
@@ -291,7 +291,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
                   <tr key={w.file} className="border-b border-zinc-900 last:border-0">
                     <td className="px-3 py-1.5">
                       <span className="text-zinc-100">{w.name}</span>{' '}
-                      <span className="font-mono text-xs text-zinc-600">{w.file}</span>
+                      <span className="font-mono text-xs text-zinc-500">{w.file}</span>
                     </td>
                     <td className="px-3 py-1.5 font-mono text-xs text-zinc-300">
                       {w.crons.length > 0 ? w.crons.join(' · ') : w.triggers.join(' · ') || '—'}
@@ -396,7 +396,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
             <input type="checkbox" checked={agenticOnly} onChange={(e) => setAgenticOnly(e.target.checked)} />
             agentic-flagged only
           </label>
-          <span className="text-xs text-zinc-600">{shownItems.length} shown</span>
+          <span className="text-xs text-zinc-500">{shownItems.length} shown</span>
         </div>
 
         {news.items.length === 0 ? (

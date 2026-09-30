@@ -126,7 +126,7 @@ export function useSignupGate() {
             Not now
           </button>
         </div>
-        <p className="mt-3 text-[11px] text-zinc-600">
+        <p className="mt-3 text-[11px] text-zinc-500">
           You&rsquo;ll come straight back here — and the thing you clicked will be recorded.
         </p>
       </div>

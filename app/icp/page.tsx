@@ -59,7 +59,7 @@ export default function IcpIndexPage() {
                   <span>/100</span>
                 </p>
               )}
-              <p className="mt-1 truncate text-[10px] uppercase tracking-wide text-zinc-600">
+              <p className="mt-1 truncate text-[10px] uppercase tracking-wide text-zinc-500">
                 weighs: {icpTopThemes(icp).join(' · ')}
               </p>
             </Link>

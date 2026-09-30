@@ -116,7 +116,7 @@ export default function PredictionsPage() {
                 <p className="mt-1.5 text-zinc-100">{q.question}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-zinc-400">
                   {productCell(q, q.productA, 'challenger')}
-                  <span className="text-zinc-600">vs</span>
+                  <span className="text-zinc-500">vs</span>
                   {productCell(q, q.productB, 'leader')}
                   {(() => {
                     const a = currentScore(q.arena, q.productA)

@@ -535,7 +535,7 @@ function StoryRowPair({
         </td>
         <td className="px-3 py-2">
           {row.evidence.length === 0 ? (
-            <span className="font-sans text-xs tabular-nums italic text-zinc-600" title="No evidence collected for this story yet — the verdict rests on absence, which the pipeline re-checks on refresh">none yet</span>
+            <span className="font-sans text-xs tabular-nums italic text-zinc-500" title="No evidence collected for this story yet — the verdict rests on absence, which the pipeline re-checks on refresh">none yet</span>
           ) : (
           <button
             type="button"

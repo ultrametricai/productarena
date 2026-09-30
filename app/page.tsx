@@ -71,7 +71,7 @@ export default function Home() {
                     <div key={p.id} className="flex items-center gap-2">
                       <span
                         aria-hidden
-                        className={`w-5 text-center text-base leading-none tabular-nums ${!isDraw && won ? 'text-emerald-300' : 'text-zinc-600'}`}
+                        className={`w-5 text-center text-base leading-none tabular-nums ${!isDraw && won ? 'text-emerald-300' : 'text-zinc-500'}`}
                       >
                         {isDraw ? '–' : i === 0 ? '①' : '②'}
                       </span>

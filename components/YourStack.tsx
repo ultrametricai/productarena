@@ -255,9 +255,9 @@ export default function YourStack({
             <p className="text-sm text-zinc-300">
               Stack score{' '}
               <span className="tabular-nums text-emerald-400">{advice.stackScore.toFixed(0)}</span>
-              <span className="text-zinc-600">/100</span> vs best possible{' '}
+              <span className="text-zinc-500">/100</span> vs best possible{' '}
               <span className="tabular-nums text-emerald-400">{(advice.bestPossible ?? 0).toFixed(0)}</span>
-              <span className="text-zinc-600">/100</span>
+              <span className="text-zinc-500">/100</span>
               <span className="ml-1 text-xs text-zinc-500">
                 — mean published Overall score of your scored picks vs those same arenas&rsquo; leaders.
               </span>

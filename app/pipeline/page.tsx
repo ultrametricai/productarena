@@ -160,7 +160,7 @@ export default function PipelinePage() {
                   </td>
                   <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">×{cell.weight}</td>
                   <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 md:table-cell">
-                    {cell.stars === null ? <span className="font-sans text-xs italic text-zinc-600">no signal</span> : cell.stars.toLocaleString()}
+                    {cell.stars === null ? <span className="font-sans text-xs italic text-zinc-500">no signal</span> : cell.stars.toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -304,7 +304,7 @@ export default function PipelinePage() {
                 <h3 className="font-medium">{entry.name}</h3>
                 {entry.aiEraAngle && <p className="mt-1 text-xs text-zinc-400">{entry.aiEraAngle}</p>}
                 {entry.candidateProducts && entry.candidateProducts.length > 0 && (
-                  <p className="mt-2 truncate text-[10px] uppercase tracking-wide text-zinc-600">
+                  <p className="mt-2 truncate text-[10px] uppercase tracking-wide text-zinc-500">
                     {entry.candidateProducts.slice(0, 5).join(' · ')}
                   </p>
                 )}

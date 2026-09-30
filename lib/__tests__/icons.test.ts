@@ -128,4 +128,10 @@ describe('humanizeTheme', () => {
     expect(humanizeTheme('openness')).toBe('Openness')
     expect(humanizeTheme('ai-in-notes')).toBe('Ai in notes')
   })
+
+  it('renders plain-language overrides for jargon ids (founder 2026-09-30)', () => {
+    // "Action primitives" means nothing to buyers — the display name is plain language while
+    // the machine id stays 'action-primitives' in data files, URLs, and schema fields.
+    expect(humanizeTheme('action-primitives')).toBe('Agent actions')
+  })
 })

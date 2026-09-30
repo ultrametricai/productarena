@@ -171,7 +171,7 @@ export default function MostOpenRankingPage() {
                       unscored
                     </span>
                   ) : (
-                    <>{row.openness.toFixed(0)}<span className="text-zinc-600">/100</span></>
+                    <>{row.openness.toFixed(0)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
                 {VERDICT_COLUMNS.map((col) => {

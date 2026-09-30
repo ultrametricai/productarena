@@ -57,8 +57,8 @@ const VERDICT_STYLE: Record<VerdictKey, { block: string; chip: string; title: st
   },
   na: {
     block: 'border-zinc-800/70 bg-transparent',
-    chip: 'bg-zinc-800/40 text-zinc-600',
-    title: 'text-zinc-600',
+    chip: 'bg-zinc-800/40 text-zinc-500',
+    title: 'text-zinc-500',
     glyph: 'n/a',
     label: 'n/a',
   },
@@ -202,7 +202,9 @@ function ClusterBox({
 }) {
   return (
     <div className={`min-w-0 rounded-xl border border-dashed border-zinc-700/80 p-2.5 ${wide ? 'lg:col-span-2' : ''}`}>
-      <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{label}</p>
+      {/* Section name (e.g. "Caching") — founder 2026-09-30 flagged these as unreadable dark
+          grey on black; section labels sit at the secondary tier (zinc-400), never darker. */}
+      <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">{label}</p>
       {children}
     </div>
   )
@@ -230,7 +232,7 @@ function DomainGroup({ group, rows, hints }: { group: string; rows: StoryVerdict
             {/* A stem header only earns its ink when the cluster is a *subset* of the box — a
                 lone stem cluster would just restate the group label above it. */}
             {c.label !== null && clusters.length > 1 && (
-              <p className="mb-1.5 px-1 text-[10px] uppercase tracking-wide text-zinc-600">{c.label}</p>
+              <p className="mb-1.5 px-1 text-[10px] uppercase tracking-wide text-zinc-400">{c.label}</p>
             )}
             <ClusterFlow rows={c.storyIds.map((id) => byId.get(id)!)} edges={[]} rootId={c.rootId} hints={hints} />
           </div>
@@ -281,7 +283,7 @@ export default function StoryMap({ rows, productName }: { rows: StoryVerdictRow[
               {humanizeTheme(theme)}
             </h3>
             {/* Visible one-liner for the grouping — the icon tooltip alone isn't discoverable. */}
-            <p className="mb-2 mt-0.5 truncate text-xs text-zinc-600">{themeExplanation(theme)}</p>
+            <p className="mb-2 mt-0.5 truncate text-xs text-zinc-400">{themeExplanation(theme)}</p>
             <div className="grid min-w-0 items-start gap-3 lg:grid-cols-2">
               {canonClusters.map(({ cluster, rows: clusterRows }) => (
                 <CanonCluster key={cluster.id} cluster={cluster} rows={clusterRows} hints={hints} />

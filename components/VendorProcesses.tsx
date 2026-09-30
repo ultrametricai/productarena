@@ -99,7 +99,7 @@ function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
                 ))}
                 {a.servedSteps.length > 2 && (
                   <span
-                    className="text-zinc-600"
+                    className="text-zinc-500"
                     title={a.servedSteps.slice(2).map((s) => `${s.label} (${s.score.toFixed(0)}/100)`).join('; ')}
                   >
                     {' '}+{a.servedSteps.length - 2}
@@ -114,7 +114,7 @@ function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
             ) : (
               <span title={BEST_SCORE_TITLE}>
                 {a.bestStepScore}
-                <span className="text-zinc-600">/100</span>
+                <span className="text-zinc-500">/100</span>
               </span>
             )}
           </td>

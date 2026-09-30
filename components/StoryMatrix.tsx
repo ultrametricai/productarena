@@ -129,8 +129,10 @@ function StoryMatrixGroup({
     // within for this group's own rows, on top of the existing horizontal scroll for narrow
     // viewports — column identity (logos/names) stays visible while scrolling a long group.
     <div className="max-h-[70vh] overflow-auto rounded-xl border border-zinc-800">
+      {/* Group section name (e.g. "Caching") — secondary tier (zinc-400), never darker
+          (founder 2026-09-30 readability sweep). */}
       {group !== theme && (
-        <p className="sticky left-0 border-b border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-500">{humanizeTheme(group)}</p>
+        <p className="sticky left-0 border-b border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-400">{humanizeTheme(group)}</p>
       )}
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <thead className="sticky top-0 z-10 bg-zinc-950">

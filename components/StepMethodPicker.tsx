@@ -227,7 +227,7 @@ export default function StepMethodPicker({
           <span className="truncate">{selected ? selected.label : 'Default'}</span>
           <span aria-hidden className="text-[10px] text-zinc-500">▾</span>
         </button>
-        <span className="text-zinc-600">{methods.length + 1} ways</span>
+        <span className="text-zinc-500">{methods.length + 1} ways</span>
       </div>
       {open && (
         <ul

@@ -122,7 +122,7 @@ export default function ProcessIconGalleryPage() {
             <div key={id} className="flex flex-col items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900/60 px-2 py-3 text-center">
               <ProcessIcon id={id} hue="zinc" size={28} />
               <span className="text-xs text-zinc-300">{g.name}</span>
-              <span className="font-mono text-[10px] text-zinc-600">{id} · was {g.emoji}</span>
+              <span className="font-mono text-[10px] text-zinc-500">{id} · was {g.emoji}</span>
             </div>
           ))}
         </div>

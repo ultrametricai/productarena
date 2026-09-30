@@ -76,16 +76,16 @@ function CellLedger({ cell, productHref }: { cell: BreakdownCell; productHref: s
         </p>
       ) : (
         <p className="mt-1 font-mono text-xs tabular-nums text-zinc-400">
-          {story.weight} <span className="text-zinc-600">(weight)</span> × {verdict.quality}{' '}
-          <span className="text-zinc-600">(quality)</span> × {cell.factor.toFixed(1)}{' '}
-          <span className="text-zinc-600">({verdict.verdict})</span> = <span className="text-zinc-200">{fmt1(cell.points)}</span>{' '}
-          <span className="text-zinc-600">of {cell.max} max</span>
+          {story.weight} <span className="text-zinc-500">(weight)</span> × {verdict.quality}{' '}
+          <span className="text-zinc-500">(quality)</span> × {cell.factor.toFixed(1)}{' '}
+          <span className="text-zinc-500">({verdict.verdict})</span> = <span className="text-zinc-200">{fmt1(cell.points)}</span>{' '}
+          <span className="text-zinc-500">of {cell.max} max</span>
         </p>
       )}
       {/* The exact evidence the judge cited for this verdict — linked, excerpt verbatim. A
           none/na cell with no citations rests on absence of evidence, said out loud. */}
       {cell.evidence.length === 0 ? (
-        <p className="mt-1 text-xs italic text-zinc-600">
+        <p className="mt-1 text-xs italic text-zinc-500">
           no evidence cited — the verdict rests on absence of evidence, re-checked on refresh
         </p>
       ) : (
@@ -121,7 +121,7 @@ function DimensionSection({ dim, productHref }: { dim: DimensionBreakdown; produ
       <h2 className="font-display leading-[1.1] flex flex-wrap items-baseline gap-x-3 text-lg font-semibold">
         {dim.label}
         <span className="text-base tabular-nums text-emerald-300">
-          {dim.score === null ? 'n/a' : <>{fmt1(dim.score)}<span className="text-zinc-600">/100</span></>}
+          {dim.score === null ? 'n/a' : <>{fmt1(dim.score)}<span className="text-zinc-500">/100</span></>}
         </span>
         <span className="text-xs font-normal text-zinc-500">×{fmt2(dim.weight)} of the PA blend</span>
       </h2>
@@ -210,7 +210,7 @@ export default async function ScorePage({
         </h2>
         <div className="mt-3 space-y-1 font-mono text-sm tabular-nums">
           {blend.terms.map((t) => (
-            <p key={t.key} className={t.score === null ? 'text-zinc-600' : 'text-zinc-300'}>
+            <p key={t.key} className={t.score === null ? 'text-zinc-500' : 'text-zinc-300'}>
               <a href={`#${t.anchor}`} className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300">
                 {t.label}
               </a>{' '}
@@ -233,7 +233,7 @@ export default async function ScorePage({
               {' '}= {fmt2(blend.weightedSum)} ÷ {fmt2(blend.totalWeight)} ={' '}
               <span className="font-bold text-emerald-300">{fmt1(blend.aiEra)}</span>
               {excluded.length > 0 && (
-                <span className="text-zinc-600"> — weights renormalized over the scored components</span>
+                <span className="text-zinc-500"> — weights renormalized over the scored components</span>
               )}
             </p>
           )}
