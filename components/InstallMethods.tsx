@@ -91,7 +91,9 @@ export default function InstallMethods({ className = 'mx-auto w-full max-w-2xl' 
                 aria-pressed={m.id === active}
                 onClick={() => selectTab(m.id)}
                 className={`min-h-11 min-w-11 cursor-pointer whitespace-nowrap px-2 text-sm font-medium transition-colors sm:px-3 ${
-                  m.id === active ? 'text-zinc-100' : 'text-zinc-400 hover:text-zinc-100'
+                  m.id === active
+                    ? 'text-zinc-100 underline decoration-emerald-400 decoration-2 underline-offset-8'
+                    : 'text-zinc-400 hover:text-zinc-100'
                 }`}
               >
                 {m.label}
