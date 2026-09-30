@@ -91,8 +91,9 @@ describe('static-HTML contract (SSR ↔ empty client state)', () => {
   it('SSR output hydrates with no mismatch against the empty lens + empty stack', async () => {
     ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
     const ssr = renderToString(row)
-    // The default view: serialized order, select affordances present, nothing selected.
-    expect(ssr).toContain('ranked for this step:')
+    // The default view: serialized order, select affordances present, nothing selected — and
+    // no leading label (founder 2026-09-30: the vendors ARE the line, highest score first).
+    expect(ssr).not.toContain('ranked for this step:')
     expect(ssr).not.toContain('✓ via')
     expect(ssr).not.toContain('not covered by')
     const container = document.createElement('div')

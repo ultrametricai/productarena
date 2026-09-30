@@ -21,8 +21,11 @@ import {
 // phase, and the totality test in lib/__tests__/processRows.test.ts walks the live corpus — a
 // new phase without a curated area fails loudly at test (and build) time instead of silently
 // rendering a stray group.
+//
+// Founder 2026-09-30: 'Starting up' overlapped the formation vocabulary everywhere else on the
+// site — the startup+formation phases now merge into ONE 'Formation' area.
 export const AREA_ORDER = [
-  'Starting up',
+  'Formation',
   'Fundraising & investors',
   'Money & finance',
   'Team & payroll',
@@ -36,8 +39,8 @@ export const AREA_ORDER = [
 export type Area = (typeof AREA_ORDER)[number]
 
 export const PHASE_AREA: Record<string, Area> = {
-  startup: 'Starting up',
-  formation: 'Starting up',
+  startup: 'Formation',
+  formation: 'Formation',
   fundraising: 'Fundraising & investors',
   vc: 'Fundraising & investors',
   finance: 'Money & finance',

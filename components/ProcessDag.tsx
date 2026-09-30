@@ -5,7 +5,6 @@ import ComputerUseChips from '@/components/ComputerUseChips'
 import GeoStepMark from '@/components/GeoStepMark'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
-import StepCanonicalVendor from '@/components/StepCanonicalVendor'
 import StepYourPick from '@/components/StepYourPick'
 import StepAfkChip from '@/components/StepAfkChip'
 import StepApiCalls from '@/components/StepApiCalls'
@@ -16,7 +15,7 @@ import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/comp
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
-import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
+import { showComputerUseChips } from '@/lib/humanStepsUi'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
@@ -102,11 +101,12 @@ const SIGNATURE_STYLE: { block: string; badge: string; label: string } = {
 // Kahn layering: lib/dagLayers.ts layerNodes — one topological layer per row of the diagram,
 // shared with the mini horizontal strip so both views always agree on the layout.
 
-// Vertical connector segment with an arrowhead — the spine joint between blocks. Fixed left
-// offset so every joint lines up down the whole diagram.
+// Vertical connector segment with an arrowhead — the spine joint between blocks, centered
+// under each block (founder 2026-09-30: center the arrows between steps; the old fixed ml-6
+// left offset read as a stray margin once the step numbers went).
 function Connector() {
   return (
-    <svg aria-hidden width="16" height="28" viewBox="0 0 16 28" className="ml-6 block text-zinc-600">
+    <svg aria-hidden width="16" height="28" viewBox="0 0 16 28" className="mx-auto block text-zinc-600">
       <line x1="8" y1="0" x2="8" y2="20.5" stroke="currentColor" strokeWidth="1.5" />
       <path d="M4.5 20 L8 27 L11.5 20 Z" fill="currentColor" />
     </svg>
@@ -335,7 +335,6 @@ function StepRankingRow({
 
 function NodeBlock({
   node,
-  index,
   taskId,
   checkStep,
   mineHref,
@@ -344,7 +343,6 @@ function NodeBlock({
   usScoped,
 }: {
   node: DagNode
-  index: number
   taskId?: string
   // Pre-serialized step row (lib/processCheckData.ts) for the client-side "yours" line — the
   // static HTML is unchanged; only readers with an "I'm using" stack see it hydrate in.
@@ -397,12 +395,11 @@ function NodeBlock({
     ...(ranking?.vendors ?? []).map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name })),
     ...extras.flatMap((r) => r.vendors.map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name }))),
   ]
-  // Does this step surface a MARKET (a ranked row or a "via:" roster)? Then the canonical
-  // vendor is only the market's reference vendor, not "the" vendor: it demotes to an
-  // "e.g."-prefixed chip until the reader picks a supplier, and disappears once a lens/stack
-  // pick covers the step (components/StepCanonicalVendor.tsx — founder 2026-09-23: "processes
-  // don't start with just one supplier"). Vendor-locked steps (IRS, Delaware portal…) have no
-  // market and keep the full-strength chip.
+  // Does this step surface a MARKET (a ranked row or a "via:" roster)? Then no canonical chip
+  // renders at all (founder 2026-09-30: the step's vendors are ONE ranked line, highest score
+  // first, no 'e.g.'-prefixed reference chip — which retires the 2026-09-23 StepCanonicalVendor
+  // demotion pattern). Vendor-locked steps (IRS, Delaware portal…) have no market and keep the
+  // full-strength chip.
   const hasMarket = ranking !== null || extras.length > 0 || options.length > 0
 
   // The step's action row, AI path first, manual path last (founder 2026-09-25): the "Do it
@@ -446,18 +443,7 @@ function NodeBlock({
   const body = (
     <>
       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px]">
-        {vendorInfo && (hasMarket ? (
-          <StepCanonicalVendor
-            info={vendorInfo}
-            logo={hasLogo(vendorInfo.productId ?? vendorInfo.vendor)}
-            topRankedId={ranking?.vendors[0]?.productId ?? null}
-            marketArenaId={node.optionsArenaId ?? vendorInfo.arenaId}
-            lensKey={lensKey}
-            checkStep={checkStep}
-          />
-        ) : (
-          <VendorChip info={vendorInfo} />
-        ))}
+        {vendorInfo && !hasMarket && <VendorChip info={vendorInfo} />}
         {node.approvalRequired && (
           <span
             className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300"
@@ -466,11 +452,8 @@ function NodeBlock({
             ⏸ approval gate
           </span>
         )}
-        {node.async && (
-          <span className="text-zinc-500" title="Async — the process waits on a third party here">
-            ⏳ async
-          </span>
-        )}
+        {/* The '⏳ async' chip is gone (founder 2026-09-30) — the route badge alone carries the
+            step's nature; async-ness stays data (manifests, simulator) without a per-step chip. */}
         {node.riskLevel && node.riskLevel !== 'low' && (
           <span className={node.riskLevel === 'high' ? 'font-semibold text-red-300/90' : 'text-zinc-500'}>
             {node.riskLevel} risk
@@ -555,21 +538,9 @@ function NodeBlock({
         </p>
       )}
 
-      {/* Why this step is human/manual, specifically — and the honest computer-use verdict. */}
-      {audit && (
-        <p className="mt-2 text-[11px] leading-relaxed text-zinc-400">
-          <span className={node.legalSignature ? 'text-violet-300/90' : node.route === 'person' ? 'text-sky-300/90' : 'text-amber-300/90'}>
-            why {node.legalSignature ? 'legally human' : node.route === 'person' ? 'human' : 'manual'}:
-          </span>{' '}
-          {audit.why}{' '}
-          <span
-            className="whitespace-nowrap text-zinc-500"
-            title={audit.computerUseWhy}
-          >
-            · {FEASIBILITY_META[audit.computerUse].icon} {FEASIBILITY_META[audit.computerUse].label}
-          </span>
-        </p>
-      )}
+      {/* The 'why human: …' explanation line is gone (founder 2026-09-30: the route badge alone
+          carries it) — the audit still GATES the computer-use chips below, so an authority/
+          physics/third-party blocker never shows a misleading "could attempt it today" row. */}
 
       {vendorCalls.length > 0 ? (
         <StepApiCalls
@@ -605,8 +576,9 @@ function NodeBlock({
           unchanged: the step stays form/manual/human. Renders nothing without judged evidence.
           Audited nodes gate the chips on feasibility (founder 2026-09-21): where the blocker is
           authority, physics, or a third party's clock, "could attempt it today" would mislead —
-          the "why human" line above carries the honest verdict instead. Legally-required
-          signature acts (legalSignature) never show chips at all. */}
+          the chips simply don't render there (the audited why lives in the manifest data; the
+          on-page 'why human' line was retired 2026-09-30). Legally-required signature acts
+          (legalSignature) never show chips at all. */}
       {taskId && node.route !== 'agent' && showComputerUseChips(audit?.computerUse, node.legalSignature) && (
         <div className="mt-2 text-[11px]">
           <ComputerUseChips taskId={taskId} nodeId={node.id} />
@@ -635,10 +607,9 @@ function NodeBlock({
   return (
     <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
       <div className="flex items-start justify-between gap-2">
+        {/* No step index numbers (founder 2026-09-30: '01', '02'… gone) — the connector spine
+            already carries the order. */}
         <p className="min-w-0 text-sm font-medium text-zinc-100">
-          <span className="mr-1.5 font-mono text-[10px] tabular-nums text-zinc-500">
-            {String(index).padStart(2, '0')}
-          </span>
           {node.label}
           {usScoped && <GeoStepMark />}
         </p>
@@ -676,57 +647,44 @@ function Flow({
   usScoped?: boolean
 }) {
   const layers = layerNodes(nodes, edges)
-  // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
-  // (react-compiler lint: "Cannot reassign variable after render completes").
-  const offsets: number[] = []
-  let acc = 0
-  for (const layer of layers) {
-    offsets.push(acc)
-    acc += layer.length
-  }
   return (
     <>
-      {layers.map((layer, li) => {
-        const start = offsets[li]
-        return (
-          <Fragment key={layer[0].id}>
-            {li > 0 && <Connector />}
-            {layer.length === 1 ? (
-              <NodeBlock
-                node={layer[0]}
-                index={start + 1}
-                taskId={taskId}
-                checkStep={checkSteps?.[layer[0].id]}
-                mineHref={mineHref}
-                lensKey={lensKey}
-                manifestUrl={manifestUrl}
-                usScoped={usScoped}
-              />
-            ) : (
-              <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
-                <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-                  runs in parallel · {layer.length}
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {layer.map((n, ni) => (
-                    <NodeBlock
-                      key={n.id}
-                      node={n}
-                      index={start + ni + 1}
-                      taskId={taskId}
-                      checkStep={checkSteps?.[n.id]}
-                      mineHref={mineHref}
-                      lensKey={lensKey}
-                      manifestUrl={manifestUrl}
-                      usScoped={usScoped}
-                    />
-                  ))}
-                </div>
+      {layers.map((layer, li) => (
+        <Fragment key={layer[0].id}>
+          {li > 0 && <Connector />}
+          {layer.length === 1 ? (
+            <NodeBlock
+              node={layer[0]}
+              taskId={taskId}
+              checkStep={checkSteps?.[layer[0].id]}
+              mineHref={mineHref}
+              lensKey={lensKey}
+              manifestUrl={manifestUrl}
+              usScoped={usScoped}
+            />
+          ) : (
+            <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
+              <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+                runs in parallel · {layer.length}
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {layer.map((n) => (
+                  <NodeBlock
+                    key={n.id}
+                    node={n}
+                    taskId={taskId}
+                    checkStep={checkSteps?.[n.id]}
+                    mineHref={mineHref}
+                    lensKey={lensKey}
+                    manifestUrl={manifestUrl}
+                    usScoped={usScoped}
+                  />
+                ))}
               </div>
-            )}
-          </Fragment>
-        )
-      })}
+            </div>
+          )}
+        </Fragment>
+      ))}
     </>
   )
 }

@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
 // StepPromptBox — the step's "Do it with AI" action row (founder 2026-09-25: the agent prompt
-// promoted from a collapsed toggle to the primary per-step affordance). Load-bearing assertions:
+// promoted from a collapsed toggle to the primary per-step affordance; founder 2026-09-30
+// compaction: always-open SMALLER box with internal scroll, header just 'prompt', icon-only
+// copy button with its aria-label kept, no hide/view toggle, no "for X — set yours" fallback
+// line). Load-bearing assertions:
 //   1. the static-HTML contract — SSR (empty lens + empty stack server snapshots) renders the
 //      default top-vendor resolution and hydrates with ZERO mismatches;
 //   2. the vendor-resolution contract survives the redesign — copy and the Claude/ChatGPT links
@@ -73,8 +76,10 @@ describe('static-HTML contract (SSR ↔ empty client state)', () => {
   it('SSR renders the default top-vendor resolution and hydrates with no mismatch', async () => {
     ;(globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true
     const ssr = renderToString(box)
-    // Default resolution: the top-ranked vendor, no personalization markers.
-    expect(ssr).toContain('for Vendor One')
+    // Default resolution: the top-ranked vendor, no personalization markers — and no "for X —
+    // set yours" fallback line (gone, founder 2026-09-30).
+    expect(ssr).toContain(resolvedFor('Vendor One'))
+    expect(ssr).not.toContain('set yours via')
     expect(ssr).not.toContain('✓ via')
     expect(ssr).not.toContain('set for')
     // Both open links carry the DEFAULT resolved prompt in ?q= already in the static HTML.
@@ -93,7 +98,7 @@ describe('static-HTML contract (SSR ↔ empty client state)', () => {
         root = hydrateRoot(container, box, { onRecoverableError: (e) => hydrationErrors.push(e) })
       })
       expect(hydrationErrors).toEqual([])
-      expect(container.textContent).toContain('for Vendor One')
+      expect(container.textContent).toContain(resolvedFor('Vendor One'))
     } finally {
       await act(async () => root?.unmount())
       container.remove()
@@ -154,14 +159,22 @@ describe('vendor resolution → copy and open links', () => {
 })
 
 describe('preview, signature honesty, and the manual-path children', () => {
-  it('the prompt text preview shows by default and collapses behind the toggle', async () => {
-    render(box)
-    // Founder 2026-09-25: expanded by default — the prompt is the step's main event.
+  it("the compact prompt box is always open: header just 'prompt', icon-only copy top-right, capped height with internal scroll, no toggle", () => {
+    const { container } = render(box)
     expect(document.querySelector('pre')?.textContent).toBe(resolvedFor('Vendor One'))
-    fireEvent.click(screen.getByRole('button', { name: /hide prompt/ }))
-    expect(document.querySelector('pre')).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: /view prompt/ }))
-    expect(document.querySelector('pre')?.textContent).toBe(resolvedFor('Vendor One'))
+    // No hide/view toggle (founder 2026-09-30) — the box can't be collapsed.
+    expect(screen.queryByRole('button', { name: /hide prompt/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /view prompt/ })).toBeNull()
+    // Header framing reduced to 'prompt' — the old long label is gone.
+    expect(container.textContent).not.toContain('paste into any agent')
+    expect(container.textContent).not.toContain('Agent prompt · resolved for')
+    // The copy control is the ICON only (house clipboard svg), aria-label kept.
+    const copy = screen.getByRole('button', { name: 'Copy prompt' })
+    expect(copy.textContent?.trim()).toBe('') // no visible text — svg only
+    expect(copy.querySelector('svg')).not.toBeNull()
+    // Smaller box: the prompt text scrolls inside its ~160px cap.
+    expect(document.querySelector('pre')?.className).toContain('max-h-40')
+    expect(document.querySelector('pre')?.className).toContain('overflow-y-auto')
   })
 
   it('legalSignature steps keep the row but say the signature stays human', () => {
@@ -180,7 +193,7 @@ describe('preview, signature honesty, and the manual-path children', () => {
     )
     const row = container.querySelector('div.flex')
     const labels = [...(row?.children ?? [])].map((el) => el.textContent ?? '')
-    const ai = labels.findIndex((t) => t.includes('Copy prompt'))
+    const ai = labels.findIndex((t) => t.includes('Open in Claude'))
     const manual = labels.findIndex((t) => t.includes('do it yourself'))
     expect(ai).toBeGreaterThanOrEqual(0)
     expect(manual).toBeGreaterThan(ai)

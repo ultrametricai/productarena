@@ -46,10 +46,8 @@ export default function ProcessesPage() {
           dominant area; the old separate playbooks section AND the 'Playbooks' vocabulary are
           gone from this UI. */}
       <section className="space-y-3">
-        <div>
-          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">All processes</h2>
-          {/* Route-dot legend removed with the dots themselves (founder 2026-09-29). */}
-        </div>
+        {/* No 'All processes' heading (founder 2026-09-30) — the table stands alone under the
+            search. The route-dot legend went earlier (founder 2026-09-29). */}
         <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} />
         {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
             decision-driven journey with clearly-labeled synthetic artifacts. */}

@@ -8,11 +8,13 @@ import { isPicked } from '@/lib/myStack'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 import { lensGapFor, useProcessLens, type LensSource } from '@/lib/processLens'
 
-// The per-step "ranked for this step" chip row, client-rendered so vendors are SELECTABLE
-// (founder 2026-09-21: "if the user clicks a vendor I want it to select using that vendor
-// through the process and adapt the DAG to using that"). Replaces the server-rendered chip row
-// inside components/ProcessDag.tsx's StepRankingRow — the evidence trail ("how these are
-// ranked") stays server-rendered below, unchanged.
+// The per-step ranked vendor chip row, client-rendered so vendors are SELECTABLE (founder
+// 2026-09-21: "if the user clicks a vendor I want it to select using that vendor through the
+// process and adapt the DAG to using that"). Replaces the server-rendered chip row inside
+// components/ProcessDag.tsx's StepRankingRow — the evidence trail ("how these are ranked")
+// stays server-rendered below, unchanged. Founder 2026-09-30: no leading label — ALL the
+// step's vendors render as one line, highest score left→right (the 'e.g.' canonical reference
+// chip is retired with it).
 //
 // Static-HTML contract: the server snapshot (empty lens, stack snapshot '{}') renders the
 // serialized default order with no selection styling — IDENTICAL to what a reader without a
@@ -265,15 +267,15 @@ export default function StepVendorRow({
   const gapName = gap ? lens.names[gap.productId] ?? gap.productId : null
 
   return (
-    <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
-      <span
-        className="text-[10px] uppercase tracking-wide text-zinc-500"
-        title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${storyCount} stories mapped to it${
-          hasExtras ? '; vendors from another arena carry a tag naming where their evidence lives' : ''
-        } — not the arena's overall Overall score. Click a chip's "use" to see the whole process via that vendor.`}
-      >
-        ranked for this step:
-      </span>
+    // No 'ranked for this step:' label (founder 2026-09-30): the step's vendors are ONE line,
+    // highest score left→right — each chip's tooltip still carries the ranked-for-this-step
+    // story. The row's flex-wrap only breaks the line where the viewport forces it.
+    <div
+      className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]"
+      title={`Vendors ranked for THIS step, highest score first — scored from their judged verdicts on the ${storyCount} stories mapped to it${
+        hasExtras ? '; vendors from another arena carry a tag naming where their evidence lives' : ''
+      } — not the arena's overall Overall score. Click a chip's "use" to see the whole process via that vendor.`}
+    >
       {ordered.map((e) => (
         <VendorChipButton
           key={`${e.vendor.arenaId}:${e.vendor.productId}`}

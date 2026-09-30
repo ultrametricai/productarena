@@ -19,18 +19,19 @@ import { readParams, setParams } from '@/lib/urlState'
 // Each row leads with its curated process icon (lib/processIcons.ts) and its software chips
 // carry real product logos (hasLogo resolved server-side — ProductLogoView is client-safe).
 //
-// Grouped-by-AREA default (founder 2026-09-28): the table opens grouped into friendly
-// founder-lifecycle areas ("Starting up", "Ongoing compliance & tax", … — the curated
-// phase→area map in lib/processRows.ts), area header rows carrying the process count and the
-// area's average agent ceiling, rows ordered by timeOrder within each area. Grouping and
-// cross-corpus sorting can't coexist honestly, so picking ANY rank-by preset or column sort
-// switches to the flat sorted table; a subtle "grouped by area" reset pill returns. The
-// grouped view is the no-param default — the ?order= URL contract below is unchanged.
+// Founder-timeline default (founder 2026-09-30: "bring back Rank By and default onto Founder
+// timeline"): the table opens FLAT, sorted by timeOrder — the journey a founder actually walks
+// — with the rank-by dropdown visibly showing 'Founder timeline'. The grouped-by-area view
+// (founder 2026-09-28: friendly founder-lifecycle areas — the curated phase→area map in
+// lib/processRows.ts — header rows carrying the process count, rows in timeOrder within each
+// area) is now the dropdown's TOP entry 'Grouped by area' instead of the no-param default.
+// Grouping and cross-corpus sorting still can't coexist honestly, so picking any rank-by
+// preset or column sort from the grouped view switches back to the flat sorted table.
 //
 // ONE combined view (founder 2026-09-29): the curated end-to-end chains are rows in this same
 // table. Founder follow-up the same day ("we don't need to say 'playbook' on those playbooks…
 // playbooks are still processes — just more abstract or general processes with higher
-// complexity"): no 'playbook' chip and no leading group — in the grouped default each chain row
+// complexity"): no 'playbook' chip and no leading group — in the grouped view each chain row
 // folds into its DOMINANT area (its first constituent process's area) at that constituent's
 // timeOrder position; the constituent icon chips + route-dot strip signal composition without a
 // category label. The flat view keeps its semantics: interleaved where the sort applies to the
@@ -114,10 +115,11 @@ const defaultDirection = (col: Column): Direction => (ASC_DEFAULT.has(col) ? 'as
 
 // Shareable ?order= values (founder 2026-09-21, lib/urlState.ts): every pickable column, with
 // the timeOrder column spelled 'timeline' in the URL (?order=order reads badly; ?order=timeline
-// says what it is). The UI's default sort (pct — the agent ceiling) never appears in the URL,
-// and bad values fall back silently — since 2026-09-28 the no-param default is the grouped-by-
-// area view, and any valid ?order= (pct included) opens the flat sorted table. Both `timeline`
-// and the raw `order` are accepted on read.
+// says what it is). Bad values fall back silently, any valid ?order= opens the flat sorted
+// table, and both `timeline` and the raw `order` are accepted on read. Since 2026-09-30 the
+// no-param default is the flat FOUNDER-TIMELINE sort — so the UI elides ?order= for timeline
+// (the new default) and writes every other ordering, pct now included; the grouped-by-area
+// view (the former 2026-09-28 default) is shareable as ?order=grouped.
 const ALL_COLUMNS: readonly Column[] = ['title', 'phase', 'pct', 'steps', 'order', 'cadence', 'annoyance', 'risk', 'growth']
 const columnToParam = (col: Column): string => (col === 'order' ? 'timeline' : col)
 function paramToColumn(value: string | null): Column | null {
@@ -126,10 +128,15 @@ function paramToColumn(value: string | null): Column | null {
   return (ALL_COLUMNS as readonly string[]).includes(value) ? (value as Column) : null
 }
 
-const PRESETS: Array<{ col: Column; label: string; icon: string }> = [
+// The rank-by dropdown's values: the sortable columns plus the grouped-by-area view (founder
+// 2026-09-30: grouping is a secondary option now, the TOP entry of the dropdown).
+type PresetCol = Column | 'grouped'
+
+const PRESETS: Array<{ col: PresetCol; label: string; icon: string }> = [
+  { col: 'grouped', label: 'Grouped by area', icon: '🗂️' },
+  { col: 'order', label: 'Founder timeline', icon: '🗓️' },
   { col: 'pct', label: 'Most automatable', icon: '⚡' },
   { col: 'steps', label: 'Most steps', icon: '🪜' },
-  { col: 'order', label: 'Founder timeline', icon: '🗓️' },
   { col: 'cadence', label: 'Regularity', icon: '🔁' },
   { col: 'annoyance', label: 'Most annoying', icon: '😤' },
   { col: 'risk', label: 'Riskiest', icon: '⚠️' },
@@ -157,6 +164,15 @@ function fieldOf(row: ProcessRow, col: Column): number | string {
   if (col === 'risk') return row.risk
   if (col === 'growth') return row.growthImpact
   return row.totalSteps
+}
+
+// The no-selection geo glyphs (founder 2026-09-30: every row shows its geo glyph ALWAYS,
+// "default on USA"): us AND us-state rows wear the flag, global rows the globe. A non-US
+// selection swaps to the sharper GEO_SCOPE_GLYPH set (🏛 distinguishes state-level work).
+const DEFAULT_GEO_GLYPH: Record<ProcessRow['geoScope'], { glyph: string; label: string }> = {
+  global: GEO_SCOPE_GLYPH.global,
+  us: GEO_SCOPE_GLYPH.us,
+  'us-state': GEO_SCOPE_GLYPH.us,
 }
 
 // 1–5 score rendered as dots, tooltip carries the number.
@@ -210,16 +226,19 @@ function playbookFieldOf(row: PlaybookRow, col: Column): number | string {
 type FlatItem = { kind: 'process'; row: ProcessRow } | { kind: 'playbook'; row: PlaybookRow }
 
 export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows: ProcessRow[]; phases: string[]; playbooks?: PlaybookRow[] }) {
-  // Grouped-by-area is the default view; column/direction only apply once the reader sorts
-  // (which flips grouped off — grouping and cross-corpus sorting can't coexist honestly).
-  const [grouped, setGrouped] = useState(true)
-  const [column, setColumn] = useState<Column>('pct')
-  const [direction, setDirection] = useState<Direction>('desc')
+  // The founder-timeline flat sort is the default view (founder 2026-09-30); the grouped-by-
+  // area view is opt-in via the rank-by dropdown's top entry. Column/direction only apply while
+  // grouped is off — grouping and cross-corpus sorting can't coexist honestly.
+  const [grouped, setGrouped] = useState(false)
+  const [column, setColumn] = useState<Column>('order')
+  const [direction, setDirection] = useState<Direction>('asc')
   const [phase, setPhase] = useState('all')
   const [query, setQuery] = useState('')
   // Non-null while the reader has a non-US country selected (GeoSwitcher seeds the shared
-  // store) — each row then wears its geoScope glyph. Null in the static HTML and the default
-  // view, so the no-selection markup is untouched. Display only: never re-sorts.
+  // store). Every row ALWAYS wears a geo glyph now (founder 2026-09-30: "processes need to
+  // have a global icon, default on USA") — with no selection us/us-state rows default to 🇺🇸
+  // and global rows to 🌐; a selection sharpens to the full scope glyphs (🏛 for state-level).
+  // Display only: never re-sorts.
   const geo = useGeoSelection()
 
   // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
@@ -231,14 +250,22 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
      initializers (hydration mismatch); the effect runs once and renders at most one extra pass. */
   useEffect(() => {
     const p = readParams()
-    const col = paramToColumn(p.get('order'))
-    if (col !== null) {
-      // Any shared ?order= opens the FLAT sorted table — grouped is the no-param default.
-      // ?order=pct is accepted on read (it shares the ceiling-sorted flat view) even though
-      // the UI still elides pct on write, per the original contract.
-      setGrouped(false)
-      setColumn(col)
-      setDirection(defaultDirection(col))
+    const raw = p.get('order')
+    if (raw === 'grouped') {
+      // The shareable grouped-by-area view (the former no-param default, founder 2026-09-28).
+      setGrouped(true)
+      setColumn('pct')
+      setDirection('desc')
+    } else {
+      const col = paramToColumn(raw)
+      if (col !== null) {
+        // Any shared column ?order= opens the FLAT sorted table in its preset direction.
+        // ?order=timeline is accepted on read even though the UI elides it on write (it IS
+        // the no-param default since 2026-09-30).
+        setGrouped(false)
+        setColumn(col)
+        setDirection(defaultDirection(col))
+      }
     }
     const ph = p.get('phase')
     if (ph !== null && phases.includes(ph)) setPhase(ph)
@@ -256,22 +283,22 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
     setParams({ phase: value === 'all' ? null : value })
   }
 
-  // Sort changes mirror into ?order= (default pct elided). Direction is deliberately NOT in the
-  // URL: a shared ordering opens in its preset direction — the five orderings are what's shared.
-  // Any sort leaves the grouped default for the flat table.
+  // Sort changes mirror into ?order= (the founder-timeline default elided). Direction is
+  // deliberately NOT in the URL: a shared ordering opens in its preset direction — the
+  // orderings are what's shared. Any sort leaves the grouped view for the flat table.
   function changeSort(col: Column, dir: Direction) {
     setGrouped(false)
     setColumn(col)
     setDirection(dir)
-    setParams({ order: col === 'pct' ? null : columnToParam(col) })
+    setParams({ order: col === 'order' ? null : columnToParam(col) })
   }
 
-  // The "grouped by area" reset pill: back to the default view, with a clean ?order=.
-  function resetToGrouped() {
+  // The dropdown's 'Grouped by area' entry: the founder-lifecycle grouped view, shareable.
+  function pickGrouped() {
     setGrouped(true)
     setColumn('pct')
     setDirection('desc')
-    setParams({ order: null })
+    setParams({ order: 'grouped' })
   }
 
   const filtered = useMemo(() => {
@@ -402,15 +429,13 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
             <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
               {r.title}
             </Link>
-            {geo !== null && (
-              <span
-                aria-hidden
-                className="text-[10px] opacity-70"
-                title={GEO_SCOPE_GLYPH[r.geoScope].label}
-              >
-                {GEO_SCOPE_GLYPH[r.geoScope].glyph}
-              </span>
-            )}
+            <span
+              aria-hidden
+              className="text-[10px] opacity-70"
+              title={(geo !== null ? GEO_SCOPE_GLYPH[r.geoScope] : DEFAULT_GEO_GLYPH[r.geoScope]).label}
+            >
+              {(geo !== null ? GEO_SCOPE_GLYPH[r.geoScope] : DEFAULT_GEO_GLYPH[r.geoScope]).glyph}
+            </span>
           </span>
         </td>
         <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
@@ -462,7 +487,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
                 className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
                 title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
               >
-                +{r.vendors.length - 3} →
+                +{r.vendors.length - 3}
               </Link>
             )}
           </span>
@@ -533,11 +558,11 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
         presetsAsDropdown
         after={<GeoDropdown />}
         presets={PRESETS}
-        activeColumn={column}
-        // In the grouped default no preset is "on" — the pills light up only once the reader
-        // has sorted into the flat view (and the mobile "Rank by" select shows its placeholder).
-        presetActive={!grouped && direction === defaultDirection(column)}
-        onPreset={(col) => changeSort(col, defaultDirection(col))}
+        // The grouped view reads as its own dropdown entry; otherwise the sorted column shows
+        // (visibly 'Founder timeline' in the no-param default — founder 2026-09-30).
+        activeColumn={grouped ? 'grouped' : column}
+        presetActive={grouped || direction === defaultDirection(column)}
+        onPreset={(col) => (col === 'grouped' ? pickGrouped() : changeSort(col, defaultDirection(col)))}
         scope={{
           value: phase,
           onChange: changePhase,
@@ -554,21 +579,8 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
           setParams({ pq: value.trim() === '' ? null : value })
         }}
       />
-      {/* Sorting flattens the table (cross-corpus order and area grouping can't coexist) — this
-          subtle pill is the way back to the grouped default. */}
-      {!grouped && (
-        <p className="text-xs text-zinc-500">
-          Sorted across all areas —{' '}
-          <button
-            type="button"
-            onClick={resetToGrouped}
-            title="Back to the default view — processes grouped into founder-lifecycle areas"
-            className="rounded-full border border-zinc-800 px-2.5 py-0.5 text-[11px] text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
-          >
-            ← grouped by area
-          </button>
-        </p>
-      )}
+      {/* The old "← grouped by area" reset pill is gone (founder 2026-09-30): the grouped view
+          lives in the rank-by dropdown as its top entry, so the way back is always visible. */}
       <div className="-mx-5 overflow-x-auto border-y border-zinc-800 sm:mx-0 sm:rounded-2xl sm:border md:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
           <thead>
@@ -582,11 +594,11 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}
               <SortableTh col={metric} current={grouped ? null : column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
-              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main software this process runs on — judged vendors link to their product page">Software</span></SortableTh>
+              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main vendors this process runs on — judged vendors link to their product page">Vendor</span></SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
-            {/* Grouped default (founder 2026-09-29: playbooks are still processes — chain rows
+            {/* Grouped view (founder 2026-09-29: playbooks are still processes — chain rows
                 fold into their dominant area at their timeline position, no leading group). */}
             {groups !== null
               ? groups.map((g) => (
