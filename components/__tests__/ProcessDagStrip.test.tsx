@@ -14,7 +14,7 @@ import { loadProcesses, type DagNode } from '@/lib/processes'
 import { processLeaderboard } from '@/lib/processRankings'
 
 function node(over: Pick<DagNode, 'id' | 'label' | 'route'> & Partial<DagNode>): DagNode {
-  return { estimatedMinutes: 5, ...over }
+  return { estimatedMinutes: 5, reversibility: 'reversible', ...over }
 }
 
 // One of each route plus the signature override, with a genuinely parallel middle (b ∥ c).

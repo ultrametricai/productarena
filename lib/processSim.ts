@@ -10,6 +10,45 @@ export type StepRoute = 'agent' | 'form' | 'person'
 // lockstep). Lives here so client components can type against it without pulling node:fs.
 export type Cadence = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual' | 'event-driven' | 'once'
 
+// Reversibility tiers (founder 2026-09-30: "map what is irreversible and what is reversible —
+// consider 'irreversible with pain' as a 3rd option — for ALL processes and process steps").
+// Curated explicitly on every corpus process AND every DAG node (processes/corpus.json,
+// validated by lib/processes.ts's ProcessTaskSchema — keep this tuple and that z.enum in
+// lockstep; totality is corpus-tested). The judgment test is "what does undoing actually take":
+//   'reversible'   — freely undoable: drafts, configs, most SaaS setup. A routine external send
+//                    whose correction costs nothing (a follow-up email) counts as reversible in
+//                    practice.
+//   'painful'      — irreversible with pain: undoable at real cost — re-domestication after
+//                    incorporating in the wrong state, entity conversion, switching payroll
+//                    providers mid-year, migrating banks, breaking a lease, walking back a
+//                    public announcement, unwinding an executed contract.
+//   'irreversible' — cannot be undone: dissolution filed, an 83(b) election filed (the missed
+//                    window never reopens), equity issued and accepted, a wire sent, an
+//                    employee terminated.
+// A process can be painful while most of its steps are reversible with one irreversible filing
+// step — the tiers are curated per level, never derived from each other.
+export const REVERSIBILITY_TIERS = ['reversible', 'painful', 'irreversible'] as const
+export type Reversibility = (typeof REVERSIBILITY_TIERS)[number]
+
+// Display meta for the tiers (components/ReversibilityBadge.tsx). Reversible deliberately
+// renders nothing — the badge marks doors that close, not the default state of work.
+export const REVERSIBILITY_META: Record<Reversibility, { label: string; definition: string }> = {
+  reversible: {
+    label: 'reversible',
+    definition: 'Reversible — freely undoable: drafts, configs, most SaaS setup. Undoing costs nothing real.',
+  },
+  painful: {
+    label: 'hard to undo',
+    definition:
+      'Irreversible with pain — undoable, but at real cost: re-domesticating an entity, switching payroll providers mid-year, migrating banks, breaking a lease, walking back a public announcement.',
+  },
+  irreversible: {
+    label: 'irreversible',
+    definition:
+      'Irreversible — cannot be undone: a dissolution filed, an 83(b) election filed, equity issued and accepted, a wire sent, an employee terminated.',
+  },
+}
+
 export interface SwapOption {
   id: string
   name: string

@@ -6,13 +6,13 @@ import { resolveGapStep } from './gapClosers'
 import { JURISDICTIONS, type Jurisdiction, type JurisdictionStepView } from './jurisdictions'
 import { hasLogo } from './logos'
 import { isShutdown } from './shutdown'
-import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
-import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
+import type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
+import { DECISION_STEP_RE, formatMinutes, gapWhy, REVERSIBILITY_TIERS } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
-export { formatMinutes, gapWhy }
-export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
+export { formatMinutes, gapWhy, REVERSIBILITY_TIERS }
+export type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole }
 
 // The founder-process corpus (processes/corpus.json): 123 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
@@ -175,6 +175,16 @@ export type StepMethod = z.infer<typeof StepMethodSchema>
 // derived generators all keep consuming the base fields only.
 export const DagNodeSchema = DagNodeBaseSchema.extend({
   methods: StepMethodSchema.array().min(1).optional(),
+  // Reversibility of THIS step's own act (founder 2026-09-30: "map what is irreversible and
+  // what is reversible — for ALL processes and process steps"). REQUIRED with no zod default —
+  // every node is explicitly curated (an unclassified node fails the corpus parse; totality and
+  // distribution are corpus-tested). Tier definitions + curation rules live on
+  // REVERSIBILITY_TIERS in lib/processSim.ts and in processes/README.md. The tier attaches to
+  // the step's own act (a "wait/receive" step commits nothing → reversible; the filing before
+  // it carried the commitment). Method-variant subSteps (DagNodeBaseSchema) deliberately do NOT
+  // carry the field this phase — variants are display-level; the default flow is the judged
+  // surface.
+  reversibility: z.enum(REVERSIBILITY_TIERS),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -268,6 +278,14 @@ export const ProcessTaskSchema = z.object({
   risk: z.number().int().min(1).max(5),
   growthImpact: z.number().int().min(1).max(5),
   complexity: z.enum(['simple', 'moderate', 'complex', 'very_complex']),
+  // Task-level reversibility (founder 2026-09-30): what undoing the COMPLETED process actually
+  // takes — dissolving a wrongly-formed entity is painful, a closed round or a filed dissolution
+  // cannot be undone, abandoning a draft costs nothing. REQUIRED, explicitly curated, no zod
+  // default (totality is corpus-tested; irreversible is deliberately rare). Independent of the
+  // per-step tiers: a painful process can contain one truly irreversible filing step, and an
+  // irreversible process is mostly reversible steps until the wire goes out. Definitions:
+  // REVERSIBILITY_TIERS in lib/processSim.ts and processes/README.md.
+  reversibility: z.enum(REVERSIBILITY_TIERS),
   category: z.string().min(1),
   supportLevel: z.enum(['full', 'partial', 'manual_guide']),
   supportReason: z.string(),
@@ -297,6 +315,10 @@ export const ProcessChainSchema = z.object({
 
 export type ProcessTask = z.infer<typeof ProcessTaskSchema>
 export type DagNode = z.infer<typeof DagNodeSchema>
+// A method-variant sub-step: the base node shape WITHOUT the full-node extensions (no nested
+// methods, and no reversibility — variants are display-level this phase; the default flow is
+// the curated, judged surface).
+export type DagSubStep = z.infer<typeof DagNodeBaseSchema>
 export type ProcessChain = z.infer<typeof ProcessChainSchema>
 
 // Display order for the corpus's phases — grouping on the index page follows the life of the
@@ -521,7 +543,12 @@ export interface ProcessCeiling {
   gaps: ProcessGap[]
 }
 
-export function computeCeiling(nodes: DagNode[]): ProcessCeiling {
+// Structural param (the fields the math actually reads) so the display-only method-variant
+// ceilings (lib/stepMethodData.ts) can substitute sub-steps — which don't carry the full-node
+// extensions — without casts. DagNode[] remains assignable unchanged.
+export function computeCeiling(
+  nodes: Array<Pick<DagNode, 'label' | 'route' | 'estimatedMinutes' | 'approvalRequired'>>,
+): ProcessCeiling {
   let agentSteps = 0
   let agentMinutes = 0
   let totalMinutes = 0

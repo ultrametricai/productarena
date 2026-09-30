@@ -15,6 +15,7 @@ const node = (over: Partial<DagNode>): DagNode => ({
   id: 'n1',
   label: 'step',
   route: 'agent',
+  reversibility: 'reversible',
   estimatedMinutes: 5,
   ...over,
 })
@@ -129,7 +130,7 @@ describe('buildManifestStep', () => {
 describe('DagNodeSchema forward-compat', () => {
   it('retains actionUrl/signupUrl instead of stripping them', () => {
     const parsed = DagNodeSchema.parse({
-      id: 'n1', label: 'Apply', route: 'form', estimatedMinutes: 5,
+      id: 'n1', label: 'Apply', route: 'form', reversibility: 'reversible', estimatedMinutes: 5,
       actionUrl: 'https://example.com/apply', signupUrl: 'https://example.com/signup',
     })
     expect(parsed.actionUrl).toBe('https://example.com/apply')
