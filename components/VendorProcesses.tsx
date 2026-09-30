@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
+import { IconGlyph } from '@/components/IconChip'
 import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
 import { processesForVendor, type VendorProcessAppearance } from '@/lib/vendorProcesses'
 
@@ -65,13 +66,13 @@ function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
               title={`${a.title} — see the full process page: the step DAG, ranked vendors per step, and the process leaderboard`}
               className="flex items-center gap-1.5 font-medium hover:text-emerald-300"
             >
-              {a.icon && <span aria-hidden>{a.icon}</span>}
+              {a.icon && <span aria-hidden><IconGlyph icon={a.icon} /></span>}
               <span className="truncate">{a.title}</span>
             </Link>
           </td>
           <td className="px-2 py-1.5 text-xs text-zinc-400">
             <span title={phaseTooltip(a.phase)}>
-              {phaseIcon(a.phase) && <span aria-hidden className="mr-1">{phaseIcon(a.phase)}</span>}
+              {phaseIcon(a.phase) && <span aria-hidden className="mr-1"><IconGlyph icon={phaseIcon(a.phase)} /></span>}
               {a.phase}
             </span>
           </td>

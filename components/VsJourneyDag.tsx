@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { chainIcon, processIcon } from '@/lib/processIcons'
 import type { SimStep } from '@/lib/processSim'
@@ -458,7 +459,7 @@ export default function VsJourneyDag({
                     title={`${cluster.title} — from the ${cluster.chainName} playbook`}
                     className={`mr-1 mt-1 inline-flex max-w-[140px] shrink-0 items-center gap-0.5 self-start rounded-full border px-1.5 py-0.5 text-[9px] uppercase leading-none tracking-wider ${style.chip}`}
                   >
-                    <span aria-hidden>{chainIcon(cluster.chainId)}</span>
+                    <span aria-hidden><IconGlyph icon={chainIcon(cluster.chainId)} /></span>
                     <span className="truncate">{cluster.title}</span>
                   </span>
                 )}
@@ -479,7 +480,7 @@ export default function VsJourneyDag({
                     }`}
                   >
                     <span aria-hidden className={`text-base ${state === 'pending' ? 'opacity-50' : ''}`}>
-                      {processIcon(node.taskId)}
+                      <IconGlyph icon={processIcon(node.taskId)} />
                     </span>
                     {/* FIXED node chrome (round 5): the title always renders — no tier ever
                         hides it, no fisheye ever shrinks it. */}

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AuthGatedMarker from '@/components/AuthGatedMarker'
 import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ContestLink from '@/components/ContestLink'
+import { IconGlyph } from '@/components/IconChip'
 import RowMenu from '@/components/RowMenu'
 import PersonaChip from '@/components/PersonaChip'
 import SurfaceChip from '@/components/SurfaceChip'
@@ -562,7 +563,7 @@ function StoryRowPair({
                     title={`${p.title} — a founder process this story's capability maps onto; opens the process page's step list`}
                     className="inline-flex max-w-[11rem] items-center gap-1 whitespace-nowrap rounded border border-zinc-800 px-1.5 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
                   >
-                    <span aria-hidden>{p.icon}</span>
+                    <span aria-hidden><IconGlyph icon={p.icon} /></span>
                     <span className="truncate">{p.title}</span>
                   </Link>
                 ))}

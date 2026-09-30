@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import RankingsNav from '@/components/RankingsNav'
 import { hasLogo } from '@/lib/logos'
@@ -102,7 +103,7 @@ export default function BestCoveredProcessesPage() {
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
                 <td className="px-3 py-2">
                   <Link href={`/processes/${r.slug}`} className="flex items-center gap-2 font-medium hover:text-emerald-300">
-                    <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80">{r.icon}</span>
+                    <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80"><IconGlyph icon={r.icon} /></span>
                     <span className="min-w-0 truncate">{r.title}</span>
                   </Link>
                   <span className="mt-0.5 block text-xs text-zinc-500">{r.phase}</span>

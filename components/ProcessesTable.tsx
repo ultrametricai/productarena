@@ -10,7 +10,7 @@ import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
 import { useGeoSelection } from '@/components/useGeoSelection'
 import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
-import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
+import { phaseEmoji, phaseIcon, phaseTooltip } from '@/lib/processIcons'
 import { readParams, setParams } from '@/lib/urlState'
 
 // The /processes controller: one dense sortable/filterable table over the whole founder-process
@@ -545,7 +545,9 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
           options: [
             // Founder 2026-09-23: reads "areas" to users, not the internal "phases" term.
             { value: 'all', label: 'All areas' },
-            ...phases.map((p) => ({ value: p, label: `${phaseIcon(p)} ${p}`.trim() })),
+            // Native <option> labels are text-only — the legacy curated emoji stands in for
+            // the house SVG glyph here (lib/processIcons.ts phaseEmoji).
+            ...phases.map((p) => ({ value: p, label: `${phaseEmoji(p)} ${p}`.trim() })),
           ],
         }}
         query={query}
