@@ -49,9 +49,28 @@ export type HireChoice = 'yes' | 'no'
 // (old links replay their placement semantics as SOC 2 early/deferred); 'none'/'hipaa'/'iso'
 // append. HIPAA and ISO 27001 run the SAME real set-up-compliance chain with the framework named
 // in lines/artifacts (no dedicated corpus chains exist — steps are never fabricated); 'none'
-// genuinely skips the chain.
-export type ComplianceChoice = 'now' | 'later' | 'none' | 'hipaa' | 'iso'
-export type EnterpriseChoice = 'yes' | 'no'
+// genuinely skips the chain. 'basics' (founder batch 2026-09-30, item 8) appends as the NEW
+// default-asserted value: the same composition 'none' maps to (no dedicated compliance playbook
+// runs), honestly named — every company still does basic compliance hygiene without a formal
+// framework. 'none' keeps its codec slot so old links replay, but it leaves the DISPLAY roster
+// (HIDDEN_OPTION_VALUES) as redundant with 'basics' — our call, said out loud.
+export type ComplianceChoice = 'now' | 'later' | 'none' | 'hipaa' | 'iso' | 'basics'
+// The ICP selector (founder batch 2026-09-30, item 4: "'Enterprise: not yet' is confusing").
+// The decision KEY stays 'enterprise' and the 'yes'/'no' value tokens keep their codec indices
+// 0/1 AND their exact strings (comboKey — and with it every seeded name/artifact/event stream of
+// a shared link — never moves): old digit 0 now reads as the default ICP (Developers, composing
+// the identical default journey the old 'Not yet' composed) and old digit 1 as Enterprises (the
+// old enterprise 'yes' behaviors — the NDA/enterprise-deal chain — attach here). 'smb' and
+// 'consumer' APPEND; both compose the default path with the audience named in the revenue phase
+// note (venue-noted — the launch-venue precedent; no SMB/consumer corpus steps exist, none are
+// invented).
+export type EnterpriseChoice = 'yes' | 'no' | 'smb' | 'consumer'
+// 'Remote vs In-office' (founder batch 2026-09-30, item 5). A NEW appended decision: 'remote'
+// (default, index 0) composes nothing extra; 'office' adds the real "Lease an office" corpus
+// process (ops_014 — the insurance/lease work) as its own journey phase. Codec: the decision
+// APPENDS to DECISIONS, so old (shorter) digit strings decode with this slot defaulted — see
+// lib/virtualStartupRun.ts decodeCombo/decodeAssertedCombo padding.
+export type RemoteChoice = 'remote' | 'office'
 // Launch options (founder batch 2026-09-29, round 4, item 7). Codec compat rules the values:
 // 'yes' (Product Hunt) and 'no' (Stealth mode — the old Quiet launch, relabeled) keep their
 // original tokens and option indices so every shared digit-codec permalink replays unchanged;
@@ -70,6 +89,7 @@ export interface Choices {
   compliance: ComplianceChoice
   enterprise: EnterpriseChoice
   ph: PhLaunchChoice
+  remote: RemoteChoice
 }
 
 export const DEFAULT_CHOICES: Choices = {
@@ -79,18 +99,42 @@ export const DEFAULT_CHOICES: Choices = {
   team: 'cofounders',
   ordering: 'name-first',
   hire: 'yes',
+  // 'Not set' still composes the SOC 2-early branch — old links that elide compliance replay the
+  // exact journey they always did. The item-8 'Basic minimums' default lives in DEFAULT_ASSERTED
+  // (a fresh session starts ASSERTED at 'basics'), never here.
   compliance: 'now',
   enterprise: 'no',
   ph: 'yes',
+  remote: 'remote',
 }
 
 // DEFAULT-ASSERTED decisions (founder batch 2026-09-29, round 4, item 5): decisions that start
 // ASSERTED at their listed value instead of 'Not set' — the dropdown shows the value, semi-auto
-// never asks them, and the ?run= codec simply serializes them like any assertion (the digit
-// codec needs no change; a decoded link overlays this map so old '.'-elided links compose the
-// same asserted state). A per-decision list so more decisions can move here later.
+// never asks them, and the ?run= codec simply serializes them like any assertion. A per-decision
+// list so more decisions can move here later. Item 8 (2026-09-30): compliance defaults onto
+// 'Basic minimums' — NOTE it differs from DEFAULT_CHOICES.compliance ('now'), so a decoded old
+// link may only be overlaid with the URL-NEUTRAL subset below (values equal to the composed
+// default) — otherwise an old '.'-elided compliance slot would silently lose its SOC 2 chain.
 export const DEFAULT_ASSERTED: Partial<Choices> = {
   entity: 'c-corp',
+  compliance: 'basics',
+}
+
+// The DEFAULT_ASSERTED subset that is composition-NEUTRAL (value === DEFAULT_CHOICES value) —
+// the only safe underlay for a decoded ?run= link: an old link that elided a decision keeps
+// composing exactly the default branch it always did, while entity still replays asserted (so
+// semi-auto never asks it — the original underlay's whole purpose).
+export const DEFAULT_ASSERTED_URL_NEUTRAL: Partial<Choices> = Object.fromEntries(
+  Object.entries(DEFAULT_ASSERTED).filter(
+    ([k, v]) => DEFAULT_CHOICES[k as keyof Choices] === v,
+  ),
+) as Partial<Choices>
+
+// Option values removed from DISPLAY (dropdown roster + the semi-auto ask) while keeping their
+// DECISIONS slot so old permalinks replay: compliance 'None' is redundant with the honestly-named
+// 'Basic minimums' (identical composition) — our call, stated here.
+export const HIDDEN_OPTION_VALUES: Partial<Record<keyof Choices, readonly string[]>> = {
+  compliance: ['none'],
 }
 
 // ---------------------------------------------------------------------------
@@ -189,12 +233,16 @@ export interface DecisionDef {
 //                left the panel 2026-09-30 — HIDDEN_DECISION_IDS; old links still replay it)
 //   hire       — the first-hire chain (hr_001, legal_003, opp_007, hr_002) included on yes
 //   compliance — the set-up-compliance chain runs early (SOC 2 early / HIPAA / ISO 27001 —
-//                framework named, same corpus steps) or deferred (SOC 2 deferred); 'None'
-//                skips it entirely
-//   enterprise — the land-the-enterprise-deal chain appended as the final phase on yes
+//                framework named, same corpus steps) or deferred (SOC 2 deferred); 'None' and
+//                'Basic minimums' (the honestly-named default posture) skip it entirely
+//   enterprise — the ICP selector (2026-09-30, item 4): Enterprises ('yes') appends the
+//                land-the-enterprise-deal chain as the final phase; every other ICP composes
+//                the default path with the audience named in the revenue note (venue-noted)
 //   ph         — the launch-on-product-hunt chain included for every public launch (Product
 //                Hunt / Show HN / Waitlist — same corpus playbook, venue named in the phase
 //                note); Stealth mode ('no') skips the chain entirely
+//   remote     — 'office' adds the real "Lease an office" corpus process (ops_014) as its own
+//                phase; remote-first (the default) composes nothing extra
 export const DECISIONS: DecisionDef[] = [
   {
     id: 'entity',
@@ -270,17 +318,24 @@ export const DECISIONS: DecisionDef[] = [
     options: [
       { value: 'now', label: 'SOC 2 (early)', detail: 'the set-up-compliance playbook (SOC 2-lite) runs right after formation' },
       { value: 'later', label: 'SOC 2 (deferred)', detail: 'the same set-up-compliance playbook, deferred to after launch' },
-      { value: 'none', label: 'None', detail: 'no compliance posture — the set-up-compliance playbook is skipped entirely' },
+      { value: 'none', label: 'None', detail: 'no compliance posture — the set-up-compliance playbook is skipped entirely (hidden from the roster: Basic minimums names the same composition honestly)' },
       { value: 'hipaa', label: 'HIPAA', detail: 'the same set-up-compliance playbook (SOC 2-lite corpus steps) run early for a HIPAA posture — the framework is named honestly; no dedicated HIPAA corpus chain exists and no steps are fabricated' },
       { value: 'iso', label: 'ISO 27001', detail: 'the same set-up-compliance playbook (SOC 2-lite corpus steps) run early for an ISO 27001 posture — the framework is named honestly; no dedicated ISO corpus chain exists and no steps are fabricated' },
+      { value: 'basics', label: 'Basic minimums', detail: 'basic compliance hygiene without a formal framework — the dedicated set-up-compliance playbook does not run (the same composition None mapped to, honestly named); SOC 2 / HIPAA / ISO 27001 stay one pick away' },
     ],
   },
   {
+    // The ICP selector (2026-09-30, item 4). Option ORDER is codec: 'no'/'yes' keep indices 0/1
+    // AND their value tokens (comboKey stability — old seeded runs replay byte-identically);
+    // 'smb'/'consumer' append. Labels map old digit 0 → the default ICP (Developers) and old
+    // digit 1 → Enterprises, which carries the old enterprise-'yes' composition.
     id: 'enterprise',
-    title: 'Enterprise motion',
+    title: 'ICP',
     options: [
-      { value: 'no', label: 'Not yet', detail: 'no enterprise deal — the land-the-enterprise-deal playbook is skipped' },
-      { value: 'yes', label: 'Chase the enterprise deal', detail: 'appends the land-the-enterprise-deal playbook (Type II, pen test, status page, NDA, the close)' },
+      { value: 'no', label: 'Developers', detail: 'selling to developers — the default journey composes unchanged (no enterprise-deal motion); the audience is a name, never new corpus steps (the developer buyer lenses — solo technical founder, AI-native startup — live at /icp)' },
+      { value: 'yes', label: 'Enterprises', detail: 'selling to enterprises — appends the land-the-enterprise-deal playbook (Type II, pen test, status page, NDA, the close); the enterprise-platform-team ICP lens at /icp is the buyer' },
+      { value: 'smb', label: 'SMBs', detail: 'selling to SMBs — the same default journey with the audience named in the revenue phase (venue-noted); no SMB-specific corpus steps exist, so none are invented' },
+      { value: 'consumer', label: 'Consumers', detail: 'selling to consumers — the same default journey with the audience named in the revenue phase (venue-noted); no consumer-specific corpus steps exist, so none are invented' },
     ],
   },
   {
@@ -296,10 +351,24 @@ export const DECISIONS: DecisionDef[] = [
       { value: 'waitlist', label: 'Waitlist launch', detail: 'the same real launch-on-product-hunt playbook — its email-capture step opens the waitlist; venue only, identical corpus steps' },
     ],
   },
+  {
+    // Remote vs In-office (2026-09-30, item 5) — APPENDED decision: older (shorter) digit
+    // strings decode with this slot at its default (see the run codec's padding rule).
+    id: 'remote',
+    title: 'Workplace',
+    options: [
+      { value: 'remote', label: 'Remote-first', detail: 'no office — nothing extra composes; the journey is byte-identical to before this decision existed' },
+      { value: 'office', label: 'Office', detail: 'adds the real "Lease an office" corpus process (ops_014) as its own phase — LOI, lease review, signature, deposit, COI; a single committed process, not a curated chain' },
+    ],
+  },
 ]
 
 export function comboKey(c: Choices): string {
-  return `${c.entity}|${c.funding}|${c.product}|${c.team}|${c.ordering}|${c.hire}|${c.compliance}|${c.enterprise}|${c.ph}`
+  // Legacy-stable seeds: the remote slot appends ONLY when non-default, so every combo that
+  // existed before the decision keeps its exact key — the seeded names/artifacts/event streams
+  // of every shared link replay byte-identically.
+  const base = `${c.entity}|${c.funding}|${c.product}|${c.team}|${c.ordering}|${c.hire}|${c.compliance}|${c.enterprise}|${c.ph}`
+  return c.remote === 'remote' ? base : `${base}|${c.remote}`
 }
 
 // Every decision combo, derived straight from DECISIONS so new options can never drift out of
@@ -347,26 +416,32 @@ export interface VsPreset {
   disclosure: string | null
 }
 
+// Functional-type labels (founder batch 2026-09-30, item 11): the pills name WHAT KIND of
+// startup each example is — the fictional company identities (Agentloop / Holofield / Demovax)
+// stay as the run's synthetic identity but leave the option labels. Ids and the ?preset= tokens
+// never move (codec/URL compat — labels only).
 export const VS_PRESETS: VsPreset[] = [
   {
     id: 'software',
-    label: 'Pure software',
+    label: 'Typical software',
     product: 'Agentic company control',
     company: { name: 'Agentloop', descriptor: 'an agentic company-control platform' },
     choices: {
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'subscriptions',
       ordering: 'name-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'yes',
+      remote: 'remote',
     },
     disclosure: null,
   },
   {
     id: 'hardware',
-    label: 'Hardware',
+    label: 'Frontier hardware',
     product: 'Headsetless VR',
     company: { name: 'Holofield', descriptor: 'a headsetless VR display' },
     choices: {
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
       ordering: 'build-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'no',
+      remote: 'remote',
     },
     disclosure:
       'Runs the same real software-company process corpus — hardware-specific steps (regulatory, manufacturing) aren’t modeled yet.',
@@ -381,6 +456,7 @@ export const VS_PRESETS: VsPreset[] = [
     choices: {
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
       ordering: 'name-first', hire: 'yes', compliance: 'hipaa', enterprise: 'yes', ph: 'no',
+      remote: 'remote',
     },
     disclosure:
       'Runs the same real software-company process corpus — biotech-specific steps (regulatory, trials, manufacturing) aren’t modeled yet.',
@@ -571,7 +647,8 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
             ? 'ISO 27001 — the same set-up-compliance corpus playbook (SOC 2-lite steps) run early for an ISO 27001 posture; no dedicated ISO corpus chain exists, so the framework is named, never fabricated'
             : 'SOC 2 deferred — the same playbook, after launch',
     )
-  // Early placement covers every framework option; only 'later' defers and 'none' skips.
+  // Early placement covers every framework option; only 'later' defers; 'none' and 'basics'
+  // (item 8 — the honestly-named default posture) skip the dedicated playbook entirely.
   const complianceEarly = choices.compliance === 'now' || choices.compliance === 'hipaa' || choices.compliance === 'iso'
 
   const raisePhase = () =>
@@ -611,6 +688,14 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
   if (complianceEarly) compliancePhase()
   if (choices.ordering === 'name-first') buildPhase()
   push('website', 'Launch the website', 'launch-website')
+  // Non-enterprise non-default ICPs (item 4) are venue-noted on the revenue phase — the audience
+  // is a name on the same corpus steps, exactly the launch-venue precedent.
+  const icpNote =
+    choices.enterprise === 'smb'
+      ? ' · ICP: SMBs — the audience is named only (no SMB-specific corpus steps exist; identical composition)'
+      : choices.enterprise === 'consumer'
+        ? ' · ICP: consumers — the audience is named only (no consumer-specific corpus steps exist; identical composition)'
+        : ''
   push(
     'revenue',
     'Turn on revenue',
@@ -621,7 +706,7 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
         : id === 'sales_002' ? choices.product === 'invoices'
         : true,
       ),
-    choices.product === 'subscriptions'
+    (choices.product === 'subscriptions'
       ? 'SaaS — subscription billing (growth_001); the invoice path (sales_002) is skipped'
       : choices.product === 'usage'
         ? 'usage-based — the same subscription-billing playbook (growth_001); usage is a billing mode (model named only; identical corpus steps); the invoice path (sales_002) is skipped'
@@ -629,9 +714,24 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
           ? 'marketplace (take-rate) — the get-paid spine only: payment processor (qs_021) + first close (fin_002); the corpus has no take-rate billing steps, so neither billing fork runs'
           : choices.product === 'ecommerce'
             ? 'e-commerce (DTC) — the get-paid spine: checkout via the payment processor (qs_021) + first close (fin_002); the corpus has no storefront step yet, so none is invented'
-            : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped',
+            : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped') + icpNote,
   )
   if (choices.hire === 'yes') push('hire', 'First hire', 'first-hire')
+  // Remote vs In-office (item 5): 'office' composes the real "Lease an office" corpus process
+  // (ops_014) as its own single-process phase. It is committed corpus work but NOT a curated
+  // chain, so the phase carries no chainId and the UI renders no playbook link — an honest
+  // presentation, never a fake chain. Remote-first composes nothing extra (the pre-decision
+  // journey, byte for byte).
+  if (choices.remote === 'office') {
+    phases.push({
+      id: 'office',
+      title: 'Move into an office',
+      chainId: '',
+      chainName: '',
+      taskIds: ['ops_014'],
+      note: 'in-office — the real "Lease an office" corpus process (ops_014) joins the journey; a single committed process, not a curated chain',
+    })
+  }
   // Any PUBLIC launch runs the same real launch playbook — the venue options only name where
   // it aims (honesty: no invented corpus steps); Stealth mode ('no') skips the chain.
   if (choices.ph !== 'no')
@@ -685,6 +785,33 @@ export function unionTaskIds(chains: VsChain[]): string[] {
     }
   }
   return out
+}
+
+// ---------------------------------------------------------------------------
+// 'Which AI firm are you using' (founder batch 2026-09-30, item 7)
+// ---------------------------------------------------------------------------
+// The setup band's "I'm using" selector: REAL judged ai-assistants products only (the roster is
+// pinned against data/ai-assistants/products.json by tests — no grokbot exists there, so the
+// judged 'grok' entry carries the Grok option). The selection is a DISPLAY PIN on the
+// ai-assistants-mapped steps (the LLM-venue curation: steps whose judged step ranking lives in
+// the ai-assistants arena): the chosen assistant renders as 'your assistant' while the judged
+// top keeps its '(recommended · judged)' chip and score — no judged number ever moves, and the
+// pin never touches the outcome clock. Persisted in ?run= as the appended 'a' token
+// (lib/virtualStartupRun.ts — old links simply lack it).
+
+export const VS_AI_FIRM_IDS = ['chatgpt', 'claude', 'gemini', 'grok', 'muse'] as const
+export type VsAiFirmId = (typeof VS_AI_FIRM_IDS)[number]
+
+// The arena the pin applies to — a step is "an AI-conversation step" exactly when its judged
+// top pick was ranked in this arena (committed step-story mappings, resolved server-side).
+export const VS_AI_FIRM_ARENA = 'ai-assistants'
+
+// Serialized server-side (lib/virtualStartupData.ts buildVsAssistants): the judged product's
+// display name + whether a committed logo file exists.
+export interface VsAssistant {
+  id: string
+  name: string
+  hasLogo: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -907,6 +1034,12 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
         ? { label: 'ISO 27001 readiness', value: 'controls stood up on the SOC 2-lite corpus playbook · framework named: ISO 27001 (no dedicated ISO corpus steps)' }
         : { label: 'SOC 2 Type I', value: 'observation window opened · 0 failing controls' },
   ],
+  // Lease-an-office process (2026-09-30, item 5 — the 'office' workplace branch). No rng: a
+  // constant draft, so no other artifact's seeded stream ever shifts.
+  ops_014: ({ co }) => [{
+    label: 'Office lease',
+    value: `LOI → lease executed for ${co.name} HQ · deposit wired $0.00 (placeholder) · COI delivered`,
+  }],
   // Land-the-enterprise-deal playbook.
   comp_002: () => [{ label: 'SOC 2 Type II', value: 'report issued — observation window closed' }],
   comp_013: () => [{ label: 'Pen test', value: 'report delivered · 0 critical findings' }],

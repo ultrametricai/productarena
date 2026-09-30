@@ -21,6 +21,7 @@ import {
   DEFAULT_CHOICES,
   gateActive,
   presetById,
+  VS_AI_FIRM_IDS,
   type Choices,
   type JourneyPhase,
   type PresetId,
@@ -901,10 +902,21 @@ export interface VsRunState {
   picks: Record<string, string>
   // Event decisions (eventId → choiceId).
   eventChoices: Record<string, string>
+  // 'Which AI firm are you using' (2026-09-30, item 7): a judged ai-assistants product id from
+  // VS_AI_FIRM_IDS, or null for the judged pick. A DISPLAY PIN only — never the outcome clock.
+  // Appended codec token 'a'; old links simply lack it and decode to null.
+  assistant: string | null
   seed: number
 }
 
-// Combo ⇄ digit string, one option index per DECISIONS entry (order-stable, ~9 chars).
+// Appended-decision compat (2026-09-30, the 'remote' decision): DECISIONS only ever APPENDS, so
+// a digit string shorter than today's roster is an OLDER link, not garbage — its missing trailing
+// slots decode as unasserted/default and the journey composes exactly what the link always
+// composed. Anything shorter than the roster at codec-ship time (9 decisions, 2026-09-28) was
+// never emitted by any released codec and still rejects.
+const MIN_COMBO_LEN = 9
+
+// Combo ⇄ digit string, one option index per DECISIONS entry (order-stable, one char each).
 export function encodeCombo(choices: Choices): string {
   return DECISIONS.map((d) => {
     const i = d.options.findIndex((o) => o.value === choices[d.id])
@@ -913,9 +925,14 @@ export function encodeCombo(choices: Choices): string {
 }
 
 export function decodeCombo(raw: string): Choices | null {
-  if (raw.length !== DECISIONS.length) return null
+  if (raw.length < MIN_COMBO_LEN || raw.length > DECISIONS.length) return null
   const out: Partial<Record<keyof Choices, string>> = {}
   for (const [i, d] of DECISIONS.entries()) {
+    if (i >= raw.length) {
+      // An appended decision an older link predates — the default, exactly what it composed.
+      out[d.id] = DEFAULT_CHOICES[d.id]
+      continue
+    }
     const idx = raw.charCodeAt(i) - 48
     const opt = d.options[idx]
     if (!opt) return null
@@ -936,10 +953,11 @@ export function encodeAssertedCombo(asserted: AssertedChoices): string {
 }
 
 export function decodeAssertedCombo(raw: string): AssertedChoices | null {
-  if (raw.length !== DECISIONS.length) return null
+  if (raw.length < MIN_COMBO_LEN || raw.length > DECISIONS.length) return null
   const out: Partial<Record<keyof Choices, string>> = {}
   for (const [i, d] of DECISIONS.entries()) {
-    if (raw[i] === '.') continue
+    // Slots past an older link's end are unasserted — identical to the '.' it would have carried.
+    if (i >= raw.length || raw[i] === '.') continue
     const opt = d.options[raw.charCodeAt(i) - 48]
     if (!opt) return null
     out[d.id] = opt.value
@@ -1013,6 +1031,8 @@ export function encodeRunState(state: VsRunState): string {
   if (state.companyName) compact.n = sanitizeVsCompanyName(state.companyName)
   if (Object.keys(state.picks).length > 0) compact.k = state.picks
   if (Object.keys(state.eventChoices).length > 0) compact.e = state.eventChoices
+  // Appended token (2026-09-30, item 7) — older decoders never saw 'a'; ours defaults it null.
+  if (state.assistant) compact.a = state.assistant
   if (state.seed !== 0) compact.s = state.seed
   return toBase64Url(JSON.stringify(compact))
 }
@@ -1056,7 +1076,11 @@ export function decodeRunState(raw: string | null): VsRunState | null {
   const picks = o.k === undefined ? {} : isStringRecord(o.k) ? o.k : null
   const eventChoices = o.e === undefined ? {} : isStringRecord(o.e) ? o.e : null
   if (picks === null || eventChoices === null) return null
+  // The assistant pin (appended 'a' token): absent = null (every old link); anything that is not
+  // a current judged roster id rejects — the defensive-decode convention (preset precedent).
+  if (o.a !== undefined && (typeof o.a !== 'string' || !(VS_AI_FIRM_IDS as readonly string[]).includes(o.a))) return null
+  const assistant = typeof o.a === 'string' ? o.a : null
   const seed = o.s === undefined ? 0 : typeof o.s === 'number' && Number.isFinite(o.s) ? o.s : null
   if (seed === null) return null
-  return { choices, preset, yc: o.y === 1, founder, mode, companyName, picks, eventChoices, seed }
+  return { choices, preset, yc: o.y === 1, founder, mode, companyName, picks, eventChoices, assistant, seed }
 }

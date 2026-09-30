@@ -7,12 +7,20 @@
 import popularIds from '../data/popular-products.json'
 import { ACCESS_COLUMNS, bestAccessVerdict } from './accessGlyphs'
 import { loadCategory } from './data'
+import { hasLogo } from './logos'
 import { formatCompact } from './popularity'
 import { weeklyInstalls } from './popularRanking'
 import { ENTRY_PLAN_UNIT, isPricingUnavailable, loadPricing, PRICING_ARENAS, formatFactAmount, type PricingFact } from './pricing'
 import { loadProcesses } from './processes'
 import type { VendorRole } from './processSim'
-import { likelyChoiceOrder, type VsPopularityMap, type VsPopularityProduct } from './virtualStartup'
+import {
+  likelyChoiceOrder,
+  VS_AI_FIRM_ARENA,
+  VS_AI_FIRM_IDS,
+  type VsAssistant,
+  type VsPopularityMap,
+  type VsPopularityProduct,
+} from './virtualStartup'
 import type { VsAccessMap, VsAccessSurface, VsPricingInfo, VsPricingMap, VsVerdictKind } from './virtualStartupRun'
 
 // The canonical MCP/CLI agent-access verdicts for every swap option of every role — the exact
@@ -95,6 +103,19 @@ export function buildVsPricing(roles: VendorRole[], dir?: string): VsPricingMap 
     if (Object.keys(byProduct).length > 0) out[role.arenaId] = byProduct
   }
   return out
+}
+
+// 'Which AI firm are you using' roster (founder batch 2026-09-30, item 7): the VS_AI_FIRM_IDS
+// roster resolved against the JUDGED ai-assistants arena — real product names only, in roster
+// order, with the committed-logo flag. A roster id missing from the judged products would be a
+// data regression: fail the build loudly rather than render an unjudged option.
+export function buildVsAssistants(dir?: string): VsAssistant[] {
+  const data = loadCategory(VS_AI_FIRM_ARENA, dir)
+  return VS_AI_FIRM_IDS.map((id) => {
+    const p = data.products.find((x) => x.id === id)
+    if (!p) throw new Error(`virtual-startup: AI firm "${id}" missing from the judged ${VS_AI_FIRM_ARENA} roster`)
+    return { id, name: p.name, hasLogo: hasLogo(id) }
+  })
 }
 
 // The corpus risk axis (processes/corpus.json `risk`, 1–5) keyed by task id — the event engine's
