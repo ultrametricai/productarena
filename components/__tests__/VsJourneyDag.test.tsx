@@ -449,7 +449,7 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
       })
       // Completed run: the WHOLE traversed journey renders in the flow — all 13 nodes done,
       // every title still legible (fixed node size, no tiers).
-      expect(dagStates()).toHaveLength(13)
+      expect(dagStates()).toHaveLength(12) // the default run composes Basic minimums (item 8) — no compliance node
       expect(new Set(dagStates())).toEqual(new Set(['done']))
       for (const n of dagNodes()) expect(n.textContent!.length).toBeGreaterThan(1) // icon + title
     } finally {
@@ -493,6 +493,7 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
       compliance: 'later',
       enterprise: 'yes',
       ph: 'no',
+      remote: 'remote',
     }
     vi.useFakeTimers()
     try {

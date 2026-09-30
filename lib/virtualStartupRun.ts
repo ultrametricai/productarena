@@ -956,8 +956,15 @@ export function decodeAssertedCombo(raw: string): AssertedChoices | null {
   if (raw.length < MIN_COMBO_LEN || raw.length > DECISIONS.length) return null
   const out: Partial<Record<keyof Choices, string>> = {}
   for (const [i, d] of DECISIONS.entries()) {
-    // Slots past an older link's end are unasserted — identical to the '.' it would have carried.
-    if (i >= raw.length || raw[i] === '.') continue
+    // An explicit '.' is the sharer's 'Not set' and stays unasserted; a slot PAST the string's
+    // end is a decision the link PREDATES — it decodes asserted at its default, so a shared
+    // semi-auto link replays start-to-finish without being asked questions that didn't exist
+    // when it was shared (the composition is the default branch either way).
+    if (i >= raw.length) {
+      out[d.id] = DEFAULT_CHOICES[d.id]
+      continue
+    }
+    if (raw[i] === '.') continue
     const opt = d.options[raw.charCodeAt(i) - 48]
     if (!opt) return null
     out[d.id] = opt.value

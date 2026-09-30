@@ -36,6 +36,8 @@ interface GeoOption {
   code: string // testid suffix + compact trigger text
   name: string // the visible list label
   flag: string
+  // The honesty line — rendered as the option SUBLABEL inside the open list (the title= tooltips
+  // left the setup-band dropdowns 2026-09-30, item 3: they overlapped the open listboxes).
   title: string
 }
 
@@ -148,7 +150,6 @@ export default function VsGeoSelector({
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
         onClick={() => setOpen((v) => !v)}
-        title={current.title}
         className={`flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
           open
             ? 'border-emerald-400/60 bg-emerald-400/5 text-zinc-100'
@@ -167,7 +168,7 @@ export default function VsGeoSelector({
           role="listbox"
           id={listboxId}
           aria-label="Country view options"
-          className="absolute left-0 top-full z-30 mt-1 min-w-[160px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 w-[280px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           {OPTIONS.map((o) => {
             const active = value === o.choice
@@ -178,17 +179,23 @@ export default function VsGeoSelector({
                   type="button"
                   role="option"
                   aria-selected={active}
+                  aria-label={o.name}
                   data-testid={`vs-geo-${o.code.toLowerCase()}`}
-                  title={o.title}
                   onClick={() => apply(o.choice)}
-                  className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
+                  className={`flex w-full items-start gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
                     active
                       ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
                       : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
                   }`}
                 >
                   <span aria-hidden>{o.flag}</span>
-                  <span className="min-w-0 flex-1">{o.name}</span>
+                  <span className="min-w-0 flex-1">
+                    {o.name}
+                    {/* Sublabel (item 3, 2026-09-30): the honesty line the removed tooltip carried. */}
+                    <span data-testid="vs-geo-detail" className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
+                      {o.title}
+                    </span>
+                  </span>
                   {active && (
                     <span aria-hidden className="shrink-0 text-emerald-300">
                       ✓

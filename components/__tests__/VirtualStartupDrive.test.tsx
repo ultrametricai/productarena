@@ -9,8 +9,9 @@
 //     never inside the scrolled output;
 //   - a semi-auto run answered with the default values is byte-identical to the auto default run;
 //   - the ?run= permalink carries the drive mode + typed name and replays;
-//   - restart in semi-auto clears assertions back to 'Not set';
-//   - the manual pause/resume control stops and resumes the reveal in both modes.
+//   - restart in semi-auto clears assertions back to 'Not set'.
+// The title-bar manual pause control is GONE (founder batch 2026-09-30, item 2) — the primary
+// ⏹ Stop suffices; only semi-auto's decision pauses remain.
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
@@ -79,6 +80,7 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('hr_001', 'Hire first employee'),
     task('growth_010', 'Launch on Product Hunt & directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
+    task('ops_014', 'Lease an office'),
   ].map((t) => [t.id, t]),
 )
 
@@ -168,9 +170,12 @@ const DEFAULT_ANSWERS: Record<string, string> = {
   funding: 'seed',
   product: 'subscriptions',
   hire: 'yes',
+  // Compliance is DEFAULT-ASSERTED at 'basics' (item 8, 2026-09-30) — a default semi-auto run
+  // never asks it; the answer stays for runs that cleared it back to 'Not set'.
   compliance: 'now',
   enterprise: 'no',
   ph: 'yes',
+  remote: 'remote',
 }
 
 beforeEach(() => {
@@ -276,7 +281,7 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     const build = within(body).getByText('Build & ship v1')
     expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     // The in-run picks asserted their decisions — the dropdowns synced (spot check).
-    expect(screen.getByTestId('vs-decision-team').getAttribute('title')).toContain('Cofounders')
+    expect(screen.getByTestId('vs-decision-team').getAttribute('aria-label')).toContain('Cofounders')
   })
 
   it('a semi-auto run answered with the DEFAULT values prints byte-identical rows to the auto default run', () => {
@@ -305,8 +310,8 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     expect(screen.queryByText('Founder agreement & equity split')).toBeNull()
     expect(screen.queryByText('Raise pre-seed (SAFEs)')).toBeNull()
     // Every decision the run asked is now asserted — the dropdowns synced.
-    expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('LLC')
-    expect(screen.getByTestId('vs-decision-team').getAttribute('title')).toContain('Solo founder')
+    expect(screen.getByTestId('vs-decision-entity').getAttribute('aria-label')).toContain('LLC')
+    expect(screen.getByTestId('vs-decision-team').getAttribute('aria-label')).toContain('Solo founder')
   })
 
   it('restart in semi-auto clears assertions back to Not set (default-asserted entity resets to asserted), and asks again', () => {
@@ -314,7 +319,7 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     clearEntity()
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd(DEFAULT_ANSWERS, 'Rocket Co')
-    expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('Delaware C-Corp')
+    expect(screen.getByTestId('vs-decision-entity').getAttribute('aria-label')).toContain('Delaware C-Corp')
     // Restart: everything back to Not set — except DEFAULT-ASSERTED entity, which resets to
     // its asserted default (never to 'Not set') — and the first card returns.
     vi.useFakeTimers()
@@ -384,6 +389,7 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
       choices: {
         entity: 'llc', funding: 'bootstrap', product: 'invoices', team: 'solo',
         ordering: 'build-first', hire: 'no', compliance: 'later', enterprise: 'no', ph: 'no',
+        remote: 'remote',
       },
       preset: null,
       yc: false,
@@ -392,6 +398,7 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
       companyName: 'Replayed Co',
       picks: {},
       eventChoices: {},
+      assistant: null,
       seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)
@@ -405,8 +412,8 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
   })
 })
 
-describe('the manual pause/resume control (both modes)', () => {
-  it('pause freezes the reveal (status: paused), resume continues to completion', () => {
+describe('the title-bar pause control is gone (founder batch 2026-09-30, item 2)', () => {
+  it('no pause affordance in either mode — ⏹ Stop halts the reveal and the status goes quiet; semi-auto decision pauses still work (covered above)', () => {
     renderIt()
     vi.useFakeTimers()
     try {
@@ -416,22 +423,16 @@ describe('the manual pause/resume control (both modes)', () => {
       })
       const printed = () => screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML
       expect(screen.getByTestId('vs-terminal-status').textContent).toBe('running…')
-      fireEvent.click(screen.getByTestId('vs-terminal-pause'))
-      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('paused')
+      expect(screen.queryByTestId('vs-terminal-pause')).toBeNull()
+      expect(screen.queryByText(/^paused$/i)).toBeNull()
+      // ⏹ Stop (the primary button while running) halts the reveal.
+      fireEvent.click(screen.getByRole('button', { name: /stop/i }))
       const frozen = printed()
       act(() => {
         vi.advanceTimersByTime(240 * 10)
       })
-      expect(printed()).toBe(frozen) // nothing advances while paused
-      fireEvent.click(screen.getByTestId('vs-terminal-pause')) // resume
-      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('running…')
-      act(() => {
-        vi.runAllTimers()
-      })
-      expect(isDone()).toBe(true)
-      // No completion label — the status simply goes quiet, and the control disappears.
+      expect(printed()).toBe(frozen)
       expect(screen.getByTestId('vs-terminal-status').textContent).toBe('')
-      expect(screen.queryByTestId('vs-terminal-pause')).toBeNull()
     } finally {
       vi.useRealTimers()
     }

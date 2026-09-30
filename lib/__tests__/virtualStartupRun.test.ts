@@ -612,10 +612,12 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     const nine = encodeCombo(DEFAULT_CHOICES).slice(0, 9)
     expect(nine).toHaveLength(9)
     expect(decodeCombo(nine)).toEqual(DEFAULT_CHOICES) // remote pads to its default
-    // A v2-era 9-char dotted string: the missing slot decodes unasserted (identical to '.').
-    expect(decodeAssertedCombo('.'.repeat(9))).toEqual({})
+    // A v2-era 9-char dotted string: the slot the link PREDATES decodes asserted at its default
+    // (a shared semi link replays without being asked a question that didn't exist), while the
+    // explicit '.' slots stay unasserted.
+    expect(decodeAssertedCombo('.'.repeat(9))).toEqual({ remote: 'remote' })
     const withEntity = `1${'.'.repeat(8)}`
-    expect(decodeAssertedCombo(withEntity)).toEqual({ entity: 'llc' })
+    expect(decodeAssertedCombo(withEntity)).toEqual({ entity: 'llc', remote: 'remote' })
     // Shorter than any released codec, or longer than today's roster: reject.
     expect(decodeCombo('00000000')).toBeNull()
     expect(decodeAssertedCombo('........')).toBeNull()
@@ -623,7 +625,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     // …and a whole 9-slot v2 ?run= payload decodes end to end (the shipped-link shape).
     const legacyRun = tamper({ v: 2, c: `1${'.'.repeat(8)}`, k: { payments: 'square' } })
     expect(legacyRun).not.toBeNull()
-    expect(legacyRun!.choices).toEqual({ entity: 'llc' })
+    expect(legacyRun!.choices).toEqual({ entity: 'llc', remote: 'remote' })
     expect(legacyRun!.assistant).toBeNull() // pre-item-7 links carry no 'a' token
   })
 

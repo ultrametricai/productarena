@@ -19,6 +19,11 @@ import { DEFAULT_CHOICES, type DecisionDef } from '@/lib/virtualStartup'
 // non-interactive — a plain uppercase micro-label with a colon, muted, no pill border — while
 // the trigger keeps the button/pill affordance. Accessible names stay canonical: the group is
 // aria-label={decision.title}, each option's accessible name is its full canonical label.
+//
+// NO title= tooltips on the trigger or the options (founder batch 2026-09-30, item 3: the
+// tooltips overlapped the open listboxes). The corpus-mapping receipt each option's tooltip
+// carried now renders as a muted SUBLABEL inside the open list (option.detail — the honest
+// mapping stays one click away, never lost); aria-labels stay for accessibility.
 export default function VsDecisionSelect({
   decision,
   shortTitle,
@@ -96,7 +101,7 @@ export default function VsDecisionSelect({
     >
       <IconChip icon={icon} title={`${decision.title} — starting decision`} className="text-[11px]" />
       {/* Non-interactive micro-label: muted, colon, no pill — visibly not a button. */}
-      <span className="text-[10px] uppercase tracking-wider text-zinc-500">{shortTitle}:</span>
+      <span className="text-[10px] uppercase tracking-wider text-zinc-400">{shortTitle}:</span>
       <button
         ref={triggerRef}
         type="button"
@@ -105,17 +110,17 @@ export default function VsDecisionSelect({
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
         onClick={() => setOpen((v) => !v)}
-        title={
+        aria-label={
           current
-            ? `${decision.title}: ${current.label} — ${current.detail}`
-            : `${decision.title}: not set — the run composes the default branch (${defaultOption.label})`
+            ? `${decision.title}: ${current.label}`
+            : `${decision.title}: not set — composes the default (${defaultOption.label})`
         }
         className={`flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
           open
             ? 'border-emerald-400/60 bg-emerald-400/5 text-zinc-100'
             : current
               ? 'border-zinc-700 text-zinc-200 hover:border-emerald-400/50'
-              : 'border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
+              : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
         }`}
       >
         {current ? shortOptions[current.value] ?? current.label : 'Not set'}
@@ -129,7 +134,7 @@ export default function VsDecisionSelect({
           role="listbox"
           id={listboxId}
           aria-label={`${decision.title} options`}
-          className="absolute left-0 top-full z-30 mt-1 min-w-[240px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 w-[300px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           <li role="presentation">
             <button
@@ -137,16 +142,22 @@ export default function VsDecisionSelect({
               type="button"
               role="option"
               aria-selected={current === null}
+              aria-label={`Not set (default: ${defaultOption.label})`}
               data-testid={`vs-decision-${decision.id}-notset`}
-              title={`Leave ${decision.title} unasserted — the journey composes the default branch and the run link omits it`}
               onClick={() => pick(null)}
-              className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
+              className={`flex w-full items-start gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
                 current === null
                   ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
                   : 'border-transparent text-zinc-400 hover:bg-emerald-400/10 hover:text-emerald-300'
               }`}
             >
-              <span className="min-w-0 flex-1">Not set (default: {defaultOption.label})</span>
+              <span className="min-w-0 flex-1">
+                Not set (default: {defaultOption.label})
+                {/* Sublabel (item 3): what unasserted means — composes the default, out of the URL. */}
+                <span className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
+                  leaves the decision unasserted — the journey composes the default branch and the run link omits it
+                </span>
+              </span>
               {current === null && (
                 <span aria-hidden className="shrink-0 text-emerald-300">
                   ✓
@@ -163,16 +174,23 @@ export default function VsDecisionSelect({
                   type="button"
                   role="option"
                   aria-selected={active}
+                  aria-label={o.label}
                   data-testid={`vs-decision-${decision.id}-${o.value}`}
-                  title={`${o.label} — ${o.detail}`}
                   onClick={() => pick(o.value)}
-                  className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
+                  className={`flex w-full items-start gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
                     active
                       ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
                       : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
                   }`}
                 >
-                  <span className="min-w-0 flex-1">{o.label}</span>
+                  <span className="min-w-0 flex-1">
+                    {o.label}
+                    {/* Sublabel (item 3): the option's corpus-mapping receipt, moved here from
+                        the removed tooltip — the honesty line stays visible in the list. */}
+                    <span data-testid="vs-option-detail" className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
+                      {o.detail}
+                    </span>
+                  </span>
                   {active && (
                     <span aria-hidden className="shrink-0 text-emerald-300">
                       ✓
