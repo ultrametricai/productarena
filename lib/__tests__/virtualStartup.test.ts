@@ -907,8 +907,8 @@ describe("'Likely choice' ordering (round 5, item 7) — committed signals, pres
   })
 })
 
-describe('repo CTA beside the title (round 5, item 6)', () => {
-  it('the page carries the GitHub-mark CTA to the open startup repo, new tab, right of the h1', () => {
+describe('repo CTA on the right side of the page (round 5 item 6; moved right founder 2026-09-30)', () => {
+  it('the page carries the GitHub-mark CTA to the open startup repo, new tab, pushed to the right edge', () => {
     const src = readFileSync(path.resolve(__dirname, '../../app/virtual-startup/page.tsx'), 'utf8')
     expect(src).toContain('data-testid="vs-repo-cta"')
     expect(src).toContain('href="https://github.com/ultrametricai/ultrametric"')
@@ -918,9 +918,12 @@ describe('repo CTA beside the title (round 5, item 6)', () => {
     expect(cta).toContain('target="_blank"')
     expect(cta).toContain('rel="noopener noreferrer"')
     expect(cta).toContain('<svg aria-hidden')
-    // Beside the title: the CTA sits in the same section as (and after) the h1.
+    // Founder 2026-09-30: the CTA moved to the RIGHT side of the page — it still lives in the
+    // header row after the h1, but ml-auto pushes it to the far edge of the flex section.
     expect(src.indexOf('The open startup simulator</h1>')).toBeGreaterThan(-1)
     expect(src.indexOf('vs-repo-cta')).toBeGreaterThan(src.indexOf('The open startup simulator</h1>'))
+    const ctaClass = cta.slice(0, cta.indexOf('>'))
+    expect(ctaClass).toContain('ml-auto')
   })
 })
 

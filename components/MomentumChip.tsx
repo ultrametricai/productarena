@@ -11,6 +11,10 @@ import type { Popularity } from '@/lib/schemas'
 // of empty products doesn't turn into a wall of muted placeholder text. The full-size variant
 // (product page header) instead renders a muted "no public signals" so a reader doesn't wonder
 // whether the chip failed to load.
+//
+// PyPI installs render only in the full-size variant (founder 2026-09-30: no PyPI data in the
+// ranking tables — compact IS the ranking-table variant). The data stays committed and still
+// shows on product pages; a pypi-only record counts as no signal in compact mode.
 export default function MomentumChip({
   popularity,
   compact = false,
@@ -18,7 +22,10 @@ export default function MomentumChip({
   popularity: Popularity | undefined
   compact?: boolean
 }) {
-  if (!hasSignal(popularity)) {
+  const compactSignal =
+    popularity !== undefined &&
+    (popularity.stars !== undefined || popularity.starsPerYear !== undefined || popularity.npmWeekly !== undefined)
+  if (!hasSignal(popularity) || (compact && !compactSignal)) {
     if (compact) return null
     return (
       <span className="text-xs text-zinc-500" title="No adoption signal found on public registries (GitHub stars, npm/PyPI installs) — absence of a public repo, not a judgment">
@@ -38,7 +45,7 @@ export default function MomentumChip({
         <span className="text-emerald-400">▲ {formatCompact(popularity.starsPerYear)}/yr</span>
       )}
       {popularity.npmWeekly !== undefined && <span>npm {formatCompact(popularity.npmWeekly)}/wk</span>}
-      {popularity.pypiWeekly !== undefined && <span>pypi {formatCompact(popularity.pypiWeekly)}/wk</span>}
+      {!compact && popularity.pypiWeekly !== undefined && <span>pypi {formatCompact(popularity.pypiWeekly)}/wk</span>}
     </span>
   )
 }

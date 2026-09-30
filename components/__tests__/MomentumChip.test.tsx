@@ -15,9 +15,24 @@ describe('MomentumChip', () => {
     expect(screen.getByText('npm 890k/wk')).toBeDefined()
   })
 
-  it('renders pypi weekly downloads', () => {
+  it('renders pypi weekly downloads in the full-size (product page) variant only', () => {
     render(<MomentumChip popularity={{ pypiWeekly: 520_890, fetchedAt: '2026-08-27T00:00:00.000Z' }} />)
     expect(screen.getByText('pypi 520.9k/wk')).toBeDefined()
+  })
+
+  it('compact (ranking tables) never renders pypi — even alongside other signals (founder 2026-09-30)', () => {
+    const { container } = render(
+      <MomentumChip popularity={{ stars: 1_200, pypiWeekly: 520_890, fetchedAt: '2026-08-27T00:00:00.000Z' }} compact />,
+    )
+    expect(container.textContent).toContain('★ 1.2k')
+    expect(container.textContent).not.toContain('pypi')
+  })
+
+  it('compact renders nothing at all for a pypi-only record (no empty hoverable shell)', () => {
+    const { container } = render(
+      <MomentumChip popularity={{ pypiWeekly: 520_890, fetchedAt: '2026-08-27T00:00:00.000Z' }} compact />,
+    )
+    expect(container.innerHTML).toBe('')
   })
 
   it('renders nothing (compact) when there is no signal', () => {
