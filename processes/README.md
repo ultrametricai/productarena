@@ -60,6 +60,34 @@ Every step carries a route: `agent` (an agent can run it), `form` (a manual web 
 API), `person` (human judgment or computer use), and `person` steps can additionally be marked
 `legalSignature` — the true human floor, a legally required signature/attestation.
 
+## Reversibility
+
+Every process AND every step carries a required `reversibility` tier (founder ask 2026-09-30:
+map what is irreversible, reversible, and "irreversible with pain"). The judgment test is
+**"what does undoing actually take"** — never how risky or annoying the work is (that's `risk`
+/ `annoyance`):
+
+- **`reversible`** — freely undoable: drafts, configs, most SaaS setup, waits on third
+  parties, internal governance paper a later consent supersedes. A routine external send whose
+  correction costs nothing (a follow-up email) is reversible in practice.
+- **`painful`** — irreversible with pain: undoable at real cost. Incorporating in the wrong
+  state (re-domestication), entity conversion, switching payroll providers mid-year, migrating
+  banks, breaking a lease, renaming the company, walking back a public announcement, unwinding
+  an executed contract, withdrawing a government registration.
+- **`irreversible`** — cannot be undone: dissolution filed, an 83(b) election filed (the
+  missed window never reopens), equity issued and accepted, a wire sent, a refund processed,
+  an employee terminated.
+
+Curation rules: classify the **step's own act** — a "Receive the certificate" step commits
+nothing (reversible) even though the filing before it did; a "Sign the X" step is reversible
+while the paper is unfiled and unaccepted (the signed-but-unfiled 83(b)), and binding once
+executed and accepted. The two levels are curated independently: a *painful* process can
+contain one truly *irreversible* filing step (Incorporate C-Corp — the entity can be
+dissolved, the filed 83(b) cannot be unfiled), and an *irreversible* process is mostly
+reversible steps until the wire goes out. Irreversible is deliberately rare at both levels —
+totality and distribution are pinned by `lib/__tests__/reversibility.test.ts`. No zod default
+exists: an unclassified process or step fails the corpus parse.
+
 ## A real process DAG
 
 This is `form_001` (Incorporate C-Corp) exactly as committed in `corpus.json` at

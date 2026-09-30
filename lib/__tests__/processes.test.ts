@@ -19,6 +19,7 @@ const node = (over: Partial<DagNode>): DagNode => ({
   id: 'n1',
   label: 'step',
   route: 'agent',
+  reversibility: 'reversible',
   estimatedMinutes: 5,
   ...over,
 })

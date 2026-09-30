@@ -18,7 +18,7 @@
 import { hasLogo } from './logos'
 import {
   computeCeiling, loadProcesses, stepVendorOptions, vendorChipInfo,
-  type DagNode, type StepMethod,
+  type DagNode, type DagSubStep, type StepMethod,
 } from './processes'
 import type { StepMethodChipView, StepMethodSubStepView, StepMethodView } from './stepMethods'
 
@@ -40,7 +40,7 @@ function chipsFor(
   return infos.map((c) => ({ ...c, hasLogo: hasLogo(c.productId ?? c.vendor) }))
 }
 
-function subStepView(s: DagNode, dir?: string): StepMethodSubStepView {
+function subStepView(s: DagSubStep, dir?: string): StepMethodSubStepView {
   return {
     id: s.id,
     label: s.label,
