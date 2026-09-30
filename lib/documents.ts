@@ -7,7 +7,15 @@ import path from 'node:path'
 // testable; no network I/O — URL liveness is an editorial duty recorded via checked_on.
 // Policy enforced socially, stated here for the record: link, never redistribute the documents.
 
-export const DOCUMENT_USE_CASES = ['formation', 'fundraising', 'hiring', 'commercial', 'governance'] as const
+export const DOCUMENT_USE_CASES = [
+  'formation',
+  'fundraising',
+  'hiring',
+  'commercial',
+  'governance',
+  'privacy',
+  'open-source',
+] as const
 export type DocumentUseCase = (typeof DOCUMENT_USE_CASES)[number]
 
 export const DOCUMENT_FORMATS = ['web-page', 'pdf', 'docx', 'xlsx', 'doc-generator', 'mixed'] as const
@@ -29,6 +37,8 @@ export interface OpenDocument {
 
 export interface DocumentRegistry {
   updated_on: string
+  /** The registry's stated review window: every checked_on must fall within this many days before updated_on. */
+  review_window_days: number
   documents: OpenDocument[]
 }
 
@@ -42,6 +52,9 @@ function isIsoDate(value: string): boolean {
 export function validateDocumentRegistry(doc: DocumentRegistry, asOf: Date): string[] {
   const errors: string[] = []
   if (!isIsoDate(doc.updated_on)) errors.push(`registry.updated_on: invalid ISO date ${JSON.stringify(doc.updated_on)}`)
+  if (!Number.isInteger(doc.review_window_days) || doc.review_window_days <= 0) {
+    errors.push(`registry.review_window_days: must be a positive integer, got ${JSON.stringify(doc.review_window_days)}`)
+  }
   if (!Array.isArray(doc.documents) || doc.documents.length === 0) {
     errors.push('registry: no documents')
     return errors
@@ -61,7 +74,19 @@ export function validateDocumentRegistry(doc: DocumentRegistry, asOf: Date): str
     if (!DOCUMENT_USE_CASES.includes(d.use_case)) errors.push(`${where}: unknown use_case ${JSON.stringify(d.use_case)}`)
     if (!DOCUMENT_FORMATS.includes(d.format)) errors.push(`${where}: unknown format ${JSON.stringify(d.format)}`)
     if (typeof d.checked_on !== 'string' || !isIsoDate(d.checked_on)) errors.push(`${where}: invalid checked_on`)
-    else if (new Date(`${d.checked_on}T00:00:00Z`) > asOf) errors.push(`${where}: checked_on is in the future`)
+    else {
+      if (new Date(`${d.checked_on}T00:00:00Z`) > asOf) errors.push(`${where}: checked_on is in the future`)
+      // Currency invariant: a record's liveness check may not be older than the registry's
+      // stated review window — a stale checked_on means the URL is due for re-verification.
+      if (isIsoDate(doc.updated_on) && Number.isInteger(doc.review_window_days) && doc.review_window_days > 0) {
+        const ageDays =
+          (new Date(`${doc.updated_on}T00:00:00Z`).getTime() - new Date(`${d.checked_on}T00:00:00Z`).getTime()) /
+          86_400_000
+        if (ageDays > doc.review_window_days) {
+          errors.push(`${where}: checked_on ${d.checked_on} is outside the ${doc.review_window_days}-day review window`)
+        }
+      }
+    }
   }
   return errors
 }
