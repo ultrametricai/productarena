@@ -124,23 +124,46 @@ export function serializeGeo(selection: GeoSelection | null): string | null {
 
 // ---------------------------------------------------------------------------------------------
 // The per-tab store. Module-level state in the client bundle: every subscriber sees the same
-// selection, GeoSwitcher is the only writer, and the server render never touches it (each
-// consumer starts from the US default and syncs in its mount effect — the client-
+// selection, GeoSwitcher/GeoDropdown are the only writers, and the server render never touches
+// it (each consumer starts from the US default and syncs in its mount effect — the client-
 // personalization contract).
+//
+// Since the founder's global-mode ask (2026-09-30: "add a Global option — the process in its
+// country-agnostic form") the store carries the full GeoChoice: countries AND the explicit
+// 'GLOBAL'. Back-compat is structural, not hopeful — getGeoSelection() maps GLOBAL to null, so
+// every country-consumer (banner marks, vendor annotations, index glyphs, the step-method geo
+// auto-preselect) sees exactly the geo-neutral state it always did; only the explicitly
+// global-aware consumers (ProcessGeoBanner, ProcessGeoNotes, JurisdictionToggle) read the
+// choice level via getGeoChoice().
+//
+// TODO(sim lane): components/VsGeoSelector.tsx still maps its Global pick to the null store
+// state (its documented pre-global-store contract). Once that lane adopts setGeoChoice, a
+// Global pick in the sim and on process pages will share one store state.
 
 type Listener = () => void
-let selection: GeoSelection | null = null
+let choice: GeoChoice | null = null
 const listeners = new Set<Listener>()
 
+/** The country view of the store — GLOBAL reads as null (geo-neutral), the historic contract. */
 export function getGeoSelection(): GeoSelection | null {
-  return selection
+  return choice === GEO_GLOBAL ? null : choice
 }
 
-/** Set + notify. GeoSwitcher owns the URL/localStorage writes; this is state fan-out only. */
-export function setGeoSelection(next: GeoSelection | null): void {
-  if (selection === next) return
-  selection = next
+/** The full choice: a country, the explicit 'GLOBAL', or null (the US default). */
+export function getGeoChoice(): GeoChoice | null {
+  return choice
+}
+
+/** Set + notify. The switchers own the URL/localStorage writes; this is state fan-out only. */
+export function setGeoChoice(next: GeoChoice | null): void {
+  if (choice === next) return
+  choice = next
   for (const l of listeners) l()
+}
+
+/** Country-only setter — kept for existing callers; identical semantics to setGeoChoice. */
+export function setGeoSelection(next: GeoSelection | null): void {
+  setGeoChoice(next)
 }
 
 export function subscribeGeoSelection(listener: Listener): () => void {

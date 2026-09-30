@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import GeoStepMark from '@/components/GeoStepMark'
+import { useGeoChoice } from '@/components/useGeoSelection'
+import { GEO_GLOBAL } from '@/lib/geoPreference'
 import {
   activeJurisdictionSteps,
   ceilingWithJurisdictions,
@@ -54,6 +56,10 @@ export default function JurisdictionToggle({
   base: { agentSteps: number; totalSteps: number; pct: number }
 }) {
   const [active, setActive] = useState<Jurisdiction[]>([])
+  // The shared geo choice — under the explicit 🌐 Global lens (founder 2026-09-30) this whole
+  // control disappears (see below): jurisdiction branching is a US-states concept, i.e. exactly
+  // the country-conditional detail the global view hides.
+  const geoChoice = useGeoChoice()
   /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
      and the stored preference (external systems). The static HTML must render the Delaware-only
      default, so this cannot be a useState initializer (hydration mismatch); it runs once and
@@ -65,6 +71,12 @@ export default function JurisdictionToggle({
     // Mount-only: the URL (else the stored copy) is the INITIAL view.
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // 🌐 Global: render NOTHING — the jurisdiction-conditional steps (jca1/jmu1 …) and their
+  // pills are country-specific by definition. Client-side only (the hook is null in the static
+  // HTML and for the US default, so the default page stays byte-identical); a manual country
+  // pick — or clearing back to the US default — restores the control unchanged.
+  if (geoChoice === GEO_GLOBAL) return null
 
   const apply = (next: Jurisdiction[]) => {
     const canonical = JURISDICTIONS.filter((j) => next.includes(j))

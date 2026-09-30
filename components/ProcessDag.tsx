@@ -22,6 +22,7 @@ import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 import { crossArenaStepRankings, stepRanking, type StepCite, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
+import { VERDICT_FACTORS } from '@/lib/scoring'
 import { buildStepMethodViews } from '@/lib/stepMethodData'
 import { stepMethodNodeKey } from '@/lib/stepMethods'
 import { stepPromptFor } from '@/lib/stepPrompts'
@@ -297,8 +298,10 @@ function StepRankingRow({
         <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3 text-[11px] text-zinc-500">
           <p>
             Score = story-weighted verdicts on the stories mapped to this step
-            (full=1, partial=0.6, disputed=0.3, none=0 · n/a excluded) — every number below traces
-            to a judged verdict on the vendor&rsquo;s product page.
+            {/* Interpolated from lib/scoring.ts VERDICT_FACTORS (SSOT audit 2026-09-30) — the
+                prose can never drift from the weights the recompute actually uses. */}
+            {` (full=${VERDICT_FACTORS.full}, partial=${VERDICT_FACTORS.partial}, disputed=${VERDICT_FACTORS.disputed}, none=${VERDICT_FACTORS.none} · n/a excluded)`}{' '}
+            — every number below traces to a judged verdict on the vendor&rsquo;s product page.
             {extras.length > 0
               && ' Cross-arena vendors are scored on THEIR arena’s mapped stories and appear only with at least one judged full/partial verdict.'}
           </p>

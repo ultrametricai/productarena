@@ -647,177 +647,73 @@ export function gapThemes(tasks: ProcessTask[]): GapTheme[] {
 }
 
 // ---------------------------------------------------------------------------
-// Vendor -> arena mapping (internal links + swap options)
+// Vendor registry (processes/vendor-registry.json) — arena links, labels, product ids, signup URLs
 // ---------------------------------------------------------------------------
+
+// Single source of truth for vendor FACTS (SSOT migration, founder audit 2026-09-30: "verify
+// everything rendered on /processes is driven from the open repo corpus"): which arena judges a
+// corpus vendor, its display label where title-casing the key misfires, its judged product id
+// where it differs from the key, and its verified-live start-here page all live in the open
+// corpus file processes/vendor-registry.json — keyed by corpus vendor key (snake_case, the same
+// keys corpus.json uses in vendor/vendorOptions) — not in TypeScript. The exports below are
+// READ BACK from that file with their historic shapes, so every consumer (processRows,
+// vendorProcesses, tryit, everything, opsCoverage, operating-rhythm, pipeline scripts) is
+// unchanged, and the honesty invariants are now data-testable: a mapped vendor resolves (via
+// vendorProductId) to a real product in its arena (lib/__tests__/processes.test.ts), every
+// signupUrl was verified reachable before listing, and a vendor deliberately without one is
+// simply absent with the reason carried in `note` — no link fabricated. Published schema:
+// schemas/process-vendor-registry.schema.json (generated, drift-tested).
+export const VendorRegistryEntrySchema = z
+  .object({
+    // Display name, only where title-casing the key misfires (GitHub, IRS, incident.io, …).
+    label: z.string().min(1).optional(),
+    // The live arena that judges this vendor; absent = an honest unlinked chip.
+    arenaId: z.string().min(1).optional(),
+    // The judged product id where it differs beyond snake_case → kebab-case normalization.
+    productId: z.string().min(1).optional(),
+    // The vendor's own start-here page — verified reachable before listing, never fabricated.
+    signupUrl: z.string().url().optional(),
+    // Honest curation context (e.g. why a vendor deliberately carries no signupUrl).
+    note: z.string().min(1).optional(),
+  })
+  .strict()
+export type VendorRegistryEntry = z.infer<typeof VendorRegistryEntrySchema>
+
+export const VendorRegistrySchema = z
+  .object({
+    $comment: z.string().optional(),
+    vendors: z.record(z.string().regex(/^[a-z0-9]+(_[a-z0-9]+)*$/), VendorRegistryEntrySchema),
+  })
+  .strict()
+
+const vendorRegistryFile = () => path.join(process.cwd(), 'processes', 'vendor-registry.json')
+let vendorRegistryCache: Record<string, VendorRegistryEntry> | null = null
+export function loadVendorRegistry(): Record<string, VendorRegistryEntry> {
+  if (!vendorRegistryCache) {
+    vendorRegistryCache = VendorRegistrySchema.parse(
+      JSON.parse(fs.readFileSync(vendorRegistryFile(), 'utf8')),
+    ).vendors
+  }
+  return vendorRegistryCache
+}
+
+function registryField(field: 'label' | 'arenaId' | 'productId' | 'signupUrl'): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const [vendor, entry] of Object.entries(loadVendorRegistry())) {
+    const value = entry[field]
+    if (value) out[vendor] = value
+  }
+  return out
+}
 
 // Corpus vendor key -> categories.json arena id, for vendors we actually rank. A mapped vendor's
 // product id is vendorProductId(key) — usually the key itself, snake_case normalized to the
 // site's kebab-case product ids (stripe_atlas → stripe-atlas), verified against real product ids
 // by lib/__tests__/processes tests — so the DAG's canonical vendor resolves to a product page.
-export const VENDOR_ARENA: Record<string, string> = {
-  gusto: 'payroll',
-  rippling: 'payroll',
-  deel: 'payroll',
-  justworks: 'payroll',
-  mercury: 'startup-banking',
-  brex: 'startup-banking',
-  ramp: 'startup-banking',
-  relay: 'startup-banking',
-  stripe: 'payments',
-  quickbooks: 'accounting',
-  xero: 'accounting',
-  pilot: 'accounting',
-  linear: 'project-management',
-  asana: 'project-management',
-  notion: 'project-management',
-  github: 'code-hosting',
-  slack: 'team-chat',
-  hubspot: 'crm',
-  attio: 'crm',
-  salesforce: 'crm',
-  posthog: 'product-analytics',
-  amplitude: 'product-analytics',
-  mixpanel: 'product-analytics',
-  vercel: 'edge-platforms',
-  cloudflare: 'edge-platforms',
-  supabase: 'backend-as-a-service',
-  firebase: 'backend-as-a-service',
-  // Formation & legal paperwork — judged in legal-ops.
-  clerky: 'legal-ops',
-  stripe_atlas: 'legal-ops',
-  firstbase: 'legal-ops',
-  legalzoom: 'legal-ops',
-  docusign: 'legal-ops',
-  // Lifecycle email to users — judged in email-marketing.
-  mailchimp: 'email-marketing',
-  // Domain email + connect-a-vendor steps (founder 2026-09-18 vendor-cell fill).
-  fastmail: 'email',
-  composio: 'mcp-infrastructure',
-  smithery: 'mcp-infrastructure',
-  // Cap table & option grants.
-  carta: 'equity-management',
-  pulley: 'equity-management',
-  // Ops tooling that founder processes lean on.
-  calendly: 'scheduling',
-  sentry: 'observability',
-  pagerduty: 'incident-management',
-  segment: 'customer-data-platforms',
-  snowflake: 'data-warehouses',
-  intercom: 'ai-support-agents',
-  // Site generation options (launch-website chain).
-  lovable: 'vibe-coding',
-  v0: 'vibe-coding',
-  bolt: 'vibe-coding',
-  // The software-making loop (ship-a-feature / cut-a-release processes).
-  claude_code: 'ai-coding',
-  codex: 'ai-coding',
-  cursor: 'ai-coding',
-  coderabbit: 'ai-code-review',
-  greptile: 'ai-code-review',
-  cursor_bugbot: 'ai-code-review',
-  datadog: 'observability',
-  // Sales-tax nexus & registration (tax_011) — judged in tax-automation.
-  stripe_tax: 'tax-automation',
-  avalara: 'tax-automation',
-  taxjar: 'tax-automation',
-  anrok: 'tax-automation',
-  // Incident postmortems & status pages (prod_010 / prod_011).
-  incident_io: 'incident-management',
-  betterstack: 'incident-management',
-  // Lifecycle email for pricing-change / win-back campaigns (growth_014 / growth_015).
-  loops: 'email-marketing',
-  customer_io: 'email-marketing',
-  // Billing plan changes (growth_014) — judged in billing-subscriptions.
-  stripe_billing: 'billing-subscriptions',
-  chargebee: 'billing-subscriptions',
-  recurly: 'billing-subscriptions',
-  // Make-the-repo-agent-ready (sw_010) — the agent-skills market.
-  superpowers: 'agent-skills',
-  gstack: 'agent-skills',
-  skills_cli: 'agent-skills',
-  // 2026-09-22 wave-3 vendor-cell fill: refunds run on every processor, not just Stripe.
-  square: 'payments',
-  paypal: 'payments',
-  // Brand palette work (brand_003) — judged in design-tools.
-  figma: 'design-tools',
-  canva: 'design-tools',
-  penpot: 'design-tools',
-  // Workspace-user provisioning via SSO/SCIM (opp_007) — judged in auth-platforms.
-  workos: 'auth-platforms',
-  auth0: 'auth-platforms',
-  // 2026-09-22 wave-5: the compliance/ATS/registrar/IdP markets graduated from untracked
-  // chips to live arenas (launch-audit wave 5).
-  vanta: 'compliance-automation',
-  drata: 'compliance-automation',
-  secureframe: 'compliance-automation',
-  oneleet: 'compliance-automation',
-  sprinto: 'compliance-automation',
-  thoropass: 'compliance-automation',
-  lever: 'applicant-tracking',
-  greenhouse: 'applicant-tracking',
-  ashby: 'applicant-tracking',
-  workable: 'applicant-tracking',
-  recruitee: 'applicant-tracking',
-  namecheap: 'domain-registrars',
-  name_com: 'domain-registrars',
-  porkbun: 'domain-registrars',
-  // Cloudflare's registrar product competes here under its own scoped id — the edge platform
-  // keeps the bare `cloudflare` key (same family/sub-product precedent as stripe_billing).
-  cloudflare_registrar: 'domain-registrars',
-  godaddy: 'domain-registrars',
-  dynadot: 'domain-registrars',
-  okta: 'sso-identity',
-  jumpcloud: 'sso-identity',
-  microsoft_entra: 'sso-identity',
-  google_workspace: 'sso-identity',
-  rippling_it: 'sso-identity',
-  // 2026-09-23 launch day: the file-storage and hyperscaler markets graduated from untracked
-  // chips to live arenas (founder: "get the 'not yet judged' judged — dropbox etc.").
-  // google_drive/onedrive are product-scoped sub-products of the google/microsoft families
-  // (google-workspace/microsoft-entra precedent).
-  dropbox: 'cloud-storage',
-  google_drive: 'cloud-storage',
-  box: 'cloud-storage',
-  onedrive: 'cloud-storage',
-  aws: 'cloud-platforms',
-  google_cloud: 'cloud-platforms',
-  azure: 'cloud-platforms',
-  oracle_cloud: 'cloud-platforms',
-  // LLM-first thinking/drafting steps (founder 2026-09-30: "validation of the idea is more
-  // likely to be done in ChatGPT, Claude, Grok etc first and maybe Notion after") — the
-  // assistants are judged in ai-assistants, so these curated seeds resolve to live product
-  // pages and the derived rosters/rankings stay evidence-backed.
-  chatgpt: 'ai-assistants',
-  claude: 'ai-assistants',
-  gemini: 'ai-assistants',
-  grok: 'ai-assistants',
-  // Launch-day email lane (founder 2026-09-23: "sendgrid, virtualpostmail, do an arena for
-  // mail"): growth_005's transactional-email steps and the qs_044 mailing-address chips
-  // graduate from the untracked allowlist; gmail is the email arena's scoped Google
-  // sub-product (google-workspace/sso-identity precedent).
-  sendgrid: 'email-apis',
-  gmail: 'email',
-  stable: 'virtual-mailboxes',
-  earth_class_mail: 'virtual-mailboxes',
-  virtualpostmail: 'virtual-mailboxes',
-  // 2026-09-30 method variants (founder: "multiple methods depending on context"): the judged
-  // products the new context-selectable methods reference graduate to tracked vendor keys —
-  // the MoR route (Paddle), the non-US banking routes (Wise/Airwallex, vendor-geo-backed),
-  // design-led site publishing (Framer), the German notary tooling (beglaubigt, judged in
-  // legal-ops), and the GCP/small-data warehouse routes (BigQuery/MotherDuck).
-  paddle: 'payments',
-  wise: 'startup-banking',
-  airwallex: 'startup-banking',
-  framer: 'design-tools',
-  beglaubigt: 'legal-ops',
-  bigquery: 'data-warehouses',
-  motherduck: 'data-warehouses',
-}
+export const VENDOR_ARENA: Record<string, string> = registryField('arenaId')
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
-const VENDOR_PRODUCT_ID: Record<string, string> = {
-  intercom: 'intercom-fin', // Fin is Intercom's judged support-agent product
-}
+const VENDOR_PRODUCT_ID: Record<string, string> = registryField('productId')
 
 // The judged product id for a corpus vendor key: explicit override, else the key with
 // snake_case normalized to the site's kebab-case product-id convention.
@@ -826,172 +722,15 @@ export function vendorProductId(vendor: string): string {
 }
 
 // Pretty display names for corpus vendor keys (snake_case, lowercase). Fallback title-cases.
-const VENDOR_LABELS: Record<string, string> = {
-  irs: 'IRS',
-  sec: 'SEC',
-  uspto: 'USPTO',
-  aws: 'AWS',
-  state_sos: 'State Secretary of State',
-  stripe_atlas: 'Stripe Atlas',
-  google_drive: 'Google Drive',
-  google_slides: 'Google Slides',
-  onepassword: '1Password',
-  docusign: 'DocuSign',
-  hubspot: 'HubSpot',
-  github: 'GitHub',
-  quickbooks: 'QuickBooks',
-  posthog: 'PostHog',
-  pagerduty: 'PagerDuty',
-  sendgrid: 'SendGrid',
-  bamboohr: 'BambooHR',
-  google_workspace: 'Google Workspace',
-  name_com: 'Name.com',
-  porkbun: 'Porkbun',
-  v0: 'v0',
-  legalzoom: 'LegalZoom',
-  northwest: 'Northwest Registered Agent',
-  producthunt: 'Product Hunt',
-  betalist: 'BetaList',
-  hackernews: 'Hacker News',
-  google_search_console: 'Google Search Console',
-  iubenda: 'iubenda',
-  coderabbit: 'CodeRabbit',
-  // 2026-09-22 corpus expansion vendors.
-  stripe_tax: 'Stripe Tax',
-  stripe_billing: 'Stripe Billing',
-  taxjar: 'TaxJar',
-  incident_io: 'incident.io',
-  betterstack: 'Better Stack',
-  customer_io: 'Customer.io',
-  skills_cli: 'skills.sh',
-  gstack: 'gstack',
-  neo_tax: 'Neo.Tax',
-  human_interest: 'Human Interest',
-  statuspage: 'Statuspage',
-  fastlane: 'fastlane',
-  // Contextual vendor selection (vendor_011): our own evidence-comparison surface, disclosed as
-  // ours — same honest-affiliation posture as Ultrametric products judged in their arenas.
-  productarena: 'Ultrametric (ours)',
-  // 2026-09-22 wave-3 vendor-cell fill (title-case fallback misfires on these).
-  virtualpostmail: 'VirtualPostMail',
-  workos: 'WorkOS',
-  // 2026-09-22 wave-5 arenas (title-case fallback misfires on these).
-  jumpcloud: 'JumpCloud',
-  godaddy: 'GoDaddy',
-  cloudflare_registrar: 'Cloudflare Registrar',
-  microsoft_entra: 'Microsoft Entra ID',
-  rippling_it: 'Rippling IT',
-  // 2026-09-23 launch-day arenas (title-case fallback misfires on these).
-  onedrive: 'Microsoft OneDrive',
-  google_cloud: 'Google Cloud',
-  oracle_cloud: 'Oracle Cloud Infrastructure',
-  azure: 'Microsoft Azure',
-  // 2026-09-23 VC-fund phase (title-case fallback misfires on this one).
-  angellist: 'AngelList',
-  // 2026-09-30 LLM-first steps (title-case fallback misfires on this one).
-  chatgpt: 'ChatGPT',
-  // 2026-09-30 method-variant vendor keys (title-case fallback misfires on these; tracked
-  // chips read names from products.json — these cover the vendorLabel() call sites).
-  bigquery: 'BigQuery',
-  motherduck: 'MotherDuck',
-  beglaubigt: 'Beglaubigt.de',
-  wise: 'Wise Business',
-}
+const VENDOR_LABELS: Record<string, string> = registryField('label')
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
 // inside a chosen vendor — "run payroll" happens in Gusto, so the Gusto OPTION carries the
 // start URL rather than the step carrying an actionUrl. Rendered as a small ↗ beside the
 // vendor chip; the chip itself keeps linking to OUR judged product page. Every URL verified
 // reachable before listing; vendors without a verified canonical start page aren't listed
-// (no link fabricated). Keyed by corpus vendor key (snake_case), like VENDOR_ARENA.
-export const VENDOR_SIGNUP_URL: Record<string, string> = {
-  clerky: 'https://www.clerky.com/',
-  stripe_atlas: 'https://stripe.com/atlas',
-  firstbase: 'https://firstbase.io/',
-  doola: 'https://www.doola.com/',
-  mercury: 'https://mercury.com/',
-  brex: 'https://www.brex.com/',
-  relay: 'https://relayfi.com/',
-  ramp: 'https://ramp.com/',
-  gusto: 'https://gusto.com/',
-  rippling: 'https://www.rippling.com/',
-  deel: 'https://www.deel.com/',
-  justworks: 'https://www.justworks.com/',
-  quickbooks: 'https://quickbooks.intuit.com/',
-  xero: 'https://www.xero.com/',
-  pilot: 'https://pilot.com/',
-  carta: 'https://carta.com/',
-  pulley: 'https://pulley.com/',
-  stripe: 'https://dashboard.stripe.com/register',
-  docusign: 'https://www.docusign.com/',
-  google_workspace: 'https://workspace.google.com/',
-  name_com: 'https://www.name.com/domain/search',
-  namecheap: 'https://www.namecheap.com/domains/',
-  porkbun: 'https://porkbun.com/products/domains',
-  lovable: 'https://lovable.dev/',
-  v0: 'https://v0.app/',
-  bolt: 'https://bolt.new/',
-  cloudflare: 'https://www.cloudflare.com/',
-  vercel: 'https://vercel.com/',
-  posthog: 'https://posthog.com/',
-  slack: 'https://slack.com/',
-  // 2026-09-22 corpus expansion — every URL curl-verified reachable before listing.
-  stripe_tax: 'https://stripe.com/tax',
-  avalara: 'https://www.avalara.com/',
-  taxjar: 'https://www.taxjar.com/',
-  anrok: 'https://www.anrok.com/',
-  incident_io: 'https://incident.io/',
-  betterstack: 'https://betterstack.com/',
-  statuspage: 'https://www.statuspage.io/',
-  loops: 'https://loops.so/',
-  customer_io: 'https://customer.io/',
-  guideline: 'https://www.guideline.com/',
-  human_interest: 'https://humaninterest.com/',
-  kandji: 'https://www.kandji.io/',
-  jamf: 'https://www.jamf.com/',
-  remote: 'https://remote.com/',
-  cobalt: 'https://www.cobalt.io/',
-  oneleet: 'https://www.oneleet.com/',
-  conveyor: 'https://www.conveyor.com/',
-  neo_tax: 'https://neo.tax/',
-  fondo: 'https://www.tryfondo.com/',
-  fastlane: 'https://www.fastlane.tools/',
-  expo: 'https://expo.dev/',
-  // Our own compare-against-your-stack page (vendor_011) — verified live; the chip label
-  // discloses the affiliation.
-  productarena: 'https://ultrametric.ai/my-stack',
-  // 2026-09-22 wave-3 vendor-cell fill — every URL curl-verified 200 before listing.
-  // (Northwest Registered Agent's site serves 403 to non-browser clients, so its chip
-  // deliberately carries no signup link — no unverifiable URL is fabricated.)
-  stable: 'https://usestable.com/',
-  earth_class_mail: 'https://www.earthclassmail.com/',
-  virtualpostmail: 'https://www.virtualpostmail.com/',
-  onepassword: 'https://1password.com/',
-  bitwarden: 'https://bitwarden.com/',
-  dashlane: 'https://www.dashlane.com/',
-  vanta: 'https://www.vanta.com/',
-  secureframe: 'https://secureframe.com/',
-  markify: 'https://www.markify.com/',
-  corsearch: 'https://corsearch.com/',
-  harbor_compliance: 'https://www.harborcompliance.com/',
-  // 2026-09-23 launch-day arenas — every URL curl-verified 200 before listing.
-  // (oracle.com/cloud serves 403 to non-browser clients, so oracle_cloud's chip deliberately
-  // carries no signup link — no unverifiable URL is fabricated.)
-  dropbox: 'https://www.dropbox.com/',
-  google_drive: 'https://workspace.google.com/products/drive/',
-  box: 'https://www.box.com/',
-  onedrive: 'https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage',
-  aws: 'https://aws.amazon.com/',
-  google_cloud: 'https://cloud.google.com/',
-  azure: 'https://azure.microsoft.com/',
-  // 2026-09-23 VC-fund phase (founder ask: "a process area for VC processes") — genuine
-  // fund-formation/fund-admin suppliers with no arena yet; every URL curl-verified 200
-  // before listing.
-  angellist: 'https://www.angellist.com/',
-  sydecar: 'https://sydecar.io/',
-  passthrough: 'https://www.passthrough.com/',
-  juniper_square: 'https://www.junipersquare.com/',
-}
+// (no link fabricated — the registry `note` says why where that's deliberate).
+export const VENDOR_SIGNUP_URL: Record<string, string> = registryField('signupUrl')
 
 export function vendorLabel(vendor: string): string {
   const hit = VENDOR_LABELS[vendor]

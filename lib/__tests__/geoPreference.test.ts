@@ -4,11 +4,13 @@ import {
   GEO_GLOBAL,
   GEO_PREF_META,
   GEO_SCOPE_GLYPH,
+  getGeoChoice,
   getGeoSelection,
   parseGeo,
   parseGeoChoice,
   serializeGeo,
   serializeGeoChoice,
+  setGeoChoice,
   setGeoSelection,
   subscribeGeoSelection,
 } from '@/lib/geoPreference'
@@ -92,6 +94,27 @@ describe('the shared per-tab store', () => {
     unsubscribe()
     setGeoSelection('DE')
     expect(listener).toHaveBeenCalledTimes(2)
+  })
+
+  // The choice level (founder 2026-09-30 global mode): the store carries GLOBAL, but the
+  // country view maps it to null — so every country-consumer stays geo-neutral for free.
+  it('carries the explicit GLOBAL choice; getGeoSelection maps it to the geo-neutral null', () => {
+    const listener = vi.fn()
+    const unsubscribe = subscribeGeoSelection(listener)
+    setGeoChoice(GEO_GLOBAL)
+    expect(getGeoChoice()).toBe(GEO_GLOBAL)
+    expect(getGeoSelection()).toBeNull() // never an invented sixth country
+    expect(listener).toHaveBeenCalledTimes(1)
+    setGeoChoice(GEO_GLOBAL) // de-dupes at the choice level too
+    expect(listener).toHaveBeenCalledTimes(1)
+    // A country pick (manual wins) replaces the global lens; both views agree.
+    setGeoChoice('UK')
+    expect(getGeoChoice()).toBe('UK')
+    expect(getGeoSelection()).toBe('UK')
+    // The country-only setter keeps its exact semantics over the shared state.
+    setGeoSelection(null)
+    expect(getGeoChoice()).toBeNull()
+    unsubscribe()
   })
 })
 

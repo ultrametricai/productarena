@@ -3,14 +3,17 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   GEO_COUNTRIES,
+  GEO_GLOBAL,
+  GEO_GLOBAL_META,
   GEO_PARAM,
   GEO_PREF_META,
   GEO_STORAGE_KEY,
-  getGeoSelection,
-  parseGeo,
-  serializeGeo,
-  setGeoSelection,
+  getGeoChoice,
+  parseGeoChoice,
+  serializeGeoChoice,
+  setGeoChoice,
   subscribeGeoSelection,
+  type GeoChoice,
   type GeoSelection,
 } from '@/lib/geoPreference'
 import { readParam, setParams } from '@/lib/urlState'
@@ -22,7 +25,7 @@ import { readParam, setParams } from '@/lib/urlState'
 // listbox pattern (SimRolePicker/VsGeoSelector family), never a native <select>.
 
 export default function GeoDropdown() {
-  const [geo, setGeo] = useState<GeoSelection | null>(null)
+  const [geo, setGeo] = useState<GeoChoice | null>(null)
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -31,10 +34,10 @@ export default function GeoDropdown() {
      default; the mount effect seeds the shared store). */
   useEffect(() => {
     const fromUrl = readParam(GEO_PARAM)
-    const initial = fromUrl !== null ? parseGeo(fromUrl) : parseGeo(window.localStorage.getItem(GEO_STORAGE_KEY))
-    setGeoSelection(initial)
-    setGeo(getGeoSelection())
-    return subscribeGeoSelection(() => setGeo(getGeoSelection()))
+    const initial = fromUrl !== null ? parseGeoChoice(fromUrl) : parseGeoChoice(window.localStorage.getItem(GEO_STORAGE_KEY))
+    setGeoChoice(initial)
+    setGeo(getGeoChoice())
+    return subscribeGeoSelection(() => setGeo(getGeoChoice()))
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -54,19 +57,24 @@ export default function GeoDropdown() {
     }
   }, [open])
 
-  const apply = (next: GeoSelection | null) => {
-    setGeoSelection(next)
-    setParams({ [GEO_PARAM]: serializeGeo(next) })
-    if (next === null) window.localStorage.removeItem(GEO_STORAGE_KEY)
-    else window.localStorage.setItem(GEO_STORAGE_KEY, next)
+  const apply = (next: GeoChoice | null) => {
+    setGeoChoice(next)
+    const serialized = serializeGeoChoice(next)
+    setParams({ [GEO_PARAM]: serialized })
+    if (serialized === null) window.localStorage.removeItem(GEO_STORAGE_KEY)
+    else window.localStorage.setItem(GEO_STORAGE_KEY, serialized)
     setOpen(false)
   }
 
-  const current = geo ? GEO_PREF_META[geo] : null
-  const options: Array<{ value: GeoSelection | null; flag: string; name: string }> = [
+  const current =
+    geo === GEO_GLOBAL ? GEO_GLOBAL_META : geo ? GEO_PREF_META[geo] : null
+  // 🌐 Global leads (the VsGeoSelector list order — the explicit geo-neutral choice, founder
+  // 2026-09-30), then the canonical US-default → country set.
+  const options: Array<{ value: GeoChoice | null; flag: string; name: string }> = [
+    { value: GEO_GLOBAL, flag: GEO_GLOBAL_META.flag, name: GEO_GLOBAL_META.label },
     { value: null, flag: '🇺🇸', name: 'USA' },
     ...GEO_COUNTRIES.filter((c): c is GeoSelection => c !== 'US').map((c) => ({
-      value: c as GeoSelection,
+      value: c as GeoChoice,
       flag: GEO_PREF_META[c].flag,
       name: GEO_PREF_META[c].label,
     })),
