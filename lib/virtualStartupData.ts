@@ -4,11 +4,15 @@
 // judged/committed data — canonical agent-access verdicts (lib/accessGlyphs.ts), verbatim
 // published-pricing facts (lib/pricing.ts), and the corpus risk axis (processes/corpus.json) —
 // never a new judgment.
+import popularIds from '../data/popular-products.json'
 import { ACCESS_COLUMNS, bestAccessVerdict } from './accessGlyphs'
 import { loadCategory } from './data'
+import { formatCompact } from './popularity'
+import { weeklyInstalls } from './popularRanking'
 import { ENTRY_PLAN_UNIT, isPricingUnavailable, loadPricing, PRICING_ARENAS, formatFactAmount, type PricingFact } from './pricing'
 import { loadProcesses } from './processes'
 import type { VendorRole } from './processSim'
+import { likelyChoiceOrder, type VsPopularityMap, type VsPopularityProduct } from './virtualStartup'
 import type { VsAccessMap, VsAccessSurface, VsPricingInfo, VsPricingMap, VsVerdictKind } from './virtualStartupRun'
 
 // The canonical MCP/CLI agent-access verdicts for every swap option of every role — the exact
@@ -97,4 +101,38 @@ export function buildVsPricing(roles: VendorRole[], dir?: string): VsPricingMap 
 // plausibility gate reads it client-side.
 export function buildVsTaskRisks(dir?: string): Record<string, number> {
   return Object.fromEntries(loadProcesses(dir).map((t) => [t.id, t.risk]))
+}
+
+// 'Likely choice' ordering payload (founder round 5, item 7): per role arena, every swap
+// option's committed adoption/popularity signal resolved into a best-first PRESENTATION order
+// (lib/virtualStartup.ts likelyChoiceOrder) plus per-product signal labels — the receipts.
+// Committed data only: data/popular-products.json curated membership, data/{arena}/
+// popularity.json stars and npm+PyPI weekly installs. Products with no signal carry no label
+// and keep the judged order at the tail — absence is absence, never a fake rank.
+export function buildVsPopularity(roles: VendorRole[], dir?: string): VsPopularityMap {
+  const curated = new Set(popularIds as string[])
+  const out: VsPopularityMap = {}
+  for (const role of roles) {
+    const data = loadCategory(role.arenaId, dir)
+    const products: VsPopularityProduct[] = role.alternatives.map((o) => {
+      const pop = data.popularity[o.id]
+      return {
+        id: o.id,
+        name: o.name,
+        curated: curated.has(o.id),
+        stars: pop?.stars,
+        installs: pop ? weeklyInstalls(pop) : undefined,
+      }
+    })
+    const signals: Record<string, string> = {}
+    for (const p of products) {
+      const parts: string[] = []
+      if (p.curated) parts.push('clearly popular (curated set — unranked; alphabetical within)')
+      if (p.stars !== undefined) parts.push(`★ ${formatCompact(p.stars)} GitHub stars`)
+      if (p.installs !== undefined) parts.push(`${formatCompact(p.installs)} weekly installs`)
+      if (parts.length > 0) signals[p.id] = parts.join(' · ')
+    }
+    out[role.arenaId] = { order: likelyChoiceOrder(products), signals }
+  }
+  return out
 }

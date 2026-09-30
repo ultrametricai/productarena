@@ -22,10 +22,23 @@ export default function SimRolePicker({
   role,
   selectedId,
   onSelect,
+  displayOrder,
+  signals,
+  recommendedId,
 }: {
   role: VendorRole
   selectedId: string
   onSelect: (productId: string) => void
+  // Optional PRESENTATION order for the option list (founder round 5, item 7: the Virtual
+  // Startup's 'Likely choice' adoption/popularity ordering). Additive: absent = the arena's
+  // agent-readiness ladder order, exactly as before. Ids the order doesn't know keep their
+  // ladder order at the tail; the #N badge always names the LADDER rank (identity, not position).
+  displayOrder?: string[]
+  // Per-product committed popularity signal labels (the receipts) — ride in the row tooltip.
+  signals?: Record<string, string>
+  // The judged default pick — wears the '(recommended · judged)' label so the judged
+  // recommendation stays visible whatever the presentation order. Additive: absent = no label.
+  recommendedId?: string
 }) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -36,6 +49,18 @@ export default function SimRolePicker({
   const current = role.alternatives.find((o) => o.id === selectedId)
   const rankOf = (id: string) => role.alternatives.findIndex((o) => o.id === id) + 1
   const swapped = selectedId !== role.canonicalVendor
+  // Presentation order only — membership, scores, and the #ladder-rank badges never move.
+  const options =
+    displayOrder && displayOrder.length > 0
+      ? [...role.alternatives]
+          .map((o, i) => ({ o, i }))
+          .sort((a, b) => {
+            const ra = displayOrder.indexOf(a.o.id)
+            const rb = displayOrder.indexOf(b.o.id)
+            return (ra === -1 ? Number.POSITIVE_INFINITY : ra) - (rb === -1 ? Number.POSITIVE_INFINITY : rb) || a.i - b.i
+          })
+          .map((x) => x.o)
+      : role.alternatives
 
   // Close on any click/tap outside the card while open.
   useEffect(() => {
@@ -137,7 +162,7 @@ export default function SimRolePicker({
           aria-label={`${role.arenaName} products`}
           className="absolute left-0 right-0 z-30 mt-1 max-h-64 overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
-          {role.alternatives.map((o, i) => {
+          {options.map((o) => {
             const active = o.id === selectedId
             return (
               <li key={o.id} role="presentation">
@@ -147,17 +172,26 @@ export default function SimRolePicker({
                   role="option"
                   aria-selected={active}
                   onClick={() => pick(o.id)}
+                  title={signals?.[o.id]}
                   className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-sm transition ${
                     active
                       ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
                       : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
                   }`}
                 >
-                  <span className="w-6 shrink-0 text-right text-[10px] text-zinc-500">#{i + 1}</span>
+                  <span
+                    className="w-6 shrink-0 text-right text-[10px] text-zinc-500"
+                    title={`#${rankOf(o.id)} on this arena's agent-readiness ladder`}
+                  >
+                    #{rankOf(o.id)}
+                  </span>
                   <ProductLogoView product={{ id: o.id, name: o.name }} size={20} hasLogo={o.hasLogo ?? false} />
                   <span className="min-w-0 flex-1 truncate">
                     {o.name}
                     {o.id === role.canonicalVendor && <span className="ml-1 text-[10px] text-zinc-500">(canonical)</span>}
+                    {recommendedId === o.id && (
+                      <span className="ml-1 text-[10px] text-emerald-400/80">(recommended · judged)</span>
+                    )}
                   </span>
                   {o.agentReady !== null && (
                     <span className="shrink-0 text-[10px] text-zinc-500">{o.agentReady.toFixed(0)}/100 agent-ready</span>

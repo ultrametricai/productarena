@@ -243,27 +243,67 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     expect(screen.queryByText('Set up subscription billing')).toBeNull()
   })
 
-  it('the 2026-09-25 toggles: hire, enterprise, PH launch, build-first ordering all reshape the journey', () => {
+  it('the 2026-09-25 toggles: hire, enterprise, PH launch all reshape the journey (build-first now rides presets/permalinks only — round 5, item 4)', () => {
     renderIt()
     showAll()
     // Defaults: hire yes (playbook in), enterprise no, PH yes, name-first.
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
     expect(screen.queryByText('Complete SOC 2 Type II')).toBeNull()
     expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
-    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // compliance chain always runs
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // default compliance (SOC 2 early) runs
 
     pickDecision('hire', 'Stay founders-only')
     pickDecision('enterprise', 'Chase the enterprise deal')
     pickDecision('ph', 'Stealth mode')
-    pickDecision('ordering', 'Build first')
     showAll()
     expect(screen.queryByText('Hire first employee')).toBeNull()
     expect(screen.getAllByText('Complete SOC 2 Type II').length).toBeGreaterThan(0)
     expect(screen.queryByText('Launch on Product Hunt & directories')).toBeNull()
-    // Build-first: the ship-v1 phase renders before name & brand in document order.
+    // Ordering keeps its default composition: name & brand leads, ship-v1 follows.
     const build = termBody().getByText('Build & ship v1')
     const name = termBody().getByText('Name & brand')
-    expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('round 5 business models: Usage-based runs the SAME growth_001 steps (venue-noted); Marketplace/E-commerce run the spine with neither billing fork', () => {
+    renderIt()
+    pickDecision('product', 'Usage-based')
+    showAll()
+    expect(termBody().getByText('Set up subscription billing')).toBeTruthy()
+    expect(screen.queryByText('Send an invoice')).toBeNull()
+    expect(termBody().getByText(/usage-based — the same subscription-billing playbook/)).toBeTruthy()
+    const sub = screen.getAllByTestId('vs-artifact').find((a) => /First subscription/.test(a.textContent ?? ''))!
+    expect(sub.textContent).toContain('metered usage')
+
+    pickDecision('product', 'Marketplace (take-rate)')
+    showAll()
+    expect(screen.queryByText('Set up subscription billing')).toBeNull()
+    expect(screen.queryByText('Send an invoice')).toBeNull()
+    expect(termBody().getByText('Connect a payment processor')).toBeTruthy()
+    expect(termBody().getByText(/marketplace \(take-rate\)/)).toBeTruthy()
+    expect(termBody().getByText(/no take-rate billing steps/)).toBeTruthy()
+
+    pickDecision('product', 'E-commerce (DTC)')
+    showAll()
+    expect(screen.queryByText('Set up subscription billing')).toBeNull()
+    expect(termBody().getByText(/no storefront step yet/)).toBeTruthy()
+  })
+
+  it('round 5 compliance options: None skips the chain; HIPAA runs the same chain with the framework named in note and artifact', () => {
+    renderIt()
+    pickDecision('compliance', 'None')
+    showAll()
+    expect(screen.queryByText('Set up a password manager')).toBeNull()
+    expect(termBody().queryByText('Stand up compliance')).toBeNull()
+
+    pickDecision('compliance', 'HIPAA')
+    showAll()
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy()
+    expect(termBody().getByText(/HIPAA — the same set-up-compliance corpus playbook/)).toBeTruthy()
+    // Early placement: compliance renders before the website launch phase.
+    const compliance = termBody().getByText('Stand up compliance')
+    const website = termBody().getByText('Launch the website')
+    expect(compliance.compareDocumentPosition(website) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })
 
@@ -414,7 +454,7 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
 // every preset/persona/toggle interaction stays semantically identical and is covered by the
 // suites around this one.
 describe('VirtualStartup — the compact setup band (decisions as dropdowns, 2026-09-29)', () => {
-  it('one band holds presets, YC mode, founder axes, all nine decision dropdowns, drive mode, and the run CTA — and renders before the terminal', () => {
+  it('one band holds presets, YC mode, founder axes, the eight visible decision dropdowns, drive mode, and the run CTA — and renders before the terminal', () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
@@ -427,22 +467,33 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     // No pre-run company line (founder addendum 2026-09-29): the name comes into existence at
     // the run's naming step, so the band never announces a company upfront.
     expect(within(band).queryByText(/your virtual company/i)).toBeNull()
-    // Every decision renders as a listbox dropdown starting at 'Not set' — EXCEPT the
+    // Every VISIBLE decision renders as a listbox dropdown starting at 'Not set' — EXCEPT the
     // DEFAULT-ASSERTED entity (founder round 4, item 5), which starts asserted at
     // 'Delaware C-Corp'; opening a dropdown exposes the canonical full labels as option
-    // accessible names, plus the explicit Not-set row.
+    // accessible names, plus the explicit Not-set row. The Entity roster shows the geo-selected
+    // country's options only (US default here — round 5, item 1); 'Start with' is gone from the
+    // panel entirely (round 5, item 4).
     const optionNames: Record<string, string[]> = {
       entity: ['Delaware C-Corp', 'LLC'],
       team: ['Cofounders', 'Solo founder'],
-      funding: ['Raise a seed', 'Bootstrap'],
-      product: ['SaaS subscriptions', 'Invoice-billed services'],
-      ordering: ['Name first', 'Build first'],
+      // The single Funding selector (addendum 2026-09-30): decision options + scenario combos.
+      funding: ['Raise a seed', 'Bootstrap', 'VC backed', 'Bootstrapped'],
+      // Business models (round 5, item 2): the three new models appended after the originals.
+      product: ['SaaS subscriptions', 'Invoice-billed services', 'Marketplace (take-rate)', 'Usage-based', 'E-commerce (DTC)'],
       hire: ['Make the first hire', 'Stay founders-only'],
-      compliance: ['Compliance early', 'Compliance later'],
+      // Compliance gets specific (round 5, item 3).
+      compliance: ['SOC 2 (early)', 'SOC 2 (deferred)', 'None', 'HIPAA', 'ISO 27001'],
       enterprise: ['Not yet', 'Chase the enterprise deal'],
       // Launch options (founder round 4, item 7): venue-flavored public launches + stealth.
       ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'],
     }
+    // 'Start with' left the control panel — no dropdown, no micro-label (round 5, item 4).
+    expect(within(band).queryByTestId('vs-decision-ordering')).toBeNull()
+    // …and the non-US entity options stay OFF the US roster (they follow the geo pick).
+    fireEvent.click(within(band).getByTestId('vs-decision-entity'))
+    expect(screen.queryByRole('option', { name: 'Ltd (Companies House)' })).toBeNull()
+    expect(screen.queryByRole('option', { name: 'GmbH' })).toBeNull()
+    fireEvent.click(within(band).getByTestId('vs-decision-entity')) // close
     for (const [id, names] of Object.entries(optionNames)) {
       const trigger = within(band).getByTestId(`vs-decision-${id}`)
       expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
@@ -460,20 +511,22 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(band.compareDocumentPosition(term) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('renamed visible group labels — Start with / Business model — while canonical accessible names stay put', () => {
+  it("visible group labels: Business model stays; 'Start with' is GONE from the panel (round 5, item 4) while composition keeps the default", () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     // Visible micro-labels (non-interactive, colon-suffixed).
-    expect(within(band).getByText('Start with:')).toBeTruthy()
     expect(within(band).getByText('Business model:')).toBeTruthy()
+    expect(within(band).queryByText('Start with:')).toBeNull()
     expect(within(band).queryByText('Order:')).toBeNull()
     expect(within(band).queryByText('Model:')).toBeNull()
-    // Canonical accessible names unchanged: the groups and full option labels.
-    expect(within(band).getByRole('group', { name: 'What comes first' })).toBeTruthy()
+    // The removed decision leaves no group behind; Business model keeps its canonical name.
+    expect(within(band).queryByRole('group', { name: 'What comes first' })).toBeNull()
     expect(within(band).getByRole('group', { name: 'Business model' })).toBeTruthy()
-    fireEvent.click(within(band).getByTestId('vs-decision-ordering'))
-    expect(screen.getByRole('option', { name: 'Name first' })).toBeTruthy()
-    expect(screen.getByRole('option', { name: 'Build first' })).toBeTruthy()
+    // Composition keeps the default branch: name & brand leads the run.
+    showAll()
+    const build = termBody().getByText('Build & ship v1')
+    const name = termBody().getByText('Name & brand')
+    expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("dropdown semantics: picking asserts (title shows the full label + mapping), 'Not set' clears back, asserting the default value still asserts", () => {
@@ -517,10 +570,12 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(termBody().getByText('Incorporate C-Corp')).toBeTruthy()
     // Re-run with every decision explicitly asserted to its default value: same rows (each
     // assertion resets the terminal; the final showAll replays the full journey).
+    // 'Start with' has no control (round 5, item 4) — unasserted, it composes the default, so
+    // the byte-identity still holds over the eight visible decisions.
     for (const [id, name] of [
       ['entity', 'Delaware C-Corp'], ['team', 'Cofounders'], ['funding', 'Raise a seed'],
-      ['product', 'SaaS subscriptions'], ['ordering', 'Name first'], ['hire', 'Make the first hire'],
-      ['compliance', 'Compliance early'], ['enterprise', 'Not yet'], ['ph', 'Product Hunt'],
+      ['product', 'SaaS subscriptions'], ['hire', 'Make the first hire'],
+      ['compliance', 'SOC 2 (early)'], ['enterprise', 'Not yet'], ['ph', 'Product Hunt'],
     ] as const) {
       pickDecision(id, name)
     }
@@ -536,9 +591,12 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     const disclosures = screen.getAllByTestId('vs-preset-disclosure')
     expect(disclosures.length).toBe(2)
     for (const d of disclosures) expect(d.getAttribute('title')).toContain('same real software-company process corpus')
-    // …the axis pills carry their named simulation assumptions…
-    expect(screen.getByTestId('vs-persona-non-technical').getAttribute('title')).toContain('simulation assumption')
-    expect(screen.getByTestId('vs-persona-second-timer').getAttribute('title')).toContain('simulation assumption')
+    // …the founder selector's combo options carry their named simulation assumptions (the
+    // single-dropdown consolidation, addendum 2026-09-30)…
+    fireEvent.click(screen.getByTestId('vs-persona-trigger'))
+    expect(screen.getByTestId('vs-persona-non-technical-first-timer').getAttribute('title')).toContain('simulation assumption')
+    expect(screen.getByTestId('vs-persona-technical-second-timer').getAttribute('title')).toContain('simulation assumption')
+    fireEvent.click(screen.getByTestId('vs-persona-trigger')) // close
     // …and each decision option keeps its corpus mapping in its option tooltip.
     fireEvent.click(screen.getByTestId('vs-decision-funding'))
     expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toContain('Raise a seed round')
@@ -604,8 +662,8 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     window.history.replaceState(null, '', '/?preset=biotech')
     renderIt()
     expect(screen.getByTestId('vs-preset-biotech').getAttribute('aria-pressed')).toBe('true')
-    // Biotech runs compliance EARLY — asserted in the dropdowns.
-    expect(decisionTitle('compliance')).toContain('Compliance early')
+    // Biotech asserts the HIPAA framing (round 5, item 3: combos updated) — same chain, early.
+    expect(decisionTitle('compliance')).toContain('HIPAA')
     expect(decisionTitle('product')).toContain('Invoice-billed services')
     showAll()
     expect(within(screen.getByTestId('vs-terminal-body')).getAllByText(/Demovax, Inc\./).length).toBeGreaterThan(0)
@@ -625,10 +683,14 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
     pickDecision('team', 'Solo founder')
     expect(window.location.search).not.toContain('preset')
     expect(screen.getByTestId('vs-preset-hardware').getAttribute('aria-pressed')).toBe('false')
-    // …but the rest of the preset combo survives the manual change, asserted.
+    // …but the rest of the preset combo survives the manual change, asserted (the hidden
+    // ordering assertion survives too — observable as the build-first composition below).
     expect(decisionTitle('product')).toContain('Invoice-billed services')
-    expect(decisionTitle('ordering')).toContain('Build first')
+    expect(decisionTitle('ph')).toContain('Stealth mode')
     showAll()
+    const build = termBody().getByText('Build & ship v1')
+    const name = termBody().getByText('Name & brand')
+    expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     // Identity reverted to the combo-seeded name: no Holofield artifact in the run (the preset
     // PILL still shows its own name — scope to the terminal body).
     expect(within(screen.getByTestId('vs-terminal-body')).queryByText(/Holofield/)).toBeNull()
@@ -637,36 +699,44 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
   })
 })
 
-// Funding scenarios (founder round 3, 2026-09-29, item 1): the setup row is 'Scenario', and two
-// one-tap pills — VC backed / Bootstrapped — assert the funding decision plus the calibrations
-// that sensibly follow it (a PARTIAL combo, tooltip-documented), sharing the ?preset= param
-// namespace with the company presets.
-describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on the Scenario row', () => {
-  it("the row label reads 'Scenario' (not 'Example'), and both pills carry the mapping tooltip", () => {
+// Funding scenarios, now INSIDE the single Funding selector (founder addendum 2026-09-30): the
+// plain funding options (Raise a seed / Bootstrap) and the scenario combos (VC backed /
+// Bootstrapped) share one house-listbox dropdown. Asserting semantics/codec unchanged: a plain
+// option asserts only the funding decision; a scenario option asserts its partial combo and
+// writes the shared ?preset= namespace, exactly as the old Scenario-row pills did.
+describe('VirtualStartup — the single Funding selector (decision options + scenario combos)', () => {
+  const openFunding = () => fireEvent.click(screen.getByTestId('vs-decision-funding'))
+
+  it("ONE dropdown carries all four options; the scenario rows carry the mapping tooltip; the pills are gone and the Scenario row keeps presets + YC", () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
-    expect(within(band).getByTitle('Scenario — one-tap setups: example companies and funding scenarios')).toBeTruthy()
-    expect(within(band).queryByTitle('Example companies — one-tap preset setups')).toBeNull()
-    expect(band.textContent).toContain('Scenario')
-    const vc = within(band).getByTestId('vs-scenario-vc-backed')
-    const boot = within(band).getByTestId('vs-scenario-bootstrapped')
-    // The tooltip documents the exact key → DECISIONS-option mapping (founder ask).
+    expect(within(band).getByTitle('Scenario — one-tap setups: example companies and YC batch mode')).toBeTruthy()
+    expect(within(band).queryByTestId('vs-scenario-vc-backed')).toBeNull()
+    expect(within(band).queryByTestId('vs-scenario-bootstrapped')).toBeNull()
+    openFunding()
+    for (const name of ['Raise a seed', 'Bootstrap', 'VC backed', 'Bootstrapped']) {
+      expect(screen.getByRole('option', { name })).toBeTruthy()
+    }
+    // The scenario options document the exact key → DECISIONS-option mapping in their tooltips.
+    const vc = screen.getByRole('option', { name: 'VC backed' })
     expect(vc.getAttribute('title')).toContain('Raise a seed')
     expect(vc.getAttribute('title')).toContain('Delaware C-Corp')
     expect(vc.getAttribute('title')).toContain('Make the first hire')
+    const boot = screen.getByRole('option', { name: 'Bootstrapped' })
     expect(boot.getAttribute('title')).toContain('Bootstrap')
     expect(boot.getAttribute('title')).toContain('Invoice-billed services')
     expect(boot.getAttribute('title')).toContain('Stay founders-only')
+    openFunding() // close
     // The company preset pills are unchanged otherwise.
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
   })
 
-  it('VC backed asserts funding + entity + hire, leaves everything else Not set, and writes ?preset=vc-backed', () => {
+  it('VC backed asserts funding + entity + hire, leaves everything else Not set, shows on the trigger, and writes ?preset=vc-backed', () => {
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-scenario-vc-backed'))
+    pickDecision('funding', 'VC backed')
     expect(window.location.search).toContain('preset=vc-backed')
-    expect(screen.getByTestId('vs-scenario-vc-backed').getAttribute('aria-pressed')).toBe('true')
-    expect(decisionTitle('funding')).toContain('Raise a seed')
+    expect(screen.getByTestId('vs-decision-funding').textContent).toContain('VC backed')
+    expect(decisionTitle('funding')).toContain('VC backed')
     expect(decisionTitle('entity')).toContain('Delaware C-Corp')
     expect(decisionTitle('hire')).toContain('Make the first hire')
     // Partial assert: decisions outside the scenario stay Not set (they compose defaults).
@@ -677,11 +747,11 @@ describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on th
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
   })
 
-  it('Bootstrapped asserts bootstrap + invoice-billed + founders-only: the journey drops the raise and the hire, bills by invoice', () => {
+  it('Bootstrapped asserts bootstrap + invoice-billed + founders-only; picking the PLAIN option afterwards asserts only funding and drops the scenario', () => {
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    pickDecision('funding', 'Bootstrapped')
     expect(window.location.search).toContain('preset=bootstrapped')
-    expect(decisionTitle('funding')).toContain('Bootstrap')
+    expect(decisionTitle('funding')).toContain('Bootstrapped')
     expect(decisionTitle('product')).toContain('Invoice-billed services')
     expect(decisionTitle('hire')).toContain('Stay founders-only')
     showAll()
@@ -689,13 +759,22 @@ describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on th
     expect(screen.queryByText('Hire first employee')).toBeNull()
     expect(termBody().getByText('Send an invoice')).toBeTruthy()
     expect(screen.queryByText('Set up subscription billing')).toBeNull()
+    // The plain decision option: asserts funding alone, deselects the scenario (?preset clears),
+    // and the other scenario-asserted keys keep their values (the pickChoice rule).
+    pickDecision('funding', 'Raise a seed')
+    expect(window.location.search).not.toContain('preset')
+    expect(decisionTitle('funding')).toContain('Raise a seed')
+    expect(decisionTitle('funding')).not.toContain('Bootstrapped')
+    expect(decisionTitle('product')).toContain('Invoice-billed services')
   })
 
-  it('?preset=vc-backed round-trips: read on mount, pill pressed, the partial combo asserted', () => {
+  it('?preset=vc-backed round-trips: read on mount, shown on the trigger, the partial combo asserted', () => {
     window.history.replaceState(null, '', '/?preset=vc-backed')
     renderIt()
-    expect(screen.getByTestId('vs-scenario-vc-backed').getAttribute('aria-pressed')).toBe('true')
-    expect(decisionTitle('funding')).toContain('Raise a seed')
+    expect(screen.getByTestId('vs-decision-funding').textContent).toContain('VC backed')
+    fireEvent.click(screen.getByTestId('vs-decision-funding'))
+    expect(screen.getByRole('option', { name: 'VC backed' }).getAttribute('aria-selected')).toBe('true')
+    fireEvent.click(screen.getByTestId('vs-decision-funding')) // close
     expect(decisionTitle('entity')).toContain('Delaware C-Corp')
     expect(decisionTitle('product')).toContain('not set')
     // The shared param namespace: no company preset lights up.
@@ -704,36 +783,36 @@ describe('VirtualStartup — funding scenarios (VC backed vs Bootstrapped) on th
     }
   })
 
-  it('a scenario composes OVER a company preset (pill swaps, other assertions survive); a manual change clears the scenario', () => {
+  it('a scenario composes OVER a company preset (preset pill deselects, other assertions survive); a manual change clears the scenario', () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-preset-hardware'))
-    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    pickDecision('funding', 'Bootstrapped')
     expect(window.location.search).toContain('preset=bootstrapped')
     expect(screen.getByTestId('vs-preset-hardware').getAttribute('aria-pressed')).toBe('false')
     // Scenario keys override; the hardware combo's other keys stay asserted.
-    expect(decisionTitle('funding')).toContain('Bootstrap')
-    expect(decisionTitle('ordering')).toContain('Build first')
+    expect(decisionTitle('funding')).toContain('Bootstrapped')
+    expect(decisionTitle('ph')).toContain('Stealth mode')
     // A manual decision change deselects the scenario and clears ?preset (the pickChoice rule).
     pickDecision('team', 'Solo founder')
     expect(window.location.search).not.toContain('preset')
-    expect(screen.getByTestId('vs-scenario-bootstrapped').getAttribute('aria-pressed')).toBe('false')
-    expect(decisionTitle('funding')).toContain('Bootstrap')
+    expect(decisionTitle('funding')).not.toContain('Bootstrapped')
+    expect(decisionTitle('funding')).toContain('Bootstrap') // the asserted decision value stays
   })
 
-  it('YC interplay: Bootstrapped contradicts the calibration and turns YC off; VC backed keeps it; YC-on over Bootstrapped deselects the pill', () => {
+  it('YC interplay: Bootstrapped contradicts the calibration and turns YC off; VC backed keeps it; YC-on over Bootstrapped deselects the scenario', () => {
     renderIt()
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
     expect(window.location.search).toContain('yc=1')
-    fireEvent.click(screen.getByTestId('vs-scenario-vc-backed'))
+    pickDecision('funding', 'VC backed')
     expect(screen.getByTestId('vs-yc-toggle').getAttribute('aria-pressed')).toBe('true')
     expect(window.location.search).toContain('yc=1')
-    fireEvent.click(screen.getByTestId('vs-scenario-bootstrapped'))
+    pickDecision('funding', 'Bootstrapped')
     expect(screen.getByTestId('vs-yc-toggle').getAttribute('aria-pressed')).toBe('false')
     expect(window.location.search).not.toContain('yc=1')
-    expect(decisionTitle('funding')).toContain('Bootstrap')
-    // Turning YC back on over Bootstrapped: the calibration wins, the scenario pill deselects.
+    expect(decisionTitle('funding')).toContain('Bootstrapped')
+    // Turning YC back on over Bootstrapped: the calibration wins, the scenario deselects.
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
-    expect(screen.getByTestId('vs-scenario-bootstrapped').getAttribute('aria-pressed')).toBe('false')
+    expect(screen.getByTestId('vs-decision-funding').textContent).not.toContain('Bootstrapped')
     expect(window.location.search).not.toContain('preset')
     expect(decisionTitle('funding')).toContain('Raise a seed')
   })
@@ -895,10 +974,15 @@ describe('VirtualStartup — YC batch mode', () => {
     expect(window.location.search).toContain('yc=1')
     const disclosure = screen.getByTestId('vs-yc-disclosure')
     expect(disclosure.textContent).toContain('not affiliated with or endorsed by Y Combinator')
-    // Launch-early calibration: PH on, build-first, seed raise — asserted in the dropdowns.
+    // Launch-early calibration: PH on, seed raise — asserted in the dropdowns; build-first has
+    // no control (round 5, item 4) but the calibration still asserts it internally, observable
+    // as the composition below.
     expect(decisionTitle('ph')).toContain('Product Hunt')
-    expect(decisionTitle('ordering')).toContain('Build first')
     expect(decisionTitle('funding')).toContain('Raise a seed')
+    showAll()
+    const build = termBody().getByText('Build & ship v1')
+    const name = termBody().getByText('Name & brand')
+    expect(build.compareDocumentPosition(name) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('the YC pill wears the house YC mark and keeps the accessible name', () => {
@@ -965,7 +1049,7 @@ describe('VirtualStartup — YC batch mode', () => {
     window.history.replaceState(null, '', '/?yc=1')
     renderIt()
     expect(screen.getByTestId('vs-yc-disclosure')).toBeTruthy()
-    expect(decisionTitle('ordering')).toContain('Build first')
+    expect(decisionTitle('funding')).toContain('Raise a seed')
     // Contradicting the calibration (quiet launch) turns the mode off and clears ?yc.
     pickDecision('ph', 'Stealth mode')
     expect(screen.queryByTestId('vs-yc-disclosure')).toBeNull()

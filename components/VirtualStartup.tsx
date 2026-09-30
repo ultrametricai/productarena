@@ -10,7 +10,7 @@ import VsDecisionSelect from '@/components/VsDecisionSelect'
 import VsGeoSelector from '@/components/VsGeoSelector'
 import VsJourneyDag, { type VsDagPause } from '@/components/VsJourneyDag'
 import VsStateGraph, { type VsPanelEvent } from '@/components/VsStateGraph'
-import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
+import { GEO_GLOBAL, GEO_PREF_META, type GeoChoice, type GeoCountry, type GeoSelection, type VendorGeoLookup } from '@/lib/geoPreference'
 import { formatMinutes, type SimStep, type VendorRole } from '@/lib/processSim'
 import { ULTRAMETRIC_CLI_DISCLOSURE, ultrametricCliFor } from '@/lib/ultrametricCli'
 import { readParam, setParams } from '@/lib/urlState'
@@ -21,7 +21,11 @@ import {
   DECISIONS,
   DEFAULT_ASSERTED,
   DEFAULT_CHOICES,
+  defaultEntityFor,
+  ENTITY_META,
+  ENTITY_OPTIONS_BY_COUNTRY,
   eventRows,
+  HIDDEN_DECISION_IDS,
   journeyPhases,
   journeyStats,
   MONTH_LABELS,
@@ -36,6 +40,9 @@ import {
   yearRows,
   yearStats,
   type Choices,
+  type DecisionDef,
+  type EntityChoice,
+  type VsPopularityMap,
   type EventExample,
   type JourneyStats,
   type PresetId,
@@ -224,16 +231,29 @@ function rowSignature(row: Row): string {
   }
 }
 
-// First index where the two variant row lists differ. 0 (= ask at Run-press, nothing printed
-// yet) when a decision changes nothing the terminal ever prints (the founder-approved upfront
-// fallback) — asking it any time is then safe by construction.
-function firstDifferingRow(a: Row[], b: Row[]): number {
+// First index where the two variant row lists differ; null when nothing the terminal ever prints
+// differs (callers fall back to 0 — ask at Run-press, safe by construction).
+function firstDifferingRow(a: Row[], b: Row[]): number | null {
   const n = Math.min(a.length, b.length)
   for (let i = 0; i < n; i++) {
     if (rowSignature(a[i]) !== rowSignature(b[i])) return i
   }
   if (a.length !== b.length) return n
-  return 0
+  return null
+}
+
+// The first row index at which ANY pair of variant row lists visibly differs — decisions can now
+// carry more than two options (entities, business models, compliance frameworks), and comparing
+// every variant against the first catches the earliest pairwise divergence (if two non-base
+// variants first differ from each other at row m, at least one of them differs from the base at
+// m too). null = no variant ever differs.
+function firstAffectedRow(variants: Row[][]): number | null {
+  let at: number | null = null
+  for (let i = 1; i < variants.length; i++) {
+    const d = firstDifferingRow(variants[0], variants[i])
+    if (d !== null && (at === null || d < at)) at = d
+  }
+  return at
 }
 
 function routeBadge(step: SimStep): { text: string; cls: string } {
@@ -347,13 +367,46 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // compliance ⚖️). Icons are decoration on top of the existing labels: every control keeps its
 // canonical accessible name (the decision groups' aria-label, the options' full-label
 // aria-labels) — tests assert nothing moved.
-const ROW_ICONS: Record<'scenario' | 'founder' | 'geo' | 'decisions', { icon: string; title: string }> = {
-  // 'Example' → 'Scenario' (founder batch 2026-09-29, round 3, item 1) — the row now holds the
-  // company presets AND the funding scenarios; the pills themselves are unchanged otherwise.
-  scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and funding scenarios' },
+// The geo row's adjacent 🌍 IconChip is GONE (founder round 5, item 5) — the selector's own
+// flags suffice; the Founder row icon still names the whole who/where cluster.
+const ROW_ICONS: Record<'scenario' | 'founder' | 'decisions', { icon: string; title: string }> = {
+  // 'Example' → 'Scenario' (round 3, item 1); the funding-scenario pills moved INTO the single
+  // Funding selector (addendum 2026-09-30) — the row holds the company presets + YC mode.
+  scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and YC batch mode' },
   founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
-  geo: { icon: '🌍', title: 'Country view — annotate the run with committed geo evidence' },
   decisions: { icon: '🎛️', title: 'Starting decisions — which real processes make up the journey' },
+}
+
+// The decisions rendered as controls — 'Start with' (ordering) left the panel (founder round 5,
+// item 4): composition keeps the default, presets/YC assert it internally, the codec digit slot
+// stays, and semi-auto never asks it.
+const VISIBLE_DECISIONS = DECISIONS.filter((d) => !HIDDEN_DECISION_IDS.includes(d.id))
+
+// ONE funding selector (founder addendum 2026-09-30): the funding decision's two options and the
+// funding SCENARIOS (VC backed / Bootstrapped — formerly Scenario-row pills) fold into a single
+// dropdown. DISPLAY consolidation only — the asserting semantics and the codec are untouched:
+// a plain option asserts just the funding decision (its digit slot unchanged), a scenario option
+// runs the exact applyScenario path (partial combo assert + the shared ?preset= namespace), and
+// the values below are pseudo-options that never reach the combo codec.
+const FUNDING_DECISION = DECISIONS.find((d) => d.id === 'funding')!
+const FUNDING_SCENARIO_PREFIX = 'scenario:'
+const FUNDING_COMBINED: DecisionDef = {
+  ...FUNDING_DECISION,
+  options: [
+    ...FUNDING_DECISION.options,
+    ...VS_SCENARIOS.map((s) => ({
+      value: `${FUNDING_SCENARIO_PREFIX}${s.id}`,
+      label: s.label,
+      // The scenario tooltip already documents the exact key → DECISIONS-option mapping.
+      detail: s.tooltip,
+    })),
+  ],
+}
+const FUNDING_SHORT: Record<string, string> = {
+  seed: 'Seed',
+  bootstrap: 'Bootstrap',
+  [`${FUNDING_SCENARIO_PREFIX}vc-backed`]: 'VC backed',
+  [`${FUNDING_SCENARIO_PREFIX}bootstrapped`]: 'Bootstrapped',
 }
 
 const DECISION_ICONS: Record<keyof Choices, string> = {
@@ -373,13 +426,27 @@ const DECISION_ICONS: Record<keyof Choices, string> = {
 // addendum 2026-09-29): 'Order' → 'Start with' (name-first vs build-first read wrong), 'Model' →
 // 'Business model' (could read as an AI model).
 const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<string, string> }> = {
-  entity: { title: 'Entity', options: { 'c-corp': 'C-Corp', llc: 'LLC' } },
+  // Country-aware entities (founder round 5, item 1) — the roster shown follows the geo pick.
+  entity: {
+    title: 'Entity',
+    options: { 'c-corp': 'C-Corp', llc: 'LLC', ltd: 'Ltd', gmbh: 'GmbH', ug: 'UG', sas: 'SAS', sarl: 'SARL', 'pvt-ltd': 'Pvt Ltd' },
+  },
   team: { title: 'Team', options: { cofounders: 'Cofounders', solo: 'Solo' } },
   funding: { title: 'Funding', options: { seed: 'Seed', bootstrap: 'Bootstrap' } },
-  product: { title: 'Business model', options: { subscriptions: 'SaaS', invoices: 'Invoices' } },
+  // More business models (founder round 5, item 2).
+  product: {
+    title: 'Business model',
+    options: { subscriptions: 'SaaS', invoices: 'Invoices', marketplace: 'Marketplace', usage: 'Usage', ecommerce: 'E-com' },
+  },
+  // 'Start with' left the control panel (round 5, item 4) — the entry stays for the typed map
+  // (the decision itself still exists for composition and the codec).
   ordering: { title: 'Start with', options: { 'name-first': 'Name', 'build-first': 'Build' } },
   hire: { title: 'Hire', options: { yes: 'Yes', no: 'No' } },
-  compliance: { title: 'Compliance', options: { now: 'Early', later: 'Later' } },
+  // Compliance gets specific (round 5, item 3): SOC 2 early/deferred keep their codec slots.
+  compliance: {
+    title: 'Compliance',
+    options: { now: 'SOC 2', later: 'SOC 2 later', none: 'None', hipaa: 'HIPAA', iso: 'ISO 27001' },
+  },
   enterprise: { title: 'Enterprise', options: { no: 'No', yes: 'Yes' } },
   // Launch options (founder round 4, item 7): venue-flavored public launches + Stealth mode.
   ph: { title: 'Launch', options: { yes: 'PH', no: 'Stealth', 'show-hn': 'HN', waitlist: 'Waitlist' } },
@@ -395,6 +462,7 @@ export default function VirtualStartup({
   pricing,
   taskRisks,
   vendorGeo = {},
+  popularity = {},
 }: {
   chains: VsChain[]
   // Precomputed payload for every task any decision combo can reach, keyed by corpus task id.
@@ -416,6 +484,10 @@ export default function VirtualStartup({
   // cells (lib/vendorGeo.ts vendorGeoLookup — non-US cells only, evidence or absent). Optional
   // additive prop: {} = no vendor geo warnings ever render (honest degrade).
   vendorGeo?: VendorGeoLookup
+  // 'Likely choice' ordering payload (founder round 5, item 7) — per role arena, the committed
+  // adoption/popularity presentation order + per-product signal labels (lib/virtualStartupData.ts
+  // buildVsPopularity). Optional additive prop: {} = judged/ladder ordering everywhere.
+  popularity?: VsPopularityMap
 }) {
   // ── The ASSERTED decisions only (dropdowns; 'Not set' = absent key). The journey always
   // composes over the EFFECTIVE combo below — an unasserted decision runs the default branch
@@ -434,6 +506,10 @@ export default function VirtualStartup({
   // NOT persisted in the URL — the chosen tab is ephemeral chrome, the picks themselves ride
   // the ?run= permalink.
   const [tab, setTab] = useState<'setup' | 'vendors'>('setup')
+  // Vendors-tab ordering toggle (founder round 5, item 7): 'Likely choice' (the committed
+  // adoption/popularity presentation order) leads; 'Judged' is the arena's agent-readiness
+  // ladder. Both orderings are committed data — the toggle only changes presentation.
+  const [vendorOrdering, setVendorOrdering] = useState<'likely' | 'judged'>('likely')
   // ── v3 state: founder AXES (Technical × Experience — orthogonal, composable), the reader's
   // vendor picks (shared with ProcessSimulator below, controlled), decided event branches, the
   // drive mode, the typed company name (semi-auto naming card; null = autopilot), and the run
@@ -465,6 +541,10 @@ export default function VirtualStartup({
   // switching mid-run simply annotates the already-revealed lines. VsGeoSelector owns the
   // ?geo=/pa-geo sync (mount-read + writes), the same contract as components/GeoSwitcher.tsx.
   const [geo, setGeo] = useState<GeoChoice | null>(null)
+  // The entity roster's country (founder round 5, item 1): the geo selection, with both the US
+  // default (null) and the geo-neutral 🌐 Global resolving to the US roster (the corpus default).
+  const entityCountry: GeoCountry = geo === null || geo === GEO_GLOBAL ? 'US' : geo
+  const entityValuesFor = (country: GeoCountry): readonly string[] => ENTITY_OPTIONS_BY_COUNTRY[country]
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -625,20 +705,23 @@ export default function VirtualStartup({
     // variants). 0 = asked at Run-press, before anything prints.
     const cap = Math.max(0, rows.length - 1)
     const out: Array<{ id: keyof Choices | 'name'; at: number }> = []
-    for (const d of DECISIONS) {
+    for (const d of VISIBLE_DECISIONS) {
       if (asserted[d.id] !== undefined) continue
-      const [a, b] = d.options.map(
-        (o) => buildRunRows({ ...runArgs, choices: effectiveChoices({ ...asserted, [d.id]: o.value }) }).rows,
+      // The Entity ask offers the geo-selected country's roster only (round 5, item 1) — the
+      // pause point derives from exactly the options the card will offer.
+      const values = d.id === 'entity' ? entityValuesFor(entityCountry) : d.options.map((o) => o.value)
+      const variants = values.map(
+        (v) => buildRunRows({ ...runArgs, choices: effectiveChoices({ ...asserted, [d.id]: v }) }).rows,
       )
-      out.push({ id: d.id, at: Math.min(firstDifferingRow(a, b), cap) })
+      out.push({ id: d.id, at: Math.min(firstAffectedRow(variants) ?? 0, cap) })
     }
     if (!named && companyName === null) {
       const withName = (name: string) =>
         buildRunRows({ ...runArgs, identity: { name, descriptor: identity?.descriptor ?? '' }, choices }).rows
-      out.push({ id: 'name', at: Math.min(firstDifferingRow(withName('Aaaa'), withName('Bbbb')), cap) })
+      out.push({ id: 'name', at: Math.min(firstDifferingRow(withName('Aaaa'), withName('Bbbb')) ?? 0, cap) })
     }
     return out
-  }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length])
+  }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length, entityCountry])
 
   // Only the roles whose arena the selected journey actually touches — the Vendors tab (and the
   // outcome model, which resolves picks via step.arenaId / step.choiceArenaId) loses nothing.
@@ -753,7 +836,9 @@ export default function VirtualStartup({
       { id: 'founder-technical', title: 'Founder', icon: '👤', label: techLabel, state: 'asserted' as const },
       { id: 'founder-experience', title: 'Experience', icon: '🎓', label: expLabel, state: 'asserted' as const },
     ]
-    const decisions = DECISIONS.map((d) => {
+    // 'Start with' left the UI entirely (round 5, item 4) — the state panel lists only the
+    // decisions the panel offers.
+    const decisions = VISIBLE_DECISIONS.map((d) => {
       const label = d.options.find((o) => o.value === choices[d.id])?.label ?? String(choices[d.id])
       const state = asserted[d.id] !== undefined ? ('asserted' as const) : waitingOn === d.id ? ('pending' as const) : ('default' as const)
       return {
@@ -808,8 +893,10 @@ export default function VirtualStartup({
     [rows],
   )
   const nameExists = nameRowIndex !== -1 && revealed > nameRowIndex
+  // Slugged from the bare name (co.name carries no entity suffix), so every entity — Inc./LLC
+  // and the round-5 country entities alike — yields the same clean prompt identity.
   const termName = nameExists
-    ? co.display.replace(/(,\s*Inc\.?|\s+LLC)$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    ? co.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
     : 'new-startup'
 
   // ── The reveal ticker (shared by Run, manual resume, and semi-auto resume). It checks the
@@ -907,6 +994,26 @@ export default function VirtualStartup({
     setParams({ preset: null, yc: nextYc ? '1' : null })
   }
 
+  // Geo switch with the entity-geo reset rule (founder round 5, item 1): the Entity dropdown's
+  // roster follows the country, and an asserted entity the new country doesn't offer resets to
+  // that country's default-asserted first option — a composition change, so the run clears like
+  // any decision change (plain geo switches stay annotation-only and never touch the run).
+  function onGeoChange(next: GeoChoice | null) {
+    const country: GeoCountry = next === null || next === GEO_GLOBAL ? 'US' : next
+    const current = asserted.entity
+    if (current !== undefined && !ENTITY_OPTIONS_BY_COUNTRY[country].includes(current)) {
+      clearRun()
+      clearRunState()
+      // The reset entity no longer matches a preset/scenario's asserted combo — deselect, keep
+      // the rest of the setup (the pickChoice rule).
+      setPreset(null)
+      setScenario(null)
+      setAsserted((a) => ({ ...a, entity: defaultEntityFor(country) }))
+      setParams({ preset: null })
+    }
+    setGeo(next)
+  }
+
   function applyPreset(p: VsPreset) {
     clearRun()
     clearRunState()
@@ -925,6 +1032,18 @@ export default function VirtualStartup({
       const want = s.asserts[k as keyof Choices]
       return want !== undefined && want !== v
     })
+  }
+
+  // The combined Funding selector's pick handler (addendum 2026-09-30): plain values go through
+  // pickChoice (asserts only the funding decision; deselects any scenario, the standing rule),
+  // scenario pseudo-values go through the exact applyScenario path the pills used.
+  function pickFunding(value: string | null) {
+    if (value !== null && value.startsWith(FUNDING_SCENARIO_PREFIX)) {
+      const s = scenarioById(value.slice(FUNDING_SCENARIO_PREFIX.length))
+      if (s) applyScenario(s)
+      return
+    }
+    pickChoice('funding', value)
   }
 
   function applyScenario(s: VsScenario) {
@@ -1126,29 +1245,10 @@ export default function VirtualStartup({
                 </button>
               )
             })}
-            {/* Funding scenarios (round 3, item 1): one-tap pills asserting the funding decision
-                plus the calibrations that sensibly follow — the tooltip documents the exact
-                key → DECISIONS-option mapping. Partial asserts: everything else keeps its
-                current setting (so they compose with a company preset, which deselects). */}
+            {/* The funding scenario PILLS are gone (founder addendum 2026-09-30): VC backed /
+                Bootstrapped now live as options of the single Funding selector on the Decisions
+                row — same applyScenario semantics, same ?preset= namespace. */}
             <span aria-hidden className="text-zinc-700">|</span>
-            {VS_SCENARIOS.map((s) => {
-              const active = scenario === s.id
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  data-testid={`vs-scenario-${s.id}`}
-                  aria-pressed={active}
-                  onClick={() => applyScenario(s)}
-                  title={s.tooltip}
-                  className={`shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
-                    active ? 'border-emerald-400/60 bg-emerald-400/10 text-zinc-200' : 'border-zinc-800 text-zinc-300 hover:border-zinc-600'
-                  }`}
-                >
-                  {s.label}
-                </button>
-              )
-            })}
             {/* YC batch mode — a calibration applied on top of any setup, never a new process;
                 its full disclosure prints in the info line below while the mode is on. The pill
                 leads with the house YC mark (components/YcBadge.tsx: the YC orange square) —
@@ -1198,8 +1298,9 @@ export default function VirtualStartup({
             <span aria-hidden className="text-zinc-700">
               |
             </span>
-            <IconChip icon={ROW_ICONS.geo.icon} title={ROW_ICONS.geo.title} />
-            <VsGeoSelector value={geo} onChange={setGeo} />
+            {/* The adjacent 🌍 IconChip is gone (founder round 5, item 5) — the selector's own
+                flags carry the affordance. */}
+            <VsGeoSelector value={geo} onChange={onGeoChange} />
           </div>
           {/* The nine starting decisions as compact dropdowns (founder addendum 2026-09-29) —
               the house listbox pattern, each with a 'Not set' initial state that composes the
@@ -1211,17 +1312,35 @@ export default function VirtualStartup({
             Decisions
           </span>
           <div className="flex items-center gap-2.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
-          {DECISIONS.map((d) => (
-            <VsDecisionSelect
-              key={d.id}
-              decision={d}
-              shortTitle={DECISION_SHORT[d.id].title}
-              shortOptions={DECISION_SHORT[d.id].options}
-              icon={DECISION_ICONS[d.id]}
-              value={asserted[d.id]}
-              onSelect={(value) => pickChoice(d.id, value)}
-            />
-          ))}
+          {/* 'Start with' is gone from the panel (round 5, item 4 — VISIBLE_DECISIONS); the
+              Entity roster follows the geo pick (round 5, item 1 — country-filtered options,
+              full codec roster intact underneath); Funding is the SINGLE combined selector
+              (addendum 2026-09-30): plain options assert the decision, scenario options run the
+              one-tap applyScenario path. */}
+          {VISIBLE_DECISIONS.map((d) =>
+            d.id === 'funding' ? (
+              <VsDecisionSelect
+                key={d.id}
+                decision={FUNDING_COMBINED}
+                shortTitle={DECISION_SHORT.funding.title}
+                shortOptions={FUNDING_SHORT}
+                icon={DECISION_ICONS.funding}
+                value={scenario !== null ? `${FUNDING_SCENARIO_PREFIX}${scenario}` : asserted.funding}
+                onSelect={pickFunding}
+              />
+            ) : (
+              <VsDecisionSelect
+                key={d.id}
+                decision={d}
+                shortTitle={DECISION_SHORT[d.id].title}
+                shortOptions={DECISION_SHORT[d.id].options}
+                icon={DECISION_ICONS[d.id]}
+                value={asserted[d.id]}
+                visibleValues={d.id === 'entity' ? entityValuesFor(entityCountry) : undefined}
+                onSelect={(value) => pickChoice(d.id, value)}
+              />
+            ),
+          )}
           </div>
         </div>
         </div>
@@ -1241,6 +1360,43 @@ export default function VirtualStartup({
             restarts, so you can pick your favorites and rerun. Roles follow the selected
             journey; each process page keeps its full dry-run transcript.
           </p>
+          {/* Ordering toggle (founder round 5, item 7): 'Likely choice' — the committed
+              adoption/popularity signal — leads the pickers; 'Judged' is the arena's
+              agent-readiness ladder. Both orderings are committed data; the judged default
+              keeps its '(recommended · judged)' label either way. */}
+          {journeyRoles.length > 0 && (
+            <div role="group" aria-label="Vendor ordering" className="mt-2 flex items-center gap-1">
+              <span className="text-[10px] uppercase tracking-wider text-zinc-500">Order:</span>
+              <button
+                type="button"
+                data-testid="vs-vendor-order-likely"
+                aria-pressed={vendorOrdering === 'likely'}
+                onClick={() => setVendorOrdering('likely')}
+                title="Likely choice — the committed adoption/popularity signal (curated clearly-popular set, GitHub stars, weekly installs) orders each picker's list; judged scores never move"
+                className={`rounded-full border px-2 py-0.5 text-[11px] transition ${
+                  vendorOrdering === 'likely'
+                    ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                    : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+                }`}
+              >
+                Likely choice
+              </button>
+              <button
+                type="button"
+                data-testid="vs-vendor-order-judged"
+                aria-pressed={vendorOrdering === 'judged'}
+                onClick={() => setVendorOrdering('judged')}
+                title="Judged — the arena's agent-readiness ladder, exactly as the rankings pages order it"
+                className={`rounded-full border px-2 py-0.5 text-[11px] transition ${
+                  vendorOrdering === 'judged'
+                    ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                    : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+                }`}
+              >
+                Judged
+              </button>
+            </div>
+          )}
           {journeyRoles.length > 0 ? (
             <div className="mt-2.5 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
               {journeyRoles.map((role) => (
@@ -1249,6 +1405,9 @@ export default function VirtualStartup({
                   role={role}
                   selectedId={picks[role.arenaId] ?? role.defaultProductId}
                   onSelect={(id) => pickVendor(role.arenaId, id)}
+                  displayOrder={vendorOrdering === 'likely' ? popularity[role.arenaId]?.order : undefined}
+                  signals={popularity[role.arenaId]?.signals}
+                  recommendedId={role.defaultProductId}
                 />
               ))}
             </div>
@@ -1361,7 +1520,10 @@ export default function VirtualStartup({
             <span className="font-medium text-zinc-200">{waitingDecision.title}</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Decision: ${waitingDecision.title}`}>
-            {waitingDecision.options.map((o) => (
+            {(waitingDecision.id === 'entity'
+              ? waitingDecision.options.filter((o) => entityValuesFor(entityCountry).includes(o.value))
+              : waitingDecision.options
+            ).map((o) => (
               <button
                 key={o.value}
                 type="button"
@@ -1524,8 +1686,22 @@ export default function VirtualStartup({
                 // Annotation only, and never for 🌐 Global / the US default (geoCountry null).
                 const geoCountryNote =
                   geoCountry !== null ? (row.task.geoNotes ?? []).find((n) => n.country === geoCountry) ?? null : null
+                // Country-aware entity framing (founder round 5, item 1): a non-US entity prints
+                // the incorporation process's COMMITTED country analog on its row (the corpus
+                // composition stays the US-shaped C-Corp path — this line is the honest frame).
+                const entityMeta = ENTITY_META[choices.entity]
+                const entityAnalog =
+                  row.task.id === 'form_001' && entityMeta.country !== 'US'
+                    ? {
+                        meta: GEO_PREF_META[entityMeta.country],
+                        note: (row.task.geoNotes ?? []).find((n) => n.country === entityMeta.country) ?? null,
+                      }
+                    : null
                 const geoNote =
-                  geoCountry !== null && (usScoped(row.task.id) || geoCountryNote !== null)
+                  geoCountry !== null &&
+                  (usScoped(row.task.id) || geoCountryNote !== null) &&
+                  // The entity analog already frames this row for the same country — one line, not two.
+                  !(entityAnalog !== null && geoCountry === entityMeta.country)
                     ? { meta: GEO_PREF_META[geoCountry], note: geoCountryNote }
                     : null
                 return (
@@ -1556,6 +1732,31 @@ export default function VirtualStartup({
                         <p data-testid="vs-geo-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
                           <span aria-hidden className="mr-1">🇺🇸</span>
                           no {geoNote.meta.label} mapping yet — this process is US-specific
+                        </p>
+                      ))}
+                    {/* The non-US entity's country frame (round 5, item 1): committed analog or
+                        the honest absence — the corpus steps below stay the US C-Corp path. */}
+                    {entityAnalog &&
+                      (entityAnalog.note ? (
+                        <p data-testid="vs-entity-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                          <span aria-hidden className="mr-1">{entityAnalog.meta.flag}</span>
+                          {entityMeta.label} — in {entityAnalog.meta.prose} this is:{' '}
+                          <span className="text-zinc-400">{entityAnalog.note.summary}</span>{' '}
+                          <a
+                            href={entityAnalog.note.actionUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-emerald-400/90 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-300"
+                            title={`${entityAnalog.meta.label} — the canonical portal for this work (verified live)`}
+                          >
+                            {entityAnalog.note.actionLabel} ↗
+                          </a>{' '}
+                          <span className="text-zinc-600">· the steps below are the US-shaped corpus playbook</span>
+                        </p>
+                      ) : (
+                        <p data-testid="vs-entity-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                          <span aria-hidden className="mr-1">🇺🇸</span>
+                          {entityMeta.label} — no {entityAnalog.meta.label} analog committed yet; the steps below are the US-shaped corpus playbook
                         </p>
                       ))}
                     {/* Ultrametric CLI/MCP affordance (founder ask 2026-09-30) — OWNER PRODUCT,
@@ -1657,13 +1858,18 @@ export default function VirtualStartup({
                           />
                           {row.top.name} · {row.top.score.toFixed(0)}
                         </Link>
-                        <span className="text-[10px] text-zinc-500">(recommended)</span>
-                        {/* The step ranking's runners-up + the arena behind the choice (founder
-                            addendum 2026-09-29) — a quiet trailing fragment, judged order kept. */}
-                        <span data-testid="vs-step-runnersup" className="text-[10px] text-zinc-600">
+                        <span className="text-[10px] text-zinc-500">(recommended · judged)</span>
+                        {/* The step ranking's runners-up + the arena behind the choice — the
+                            fragment now LEADS with the likely-choice (adoption/popularity)
+                            ordering (founder round 5, item 7); every score stays judged. */}
+                        <span
+                          data-testid="vs-step-runnersup"
+                          title="Runners-up ordered by the committed adoption/popularity signal (likely choice); the scores are the judged step ranking's — nothing re-ranked"
+                          className="text-[10px] text-zinc-600"
+                        >
                           {(row.top.runnersUp ?? []).length > 0 && (
                             <>
-                              {'then '}
+                              {'likely '}
                               {(row.top.runnersUp ?? []).map((r, i) => (
                                 <span key={r.productId}>
                                   {i > 0 && ', '}

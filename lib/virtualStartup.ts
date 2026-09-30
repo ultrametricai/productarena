@@ -21,21 +21,36 @@
 //   - fake identifiers are constructed to be impossible-real: EIN "00-0000000" (no real EIN
 //     starts 00), domains on the RFC 2606-reserved .example TLD, all-zero file/routing numbers.
 
-import type { GeoAnalogNote } from './geoPreference'
+import { GEO_PREF_META, type GeoAnalogNote, type GeoCountry } from './geoPreference'
 import type { Cadence, SimStep } from './processSim'
 
 // ---------------------------------------------------------------------------
 // Decisions
 // ---------------------------------------------------------------------------
 
-export type EntityChoice = 'c-corp' | 'llc'
+// Country-aware entity options (founder round 5, item 1). Codec rule: 'c-corp'/'llc' keep their
+// original indices 0/1; every non-US entity value is APPENDED so old digit permalinks replay
+// unchanged. HONESTY: the step corpus is US-shaped — a non-US entity keeps the EXACT corpus
+// incorporation composition of the C-Corp path (never a fake corpus branch) and frames it with
+// the committed geoNotes country analog (terminal line + entity label).
+export type EntityChoice = 'c-corp' | 'llc' | 'ltd' | 'gmbh' | 'ug' | 'sas' | 'sarl' | 'pvt-ltd'
 export type FundingChoice = 'bootstrap' | 'seed'
-export type ProductChoice = 'subscriptions' | 'invoices'
+// Business models (founder round 5, item 2). Codec rule: 'subscriptions'/'invoices' keep indices
+// 0/1; 'marketplace'/'usage'/'ecommerce' append. Only compositions the corpus honestly supports:
+// usage runs the SAME subscription-billing task (usage is a billing mode — venue-noted);
+// marketplace and e-commerce run the get-paid spine (processor + first close) with the model
+// named — no take-rate or storefront corpus steps exist, so none are invented.
+export type ProductChoice = 'subscriptions' | 'invoices' | 'marketplace' | 'usage' | 'ecommerce'
 export type TeamChoice = 'solo' | 'cofounders'
 // Founder iteration 2026-09-25 — five more corpus-real branches:
 export type OrderingChoice = 'name-first' | 'build-first'
 export type HireChoice = 'yes' | 'no'
-export type ComplianceChoice = 'now' | 'later'
+// Compliance gets specific (founder round 5, item 3). Codec rule: 'now'/'later' keep indices 0/1
+// (old links replay their placement semantics as SOC 2 early/deferred); 'none'/'hipaa'/'iso'
+// append. HIPAA and ISO 27001 run the SAME real set-up-compliance chain with the framework named
+// in lines/artifacts (no dedicated corpus chains exist — steps are never fabricated); 'none'
+// genuinely skips the chain.
+export type ComplianceChoice = 'now' | 'later' | 'none' | 'hipaa' | 'iso'
 export type EnterpriseChoice = 'yes' | 'no'
 // Launch options (founder batch 2026-09-29, round 4, item 7). Codec compat rules the values:
 // 'yes' (Product Hunt) and 'no' (Stealth mode — the old Quiet launch, relabeled) keep their
@@ -78,6 +93,74 @@ export const DEFAULT_ASSERTED: Partial<Choices> = {
   entity: 'c-corp',
 }
 
+// ---------------------------------------------------------------------------
+// Country-aware entity metadata (founder round 5, item 1)
+// ---------------------------------------------------------------------------
+// Each entity value names its country, display suffix, and the impossible-real formation filing
+// its artifact prints (all-zero identifiers — the module-header convention). The corpus
+// COMPOSITION never varies by country: only 'llc' swaps form_001 → form_011; every other value
+// runs the C-Corp path framed with the committed country analog (processes/corpus.json geoNotes).
+
+export interface EntityMeta {
+  label: string
+  suffix: string
+  country: GeoCountry
+  // The register named in the SIMULATED formation artifact — mirrors the committed geoNotes
+  // analog's counterparty (Companies House / Handelsregister / RCS-greffe / MCA), never a claim
+  // of real corpus steps for that register.
+  filing: { label: string; register: string }
+}
+
+export const ENTITY_META: Record<EntityChoice, EntityMeta> = {
+  'c-corp': {
+    label: 'Delaware C-Corp', suffix: ', Inc.', country: 'US',
+    filing: { label: 'Certificate of Incorporation', register: 'DE file no. 0000000' },
+  },
+  llc: {
+    label: 'LLC', suffix: ' LLC', country: 'US',
+    filing: { label: 'Certificate of Formation', register: 'DE file no. 0000000' },
+  },
+  ltd: {
+    label: 'Ltd (Companies House)', suffix: ' Ltd', country: 'UK',
+    filing: { label: 'Certificate of Incorporation', register: 'Companies House no. 00000000 (placeholder)' },
+  },
+  gmbh: {
+    label: 'GmbH', suffix: ' GmbH', country: 'DE',
+    filing: { label: 'Formation filing', register: 'Handelsregister HRB 00000 (placeholder)' },
+  },
+  ug: {
+    label: 'UG (haftungsbeschränkt)', suffix: ' UG (haftungsbeschränkt)', country: 'DE',
+    filing: { label: 'Formation filing', register: 'Handelsregister HRB 00000 (placeholder)' },
+  },
+  sas: {
+    label: 'SAS', suffix: ' SAS', country: 'FR',
+    filing: { label: 'Formation filing', register: 'RCS no. 000 000 000 (placeholder)' },
+  },
+  sarl: {
+    label: 'SARL', suffix: ' SARL', country: 'FR',
+    filing: { label: 'Formation filing', register: 'RCS no. 000 000 000 (placeholder)' },
+  },
+  'pvt-ltd': {
+    label: 'Pvt Ltd', suffix: ' Pvt Ltd', country: 'IN',
+    filing: { label: 'Certificate of Incorporation', register: 'MCA CIN U00000-DL-0000-PTC-000000 (placeholder)' },
+  },
+}
+
+// The Entity dropdown's roster follows the geo selection; the FIRST option per country is the
+// country's default-asserted value (a geo switch with an incompatible asserted entity resets to
+// it — the component owns that rule).
+export const ENTITY_OPTIONS_BY_COUNTRY: Record<GeoCountry, EntityChoice[]> = {
+  US: ['c-corp', 'llc'],
+  UK: ['ltd'],
+  DE: ['gmbh', 'ug'],
+  FR: ['sas', 'sarl'],
+  IN: ['pvt-ltd'],
+}
+
+export function defaultEntityFor(country: GeoCountry): EntityChoice {
+  return ENTITY_OPTIONS_BY_COUNTRY[country][0]
+}
+
 export interface DecisionOption {
   value: string
   label: string
@@ -91,18 +174,23 @@ export interface DecisionDef {
   options: DecisionOption[]
 }
 
-// The decision tree, derived from what the corpus actually contains (no marketplace/other
-// entity processes exist, so no such options are offered):
-//   entity     — form_001 "Incorporate C-Corp" vs form_011 "Set up an LLC"
+// The decision tree, derived from what the corpus actually contains:
+//   entity     — form_001 "Incorporate C-Corp" vs form_011 "Set up an LLC"; non-US entities
+//                (Ltd / GmbH / UG / SAS / SARL / Pvt Ltd) keep the form_001 composition framed
+//                with the committed geoNotes country analog — never a fake corpus branch
 //   team       — startup_002 "Founder agreement & equity split" included only with cofounders
 //   funding    — the raise-a-seed-round chain (fund_005, fund_001, qs_052) included only on raise
-//   product    — the get-paid chain forked: growth_001 "Set up subscription billing" (SaaS) vs
-//                sales_002 "Send an invoice" (invoice-billed services)
+//   product    — the get-paid chain forked: growth_001 "Set up subscription billing" (SaaS and
+//                usage-based — usage is a billing mode, venue-noted) vs sales_002 "Send an
+//                invoice" (invoice-billed services); marketplace/e-commerce run the spine only
+//                (qs_021 + fin_002) — no take-rate/storefront corpus steps exist to run
 //   ordering   — name-first (classic) vs build-first: the ship-v1 chain runs before naming —
-//                pure reordering of committed chains, nothing added or dropped
+//                pure reordering of committed chains, nothing added or dropped (the control
+//                left the panel 2026-09-30 — HIDDEN_DECISION_IDS; old links still replay it)
 //   hire       — the first-hire chain (hr_001, legal_003, opp_007, hr_002) included on yes
-//   compliance — the set-up-compliance chain ALWAYS runs; the choice is placement: early
-//                (right after formation/raise) vs deferred (after launch)
+//   compliance — the set-up-compliance chain runs early (SOC 2 early / HIPAA / ISO 27001 —
+//                framework named, same corpus steps) or deferred (SOC 2 deferred); 'None'
+//                skips it entirely
 //   enterprise — the land-the-enterprise-deal chain appended as the final phase on yes
 //   ph         — the launch-on-product-hunt chain included for every public launch (Product
 //                Hunt / Show HN / Waitlist — same corpus playbook, venue named in the phase
@@ -111,9 +199,19 @@ export const DECISIONS: DecisionDef[] = [
   {
     id: 'entity',
     title: 'Entity',
+    // Option ORDER is codec (c-corp/llc keep indices 0/1; non-US entities appended — see
+    // EntityChoice). The dropdown shows only the selected country's options
+    // (ENTITY_OPTIONS_BY_COUNTRY); every non-US value keeps the C-Corp corpus composition,
+    // framed with the committed geoNotes country analog — no fake corpus branches.
     options: [
       { value: 'c-corp', label: 'Delaware C-Corp', detail: 'runs the real "Incorporate C-Corp" process (form_001)' },
       { value: 'llc', label: 'LLC', detail: 'runs the real "Set up an LLC" process (form_011)' },
+      { value: 'ltd', label: 'Ltd (Companies House)', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for the UK with the committed Companies House analog — the corpus is US-shaped; no steps invented' },
+      { value: 'gmbh', label: 'GmbH', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for Germany with the committed Handelsregister analog — the corpus is US-shaped; no steps invented' },
+      { value: 'ug', label: 'UG (haftungsbeschränkt)', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for Germany with the committed Handelsregister analog — the corpus is US-shaped; no steps invented' },
+      { value: 'sas', label: 'SAS', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for France with the committed formalités/RCS analog — the corpus is US-shaped; no steps invented' },
+      { value: 'sarl', label: 'SARL', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for France with the committed formalités/RCS analog — the corpus is US-shaped; no steps invented' },
+      { value: 'pvt-ltd', label: 'Pvt Ltd', detail: 'the same corpus incorporation composition as the C-Corp path (form_001), framed for India with the committed MCA analog — the corpus is US-shaped; no steps invented' },
     ],
   },
   {
@@ -135,9 +233,15 @@ export const DECISIONS: DecisionDef[] = [
   {
     id: 'product',
     title: 'Business model',
+    // Option ORDER is codec (subscriptions/invoices keep indices 0/1; new models appended — see
+    // ProductChoice). Only compositions the corpus honestly supports; shared chains are
+    // venue-noted in the journey.
     options: [
       { value: 'subscriptions', label: 'SaaS subscriptions', detail: 'turns on revenue via "Set up subscription billing" (growth_001)' },
       { value: 'invoices', label: 'Invoice-billed services', detail: 'turns on revenue via "Send an invoice" (sales_002)' },
+      { value: 'marketplace', label: 'Marketplace (take-rate)', detail: 'the same get-paid playbook spine — payment processor (qs_021) + first close (fin_002), take-rate named; the corpus has no dedicated take-rate billing steps, so neither billing fork runs and nothing is invented' },
+      { value: 'usage', label: 'Usage-based', detail: 'the same subscription-billing chain (growth_001) — usage is a billing mode, named in the journey; identical corpus steps to SaaS subscriptions' },
+      { value: 'ecommerce', label: 'E-commerce (DTC)', detail: 'the same get-paid playbook spine — checkout via the payment processor (qs_021) + first close (fin_002); the corpus has no storefront step yet, so none is invented' },
     ],
   },
   {
@@ -159,9 +263,16 @@ export const DECISIONS: DecisionDef[] = [
   {
     id: 'compliance',
     title: 'Compliance posture',
+    // Option ORDER is codec (now/later keep indices 0/1 — old links replay their placement
+    // semantics as SOC 2 early/deferred; none/hipaa/iso appended — see ComplianceChoice).
+    // HIPAA/ISO run the SAME chain with the framework named — no dedicated corpus chains exist
+    // and no steps are fabricated; 'None' genuinely skips the chain.
     options: [
-      { value: 'now', label: 'Compliance early', detail: 'the set-up-compliance playbook (SOC 2-lite) runs right after formation' },
-      { value: 'later', label: 'Compliance later', detail: 'the same set-up-compliance playbook, deferred to after launch' },
+      { value: 'now', label: 'SOC 2 (early)', detail: 'the set-up-compliance playbook (SOC 2-lite) runs right after formation' },
+      { value: 'later', label: 'SOC 2 (deferred)', detail: 'the same set-up-compliance playbook, deferred to after launch' },
+      { value: 'none', label: 'None', detail: 'no compliance posture — the set-up-compliance playbook is skipped entirely' },
+      { value: 'hipaa', label: 'HIPAA', detail: 'the same set-up-compliance playbook (SOC 2-lite corpus steps) run early for a HIPAA posture — the framework is named honestly; no dedicated HIPAA corpus chain exists and no steps are fabricated' },
+      { value: 'iso', label: 'ISO 27001', detail: 'the same set-up-compliance playbook (SOC 2-lite corpus steps) run early for an ISO 27001 posture — the framework is named honestly; no dedicated ISO corpus chain exists and no steps are fabricated' },
     ],
   },
   {
@@ -191,20 +302,21 @@ export function comboKey(c: Choices): string {
   return `${c.entity}|${c.funding}|${c.product}|${c.team}|${c.ordering}|${c.hire}|${c.compliance}|${c.enterprise}|${c.ph}`
 }
 
+// Every decision combo, derived straight from DECISIONS so new options can never drift out of
+// the enumeration (unionTaskIds, the codec round-trip tests, and the honesty suites all sweep it).
 export function allChoiceCombos(): Choices[] {
-  const combos: Choices[] = []
-  for (const entity of ['c-corp', 'llc'] as const)
-    for (const funding of ['bootstrap', 'seed'] as const)
-      for (const product of ['subscriptions', 'invoices'] as const)
-        for (const team of ['solo', 'cofounders'] as const)
-          for (const ordering of ['name-first', 'build-first'] as const)
-            for (const hire of ['yes', 'no'] as const)
-              for (const compliance of ['now', 'later'] as const)
-                for (const enterprise of ['yes', 'no'] as const)
-                  for (const ph of ['yes', 'no', 'show-hn', 'waitlist'] as const)
-                    combos.push({ entity, funding, product, team, ordering, hire, compliance, enterprise, ph })
-  return combos
+  let combos: Array<Partial<Record<keyof Choices, string>>> = [{}]
+  for (const d of DECISIONS) {
+    combos = combos.flatMap((c) => d.options.map((o) => ({ ...c, [d.id]: o.value })))
+  }
+  return combos as Choices[]
 }
+
+// Decisions removed from the control panel (founder round 5, item 4: 'Start with' leaves the
+// UI). The DECISIONS entry — and with it the ?run= digit slot — stays, so old links asserting
+// these values still replay; composition keeps the default; presets/YC keep asserting them
+// internally. The component hides the dropdown, the state panel row, and the semi-auto ask.
+export const HIDDEN_DECISION_IDS: ReadonlyArray<keyof Choices> = ['ordering']
 
 // ---------------------------------------------------------------------------
 // Preset example companies (founder ask 2026-09-25: "prefill the simulator with real-feeling
@@ -264,9 +376,11 @@ export const VS_PRESETS: VsPreset[] = [
     label: 'Biotech',
     product: 'Oncology vaccine co',
     company: { name: 'Demovax', descriptor: 'oncology vaccine programs' },
+    // Compliance-specific combo update (founder round 5, item 3): the biotech example asserts
+    // the HIPAA framing — the SAME set-up-compliance corpus chain, framework named, run early.
     choices: {
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
-      ordering: 'name-first', hire: 'yes', compliance: 'now', enterprise: 'yes', ph: 'no',
+      ordering: 'name-first', hire: 'yes', compliance: 'hipaa', enterprise: 'yes', ph: 'no',
     },
     disclosure:
       'Runs the same real software-company process corpus — biotech-specific steps (regulatory, trials, manufacturing) aren’t modeled yet.',
@@ -450,9 +564,15 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
       'set-up-compliance',
       undefined,
       choices.compliance === 'now'
-        ? 'compliance early — the SOC 2-lite posture stands before the product ships'
-        : 'compliance deferred — the same playbook, after launch',
+        ? 'SOC 2 early — the SOC 2-lite posture stands before the product ships'
+        : choices.compliance === 'hipaa'
+          ? 'HIPAA — the same set-up-compliance corpus playbook (SOC 2-lite steps) run early for a HIPAA posture; no dedicated HIPAA corpus chain exists, so the framework is named, never fabricated'
+          : choices.compliance === 'iso'
+            ? 'ISO 27001 — the same set-up-compliance corpus playbook (SOC 2-lite steps) run early for an ISO 27001 posture; no dedicated ISO corpus chain exists, so the framework is named, never fabricated'
+            : 'SOC 2 deferred — the same playbook, after launch',
     )
+  // Early placement covers every framework option; only 'later' defers and 'none' skips.
+  const complianceEarly = choices.compliance === 'now' || choices.compliance === 'hipaa' || choices.compliance === 'iso'
 
   const raisePhase = () =>
     push(
@@ -465,6 +585,16 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
         : null,
     )
 
+  // Non-US entities: the C-Corp corpus composition, framed with the committed country analog.
+  const entityMeta = ENTITY_META[choices.entity]
+  const entityNote =
+    choices.entity === 'llc'
+      ? 'LLC path — "Set up an LLC" (form_011) replaces the C-Corp filing'
+      : entityMeta.country !== 'US'
+        ? `${entityMeta.label} — the same corpus incorporation composition as the C-Corp path, framed for ${GEO_PREF_META[entityMeta.country].prose} with the committed country analog (the corpus is US-shaped; no steps invented)`
+        : null
+  const soloNote = choices.team === 'solo' ? 'solo founder — the founder equity split (startup_002) is skipped' : null
+
   if (choices.ordering === 'build-first') buildPhase()
   push('name', 'Name & brand', 'name-the-company')
   push(
@@ -475,14 +605,10 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
       ids
         .map((id) => (id === 'form_001' && choices.entity === 'llc' ? 'form_011' : id))
         .filter((id) => id !== 'startup_002' || choices.team === 'cofounders'),
-    choices.entity === 'llc'
-      ? 'LLC path — "Set up an LLC" (form_011) replaces the C-Corp filing'
-      : choices.team === 'solo'
-        ? 'solo founder — the founder equity split (startup_002) is skipped'
-        : null,
+    [entityNote, soloNote].filter((n): n is string => n !== null).join(' · ') || null,
   )
   if (choices.funding === 'seed' && !yc) raisePhase()
-  if (choices.compliance === 'now') compliancePhase()
+  if (complianceEarly) compliancePhase()
   if (choices.ordering === 'name-first') buildPhase()
   push('website', 'Launch the website', 'launch-website')
   push(
@@ -491,13 +617,19 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
     'get-paid',
     (ids) =>
       ids.filter((id) =>
-        id === 'growth_001' ? choices.product === 'subscriptions'
+        id === 'growth_001' ? choices.product === 'subscriptions' || choices.product === 'usage'
         : id === 'sales_002' ? choices.product === 'invoices'
         : true,
       ),
     choices.product === 'subscriptions'
       ? 'SaaS — subscription billing (growth_001); the invoice path (sales_002) is skipped'
-      : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped',
+      : choices.product === 'usage'
+        ? 'usage-based — the same subscription-billing playbook (growth_001); usage is a billing mode (model named only; identical corpus steps); the invoice path (sales_002) is skipped'
+        : choices.product === 'marketplace'
+          ? 'marketplace (take-rate) — the get-paid spine only: payment processor (qs_021) + first close (fin_002); the corpus has no take-rate billing steps, so neither billing fork runs'
+          : choices.product === 'ecommerce'
+            ? 'e-commerce (DTC) — the get-paid spine: checkout via the payment processor (qs_021) + first close (fin_002); the corpus has no storefront step yet, so none is invented'
+            : 'services — invoicing (sales_002); subscription billing (growth_001) is skipped',
   )
   if (choices.hire === 'yes') push('hire', 'First hire', 'first-hire')
   // Any PUBLIC launch runs the same real launch playbook — the venue options only name where
@@ -515,6 +647,7 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
           : null,
     )
   if (choices.compliance === 'later') compliancePhase()
+  // compliance 'none': the chain honestly never runs — neither branch above fires.
   // YC calibration: the same raise chain, at Demo-Day timing — the end of the batch.
   if (choices.funding === 'seed' && yc) raisePhase()
   // Always last: the enterprise close leans on the compliance playbook's posture either way.
@@ -657,7 +790,9 @@ export function synthCompany(choices: Choices, identity?: SynthIdentity | null, 
       })()
   return {
     name,
-    display: choices.entity === 'llc' ? `${name} LLC` : `${name}, Inc.`,
+    // The entity label follows the decision — non-US entities wear their real-world suffix
+    // (Ltd / GmbH / …), the country-frame half of founder round 5 item 1.
+    display: `${name}${ENTITY_META[choices.entity].suffix}`,
     slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     descriptor: identity?.descriptor ?? null,
   }
@@ -682,7 +817,12 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
     return [{ label: 'Brand palette', value: `${hex()} / ${hex()}` }]
   },
   legal_002: ({ co }) => [{ label: 'Trademark filing', value: `"${co.name}" — USPTO serial 00000000 (placeholder)` }],
-  form_001: ({ co }) => [{ label: 'Certificate of Incorporation', value: `${co.display} — DE file no. 0000000` }],
+  // Entity-aware (founder round 5, item 1): the filing artifact names the entity's register
+  // (mirroring the committed country analog) — still impossible-real all-zero identifiers.
+  form_001: ({ co, choices }) => [{
+    label: ENTITY_META[choices.entity].filing.label,
+    value: `${co.display} — ${ENTITY_META[choices.entity].filing.register}`,
+  }],
   form_011: ({ co }) => [{ label: 'Certificate of Formation', value: `${co.display} — DE file no. 0000000` }],
   // No real EIN starts 00 — the canonical impossible-real placeholder.
   form_002: () => [{ label: 'EIN', value: '00-0000000' }],
@@ -708,11 +848,27 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
   prod_005: () => [{ label: 'Analytics', value: 'first event captured: $pageview' }],
   site_001: ({ co }) => [{ label: 'Website', value: `https://${co.slug}.example live` }],
   prod_003: ({ co }) => [{ label: 'DNS', value: `${co.slug}.example → apex A record set` }],
-  qs_021: () => [{ label: 'Payments', value: 'account acct_SIM0000000 activated (test mode)' }],
-  growth_001: ({ rng }) => [{
-    label: 'First subscription',
-    value: `Pro — $${pick(rng, ['19', '29', '49', '99'])}/mo · sub_SIM0001 active`,
+  // Model-flavored (round 5, item 2): same corpus step, the business model named; the rng
+  // stream is consumed identically across models so every other artifact stays byte-stable.
+  qs_021: ({ choices }) => [{
+    label: 'Payments',
+    value:
+      choices.product === 'marketplace'
+        ? 'account acct_SIM0000000 activated (test mode) · take-rate routing configured'
+        : choices.product === 'ecommerce'
+          ? 'account acct_SIM0000000 activated (test mode) · checkout live on the site'
+          : 'account acct_SIM0000000 activated (test mode)',
   }],
+  growth_001: ({ rng, choices }) => {
+    const price = pick(rng, ['19', '29', '49', '99'])
+    return [{
+      label: 'First subscription',
+      value:
+        choices.product === 'usage'
+          ? `Pro — $${price}/mo base + metered usage · sub_SIM0001 active`
+          : `Pro — $${price}/mo · sub_SIM0001 active`,
+    }]
+  },
   sales_002: ({ rng }) => [{
     label: 'First invoice',
     value: `INV-0001 — $${pick(rng, ['900.00', '1,200.00', '2,400.00', '4,800.00'])} · net 30`,
@@ -742,7 +898,15 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
   scale_007: () => [{ label: 'SSO', value: 'SSO enforced · MFA on for every seat' }],
   ops_013: () => [{ label: 'Device management', value: '1 laptop enrolled · disk encryption verified' }],
   comp_010: ({ co }) => [{ label: 'Privacy policy', value: `https://${co.slug}.example/privacy live · DPA template ready` }],
-  comp_001: () => [{ label: 'SOC 2 Type I', value: 'observation window opened · 0 failing controls' }],
+  // Framework-aware (round 5, item 3): HIPAA/ISO name the framework honestly — the steps are the
+  // SOC 2-lite corpus playbook's, and the artifact says so rather than implying dedicated steps.
+  comp_001: ({ choices }) => [
+    choices.compliance === 'hipaa'
+      ? { label: 'HIPAA readiness', value: 'controls stood up on the SOC 2-lite corpus playbook · framework named: HIPAA (no dedicated HIPAA corpus steps)' }
+      : choices.compliance === 'iso'
+        ? { label: 'ISO 27001 readiness', value: 'controls stood up on the SOC 2-lite corpus playbook · framework named: ISO 27001 (no dedicated ISO corpus steps)' }
+        : { label: 'SOC 2 Type I', value: 'observation window opened · 0 failing controls' },
+  ],
   // Land-the-enterprise-deal playbook.
   comp_002: () => [{ label: 'SOC 2 Type II', value: 'report issued — observation window closed' }],
   comp_013: () => [{ label: 'Pen test', value: 'report delivered · 0 critical findings' }],
@@ -1123,6 +1287,74 @@ export interface WindowRow extends YearRow {
 // The recurring rows that land inside the first `windowDays` days, from the combo's year rows.
 // A row appears only when at least one cadence-math run fits the window (a quarterly process
 // misses the first 30 days; an annual never has a day here).
+// ---------------------------------------------------------------------------
+// 'Likely choice' vendor ordering (founder round 5, item 7) — the committed adoption/popularity
+// signal as an ORDERING, never a new number. NO rank fabrication: every input is committed data —
+//   curated  — data/popular-products.json membership ("clearly popular", an UNRANKED editorial
+//              set; within it, measured counters then name order — presentation of an unranked
+//              set, labeled as such, never a popularity rank claim);
+//   stars    — data/{arena}/popularity.json GitHub stars (open-source products only);
+//   installs — npm+PyPI weekly installs from the same popularity stage;
+//   rest     — no committed signal: the judged input order is kept.
+// The judged rankings stay untouched — this reorders PRESENTATION (Vendors-tab pickers, terminal
+// runners-up) while the judged top keeps its '(recommended · judged)' label.
+// ---------------------------------------------------------------------------
+
+export interface VsPopularityProduct {
+  id: string
+  name: string
+  curated: boolean
+  stars?: number
+  installs?: number
+}
+
+// Products best-first by the likely-choice tiers; ties inside the signal-less tail keep the
+// caller's (judged) order. Pure and client-safe — the server resolves the signals.
+export function likelyChoiceOrder(products: VsPopularityProduct[]): string[] {
+  const tier = (p: VsPopularityProduct) =>
+    p.curated ? 0 : p.stars !== undefined ? 1 : p.installs !== undefined ? 2 : 3
+  return products
+    .map((p, i) => ({ p, i }))
+    .sort(
+      (a, b) =>
+        tier(a.p) - tier(b.p) ||
+        (b.p.stars ?? -1) - (a.p.stars ?? -1) ||
+        (b.p.installs ?? -1) - (a.p.installs ?? -1) ||
+        (tier(a.p) === 3 ? a.i - b.i : a.p.name.localeCompare(b.p.name)),
+    )
+    .map((x) => x.p.id)
+}
+
+// One arena's likely-choice presentation payload: the best-first product order plus a per-product
+// signal label (for tooltips — the receipt behind the position). Serialized server-side
+// (lib/virtualStartupData.ts buildVsPopularity).
+export interface VsLikelyInfo {
+  order: string[]
+  signals: Record<string, string>
+}
+
+// arenaId → likely-choice info. Optional everywhere it flows: absent arena = judged order kept.
+export type VsPopularityMap = Record<string, VsLikelyInfo>
+
+// Reorders a judged vendor list by an arena's likely-choice order — scores and membership stay
+// exactly the judged ranking's; products the order doesn't know keep their judged order at the
+// tail (Infinity rank, stable sort).
+export function orderByLikelyChoice<T extends { productId: string }>(
+  vendors: T[],
+  order: string[] | undefined,
+): T[] {
+  if (!order || order.length === 0) return vendors
+  const rank = new Map(order.map((id, i) => [id, i]))
+  return vendors
+    .map((v, i) => ({ v, i }))
+    .sort((a, b) => {
+      const ra = rank.get(a.v.productId) ?? Number.POSITIVE_INFINITY
+      const rb = rank.get(b.v.productId) ?? Number.POSITIVE_INFINITY
+      return ra - rb || a.i - b.i
+    })
+    .map((x) => x.v)
+}
+
 export function windowRows(rows: YearRow[], windowDays: number): WindowRow[] {
   const out: WindowRow[] = []
   for (const r of rows) {

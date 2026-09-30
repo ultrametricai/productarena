@@ -157,19 +157,31 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
   it('every decision group, its options, the persona group, and the geo row keep their canonical names', () => {
     renderIt()
     for (const name of [
-      'Entity', 'Team', 'Funding', 'Business model', 'What comes first',
+      'Entity', 'Team', 'Funding', 'Business model',
       'First hire', 'Compliance posture', 'Enterprise motion', 'Launch',
     ]) {
       expect(screen.getByRole('group', { name })).toBeTruthy()
     }
+    // 'Start with' left the panel (round 5, item 4) — no group remains.
+    expect(screen.queryByRole('group', { name: 'What comes first' })).toBeNull()
     expect(screen.getByRole('group', { name: 'Who is the founder?' })).toBeTruthy()
-    // The founder axes (2026-09-29, item 4): two tiny segmented pairs inside the Founder group.
-    expect(screen.getByRole('group', { name: 'Technical background' })).toBeTruthy()
-    expect(screen.getByRole('group', { name: 'Founder experience' })).toBeTruthy()
-    // 'Second-timer' → 'Repeat entrepreneur' (founder round 4, item 6) — display-only rename.
-    for (const name of ['Technical founder', 'Non-technical founder', 'First-time founder', 'Repeat entrepreneur']) {
-      expect(screen.getByRole('button', { name })).toBeTruthy()
+    // The founder axes present as ONE dropdown over the four combinations (addendum
+    // 2026-09-30) — the old segmented pairs are gone; the model underneath is unchanged.
+    expect(screen.queryByRole('group', { name: 'Technical background' })).toBeNull()
+    expect(screen.queryByRole('group', { name: 'Founder experience' })).toBeNull()
+    const personaTrigger = screen.getByTestId('vs-persona-trigger')
+    expect(personaTrigger.getAttribute('aria-haspopup')).toBe('listbox')
+    // 'Second-timer' → 'Repeat entrepreneur' (round 4 rename) survives in the combo labels.
+    fireEvent.click(personaTrigger)
+    for (const name of [
+      'Technical founder, first-time',
+      'Technical founder, repeat entrepreneur',
+      'Non-technical founder, first-time',
+      'Non-technical founder, repeat entrepreneur',
+    ]) {
+      expect(screen.getByRole('option', { name })).toBeTruthy()
     }
+    fireEvent.click(personaTrigger) // close
     expect(screen.getByRole('group', { name: 'Country view' })).toBeTruthy()
     // Decision options keep their canonical full labels as accessible names inside the open
     // dropdown listboxes (spot checks; the compact-band suite sweeps all 18).
@@ -184,13 +196,16 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     renderIt()
     const band = screen.getByTestId('vs-setup')
     for (const title of [
-      'Scenario — one-tap setups: example companies and funding scenarios',
+      'Scenario — one-tap setups: example companies and YC batch mode',
       'Founder — the who/where cluster: the two founder axes plus the country view',
-      'Country view — annotate the run with committed geo evidence',
       'Starting decisions — which real processes make up the journey',
     ]) {
       expect(within(band).getByTitle(title)).toBeTruthy()
     }
+    // The geo row's adjacent 🌍 IconChip is GONE (round 5, item 5) — the selector's own flags
+    // (each option tooltipped) carry the affordance; no bare icon remains.
+    expect(within(band).queryByTitle('Country view — annotate the run with committed geo evidence')).toBeNull()
+    expect(band.textContent).not.toContain('🌍')
     const entity = screen.getByRole('group', { name: 'Entity' })
     expect(within(entity).getByTitle('Entity — starting decision')).toBeTruthy()
     const launch = screen.getByRole('group', { name: 'Launch' })
@@ -221,7 +236,7 @@ describe('VirtualStartup — the Geo dropdown (founder round 4, item 3: a house 
 })
 
 describe('VirtualStartup — the in-sim Geo row', () => {
-  it('default (and 🌐 Global) render the run byte-identically: no marks, no analogs, no warnings', () => {
+  it('default (and 🌐 Global) render the run byte-identically: no marks, no analogs, no warnings; an entity-compatible geo switch stays annotation-only', () => {
     renderIt()
     showAll()
     const term = screen.getByTestId('vs-terminal-body')
@@ -230,16 +245,35 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(screen.queryByTestId('vs-geo-analog-missing')).toBeNull()
     expect(screen.queryByTestId('vs-geo-step-mark')).toBeNull()
     expect(screen.queryByTestId('vs-geo-vendor-warning')).toBeNull()
+    expect(screen.queryByTestId('vs-entity-analog')).toBeNull()
     expect(window.location.search).not.toContain('geo')
-    // A country annotates the already-printed run (annotation only, no reset)…
-    pickGeo('uk')
-    expect(term.innerHTML).not.toBe(baseline)
-    // …and stepping back to the USA default — or to explicit Global — restores the exact bytes.
+    // Global is geo-neutral AND entity-compatible (US roster): byte-identical, no reset.
+    pickGeo('global')
+    expect(term.innerHTML).toBe(baseline)
     pickGeo('usa')
     expect(term.innerHTML).toBe(baseline)
     expect(window.location.search).not.toContain('geo')
-    pickGeo('global')
-    expect(term.innerHTML).toBe(baseline)
+  })
+
+  it('the entity-geo RESET rule (round 5, item 1): a geo switch with an incompatible asserted entity resets it to the new country’s default-asserted first option — a composition change, so the run clears', () => {
+    renderIt()
+    showAll()
+    // Default-asserted Delaware C-Corp is not on the UK roster → reset to Ltd, run cleared.
+    pickGeo('uk')
+    expect(screen.getByTestId('vs-decision-entity').textContent).toContain('Ltd')
+    expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('Ltd (Companies House)')
+    expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0) // composition change = new run
+    // The Entity dropdown's roster now follows the UK.
+    fireEvent.click(screen.getByTestId('vs-decision-entity'))
+    expect(screen.getByRole('option', { name: 'Ltd (Companies House)' })).toBeTruthy()
+    expect(screen.queryByRole('option', { name: 'Delaware C-Corp' })).toBeNull()
+    fireEvent.click(screen.getByTestId('vs-decision-entity')) // close
+    // Back to the USA: Ltd is off the US roster → resets to the default-asserted C-Corp.
+    pickGeo('usa')
+    expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
+    // The run replays the C-Corp composition — same company suffix as the baseline.
+    showAll()
+    expect(screen.getAllByTestId('vs-artifact').some((a) => /, Inc\./.test(a.textContent ?? ''))).toBe(true)
   })
 
   it('UK: the committed form_001 analog prints (Companies House + verified actionUrl); unmapped stays honest; steps carry the mark', () => {
@@ -255,15 +289,23 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(window.location.search).toContain('geo=uk')
     expect(window.localStorage.getItem('pa-geo')).toBe('uk')
     showAll()
-    const analog = screen.getByTestId('vs-geo-analog')
+    // The UK pick reset the entity to Ltd (round 5, item 1), so form_001's country frame is the
+    // ENTITY analog line — the same committed geoNotes data, deduped with the generic geo line.
+    const analog = screen.getByTestId('vs-entity-analog')
+    expect(analog.textContent).toContain('Ltd (Companies House)')
     expect(analog.textContent).toContain('in the United Kingdom this is:')
     expect(analog.textContent).toContain('Companies House')
+    expect(analog.textContent).toContain('US-shaped corpus playbook') // the honest frame
     expect(within(analog).getByRole('link').getAttribute('href')).toBe(ukNote.actionUrl)
+    // One line, not two: the generic geo analog is suppressed where the entity frame covers it.
+    expect(screen.queryByTestId('vs-geo-analog')).toBeNull()
     // qs_023 has no UK analog — said plainly, never fabricated.
     const missing = screen.getByTestId('vs-geo-analog-missing')
     expect(missing.textContent).toContain('no United Kingdom mapping yet')
     // Both US-scoped processes' steps carry the quiet 🇺🇸 mark; global tasks carry none.
     expect(screen.getAllByTestId('vs-geo-step-mark')).toHaveLength(2)
+    // The Ltd entity label reached the artifacts (the company display suffix).
+    expect(screen.getAllByTestId('vs-artifact').some((a) => / Ltd/.test(a.textContent ?? ''))).toBe(true)
   })
 
   it('mercury+UK: the committed unavailability prints verbatim with its source; the judged pill and score never move', () => {
@@ -294,7 +336,10 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(screen.getByTestId('vs-geo-uk').getAttribute('aria-selected')).toBe('true')
     fireEvent.click(screen.getByTestId('vs-geo-trigger')) // close before the run
     showAll()
-    expect(screen.getByTestId('vs-geo-analog')).toBeTruthy()
+    // The mount-read UK selection also applied the entity reset (asserted Ltd) — form_001's
+    // country frame prints as the entity analog; qs_023 still reports its honest gap.
+    expect(screen.getByTestId('vs-entity-analog')).toBeTruthy()
+    expect(screen.getByTestId('vs-geo-analog-missing')).toBeTruthy()
   })
 
   it('the stored pa-geo copy (incl. global) is read on mount when the URL carries nothing', () => {
@@ -348,12 +393,12 @@ describe('VirtualStartup — the state-graph panel', () => {
     expect(vendor.textContent).toContain('Startup banking · top judged · 88')
   })
 
-  it('Decisions tab shows BOTH founder axes plus the nine choices, with pending/asserted state', () => {
+  it('Decisions tab shows BOTH founder axes plus the eight visible choices, with pending/asserted state', () => {
     renderIt()
     showAll()
     fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
     const decisions = screen.getAllByTestId('vs-sg-decision')
-    expect(decisions).toHaveLength(11) // 2 founder axes + 9 decisions
+    expect(decisions).toHaveLength(10) // 2 founder axes + 8 visible decisions ('Start with' left the UI)
     const text = decisions.map((d) => d.textContent).join(' | ')
     // The axes lead (item 5: the panel shows both).
     expect(text).toContain('Technical founder')

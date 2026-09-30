@@ -15,13 +15,14 @@ import {
   DEFAULT_CHOICES,
   journeyPhases,
   journeyTaskIds,
+  orderByLikelyChoice,
   unionTaskIds,
   VS_CHAIN_IDS,
   type Choices,
   type VirtualTaskPayload,
   type VsChain,
 } from '@/lib/virtualStartup'
-import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
+import { buildVsAccess, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
 import {
   computeBurn,
   computeStackOutcome,
@@ -545,6 +546,41 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     expect(decodeAssertedCombo(withPhDigit('3'))!.ph).toBe('waitlist')
   })
 
+  it('round-5 codec compat: entity/product/compliance digits 0/1 still mean what they always meant; the new options append as the next digits', () => {
+    const digitAt = (id: string, digit: string) => {
+      const i = DECISIONS.findIndex((d) => d.id === id)
+      const base = encodeCombo(DEFAULT_CHOICES).split('')
+      base[i] = digit
+      return base.join('')
+    }
+    // Entity: c-corp/llc keep 0/1; the six country entities append as 2–7; 8 rejects.
+    expect(decodeCombo(digitAt('entity', '0'))!.entity).toBe('c-corp')
+    expect(decodeCombo(digitAt('entity', '1'))!.entity).toBe('llc')
+    expect(decodeCombo(digitAt('entity', '2'))!.entity).toBe('ltd')
+    expect(decodeCombo(digitAt('entity', '7'))!.entity).toBe('pvt-ltd')
+    expect(decodeCombo(digitAt('entity', '8'))).toBeNull()
+    // Business model: subscriptions/invoices keep 0/1; marketplace/usage/ecommerce append.
+    expect(decodeCombo(digitAt('product', '0'))!.product).toBe('subscriptions')
+    expect(decodeCombo(digitAt('product', '1'))!.product).toBe('invoices')
+    expect(decodeCombo(digitAt('product', '2'))!.product).toBe('marketplace')
+    expect(decodeCombo(digitAt('product', '3'))!.product).toBe('usage')
+    expect(decodeCombo(digitAt('product', '4'))!.product).toBe('ecommerce')
+    expect(decodeCombo(digitAt('product', '5'))).toBeNull()
+    // Compliance: now/later keep 0/1 (old placement links replay); none/hipaa/iso append.
+    expect(decodeCombo(digitAt('compliance', '0'))!.compliance).toBe('now')
+    expect(decodeCombo(digitAt('compliance', '1'))!.compliance).toBe('later')
+    expect(decodeCombo(digitAt('compliance', '2'))!.compliance).toBe('none')
+    expect(decodeCombo(digitAt('compliance', '3'))!.compliance).toBe('hipaa')
+    expect(decodeCombo(digitAt('compliance', '4'))!.compliance).toBe('iso')
+    expect(decodeCombo(digitAt('compliance', '5'))).toBeNull()
+    // The hidden 'Start with' decision keeps its digit slot (item 4): old links asserting
+    // build-first still decode and replay.
+    expect(decodeCombo(digitAt('ordering', '1'))!.ordering).toBe('build-first')
+    expect(decodeAssertedCombo(digitAt('ordering', '1'))!.ordering).toBe('build-first')
+    // …and the asserted codec accepts every appended digit too.
+    expect(decodeAssertedCombo(digitAt('entity', '3'))!.entity).toBe('gmbh')
+  })
+
   it('accepts v1 payloads: full combo asserted, legacy persona ids mapped onto the axis pairs, mode auto — shared links keep replaying', () => {
     const v1 = (persona?: string) =>
       tamper({
@@ -638,29 +674,58 @@ describe('server payloads — canonical verdicts, cited pricing, corpus risks', 
     expect(facts).toBeGreaterThan(0)
   })
 
-  it('stepRanking carries runners-up behind the recommended pick — the terminal tops serialization is pinned to real judged data', () => {
-    // The page serializes tops as ranking.vendors[0] (recommended) + vendors.slice(1, 3)
-    // (runners-up). Pin against the live corpus: at least one union step has ≥2 ranked vendors,
-    // and every runner-up row is a real (id, name, finite score) triple in judged order.
+  it('stepRanking carries runners-up behind the recommended pick — likely-choice ORDERED, judged-scored (round 5, item 7)', () => {
+    // The page serializes tops as ranking.vendors[0] (recommended · judged) + the REST of the
+    // judged list reordered by the arena's likely-choice order and capped at 2. Pin against the
+    // live corpus: membership and scores stay the judged ranking's; only presentation order moves.
+    const popularity = buildVsPopularity(liveRoles, DATA_DIR)
     let covered = 0
     for (const t of unionTasks) {
       for (const node of t.dag.nodes) {
         const ranking = stepRanking(t.id, node, DATA_DIR)
         if (!ranking || ranking.vendors.length < 2) continue
         covered += 1
-        const runners = ranking.vendors.slice(1, 3)
+        const runners = orderByLikelyChoice(ranking.vendors.slice(1), popularity[ranking.arenaId]?.order).slice(0, 2)
         expect(runners.length).toBeGreaterThanOrEqual(1)
         expect(runners.length).toBeLessThanOrEqual(2)
+        const judgedRest = new Map(ranking.vendors.slice(1).map((v) => [v.productId, v.score]))
         for (const v of runners) {
           expect(v.productId.length).toBeGreaterThan(0)
           expect(v.name.length).toBeGreaterThan(0)
           expect(Number.isFinite(v.score)).toBe(true)
+          // NO rank fabrication: every runner-up is a judged vendor carrying its judged score.
+          expect(judgedRest.get(v.productId)).toBe(v.score)
         }
-        // Judged order: the recommended pick outranks its runners-up.
-        expect(ranking.vendors[0].score).toBeGreaterThanOrEqual(runners[0].score)
+        // The judged TOP is never displaced — runners-up come from behind it only.
+        expect(runners.some((v) => v.productId === ranking.vendors[0].productId)).toBe(false)
       }
     }
     expect(covered).toBeGreaterThan(0)
+  })
+
+  it("buildVsPopularity: committed signals only, labels as receipts — and the founder's code-hosting complaint: GitHub leads the likely order", () => {
+    const popularity = buildVsPopularity(liveRoles, DATA_DIR)
+    for (const r of liveRoles) {
+      const info = popularity[r.arenaId]
+      expect(info, `no popularity payload for ${r.arenaId}`).toBeDefined()
+      // The order is a permutation of the role's alternatives — membership never changes.
+      expect([...info.order].sort()).toEqual(r.alternatives.map((o) => o.id).sort())
+      // Signal labels exist only where a committed signal exists (absence is absence).
+      for (const id of Object.keys(info.signals)) {
+        expect(info.order).toContain(id)
+        expect(info.signals[id].length).toBeGreaterThan(0)
+      }
+    }
+    // The code-hosting audit (round 5, item 7): the judged story rankings put Bitbucket on top of
+    // several prod_006/prod_002 steps (branch-permission/merge-check stories) — the likely-choice
+    // ordering leads with GitHub (curated clearly-popular; Bitbucket carries no committed signal).
+    const codeHosting = popularity['code-hosting']
+    if (codeHosting) {
+      expect(codeHosting.order[0]).toBe('github')
+      expect(codeHosting.order.indexOf('github')).toBeLessThan(codeHosting.order.indexOf('bitbucket'))
+      expect(codeHosting.signals.github).toContain('clearly popular')
+      expect(codeHosting.signals.bitbucket).toBeUndefined()
+    }
   })
 
   it('buildVsTaskRisks mirrors the committed corpus risk axis', () => {
