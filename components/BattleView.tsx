@@ -40,6 +40,12 @@ export default function BattleView({
   const naRounds = battle.rounds.filter((r) => r.winner === 'na')
   const byTheme = groupInOrder(decided, (r) => storyById.get(r.storyId)!.theme)
 
+  // COMPRESSED rounds (founder 2026-09-30: "/vs pages must read as a compact scorecard first,
+  // not walls of text"): each round is a one-line verdict — action, per-product scores, who
+  // took it — inside a native <details> disclosure. The full two-panel analysis (rationale,
+  // citations, proof links, contest affordance) renders unchanged INSIDE the expander: nothing
+  // is deleted or moved out of the page, it's folded. <details>/<summary> keeps this a server
+  // component (no JS needed to expand) and keeps every word in the served HTML for search.
   const renderRound = (round: Round) => {
     const story = storyById.get(round.storyId)!
     // Rounds lead with the de-framed action (lib/storyText.ts) — fifty "As a developer, …"
@@ -49,19 +55,36 @@ export default function BattleView({
     const vb = verdictFor(data, battle.b, round.storyId)
     const roundWinner =
       round.winner === 'a' ? a.name : round.winner === 'b' ? b.name : round.winner === 'draw' ? 'draw' : null
+    // One-line scoreline in a–b order, only when both sides carry a judged quality.
+    const scoreline = va.verdict !== 'na' && vb.verdict !== 'na' ? `${va.quality}–${vb.quality}` : null
     return (
-      <li key={round.storyId} className="rounded-xl border border-zinc-800 p-5">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h4 className="font-medium">
-            <PersonaChip persona={parsed.persona ?? story.persona} className="mr-1.5" />
-            {parsed.action}
-          </h4>
-          <span className="text-xs text-zinc-500">
-            weight {story.weight} ·{' '}
-            {roundWinner === null ? 'not comparable' : roundWinner === 'draw' ? 'round drawn' : `round to ${roundWinner}`}
-          </span>
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      <li key={round.storyId} className="overflow-hidden rounded-xl border border-zinc-800">
+        <details className="group">
+          <summary className="flex cursor-pointer select-none items-baseline gap-2 px-4 py-2.5 transition hover:bg-zinc-900/50 [&::-webkit-details-marker]:hidden">
+            <span aria-hidden className="text-xs text-zinc-600 transition group-open:rotate-90">
+              ▸
+            </span>
+            <h4 className="min-w-0 flex-1 truncate text-sm font-medium group-open:whitespace-normal">
+              <PersonaChip persona={parsed.persona ?? story.persona} className="mr-1.5" />
+              {parsed.action}
+            </h4>
+            <span className="ml-auto whitespace-nowrap text-xs text-zinc-500">
+              {scoreline && <span className="mr-2 font-mono tabular-nums text-zinc-400">{scoreline}</span>}
+              {roundWinner === null ? (
+                'not comparable'
+              ) : roundWinner === 'draw' ? (
+                'drawn'
+              ) : (
+                <span className="text-emerald-300">→ {roundWinner}</span>
+              )}
+            </span>
+          </summary>
+          <div className="border-t border-zinc-800 p-5 pt-4">
+            <p className="text-xs text-zinc-500">
+              weight {story.weight} ·{' '}
+              {roundWinner === null ? 'not comparable' : roundWinner === 'draw' ? 'round drawn' : `round to ${roundWinner}`}
+            </p>
+            <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {[
             { p: a, v: va, won: round.winner === 'a' },
             { p: b, v: vb, won: round.winner === 'b' },
@@ -114,7 +137,9 @@ export default function BattleView({
               </div>
             )
           })}
-        </div>
+            </div>
+          </div>
+        </details>
       </li>
     )
   }
