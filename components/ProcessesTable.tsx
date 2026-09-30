@@ -9,7 +9,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
 import { useGeoSelection } from '@/components/useGeoSelection'
-import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
+import { GEO_GLOBAL, GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
 import { phaseEmoji, phaseIcon, phaseTooltip } from '@/lib/processIcons'
 import { readParams, setParams } from '@/lib/urlState'
 
@@ -225,7 +225,20 @@ function playbookFieldOf(row: PlaybookRow, col: Column): number | string {
 // The flat view's union row type: process and playbook rows sorted through one comparator.
 type FlatItem = { kind: 'process'; row: ProcessRow } | { kind: 'playbook'; row: PlaybookRow }
 
-export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows: ProcessRow[]; phases: string[]; playbooks?: PlaybookRow[] }) {
+export default function ProcessesTable({
+  rows,
+  phases,
+  playbooks = [],
+  // The surface's no-selection geo framing (founder 2026-09-30: the /processes index defaults
+  // onto the global view — lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO threads in from
+  // app/processes/page.tsx). null keeps the sitewide US default (the homepage's process mode).
+  defaultGeo = null,
+}: {
+  rows: ProcessRow[]
+  phases: string[]
+  playbooks?: PlaybookRow[]
+  defaultGeo?: typeof GEO_GLOBAL | null
+}) {
   // The founder-timeline flat sort is the default view (founder 2026-09-30); the grouped-by-
   // area view is opt-in via the rank-by dropdown's top entry. Column/direction only apply while
   // grouped is off — grouping and cross-corpus sorting can't coexist honestly.
@@ -238,8 +251,12 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
   // store). Every row ALWAYS wears a geo glyph now (founder 2026-09-30: "processes need to
   // have a global icon, default on USA") — with no selection us/us-state rows default to 🇺🇸
   // and global rows to 🌐; a selection sharpens to the full scope glyphs (🏛 for state-level).
-  // Display only: never re-sorts.
+  // Under the GLOBAL surface default (founder 2026-09-30: /processes opens on the global view)
+  // the no-selection glyphs are the sharp set from the server render on — every row still
+  // present, US-specific work told apart as 🇺🇸 (federal) vs 🏛 (state) from the global vantage.
+  // Display only: never re-sorts, never filters.
   const geo = useGeoSelection()
+  const scopeGlyphs = geo !== null || defaultGeo === GEO_GLOBAL ? GEO_SCOPE_GLYPH : DEFAULT_GEO_GLYPH
 
   // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
   // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
@@ -432,9 +449,9 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
             <span
               aria-hidden
               className="text-[10px] opacity-70"
-              title={(geo !== null ? GEO_SCOPE_GLYPH[r.geoScope] : DEFAULT_GEO_GLYPH[r.geoScope]).label}
+              title={scopeGlyphs[r.geoScope].label}
             >
-              {(geo !== null ? GEO_SCOPE_GLYPH[r.geoScope] : DEFAULT_GEO_GLYPH[r.geoScope]).glyph}
+              {scopeGlyphs[r.geoScope].glyph}
             </span>
           </span>
         </td>
@@ -556,7 +573,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
     <div className="space-y-3">
       <TableControls
         presetsAsDropdown
-        after={<GeoDropdown />}
+        after={<GeoDropdown defaultChoice={defaultGeo} />}
         presets={PRESETS}
         // The grouped view reads as its own dropdown entry; otherwise the sorted column shows
         // (visibly 'Founder timeline' in the no-param default — founder 2026-09-30).
