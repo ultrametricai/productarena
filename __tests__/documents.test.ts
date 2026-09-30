@@ -12,7 +12,7 @@ import {
 // README's grouped tables stay in sync with the registry. Link-don't-redistribute is policy
 // (documents/README.md); nothing here fetches the documents.
 
-const AS_OF = new Date('2026-09-29T00:00:00Z')
+const AS_OF = new Date('2026-09-30T00:00:00Z')
 
 describe('documents corpus', () => {
   it('the committed registry + README pass every invariant', () => {
@@ -31,12 +31,19 @@ describe('documents corpus', () => {
       'yc-postmoney-safe-cap',
       'yc-safe-user-guide',
       'yc-series-a-term-sheet',
-      'nvca-model-legal-documents',
+      // The NVCA suite is enumerated per document (the old single blob row is gone).
+      'nvca-stock-purchase-agreement',
+      'nvca-voting-agreement',
       'cooley-series-seed-package',
       'cooley-ciiaa',
       'commonpaper-mutual-nda',
       'saft-form',
       'irs-form-15620',
+      'kiss-500-global',
+      'eu-scc-international-transfers',
+      'uk-idta-addendum',
+      'apache-icla',
+      'onedpa',
     ]) {
       expect(ids.has(id), `registry must keep ${id}`).toBe(true)
     }
@@ -59,10 +66,14 @@ describe('documents validators (failure modes)', () => {
     use_case: 'formation' as const,
     jurisdiction: 'US',
     format: 'pdf' as const,
-    checked_on: '2026-09-29',
+    checked_on: '2026-09-30',
     ...over,
   })
-  const reg = (...documents: DocumentRegistry['documents']): DocumentRegistry => ({ updated_on: '2026-09-29', documents })
+  const reg = (...documents: DocumentRegistry['documents']): DocumentRegistry => ({
+    updated_on: '2026-09-30',
+    review_window_days: 120,
+    documents,
+  })
 
   it('rejects duplicate ids, non-HTTPS URLs, unknown enums, and future checks', () => {
     expect(validateDocumentRegistry(reg(record(), record()), AS_OF).join(';')).toContain('duplicate document id')
@@ -74,6 +85,18 @@ describe('documents validators (failure modes)', () => {
       validateDocumentRegistry(reg(record({ format: 'zip' as unknown as 'pdf' })), AS_OF).join(';'),
     ).toContain('unknown format')
     expect(validateDocumentRegistry(reg(record({ checked_on: '2027-01-01' })), AS_OF).join(';')).toContain('future')
+  })
+
+  it('enforces the currency invariant: checked_on within the stated review window', () => {
+    // 2026-01-01 is 272 days before updated_on 2026-09-30 — outside a 120-day window.
+    expect(validateDocumentRegistry(reg(record({ checked_on: '2026-01-01' })), AS_OF).join(';')).toContain(
+      'outside the 120-day review window',
+    )
+    // Exactly at the edge of the window passes (120 days before 2026-09-30 is 2026-06-02).
+    expect(validateDocumentRegistry(reg(record({ checked_on: '2026-06-02' })), AS_OF)).toEqual([])
+    // And a registry without a stated window is itself invalid.
+    const noWindow = { ...reg(record()), review_window_days: 0 }
+    expect(validateDocumentRegistry(noWindow, AS_OF).join(';')).toContain('review_window_days')
   })
 
   it('catches README drift in both directions', () => {
