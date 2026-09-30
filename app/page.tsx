@@ -36,11 +36,9 @@ export default function Home() {
       </section>
 
       <section>
+        {/* Founder 2026-09-30: no explainer line under the heading — the podium cards below
+            speak for themselves; each links to its /vs/ page. */}
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Leading battles</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Every arena&rsquo;s #1 vs #2, evidence-tested round by round — see every battle on its own{' '}
-          <code className="text-xs text-zinc-400">/vs/</code> page.
-        </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* Hardware-class arenas excluded here too (founder 2026-09-25) — a CPU 'battle' under
               an agentic framing reads wrong; the arenas keep their own pages. */}
@@ -49,7 +47,16 @@ export default function Home() {
             if (!battle) return null
             const a = data.products.find((p) => p.id === battle.a)!
             const b = data.products.find((p) => p.id === battle.b)!
-            const winnerName = battle.winner === 'draw' ? null : battle.winner === a.id ? a.name : b.name
+            // PODIUM treatment (founder 2026-09-30, replacing the win-count line): ① winner /
+            // ② runner-up, winner listed first. The positions come straight from the COMMITTED
+            // judged battle.winner — never recomputed, never inferred from arena rank. A drawn
+            // battle podiums nobody: both rows keep battle order and the card says Draw.
+            const isDraw = battle.winner === 'draw'
+            const pair = [
+              { p: a, won: battle.winner === a.id },
+              { p: b, won: battle.winner === b.id },
+            ]
+            const podium = isDraw ? pair : pair.slice().sort((x, y) => Number(y.won) - Number(x.won))
             return (
               <Link
                 key={data.category.id}
@@ -58,20 +65,35 @@ export default function Home() {
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-400">{data.category.name}</p>
                 {/* No Overall score badges here — those already render in the table and arena cards
-                    above; this card's own datum is the head-to-head record. */}
-                <div className="mt-2 flex items-center gap-2">
-                  <ProductLogo product={a} size={28} />
-                  <span className="text-sm font-medium group-hover:text-emerald-300">{a.name}</span>
+                    above; this card's own datum is the judged head-to-head podium. */}
+                <div className="mt-3 space-y-2">
+                  {podium.map(({ p, won }, i) => (
+                    <div key={p.id} className="flex items-center gap-2">
+                      <span
+                        aria-hidden
+                        className={`w-5 text-center text-base leading-none tabular-nums ${!isDraw && won ? 'text-emerald-300' : 'text-zinc-600'}`}
+                      >
+                        {isDraw ? '–' : i === 0 ? '①' : '②'}
+                      </span>
+                      <ProductLogo product={p} size={28} />
+                      <span
+                        className={`min-w-0 truncate text-sm font-medium group-hover:text-emerald-300 ${!isDraw && !won ? 'text-zinc-400' : ''}`}
+                      >
+                        {p.name}
+                      </span>
+                      {!isDraw && (
+                        <span
+                          className={`ml-auto whitespace-nowrap text-[10px] uppercase tracking-widest ${won ? 'text-emerald-400' : 'text-zinc-500'}`}
+                        >
+                          {won ? 'winner' : 'runner-up'}
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <p className="my-1 text-center text-[10px] uppercase tracking-widest text-zinc-500">vs</p>
-                <div className="flex items-center gap-2">
-                  <ProductLogo product={b} size={28} />
-                  <span className="text-sm font-medium group-hover:text-emerald-300">{b.name}</span>
-                </div>
-                <p className="mt-3 text-center text-xs text-emerald-300">
-                  {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
-                  {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
-                </p>
+                {isDraw && (
+                  <p className="mt-3 text-center text-xs text-zinc-500">Draw — the judged rounds split even</p>
+                )}
               </Link>
             )
           })}
