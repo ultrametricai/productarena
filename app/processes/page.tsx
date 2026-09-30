@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import FatProcessSearch from '@/components/FatProcessSearch'
 import ProcessesTable from '@/components/ProcessesTable'
+import { PROCESSES_INDEX_DEFAULT_GEO } from '@/lib/geoPreference'
 import { buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
 export const metadata: Metadata = {
@@ -35,9 +36,9 @@ export default function ProcessesPage() {
             ...playbooks.map((p) => ({ href: p.href, title: p.title, icon: p.icon, phase: 'playbook', pct: p.pct, playbook: true })),
           ]}
         />
-        {/* The global geo switcher (founder GEO ask 2026-09-28, lib/geoPreference.ts): with a
-            non-US country selected every process row below wears its geoScope glyph — the US
-            default view is byte-identical to before. */}
+        {/* The geo dimension (founder GEO ask 2026-09-28, lib/geoPreference.ts): every process
+            row below always wears its geoScope glyph; since 2026-09-30 the index opens on the
+            GLOBAL framing by default (see the ProcessesTable defaultGeo prop below). */}
       </section>
 
       {/* ONE view under the search (founder 2026-09-29: "combine playbooks and all processes
@@ -48,7 +49,14 @@ export default function ProcessesPage() {
       <section className="space-y-3">
         {/* No 'All processes' heading (founder 2026-09-30) — the table stands alone under the
             search. The route-dot legend went earlier (founder 2026-09-29). */}
-        <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} />
+        {/* The index DEFAULTS onto the global view (founder 2026-09-30: "default /processes
+            onto a global view — you can include the US specific ones in the first view"): the
+            geo dropdown opens on 🌐 Global and the always-on scope glyphs run sharp (🌐/🇺🇸/🏛)
+            — server-rendered via this prop, not a mount flash, with every US-specific row still
+            in the first view (the geo dimension annotates, never filters). ?geo=/pa-geo win as
+            before; process DETAIL pages keep their US default (the seam is documented on
+            lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO). */}
+        <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} defaultGeo={PROCESSES_INDEX_DEFAULT_GEO} />
         {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
             decision-driven journey with clearly-labeled synthetic artifacts. */}
         <Link

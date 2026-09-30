@@ -23,8 +23,18 @@ import { readParam, setParams } from '@/lib/urlState'
 // store, URL param, and honesty contract as components/GeoSwitcher.tsx (which keeps the pill
 // form used on process/product page headers); this is the table-controls-sized variant. House
 // listbox pattern (SimRolePicker/VsGeoSelector family), never a native <select>.
+//
+// `defaultChoice` is the SURFACE's no-selection framing (founder 2026-09-30: the /processes
+// index defaults onto the global view — lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO): with
+// nothing chosen the trigger reads 🌐 Global instead of 🇺🇸 USA, server-rendered (the prop, not a
+// mount effect, so the static HTML IS the default view). Display framing only — the store stays
+// null, no param/storage is written, and an explicit ?geo=/pa-geo/pick wins exactly as before.
+// On a global-default surface the 🇺🇸 USA entry keeps its sitewide meaning — clear the param and
+// the stored pref (the US default never appears in the URL) — so after picking it the trigger
+// settles back on the surface's default framing; the index rows are identical either way (the
+// geo dimension annotates, never filters), and detail pages return to their US default.
 
-export default function GeoDropdown() {
+export default function GeoDropdown({ defaultChoice = null }: { defaultChoice?: typeof GEO_GLOBAL | null } = {}) {
   const [geo, setGeo] = useState<GeoChoice | null>(null)
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -66,8 +76,13 @@ export default function GeoDropdown() {
     setOpen(false)
   }
 
+  // No explicit choice reads as the surface default (null = the sitewide 🇺🇸 US default;
+  // GEO_GLOBAL on the /processes index) — so with defaultChoice=GEO_GLOBAL the 🌐 Global entry
+  // is the one marked active in the pristine state, and the trigger says so from the server
+  // render on.
+  const effective = geo ?? defaultChoice
   const current =
-    geo === GEO_GLOBAL ? GEO_GLOBAL_META : geo ? GEO_PREF_META[geo] : null
+    effective === GEO_GLOBAL ? GEO_GLOBAL_META : effective ? GEO_PREF_META[effective] : null
   // 🌐 Global leads (the VsGeoSelector list order — the explicit geo-neutral choice, founder
   // 2026-09-30), then the canonical US-default → country set.
   const options: Array<{ value: GeoChoice | null; flag: string; name: string }> = [
@@ -97,7 +112,7 @@ export default function GeoDropdown() {
       {open && (
         <ul role="listbox" aria-label="Country" className="absolute right-0 z-40 mt-1 w-40 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl">
           {options.map((o) => {
-            const active = geo === o.value
+            const active = effective === o.value
             return (
               <li key={o.name} role="presentation">
                 <button
