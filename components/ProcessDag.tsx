@@ -5,6 +5,7 @@ import ComputerUseChips from '@/components/ComputerUseChips'
 import GeoStepMark from '@/components/GeoStepMark'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import ReversibilityBadge from '@/components/ReversibilityBadge'
 import StepCanonicalVendor from '@/components/StepCanonicalVendor'
 import StepYourPick from '@/components/StepYourPick'
 import StepAfkChip from '@/components/StepAfkChip'
@@ -435,11 +436,16 @@ function NodeBlock({
   const methodViews = node.methods && node.methods.length > 0 ? buildStepMethodViews(node, taskId) : null
   const nodeKey = stepMethodNodeKey(taskId, node.id)
 
+  // The route badge, plus the step's reversibility marker (founder 2026-09-30) — the marker
+  // renders nothing for reversible steps, so most blocks are byte-identical to before.
   const routeBadge = (
-    <span
-      className={`mt-px shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}
-    >
-      {style.label}
+    <span className="mt-px flex shrink-0 items-center gap-1.5">
+      <ReversibilityBadge tier={node.reversibility} />
+      <span
+        className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}
+      >
+        {style.label}
+      </span>
     </span>
   )
 
