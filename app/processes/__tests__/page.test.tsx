@@ -47,7 +47,7 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     }
   })
 
-  it('the fat search counts chains in the one processes N; the Virtual Startup card stays', () => {
+  it('the fat search counts chains in the one processes N; the simulator card stays (renamed 2026-09-30, item 1)', () => {
     const { container } = render(<ProcessesPage />)
     const playbooks = buildPlaybookRows()
     const { rows } = buildProcessRows()
@@ -57,6 +57,8 @@ describe('/processes — one combined table, one processes vocabulary', () => {
 
     // The route-dot legend was removed with the dots (founder 2026-09-29).
     expect(within(container).queryByText('agent-runnable')).toBeNull()
-    expect(within(container).getByText('🐣 Virtual Startup').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
+    // 'Virtual Startup' → 'The open startup simulator' (founder batch 2026-09-30, item 1) —
+    // the route and internal vocabulary stay /virtual-startup.
+    expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
   })
 })
