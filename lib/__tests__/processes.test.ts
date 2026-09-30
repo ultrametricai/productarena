@@ -222,14 +222,14 @@ describe('corpus', () => {
     expect((byId('qs_063').geoNotes ?? []).length).toBeGreaterThan(0)
   })
 
-  it('geoNotes are curated, deduped per country, and only on US-scoped processes', () => {
+  it('geoNotes are curated, deduped per country, and honest about scope', () => {
     const tasks = loadProcesses(DATA_DIR)
     let total = 0
+    let globalWithNotes = 0
     for (const t of tasks) {
       const notes = t.geoNotes ?? []
       if (notes.length === 0) continue
-      // A global process needs no "Outside the US" story.
-      expect(t.geoScope, `${t.id} carries geoNotes but is global`).not.toBe('global')
+      if (t.geoScope === 'global') globalWithNotes++
       // At most one note per country per process, IN/UK/DE/FR only (schema re-checks the enum).
       expect(new Set(notes.map((n) => n.country)).size).toBe(notes.length)
       for (const n of notes) {
@@ -239,12 +239,24 @@ describe('corpus', () => {
       }
       total += notes.length
     }
-    // The founder's target band for the documentation pass: 20–40 verified notes.
-    expect(total).toBeGreaterThanOrEqual(20)
-    expect(total).toBeLessThanOrEqual(40)
-    // The founder's worked example: incorporation has all four country analogs.
-    const form001 = tasks.find((t) => t.id === 'form_001')!
-    expect((form001.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'FR', 'IN', 'UK'])
+    // The mapping expansion (founder ask 2026-09-29: "map the processes in the countries we
+    // tried to spike"): every US-scoped process with a true analog is mapped, PLUS the
+    // jurisdictionally-flavored global processes (founder agreement, invoicing, offboarding,
+    // data protection, accounting…). Honest coverage, not completeness theater — a country
+    // with no real analog carries no note, so the band stays wide.
+    expect(total).toBeGreaterThanOrEqual(120)
+    expect(total).toBeLessThanOrEqual(400)
+    // Global notes exist (the flavored set) but stay the minority of note-carrying processes.
+    expect(globalWithNotes).toBeGreaterThan(0)
+    const usWithNotes = tasks.filter((t) => t.geoScope !== 'global' && (t.geoNotes ?? []).length > 0).length
+    expect(usWithNotes).toBeGreaterThan(globalWithNotes)
+    // The founder's worked examples: incorporation has all four country analogs, and the
+    // founder agreement / equity split (founder example 2026-09-29: "?geo=in currently has
+    // no India note") carries all four too — stamp duty in India, share classes in the UK.
+    for (const id of ['form_001', 'startup_002']) {
+      const t = tasks.find((x) => x.id === id)!
+      expect((t.geoNotes ?? []).map((n) => n.country).sort(), id).toEqual(['DE', 'FR', 'IN', 'UK'])
+    }
   })
 
   it('cadence display helpers cover every bucket in board order', () => {
