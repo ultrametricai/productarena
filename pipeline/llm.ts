@@ -1,7 +1,14 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { z } from 'zod'
 
-const MODEL = process.env.PA_MODEL ?? 'claude-sonnet-5'
+// Default judge/pipeline model. Migrated sonnet-5 → claude-opus-5-5 on 2026-09-30 per the
+// adopted docs/OPUS-5-5-JUDGE-PILOT.md recommendation (founder-ordered re-judge): Opus 5.5
+// follows the v3 rubric's decision procedures more faithfully (7/10 adjudicated flips), at 2.0x
+// Sonnet interactive pricing ($4/$20 per MTok; $2/$10 via the Batch API the migration ran on).
+// The model id is part of the judge cellHash (pipeline/stages/judge.ts) — changing PA_MODEL or
+// this default invalidates every cached verdict rather than silently mixing judge models.
+export const JUDGE_MODEL = process.env.PA_MODEL ?? 'claude-opus-5-5'
+const MODEL = JUDGE_MODEL
 // 5 attempts total. 3 proved too few in scheduled CI (story-runner, 2026-09: 2 of 3 runs died
 // on "response contained no parseable JSON" with nobody around to retry the job).
 const MAX_RETRIES = 4

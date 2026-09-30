@@ -233,6 +233,11 @@ export const ScoreHistoryEntrySchema = z.object({
   date: z.iso.datetime({ offset: true }),
   aiEra: z.number().min(0).max(100).nullable(),
   agentReady: z.number().min(0).max(100).nullable(),
+  // Optional provenance label for entries whose move is NOT an evidence/capability change —
+  // e.g. 'judge-migration-2026-09-30: sonnet-5 → opus-5-5 (prompt v4)'. Stamped so the time
+  // series shows a labeled discontinuity instead of a silent evidence-looking move (see
+  // docs/OPUS-5-5-JUDGE-PILOT.md §5.4). Absent on ordinary evidence-driven entries.
+  note: z.string().min(1).optional(),
 })
 
 // Keyless popularity/momentum signal for one product (see pipeline/stages/popularity.ts). Every
