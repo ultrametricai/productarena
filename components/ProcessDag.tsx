@@ -10,6 +10,8 @@ import StepYourPick from '@/components/StepYourPick'
 import StepAfkChip from '@/components/StepAfkChip'
 import StepApiCalls from '@/components/StepApiCalls'
 import StepPromptBox from '@/components/StepPromptBox'
+import StepMethodDefault from '@/components/StepMethodDefault'
+import StepMethodPicker from '@/components/StepMethodPicker'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { resolveGapStep } from '@/lib/gapClosers'
@@ -20,6 +22,8 @@ import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 import { crossArenaStepRankings, stepRanking, type StepCite, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
+import { buildStepMethodViews } from '@/lib/stepMethodData'
+import { stepMethodNodeKey } from '@/lib/stepMethods'
 import { stepPromptFor } from '@/lib/stepPrompts'
 import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 import { vendorGeoLookup } from '@/lib/vendorGeo'
@@ -422,23 +426,25 @@ function NodeBlock({
     </a>
   )
 
-  return (
-    <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
-      <div className="flex items-start justify-between gap-2">
-        <p className="min-w-0 text-sm font-medium text-zinc-100">
-          <span className="mr-1.5 font-mono text-[10px] tabular-nums text-zinc-500">
-            {String(index).padStart(2, '0')}
-          </span>
-          {node.label}
-          {usScoped && <GeoStepMark />}
-        </p>
-        <span
-          className={`mt-px shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}
-        >
-          {style.label}
-        </span>
-      </div>
+  // Method variants (founder 2026-09-30): a method-bearing step gets the compact selector
+  // (components/StepMethodPicker.tsx) and its default-method content — the route badge and the
+  // whole body below the header — hides client-side while a variant is selected, whose panel
+  // shows the variant's own route/vendors/calls/time and sub-DAG instead. Nodes without methods
+  // render EXACTLY the pre-variant output (no wrapper, no picker), and the static HTML of a
+  // method-bearing step is byte-stable too: the server snapshot is always the default method.
+  const methodViews = node.methods && node.methods.length > 0 ? buildStepMethodViews(node, taskId) : null
+  const nodeKey = stepMethodNodeKey(taskId, node.id)
 
+  const routeBadge = (
+    <span
+      className={`mt-px shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.badge}`}
+    >
+      {style.label}
+    </span>
+  )
+
+  const body = (
+    <>
       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px]">
         {vendorInfo && (hasMarket ? (
           <StepCanonicalVendor
@@ -623,6 +629,29 @@ function NodeBlock({
           {closer.caution && <span className="text-amber-400/80"> · {closer.caution}</span>}
         </p>
       )}
+    </>
+  )
+
+  return (
+    <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="min-w-0 text-sm font-medium text-zinc-100">
+          <span className="mr-1.5 font-mono text-[10px] tabular-nums text-zinc-500">
+            {String(index).padStart(2, '0')}
+          </span>
+          {node.label}
+          {usScoped && <GeoStepMark />}
+        </p>
+        {methodViews ? <StepMethodDefault nodeKey={nodeKey}>{routeBadge}</StepMethodDefault> : routeBadge}
+      </div>
+      {methodViews && (
+        <StepMethodPicker
+          nodeKey={nodeKey}
+          defaultView={methodViews.defaultView}
+          methods={methodViews.variants}
+        />
+      )}
+      {methodViews ? <StepMethodDefault nodeKey={nodeKey}>{body}</StepMethodDefault> : body}
     </div>
   )
 }

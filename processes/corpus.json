@@ -61,6 +61,99 @@
               "type": "manual",
               "description": "Manual submission on Clerky portal"
             }
+          ],
+          "methods": [
+            {
+              "id": "india-spice-plus",
+              "label": "India - MCA SPICe+ filing",
+              "summary": "One integrated SPICe+ filing covers name reservation, incorporation, PAN, TAN, EPFO/ESIC and optional GST; the government's National Single Window System fronts the MCA service.",
+              "context": {
+                "kind": "geo",
+                "when": "Incorporating in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.nsws.gov.in/",
+              "actionLabel": "India NSWS (MCA SPICe+ incorporation)"
+            },
+            {
+              "id": "uk-companies-house",
+              "label": "UK - Companies House filing",
+              "summary": "Register a private limited company with Companies House - online filings are usually approved within 24 hours, and Companies House exposes a live REST filing API, so software-driven incorporation genuinely works.",
+              "context": {
+                "kind": "geo",
+                "when": "Incorporating in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/limited-company-formation",
+              "actionLabel": "Companies House - set up a limited company"
+            },
+            {
+              "id": "germany-notary-gmbh",
+              "label": "Germany - notarized GmbH/UG formation",
+              "summary": "A GmbH (or UG) forms by notarized deed - since 2022 the notarization can happen by video - and the company only exists once registered in the Handelsregister: days to weeks, not hours.",
+              "context": {
+                "kind": "geo",
+                "when": "Incorporating in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.handelsregister.de/",
+              "actionLabel": "Handelsregister (commercial register)",
+              "vendorOptions": [
+                "beglaubigt"
+              ],
+              "subSteps": [
+                {
+                  "id": "de1",
+                  "label": "Prepare the formation deed with the notary",
+                  "route": "form",
+                  "vendorOptions": [
+                    "beglaubigt"
+                  ],
+                  "estimatedMinutes": 60
+                },
+                {
+                  "id": "de2",
+                  "label": "Notarization appointment (in person or by video)",
+                  "route": "person",
+                  "legalSignature": true,
+                  "estimatedMinutes": 60
+                },
+                {
+                  "id": "de3",
+                  "label": "Pay in the share capital",
+                  "route": "form",
+                  "estimatedMinutes": 30
+                },
+                {
+                  "id": "de4",
+                  "label": "Wait for registration in the Handelsregister",
+                  "route": "person",
+                  "async": true,
+                  "estimatedMinutes": 10080
+                }
+              ]
+            },
+            {
+              "id": "france-inpi-guichet",
+              "label": "France - INPI guichet unique filing",
+              "summary": "Form a SAS/SASU through the INPI guichet unique - the single online portal for all French business formalities since 2023; registration lands in the RCS via INSEE.",
+              "context": {
+                "kind": "geo",
+                "when": "Incorporating in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://procedures.inpi.fr/",
+              "actionLabel": "INPI guichet unique"
+            }
           ]
         },
         {
@@ -337,6 +430,65 @@
               "method": "atlas.llc.formation.submit()",
               "type": "manual",
               "description": "Manual submission on the formation service's portal"
+            }
+          ],
+          "methods": [
+            {
+              "id": "india-llp-fillip",
+              "label": "India - LLP via MCA FiLLiP",
+              "summary": "The Indian analog is the LLP, incorporated with the MCA via the FiLLiP form; the government's NSWS portal fronts the MCA service.",
+              "context": {
+                "kind": "geo",
+                "when": "Forming the pass-through entity in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.nsws.gov.in/",
+              "actionLabel": "NSWS (MCA LLP incorporation)"
+            },
+            {
+              "id": "uk-llp",
+              "label": "UK - LLP at Companies House",
+              "summary": "The pass-through analog is the LLP, registered at Companies House - though most UK founders just form a private limited company, since there is no US-style LLC.",
+              "context": {
+                "kind": "geo",
+                "when": "Forming the pass-through entity in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/guidance/set-up-and-run-a-limited-liability-partnership-llp",
+              "actionLabel": "Set up and run an LLP"
+            },
+            {
+              "id": "germany-ug",
+              "label": "Germany - UG (haftungsbeschraenkt)",
+              "summary": "No LLC analog with pass-through: the low-capital route is the UG - a mini-GmbH formable from 1 euro with a notarized deed.",
+              "context": {
+                "kind": "geo",
+                "when": "Forming the low-capital entity in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.existenzgruender.de/",
+              "actionLabel": "BMWK founders portal (UG/GmbH)"
+            },
+            {
+              "id": "france-sarl-eurl",
+              "label": "France - SARL/EURL via INPI",
+              "summary": "The closest analog is the SARL (or single-member EURL) - a simpler, statute-driven company than the SAS - formed like every French entity through the INPI guichet unique.",
+              "context": {
+                "kind": "geo",
+                "when": "Forming the pass-through analog in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://procedures.inpi.fr/",
+              "actionLabel": "INPI guichet unique (SARL/EURL)"
             }
           ]
         },
@@ -826,7 +978,69 @@
           "vendor": "clerky",
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 30
+          "estimatedMinutes": 30,
+          "methods": [
+            {
+              "id": "india-isafe-ccps",
+              "label": "India - iSAFE / CCPS instruments",
+              "summary": "Pre-seed runs on CCPS/CCD instruments or the iSAFE (a practitioner adaptation of the SAFE onto compulsorily convertible preference shares); DPIIT Startup-India recognition unlocks the startup tax benefits.",
+              "context": {
+                "kind": "geo",
+                "when": "Raising the pre-seed in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.startupindia.gov.in/",
+              "actionLabel": "Startup India (DPIIT recognition)"
+            },
+            {
+              "id": "uk-asa-seis",
+              "label": "UK - ASA + SEIS/EIS assurance",
+              "summary": "The SAFE analog is the ASA (advanced subscription agreement) or convertible loan note - but the round is really driven by SEIS/EIS tax relief: get HMRC advance assurance first and keep ASA longstop dates compliant.",
+              "context": {
+                "kind": "geo",
+                "when": "Raising the pre-seed in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.gov.uk/guidance/venture-capital-schemes-apply-to-use-the-seed-enterprise-investment-scheme",
+              "actionLabel": "HMRC - apply to use SEIS"
+            },
+            {
+              "id": "germany-wandeldarlehen",
+              "label": "Germany - Wandeldarlehen",
+              "summary": "Pre-seed runs on the Wandeldarlehen (convertible loan) - kept notarization-free in most setups - and business angels claim the federal INVEST grant on qualifying equity tickets via BAFA.",
+              "context": {
+                "kind": "geo",
+                "when": "Raising the pre-seed in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.bafa.de/DE/Wirtschaft/Beratung_Finanzierung/Invest/invest_node.html",
+              "actionLabel": "BAFA - INVEST grant for angels"
+            },
+            {
+              "id": "france-bsa-air",
+              "label": "France - BSA-AIR",
+              "summary": "The SAFE analog is the BSA-AIR, a practitioner-standard warrant instrument; Bpifrance, the state investment bank, co-invests alongside angels.",
+              "context": {
+                "kind": "geo",
+                "when": "Raising the pre-seed in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://bpifrance-creation.fr/",
+              "actionLabel": "Bpifrance Creation (state investment bank)"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -873,6 +1087,64 @@
               "method": "gmail.users.drafts.create",
               "type": "rest",
               "description": "Create draft outreach emails"
+            }
+          ],
+          "methods": [
+            {
+              "id": "warm-intros",
+              "label": "Warm-intro outreach",
+              "summary": "Map mutual connections to the target list, draft a forwardable blurb, and ask for double-opt-in intros - warm paths convert far better than cold email when the network exists.",
+              "context": {
+                "kind": "situational",
+                "when": "You have an existing network into the target investors - warm intros convert best"
+              },
+              "route": "person",
+              "subSteps": [
+                {
+                  "id": "wi1",
+                  "label": "Map mutual connections to the investor target list",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "hubspot",
+                    "attio"
+                  ],
+                  "optionsArenaId": "crm",
+                  "estimatedMinutes": 30
+                },
+                {
+                  "id": "wi2",
+                  "label": "Draft the forwardable blurb",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "chatgpt",
+                    "claude",
+                    "gemini",
+                    "grok"
+                  ],
+                  "optionsArenaId": "ai-assistants",
+                  "estimatedMinutes": 15
+                },
+                {
+                  "id": "wi3",
+                  "label": "Ask connectors for double-opt-in intros",
+                  "route": "person",
+                  "estimatedMinutes": 120,
+                  "async": true
+                }
+              ]
+            },
+            {
+              "id": "platform-syndicate",
+              "label": "Platform round (RUV/syndicate)",
+              "summary": "Stand up an AngelList RUV/syndicate round and let the platform handle accreditation, docs, and the single cap-table line - outreach becomes inviting backers to the vehicle.",
+              "context": {
+                "kind": "situational",
+                "when": "Raising from many angels via a platform vehicle rather than direct outreach"
+              },
+              "route": "form",
+              "vendorOptions": [
+                "angellist"
+              ]
             }
           ]
         },
@@ -1198,7 +1470,66 @@
           "actionUrl": "https://www.onlineforms.edgarfiling.sec.gov/",
           "actionLabel": "SEC EDGAR online forms",
           "riskLevel": "high",
-          "estimatedMinutes": 30
+          "estimatedMinutes": 30,
+          "methods": [
+            {
+              "id": "india-pas3",
+              "label": "India - PAS-3 private placement",
+              "summary": "A priced round is a private placement under Companies Act s.42: special resolution, a registered-valuer report on price, and the PAS-3 return of allotment to the MCA.",
+              "context": {
+                "kind": "geo",
+                "when": "Closing the priced round in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.nsws.gov.in/",
+              "actionLabel": "NSWS (MCA private placement filings)"
+            },
+            {
+              "id": "uk-sh01",
+              "label": "UK - SH01 return of allotment",
+              "summary": "Closing means allotting new shares: board and (usually) shareholder authorities, a subscription and shareholders' agreement, new articles for the preferred class, and the SH01 filed at Companies House.",
+              "context": {
+                "kind": "geo",
+                "when": "Closing the priced round in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/government/publications/return-of-allotment-of-shares-sh01",
+              "actionLabel": "Companies House - return of allotment (SH01)"
+            },
+            {
+              "id": "germany-kapitalerhoehung",
+              "label": "Germany - notarized Kapitalerhoehung",
+              "summary": "A priced round is a notarized capital increase: the notary records the shareholder resolution and subscription, and the new shares only exist once the increase registers in the Handelsregister.",
+              "context": {
+                "kind": "geo",
+                "when": "Closing the priced round in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.handelsregister.de/",
+              "actionLabel": "Handelsregister (capital increase)"
+            },
+            {
+              "id": "france-augmentation-capital",
+              "label": "France - augmentation de capital",
+              "summary": "Closing is an augmentation de capital: an extraordinary general meeting, updated statuts, funds certified on a blocked account, then the capital change filed via the INPI guichet unique.",
+              "context": {
+                "kind": "geo",
+                "when": "Closing the priced round in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://procedures.inpi.fr/",
+              "actionLabel": "INPI guichet unique (capital increase)"
+            }
+          ]
         },
         {
           "id": "n9",
@@ -1453,7 +1784,38 @@
           "vendor": "carta",
           "approvalRequired": true,
           "riskLevel": "medium",
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "methods": [
+            {
+              "id": "uk-emi-valuation",
+              "label": "UK - EMI valuation with HMRC",
+              "summary": "The analog is agreeing an EMI valuation with HMRC's Shares and Assets Valuation team (the VAL231 process): it fixes actual and unrestricted market value for 90 days of option grants.",
+              "context": {
+                "kind": "geo",
+                "when": "Pricing options in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/government/collections/employment-related-securities",
+              "actionLabel": "HMRC - employment related securities"
+            },
+            {
+              "id": "india-registered-valuer",
+              "label": "India - registered-valuer report",
+              "summary": "No 409A, but pricing is still regulated: share issues need a report from an IBBI-registered valuer (Companies Act) or merchant banker (Income-tax Rule 11UA).",
+              "context": {
+                "kind": "geo",
+                "when": "Pricing shares/ESOPs in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://ibbi.gov.in/",
+              "actionLabel": "IBBI - registered valuers"
+            }
+          ]
         },
         {
           "id": "n4",
@@ -1989,6 +2351,64 @@
               "method": "TEAS Plus online filing",
               "type": "manual",
               "description": "Manual USPTO filing wizard"
+            }
+          ],
+          "methods": [
+            {
+              "id": "india-ipindia",
+              "label": "India - CGPDTM e-filing",
+              "summary": "Trade marks are filed with the Controller General (CGPDTM) through the IP India e-filing portal; public search runs on the separate tmrsearch portal.",
+              "context": {
+                "kind": "geo",
+                "when": "Filing the mark in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://ipindiaonline.gov.in/",
+              "actionLabel": "Intellectual Property India e-filing"
+            },
+            {
+              "id": "uk-ipo",
+              "label": "UK - UK IPO filing",
+              "summary": "UK marks are filed online with the UK IPO (from 170 pounds); since Brexit an EUIPO registration no longer covers the UK, so UK + EU protection means two filings.",
+              "context": {
+                "kind": "geo",
+                "when": "Filing the mark in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/how-to-register-a-trade-mark",
+              "actionLabel": "UK IPO - register a trade mark"
+            },
+            {
+              "id": "germany-dpma",
+              "label": "Germany - DPMA (or EUIPO) filing",
+              "summary": "National marks are filed with the DPMA (DPMAdirekt online filing); the EU-wide alternative is a single EUIPO application covering all 27 member states.",
+              "context": {
+                "kind": "geo",
+                "when": "Filing the mark in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.dpma.de/marken/index.html",
+              "actionLabel": "DPMA trade mark filing"
+            },
+            {
+              "id": "france-inpi-marque",
+              "label": "France - INPI (or EUIPO) filing",
+              "summary": "French marks are filed online with the INPI; as in Germany, an EUIPO application is the single-filing route to EU-wide protection.",
+              "context": {
+                "kind": "geo",
+                "when": "Filing the mark in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://www.inpi.fr/comprendre-la-propriete-intellectuelle/la-marque",
+              "actionLabel": "INPI - depot de marque"
             }
           ]
         },
@@ -2639,7 +3059,22 @@
           "route": "person",
           "riskLevel": "high",
           "estimatedMinutes": 20160,
-          "async": true
+          "async": true,
+          "methods": [
+            {
+              "id": "startup-tax-firm",
+              "label": "Startup tax platform",
+              "summary": "Fixed-fee startup tax firms prepare and e-file the federal return straight from your books - the software-plus-service alternative to a traditional CPA engagement.",
+              "context": {
+                "kind": "situational",
+                "when": "No CPA relationship - a startup tax platform prepares and files the return"
+              },
+              "vendorOptions": [
+                "fondo",
+                "pilot"
+              ]
+            }
+          ]
         },
         {
           "id": "n5",
@@ -3116,6 +3551,50 @@
             "drata",
             "secureframe",
             "oneleet"
+          ],
+          "methods": [
+            {
+              "id": "uk-cyber-essentials",
+              "label": "UK - Cyber Essentials first",
+              "summary": "UK buyers ask for Cyber Essentials (the NCSC-backed baseline, mandatory for many government contracts) and ISO 27001 more often than SOC 2 - SOC 2 still travels for US-facing sales.",
+              "context": {
+                "kind": "geo",
+                "when": "Selling to UK buyers - the asked-for framework differs",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.ncsc.gov.uk/cyberessentials/overview",
+              "actionLabel": "NCSC - Cyber Essentials"
+            },
+            {
+              "id": "germany-iso-27001",
+              "label": "Germany - ISO 27001 first",
+              "summary": "German enterprise security reviews anchor on ISO 27001 (historically also BSI IT-Grundschutz) rather than SOC 2 - plan ISO 27001 if the pipeline is DACH enterprise.",
+              "context": {
+                "kind": "geo",
+                "when": "Selling to German enterprise - the asked-for framework differs",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.bsi.bund.de/",
+              "actionLabel": "BSI - IT security authority"
+            },
+            {
+              "id": "france-iso-secnumcloud",
+              "label": "France - ISO 27001 / SecNumCloud",
+              "summary": "French buyers look for ISO 27001, and cloud vendors selling to the public sector meet ANSSI's SecNumCloud qualification - SOC 2 is a US-market artifact here.",
+              "context": {
+                "kind": "geo",
+                "when": "Selling to French buyers - the asked-for framework differs",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://cyber.gouv.fr/",
+              "actionLabel": "ANSSI (cyber.gouv.fr)"
+            }
           ]
         },
         {
@@ -3410,7 +3889,37 @@
             "stripe"
           ],
           "optionsArenaId": "payments",
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "methods": [
+            {
+              "id": "merchant-of-record",
+              "label": "Merchant of record (MoR)",
+              "summary": "A merchant of record sits between you and the buyer: it is the legal seller, so global VAT/sales-tax registration, remittance, and chargebacks are its problem - traded for a higher take rate.",
+              "context": {
+                "kind": "vendor",
+                "when": "Selling software globally without a tax/entity footprint - the MoR is the seller of record"
+              },
+              "vendor": "paddle",
+              "vendorOptions": [
+                "paddle"
+              ]
+            },
+            {
+              "id": "invoice-first",
+              "label": "Invoice-first (no checkout)",
+              "summary": "Skip checkout integration entirely: raise invoices from the accounting system and take bank transfers; add a processor when self-serve volume justifies it.",
+              "context": {
+                "kind": "situational",
+                "when": "B2B with a handful of large contracts - invoice and bank transfer before a checkout exists"
+              },
+              "route": "agent",
+              "vendorOptions": [
+                "quickbooks",
+                "xero"
+              ],
+              "optionsArenaId": "accounting"
+            }
+          ]
         },
         {
           "id": "n2",
@@ -3515,7 +4024,28 @@
             "relay"
           ],
           "optionsArenaId": "startup-banking",
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "methods": [
+            {
+              "id": "uk-eu-multicurrency",
+              "label": "UK/EU - multi-currency account",
+              "summary": "The US neobanks onboard US entities (committed vendor-geo evidence); a UK- or EU-incorporated company opens a multi-currency business account with a provider that operates there.",
+              "context": {
+                "kind": "geo",
+                "when": "The company is incorporated in the UK or EU - the US neobanks don't onboard it",
+                "countries": [
+                  "UK",
+                  "DE",
+                  "FR"
+                ]
+              },
+              "vendor": "wise",
+              "vendorOptions": [
+                "wise",
+                "airwallex"
+              ]
+            }
+          ]
         },
         {
           "id": "n3",
@@ -4339,7 +4869,53 @@
           "label": "Enter founding shares",
           "route": "form",
           "riskLevel": "medium",
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "methods": [
+            {
+              "id": "india-demat",
+              "label": "India - dematerialised shares",
+              "summary": "Since the 2023 MCA amendment, private companies (other than small ones) must dematerialise their shares - an ISIN via NSDL/CDSL, with shares held in demat accounts.",
+              "context": {
+                "kind": "geo",
+                "when": "Recording founding shares in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.cdslindia.com/",
+              "actionLabel": "CDSL (dematerialisation)"
+            },
+            {
+              "id": "uk-psc-register",
+              "label": "UK - register of members + PSC",
+              "summary": "The legal record is the company's own register of members plus the public PSC (people with significant control) register at Companies House - cap-table software mirrors it, never replaces it.",
+              "context": {
+                "kind": "geo",
+                "when": "Recording founding shares in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/guidance/people-with-significant-control-pscs",
+              "actionLabel": "PSC register guidance"
+            },
+            {
+              "id": "germany-gesellschafterliste",
+              "label": "Germany - Gesellschafterliste",
+              "summary": "The cap table has one authoritative form: the Gesellschafterliste filed in the Handelsregister (s.40 GmbHG), updated by the notary after every transfer.",
+              "context": {
+                "kind": "geo",
+                "when": "Recording founding shares in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.gesetze-im-internet.de/gmbhg/__40.html",
+              "actionLabel": "s.40 GmbHG - Gesellschafterliste"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -4626,7 +5202,126 @@
           ],
           "optionsArenaId": "payroll",
           "estimatedMinutes": 30,
-          "async": true
+          "async": true,
+          "methods": [
+            {
+              "id": "eor-international",
+              "label": "EOR - employees outside the US",
+              "summary": "An employer of record employs the team on your behalf and runs compliant local payroll in each hiring country - no local entities, per-seat pricing.",
+              "context": {
+                "kind": "situational",
+                "when": "Employees outside the US and no local entities - an employer of record runs compliant local payroll"
+              },
+              "vendor": "deel",
+              "vendorOptions": [
+                "deel",
+                "rippling",
+                "remote"
+              ]
+            },
+            {
+              "id": "uk-paye-rti",
+              "label": "UK - PAYE + RTI payroll",
+              "summary": "Register as an employer with HMRC for PAYE before the first payday, then report pay through Real Time Information (RTI) on or before every payment - plus pension auto-enrolment duties.",
+              "context": {
+                "kind": "geo",
+                "when": "Running payroll for UK employees",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.gov.uk/register-employer",
+              "actionLabel": "Register as an employer (PAYE)",
+              "subSteps": [
+                {
+                  "id": "ukp1",
+                  "label": "Register as an employer with HMRC (PAYE)",
+                  "route": "form",
+                  "actionUrl": "https://www.gov.uk/register-employer",
+                  "actionLabel": "Register as an employer (PAYE)",
+                  "estimatedMinutes": 30
+                },
+                {
+                  "id": "ukp2",
+                  "label": "Configure a UK-capable payroll provider",
+                  "route": "form",
+                  "vendorOptions": [
+                    "deel",
+                    "rippling"
+                  ],
+                  "estimatedMinutes": 30
+                },
+                {
+                  "id": "ukp3",
+                  "label": "File the first RTI submission on or before payday",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "deel",
+                    "rippling"
+                  ],
+                  "estimatedMinutes": 15
+                }
+              ]
+            },
+            {
+              "id": "india-epf-esi",
+              "label": "India - EPF/ESI employer setup",
+              "summary": "Employer setup spans EPF (provident fund) and ESI (state insurance) registration plus state-level professional tax; salary TDS is deposited monthly against the company's TAN.",
+              "context": {
+                "kind": "geo",
+                "when": "Running payroll for employees in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://unifiedportal-emp.epfindia.gov.in/epfo/",
+              "actionLabel": "EPFO employer portal",
+              "vendorOptions": [
+                "deel",
+                "rippling"
+              ]
+            },
+            {
+              "id": "germany-betriebsnummer",
+              "label": "Germany - Betriebsnummer + social insurance",
+              "summary": "You need a Betriebsnummer from the Federal Employment Agency before running payroll, then monthly social-insurance reports to each employee's health insurer and wage tax via ELSTER.",
+              "context": {
+                "kind": "geo",
+                "when": "Running payroll for employees in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.arbeitsagentur.de/unternehmen/betriebsnummern-service",
+              "actionLabel": "Betriebsnummern-Service (Bundesagentur fuer Arbeit)",
+              "vendorOptions": [
+                "deel",
+                "rippling"
+              ]
+            },
+            {
+              "id": "france-dpae-dsn",
+              "label": "France - DPAE + DSN payroll",
+              "summary": "Every hire starts with a DPAE filed with URSSAF before the employee starts; monthly payroll then flows through the DSN, France's unified RTI-style payroll report.",
+              "context": {
+                "kind": "geo",
+                "when": "Running payroll for employees in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F23107",
+              "actionLabel": "Declaration prealable a l'embauche (DPAE)",
+              "vendorOptions": [
+                "deel",
+                "rippling"
+              ]
+            }
+          ]
         },
         {
           "id": "n4",
@@ -4808,7 +5503,68 @@
           ],
           "optionsArenaId": "accounting",
           "estimatedMinutes": 30,
-          "async": true
+          "async": true,
+          "methods": [
+            {
+              "id": "india-statutory-audit",
+              "label": "India - Companies Act books + audit",
+              "summary": "Books follow the Companies Act and Indian accounting standards, and every company needs a statutory audit by a chartered accountant from year one - the auditor relationship starts now.",
+              "context": {
+                "kind": "geo",
+                "when": "Setting up the books in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.icai.org/",
+              "actionLabel": "ICAI (statutory audit)"
+            },
+            {
+              "id": "uk-frs",
+              "label": "UK - FRS 105/102 + statutory accounts",
+              "summary": "Statutory accounts for Companies House are unavoidable, but most startups qualify for the small-company audit exemption; FRS 105/102 set the framework the software must map to.",
+              "context": {
+                "kind": "geo",
+                "when": "Setting up the books in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/audit-exemptions-for-private-limited-companies",
+              "actionLabel": "Audit exemption for small companies",
+              "vendorOptions": [
+                "xero"
+              ]
+            },
+            {
+              "id": "germany-gobd-skr",
+              "label": "Germany - GoBD books + SKR03/04",
+              "summary": "Bookkeeping must be GoBD-compliant (tamper-evident, German retention rules), the de-facto chart of accounts is DATEV's SKR03/SKR04, and nearly every startup runs the books through a Steuerberater.",
+              "context": {
+                "kind": "geo",
+                "when": "Setting up the books in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.elster.de/eportal/start",
+              "actionLabel": "ELSTER (GoBD-compliant bookkeeping)"
+            },
+            {
+              "id": "france-pcg-fec",
+              "label": "France - Plan Comptable General + FEC",
+              "summary": "France mandates the chart of accounts: the Plan Comptable General from the ANC is law, and the tax authority can demand the ledger as a standardized FEC file - software must speak both.",
+              "context": {
+                "kind": "geo",
+                "when": "Setting up the books in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://www.anc.gouv.fr/",
+              "actionLabel": "ANC - Plan Comptable General"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -4934,6 +5690,37 @@
               "type": "rest",
               "description": "Create employee in Gusto"
             }
+          ],
+          "methods": [
+            {
+              "id": "eor-hire",
+              "label": "EOR hire (outside the US)",
+              "summary": "An employer of record employs the hire on your behalf in their country - locally compliant contract, payroll, and benefits without opening an entity.",
+              "context": {
+                "kind": "situational",
+                "when": "The hire is outside the US - an employer of record employs them on your behalf"
+              },
+              "vendor": "deel",
+              "vendorOptions": [
+                "deel",
+                "rippling",
+                "remote"
+              ]
+            },
+            {
+              "id": "contractor-first",
+              "label": "Contractor-first trial",
+              "summary": "Onboard as a 1099 contractor first (its own corpus process) and convert to an employee once both sides commit.",
+              "context": {
+                "kind": "situational",
+                "when": "The engagement starts as a paid contractor trial before a full-time offer"
+              },
+              "route": "agent",
+              "vendorOptions": [
+                "gusto",
+                "deel"
+              ]
+            }
           ]
         },
         {
@@ -4988,6 +5775,20 @@
               "method": "directory.users.insert",
               "type": "rest",
               "description": "Create Google Workspace user"
+            }
+          ],
+          "methods": [
+            {
+              "id": "microsoft-365",
+              "label": "Microsoft 365 mailbox",
+              "summary": "Create the mailbox in the Microsoft 365 admin center instead of Google Admin - the same step on the other workspace suite.",
+              "context": {
+                "kind": "vendor",
+                "when": "The company runs on Outlook/Teams rather than Google Workspace"
+              },
+              "vendorOptions": [
+                "microsoft_365"
+              ]
             }
           ]
         },
@@ -5621,6 +6422,68 @@
               "method": "POST /v1/employees/{id}/terminations",
               "type": "rest",
               "description": "Process employee termination"
+            }
+          ],
+          "methods": [
+            {
+              "id": "india-notice-gratuity",
+              "label": "India - notice, gratuity, F&F",
+              "summary": "Offboarding is governed by state shops-and-establishments acts and central law: contractual/statutory notice, gratuity past five years of service, leave encashment in the full-and-final settlement.",
+              "context": {
+                "kind": "geo",
+                "when": "Offboarding an employee in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://labour.gov.in/",
+              "actionLabel": "Ministry of Labour & Employment"
+            },
+            {
+              "id": "uk-fair-process",
+              "label": "UK - fair reason + Acas process",
+              "summary": "Dismissal is procedural, not at-will: a fair reason and a fair process (the Acas code), statutory notice periods, and final pay including accrued holiday.",
+              "context": {
+                "kind": "geo",
+                "when": "Offboarding an employee in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.gov.uk/dismiss-staff",
+              "actionLabel": "Dismissing staff - the rules"
+            },
+            {
+              "id": "germany-kschg",
+              "label": "Germany - KSchG + wet-ink notice",
+              "summary": "The Kuendigungsschutzgesetz protects employees after six months in companies with more than ten staff: dismissal needs a legally recognized ground and a wet-ink termination letter.",
+              "context": {
+                "kind": "geo",
+                "when": "Offboarding an employee in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.gesetze-im-internet.de/kschg/",
+              "actionLabel": "KSchG - dismissal protection law"
+            },
+            {
+              "id": "france-rupture-conventionnelle",
+              "label": "France - rupture conventionnelle",
+              "summary": "The standard amicable exit is the rupture conventionnelle: a signed agreement with a mandatory indemnity, a 15-day withdrawal period, and homologation by the labor administration.",
+              "context": {
+                "kind": "geo",
+                "when": "Offboarding an employee in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F19030",
+              "actionLabel": "Rupture conventionnelle"
             }
           ]
         },
@@ -6727,7 +7590,21 @@
           ],
           "approvalRequired": true,
           "riskLevel": "medium",
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "methods": [
+            {
+              "id": "microsoft-365",
+              "label": "Microsoft 365 workspace",
+              "summary": "Create the workspace on Microsoft 365 instead of Google - the default when the team and its buyers live on Outlook/Teams.",
+              "context": {
+                "kind": "vendor",
+                "when": "The team and its buyers live on Outlook/Teams"
+              },
+              "vendorOptions": [
+                "microsoft_365"
+              ]
+            }
+          ]
         },
         {
           "id": "n2",
@@ -7144,7 +8021,20 @@
           "label": "Get quotes from providers",
           "route": "person",
           "estimatedMinutes": 7200,
-          "async": true
+          "async": true,
+          "methods": [
+            {
+              "id": "peo-bundled",
+              "label": "PEO-bundled benefits",
+              "summary": "A PEO co-employs the team: group benefits rates and compliance come bundled with payroll instead of a broker-quote cycle - trading control for speed.",
+              "context": {
+                "kind": "situational",
+                "when": "You want benefits bundled with payroll via co-employment - trading control for speed"
+              },
+              "route": "form",
+              "vendor": "justworks"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -8503,7 +9393,29 @@
           ],
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 60
+          "estimatedMinutes": 60,
+          "methods": [
+            {
+              "id": "bigquery-gcp",
+              "label": "BigQuery (GCP-standardized)",
+              "summary": "On a GCP-standardized stack the warehouse is serverless BigQuery - no cluster to size, billing by query.",
+              "context": {
+                "kind": "vendor",
+                "when": "GCP-standardized stack - the warehouse is serverless BigQuery"
+              },
+              "vendor": "bigquery"
+            },
+            {
+              "id": "motherduck-small-data",
+              "label": "MotherDuck (small data)",
+              "summary": "At seed-stage data volumes a DuckDB-based warehouse is cheaper and simpler than enterprise platforms - and migrates cleanly later if volumes demand it.",
+              "context": {
+                "kind": "vendor",
+                "when": "Seed-stage data volumes - a DuckDB-based warehouse over an enterprise platform"
+              },
+              "vendor": "motherduck"
+            }
+          ]
         },
         {
           "id": "n2",
@@ -8922,6 +9834,28 @@
             "google_cloud",
             "azure",
             "oracle_cloud"
+          ],
+          "methods": [
+            {
+              "id": "google-cloud",
+              "label": "Google Cloud account",
+              "summary": "Stand the stack up on GCP instead of AWS - the natural default when the data platform is BigQuery or the team standardizes on GKE/Vertex.",
+              "context": {
+                "kind": "vendor",
+                "when": "Standardizing on GCP (BigQuery, GKE, Vertex)"
+              },
+              "vendor": "google_cloud"
+            },
+            {
+              "id": "azure",
+              "label": "Microsoft Azure account",
+              "summary": "Stand the stack up on Azure - the default for Microsoft-stack teams and enterprise-agreement shops.",
+              "context": {
+                "kind": "vendor",
+                "when": "Microsoft-stack team or enterprise-agreement pricing"
+              },
+              "vendor": "azure"
+            }
           ]
         },
         {
@@ -10090,6 +11024,65 @@
               "type": "rest",
               "description": "Add line items"
             }
+          ],
+          "methods": [
+            {
+              "id": "india-gst-irn",
+              "label": "India - GST e-invoice (IRN)",
+              "summary": "Invoices are GST documents: registered businesses past the turnover threshold must clear every B2B invoice through the government IRP to get an IRN and QR code - an invoice without one simply isn't valid.",
+              "context": {
+                "kind": "geo",
+                "when": "Invoicing from an Indian entity",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://einvoice.gst.gov.in/",
+              "actionLabel": "GST e-Invoice portal (IRP)"
+            },
+            {
+              "id": "uk-vat-invoice",
+              "label": "UK - statutory VAT invoice",
+              "summary": "Invoices must carry the statutory particulars (and full VAT-invoice fields once registered); late payers owe statutory interest at 8% over base under the late-payment legislation.",
+              "context": {
+                "kind": "geo",
+                "when": "Invoicing from a UK entity",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/invoicing-and-taking-payment-from-customers",
+              "actionLabel": "Invoicing and taking payment"
+            },
+            {
+              "id": "germany-e-rechnung",
+              "label": "Germany - s.14 UStG e-invoice",
+              "summary": "s.14 UStG fixes the mandatory invoice fields (sequential number, Steuernummer/USt-IdNr, ...) - and since January 2025 every German business must be able to receive structured e-invoices (XRechnung/ZUGFeRD).",
+              "context": {
+                "kind": "geo",
+                "when": "Invoicing from a German entity",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.gesetze-im-internet.de/ustg_1980/__14.html",
+              "actionLabel": "s.14 UStG - invoice requirements"
+            },
+            {
+              "id": "france-mentions-obligatoires",
+              "label": "France - mentions obligatoires",
+              "summary": "French invoices carry a long list of mentions obligatoires (SIREN, RCS, per-line detail, late-payment penalty terms...), with mandatory B2B e-invoicing via accredited platforms phasing in.",
+              "context": {
+                "kind": "geo",
+                "when": "Invoicing from a French entity",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F31808",
+              "actionLabel": "Mentions obligatoires sur une facture"
+            }
           ]
         },
         {
@@ -10199,6 +11192,36 @@
               "method": "POST /v1/products",
               "type": "rest",
               "description": "Create Stripe products"
+            }
+          ],
+          "methods": [
+            {
+              "id": "billing-platform",
+              "label": "Dedicated billing platform",
+              "summary": "A billing layer over the processor handles complex plans, entitlements, and mid-cycle changes independently of the PSP - worth it once pricing outgrows simple per-seat plans.",
+              "context": {
+                "kind": "vendor",
+                "when": "Complex plans/entitlements independent of the PSP - a dedicated billing layer over the processor"
+              },
+              "vendor": "chargebee",
+              "vendorOptions": [
+                "chargebee",
+                "recurly"
+              ],
+              "optionsArenaId": "billing-subscriptions"
+            },
+            {
+              "id": "merchant-of-record",
+              "label": "Merchant of record (MoR)",
+              "summary": "The MoR is the legal seller: subscriptions, global VAT/sales tax, and chargebacks run on its account - the lowest-ops route for global self-serve SaaS.",
+              "context": {
+                "kind": "vendor",
+                "when": "Global self-serve SaaS without a tax footprint - the MoR sells as the seller of record"
+              },
+              "vendor": "paddle",
+              "vendorOptions": [
+                "paddle"
+              ]
             }
           ]
         },
@@ -10558,7 +11581,23 @@
             "customer_io"
           ],
           "approvalRequired": true,
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "methods": [
+            {
+              "id": "event-driven-lifecycle",
+              "label": "Event-driven lifecycle email",
+              "summary": "Key email to product events rather than newsletter lists: lifecycle tools trigger sends from what users actually do in the product.",
+              "context": {
+                "kind": "situational",
+                "when": "Product-led SaaS - email keyed to product events, not newsletter blasts"
+              },
+              "vendor": "loops",
+              "vendorOptions": [
+                "loops",
+                "customer_io"
+              ]
+            }
+          ]
         },
         {
           "id": "n2",
@@ -10994,7 +12033,23 @@
           ],
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 2
+          "estimatedMinutes": 2,
+          "methods": [
+            {
+              "id": "cross-border-payout",
+              "label": "Cross-border payout",
+              "summary": "For a payee outside the US, multi-currency rails price better than a USD international wire - create the payout in the currency the payee actually banks in.",
+              "context": {
+                "kind": "situational",
+                "when": "The payee is outside the US - multi-currency rails beat a USD wire"
+              },
+              "vendor": "wise",
+              "vendorOptions": [
+                "wise",
+                "airwallex"
+              ]
+            }
+          ]
         },
         {
           "id": "n3",
@@ -11092,7 +12147,67 @@
           "label": "Contractor completes their own W-9 and bank details",
           "route": "person",
           "async": true,
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "methods": [
+            {
+              "id": "india-pan-tds",
+              "label": "India - PAN + TDS on fees",
+              "summary": "Collect the contractor's PAN and deduct TDS from every payment (s.194C/194J), depositing it monthly and reporting quarterly - plus check whether their GST registration applies.",
+              "context": {
+                "kind": "geo",
+                "when": "Engaging a contractor in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.incometax.gov.in/iec/foportal/",
+              "actionLabel": "Income Tax e-filing (TDS on fees)"
+            },
+            {
+              "id": "uk-ir35-cest",
+              "label": "UK - IR35 status check (CEST)",
+              "summary": "Before the contract: an IR35/off-payroll status check - HMRC's CEST tool gives a rulable answer, and medium/large clients must issue a status determination statement.",
+              "context": {
+                "kind": "geo",
+                "when": "Engaging a contractor in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.gov.uk/guidance/check-employment-status-for-tax",
+              "actionLabel": "HMRC - check employment status (CEST)"
+            },
+            {
+              "id": "germany-status-determination",
+              "label": "Germany - Scheinselbstaendigkeit check",
+              "summary": "A one-client contractor working like staff triggers retroactive social contributions (false self-employment); the DRV Clearingstelle runs the official status-determination procedure.",
+              "context": {
+                "kind": "geo",
+                "when": "Engaging a contractor in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.deutsche-rentenversicherung.de/",
+              "actionLabel": "Deutsche Rentenversicherung (status determination)"
+            },
+            {
+              "id": "france-attestation-vigilance",
+              "label": "France - URSSAF vigilance attestation",
+              "summary": "Contractors must be registered, and for contracts of 5,000 euros+ you must collect and verify their URSSAF attestation de vigilance every six months.",
+              "context": {
+                "kind": "geo",
+                "when": "Engaging a contractor in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://www.urssaf.fr/accueil/attestation-vigilance.html",
+              "actionLabel": "URSSAF - attestation de vigilance"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -12001,6 +13116,24 @@
               "arenaId": "design-tools",
               "productId": "figma"
             }
+          ],
+          "methods": [
+            {
+              "id": "design-tool-logo",
+              "label": "Hands-on design tool",
+              "summary": "Design the mark by hand in a vector tool instead of generating images - full control over the vector asset and its variants.",
+              "context": {
+                "kind": "vendor",
+                "when": "You want hands-on vector control rather than generated images"
+              },
+              "route": "person",
+              "vendorOptions": [
+                "figma",
+                "canva",
+                "penpot"
+              ],
+              "optionsArenaId": "design-tools"
+            }
           ]
         },
         {
@@ -12230,7 +13363,19 @@
           ],
           "estimatedMinutes": 3,
           "async": true,
-          "approvalRequired": true
+          "approvalRequired": true,
+          "methods": [
+            {
+              "id": "cloudflare-at-cost",
+              "label": "Cloudflare Registrar (at cost)",
+              "summary": "If DNS already lives on Cloudflare, its registrar sells registration at wholesale cost with no markup - one less vendor in the chain.",
+              "context": {
+                "kind": "vendor",
+                "when": "DNS already runs on Cloudflare - at-cost registration, no markup"
+              },
+              "vendor": "cloudflare_registrar"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -12308,6 +13453,22 @@
             {
               "arenaId": "design-tools",
               "productId": "canva"
+            }
+          ],
+          "methods": [
+            {
+              "id": "design-tool-publish",
+              "label": "Design-tool site",
+              "summary": "Framer, Figma, and Canva publish a designed marketing site straight from the canvas - stronger visual control, less code ownership than a generated codebase.",
+              "context": {
+                "kind": "vendor",
+                "when": "Design-led marketing site - a design tool publishes it directly"
+              },
+              "vendorOptions": [
+                "framer",
+                "figma",
+                "canva"
+              ]
             }
           ]
         },
@@ -12779,6 +13940,173 @@
               "arenaId": "design-tools",
               "productId": "canva"
             }
+          ],
+          "methods": [
+            {
+              "id": "customer-interview-sprint",
+              "label": "Customer-interview sprint",
+              "summary": "Skip the smoke test and run a structured interview sprint: a discussion guide, 5-10 prospects who match the target customer, and synthesized demand evidence before anything is built.",
+              "context": {
+                "kind": "situational",
+                "when": "B2B / enterprise - demand signal comes from conversations with named buyers, not anonymous clicks"
+              },
+              "route": "person",
+              "subSteps": [
+                {
+                  "id": "ci1",
+                  "label": "Draft the interview discussion guide",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "chatgpt",
+                    "claude",
+                    "gemini",
+                    "grok"
+                  ],
+                  "optionsArenaId": "ai-assistants",
+                  "estimatedMinutes": 15
+                },
+                {
+                  "id": "ci2",
+                  "label": "Recruit 5-10 prospects matching the target customer",
+                  "route": "person",
+                  "estimatedMinutes": 240,
+                  "async": true
+                },
+                {
+                  "id": "ci3",
+                  "label": "Run the interviews",
+                  "route": "person",
+                  "estimatedMinutes": 300,
+                  "async": true
+                },
+                {
+                  "id": "ci4",
+                  "label": "Synthesize notes into demand evidence",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "chatgpt",
+                    "claude",
+                    "gemini",
+                    "grok"
+                  ],
+                  "optionsArenaId": "ai-assistants",
+                  "estimatedMinutes": 30
+                }
+              ]
+            },
+            {
+              "id": "waitlist-ad-test",
+              "label": "Waitlist + ad-spend test",
+              "summary": "Publish a waitlist page, put a small paid-ad budget behind it, and read conversion from ad click to signup - the consumer analog of the smoke test, with intent priced in dollars.",
+              "context": {
+                "kind": "situational",
+                "when": "Consumer product - buy a small amount of traffic and measure real waitlist conversion"
+              },
+              "subSteps": [
+                {
+                  "id": "wl1",
+                  "label": "Publish the waitlist page",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "lovable",
+                    "v0",
+                    "bolt"
+                  ],
+                  "optionsArenaId": "vibe-coding",
+                  "estimatedMinutes": 20
+                },
+                {
+                  "id": "wl2",
+                  "label": "Launch a small paid ad campaign at the target audience",
+                  "route": "form",
+                  "estimatedMinutes": 45
+                },
+                {
+                  "id": "wl3",
+                  "label": "Measure click-to-signup conversion",
+                  "route": "agent",
+                  "vendor": "posthog",
+                  "vendorOptions": [
+                    "posthog",
+                    "amplitude",
+                    "mixpanel"
+                  ],
+                  "optionsArenaId": "product-analytics",
+                  "estimatedMinutes": 15
+                }
+              ]
+            },
+            {
+              "id": "concierge-mvp",
+              "label": "Concierge / manual MVP",
+              "summary": "Deliver the product's outcome manually for a handful of pilot customers and track effort and willingness to pay - validation by doing the job, not by describing it.",
+              "context": {
+                "kind": "situational",
+                "when": "Service-shaped product - deliver the outcome by hand before building any software"
+              },
+              "route": "person",
+              "subSteps": [
+                {
+                  "id": "cm1",
+                  "label": "Recruit 2-3 pilot customers",
+                  "route": "person",
+                  "estimatedMinutes": 240,
+                  "async": true
+                },
+                {
+                  "id": "cm2",
+                  "label": "Deliver the service manually end to end",
+                  "route": "person",
+                  "estimatedMinutes": 480,
+                  "async": true
+                },
+                {
+                  "id": "cm3",
+                  "label": "Track effort, outcomes, and willingness to pay",
+                  "route": "agent",
+                  "vendor": "notion",
+                  "estimatedMinutes": 20
+                }
+              ]
+            },
+            {
+              "id": "preorder-deposit-test",
+              "label": "Preorder / deposit test",
+              "summary": "Put a refundable deposit behind a preorder page: hardware intent that survives a checkout is real in a way a click never is.",
+              "context": {
+                "kind": "situational",
+                "when": "Hardware or physical product - a refundable deposit is the only honest demand signal"
+              },
+              "subSteps": [
+                {
+                  "id": "po1",
+                  "label": "Publish the preorder page",
+                  "route": "agent",
+                  "vendorOptions": [
+                    "lovable",
+                    "v0",
+                    "bolt"
+                  ],
+                  "optionsArenaId": "vibe-coding",
+                  "estimatedMinutes": 20
+                },
+                {
+                  "id": "po2",
+                  "label": "Set up the refundable-deposit checkout",
+                  "route": "agent",
+                  "vendor": "stripe",
+                  "optionsArenaId": "payments",
+                  "estimatedMinutes": 15
+                },
+                {
+                  "id": "po3",
+                  "label": "Measure deposit conversion and refund rate",
+                  "route": "agent",
+                  "vendor": "stripe",
+                  "estimatedMinutes": 15
+                }
+              ]
+            }
           ]
         },
         {
@@ -12890,7 +14218,69 @@
             "clerky",
             "stripe_atlas"
           ],
-          "estimatedMinutes": 20
+          "estimatedMinutes": 20,
+          "methods": [
+            {
+              "id": "india-stamped-agreement",
+              "label": "India - stamped founders' agreement",
+              "summary": "The founders' agreement is enforceable contract law - but it must be properly stamped (stamp duty is a state tax, e-stamping in most states) to be usable in court.",
+              "context": {
+                "kind": "geo",
+                "when": "Founder agreement under Indian law",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.startupindia.gov.in/",
+              "actionLabel": "Startup India (founder agreement resources)"
+            },
+            {
+              "id": "uk-shareholders-agreement",
+              "label": "UK - shareholders' agreement + articles",
+              "summary": "Vesting is not a default: it lives in a shareholders' agreement plus bespoke articles - the statutory model articles have no leaver or share-class provisions.",
+              "context": {
+                "kind": "geo",
+                "when": "Founder agreement under UK law",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/guidance/model-articles-of-association-for-limited-companies",
+              "actionLabel": "Model articles of association"
+            },
+            {
+              "id": "germany-notarized-vesting",
+              "label": "Germany - notarized vesting clauses",
+              "summary": "GmbH shares only move by notarial deed (s.15 GmbHG), so founder vesting is drafted as notarized call-option/clawback clauses in the Gesellschaftervereinbarung.",
+              "context": {
+                "kind": "geo",
+                "when": "Founder agreement under German law",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.bnotk.de/",
+              "actionLabel": "Bundesnotarkammer (notaries)",
+              "vendorOptions": [
+                "beglaubigt"
+              ]
+            },
+            {
+              "id": "france-pacte-associes",
+              "label": "France - pacte d'associes",
+              "summary": "The founder agreement is the pacte d'associes - a private contract alongside the statuts; vesting is built from promesses de cession (share-transfer promises).",
+              "context": {
+                "kind": "geo",
+                "when": "Founder agreement under French law",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://bpifrance-creation.fr/encyclopedie/structures-juridiques/entreprendre-a-plusieurs/pacte-dassocies-organisation",
+              "actionLabel": "Pacte d'associes - Bpifrance Creation guide"
+            }
+          ]
         },
         {
           "id": "n3",
@@ -13069,6 +14459,65 @@
             {
               "arenaId": "ai-assistants",
               "productId": "gemini"
+            }
+          ],
+          "methods": [
+            {
+              "id": "india-dpdp",
+              "label": "India - DPDP Act 2023",
+              "summary": "The Digital Personal Data Protection Act 2023 is the GDPR analog: consent-first processing, notice requirements and data-fiduciary duties, with rules phasing in.",
+              "context": {
+                "kind": "geo",
+                "when": "Privacy policy for users in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.meity.gov.in/",
+              "actionLabel": "MeitY (DPDP Act 2023)"
+            },
+            {
+              "id": "uk-ico-fee",
+              "label": "UK - UK GDPR + ICO fee",
+              "summary": "UK GDPR applies post-Brexit with the ICO as regulator - and there is a concrete registration step US startups miss: nearly every data-processing company must pay the ICO data-protection fee.",
+              "context": {
+                "kind": "geo",
+                "when": "Privacy policy for users in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "route": "form",
+              "actionUrl": "https://ico.org.uk/for-organisations/data-protection-fee/",
+              "actionLabel": "ICO - data protection fee"
+            },
+            {
+              "id": "germany-bdsg-dpo",
+              "label": "Germany - GDPR + BDSG specifics",
+              "summary": "GDPR plus the BDSG: German specifics include mandatory data protection officers at lower thresholds (generally 20+ people regularly processing personal data).",
+              "context": {
+                "kind": "geo",
+                "when": "Privacy policy for users in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.bfdi.bund.de/",
+              "actionLabel": "BfDI - federal data protection authority"
+            },
+            {
+              "id": "france-cnil-cookies",
+              "label": "France - CNIL cookie rules",
+              "summary": "The CNIL is Europe's most active enforcer of GDPR cookie/consent rules - its published guidelines on cookies and trackers are effectively the spec for a French-market site.",
+              "context": {
+                "kind": "geo",
+                "when": "Privacy policy for users in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://www.cnil.fr/",
+              "actionLabel": "CNIL"
             }
           ]
         },
@@ -13291,7 +14740,35 @@
           "vendorOptions": [
             "producthunt"
           ],
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "methods": [
+            {
+              "id": "show-hn",
+              "label": "Show HN launch",
+              "summary": "Post a Show HN with a working demo; HN rewards substance and punishes marketing copy - the right venue when the buyers are developers.",
+              "context": {
+                "kind": "situational",
+                "when": "Developer-tool audience - Show HN reaches it better than Product Hunt"
+              },
+              "route": "form",
+              "vendorOptions": [
+                "hackernews"
+              ]
+            },
+            {
+              "id": "betalist-prelaunch",
+              "label": "BetaList pre-launch",
+              "summary": "BetaList runs before launch: submit while still in beta to collect early-adopter signups ahead of the real launch day.",
+              "context": {
+                "kind": "situational",
+                "when": "Pre-launch - you want waitlist signups before the product is public"
+              },
+              "route": "form",
+              "vendorOptions": [
+                "betalist"
+              ]
+            }
+          ]
         },
         {
           "id": "n3",
@@ -13746,7 +15223,34 @@
             "cursor"
           ],
           "optionsArenaId": "ai-coding",
-          "estimatedMinutes": 120
+          "estimatedMinutes": 120,
+          "methods": [
+            {
+              "id": "cloud-autonomous-agent",
+              "label": "Autonomous cloud-agent run",
+              "summary": "Delegate the whole implementation to an autonomous agent run and review the resulting PR - works when the spec is tight and CI is trustworthy.",
+              "context": {
+                "kind": "situational",
+                "when": "Well-scoped, well-tested task - hand it to an autonomous agent and review the PR"
+              },
+              "vendorOptions": [
+                "claude_code",
+                "codex"
+              ]
+            },
+            {
+              "id": "ide-pair",
+              "label": "IDE pairing session",
+              "summary": "Pair with the agent in the IDE for exploratory or design-heavy changes - tighter feedback loop, human steering every edit.",
+              "context": {
+                "kind": "situational",
+                "when": "Exploratory or design-heavy change - pair in the IDE instead of delegating"
+              },
+              "vendorOptions": [
+                "cursor"
+              ]
+            }
+          ]
         },
         {
           "id": "n4",
@@ -13997,7 +15501,66 @@
           "actionLabel": "Delaware dissolution forms",
           "vendor": "state_sos",
           "riskLevel": "high",
-          "estimatedMinutes": 30
+          "estimatedMinutes": 30,
+          "methods": [
+            {
+              "id": "india-strike-off-ibc",
+              "label": "India - STK-2 strike-off or IBC liquidation",
+              "summary": "Two exits: MCA strike-off via form STK-2 for a company with no liabilities, or a formal voluntary liquidation under the IBC run by an insolvency professional.",
+              "context": {
+                "kind": "geo",
+                "when": "Winding up in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://ibbi.gov.in/",
+              "actionLabel": "IBBI (voluntary liquidation) / MCA strike-off"
+            },
+            {
+              "id": "uk-ds01",
+              "label": "UK - DS01 voluntary strike-off",
+              "summary": "A solvent company applies for voluntary strike-off with a DS01 filing to Companies House (or a members' voluntary liquidation for larger balance sheets).",
+              "context": {
+                "kind": "geo",
+                "when": "Winding up in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/strike-off-your-company-from-companies-register",
+              "actionLabel": "Strike off a company (DS01)"
+            },
+            {
+              "id": "germany-sperrjahr",
+              "label": "Germany - liquidation + Sperrjahr",
+              "summary": "Winding up a GmbH is slow by design: a notarized dissolution resolution, liquidators registered, creditors publicly invited - then a mandatory one-year Sperrjahr before assets distribute.",
+              "context": {
+                "kind": "geo",
+                "when": "Winding up in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "route": "person",
+              "actionUrl": "https://www.handelsregister.de/",
+              "actionLabel": "Handelsregister (Liquidation & Sperrjahr)"
+            },
+            {
+              "id": "france-dissolution-radiation",
+              "label": "France - dissolution then radiation",
+              "summary": "The sequence is dissolution (shareholder decision + legal-announcement publication), a liquidation phase closing the accounts, then radiation from the RCS - all through the INPI guichet unique.",
+              "context": {
+                "kind": "geo",
+                "when": "Winding up in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://procedures.inpi.fr/",
+              "actionLabel": "INPI guichet unique (dissolution-liquidation)"
+            }
+          ]
         },
         {
           "id": "n6",
@@ -14715,7 +16278,65 @@
           "actionUrl": "https://www.streamlinedsalestax.org/",
           "actionLabel": "Streamlined Sales Tax registration",
           "riskLevel": "high",
-          "estimatedMinutes": 45
+          "estimatedMinutes": 45,
+          "methods": [
+            {
+              "id": "india-gst",
+              "label": "India - GST registration",
+              "summary": "GST replaces the per-state sales-tax patchwork with one national regime - registration per state of operation on the GST portal; SaaS sold from abroad falls under the OIDAR rules.",
+              "context": {
+                "kind": "geo",
+                "when": "Indirect-tax registration in India",
+                "countries": [
+                  "IN"
+                ]
+              },
+              "actionUrl": "https://www.gst.gov.in/",
+              "actionLabel": "GST portal registration"
+            },
+            {
+              "id": "uk-vat-mtd",
+              "label": "UK - one VAT registration (MTD)",
+              "summary": "Instead of per-state sales tax there is one national VAT registration - mandatory past 90k pounds of taxable turnover (or immediately for many non-established sellers) - with digital returns under Making Tax Digital.",
+              "context": {
+                "kind": "geo",
+                "when": "Indirect-tax registration in the United Kingdom",
+                "countries": [
+                  "UK"
+                ]
+              },
+              "actionUrl": "https://www.gov.uk/register-for-vat",
+              "actionLabel": "Register for VAT (Making Tax Digital)"
+            },
+            {
+              "id": "germany-vat-oss",
+              "label": "Germany - VAT ID + OSS",
+              "summary": "One German VAT registration (plus a BZSt-issued VAT ID) covers the whole country; for EU-wide B2C digital sales a single OSS (One-Stop-Shop) return replaces per-country registrations.",
+              "context": {
+                "kind": "geo",
+                "when": "Indirect-tax registration in Germany",
+                "countries": [
+                  "DE"
+                ]
+              },
+              "actionUrl": "https://www.bzst.de/",
+              "actionLabel": "BZSt - VAT identification number"
+            },
+            {
+              "id": "france-tva-oss",
+              "label": "France - TVA + OSS",
+              "summary": "One national TVA registration replaces the state-by-state patchwork - declared and paid through the espace professionnel - and a single OSS return covers EU-wide B2C digital sales.",
+              "context": {
+                "kind": "geo",
+                "when": "Indirect-tax registration in France",
+                "countries": [
+                  "FR"
+                ]
+              },
+              "actionUrl": "https://www.impots.gouv.fr/professionnel",
+              "actionLabel": "impots.gouv.fr - espace professionnel (TVA)"
+            }
+          ]
         },
         {
           "id": "n5",
@@ -16128,7 +17749,23 @@
             "remote",
             "justworks"
           ],
-          "estimatedMinutes": 30
+          "estimatedMinutes": 30,
+          "methods": [
+            {
+              "id": "own-entity-local-payroll",
+              "label": "Own entity - direct local payroll",
+              "summary": "With a local entity the EOR layer is pure margin: register as a local employer and run country payroll directly on a multi-country provider.",
+              "context": {
+                "kind": "situational",
+                "when": "You already have a local entity in the hiring country - skip the EOR margin"
+              },
+              "route": "form",
+              "vendorOptions": [
+                "deel",
+                "rippling"
+              ]
+            }
+          ]
         },
         {
           "id": "n2",
@@ -16246,7 +17883,22 @@
             "kandji",
             "jamf"
           ],
-          "estimatedMinutes": 20
+          "estimatedMinutes": 20,
+          "methods": [
+            {
+              "id": "apple-only-fleet",
+              "label": "Mac-native MDM",
+              "summary": "For an all-Mac fleet a Mac-native MDM goes deeper than the HR-platform bundle - declarative management, zero-touch enrollment via Apple Business Manager.",
+              "context": {
+                "kind": "situational",
+                "when": "All-Mac fleet - a Mac-native MDM over the HR-platform bundle"
+              },
+              "vendorOptions": [
+                "kandji",
+                "jamf"
+              ]
+            }
+          ]
         },
         {
           "id": "n2",

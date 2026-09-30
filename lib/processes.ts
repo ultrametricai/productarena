@@ -46,7 +46,12 @@ export const ExtraOptionRefSchema = z.object({
 
 export type ExtraOptionRef = z.infer<typeof ExtraOptionRefSchema>
 
-export const DagNodeSchema = z.object({
+// Declared ahead of the node schema so method contexts can reference it — see the GEO dimension
+// block below (founder ask 2026-09-28) for the full story of these four countries.
+export const GEO_NOTE_COUNTRIES = ['IN', 'UK', 'DE', 'FR'] as const
+export type GeoNoteCountry = (typeof GEO_NOTE_COUNTRIES)[number]
+
+export const DagNodeBaseSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   route: z.enum(['agent', 'form', 'person']),
@@ -116,6 +121,62 @@ export const DagNodeSchema = z.object({
   processRef: z.string().min(1).optional(),
 })
 
+// ---------------------------------------------------------------------------
+// Method variants (founder 2026-09-30: "certain processes have steps that are just ONE way to
+// do it when there are multiple methods depending on context — get multiple options selectable
+// by context … sub-DAGs for all DAG choices that have multiple paths").
+// ---------------------------------------------------------------------------
+
+export const METHOD_CONTEXT_KINDS = ['situational', 'geo', 'vendor'] as const
+
+// When a method variant is the right one. Honesty contract: `when` is a short PREDICATE
+// description ("B2B/enterprise — demand signal comes from conversations, not clicks",
+// "incorporating in the UK"), never marketing. Geo methods carry the committed country codes
+// they apply to — the same GEO_NOTE_COUNTRIES set the geo switcher and geoNotes use, so the
+// client geo selection can auto-preselect a matching method. `countries` is REQUIRED for kind
+// 'geo' and forbidden otherwise — enforced at load time (loadProcesses) rather than as a zod
+// refinement, so the published JSON schema stays a plain object shape() can check.
+export const StepMethodContextSchema = z.object({
+  kind: z.enum(METHOD_CONTEXT_KINDS),
+  when: z.string().min(1),
+  countries: z.enum(GEO_NOTE_COUNTRIES).array().min(1).optional(),
+})
+
+// One alternative way to run a step — the node's own fields stay the DEFAULT method (so every
+// committed number — ceilings, rankings, simulator, manifest — keeps describing the default
+// flow byte-identically; a variant is a display-level choice). A variant may override the
+// step's route/vendors/calls/action/time, and may decompose into a small sub-DAG (subSteps:
+// 2–5 nodes, same node schema minus further nesting — sub-steps never carry methods).
+// Vendor/arena refs obey the corpus house rules: only REAL judged arenas/products (or the
+// deliberate untracked-chip allowlist), every actionUrl verified live, estimatedMinutes only
+// where honest (derived from subSteps or omitted — never invented).
+export const StepMethodSchema = z.object({
+  id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'method id must be kebab-case'),
+  label: z.string().min(1),
+  summary: z.string().min(1),
+  context: StepMethodContextSchema,
+  route: z.enum(['agent', 'form', 'person']).optional(),
+  vendor: z.string().min(1).optional(),
+  vendorOptions: z.string().min(1).array().optional(),
+  optionsArenaId: z.string().min(1).optional(),
+  actionUrl: z.string().url().optional(),
+  actionLabel: z.string().min(1).optional(),
+  functionCalls: FunctionCallSchema.array().optional(),
+  estimatedMinutes: z.number().min(0).optional(),
+  subSteps: DagNodeBaseSchema.array().min(2).max(5).optional(),
+})
+
+export type StepMethodContext = z.infer<typeof StepMethodContextSchema>
+export type StepMethod = z.infer<typeof StepMethodSchema>
+
+// The full node schema: the base fields (the DEFAULT method) plus optional method variants.
+// COMPAT-ADDITIVE: a node without methods is exactly the pre-variant schema, and no default
+// surface reads methods — computeCeiling, buildSimSteps, the manifest, the rankings and the
+// derived generators all keep consuming the base fields only.
+export const DagNodeSchema = DagNodeBaseSchema.extend({
+  methods: StepMethodSchema.array().min(1).optional(),
+})
+
 // An old URL slug that must keep working after a rename (founder rule: processes are named
 // vendor-neutral — "Send an invoice", not "Send Stripe invoice" — but old vendor-flavored
 // slugs are indexed and shared). Static export means no server redirects, so each alias
@@ -140,10 +201,8 @@ export type SlugAlias = z.infer<typeof SlugAliasSchema>
 // VENDOR_SIGNUP_URL house rule — no unverifiable URL is fabricated; official-host blocks get
 // the mca.gov.in→NSWS substitution, never a fabricated link), and a country with no true
 // analog simply carries no note. Display-only: rendered as the "Outside the US" block on
-// /processes/[slug]; no judged number reads these.
-export const GEO_NOTE_COUNTRIES = ['IN', 'UK', 'DE', 'FR'] as const
-export type GeoNoteCountry = (typeof GEO_NOTE_COUNTRIES)[number]
-
+// /processes/[slug]; no judged number reads these. (GEO_NOTE_COUNTRIES itself is declared
+// above the node schema so method contexts can share the same country codes.)
 export const GeoNoteSchema = z.object({
   country: z.enum(GEO_NOTE_COUNTRIES),
   // What the analog IS and how it differs — one or two honest sentences, not marketing.
@@ -309,6 +368,36 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(corpusFile(dir), 'utf8'))
   const parsed = ProcessTaskSchema.array().parse(raw)
+  // Method-variant invariants that zod deliberately doesn't encode (the published JSON schema
+  // stays a plain shape): unique method ids per node, geo⇔countries consistency, unique
+  // sub-step ids per method, and a derived (never invented) method time where subSteps exist.
+  for (const t of parsed) {
+    for (const n of t.dag.nodes) {
+      const methodIds = new Set<string>()
+      for (const m of n.methods ?? []) {
+        const at = `${t.id}/${n.id} method ${m.id}`
+        if (methodIds.has(m.id)) throw new Error(`${at}: duplicate method id`)
+        methodIds.add(m.id)
+        if (m.context.kind === 'geo' && !m.context.countries?.length) {
+          throw new Error(`${at}: geo method must carry country codes`)
+        }
+        if (m.context.kind !== 'geo' && m.context.countries) {
+          throw new Error(`${at}: only geo methods carry country codes`)
+        }
+        const subIds = new Set<string>()
+        for (const s of m.subSteps ?? []) {
+          if (subIds.has(s.id)) throw new Error(`${at}: duplicate sub-step id ${s.id}`)
+          subIds.add(s.id)
+        }
+        if (m.subSteps && m.estimatedMinutes !== undefined) {
+          const sum = m.subSteps.reduce((acc, s) => acc + s.estimatedMinutes, 0)
+          if (sum !== m.estimatedMinutes) {
+            throw new Error(`${at}: estimatedMinutes ${m.estimatedMinutes} must equal sub-step sum ${sum}`)
+          }
+        }
+      }
+    }
+  }
   // Split jurisdiction-conditional nodes OUT of the default corpus here, so every downstream
   // consumer (ceilings, rankings, simulator, manifest, generators, tests) sees exactly the
   // Delaware-only flow it always saw — conditional steps can never move a judged number. Edges
@@ -684,6 +773,18 @@ export const VENDOR_ARENA: Record<string, string> = {
   stable: 'virtual-mailboxes',
   earth_class_mail: 'virtual-mailboxes',
   virtualpostmail: 'virtual-mailboxes',
+  // 2026-09-30 method variants (founder: "multiple methods depending on context"): the judged
+  // products the new context-selectable methods reference graduate to tracked vendor keys —
+  // the MoR route (Paddle), the non-US banking routes (Wise/Airwallex, vendor-geo-backed),
+  // design-led site publishing (Framer), the German notary tooling (beglaubigt, judged in
+  // legal-ops), and the GCP/small-data warehouse routes (BigQuery/MotherDuck).
+  paddle: 'payments',
+  wise: 'startup-banking',
+  airwallex: 'startup-banking',
+  framer: 'design-tools',
+  beglaubigt: 'legal-ops',
+  bigquery: 'data-warehouses',
+  motherduck: 'data-warehouses',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -762,6 +863,12 @@ const VENDOR_LABELS: Record<string, string> = {
   angellist: 'AngelList',
   // 2026-09-30 LLM-first steps (title-case fallback misfires on this one).
   chatgpt: 'ChatGPT',
+  // 2026-09-30 method-variant vendor keys (title-case fallback misfires on these; tracked
+  // chips read names from products.json — these cover the vendorLabel() call sites).
+  bigquery: 'BigQuery',
+  motherduck: 'MotherDuck',
+  beglaubigt: 'Beglaubigt.de',
+  wise: 'Wise Business',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
