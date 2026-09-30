@@ -12,21 +12,21 @@ import ProcessGeoNotes from '@/components/ProcessGeoNotes'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessVendorPicker from '@/components/ProcessVendorPicker'
-import ProcessSimulator from '@/components/ProcessSimulator'
-import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  buildSimSteps, CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
-  taskCeiling, vendorRoles,
+  CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
+  taskCeiling,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
-// One founder process: the DAG as it really runs, the market options per vendor role (resolved
-// live from arena leaderboards), the agent-ceiling verdict, and a simulated dry run.
+// One founder process: the DAG as it really runs, with the market resolved live from arena
+// leaderboards per step. Founder 2026-09-30: the page slimmed — the vendor selector moved to
+// the top ('Select vendor for process test'), and the bottom 'Agent ceiling' verdict box and
+// 'Simulate this process' section are gone from process pages (chain pages keep both).
 //
 // Renamed processes (founder rule: vendor-neutral names — "Send an invoice", not "Send Stripe
 // invoice") also prerender their old vendor-flavored slugs (slugAliases): static export has no
@@ -71,8 +71,6 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   if (!task) notFound()
 
   const ceiling = taskCeiling(task)
-  const roles = vendorRoles([task])
-  const simSteps = buildSimSteps([task])
   const alias = slugAliasFor(task, slug)
   const canonicalSlug = processSlug(task.title)
   const mineHref = `/processes/${canonicalSlug}/mine`
@@ -154,6 +152,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <GeoSwitcher />
         </div>
         <ProcessGeoBanner geoScope={task.geoScope} notes={task.geoNotes ?? []} />
+        {/* Vendor selection at the TOP of the page (founder 2026-09-30: 'Select vendor for
+            process test', no vendor selected by default) — the same lens the per-step "use"
+            affordances and ?via= drive; picking one re-resolves the whole step-by-step below. */}
+        <ProcessVendorPicker steps={checkStepList} lensKey={task.id} />
       </section>
 
       {/* Founder 2026-09-18: the process ITSELF leads — who covers it, then the step-by-step
@@ -188,9 +190,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             run via it). Renders nothing in the static HTML — hydrates in only for readers with
             a clicked vendor or an "I'm using" stack pick. */}
         <ProcessLensBanner steps={checkStepList} pageKey={task.id} />
-        {/* Founder 2026-09-22: pick vendors at the top — logo buttons per covering arena; one
-            click drives the whole process (same lens as the per-step "use" affordances). */}
-        <ProcessVendorPicker steps={checkStepList} lensKey={task.id} />
+        {/* The vendor picker itself sits at the top of the page now (founder 2026-09-30). */}
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <div id="steps" className="scroll-mt-4" />
           <ProcessDag
@@ -236,12 +236,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           corpus (geoNotes); renders nothing for the many processes without. */}
       <ProcessGeoNotes notes={task.geoNotes ?? []} geoScope={task.geoScope} />
 
-      <ProcessVerdict ceiling={ceiling} tasks={[task]} />
-
-      {/* "The market options" section removed (founder 2026-09-23): the "Who covers this
-          process best" leaderboard + per-step ranked rows already carry the market; the roles
-          data still feeds the simulator below. */}
-      <ProcessSimulator steps={simSteps} roles={roles} />
+      {/* The 'Agent ceiling' verdict box and the 'Simulate this process' section are gone from
+          process pages (founder 2026-09-30) — the per-step route badges and the leaderboard
+          carry the story here; chain pages keep both (ProcessVerdict/ProcessSimulator live on). */}
 
       {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
       <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">

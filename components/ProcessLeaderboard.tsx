@@ -40,12 +40,8 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
       <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">
         Who covers this process best
       </h2>
-      <p className="mt-1 text-sm text-zinc-400">
-        No vendor assumed — every vendor of the covering arenas, scored per step from its judged
-        verdicts on the stories mapped to that step, then aggregated: coverage × step quality
-        over the {lb.rankableSteps} rankable of {lb.totalSteps} steps. Expand a row for the
-        per-step trail; the verdict citations behind each step score are in the diagram below.
-      </p>
+      {/* The 'No vendor assumed — …' explainer paragraph is gone (founder 2026-09-30): the
+          heading stands alone; the scoring story lives in the row tooltips and /methodology. */}
 
       {/* The process at a glance (founder 2026-09-23): the SAME Kahn layers as the full vertical
           diagram, compressed to a horizontal dot strip — scan the shape, then click through to

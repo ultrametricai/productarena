@@ -74,11 +74,13 @@ export default function ProcessVendorPicker({ steps, lensKey }: { steps: Process
 
   return (
     <div className="mt-3 rounded-xl border border-zinc-800 px-3.5 py-2.5">
+      {/* Founder 2026-09-30: relabeled from 'Drive this process with your vendors' and moved to
+          the top of process pages — no vendor selected by default. */}
       <p
         className="text-[10px] uppercase tracking-widest text-zinc-500"
         title="Pick the vendor you actually run for each market and the whole process below adjusts to it — step rankings pin your vendor, its real API calls and agent prompts lead, and steps it can't cover say so honestly. Starts generic with nothing selected; your picks persist on this device and travel in the URL (?via=) when you share it."
       >
-        Drive this process with your vendors
+        Select vendor for process test
       </p>
       <div className="mt-2 space-y-1.5">
         {arenas.map((arena) => {
