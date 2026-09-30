@@ -6,7 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
-import GeoSwitcher from '@/components/GeoSwitcher'
+import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
 import { useGeoSelection } from '@/components/useGeoSelection'
 import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
@@ -550,12 +550,7 @@ export default function ProcessesTable({ rows, phases, playbooks = [] }: { rows:
   return (
     <div className="space-y-3">
       <TableControls
-        after={
-          <span className="flex items-center gap-1.5">
-            <span aria-hidden>🌐</span>
-            <GeoSwitcher />
-          </span>
-        }
+        after={<GeoDropdown />}
         presets={PRESETS}
         activeColumn={column}
         // In the grouped default no preset is "on" — the pills light up only once the reader

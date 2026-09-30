@@ -268,17 +268,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
               </SortableTh>
-              {/* Fixed slim compare column at the row's end — the affordance used to sit next to
-                  the product name, so it shifted with name width and made the layout move. */}
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
-                <span className="sr-only">Compare</span>
-              </SortableTh>
-              {/* Founder 2026-09-23: an evidence column at the end — every ranking clicks
-                  through to the receipt that produced it (the product's /score page: every
-                  story, verdict, evidence item, and the arithmetic). */}
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
-                <span title="The evidence behind this ranking — click a row's ⚖ for the full receipt: every story, verdict, and cited evidence item">Evidence</span>
-              </SortableTh>
               {watchlistOn && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
                   <span className="sr-only">Watch</span>
@@ -307,8 +296,8 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       <ShutdownBadge shutdown={row.shutdown} />
                     </div>
                   </td>
-                  <td className="hidden px-2 py-2 lg:table-cell">
-                    <Link href={`/arena/${row.arenaId}`} className="text-zinc-400 hover:text-emerald-300">
+                  <td className="hidden max-w-[180px] px-2 py-2 lg:table-cell">
+                    <Link href={`/arena/${row.arenaId}`} className="block truncate whitespace-nowrap text-xs text-zinc-500 hover:text-emerald-300">
                       {(arenaIcons as Record<string, string>)[row.arenaId] && (
                         <span aria-hidden className="mr-1">{(arenaIcons as Record<string, string>)[row.arenaId]}</span>
                       )}
@@ -406,29 +395,8 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       })}
                     </div>
                   </td>
-                  {/* Compact compare affordance in its own fixed-width end cell: a plain link
-                      into /compare?p=<id> — the compare page owns all selection state via its
-                      URL, so no cross-page state is needed here. */}
-                  <td className="w-8 px-2 py-2 text-center">
-                    <Link
-                      href={`/compare?p=${row.productId}`}
-                      title={`Compare ${row.name} with other products`}
-                      aria-label={`Compare ${row.name} with other products`}
-                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
-                    >
-                      +⇆
-                    </Link>
-                  </td>
-                  <td className="w-8 px-2 py-2 text-center">
-                    <Link
-                      href={`/arena/${row.arenaId}/product/${row.productId}/score`}
-                      title={`The evidence behind ${row.name}'s ranking — every story, verdict, and cited evidence item, with the arithmetic`}
-                      aria-label={`Evidence behind ${row.name}'s ranking`}
-                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
-                    >
-                      ⚖
-                    </Link>
-                  </td>
+                  {/* Compare + Evidence end-columns removed (founder 2026-09-29: rows must not
+                      wrap; both live one click in on the product page). */}
                   {watchlistOn && (
                     <td className="px-2 py-2 text-center">
                       <WatchButton productId={row.productId} productName={row.name} size="sm" />
