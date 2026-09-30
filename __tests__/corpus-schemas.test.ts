@@ -2,8 +2,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { shape } from '@/lib/founderOps'
+import { VendorRegistrySchema } from '@/lib/processes'
 import {
   OPERATIONAL_PROCESS_SCHEMA_FILE, operationalProcessSchemaJson,
+  VENDOR_REGISTRY_SCHEMA_FILE, vendorRegistrySchemaJson,
 } from '../scripts/generate-corpus-schemas'
 
 // Corpus lift stage 2: schemas/operational-process.schema.json is GENERATED from the zod source
@@ -47,5 +49,29 @@ describe('operational-process schema publication', () => {
       shape(record, schema, `process ${record?.id ?? '?'}`, errors)
     }
     expect(errors).toEqual([])
+  })
+})
+
+// The vendor-registry schema (SSOT migration, founder audit 2026-09-30): same two contracts —
+// no drift, and the committed registry conforms to what we publish.
+describe('process vendor-registry schema publication', () => {
+  const committed = fs.readFileSync(VENDOR_REGISTRY_SCHEMA_FILE, 'utf8')
+
+  it('regenerating produces byte-identical committed output (no drift)', () => {
+    expect(vendorRegistrySchemaJson()).toBe(committed)
+  })
+
+  it('the committed registry conforms: shape() on the published schema + the zod source', () => {
+    const schema = JSON.parse(committed)
+    const registry = JSON.parse(
+      fs.readFileSync(path.join(ROOT, 'processes', 'vendor-registry.json'), 'utf8'),
+    )
+    const errors: string[] = []
+    shape(registry, schema, 'vendor registry', errors)
+    expect(errors).toEqual([])
+    // shape() is the shallow published-contract checker (it doesn't walk record entries) — the
+    // zod source of truth validates every entry strictly, exactly as the site loader does.
+    expect(() => VendorRegistrySchema.parse(registry)).not.toThrow()
+    expect(Object.keys(registry.vendors).length).toBeGreaterThanOrEqual(150)
   })
 })

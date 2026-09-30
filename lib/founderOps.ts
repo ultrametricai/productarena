@@ -20,9 +20,15 @@ const MATCH_KEYS = ['entity_jurisdiction', 'tax_jurisdiction', 'entity_type', 'e
 // lib/__tests__/processes.test.ts), so the workflow walker skips it rather than misreading a
 // task array as a workflow record.
 const OPERATIONAL_CORPUS = path.join('processes', 'corpus.json')
+// The corpus's vendor registry (SSOT migration 2026-09-30) is the operational layer too — its
+// own schema/loader/tests live in lib/processes.ts + schemas/process-vendor-registry.schema.json
+// + lib/__tests__/vendorRegistry.test.ts, so the workflow walker skips it like corpus.json.
+const OPERATIONAL_VENDOR_REGISTRY = path.join('processes', 'vendor-registry.json')
 
 function workflowJson(dir: string): string[] {
-  return listJson(dir).filter((f) => !f.endsWith(OPERATIONAL_CORPUS))
+  return listJson(dir).filter(
+    (f) => !f.endsWith(OPERATIONAL_CORPUS) && !f.endsWith(OPERATIONAL_VENDOR_REGISTRY),
+  )
 }
 
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json }

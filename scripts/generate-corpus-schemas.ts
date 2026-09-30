@@ -9,10 +9,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
-import { ProcessTaskSchema } from '../lib/processes'
+import { ProcessTaskSchema, VendorRegistrySchema } from '../lib/processes'
 
 const ROOT = path.resolve(__dirname, '..')
 export const OPERATIONAL_PROCESS_SCHEMA_FILE = path.join(ROOT, 'schemas', 'operational-process.schema.json')
+export const VENDOR_REGISTRY_SCHEMA_FILE = path.join(ROOT, 'schemas', 'process-vendor-registry.schema.json')
 
 // The published schema text, byte-exact (2-space indent + trailing newline, the schemas/ house
 // format). Deterministic: z.toJSONSchema walks the zod shape in declaration order and
@@ -33,9 +34,32 @@ export function operationalProcessSchemaJson(): string {
   return `${JSON.stringify(doc, null, 2)}\n`
 }
 
+// The vendor-registry contract (SSOT migration, founder audit 2026-09-30): the vendor facts the
+// process pages render moved out of TypeScript into processes/vendor-registry.json; this schema
+// is generated from the same zod source of truth (VendorRegistrySchema in lib/processes.ts) and
+// drift-tested the same way.
+export function vendorRegistrySchemaJson(): string {
+  const { $schema, ...rest } = z.toJSONSchema(VendorRegistrySchema)
+  const doc = {
+    $schema,
+    title: 'Ultrametric process vendor registry',
+    description:
+      'The vendor registry beside the operational-process corpus ' +
+      '(processes/vendor-registry.json): per corpus vendor key, the arena that judges the ' +
+      'vendor, its display label where title-casing misfires, its judged product id where it ' +
+      'differs from the key, and its verified-live start-here page — with honest curation ' +
+      'notes. Generated from VendorRegistrySchema in lib/processes.ts by ' +
+      'scripts/generate-corpus-schemas.ts — edit the zod schema, never this file.',
+    ...rest,
+  }
+  return `${JSON.stringify(doc, null, 2)}\n`
+}
+
 function main(): void {
   fs.writeFileSync(OPERATIONAL_PROCESS_SCHEMA_FILE, operationalProcessSchemaJson())
   console.log(`wrote ${path.relative(ROOT, OPERATIONAL_PROCESS_SCHEMA_FILE)}`)
+  fs.writeFileSync(VENDOR_REGISTRY_SCHEMA_FILE, vendorRegistrySchemaJson())
+  console.log(`wrote ${path.relative(ROOT, VENDOR_REGISTRY_SCHEMA_FILE)}`)
 }
 
 if (require.main === module) main()
