@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
@@ -20,12 +20,15 @@ import {
   dayOf,
   DECISIONS,
   DEFAULT_ASSERTED,
+  DEFAULT_ASSERTED_URL_NEUTRAL,
   DEFAULT_CHOICES,
   defaultEntityFor,
   ENTITY_META,
   ENTITY_OPTIONS_BY_COUNTRY,
   eventRows,
   HIDDEN_DECISION_IDS,
+  HIDDEN_OPTION_VALUES,
+  VS_AI_FIRM_ARENA,
   journeyPhases,
   journeyStats,
   MONTH_LABELS,
@@ -50,6 +53,7 @@ import {
   type SynthIdentity,
   type SyntheticArtifact,
   type TopVendorPick,
+  type VsAssistant,
   type VirtualTaskPayload,
   type VsChain,
   type VsPreset,
@@ -62,6 +66,7 @@ import {
 // picks drive outcomes, founder AXES (Technical × Experience), seeded corpus-grounded events,
 // scorecard + shareable ?run= permalink, auto/semi-auto drive. All logic lives in
 // lib/virtualStartupRun.ts (pure, deterministic); the UI pieces are separate components.
+import VsAssistantSelect from '@/components/VsAssistantSelect'
 import VsEventCard from '@/components/VsEventCard'
 import VsPersonaPicker from '@/components/VsPersonaPicker'
 import VsScorecard from '@/components/VsScorecard'
@@ -278,13 +283,13 @@ function YearRhythmRow({ row }: { row: YearRow }) {
         {row.monthNote && (
           <p
             data-synthetic={seeded ? 'true' : undefined}
-            className={`mt-0.5 flex flex-wrap items-center gap-1 text-[10px] ${seeded ? 'text-fuchsia-300/80' : 'text-zinc-500'}`}
+            className={`mt-0.5 flex flex-wrap items-center gap-1 text-[10px] ${seeded ? 'text-fuchsia-300/80' : 'text-zinc-400'}`}
           >
             {row.monthNote}
           </p>
         )}
       </td>
-      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">{row.cadenceLabel}</td>
+      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400">{row.cadenceLabel}</td>
       <td className="py-2 pr-3">
         <span className="flex gap-1">
           {MONTH_LABELS.map((label, i) => {
@@ -305,7 +310,7 @@ function YearRhythmRow({ row }: { row: YearRow }) {
         ×{row.runsPerYear}
       </td>
       <td
-        className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500"
+        className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400"
         title={row.routes.legalSignature > 0 ? `${row.routes.legalSignature} legally-human signature step(s)` : undefined}
       >
         <span className="text-emerald-300/90">{row.routes.agent} agent</span>
@@ -331,14 +336,14 @@ function WindowRhythmRow({ row }: { row: WindowRow }) {
           {row.title}
         </Link>
       </td>
-      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">{row.cadenceLabel}</td>
+      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400">{row.cadenceLabel}</td>
       <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
         day {row.firstRunDay}
       </td>
       <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
         ×{row.runsInWindow}
       </td>
-      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">
+      <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400">
         <span className="text-emerald-300/90">{row.routes.agent} agent</span>
         {row.routes.form > 0 && <> · <span className="text-amber-300/90">{row.routes.form} form</span></>}
         {row.routes.person > 0 && <> · <span className="text-sky-300/90">{row.routes.person} human</span></>}
@@ -368,19 +373,27 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // canonical accessible name (the decision groups' aria-label, the options' full-label
 // aria-labels) — tests assert nothing moved.
 // The geo row's adjacent 🌍 IconChip is GONE (founder round 5, item 5) — the selector's own
-// flags suffice; the Founder row icon still names the whole who/where cluster.
-const ROW_ICONS: Record<'scenario' | 'founder' | 'decisions', { icon: string; title: string }> = {
+// flags suffice; the Founder row icon still names the whole who/where cluster. The 'Decisions'
+// row label is GONE too (founder batch 2026-09-30, item 6: it's obviously the setup) — the
+// decisions grid cell keeps an empty label slot for column alignment only.
+const ROW_ICONS: Record<'scenario' | 'founder' | 'using', { icon: string; title: string }> = {
   // 'Example' → 'Scenario' (round 3, item 1); the funding-scenario pills moved INTO the single
   // Funding selector (addendum 2026-09-30) — the row holds the company presets + YC mode.
   scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and YC batch mode' },
   founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
-  decisions: { icon: '🎛️', title: 'Starting decisions — which real processes make up the journey' },
+  // 'Which AI firm are you using' (2026-09-30, item 7) — its own row.
+  using: { icon: '🤖', title: "I'm using — pin your AI assistant on the AI-conversation steps; the judged pick stays visible and no judged number moves" },
 }
 
 // The decisions rendered as controls — 'Start with' (ordering) left the panel (founder round 5,
 // item 4): composition keeps the default, presets/YC assert it internally, the codec digit slot
 // stays, and semi-auto never asks it.
 const VISIBLE_DECISIONS = DECISIONS.filter((d) => !HIDDEN_DECISION_IDS.includes(d.id))
+
+// The combo a fresh semi-auto run starts from (the default-asserted state over the defaults) —
+// the stable seed pin for semi-auto's synthetic names/artifacts (module constant so the memos
+// keep referential identity across renders).
+const SEMI_SEED_COMBO = effectiveChoices(DEFAULT_ASSERTED)
 
 // ONE funding selector (founder addendum 2026-09-30): the funding decision's two options and the
 // funding SCENARIOS (VC backed / Bootstrapped — formerly Scenario-row pills) fold into a single
@@ -417,8 +430,9 @@ const DECISION_ICONS: Record<keyof Choices, string> = {
   ordering: '🔀',
   hire: '🧑‍💼',
   compliance: '⚖️',
-  enterprise: '🤝',
+  enterprise: '🎯',
   ph: '🚀',
+  remote: '🏠',
 }
 
 // Visible display titles only — every dropdown keeps its canonical DECISIONS title as the group
@@ -443,13 +457,19 @@ const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<str
   ordering: { title: 'Start with', options: { 'name-first': 'Name', 'build-first': 'Build' } },
   hire: { title: 'Hire', options: { yes: 'Yes', no: 'No' } },
   // Compliance gets specific (round 5, item 3): SOC 2 early/deferred keep their codec slots.
+  // 'Basics' (item 8, 2026-09-30) is the new default-asserted posture; 'None' keeps its slot for
+  // old links but leaves the display roster (HIDDEN_OPTION_VALUES).
   compliance: {
     title: 'Compliance',
-    options: { now: 'SOC 2', later: 'SOC 2 later', none: 'None', hipaa: 'HIPAA', iso: 'ISO 27001' },
+    options: { now: 'SOC 2', later: 'SOC 2 later', none: 'None', hipaa: 'HIPAA', iso: 'ISO 27001', basics: 'Basics' },
   },
-  enterprise: { title: 'Enterprise', options: { no: 'No', yes: 'Yes' } },
+  // The ICP selector (item 4, 2026-09-30): the internal 'enterprise' key + 'no'/'yes' tokens are
+  // codec/seed surface and never move; the display is who you sell to.
+  enterprise: { title: 'ICP', options: { no: 'Developers', yes: 'Enterprises', smb: 'SMBs', consumer: 'Consumers' } },
   // Launch options (founder round 4, item 7): venue-flavored public launches + Stealth mode.
   ph: { title: 'Launch', options: { yes: 'PH', no: 'Stealth', 'show-hn': 'HN', waitlist: 'Waitlist' } },
+  // Remote vs In-office (item 5, 2026-09-30).
+  remote: { title: 'Workplace', options: { remote: 'Remote', office: 'Office' } },
 }
 
 export default function VirtualStartup({
@@ -463,6 +483,7 @@ export default function VirtualStartup({
   taskRisks,
   vendorGeo = {},
   popularity = {},
+  assistants = [],
 }: {
   chains: VsChain[]
   // Precomputed payload for every task any decision combo can reach, keyed by corpus task id.
@@ -488,6 +509,10 @@ export default function VirtualStartup({
   // adoption/popularity presentation order + per-product signal labels (lib/virtualStartupData.ts
   // buildVsPopularity). Optional additive prop: {} = judged/ladder ordering everywhere.
   popularity?: VsPopularityMap
+  // 'Which AI firm are you using' roster (item 7, 2026-09-30) — the judged ai-assistants
+  // products behind the "I'm using" selector (lib/virtualStartupData.ts buildVsAssistants).
+  // Optional additive prop: [] = the selector row never renders (honest degrade).
+  assistants?: VsAssistant[]
 }) {
   // ── The ASSERTED decisions only (dropdowns; 'Not set' = absent key). The journey always
   // composes over the EFFECTIVE combo below — an unasserted decision runs the default branch
@@ -528,12 +553,17 @@ export default function VirtualStartup({
   const [pinnedPrefix, setPinnedPrefix] = useState<Row[] | null>(null)
   const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
   const [runSeed, setRunSeed] = useState(0)
+  // ── The assistant pin (item 7, 2026-09-30): a judged ai-assistants product id or null for the
+  // judged pick. DISPLAY annotation only (the geo precedent) — changing it never recomposes or
+  // resets the run; it renames the displayed pick on the AI-conversation steps, shows in the
+  // state panel, and rides the ?run= permalink ('a' token).
+  const [assistant, setAssistant] = useState<string | null>(null)
   const [win, setWin] = useState<WindowTab>('d30')
   // ── Semi-auto drive state: what the paused run is waiting on (a decision card or the naming
-  // card), plus whether it already handled naming; manual pause is the title-bar control.
+  // card), plus whether it already handled naming. (The title-bar manual pause is GONE — founder
+  // batch 2026-09-30, item 2: the primary ⏹ Stop suffices; semi-auto decision pauses stay.)
   const [waitingOn, setWaitingOn] = useState<keyof Choices | 'name' | null>(null)
   const [named, setNamed] = useState(false)
-  const [manualPause, setManualPause] = useState(false)
   const [nameDraft, setNameDraft] = useState('')
   // ── In-sim GEO selection (founder batch 2026-09-29): null = the 🇺🇸 US default (never stored,
   // never in the URL), 'GLOBAL' = explicit geo-neutral (no marks), else a country. ANNOTATION
@@ -544,7 +574,18 @@ export default function VirtualStartup({
   // The entity roster's country (founder round 5, item 1): the geo selection, with both the US
   // default (null) and the geo-neutral 🌐 Global resolving to the US roster (the corpus default).
   const entityCountry: GeoCountry = geo === null || geo === GEO_GLOBAL ? 'US' : geo
-  const entityValuesFor = (country: GeoCountry): readonly string[] => ENTITY_OPTIONS_BY_COUNTRY[country]
+  // The option values a decision's UI actually offers (dropdown roster, semi-auto ask, pause
+  // schedule alike): the geo-filtered entity roster, minus display-hidden values (compliance
+  // 'None' — HIDDEN_OPTION_VALUES). The full DECISIONS roster stays the codec source of truth,
+  // so an old link's asserted hidden value still resolves and replays.
+  const offeredValues = useCallback(
+    (d: DecisionDef): readonly string[] => {
+      const base = d.id === 'entity' ? ENTITY_OPTIONS_BY_COUNTRY[entityCountry] : d.options.map((o) => o.value)
+      const hidden = HIDDEN_OPTION_VALUES[d.id]
+      return hidden ? base.filter((v) => !hidden.includes(v)) : base
+    },
+    [entityCountry],
+  )
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -615,9 +656,12 @@ export default function VirtualStartup({
   useEffect(() => {
     const run = decodeRunState(readParam('run'))
     if (!run) return
-    // DEFAULT-ASSERTED decisions underlay the link's choices: a ?run= may elide entity (old
-    // links encode it as '.') and still replay with it asserted — semi-auto never asks it.
-    setAsserted({ ...DEFAULT_ASSERTED, ...run.choices })
+    // Only the composition-NEUTRAL default-asserted decisions underlay the link's choices: a
+    // ?run= may elide entity (old links encode it as '.') and still replay with it asserted —
+    // semi-auto never asks it. Compliance is NOT neutral (its default-asserted 'basics' differs
+    // from the composed default), so an old link's elided compliance keeps composing the SOC 2
+    // branch it always did instead of being silently re-asserted.
+    setAsserted({ ...DEFAULT_ASSERTED_URL_NEUTRAL, ...run.choices })
     setPreset(run.preset)
     // A run link carries the asserted decisions themselves, never a scenario pill — the pill is
     // one-tap input chrome, so any scenario a stray ?preset= set deselects here.
@@ -629,6 +673,7 @@ export default function VirtualStartup({
     if (run.companyName) setNamed(true)
     setPicks(run.picks)
     setEventChoices(run.eventChoices)
+    setAssistant(run.assistant)
     setRunSeed(run.seed)
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -641,9 +686,11 @@ export default function VirtualStartup({
     if (companyName) return { name: companyName, descriptor: presetIdentity?.descriptor ?? '' }
     return presetIdentity
   }, [preset, companyName])
-  // Semi-auto pins the synthetic name/artifact seed to the default combo so mid-run decision
-  // assertions never rewrite an already-printed seeded value (see buildRunRows/RunArgs).
-  const seedCombo = mode === 'semi' ? DEFAULT_CHOICES : undefined
+  // Semi-auto pins the synthetic name/artifact seed to the RUN-START combo (the default-asserted
+  // state — the combo a fresh semi run actually starts from, item 8 moved compliance there) so
+  // mid-run decision assertions never rewrite an already-printed seeded value, and a semi run
+  // answered with the defaults stays byte-identical to the auto default run.
+  const seedCombo = mode === 'semi' ? SEMI_SEED_COMBO : undefined
   const co = useMemo(() => synthCompany(choices, identity, seedCombo), [choices, identity, seedCombo])
 
   // ── The whole run, assembled by the shared pure builder (rows, steps, outcome model, drawn
@@ -707,9 +754,9 @@ export default function VirtualStartup({
     const out: Array<{ id: keyof Choices | 'name'; at: number }> = []
     for (const d of VISIBLE_DECISIONS) {
       if (asserted[d.id] !== undefined) continue
-      // The Entity ask offers the geo-selected country's roster only (round 5, item 1) — the
-      // pause point derives from exactly the options the card will offer.
-      const values = d.id === 'entity' ? entityValuesFor(entityCountry) : d.options.map((o) => o.value)
+      // The ask offers exactly what the card will offer (the geo-filtered entity roster;
+      // display-hidden values excluded) — the pause point derives from those options.
+      const values = offeredValues(d)
       const variants = values.map(
         (v) => buildRunRows({ ...runArgs, choices: effectiveChoices({ ...asserted, [d.id]: v }) }).rows,
       )
@@ -721,7 +768,7 @@ export default function VirtualStartup({
       out.push({ id: 'name', at: Math.min(firstDifferingRow(withName('Aaaa'), withName('Bbbb')) ?? 0, cap) })
     }
     return out
-  }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length, entityCountry])
+  }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length, offeredValues])
 
   // Only the roles whose arena the selected journey actually touches — the Vendors tab (and the
   // outcome model, which resolves picks via step.arenaId / step.choiceArenaId) loses nothing.
@@ -774,9 +821,11 @@ export default function VirtualStartup({
   )
   const burn = useMemo(() => computeBurn(journeyRoles, effectivePicks, pricing), [journeyRoles, effectivePicks, pricing])
   const runState: VsRunState = useMemo(
-    () => ({ choices: asserted, preset, yc, founder, mode, companyName, picks, eventChoices, seed: runSeed }),
-    [asserted, preset, yc, founder, mode, companyName, picks, eventChoices, runSeed],
+    () => ({ choices: asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, seed: runSeed }),
+    [asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, runSeed],
   )
+  // The pinned assistant's judged roster entry (null = the judged pick displays alone).
+  const assistantPick = useMemo(() => assistants.find((a) => a.id === assistant) ?? null, [assistants, assistant])
   function chooseEventBranch(eventId: string, choiceId: string) {
     setEventChoices((prev) => ({ ...prev, [eventId]: choiceId }))
   }
@@ -836,6 +885,10 @@ export default function VirtualStartup({
       { id: 'founder-technical', title: 'Founder', icon: '👤', label: techLabel, state: 'asserted' as const },
       { id: 'founder-experience', title: 'Experience', icon: '🎓', label: expLabel, state: 'asserted' as const },
     ]
+    // The assistant pin (item 7): the panel reflects the "I'm using" selection when one is set.
+    const using = assistantPick
+      ? [{ id: 'assistant', title: "I'm using", icon: '🤖', label: `${assistantPick.name} · your assistant`, state: 'asserted' as const }]
+      : []
     // 'Start with' left the UI entirely (round 5, item 4) — the state panel lists only the
     // decisions the panel offers.
     const decisions = VISIBLE_DECISIONS.map((d) => {
@@ -849,8 +902,8 @@ export default function VirtualStartup({
         state,
       }
     })
-    return [...axes, ...decisions]
-  }, [choices, asserted, founder, waitingOn])
+    return [...axes, ...using, ...decisions]
+  }, [choices, asserted, founder, waitingOn, assistantPick])
 
   // ── Journey DAG strip inputs (founder ask 2026-09-29: "the DAG visualization UI unit … on top
   // of the terminal output") — the strip derives everything from the SAME rows/revealed state the
@@ -926,7 +979,6 @@ export default function VirtualStartup({
   function startTicker() {
     if (timer.current) clearInterval(timer.current)
     setRunning(true)
-    setManualPause(false)
     timer.current = setInterval(() => {
       const at = revealedRef.current
       const waitFor = pauseDue(at)
@@ -950,7 +1002,6 @@ export default function VirtualStartup({
     revealedRef.current = 0
     setPinnedPrefix(null) // a fresh transcript has no pinned prefix (addendum #2)
     setWaitingOn(null)
-    setManualPause(false)
     setNameDraft('')
     followRef.current = true
     pendingTopRef.current = false
@@ -1157,7 +1208,7 @@ export default function VirtualStartup({
           mobile-sticky run bar is gone because the run now prints inside the fixed terminal at
           the very top of the page — Run/Restart is one flick away, never a long timeline away. */}
       <div className="space-y-3">
-      <section data-testid="vs-setup" aria-label="Set up the virtual startup" className="rounded-2xl border border-zinc-800 p-3">
+      <section data-testid="vs-setup" aria-label="Set up the open startup simulator" className="rounded-2xl border border-zinc-800 p-3">
         {/* The controller tabs (founder round 3, item 3): Setup — the scenario/founder/geo/
             decisions rows — and Vendors — fix a vendor per market role before/independent of
             the run (the picks flow through the same controlled-selections contract into the
@@ -1166,7 +1217,7 @@ export default function VirtualStartup({
             The footer (drive mode + Run CTA) sits below the panels, reachable from both. */}
         <div
           role="tablist"
-          aria-label="Virtual startup controller"
+          aria-label="Open startup simulator controller"
           className="mb-2.5 flex items-center gap-1 border-b border-zinc-800/70 pb-2"
           onKeyDown={(e) => {
             if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
@@ -1200,7 +1251,7 @@ export default function VirtualStartup({
             >
               {t.label}
               {t.id === 'vendors' && vendorOverrides > 0 && (
-                <span className="ml-1 text-[10px] text-zinc-500">· {vendorOverrides}</span>
+                <span className="ml-1 text-[10px] text-zinc-400">· {vendorOverrides}</span>
               )}
             </button>
           ))}
@@ -1217,9 +1268,11 @@ export default function VirtualStartup({
             Scenario
           </span>
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
-            {/* One-tap preset companies (founder ask 2026-09-25), compacted to pills: the
-                product tagline rides in the tooltip; the hardware/biotech corpus disclosure is
-                the amber ⓘ. */}
+            {/* One-tap example startups (founder batch 2026-09-30, item 11): the pills name the
+                FUNCTIONAL TYPE of startup ('Typical software' / 'Frontier hardware' / 'Biotech')
+                — the fictional company names left the labels, and the amber ⓘ is gone; the
+                hardware/biotech same-corpus honesty disclosure folds into the pill tooltip and
+                its screen-reader text instead (still reachable before any run; tests assert it). */}
             {VS_PRESETS.map((p) => {
               const active = preset === p.id
               return (
@@ -1229,17 +1282,15 @@ export default function VirtualStartup({
                   data-testid={`vs-preset-${p.id}`}
                   aria-pressed={active}
                   onClick={() => applyPreset(p)}
-                  title={`${p.label}: ${p.company.name} — ${p.product} (${p.company.descriptor}). One tap prefills every decision; change any decision afterwards and the setup stays, but the preset deselects.`}
+                  title={`${p.label} — ${p.product}. One tap prefills every decision; change any decision afterwards and the setup stays, but the example deselects.${p.disclosure ? ` ${p.disclosure}` : ''}`}
                   className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
                     active ? 'border-emerald-400/60 bg-emerald-400/10' : 'border-zinc-800 hover:border-zinc-600'
                   }`}
                 >
-                  <span className="text-zinc-500">{p.label}</span>
-                  <span className="font-medium text-zinc-200">{p.company.name}</span>
+                  <span className="font-medium text-zinc-200">{p.label}</span>
                   {p.disclosure && (
-                    <span data-testid="vs-preset-disclosure" title={p.disclosure} className="text-amber-300/90">
-                      <span aria-hidden>ⓘ</span>
-                      <span className="sr-only">{p.disclosure}</span>
+                    <span data-testid="vs-preset-disclosure" className="sr-only">
+                      {p.disclosure}
                     </span>
                   )}
                 </button>
@@ -1302,15 +1353,29 @@ export default function VirtualStartup({
                 flags carry the affordance. */}
             <VsGeoSelector value={geo} onChange={onGeoChange} />
           </div>
-          {/* The nine starting decisions as compact dropdowns (founder addendum 2026-09-29) —
-              the house listbox pattern, each with a 'Not set' initial state that composes the
-              default branch and stays out of the URL. Canonical accessible names throughout;
-              the micro-labels are visibly non-interactive (item 3). Each choice still only
-              swaps, reorders, or skips corpus processes. */}
-          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:self-start sm:pt-1.5 sm:text-right">
-            <IconChip icon={ROW_ICONS.decisions.icon} title={ROW_ICONS.decisions.title} className="mr-1" />
-            Decisions
-          </span>
+          {/* 'Which AI firm are you using' (founder batch 2026-09-30, item 7) — its own row.
+              The pick pins the displayed assistant on the AI-conversation steps (the judged top
+              stays visible as recommended · judged; no judged number moves), names it in the
+              state panel, and rides the ?run= permalink. Annotation only — changing it never
+              resets the run. */}
+          {assistants.length > 0 && (
+            <>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
+                <IconChip icon={ROW_ICONS.using.icon} title={ROW_ICONS.using.title} className="mr-1" />
+                I&apos;m using
+              </span>
+              <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+                <VsAssistantSelect assistants={assistants} value={assistant} onChange={setAssistant} />
+              </div>
+            </>
+          )}
+          {/* The starting decisions as compact dropdowns (founder addendum 2026-09-29) — the
+              house listbox pattern, each with a 'Not set' initial state that composes the
+              default branch and stays out of the URL. Canonical accessible names throughout.
+              The 'Decisions' row LABEL is gone (founder batch 2026-09-30, item 6 — it's
+              obviously the setup); an empty slot keeps the grid columns aligned. Each choice
+              still only swaps, reorders, adds, or skips corpus processes. */}
+          <span aria-hidden className="hidden sm:block" />
           <div className="flex items-center gap-2.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {/* 'Start with' is gone from the panel (round 5, item 4 — VISIBLE_DECISIONS); the
               Entity roster follows the geo pick (round 5, item 1 — country-filtered options,
@@ -1336,7 +1401,10 @@ export default function VirtualStartup({
                 shortOptions={DECISION_SHORT[d.id].options}
                 icon={DECISION_ICONS[d.id]}
                 value={asserted[d.id]}
-                visibleValues={d.id === 'entity' ? entityValuesFor(entityCountry) : undefined}
+                // The geo-filtered entity roster and the display-hidden values (compliance
+                // 'None') both flow through offeredValues; asserted off-roster values (old
+                // links') still resolve against the full DECISIONS options.
+                visibleValues={offeredValues(d)}
                 onSelect={(value) => pickChoice(d.id, value)}
               />
             ),
@@ -1352,7 +1420,7 @@ export default function VirtualStartup({
             this page (the per-process pages keep theirs) — the terminal above IS this page's
             transcript. */}
         <div role="tabpanel" id="vs-tabpanel-vendors" aria-labelledby="vs-tab-vendors" data-testid="vs-tabpanel-vendors" hidden={tab !== 'vendors'}>
-          <p className="text-[11px] leading-snug text-zinc-500">
+          <p className="text-[11px] leading-snug text-zinc-400">
             Fix a vendor per market role, before, during, or after the run — the picks drive the
             run&apos;s clock, scorecard, and burn (recommended lines keep the judged ranking).
             Swapping mid-run (stopped, paused, or live) never rewrites what already printed —
@@ -1366,7 +1434,7 @@ export default function VirtualStartup({
               keeps its '(recommended · judged)' label either way. */}
           {journeyRoles.length > 0 && (
             <div role="group" aria-label="Vendor ordering" className="mt-2 flex items-center gap-1">
-              <span className="text-[10px] uppercase tracking-wider text-zinc-500">Order:</span>
+              <span className="text-[10px] uppercase tracking-wider text-zinc-400">Order:</span>
               <button
                 type="button"
                 data-testid="vs-vendor-order-likely"
@@ -1412,7 +1480,7 @@ export default function VirtualStartup({
               ))}
             </div>
           ) : (
-            <p data-testid="vs-vendors-empty" className="mt-2 text-[11px] text-zinc-600">
+            <p data-testid="vs-vendors-empty" className="mt-2 text-[11px] text-zinc-400">
               no swappable market roles in this journey
             </p>
           )}
@@ -1520,10 +1588,9 @@ export default function VirtualStartup({
             <span className="font-medium text-zinc-200">{waitingDecision.title}</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Decision: ${waitingDecision.title}`}>
-            {(waitingDecision.id === 'entity'
-              ? waitingDecision.options.filter((o) => entityValuesFor(entityCountry).includes(o.value))
-              : waitingDecision.options
-            ).map((o) => (
+            {waitingDecision.options
+              .filter((o) => offeredValues(waitingDecision).includes(o.value))
+              .map((o) => (
               <button
                 key={o.value}
                 type="button"
@@ -1560,7 +1627,7 @@ export default function VirtualStartup({
                 if (e.key === 'Enter') nameInRun(nameDraft)
               }}
               placeholder="type a name…"
-              className="w-44 rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400/60 focus:outline-none"
+              className="w-44 rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-200 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none"
             />
             <button
               type="button"
@@ -1580,7 +1647,7 @@ export default function VirtualStartup({
               Autopilot name
             </button>
           </div>
-          <p className="mt-1.5 text-[11px] text-zinc-500">
+          <p className="mt-1.5 text-[11px] text-zinc-400">
             the typed name flows into every downstream artifact and the terminal title
             (sanitized), and rides in the run link — empty means the autopilot names it
           </p>
@@ -1623,29 +1690,12 @@ export default function VirtualStartup({
           </code>
           {/* Founder 2026-09-29 terminal declutter: no 'virtual run' suffix, no title-bar chip,
               no 'idle', no completion label — the status only speaks while the run needs it
-              ('running…' or 'paused' — semi-auto waits show nothing; the pinned card IS the signal). */}
-          <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-            {running ? 'running…' : manualPause ? 'paused' : ''}
+              ('running…'; semi-auto waits show nothing, the pinned card IS the signal). The
+              title-bar pause button and its 'paused' status are GONE (founder batch 2026-09-30,
+              item 2: the primary ⏹ Stop suffices; semi-auto's decision pauses stay). */}
+          <span data-testid="vs-terminal-status" className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-zinc-400">
+            {running ? 'running…' : ''}
           </span>
-          {/* Manual pause/resume (founder addendum 2026-09-29) — both drive modes; hidden while a
-              semi-auto card already holds the run (answering the card is the only way onward). */}
-          {(running || manualPause) && (
-            <button
-              type="button"
-              data-testid="vs-terminal-pause"
-              onClick={() => {
-                if (running) {
-                  stop()
-                  setManualPause(true)
-                } else {
-                  startTicker()
-                }
-              }}
-              className="shrink-0 rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-zinc-400 transition hover:border-emerald-400/50 hover:text-emerald-300"
-            >
-              {running ? '⏸ pause' : '▶ resume'}
-            </button>
-          )}
         </div>
 
         <div
@@ -1666,14 +1716,18 @@ export default function VirtualStartup({
                   <li key={row.key} className="pt-4 first:pt-0">
                     <p className="border-b border-zinc-800 pb-1 text-sm font-semibold tracking-tight text-zinc-200">
                       {row.title}
-                      <Link
-                        href={`/processes/chains/${row.chainId}`}
-                        className="ml-2 text-[11px] font-normal text-zinc-500 hover:text-emerald-300"
-                      >
-                        from the {row.chainName} playbook →
-                      </Link>
+                      {/* A chainless phase (the office lease — a single corpus process, not a
+                          curated chain) honestly renders no playbook link. */}
+                      {row.chainId !== '' && (
+                        <Link
+                          href={`/processes/chains/${row.chainId}`}
+                          className="ml-2 text-[11px] font-normal text-zinc-400 hover:text-emerald-300"
+                        >
+                          from the {row.chainName} playbook →
+                        </Link>
+                      )}
                     </p>
-                    {row.note && <p className="mt-0.5 text-[11px] text-zinc-500">{row.note}</p>}
+                    {row.note && <p className="mt-0.5 text-[11px] text-zinc-400">{row.note}</p>}
                   </li>
                 )
               }
@@ -1715,7 +1769,7 @@ export default function VirtualStartup({
                     </Link>
                     {geoNote &&
                       (geoNote.note ? (
-                        <p data-testid="vs-geo-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                        <p data-testid="vs-geo-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-400">
                           <span aria-hidden className="mr-1">{geoNote.meta.flag}</span>
                           in {geoNote.meta.prose} this is: <span className="text-zinc-400">{geoNote.note.summary}</span>{' '}
                           <a
@@ -1729,7 +1783,7 @@ export default function VirtualStartup({
                           </a>
                         </p>
                       ) : (
-                        <p data-testid="vs-geo-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                        <p data-testid="vs-geo-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-400">
                           <span aria-hidden className="mr-1">🇺🇸</span>
                           no {geoNote.meta.label} mapping yet — this process is US-specific
                         </p>
@@ -1738,7 +1792,7 @@ export default function VirtualStartup({
                         the honest absence — the corpus steps below stay the US C-Corp path. */}
                     {entityAnalog &&
                       (entityAnalog.note ? (
-                        <p data-testid="vs-entity-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                        <p data-testid="vs-entity-analog" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-400">
                           <span aria-hidden className="mr-1">{entityAnalog.meta.flag}</span>
                           {entityMeta.label} — in {entityAnalog.meta.prose} this is:{' '}
                           <span className="text-zinc-400">{entityAnalog.note.summary}</span>{' '}
@@ -1751,10 +1805,10 @@ export default function VirtualStartup({
                           >
                             {entityAnalog.note.actionLabel} ↗
                           </a>{' '}
-                          <span className="text-zinc-600">· the steps below are the US-shaped corpus playbook</span>
+                          <span className="text-zinc-500">· the steps below are the US-shaped corpus playbook</span>
                         </p>
                       ) : (
-                        <p data-testid="vs-entity-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500">
+                        <p data-testid="vs-entity-analog-missing" className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-400">
                           <span aria-hidden className="mr-1">🇺🇸</span>
                           {entityMeta.label} — no {entityAnalog.meta.label} analog committed yet; the steps below are the US-shaped corpus playbook
                         </p>
@@ -1772,7 +1826,7 @@ export default function VirtualStartup({
                           <p
                             data-testid="vs-um-cli"
                             title={ULTRAMETRIC_CLI_DISCLOSURE}
-                            className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-500"
+                            className="mt-0.5 pl-2 text-[11px] leading-snug text-zinc-400"
                           >
                             <span aria-hidden className="mr-1 text-emerald-400/80">▸</span>
                             drive this process from your agent via the{' '}
@@ -1783,7 +1837,7 @@ export default function VirtualStartup({
                               Ultrametric CLI/MCP
                             </Link>{' '}
                             — our own product: <code className="text-zinc-400">{um.command}</code>
-                            <span className="text-zinc-600"> · MCP {um.mcpTool} — guide + saved records; your agent does the work</span>
+                            <span className="text-zinc-500"> · MCP {um.mcpTool} — guide + saved records; your agent does the work</span>
                           </p>
                         )
                       )
@@ -1793,7 +1847,7 @@ export default function VirtualStartup({
               }
               if (row.kind === 'day') {
                 return (
-                  <li key={row.key} aria-hidden className="pl-2 font-mono text-[10px] uppercase tracking-widest text-zinc-600">
+                  <li key={row.key} aria-hidden className="pl-2 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
                     — day {row.day} —
                   </li>
                 )
@@ -1809,6 +1863,11 @@ export default function VirtualStartup({
                 const geoCell =
                   geoCountry !== null && row.top ? vendorGeo[row.top.productId]?.[geoCountry] ?? null : null
                 const geoWarn = geoCell?.status === 'unavailable' ? geoCell : null
+                // The assistant pin (item 7, 2026-09-30): only on AI-conversation steps — the
+                // steps whose judged top was ranked in the ai-assistants arena. Display only:
+                // the pinned chip is clearly labeled 'your assistant' while the judged top keeps
+                // its chip, score, and '(recommended · judged)' label untouched.
+                const aiPinned = assistantPick && row.top?.arenaId === VS_AI_FIRM_ARENA ? assistantPick : null
                 return (
                   <li key={row.key} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 pl-4 text-sm text-zinc-400">
                     <span className={`rounded border px-1.5 py-px text-[10px] ${badge.cls}`}>{badge.text}</span>
@@ -1823,7 +1882,7 @@ export default function VirtualStartup({
                         🇺🇸
                       </span>
                     )}
-                    <span className="font-mono text-[11px] text-zinc-600">
+                    <span className="font-mono text-[11px] text-zinc-500">
                       {formatMinutes(row.step.estimatedMinutes)}
                       {row.step.async ? ' ⏳' : ''}
                     </span>
@@ -1843,6 +1902,28 @@ export default function VirtualStartup({
                     )}
                     {row.top && (
                       <>
+                        {/* 'I'm using' pin (item 7): the chosen assistant leads as the displayed
+                            pick on this AI-conversation step — name + link only, never a score
+                            we didn't judge for it here. */}
+                        {aiPinned && aiPinned.id !== row.top.productId && (
+                          <>
+                            <Link
+                              data-testid="vs-step-assistant"
+                              href={`/arena/${VS_AI_FIRM_ARENA}/product/${aiPinned.id}`}
+                              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/50 px-2 py-px text-[11px] text-emerald-300 hover:border-emerald-400 hover:text-emerald-200"
+                            >
+                              <ProductLogoView
+                                product={{ id: aiPinned.id, name: aiPinned.name }}
+                                size={14}
+                                hasLogo={aiPinned.hasLogo}
+                              />
+                              {aiPinned.name}
+                            </Link>
+                            <span data-testid="vs-step-assistant-label" className="text-[10px] text-emerald-300/80">
+                              (your assistant)
+                            </span>
+                          </>
+                        )}
                         {/* The recommended (top judged) pick, logo inline (founder batch
                             2026-09-29, item 1: ProductLogoView ~14px, hasLogo serialized per
                             pick — mono aesthetic kept, fixed size so nothing jumps). */}
@@ -1858,14 +1939,20 @@ export default function VirtualStartup({
                           />
                           {row.top.name} · {row.top.score.toFixed(0)}
                         </Link>
-                        <span className="text-[10px] text-zinc-500">(recommended · judged)</span>
+                        <span className="text-[10px] text-zinc-400">(recommended · judged)</span>
+                        {/* The judged top IS the chosen assistant — one chip, both labels. */}
+                        {aiPinned && aiPinned.id === row.top.productId && (
+                          <span data-testid="vs-step-assistant-label" className="text-[10px] text-emerald-300/80">
+                            · your assistant
+                          </span>
+                        )}
                         {/* The step ranking's runners-up + the arena behind the choice — the
                             fragment now LEADS with the likely-choice (adoption/popularity)
                             ordering (founder round 5, item 7); every score stays judged. */}
                         <span
                           data-testid="vs-step-runnersup"
                           title="Runners-up ordered by the committed adoption/popularity signal (likely choice); the scores are the judged step ranking's — nothing re-ranked"
-                          className="text-[10px] text-zinc-600"
+                          className="text-[10px] text-zinc-500"
                         >
                           {(row.top.runnersUp ?? []).length > 0 && (
                             <>
@@ -1966,7 +2053,7 @@ export default function VirtualStartup({
                 {stats.legalSignatures > 0 && <> (incl. {stats.legalSignatures} legal signature{stats.legalSignatures === 1 ? '' : 's'})</>},{' '}
                 {stats.approvals} approval gate{stats.approvals === 1 ? '' : 's'}
               </p>
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-zinc-400">
                 Corpus time estimate: {formatMinutes(stats.totalMinutes)} (~{dayOf(stats.totalMinutes)} sim days,
                 incl. {stats.asyncSteps} async wait{stats.asyncSteps === 1 ? '' : 's'}) — from each step&apos;s recorded
                 estimate, not invented.
@@ -1990,7 +2077,7 @@ export default function VirtualStartup({
               differs from the default judged-top, say so and make the loop one click — the
               button IS a plain restart (picks persist across '▶ Run it again' by design). */}
           {revealed > 0 && done && vendorOverrides > 0 && (
-            <p data-testid="vs-rerun-vendors" className="mt-2 text-[11px] text-zinc-500">
+            <p data-testid="vs-rerun-vendors" className="mt-2 text-[11px] text-zinc-400">
               {vendorOverrides} vendor role{vendorOverrides === 1 ? '' : 's'} on your own picks —
               they persist across restarts.{' '}
               <button
@@ -2069,11 +2156,11 @@ export default function VirtualStartup({
                           <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-fuchsia-300/90">
                             {YC_BATCH.officeHours.title}
                           </span>
-                          <p className="mt-0.5 text-[10px] text-zinc-500">
+                          <p className="mt-0.5 text-[10px] text-zinc-400">
                             synthetic YC-mode row — not a corpus process; excluded from the totals below
                           </p>
                         </td>
-                        <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">{YC_BATCH.officeHours.cadenceLabel}</td>
+                        <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400">{YC_BATCH.officeHours.cadenceLabel}</td>
                         <td className="py-2 pr-3">
                           <span className="flex gap-1">
                             {MONTH_LABELS.map((label, i) => (
@@ -2090,8 +2177,8 @@ export default function VirtualStartup({
                         <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
                           ×{YC_BATCH.officeHours.runsPerBatch}
                         </td>
-                        <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-600">—</td>
-                        <td className="py-2 text-xs text-zinc-600">—</td>
+                        <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">—</td>
+                        <td className="py-2 text-xs text-zinc-500">—</td>
                       </tr>
                     )}
                     {(() => {
@@ -2102,7 +2189,7 @@ export default function VirtualStartup({
                           lastCadence = row.cadenceLabel
                           nodes.push(
                             <tr key={`group-${row.cadenceLabel}`} data-testid="vs-cadence-group" className="bg-zinc-900/40">
-                              <th colSpan={6} scope="colgroup" className="py-1.5 pr-3 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-500">
+                              <th colSpan={6} scope="colgroup" className="py-1.5 pr-3 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-400">
                                 {row.cadenceLabel}
                               </th>
                             </tr>,
@@ -2153,17 +2240,17 @@ export default function VirtualStartup({
                               <span className="flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-fuchsia-300/90">
                                 {YC_BATCH.officeHours.title}
                               </span>
-                              <p className="mt-0.5 text-[10px] text-zinc-500">synthetic YC-mode row — not a corpus process</p>
+                              <p className="mt-0.5 text-[10px] text-zinc-400">synthetic YC-mode row — not a corpus process</p>
                             </td>
-                            <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">{YC_BATCH.officeHours.cadenceLabel}</td>
+                            <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-400">{YC_BATCH.officeHours.cadenceLabel}</td>
                             <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
                               day {YC_BATCH.officeHours.intervalDays}
                             </td>
                             <td className="whitespace-nowrap py-2 pr-3 text-right font-mono text-xs tabular-nums text-zinc-400">
                               ×{Math.min(Math.floor(windowDays / YC_BATCH.officeHours.intervalDays), YC_BATCH.officeHours.runsPerBatch)}
                             </td>
-                            <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-600">—</td>
-                            <td className="py-2 text-xs text-zinc-600">—</td>
+                            <td className="whitespace-nowrap py-2 pr-3 text-xs text-zinc-500">—</td>
+                            <td className="py-2 text-xs text-zinc-500">—</td>
                           </tr>
                         )}
                         {wrows.map((row) => (
@@ -2181,7 +2268,7 @@ export default function VirtualStartup({
               not a cron job: no months, no runs/yr, and they never enter the totals. */}
           {events.length > 0 && (
             <div className="mt-5 border-t border-zinc-800 pt-3">
-              <h3 className="text-[11px] uppercase tracking-widest text-zinc-500">
+              <h3 className="text-[11px] uppercase tracking-widest text-zinc-400">
                 Event-driven — runs when triggered, not on a calendar
               </h3>
               <ul className="mt-2 grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
@@ -2190,7 +2277,7 @@ export default function VirtualStartup({
                     <Link href={`/processes/${e.slug}`} className="font-medium text-zinc-300 hover:text-emerald-300">
                       {e.title}
                     </Link>
-                    <span className="text-[11px] text-zinc-500">when {e.trigger}</span>
+                    <span className="text-[11px] text-zinc-400">when {e.trigger}</span>
                   </li>
                 ))}
               </ul>

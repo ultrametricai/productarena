@@ -16,10 +16,11 @@ import {
 // VsFounderAxes pair, derived from the committed axis options, never a new persona. Founder-count
 // stays the Team decision's business; no solo option lives here. An axis shifts which
 // person-routed work is DIY vs delegated in the run's time model only (computeStackOutcome — the
-// two modifiers compose) — it never changes a judged verdict or a corpus estimate. The blurbs and
-// each axis's named simulation assumption ride in the option tooltips (the band prints no amber
-// assumption lines — founder round 3, 2026-09-29); the run's outcome surfaces still disclose the
-// assumptions where they apply.
+// two modifiers compose) — it never changes a judged verdict or a corpus estimate. NO title=
+// tooltips on the trigger or options (founder batch 2026-09-30, item 3: they overlap the open
+// listbox) — the blurbs + each axis's named simulation assumption render as option SUBLABELS
+// inside the list instead; the run's outcome surfaces still disclose the assumptions where they
+// apply.
 
 interface AxisCombo {
   axes: VsFounderAxes
@@ -27,7 +28,8 @@ interface AxisCombo {
   short: string
   // The canonical accessible name, e.g. 'Technical founder, first-time'.
   label: string
-  // Blurbs + named simulation assumptions of BOTH axes — the tooltip receipt.
+  // Blurbs + named simulation assumptions of BOTH axes — rendered as the option SUBLABEL (the
+  // receipt the removed tooltip used to carry — item 3, 2026-09-30).
   title: string
 }
 
@@ -116,7 +118,6 @@ export default function VsPersonaPicker({
         aria-controls={open ? listboxId : undefined}
         aria-label={current.label}
         onClick={() => setOpen((v) => !v)}
-        title={current.title}
         className={`flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs transition ${
           open
             ? 'border-emerald-400/60 bg-emerald-400/5 text-zinc-100'
@@ -134,7 +135,7 @@ export default function VsPersonaPicker({
           role="listbox"
           id={listboxId}
           aria-label="Who is the founder? options"
-          className="absolute left-0 top-full z-30 mt-1 min-w-[240px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 w-[300px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           {AXIS_COMBOS.map((c) => {
             const active = comboId(c.axes) === comboId(axes)
@@ -147,15 +148,21 @@ export default function VsPersonaPicker({
                   aria-selected={active}
                   aria-label={c.label}
                   data-testid={`vs-persona-${comboId(c.axes)}`}
-                  title={c.title}
                   onClick={() => pick(c)}
-                  className={`flex w-full items-center gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
+                  className={`flex w-full items-start gap-2 border-l-2 px-2.5 py-1.5 text-left text-xs transition ${
                     active
                       ? 'border-emerald-400/70 bg-emerald-400/10 text-emerald-300'
                       : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
                   }`}
                 >
-                  <span className="min-w-0 flex-1">{c.short}</span>
+                  <span className="min-w-0 flex-1">
+                    {c.short}
+                    {/* Sublabel (item 3, 2026-09-30): the blurbs + named simulation assumptions
+                        the removed tooltip carried — the receipt stays visible in the list. */}
+                    <span data-testid="vs-persona-detail" className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
+                      {c.title}
+                    </span>
+                  </span>
                   {active && (
                     <span aria-hidden className="shrink-0 text-emerald-300">
                       ✓

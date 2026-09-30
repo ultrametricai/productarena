@@ -104,21 +104,18 @@ export default function VsStateGraph({
             <span className="ml-1 text-[10px] tabular-nums opacity-70">{t.count}</span>
           </button>
         ))}
-        <span className="ml-auto shrink-0 text-[9px] uppercase tracking-widest text-zinc-600">
-          fills as the run prints
-        </span>
       </div>
 
       {/* The compact scroll box — capped so the terminal stays dominant (~200px on mobile). */}
       <div data-testid="vs-stategraph-body" className="max-h-[200px] overflow-y-auto px-2.5 py-2 sm:max-h-[240px] lg:max-h-[320px]">
         {!started ? (
-          <p data-testid="vs-sg-placeholder" className="py-2 text-[11px] text-zinc-600">
+          <p data-testid="vs-sg-placeholder" className="py-2 text-[11px] text-zinc-400">
             The company, its vendors, and its decisions appear here object by object as the run
             prints in the terminal.
           </p>
         ) : tab === 'company' ? (
           artifacts.length === 0 ? (
-            <p className="py-2 text-[11px] text-zinc-600">nothing exists yet — the first artifacts are printing…</p>
+            <p className="py-2 text-[11px] text-zinc-400">nothing exists yet — the first artifacts are printing…</p>
           ) : (
             <ul className="space-y-1">
               {artifacts.map((a, i) => (
@@ -137,7 +134,7 @@ export default function VsStateGraph({
         ) : tab === 'vendors' ? (
           <>
             {vendors.length === 0 ? (
-              <p className="py-2 text-[11px] text-zinc-600">no judged vendor picked up yet — they collect as the journey hits their steps</p>
+              <p className="py-2 text-[11px] text-zinc-400">no judged vendor picked up yet — they collect as the journey hits their steps</p>
             ) : (
               <ul className="space-y-1.5">
                 {vendors.map((v) => (
@@ -150,7 +147,7 @@ export default function VsStateGraph({
                       {v.name}
                     </Link>
                     <span
-                      className="min-w-0 truncate text-[11px] text-zinc-500"
+                      className="min-w-0 truncate text-[11px] text-zinc-400"
                       title={`Why picked: the top judged vendor for its step — ${v.arenaName}, scored over the step's mapped stories`}
                     >
                       {v.arenaName} · top judged · {v.score.toFixed(0)}
@@ -165,7 +162,7 @@ export default function VsStateGraph({
                 pick. Curated map: lib/ultrametricCli.ts, verified against the live catalog. */}
             {umCli.length > 0 && (
               <div data-testid="vs-sg-umcli" className="mt-2 border-t border-zinc-800 pt-1.5">
-                <p className="text-[9px] uppercase tracking-widest text-zinc-600">
+                <p className="text-[9px] uppercase tracking-widest text-zinc-400">
                   first-party · Ultrametric CLI/MCP (ours) — not a judged pick
                 </p>
                 <ul className="mt-1 space-y-1">
@@ -192,8 +189,8 @@ export default function VsStateGraph({
               {decisions.map((d) => (
                 <li key={d.id} data-testid="vs-sg-decision" data-decision-state={d.state ?? 'asserted'} className="flex items-baseline gap-2 text-[12px]">
                   <span aria-hidden className="shrink-0">{d.icon}</span>
-                  <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-500">{d.title}</span>
-                  <span className={d.state === 'pending' ? 'text-amber-300/90' : d.state === 'default' ? 'text-zinc-500' : 'text-zinc-300'}>
+                  <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-400">{d.title}</span>
+                  <span className={d.state === 'pending' ? 'text-amber-300/90' : d.state === 'default' ? 'text-zinc-400' : 'text-zinc-300'}>
                     {d.label}
                   </span>
                 </li>
@@ -208,10 +205,10 @@ export default function VsStateGraph({
                     data-synthetic="true"
                     className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 border-l-2 border-fuchsia-400/40 pl-2 text-[12px]"
                   >
-                    <span className="shrink-0 text-[10px] text-zinc-600">day {e.day}</span>
+                    <span className="shrink-0 text-[10px] text-zinc-500">day {e.day}</span>
                     <span className="text-zinc-300">{e.title}</span>
                     {e.choiceLabel ? (
-                      <span className="text-[11px] text-zinc-500" title={e.outcome ?? undefined}>
+                      <span className="text-[11px] text-zinc-400" title={e.outcome ?? undefined}>
                         → {e.choiceLabel}
                       </span>
                     ) : (

@@ -158,7 +158,7 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     renderIt()
     for (const name of [
       'Entity', 'Team', 'Funding', 'Business model',
-      'First hire', 'Compliance posture', 'Enterprise motion', 'Launch',
+      'First hire', 'Compliance posture', 'ICP', 'Launch', 'Workplace',
     ]) {
       expect(screen.getByRole('group', { name })).toBeTruthy()
     }
@@ -198,10 +198,11 @@ describe('VirtualStartup — control icons never move an accessible name', () =>
     for (const title of [
       'Scenario — one-tap setups: example companies and YC batch mode',
       'Founder — the who/where cluster: the two founder axes plus the country view',
-      'Starting decisions — which real processes make up the journey',
     ]) {
       expect(within(band).getByTitle(title)).toBeTruthy()
     }
+    // The 'Decisions' row label AND its icon are gone (founder batch 2026-09-30, item 6).
+    expect(within(band).queryByTitle('Starting decisions — which real processes make up the journey')).toBeNull()
     // The geo row's adjacent 🌍 IconChip is GONE (round 5, item 5) — the selector's own flags
     // (each option tooltipped) carry the affordance; no bare icon remains.
     expect(within(band).queryByTitle('Country view — annotate the run with committed geo evidence')).toBeNull()
@@ -222,9 +223,14 @@ describe('VirtualStartup — the Geo dropdown (founder round 4, item 3: a house 
     expect(trigger.textContent).toContain('USA')
     fireEvent.click(trigger)
     const list = screen.getByRole('listbox', { name: 'Country view options' })
-    expect(within(list).getAllByRole('option').map((o) => o.textContent?.replace('✓', ''))).toEqual([
-      '🌐Global', '🇺🇸USA', '🇬🇧UK', '🇮🇳India', '🇩🇪Germany', '🇫🇷France',
+    expect(within(list).getAllByRole('option').map((o) => o.getAttribute('aria-label'))).toEqual([
+      'Global', 'USA', 'UK', 'India', 'Germany', 'France',
     ])
+    // The flags still render, and each option carries its honesty sublabel (item 3: the removed
+    // tooltips' copy moved into the list).
+    const optionText = within(list).getAllByRole('option').map((o) => o.textContent ?? '').join(' ')
+    for (const flag of ['🌐', '🇺🇸', '🇬🇧', '🇮🇳', '🇩🇪', '🇫🇷']) expect(optionText).toContain(flag)
+    expect(within(list).getAllByTestId('vs-geo-detail').length).toBe(6)
     expect(screen.getByTestId('vs-geo-usa').getAttribute('aria-selected')).toBe('true')
     // Picking a country closes the list and the trigger takes its flag + name.
     fireEvent.click(screen.getByTestId('vs-geo-in'))
@@ -261,7 +267,7 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     // Default-asserted Delaware C-Corp is not on the UK roster → reset to Ltd, run cleared.
     pickGeo('uk')
     expect(screen.getByTestId('vs-decision-entity').textContent).toContain('Ltd')
-    expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('Ltd (Companies House)')
+    expect(screen.getByTestId('vs-decision-entity').getAttribute('aria-label')).toContain('Ltd (Companies House)')
     expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0) // composition change = new run
     // The Entity dropdown's roster now follows the UK.
     fireEvent.click(screen.getByTestId('vs-decision-entity'))
@@ -393,12 +399,12 @@ describe('VirtualStartup — the state-graph panel', () => {
     expect(vendor.textContent).toContain('Startup banking · top judged · 88')
   })
 
-  it('Decisions tab shows BOTH founder axes plus the eight visible choices, with pending/asserted state', () => {
+  it('Decisions tab shows BOTH founder axes plus the nine visible choices, with pending/asserted state', () => {
     renderIt()
     showAll()
     fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
     const decisions = screen.getAllByTestId('vs-sg-decision')
-    expect(decisions).toHaveLength(10) // 2 founder axes + 8 visible decisions ('Start with' left the UI)
+    expect(decisions).toHaveLength(11) // 2 founder axes + 9 visible decisions ('Start with' left the UI; Workplace joined 2026-09-30)
     const text = decisions.map((d) => d.textContent).join(' | ')
     // The axes lead (item 5: the panel shows both).
     expect(text).toContain('Technical founder')

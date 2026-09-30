@@ -60,7 +60,11 @@ const CHAINS: VsChain[] = [
 
 const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
   [
-    task('brand_001', 'Generate a company name'),
+    task('brand_001', 'Generate a company name', {
+      // The naming step is an AI-conversation step: its judged top ranks in ai-assistants —
+      // the 'I'm using' pin surface (item 7, 2026-09-30).
+      tops: [{ productId: 'chatgpt', name: 'ChatGPT', score: 77, arenaId: 'ai-assistants', arenaName: 'AI assistants' }],
+    }),
     task('form_001', 'Incorporate C-Corp', {
       steps: [
         step('form_001', 'Submit incorporation filing', { route: 'form', approvalRequired: true }),
@@ -86,8 +90,17 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('hr_002', 'Run payroll'),
     task('growth_010', 'Launch on Product Hunt & directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
+    task('ops_014', 'Lease an office'),
   ].map((t) => [t.id, t]),
 )
+
+const ASSISTANTS = [
+  { id: 'chatgpt', name: 'ChatGPT', hasLogo: false },
+  { id: 'claude', name: 'Claude', hasLogo: false },
+  { id: 'gemini', name: 'Gemini', hasLogo: false },
+  { id: 'grok', name: 'Grok', hasLogo: false },
+  { id: 'muse', name: 'Muse', hasLogo: false },
+]
 
 // Year-view candidates: two always-on rhythm rows (one corpus-dated annual) plus two
 // journey-gated ones (payroll with the hire, Type II with the enterprise motion).
@@ -150,6 +163,7 @@ const renderIt = () =>
       access={{}}
       pricing={{}}
       taskRisks={{}}
+      assistants={ASSISTANTS}
     />,
   )
 // The skip-animation link is gone (founder 2026-09-28) — reveal the full timeline by running
@@ -171,8 +185,9 @@ const pickDecision = (id: string, optionName: string | RegExp) => {
   fireEvent.click(screen.getByTestId(`vs-decision-${id}`))
   fireEvent.click(screen.getByRole('option', { name: optionName }))
 }
-// The trigger's title carries the asserted option's full label (or 'not set').
-const decisionTitle = (id: string) => screen.getByTestId(`vs-decision-${id}`).getAttribute('title') ?? ''
+// The trigger's tooltip is GONE (founder batch 2026-09-30, item 3) — the asserted option's full
+// label (or 'not set') now rides the trigger's aria-label.
+const decisionTitle = (id: string) => screen.getByTestId(`vs-decision-${id}`).getAttribute('aria-label') ?? ''
 const rhythmSection = () => screen.getByText('The operating rhythm').closest('section')!
 // The journey DAG strip (components/VsJourneyDag.tsx, 2026-09-29) mirrors the process and phase
 // titles above the terminal, so journey-composition assertions scope to the terminal body.
@@ -246,14 +261,15 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
   it('the 2026-09-25 toggles: hire, enterprise, PH launch all reshape the journey (build-first now rides presets/permalinks only — round 5, item 4)', () => {
     renderIt()
     showAll()
-    // Defaults: hire yes (playbook in), enterprise no, PH yes, name-first.
+    // Defaults: hire yes (playbook in), Developers ICP (no enterprise chain), PH yes, name-first
+    // — and compliance default-asserted at Basic minimums (item 8), so NO compliance chain runs.
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
     expect(screen.queryByText('Complete SOC 2 Type II')).toBeNull()
     expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
-    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // default compliance (SOC 2 early) runs
+    expect(screen.queryByText('Set up a password manager')).toBeNull() // Basic minimums — the dedicated playbook honestly absent
 
     pickDecision('hire', 'Stay founders-only')
-    pickDecision('enterprise', 'Chase the enterprise deal')
+    pickDecision('enterprise', 'Enterprises')
     pickDecision('ph', 'Stealth mode')
     showAll()
     expect(screen.queryByText('Hire first employee')).toBeNull()
@@ -289,12 +305,18 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     expect(termBody().getByText(/no storefront step yet/)).toBeTruthy()
   })
 
-  it('round 5 compliance options: None skips the chain; HIPAA runs the same chain with the framework named in note and artifact', () => {
+  it("compliance options: the default-asserted 'Basic minimums' honestly skips the chain and 'None' is display-hidden (item 8); HIPAA runs the same chain with the framework named", () => {
     renderIt()
-    pickDecision('compliance', 'None')
+    // The default-asserted 'Basic minimums' composes the none-path — nothing to unskip.
+    expect(decisionTitle('compliance')).toContain('Basic minimums')
     showAll()
     expect(screen.queryByText('Set up a password manager')).toBeNull()
     expect(termBody().queryByText('Stand up compliance')).toBeNull()
+    // 'None' left the display roster — redundant with the honestly-named Basic minimums.
+    fireEvent.click(screen.getByTestId('vs-decision-compliance'))
+    expect(screen.queryByRole('option', { name: 'None' })).toBeNull()
+    expect(screen.getByRole('option', { name: 'Basic minimums' })).toBeTruthy()
+    fireEvent.click(screen.getByTestId('vs-decision-compliance')) // close
 
     pickDecision('compliance', 'HIPAA')
     showAll()
@@ -389,7 +411,7 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
 
   it('marks seeded (non-corpus-dated) annual slots data-synthetic with the seeded note — no visible label', () => {
     renderIt()
-    pickDecision('enterprise', 'Chase the enterprise deal')
+    pickDecision('enterprise', 'Enterprises')
     showAll()
     showYearTab()
     const seeded = screen.getAllByTestId('vs-year-row').filter((r) => r.getAttribute('data-month-source') === 'seeded')
@@ -441,7 +463,7 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
     expect(events).toHaveLength(1)
     expect(within(events[0]).getByText('Send a wire or ACH payment')).toBeTruthy()
     expect(within(events[0]).getByText(/when a vendor bill needs paying/)).toBeTruthy()
-    pickDecision('enterprise', 'Chase the enterprise deal')
+    pickDecision('enterprise', 'Enterprises')
     showAll()
     events = screen.getAllByTestId('vs-event-row')
     expect(events).toHaveLength(2)
@@ -454,7 +476,7 @@ describe('VirtualStartup — run CTA and the operating rhythm (30/90/year tabs)'
 // every preset/persona/toggle interaction stays semantically identical and is covered by the
 // suites around this one.
 describe('VirtualStartup — the compact setup band (decisions as dropdowns, 2026-09-29)', () => {
-  it('one band holds presets, YC mode, founder axes, the eight visible decision dropdowns, drive mode, and the run CTA — and renders before the terminal', () => {
+  it('one band holds presets, YC mode, founder axes, the nine visible decision dropdowns, drive mode, and the run CTA — and renders before the terminal', () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
@@ -481,11 +503,15 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
       // Business models (round 5, item 2): the three new models appended after the originals.
       product: ['SaaS subscriptions', 'Invoice-billed services', 'Marketplace (take-rate)', 'Usage-based', 'E-commerce (DTC)'],
       hire: ['Make the first hire', 'Stay founders-only'],
-      // Compliance gets specific (round 5, item 3).
-      compliance: ['SOC 2 (early)', 'SOC 2 (deferred)', 'None', 'HIPAA', 'ISO 27001'],
-      enterprise: ['Not yet', 'Chase the enterprise deal'],
+      // Compliance gets specific (round 5, item 3); 'Basic minimums' appended (item 8,
+      // 2026-09-30) and 'None' display-hidden — redundant with the honest name.
+      compliance: ['SOC 2 (early)', 'SOC 2 (deferred)', 'HIPAA', 'ISO 27001', 'Basic minimums'],
+      // The ICP selector (item 4, 2026-09-30) replaced the enterprise yes/no.
+      enterprise: ['Developers', 'Enterprises', 'SMBs', 'Consumers'],
       // Launch options (founder round 4, item 7): venue-flavored public launches + stealth.
       ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'],
+      // Remote vs In-office (item 5, 2026-09-30).
+      remote: ['Remote-first', 'Office'],
     }
     // 'Start with' left the control panel — no dropdown, no micro-label (round 5, item 4).
     expect(within(band).queryByTestId('vs-decision-ordering')).toBeNull()
@@ -497,12 +523,17 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     for (const [id, names] of Object.entries(optionNames)) {
       const trigger = within(band).getByTestId(`vs-decision-${id}`)
       expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
-      if (id === 'entity') expect(trigger.textContent).toContain('C-Corp') // default-asserted
+      // DEFAULT-ASSERTED decisions show their value: entity (round 4, item 5) and compliance
+      // ('Basic minimums' — item 8, 2026-09-30); everything else starts 'Not set'.
+      if (id === 'entity') expect(trigger.textContent).toContain('C-Corp')
+      else if (id === 'compliance') expect(trigger.textContent).toContain('Basics')
       else expect(trigger.textContent).toContain('Not set')
       fireEvent.click(trigger)
       for (const name of names) expect(screen.getByRole('option', { name })).toBeTruthy()
+      // The hidden 'None' never renders as an option (HIDDEN_OPTION_VALUES).
+      if (id === 'compliance') expect(screen.queryByRole('option', { name: 'None' })).toBeNull()
       expect(screen.getByTestId(`vs-decision-${id}-notset`).getAttribute('aria-selected')).toBe(
-        id === 'entity' ? 'false' : 'true',
+        id === 'entity' || id === 'compliance' ? 'false' : 'true',
       )
       fireEvent.click(trigger) // close before the next one
     }
@@ -529,14 +560,17 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it("dropdown semantics: picking asserts (title shows the full label + mapping), 'Not set' clears back, asserting the default value still asserts", () => {
+  it("dropdown semantics: picking asserts (the aria-label carries the full label; the corpus mapping rides the option sublabel), 'Not set' clears back, asserting the default value still asserts", () => {
     renderIt()
     // Unasserted: the trigger says so and names the default it composes.
     expect(decisionTitle('enterprise')).toContain('not set')
-    expect(decisionTitle('enterprise')).toContain('Not yet')
-    pickDecision('enterprise', 'Chase the enterprise deal')
-    expect(decisionTitle('enterprise')).toContain('Chase the enterprise deal')
-    expect(decisionTitle('enterprise')).toContain('land-the-enterprise-deal')
+    expect(decisionTitle('enterprise')).toContain('Developers')
+    // The option's corpus-mapping receipt lives in its in-list sublabel (item 3 — no tooltips).
+    fireEvent.click(screen.getByTestId('vs-decision-enterprise'))
+    expect(screen.getByTestId('vs-decision-enterprise-yes').textContent).toContain('land-the-enterprise-deal')
+    fireEvent.click(screen.getByTestId('vs-decision-enterprise')) // close
+    pickDecision('enterprise', 'Enterprises')
+    expect(decisionTitle('enterprise')).toContain('Enterprises')
     // Clear back to Not set via the explicit listbox row.
     fireEvent.click(screen.getByTestId('vs-decision-enterprise'))
     fireEvent.click(screen.getByTestId('vs-decision-enterprise-notset'))
@@ -575,7 +609,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     for (const [id, name] of [
       ['entity', 'Delaware C-Corp'], ['team', 'Cofounders'], ['funding', 'Raise a seed'],
       ['product', 'SaaS subscriptions'], ['hire', 'Make the first hire'],
-      ['compliance', 'SOC 2 (early)'], ['enterprise', 'Not yet'], ['ph', 'Product Hunt'],
+      // Compliance's INITIAL state is the default-asserted 'Basic minimums' (item 8) — the
+      // byte-identity baseline composes it, so the explicit assertion repeats that value.
+      ['compliance', 'Basic minimums'], ['enterprise', 'Developers'], ['ph', 'Product Hunt'],
+      ['remote', 'Remote-first'],
     ] as const) {
       pickDecision(id, name)
     }
@@ -583,42 +620,51 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.getByTestId('vs-terminal-body').textContent).toBe(notSet)
   })
 
-  it("the 'full setup guide' expander is GONE (founder round 4, item 1) — the honesty copy lives on in tooltips", () => {
+  it("the 'full setup guide' expander is GONE (round 4, item 1) — and since the 2026-09-30 tooltip removal (item 3) the honesty copy lives in pill titles and option SUBLABELS", () => {
     const { container } = renderIt()
     expect(screen.queryByText(/full setup guide/i)).toBeNull()
     expect(container.querySelector('details')).toBeNull() // no disclosure widget in the band
-    // The explanations survive as tooltips: the preset ⓘ carries the corpus disclosure…
+    // The corpus disclosure folds into the preset PILL (tooltip + sr-only) — the ⓘ is gone
+    // (item 11); pills are not dropdowns, so their titles never overlap an open listbox.
     const disclosures = screen.getAllByTestId('vs-preset-disclosure')
     expect(disclosures.length).toBe(2)
-    for (const d of disclosures) expect(d.getAttribute('title')).toContain('same real software-company process corpus')
-    // …the founder selector's combo options carry their named simulation assumptions (the
-    // single-dropdown consolidation, addendum 2026-09-30)…
+    for (const d of disclosures) expect(d.textContent).toContain('same real software-company process corpus')
+    expect(screen.getByTestId('vs-preset-hardware').getAttribute('title')).toContain('same real software-company process corpus')
+    // The founder selector's combo options carry their named simulation assumptions as
+    // SUBLABELS inside the open list (item 3: no title= on dropdown options)…
     fireEvent.click(screen.getByTestId('vs-persona-trigger'))
-    expect(screen.getByTestId('vs-persona-non-technical-first-timer').getAttribute('title')).toContain('simulation assumption')
-    expect(screen.getByTestId('vs-persona-technical-second-timer').getAttribute('title')).toContain('simulation assumption')
+    expect(screen.getByTestId('vs-persona-non-technical-first-timer').getAttribute('title')).toBeNull()
+    expect(screen.getByTestId('vs-persona-non-technical-first-timer').textContent).toContain('simulation assumption')
+    expect(screen.getByTestId('vs-persona-technical-second-timer').textContent).toContain('simulation assumption')
     fireEvent.click(screen.getByTestId('vs-persona-trigger')) // close
-    // …and each decision option keeps its corpus mapping in its option tooltip.
+    // …and each decision option keeps its corpus mapping in its in-list sublabel.
     fireEvent.click(screen.getByTestId('vs-decision-funding'))
-    expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toContain('Raise a seed round')
+    expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toBeNull()
+    expect(screen.getByTestId('vs-decision-funding-seed').textContent).toContain('Raise a seed round')
   })
 })
 
 describe('VirtualStartup — preset example companies and the ?preset= contract', () => {
-  it('renders the three preset pills; the honesty disclosure sits on hardware and biotech, NOT software', () => {
+  it('renders the three example pills with FUNCTIONAL-TYPE labels (item 11) — fake startup names and the ⓘ icon are gone; the honesty disclosure folds into the pill title + sr-only', () => {
     renderIt()
-    expect(screen.getByTestId('vs-preset-software')).toBeTruthy()
-    expect(screen.getByTestId('vs-preset-hardware')).toBeTruthy()
-    expect(screen.getByTestId('vs-preset-biotech')).toBeTruthy()
+    // Functional types, not fictional companies (item 11, 2026-09-30).
+    expect(screen.getByTestId('vs-preset-software').textContent).toContain('Typical software')
+    expect(screen.getByTestId('vs-preset-hardware').textContent).toContain('Frontier hardware')
+    expect(screen.getByTestId('vs-preset-biotech').textContent).toContain('Biotech')
+    for (const [id, name] of [['software', 'Agentloop'], ['hardware', 'Holofield'], ['biotech', 'Demovax']] as const) {
+      const pill = screen.getByTestId(`vs-preset-${id}`)
+      expect(pill.textContent).not.toContain(name) // the fake name left the label
+      expect(pill.textContent).not.toContain('ⓘ') // the info icon is gone
+    }
+    // The hardware/biotech corpus disclosure stays reachable BEFORE any run: pill tooltip +
+    // screen-reader text (sr-only), software honestly carries none.
     const disclosures = screen.getAllByTestId('vs-preset-disclosure')
     expect(disclosures).toHaveLength(2)
-    // Reachable BEFORE any run, on the pill itself: ⓘ tooltip + screen-reader text.
-    for (const d of disclosures) {
-      expect(d.textContent).toContain('same real software-company process corpus')
-      expect(d.getAttribute('title')).toContain('same real software-company process corpus')
-    }
+    for (const d of disclosures) expect(d.textContent).toContain('same real software-company process corpus')
+    expect(screen.getByTestId('vs-preset-hardware').getAttribute('title')).toContain('aren’t modeled yet')
+    expect(screen.getByTestId('vs-preset-biotech').getAttribute('title')).toContain('aren’t modeled yet')
+    expect(screen.getByTestId('vs-preset-software').getAttribute('title')).not.toContain('aren’t modeled yet')
     expect(within(screen.getByTestId('vs-preset-software')).queryByTestId('vs-preset-disclosure')).toBeNull()
-    expect(within(screen.getByTestId('vs-preset-hardware')).getByTestId('vs-preset-disclosure')).toBeTruthy()
-    expect(within(screen.getByTestId('vs-preset-biotech')).getByTestId('vs-preset-disclosure')).toBeTruthy()
     // Preset pills carry NO simulated chip (founder 2026-09-28) — the tags live in the terminal.
     for (const id of ['software', 'hardware', 'biotech']) {
       expect(within(screen.getByTestId(`vs-preset-${id}`)).queryByText(/^simulated$/i)).toBeNull()
@@ -707,7 +753,7 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
 describe('VirtualStartup — the single Funding selector (decision options + scenario combos)', () => {
   const openFunding = () => fireEvent.click(screen.getByTestId('vs-decision-funding'))
 
-  it("ONE dropdown carries all four options; the scenario rows carry the mapping tooltip; the pills are gone and the Scenario row keeps presets + YC", () => {
+  it("ONE dropdown carries all four options; the scenario rows carry the mapping sublabel; the pills are gone and the Scenario row keeps presets + YC", () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     expect(within(band).getByTitle('Scenario — one-tap setups: example companies and YC batch mode')).toBeTruthy()
@@ -717,15 +763,17 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
     for (const name of ['Raise a seed', 'Bootstrap', 'VC backed', 'Bootstrapped']) {
       expect(screen.getByRole('option', { name })).toBeTruthy()
     }
-    // The scenario options document the exact key → DECISIONS-option mapping in their tooltips.
+    // The scenario options document the exact key → DECISIONS-option mapping in their in-list
+    // sublabels (item 3, 2026-09-30: no title= tooltips on dropdown options).
     const vc = screen.getByRole('option', { name: 'VC backed' })
-    expect(vc.getAttribute('title')).toContain('Raise a seed')
-    expect(vc.getAttribute('title')).toContain('Delaware C-Corp')
-    expect(vc.getAttribute('title')).toContain('Make the first hire')
+    expect(vc.getAttribute('title')).toBeNull()
+    expect(vc.textContent).toContain('Raise a seed')
+    expect(vc.textContent).toContain('Delaware C-Corp')
+    expect(vc.textContent).toContain('Make the first hire')
     const boot = screen.getByRole('option', { name: 'Bootstrapped' })
-    expect(boot.getAttribute('title')).toContain('Bootstrap')
-    expect(boot.getAttribute('title')).toContain('Invoice-billed services')
-    expect(boot.getAttribute('title')).toContain('Stay founders-only')
+    expect(boot.textContent).toContain('Bootstrap')
+    expect(boot.textContent).toContain('Invoice-billed services')
+    expect(boot.textContent).toContain('Stay founders-only')
     openFunding() // close
     // The company preset pills are unchanged otherwise.
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
@@ -825,7 +873,7 @@ describe('VirtualStartup — the controller tabs (Setup | Vendors)', () => {
   it('accessible tabs: role=tablist, two tabs, Setup selected by default, panels wired via aria-controls', () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
-    const tablist = within(band).getByRole('tablist', { name: 'Virtual startup controller' })
+    const tablist = within(band).getByRole('tablist', { name: 'Open startup simulator controller' })
     const tabs = within(tablist).getAllByRole('tab')
     expect(tabs).toHaveLength(2)
     const [setup, vendors] = tabs
@@ -1060,5 +1108,118 @@ describe('VirtualStartup — YC batch mode', () => {
     pickDecision('team', 'Solo founder')
     expect(screen.getByTestId('vs-yc-disclosure')).toBeTruthy()
     expect(window.location.search).toContain('yc=1')
+  })
+})
+
+
+describe('VirtualStartup — founder batch 2026-09-30', () => {
+  it('the title-bar pause button and the paused status are GONE (item 2): only ⏹ Stop while running, status running…/quiet', () => {
+    vi.useFakeTimers()
+    try {
+      renderIt()
+      expect(screen.queryByTestId('vs-terminal-pause')).toBeNull()
+      fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
+      act(() => { vi.advanceTimersByTime(240 * 3) })
+      // Mid-run: no pause affordance anywhere, the primary button reads Stop.
+      expect(screen.queryByTestId('vs-terminal-pause')).toBeNull()
+      expect(screen.getByRole('button', { name: /stop/i })).toBeTruthy()
+      expect(screen.getByTestId('vs-terminal-status').textContent).toMatch(/running/)
+      fireEvent.click(screen.getByRole('button', { name: /stop/i }))
+      // Stopped: the status goes quiet — 'paused' no longer exists in the vocabulary.
+      expect(screen.getByTestId('vs-terminal-status').textContent).toBe('')
+      expect(screen.queryByText(/^paused$/i)).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("the 'Decisions' row label is gone from the setup band (item 6) — the dropdowns simply sit in the grid", () => {
+    renderIt()
+    const setupPanel = document.getElementById('vs-tabpanel-setup')!
+    expect(setupPanel.textContent).not.toContain('Decisions')
+    expect(within(screen.getByTestId('vs-setup')).queryByTitle(/Starting decisions/)).toBeNull()
+    // The other row labels stay.
+    expect(setupPanel.textContent).toContain('Scenario')
+    expect(setupPanel.textContent).toContain('Founder')
+  })
+
+  it('tooltip removal (item 3): NO title= on the decision/entity/funding/founder/geo/assistant triggers or their options; aria-labels stay', () => {
+    renderIt()
+    for (const id of ['entity', 'team', 'funding', 'product', 'hire', 'compliance', 'enterprise', 'ph', 'remote']) {
+      const trigger = screen.getByTestId(`vs-decision-${id}`)
+      expect(trigger.getAttribute('title'), `trigger ${id}`).toBeNull()
+      expect(trigger.getAttribute('aria-label'), `aria ${id}`).toBeTruthy()
+      fireEvent.click(trigger)
+      for (const o of screen.getAllByRole('option')) expect(o.getAttribute('title')).toBeNull()
+      fireEvent.click(trigger) // close
+    }
+    for (const testid of ['vs-persona-trigger', 'vs-geo-trigger', 'vs-assistant-trigger']) {
+      const trigger = screen.getByTestId(testid)
+      expect(trigger.getAttribute('title'), testid).toBeNull()
+      fireEvent.click(trigger)
+      for (const o of screen.getAllByRole('option')) expect(o.getAttribute('title')).toBeNull()
+      fireEvent.click(trigger) // close
+    }
+  })
+
+  it("the Workplace decision (item 5): Office composes the real lease-an-office process as a chainless phase (no playbook link); Remote-first composes nothing extra", () => {
+    renderIt()
+    showAll()
+    expect(screen.queryByText('Lease an office')).toBeNull() // remote-first default
+    pickDecision('remote', 'Office')
+    showAll()
+    expect(termBody().getByText('Lease an office')).toBeTruthy()
+    const phase = termBody().getByText('Move into an office')
+    // Honesty: a single corpus process, NOT a curated chain — no playbook link on this phase.
+    expect(within(phase.closest('li')!).queryByText(/playbook →/)).toBeNull()
+    expect(termBody().getByText(/not a curated chain/)).toBeTruthy()
+    // Other phases keep their chain links.
+    expect(termBody().getAllByText(/playbook →/).length).toBeGreaterThan(0)
+    // The office artifact prints, simulated and impossible-real.
+    const lease = screen.getAllByTestId('vs-artifact').find((a) => /Office lease/.test(a.textContent ?? ''))!
+    expect(lease.getAttribute('data-synthetic')).toBe('true')
+    expect(lease.textContent).toContain('$0.00')
+  })
+
+  it("the 'I'm using' selector (item 7): picking an assistant pins it on the AI-conversation steps as 'your assistant' while the judged top keeps '(recommended · judged)'", () => {
+    renderIt()
+    // Default: judged pick — no pin anywhere.
+    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('Judged pick')
+    showAll()
+    expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    // Pick Claude (≠ the judged top ChatGPT on the naming step) — annotation only: the revealed
+    // terminal keeps its rows and the pin appears on the ai-assistants-mapped step.
+    fireEvent.click(screen.getByTestId('vs-assistant-trigger'))
+    fireEvent.click(screen.getByTestId('vs-assistant-claude'))
+    const pin = screen.getByTestId('vs-step-assistant')
+    expect(pin.textContent).toContain('Claude')
+    expect(pin.getAttribute('href')).toBe('/arena/ai-assistants/product/claude')
+    expect(screen.getByTestId('vs-step-assistant-label').textContent).toContain('your assistant')
+    // The judged pick stays visible, labeled, and unmoved — no judged number moves.
+    expect(termBody().getAllByText(/\(recommended · judged\)/).length).toBeGreaterThan(0)
+    expect(termBody().getByRole('link', { name: /chatgpt · 77/i })).toBeTruthy()
+    // The state panel reflects it.
+    fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
+    const decisions = screen.getAllByTestId('vs-sg-decision').map((d) => d.textContent).join(' | ')
+    expect(decisions).toContain("I'm using")
+    expect(decisions).toContain('Claude · your assistant')
+    // Picking the judged top itself collapses to one chip with both labels.
+    fireEvent.click(screen.getByTestId('vs-assistant-trigger'))
+    fireEvent.click(screen.getByTestId('vs-assistant-chatgpt'))
+    expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    expect(screen.getByTestId('vs-step-assistant-label').textContent).toContain('your assistant')
+  })
+
+  it('contrast pins (item 9): the lifted secondary-text classes hold on cheap-to-pin nodes', () => {
+    renderIt()
+    showAll()
+    // Day markers lifted off zinc-600; phase notes and the corpus-time line read at zinc-400.
+    const day = screen.getByText(/— day 3 —/)
+    expect(day.className).toContain('text-zinc-500')
+    expect(day.className).not.toContain('text-zinc-600')
+    const corpusLine = screen.getByText(/Corpus time estimate/)
+    expect(corpusLine.className).toContain('text-zinc-400')
+    // The terminal status strip sits at zinc-400 (was zinc-500).
+    expect(screen.getByTestId('vs-terminal-status').className).toContain('text-zinc-400')
   })
 })

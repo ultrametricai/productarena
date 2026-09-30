@@ -97,6 +97,7 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('hr_001', 'Hire first employee'),
     task('growth_010', 'Launch on the directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
+    task('ops_014', 'Lease an office'),
   ].map((t) => [t.id, t]),
 )
 
@@ -344,7 +345,7 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     for (const li of items) expect(li.textContent).toContain('simulation assumption')
   })
 
-  it('an axis pick prints NO amber band line (founder round 3, item 2) — the founder selector tooltips carry the named simulation assumption', () => {
+  it('an axis pick prints NO amber band line (founder round 3, item 2) — the assumption rides the option SUBLABEL since the 2026-09-30 tooltip removal (item 3)', () => {
     renderIt()
     // The single founder dropdown (addendum 2026-09-30): pick the non-technical first-timer combo.
     fireEvent.click(screen.getByTestId('vs-persona-trigger'))
@@ -352,9 +353,12 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     expect(screen.getByTestId('vs-persona-trigger').textContent).toContain('Non-technical, first-time')
     // The vs-persona-assumption info lines are gone from the band…
     expect(screen.queryByTestId('vs-persona-assumption')).toBeNull()
-    // …but the explanation stays reachable: the trigger's tooltip names the assumption (the
-    // full-setup-guide expand is gone — founder round 4, item 1 — tooltips ARE the surface).
-    expect(screen.getByTestId('vs-persona-trigger').getAttribute('title')).toContain('simulation assumption')
+    // …and the trigger carries NO tooltip (item 3) — the named simulation assumption stays
+    // reachable as the option's in-list sublabel.
+    expect(screen.getByTestId('vs-persona-trigger').getAttribute('title')).toBeNull()
+    fireEvent.click(screen.getByTestId('vs-persona-trigger'))
+    expect(screen.getByTestId('vs-persona-non-technical-first-timer').textContent).toContain('simulation assumption')
+    fireEvent.click(screen.getByTestId('vs-persona-trigger')) // close
     expect(screen.queryByText(/full setup guide/i)).toBeNull()
   })
 
@@ -398,6 +402,7 @@ describe('simulated burn — published pricing only, cited; gaps stay gaps', () 
       companyName: null,
       picks: { payments: 'square' },
       eventChoices: {},
+      assistant: null,
       seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)
@@ -435,20 +440,30 @@ describe('pick your vendors and rerun (founder addenda #2/#3, 2026-09-29)', () =
     expect(screen.getByTestId('vs-tabpanel-vendors').textContent).toContain('(swapped)')
   })
 
-  it('swap-while-PAUSED (addendum #2): the printed transcript stays byte-stable, the DAG keeps its lit nodes, and resume uses the new vendor', () => {
+  it('swap while a SEMI-AUTO card holds the run (addendum #2 — the title-bar pause is gone, item 2): printed transcript byte-stable, DAG keeps its lit nodes, the resumed tail uses the new vendor', () => {
     renderIt()
+    fireEvent.click(screen.getByTestId('vs-mode-semi'))
     vi.useFakeTimers()
     try {
       fireEvent.click(screen.getByRole('button', { name: /run this startup/i }))
-      act(() => {
-        vi.advanceTimersByTime(240 * 5)
-      })
-      fireEvent.click(screen.getByTestId('vs-terminal-pause')) // ⏸ — reveal frozen mid-run
+      // Advance until a decision card holds the run mid-transcript (skip the naming card).
+      let card: HTMLElement | null = null
+      for (let guard = 0; guard < 400 && card === null; guard++) {
+        act(() => {
+          vi.advanceTimersByTime(240)
+        })
+        if (screen.queryByTestId('vs-run-naming')) {
+          fireEvent.click(screen.getByTestId('vs-run-naming-skip'))
+          continue
+        }
+        card = screen.queryByTestId('vs-run-decision')
+      }
+      expect(card).toBeTruthy()
       const printed = screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML
       const litNodes = Array.from(
         screen.getByTestId('vs-journeydag').querySelectorAll('[data-testid^="vs-dag-node-"]'),
       ).map((n) => `${n.getAttribute('data-testid')}:${n.getAttribute('data-dag-state')}`)
-      // The pickers stay usable while paused; the pick applies WITHOUT resetting the run…
+      // The pickers stay usable while the card holds the run; the pick applies WITHOUT resetting…
       pickVendorInTab(/Square/)
       expect(screen.getByTestId('vs-terminal-body').querySelector('ol')!.innerHTML).toBe(printed)
       expect(
@@ -456,12 +471,28 @@ describe('pick your vendors and rerun (founder addenda #2/#3, 2026-09-29)', () =
           (n) => `${n.getAttribute('data-testid')}:${n.getAttribute('data-dag-state')}`,
         ),
       ).toEqual(litNodes)
-      // …and resume continues with the new pick: the not-yet-printed payments step runs at
-      // agent speed (no founder-hours badge anywhere in the completed transcript).
-      fireEvent.click(screen.getByTestId('vs-terminal-pause')) // ▶ resume
-      act(() => {
-        vi.runAllTimers()
-      })
+      // …then answer every remaining card and run out: the tail picked up the surfaced vendor —
+      // no founder-hours badge anywhere in the completed transcript.
+      const answers: Record<string, string> = {
+        team: 'cofounders', funding: 'seed', product: 'subscriptions', hire: 'yes',
+        compliance: 'now', enterprise: 'no', ph: 'yes', remote: 'remote',
+      }
+      for (let guard = 0; guard < 800 && !(screen.getByTestId('vs-terminal-body').textContent ?? '').includes('journey complete'); guard++) {
+        act(() => {
+          vi.advanceTimersByTime(240)
+        })
+        if (screen.queryByTestId('vs-run-naming')) {
+          fireEvent.click(screen.getByTestId('vs-run-naming-skip'))
+          continue
+        }
+        if (screen.queryByTestId('vs-run-decision')) {
+          const button = Object.entries(answers)
+            .map(([id, value]) => screen.queryByTestId(`vs-run-decision-${id}-${value}`))
+            .find((b) => b !== null)
+          expect(button).toBeTruthy()
+          fireEvent.click(button!)
+        }
+      }
       expect(screen.getByTestId('vs-terminal-body').textContent).toContain('journey complete')
       expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
     } finally {
@@ -571,12 +602,13 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
       companyName: null,
       picks: { payments: 'square' },
       eventChoices: {},
+      assistant: null,
       seed: 3,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)
     renderIt()
-    expect(screen.getByTestId('vs-decision-entity').getAttribute('title')).toContain('LLC')
-    expect(screen.getByTestId('vs-decision-funding').getAttribute('title')).toContain('Bootstrap')
+    expect(screen.getByTestId('vs-decision-entity').getAttribute('aria-label')).toContain('LLC')
+    expect(screen.getByTestId('vs-decision-funding').getAttribute('aria-label')).toContain('Bootstrap')
     // The restored axis pair shows as the single founder selector's combo (addendum 2026-09-30).
     expect(screen.getByTestId('vs-persona-trigger').textContent).toContain('Technical, repeat entrepreneur')
     showAll()
@@ -600,8 +632,10 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
     expect(decoded.founder).toEqual(DEFAULT_FOUNDER_AXES)
     expect(decoded.mode).toBe('auto')
     // Nothing was touched in the dropdowns — the link omits every 'Not set' decision and
-    // carries exactly the DEFAULT-ASSERTED entity (asserted from the first render).
-    expect(decoded.choices).toEqual({ entity: 'c-corp' })
+    // carries exactly the DEFAULT-ASSERTED state (entity, and since item 8 the Basic-minimums
+    // compliance posture — both asserted from the first render).
+    expect(decoded.choices).toEqual({ entity: 'c-corp', compliance: 'basics' })
+    expect(decoded.assistant).toBeNull()
   })
 
   it('a malformed ?run= is ignored (default view, no crash)', () => {

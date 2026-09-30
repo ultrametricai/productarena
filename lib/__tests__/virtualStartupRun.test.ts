@@ -22,7 +22,7 @@ import {
   type VirtualTaskPayload,
   type VsChain,
 } from '@/lib/virtualStartup'
-import { buildVsAccess, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
+import { buildVsAccess, buildVsAssistants, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
 import {
   computeBurn,
   computeStackOutcome,
@@ -476,6 +476,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     companyName: 'Perchline Labs',
     picks: { payments: 'square', accounting: 'xero' },
     eventChoices: { 'soc2-demand': 'decline', 'processor-review': 'wait' },
+    assistant: 'claude',
     seed: 7,
   }
 
@@ -502,6 +503,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
       companyName: null,
       picks: {},
       eventChoices: {},
+      assistant: null,
       seed: 0,
     }
     const encoded = encodeRunState(def)
@@ -566,19 +568,76 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     expect(decodeCombo(digitAt('product', '3'))!.product).toBe('usage')
     expect(decodeCombo(digitAt('product', '4'))!.product).toBe('ecommerce')
     expect(decodeCombo(digitAt('product', '5'))).toBeNull()
-    // Compliance: now/later keep 0/1 (old placement links replay); none/hipaa/iso append.
+    // Compliance: now/later keep 0/1 (old placement links replay); none/hipaa/iso append; the
+    // 2026-09-30 'Basic minimums' takes the next digit (the display-hidden 'none' keeps slot 2).
     expect(decodeCombo(digitAt('compliance', '0'))!.compliance).toBe('now')
     expect(decodeCombo(digitAt('compliance', '1'))!.compliance).toBe('later')
     expect(decodeCombo(digitAt('compliance', '2'))!.compliance).toBe('none')
     expect(decodeCombo(digitAt('compliance', '3'))!.compliance).toBe('hipaa')
     expect(decodeCombo(digitAt('compliance', '4'))!.compliance).toBe('iso')
-    expect(decodeCombo(digitAt('compliance', '5'))).toBeNull()
+    expect(decodeCombo(digitAt('compliance', '5'))!.compliance).toBe('basics')
+    expect(decodeCombo(digitAt('compliance', '6'))).toBeNull()
     // The hidden 'Start with' decision keeps its digit slot (item 4): old links asserting
     // build-first still decode and replay.
     expect(decodeCombo(digitAt('ordering', '1'))!.ordering).toBe('build-first')
     expect(decodeAssertedCombo(digitAt('ordering', '1'))!.ordering).toBe('build-first')
     // …and the asserted codec accepts every appended digit too.
     expect(decodeAssertedCombo(digitAt('entity', '3'))!.entity).toBe('gmbh')
+  })
+
+  it("2026-09-30 codec compat: old enterprise digits 0/1 decode to the default ICP ('no' → Developers) and Enterprises ('yes'); SMBs/Consumers append; the remote slot appends last", () => {
+    const digitAt = (id: string, digit: string) => {
+      const i = DECISIONS.findIndex((d) => d.id === id)
+      const base = encodeCombo(DEFAULT_CHOICES).split('')
+      base[i] = digit
+      return base.join('')
+    }
+    // The ICP selector kept the old tokens: digit 0 = 'no' (Developers — the default path, what
+    // 'Not yet' composed), digit 1 = 'yes' (Enterprises — the old enterprise-deal behaviors).
+    expect(decodeCombo(digitAt('enterprise', '0'))!.enterprise).toBe('no')
+    expect(decodeCombo(digitAt('enterprise', '1'))!.enterprise).toBe('yes')
+    expect(decodeCombo(digitAt('enterprise', '2'))!.enterprise).toBe('smb')
+    expect(decodeCombo(digitAt('enterprise', '3'))!.enterprise).toBe('consumer')
+    expect(decodeCombo(digitAt('enterprise', '4'))).toBeNull()
+    // The workplace decision is the LAST slot; 0 = remote-first (default), 1 = office.
+    expect(DECISIONS[DECISIONS.length - 1].id).toBe('remote')
+    expect(decodeCombo(digitAt('remote', '0'))!.remote).toBe('remote')
+    expect(decodeCombo(digitAt('remote', '1'))!.remote).toBe('office')
+    expect(decodeCombo(digitAt('remote', '2'))).toBeNull()
+    expect(decodeAssertedCombo(digitAt('remote', '1'))!.remote).toBe('office')
+  })
+
+  it('appended-decision padding: 9-char digit strings (pre-remote links) still decode — missing trailing slots compose the default/unasserted; garbage lengths still reject', () => {
+    // A v1-era 9-digit full combo (everything asserted, no remote slot yet).
+    const nine = encodeCombo(DEFAULT_CHOICES).slice(0, 9)
+    expect(nine).toHaveLength(9)
+    expect(decodeCombo(nine)).toEqual(DEFAULT_CHOICES) // remote pads to its default
+    // A v2-era 9-char dotted string: the slot the link PREDATES decodes asserted at its default
+    // (a shared semi link replays without being asked a question that didn't exist), while the
+    // explicit '.' slots stay unasserted.
+    expect(decodeAssertedCombo('.'.repeat(9))).toEqual({ remote: 'remote' })
+    const withEntity = `1${'.'.repeat(8)}`
+    expect(decodeAssertedCombo(withEntity)).toEqual({ entity: 'llc', remote: 'remote' })
+    // Shorter than any released codec, or longer than today's roster: reject.
+    expect(decodeCombo('00000000')).toBeNull()
+    expect(decodeAssertedCombo('........')).toBeNull()
+    expect(decodeCombo(`${encodeCombo(DEFAULT_CHOICES)}0`)).toBeNull()
+    // …and a whole 9-slot v2 ?run= payload decodes end to end (the shipped-link shape).
+    const legacyRun = tamper({ v: 2, c: `1${'.'.repeat(8)}`, k: { payments: 'square' } })
+    expect(legacyRun).not.toBeNull()
+    expect(legacyRun!.choices).toEqual({ entity: 'llc', remote: 'remote' })
+    expect(legacyRun!.assistant).toBeNull() // pre-item-7 links carry no 'a' token
+  })
+
+  it("the assistant token 'a' (item 7): round-trips, defaults null, rejects junk — only judged VS_AI_FIRM_IDS decode", () => {
+    expect(decodeRunState(encodeRunState(state))!.assistant).toBe('claude')
+    expect(decodeRunState(encodeRunState({ ...state, assistant: null }))!.assistant).toBeNull()
+    for (const id of ['chatgpt', 'claude', 'gemini', 'grok', 'muse']) {
+      expect(decodeRunState(encodeRunState({ ...state, assistant: id }))!.assistant).toBe(id)
+    }
+    // Not a judged roster id → the whole payload rejects (defensive-decode convention).
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), a: 'clippy' })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), a: 7 })).toBeNull()
   })
 
   it('accepts v1 payloads: full combo asserted, legacy persona ids mapped onto the axis pairs, mode auto — shared links keep replaying', () => {
@@ -726,6 +785,27 @@ describe('server payloads — canonical verdicts, cited pricing, corpus risks', 
       expect(codeHosting.signals.github).toContain('clearly popular')
       expect(codeHosting.signals.bitbucket).toBeUndefined()
     }
+  })
+
+  it('buildVsAssistants: the founder roster resolved against the JUDGED ai-assistants products, roster order, real names (item 7)', () => {
+    const assistants = buildVsAssistants(DATA_DIR)
+    expect(assistants.map((a) => a.id)).toEqual(['chatgpt', 'claude', 'gemini', 'grok', 'muse'])
+    const products = JSON.parse(
+      fs.readFileSync(path.join(DATA_DIR, 'ai-assistants', 'products.json'), 'utf8'),
+    ) as Array<{ id: string; name: string }>
+    const byId = new Map(products.map((p) => [p.id, p.name]))
+    for (const a of assistants) {
+      // Every option is a real judged product wearing its judged display name — no grokbot
+      // exists in the roster, so none is offered.
+      expect(byId.get(a.id), `${a.id} not judged in ai-assistants`).toBe(a.name)
+      expect(typeof a.hasLogo).toBe('boolean')
+    }
+    expect(byId.has('grokbot')).toBe(false)
+    // …and the journey actually contains AI-conversation steps for the pin to land on: at least
+    // one union step's judged ranking lives in the ai-assistants arena.
+    const tasks = union.map((id) => corpusById.get(id)!)
+    const aiSteps = tasks.flatMap((t) => t.dag.nodes.filter((n) => stepRanking(t.id, n, DATA_DIR)?.arenaId === 'ai-assistants'))
+    expect(aiSteps.length).toBeGreaterThan(0)
   })
 
   it('buildVsTaskRisks mirrors the committed corpus risk axis', () => {

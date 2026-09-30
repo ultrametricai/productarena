@@ -23,7 +23,9 @@ import {
   dayOf,
   DECISIONS,
   DEFAULT_ASSERTED,
+  DEFAULT_ASSERTED_URL_NEUTRAL,
   DEFAULT_CHOICES,
+  HIDDEN_OPTION_VALUES,
   defaultEntityFor,
   ENTITY_META,
   ENTITY_OPTIONS_BY_COUNTRY,
@@ -93,12 +95,23 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })
 
-  it('covers every decision combo, derived straight from DECISIONS (8 entities × 5 models × 5 compliance options × the rest)', () => {
+  it('covers every decision combo, derived straight from DECISIONS (8 entities × 5 models × 6 compliance options × 4 ICPs × 2 workplaces × the rest)', () => {
     const expected = DECISIONS.reduce((acc, d) => acc * d.options.length, 1)
-    expect(expected).toBe(25600) // 8 × 2 × 5 × 2 × 2 × 2 × 5 × 2 × 4
+    expect(expected).toBe(122880) // 8 × 2 × 5 × 2 × 2 × 2 × 6 × 4 × 4 × 2
     expect(combos.length).toBe(expected)
     expect(new Set(combos.map(comboKey)).size).toBe(expected)
-    expect(DECISIONS.length).toBe(9)
+    expect(DECISIONS.length).toBe(10)
+  })
+
+  it('comboKey is legacy-stable (2026-09-30): the appended remote slot shows only when non-default, so every pre-existing combo keeps its exact seed key', () => {
+    const legacy = { ...DEFAULT_CHOICES }
+    expect(comboKey(legacy)).toBe(
+      `${legacy.entity}|${legacy.funding}|${legacy.product}|${legacy.team}|${legacy.ordering}|${legacy.hire}|${legacy.compliance}|${legacy.enterprise}|${legacy.ph}`,
+    )
+    expect(comboKey(legacy)).not.toContain('remote')
+    expect(comboKey({ ...legacy, remote: 'office' })).toBe(`${comboKey(legacy)}|office`)
+    // …and with it, the seeded synthetic identity of every shared link replays unchanged.
+    expect(synthCompany(legacy)).toEqual(synthCompany({ ...legacy }))
   })
 
   it('every combo yields only real corpus tasks, each at most once', () => {
@@ -264,12 +277,12 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('compliance: SOC 2/HIPAA/ISO run the set-up-compliance chain (early, or deferred on later); None genuinely skips it', () => {
+  it('compliance: SOC 2/HIPAA/ISO run the set-up-compliance chain (early, or deferred on later); None AND Basic minimums genuinely skip it', () => {
     for (const combo of combos) {
       const phases = journeyPhases(combo, chains)
       const idx = (chainId: string) => phases.findIndex((p) => p.chainId === chainId)
       const c = idx('set-up-compliance')
-      if (combo.compliance === 'none') {
+      if (combo.compliance === 'none' || combo.compliance === 'basics') {
         expect(c).toBe(-1)
         continue
       }
@@ -279,10 +292,27 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
+  it("compliance 'Basic minimums' (item 8, 2026-09-30): appended codec slot, the new default-asserted value, byte-identical composition to None — honestly named, never a fake playbook", () => {
+    const compliance = DECISIONS.find((d) => d.id === 'compliance')!
+    expect(compliance.options.map((o) => o.value)).toEqual(['now', 'later', 'none', 'hipaa', 'iso', 'basics'])
+    expect(compliance.options.find((o) => o.value === 'basics')!.label).toBe('Basic minimums')
+    // The same composition None mapped to — no dedicated compliance playbook runs.
+    const none = journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'none' }, chains)
+    expect(journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'basics' }, chains)).toEqual(none)
+    // Default-asserted (the founder's "default onto Basic minimums, not None") — and because it
+    // differs from the composed default, it is NOT in the URL-neutral underlay.
+    expect(DEFAULT_ASSERTED.compliance).toBe('basics')
+    expect(DEFAULT_CHOICES.compliance).toBe('now') // 'Not set' still composes SOC 2 early — old links replay
+    // 'None' leaves the display roster (redundant with the honest name); the codec slot stays.
+    expect(HIDDEN_OPTION_VALUES.compliance).toEqual(['none'])
+    // The honest detail: basics claims hygiene, never a playbook that didn't run.
+    expect(compliance.options.find((o) => o.value === 'basics')!.detail).toContain('does not run')
+  })
+
   it('compliance gets specific (round 5, item 3): HIPAA/ISO name the framework on the SAME chain steps — no fabricated corpus steps; codec order pins now/later at 0/1', () => {
     const compliance = DECISIONS.find((d) => d.id === 'compliance')!
-    expect(compliance.options.map((o) => o.value)).toEqual(['now', 'later', 'none', 'hipaa', 'iso'])
-    expect(compliance.options.map((o) => o.label)).toEqual(['SOC 2 (early)', 'SOC 2 (deferred)', 'None', 'HIPAA', 'ISO 27001'])
+    expect(compliance.options.map((o) => o.value)).toEqual(['now', 'later', 'none', 'hipaa', 'iso', 'basics'])
+    expect(compliance.options.map((o) => o.label)).toEqual(['SOC 2 (early)', 'SOC 2 (deferred)', 'None', 'HIPAA', 'ISO 27001', 'Basic minimums'])
     const socIds = journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'now' }, chains)
     for (const value of ['hipaa', 'iso'] as const) {
       const combo = { ...DEFAULT_CHOICES, compliance: value }
@@ -304,7 +334,7 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const tid of complianceChain.taskIds) expect(noneIds.includes(tid)).toBe(false)
   })
 
-  it('enterprise: the land-the-enterprise-deal chain appears only on yes, as the final phase', () => {
+  it('enterprise/ICP: the land-the-enterprise-deal chain appears only on the Enterprises ICP (the old yes token), as the final phase', () => {
     const entChain = chains.find((c) => c.id === 'land-the-enterprise-deal')!
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
@@ -312,6 +342,55 @@ describe('decision → journey mapping (against the live corpus)', () => {
         expect(ids.includes(tid), `${tid} for ${comboKey(combo)}`).toBe(combo.enterprise === 'yes')
       }
     }
+  })
+
+  it("the ICP selector (item 4, 2026-09-30): 'no'/'yes' keep tokens AND indices 0/1 (old digits → default ICP / Enterprises); SMBs/Consumers append, venue-noted, composition-identical to the default", () => {
+    const icp = DECISIONS.find((d) => d.id === 'enterprise')!
+    expect(icp.title).toBe('ICP')
+    // Codec + seed stability: the value tokens never moved, only the labels tell the ICP story.
+    expect(icp.options.map((o) => o.value)).toEqual(['no', 'yes', 'smb', 'consumer'])
+    expect(icp.options.map((o) => o.label)).toEqual(['Developers', 'Enterprises', 'SMBs', 'Consumers'])
+    // The old enterprise-'yes' behaviors attach to the Enterprises ICP (asserted above); the
+    // appended ICPs compose EXACTLY the default path — audience named, nothing invented.
+    const defaultIds = journeyTaskIds({ ...DEFAULT_CHOICES, enterprise: 'no' }, chains)
+    for (const value of ['smb', 'consumer'] as const) {
+      const combo = { ...DEFAULT_CHOICES, enterprise: value }
+      expect(journeyTaskIds(combo, chains)).toEqual(defaultIds)
+      const note = journeyPhases(combo, chains).find((p) => p.id === 'revenue')!.note!
+      expect(note).toContain(value === 'smb' ? 'ICP: SMBs' : 'ICP: consumers')
+      expect(note).toContain('identical composition')
+    }
+    // The default ICP ('no' token) keeps the untouched default revenue note — old links replay
+    // their display too, and the enterprise phase honestly never runs.
+    const devNote = journeyPhases({ ...DEFAULT_CHOICES, enterprise: 'no' }, chains).find((p) => p.id === 'revenue')!.note!
+    expect(devNote).not.toContain('ICP:')
+  })
+
+  it("the 'Workplace' decision (item 5, 2026-09-30): remote-first composes nothing extra; office adds the real lease-an-office process (ops_014) as a chainless phase", () => {
+    const remote = DECISIONS.find((d) => d.id === 'remote')!
+    // Appended LAST so every older digit slot keeps its position; remote-first is index 0 (the default).
+    expect(DECISIONS[DECISIONS.length - 1].id).toBe('remote')
+    expect(remote.options.map((o) => o.value)).toEqual(['remote', 'office'])
+    expect(DEFAULT_CHOICES.remote).toBe('remote')
+    // remote-first: byte-identical to the journey before the decision existed.
+    const base = journeyTaskIds(DEFAULT_CHOICES, chains)
+    expect(base.includes('ops_014')).toBe(false)
+    // office: ops_014 joins as its own phase — a real corpus process, honestly presented as
+    // NOT a curated chain (no chainId → the UI renders no playbook link).
+    const office = { ...DEFAULT_CHOICES, remote: 'office' as const }
+    const ids = journeyTaskIds(office, chains)
+    expect(ids).toEqual([...base.slice(0, ids.indexOf('ops_014')), 'ops_014', ...base.slice(ids.indexOf('ops_014'))])
+    const phase = journeyPhases(office, chains).find((p) => p.id === 'office')!
+    expect(phase.taskIds).toEqual(['ops_014'])
+    expect(phase.chainId).toBe('')
+    expect(phase.note).toContain('not a curated chain')
+    expect(corpusIds.has('ops_014')).toBe(true)
+    expect(corpusById.get('ops_014')!.title).toBe('Lease an office')
+    // The office artifact exists, is simulated, and is impossible-real ($0.00 placeholder).
+    const arts = buildJourneyArtifacts(office, ids)
+    expect(arts.ops_014?.[0].label).toBe('Office lease')
+    expect(arts.ops_014?.[0].simulated).toBe(true)
+    expect(arts.ops_014?.[0].value).toContain('$0.00')
   })
 
   it('launch: every PUBLIC launch option runs the launch chain; Stealth mode skips it', () => {
@@ -350,13 +429,16 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('DEFAULT-ASSERTED decisions (item 5): a per-decision list of valid options — entity starts asserted at c-corp', () => {
-    expect(DEFAULT_ASSERTED).toEqual({ entity: 'c-corp' })
+  it('DEFAULT-ASSERTED decisions: entity starts asserted at c-corp, compliance at Basic minimums (item 8); only composition-neutral entries underlay decoded run links', () => {
+    expect(DEFAULT_ASSERTED).toEqual({ entity: 'c-corp', compliance: 'basics' })
     for (const [id, value] of Object.entries(DEFAULT_ASSERTED)) {
       const d = DECISIONS.find((x) => x.id === id)
       expect(d, `DEFAULT_ASSERTED names unknown decision "${id}"`).toBeTruthy()
       expect(d!.options.map((o) => o.value)).toContain(value)
     }
+    // The URL-neutral subset: entity (equals the composed default) underlies decoded links;
+    // compliance (differs) must NOT — an old link's elided compliance keeps its SOC 2 branch.
+    expect(DEFAULT_ASSERTED_URL_NEUTRAL).toEqual({ entity: 'c-corp' })
   })
 
   it('tasks shared across chains (domain_002, prod_005) run once — first occurrence wins', () => {
@@ -397,19 +479,27 @@ describe('synthetic artifacts — labeled, deterministic, impossible-real', () =
   })
 
   it('EVERY generated artifact carries the literal simulated flag and non-empty copy', () => {
+    // The sweep is 122,880 combos × ~15 artifacts — plain checks accumulate violations and a
+    // single expect reports them, so the full honesty sweep stays exhaustive AND fast (millions
+    // of expect() calls were the old bottleneck, not the generators).
+    const violations: string[] = []
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
+      const idSet = new Set(ids)
       const byTask = buildJourneyArtifacts(combo, ids)
-      const all = Object.values(byTask).flat()
-      expect(all.length).toBeGreaterThan(0)
-      for (const a of all) {
-        expect(a.simulated).toBe(true)
-        expect(ids.includes(a.taskId)).toBe(true)
-        expect(a.label.length).toBeGreaterThan(0)
-        expect(a.value.length).toBeGreaterThan(0)
+      let count = 0
+      for (const arts of Object.values(byTask)) {
+        for (const a of arts) {
+          count += 1
+          if (a.simulated !== true) violations.push(`${comboKey(combo)}: ${a.taskId} unlabeled`)
+          if (!idSet.has(a.taskId)) violations.push(`${comboKey(combo)}: ${a.taskId} outside the journey`)
+          if (a.label.length === 0 || a.value.length === 0) violations.push(`${comboKey(combo)}: ${a.taskId} empty copy`)
+        }
       }
+      if (count === 0) violations.push(`${comboKey(combo)}: no artifacts at all`)
     }
-  })
+    expect(violations).toEqual([])
+  }, 120_000)
 
   it('replays identically for the same decision combo (seeded, no runtime randomness)', () => {
     for (const combo of combos) {
@@ -582,17 +672,28 @@ describe('preset example companies (founder ask 2026-09-25)', () => {
     expect(c.software).toEqual({
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'subscriptions',
       ordering: 'name-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'yes',
+      remote: 'remote',
     })
     expect(c.hardware).toEqual({
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
       ordering: 'build-first', hire: 'yes', compliance: 'later', enterprise: 'yes', ph: 'no',
+      remote: 'remote',
     })
     // Combo update (round 5, item 3): biotech asserts the HIPAA framing — the same
     // set-up-compliance chain, framework named, run early.
     expect(c.biotech).toEqual({
       entity: 'c-corp', team: 'cofounders', funding: 'seed', product: 'invoices',
       ordering: 'name-first', hire: 'yes', compliance: 'hipaa', enterprise: 'yes', ph: 'no',
+      remote: 'remote',
     })
+  })
+
+  it('functional-type labels (item 11, 2026-09-30): the pills name the kind of startup, never the fictional company; ids/tokens stay stable', () => {
+    expect(VS_PRESETS.map((p) => p.label)).toEqual(['Typical software', 'Frontier hardware', 'Biotech'])
+    for (const p of VS_PRESETS) {
+      // The fake startup name left the label (the identity still themes the run's artifacts).
+      expect(p.label).not.toContain(p.company.name)
+    }
   })
 
   it('every preset journey is composed of real corpus tasks only', () => {

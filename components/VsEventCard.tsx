@@ -37,7 +37,7 @@ export default function VsEventCard({
         <span className="font-medium text-zinc-200">{def.title}</span>
       </p>
       <p className="mt-1 text-zinc-400">{def.blurb}</p>
-      <p className="mt-1 text-[11px] text-zinc-500">
+      <p className="mt-1 text-[11px] text-zinc-400">
         grounded in:{' '}
         <Link href={`/processes/${groundedSlug}`} className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
           {groundedTitle}
@@ -69,7 +69,7 @@ export default function VsEventCard({
             <p data-testid="vs-event-assumption" className="mt-0.5 text-amber-300/90">{choice.effect.assumption}</p>
           )}
           {(choice.effect.kind === 'redo-tasks' || choice.effect.kind === 'add-chain-time' || choice.effect.kind === 'switch-vendor') && (
-            <p className="mt-0.5 text-zinc-500">{choice.effect.blurb}</p>
+            <p className="mt-0.5 text-zinc-400">{choice.effect.blurb}</p>
           )}
           {choice.effect.kind === 'lose-deal' && <p className="mt-0.5 text-red-300/90">{choice.effect.note}</p>}
           {event.deltaMinutes > 0 && (
@@ -77,7 +77,7 @@ export default function VsEventCard({
           )}
         </div>
       ) : (
-        <p className="mt-2 text-[11px] text-zinc-500">
+        <p className="mt-2 text-[11px] text-zinc-400">
           undecided — the scorecard counts this event only once you choose (pending decisions add no time)
         </p>
       )}

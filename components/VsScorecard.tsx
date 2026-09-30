@@ -81,7 +81,7 @@ export default function VsScorecard({
     >
       <p className="flex flex-wrap items-center gap-1.5">
         <span className="font-semibold tracking-tight text-zinc-200">Run scorecard</span>
-        <span className="text-[11px] text-zinc-500">
+        <span className="text-[11px] text-zinc-400">
           founder: {techLabel} · {expLabel}
         </span>
       </p>
@@ -91,7 +91,7 @@ export default function VsScorecard({
         Your stack: {outcome.agentRunPct}% agent-run → launch day {launchDay} · agents-first optimal
         stack: day {optimal.launchDay}
       </p>
-      <p className="mt-0.5 text-[11px] text-zinc-500">
+      <p className="mt-0.5 text-[11px] text-zinc-400">
         agent-run = steps whose picked vendor has a judged MCP/CLI surface (canonical verdicts) or
         that no swappable vendor serves; the optimal stack is computed — the top MCP/CLI-bearing
         vendor per role from the real arena ranking, before events.
@@ -99,25 +99,25 @@ export default function VsScorecard({
 
       <ul className="mt-3 space-y-1.5">
         <li data-testid="vs-score-launch">
-          <span className="text-zinc-500">Time to launch:</span>{' '}
+          <span className="text-zinc-400">Time to launch:</span>{' '}
           <span className="tabular-nums">day {launchDay}</span>
           {resolution.deltaMinutes > 0 && (
-            <span className="text-[11px] text-zinc-500"> (incl. +{formatMinutes(resolution.deltaMinutes)} from event decisions)</span>
+            <span className="text-[11px] text-zinc-400"> (incl. +{formatMinutes(resolution.deltaMinutes)} from event decisions)</span>
           )}
         </li>
         <li data-testid="vs-score-agentrun">
-          <span className="text-zinc-500">Agent-run:</span>{' '}
+          <span className="text-zinc-400">Agent-run:</span>{' '}
           <span className="tabular-nums">{outcome.agentRunSteps}/{outcome.totalSteps} steps ({outcome.agentRunPct}%)</span>
         </li>
         <li data-testid="vs-score-saved">
-          <span className="text-zinc-500">Founder-hours saved vs all-manual:</span>{' '}
+          <span className="text-zinc-400">Founder-hours saved vs all-manual:</span>{' '}
           <span className="tabular-nums">~{savedHours} h</span>{' '}
-          <span className="text-[11px] text-zinc-500">
+          <span className="text-[11px] text-zinc-400">
             (all-manual = every agent step at ×{FOUNDER_HOURS_MULTIPLIER} founder-hours — simulation assumption)
           </span>
         </li>
         <li data-testid="vs-score-events">
-          <span className="text-zinc-500">Events:</span>{' '}
+          <span className="text-zinc-400">Events:</span>{' '}
           {resolution.events.length === 0 ? (
             <span className="text-zinc-400">none drawn this run</span>
           ) : (
@@ -126,7 +126,7 @@ export default function VsScorecard({
                 {resolution.decided}/{resolution.events.length} decided
                 {resolution.dealsLost > 0 && ` · ${resolution.dealsLost} virtual deal${resolution.dealsLost === 1 ? '' : 's'} lost`}
               </span>
-              <ul className="mt-0.5 space-y-0.5 pl-4 text-[11px] text-zinc-500">
+              <ul className="mt-0.5 space-y-0.5 pl-4 text-[11px] text-zinc-400">
                 {resolution.events.map((e) => (
                   <li key={e.def.id}>
                     day {e.day} — {e.def.title}: {e.choice ? e.choice.label : 'undecided'}
@@ -140,15 +140,15 @@ export default function VsScorecard({
 
       {/* Burn — published pricing only, cited; gaps stay gaps. */}
       <div data-testid="vs-score-burn" className="mt-3">
-        <p className="text-zinc-500">
+        <p className="text-zinc-400">
           Burn — from vendors&rsquo; published pricing (lib-extracted, cited per vendor):
         </p>
         {burn.monthlyUsd !== null && burn.monthlyUsd > 0 ? (
           <p className="mt-0.5 tabular-nums">
-            ${burn.monthlyUsd}/mo <span className="text-[11px] text-zinc-500">(entry-plan sticker prices, summed as printed)</span>
+            ${burn.monthlyUsd}/mo <span className="text-[11px] text-zinc-400">(entry-plan sticker prices, summed as printed)</span>
           </p>
         ) : (
-          <p className="mt-0.5 text-[11px] text-zinc-500">
+          <p className="mt-0.5 text-[11px] text-zinc-400">
             no monthly entry-plan prices to sum — the priced picks below are usage-based, and usage
             rates are never blended into an invented monthly figure
           </p>
@@ -169,7 +169,7 @@ export default function VsScorecard({
                 {userPickedArenas?.has(l.arenaId) ? (
                   <span className="text-amber-300/90">[your pick]</span>
                 ) : (
-                  <span className="text-zinc-600">[judged top]</span>
+                  <span className="text-zinc-500">[judged top]</span>
                 )}
                 :{' '}
                 {l.info!.kind === 'fact' ? (
@@ -184,15 +184,15 @@ export default function VsScorecard({
                     >
                       vendor pricing page
                     </a>{' '}
-                    <span className="text-zinc-600">as of {l.info!.asOf}</span>
+                    <span className="text-zinc-500">as of {l.info!.asOf}</span>
                   </>
                 ) : (
-                  <span className="text-zinc-500">pricing unclear — {l.info!.reason}</span>
+                  <span className="text-zinc-400">pricing unclear — {l.info!.reason}</span>
                 )}
               </li>
             ))}
           {burn.noPricingVendors > 0 && (
-            <li data-testid="vs-burn-gap" className="text-zinc-500">
+            <li data-testid="vs-burn-gap" className="text-zinc-400">
               {burn.noPricingVendors} picked vendor{burn.noPricingVendors === 1 ? '' : 's'}: no published pricing extracted — shown as a gap, never a guess
             </li>
           )}
@@ -219,7 +219,7 @@ export default function VsScorecard({
         >
           <span aria-live="polite">{copied ? 'Copied ✓' : 'copy run link'}</span>
         </button>
-        <span className="text-[11px] text-zinc-500">
+        <span className="text-[11px] text-zinc-400">
           the link replays this exact run — decisions, founder axes, drive mode, vendor picks,
           event choices, seed
         </span>

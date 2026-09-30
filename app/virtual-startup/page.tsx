@@ -15,7 +15,7 @@ import {
 // v3 run layer (vendor picks → outcomes, personas, seeded events, scorecard): serialized
 // canonical access verdicts, published-pricing headlines, and the corpus risk axis — see
 // lib/virtualStartupRun.ts for the client-side model and its honesty rules.
-import { buildVsAccess, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
+import { buildVsAccess, buildVsAssistants, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
 
 // Virtual Startup (founder ask 2026-09-23): a synthetic company run through the REAL process
 // corpus. This page is fully static: it precomputes, at build time, the payload for every task
@@ -171,6 +171,7 @@ export default function VirtualStartupPage() {
         taskRisks={buildVsTaskRisks()}
         vendorGeo={vendorGeoLookup(vsProductIds)}
         popularity={popularity}
+        assistants={buildVsAssistants()}
       />
 
     </div>

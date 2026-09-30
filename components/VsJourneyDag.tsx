@@ -476,7 +476,7 @@ export default function VsJourneyDag({
                         ? style.done
                         : isActive
                           ? 'animate-pulse border-emerald-400/70 text-zinc-100 ring-2 ring-emerald-400/50'
-                          : 'border-zinc-800 text-zinc-600'
+                          : 'border-zinc-800 text-zinc-500'
                     }`}
                   >
                     <span aria-hidden className={`text-base ${state === 'pending' ? 'opacity-50' : ''}`}>
