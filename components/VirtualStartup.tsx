@@ -1383,10 +1383,14 @@ export default function VirtualStartup({
                 // In-sim GEO (2026-09-29): under a non-US selection, a US-scoped process prints
                 // its committed country analog (processes/corpus.json geoNotes — summary +
                 // verified actionUrl, the ProcessGeoBanner data) or the honest "no mapping yet".
+                // A flavored GLOBAL process (mapping expansion 2026-09-29) prints its note only
+                // when one exists for the country — no "US-specific" line for global work.
                 // Annotation only, and never for 🌐 Global / the US default (geoCountry null).
+                const geoCountryNote =
+                  geoCountry !== null ? (row.task.geoNotes ?? []).find((n) => n.country === geoCountry) ?? null : null
                 const geoNote =
-                  geoCountry !== null && usScoped(row.task.id)
-                    ? { meta: GEO_PREF_META[geoCountry], note: (row.task.geoNotes ?? []).find((n) => n.country === geoCountry) ?? null }
+                  geoCountry !== null && (usScoped(row.task.id) || geoCountryNote !== null)
+                    ? { meta: GEO_PREF_META[geoCountry], note: geoCountryNote }
                     : null
                 return (
                   // data-vs-row: the journey DAG strip's click-to-scroll target (scrollTermToTask).

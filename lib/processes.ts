@@ -132,10 +132,15 @@ export type SlugAlias = z.infer<typeof SlugAliasSchema>
 // USA-centric processes vs global processes; choosing a name is global"). One curated note per
 // country DOCUMENTING the real non-US analog of a US-scoped process — what a founder in that
 // country does instead ("incorporate C-Corp" → UK Companies House, India MCA SPICe+, Germany
-// notary + Handelsregister, France INPI guichet unique). Editorial and honest: every actionUrl
-// is curl-verified live before listing (the VENDOR_SIGNUP_URL house rule — no unverifiable URL
-// is fabricated), and a country with no true analog simply carries no note. Display-only:
-// rendered as the "Outside the US" block on /processes/[slug]; no judged number reads these.
+// notary + Handelsregister, France INPI guichet unique) — and, since the mapping expansion
+// (founder ask 2026-09-29: "map the processes in the countries we tried to spike"), the real
+// per-country FLAVOR of a global process where it is jurisdictionally flavored (founder
+// agreement stamp duty in India, invoice e-invoicing mandates, offboarding law, GDPR/DPDP).
+// Editorial and honest: every actionUrl is curl-verified live before listing (the
+// VENDOR_SIGNUP_URL house rule — no unverifiable URL is fabricated; official-host blocks get
+// the mca.gov.in→NSWS substitution, never a fabricated link), and a country with no true
+// analog simply carries no note. Display-only: rendered as the "Outside the US" block on
+// /processes/[slug]; no judged number reads these.
 export const GEO_NOTE_COUNTRIES = ['IN', 'UK', 'DE', 'FR'] as const
 export type GeoNoteCountry = (typeof GEO_NOTE_COUNTRIES)[number]
 
@@ -185,9 +190,9 @@ export const ProcessTaskSchema = z.object({
   // Consistency with `region` (the 🇺🇸 display flag) is corpus-tested both ways: geoScope
   // 'us'/'us-state' ⇔ region 'us'.
   geoScope: z.enum(['global', 'us', 'us-state']),
-  // Per-country analogs for a US-scoped process — see GeoNoteSchema above. At most one note
-  // per country per process (corpus-tested); only on non-'global' processes, since a global
-  // process needs no "Outside the US" story.
+  // Per-country analogs of a US-scoped process, or the honest per-country flavor of a
+  // jurisdictionally-flavored global one — see GeoNoteSchema above. At most one note per
+  // country per process (corpus-tested); unflavored global processes carry none.
   geoNotes: GeoNoteSchema.array().optional(),
   // The five founder orderings (founder ask 2026-09-18) — curated, display-only rank axes for
   // the /processes table. All four are REQUIRED so coverage is total by construction:

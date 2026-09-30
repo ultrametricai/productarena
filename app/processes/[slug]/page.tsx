@@ -231,9 +231,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         )}
       </section>
 
-      {/* The GEO dimension (founder 2026-09-28): per-country analogs of a US-scoped process,
-          curated in the corpus (geoNotes) — renders nothing for the many processes without. */}
-      <ProcessGeoNotes notes={task.geoNotes ?? []} />
+      {/* The GEO dimension (founder 2026-09-28, expanded 2026-09-29): per-country analogs of a
+          US-scoped process — or the local flavor of a flavored global one — curated in the
+          corpus (geoNotes); renders nothing for the many processes without. */}
+      <ProcessGeoNotes notes={task.geoNotes ?? []} geoScope={task.geoScope} />
 
       <ProcessVerdict ceiling={ceiling} tasks={[task]} />
 

@@ -41,6 +41,23 @@ describe('the honesty matrix (geoScope × notes)', () => {
     expect(container.textContent).toContain('the same steps apply in Germany.')
   })
 
+  it('global + note for the country: the local flavor renders from committed data only', () => {
+    // The mapping expansion (founder ask 2026-09-29): a flavored global process carries notes.
+    const { container } = render(<ProcessGeoBanner geoScope="global" notes={NOTES} />)
+    select('UK')
+    expect(container.textContent).toContain('Global process')
+    expect(container.textContent).toContain('the same core steps apply in the United Kingdom.')
+    expect(container.textContent).toContain('Local flavor:')
+    expect(container.textContent).toContain('Register a private limited company with Companies House.')
+    expect(container.querySelector('a[href="https://www.gov.uk/limited-company-formation"]')).not.toBeNull()
+    expect(container.querySelector('a[href="#outside-the-us"]')).not.toBeNull()
+    // A country without a note stays on the plain global line — nothing borrowed.
+    select('FR')
+    expect(container.textContent).toContain('the same steps apply in France.')
+    expect(container.textContent).not.toContain('Local flavor:')
+    expect(container.querySelector('a[href^="https://"]')).toBeNull()
+  })
+
   it('us + note for the country: US-centric + the promoted analog with its verified link', () => {
     const { container } = render(<ProcessGeoBanner geoScope="us" notes={NOTES} />)
     select('UK')
