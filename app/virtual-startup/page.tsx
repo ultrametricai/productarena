@@ -28,9 +28,9 @@ import { buildVsAccess, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualSt
 export const metadata: Metadata = {
   // One title (founder 2026-09-29, latest wording): 'Startup Simulator' — the route stays
   // /virtual-startup, and every internal id/testid keeps the vs/virtual-startup vocabulary.
-  title: 'Startup Simulator — Ultrametric',
+  title: 'The open startup simulator — Ultrametric',
   description:
-    'Startup Simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',
+    'The open startup simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',
 }
 
 // DAG route mix of one corpus process — the year view's per-row honesty payload.
@@ -133,7 +133,7 @@ export default function VirtualStartupPage() {
         {/* ONE title (founder round 4, item 2): the h1+subtitle pair collapsed into the single
             'Startup Simulator' h1 — no breadcrumb eyebrow, no subtitle; the explanations
             live in the setup band's tooltips. */}
-        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Startup Simulator</h1>
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">The open startup simulator</h1>
       </section>
 
       <VirtualStartup
