@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:37:47.635Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:37:59.712Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 84 ingested+committed / 10 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 29,579 |
-| Cumulative ingested spend | $498.63 (hard stop $800) |
+| Arenas done / remaining | 85 ingested+committed / 9 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 29,844 |
+| Cumulative ingested spend | $503.16 (hard stop $800) |
 | Projected fleet ingest total | ~$572 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.9% (7,120 flips / 29,579 comparable cells) |
-| Batch requests / interactive fallbacks | 28,543 / 13 |
+| Fleet exact agreement vs sonnet-5 (running) | 76.0% (7,166 flips / 29,844 comparable cells) |
+| Batch requests / interactive fallbacks | 28,808 / 13 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -60,6 +60,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | email-marketing | 348 | 66 | 81% | $5.34 |
 | equity-management | 336 | 82 | 75.6% | $4.91 |
 | error-tracking | 330 | 74 | 77.6% | $5.35 |
+| expense-management | 265 | 46 | 82.6% | $4.53 |
 | feature-flags | 270 | 57 | 78.9% | $4.88 |
 | fraud-prevention | 270 | 68 | 74.8% | $3.81 |
 | frontend-frameworks | 425 | 101 | 76.2% | $5.83 |
@@ -106,5 +107,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `expense-management` msgbatch_01EVLYevsABYxwJNV9t5HvXZ (265) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
+`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
 
