@@ -1,16 +1,15 @@
 {
-  "hash": "6fa5585267e35335a8be466c9a0284bb816d038c99effb7a99514888e98ffaaa",
+  "hash": "1b9116c1a7499f5714bbbfdffdaf8b58da58f1221a88081e034aa08357dc31af",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Temporal's docs show relevant building blocks — automatic Activity retries (temporal-docs-4/36), deterministic replay that avoids re-executing side-effecting calls (temporal-docs-25: 'model calls are executed as Activities, so they retry durably and are not repeated during Workflow replay'), and crash-proof resume semantics (temporal-docs-1, temporal-docs-41) — which together reduce duplicate-trigger risk. However, the pack never explicitly documents Workflow ID uniqueness/reuse policies or an 'idempotency key' concept for external side effects like payments, and community feedback (temporal-comm-5) notes real-world difficulty handling anomalous workflow states, suggesting exactly-once guarantees for external actions still require developer diligence. Missing for 10: explicit documentation of Workflow ID-based deduplication/idempotency keys, guidance on making Activities idempotent for financial-grade exactly-once side effects, and independent verification that double-charging/double-sending is prevented in practice.",
+    "rationale": "Temporal's docs say Workflows resume exactly where they left off after crashes. They also say Activity results are not re-executed during Workflow replay, which prevents completed steps such as sends or charges from repeating on recovery. However, Activities are retried automatically by default, and the pack never documents idempotency keys, deduplication of duplicate triggers, or exactly-once Activity guarantees. That leaves the double-charge and double-send scenario only partly addressed. Missing for 10: documented idempotency-key or Workflow-ID-based duplicate-trigger deduplication, an explicit exactly-once (versus at-least-once) Activity semantics statement, guidance on idempotent Activities for payments and sends, and independent hands-on corroboration.",
     "evidenceIds": [
-      "temporal-docs-4",
-      "temporal-docs-25",
       "temporal-docs-1",
-      "temporal-docs-41",
-      "temporal-comm-5"
+      "temporal-docs-25",
+      "temporal-docs-4",
+      "temporal-docs-3"
     ],
     "productId": "temporal",
     "storyId": "idempotency-exactly-once"

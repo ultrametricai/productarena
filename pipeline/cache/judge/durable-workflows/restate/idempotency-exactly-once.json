@@ -1,18 +1,17 @@
 {
-  "hash": "5f2a0c6815b66af98e64353c4dd0f2287c30672fe2a202316c6c90343a52e133",
+  "hash": "e84cd53f0888010afe7cf94d1fb83fd6e2f04d7780266a346272b77107d5fcdd",
   "verdict": {
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Restate's docs explicitly describe idempotency-key deduplication and exactly-once processing for events/invocations (restate-docs-37, restate-docs-47, restate-docs-81), plus guaranteed exactly-once service calls (restate-docs-3) and durable step persistence/retry semantics (restate-docs-15, restate-docs-18, restate-docs-30) that together prevent duplicate side effects like double-charging or double-sending. Missing for 10: independent/hands-on verification specifically of idempotency-key deduplication behavior in production (community evidence is about general product experience, not this feature).",
+    "rationale": "Restate's docs describe deduplicating incoming events on an idempotency key and processing them exactly once across failures and restarts. They also describe exactly-once semantics for service calls, and `ctx.run` persisting the results of non-deterministic operations (such as HTTP or payment calls) in the execution log so completed steps are not re-run on recovery. Missing for 10: detail on idempotency-key mechanics (how keys are passed, retention window), explicit guidance on side effects inside a step that fails mid-way, and independent or hands-on corroboration that duplicates are actually prevented.",
     "evidenceIds": [
       "restate-docs-37",
-      "restate-docs-47",
       "restate-docs-81",
       "restate-docs-3",
-      "restate-docs-15",
       "restate-docs-18",
-      "restate-docs-30"
+      "restate-docs-80",
+      "restate-docs-1"
     ],
     "productId": "restate",
     "storyId": "idempotency-exactly-once"

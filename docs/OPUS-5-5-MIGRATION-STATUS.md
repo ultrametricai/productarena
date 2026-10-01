@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:16:28.857Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:16:41.342Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 54 ingested+committed / 40 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 18,319 |
-| Cumulative ingested spend | $305.63 (hard stop $800) |
-| Projected fleet ingest total | ~$579 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 76.4% (4,324 flips / 18,319 comparable cells) |
-| Batch requests / interactive fallbacks | 17,283 / 8 |
+| Arenas done / remaining | 55 ingested+committed / 39 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 18,637 |
+| Cumulative ingested spend | $312.14 (hard stop $800) |
+| Projected fleet ingest total | ~$581 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 76.4% (4,392 flips / 18,637 comparable cells) |
+| Batch requests / interactive fallbacks | 17,601 / 8 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -48,6 +48,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | docs-platforms | 265 | 68 | 74.3% | $5.22 |
 | document-extraction | 318 | 75 | 76.4% | $5.29 |
 | domain-registrars | 294 | 80 | 72.8% | $4.86 |
+| durable-workflows | 318 | 68 | 78.6% | $6.51 |
 | email-marketing | 348 | 66 | 81% | $5.34 |
 | fraud-prevention | 270 | 68 | 74.8% | $3.81 |
 | identity-verification | 318 | 83 | 73.9% | $4.84 |
@@ -76,5 +77,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`accounting` msgbatch_01QyvyRnSWgicsiv7D5VR3DZ (583) · `agent-frameworks` msgbatch_0182S9ahmeGKRUJJmYyx7JuS (459) · `agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `ai-code-review` msgbatch_01DpLWbMwBVHUdbNAhEZThyS (318) · `design-tools` msgbatch_01HxHJ9wNU6oJsgwcLPuqVBv (424) · `durable-workflows` msgbatch_019ptwiYRXzYpMvzVeywHjg4 (318) · `ecommerce-platforms` msgbatch_01HRfwoCCeoWR7Q7oR7Nn2A3 (270) · `edge-platforms` msgbatch_016F5ueZLZLKfowkrzSFGQMe (576) · `email` msgbatch_01MGnQpJmkG3aDVLaktHWTmE (378) · `email-apis` msgbatch_019oLJFMCHcPocQxpVpq3baM (260) · `equity-management` msgbatch_011Ln9oYycfZK4t3r7KsRSw7 (336) · `error-tracking` msgbatch_01MA6WFY74HDMtiHEhwBg8tA (330) · `expense-management` msgbatch_01EVLYevsABYxwJNV9t5HvXZ (265) · `feature-flags` msgbatch_01UWjXfy43h86JZ7B7UBHZ6y (270) · `frontend-frameworks` msgbatch_01UB9d68qM5ULGfYSYxjYmqr (425) · `frontier-models` msgbatch_011riJv1zhtWTuNBSnmn9suv (488) · `game-engines` msgbatch_01EWuEfAvvVMZ1d32KXG9kQP (456) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `gpus` msgbatch_01STPZTdPvsJ9NzFGdwKj8Gi (344) · `inference-providers` msgbatch_01C5aF11fVbiMhyWn3PQmgX8 (371) · `legal-ops` msgbatch_01TtKLdJENCBh61ZFTwuemfy (378) · `llm-evals-observability` msgbatch_01G85A1ownraAsrasbUkHYPb (416) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mcp-infrastructure` msgbatch_01GygcLmTLRoH4JWsq3ueEqZ (364) · `meeting-ai` msgbatch_01JQwNNka9VPbKZ5n7gP7mfG (270) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `model-gateways` msgbatch_019cpaXyRptoFAMV9kEkvWiF (350) · `package-managers` msgbatch_01ReRXVJGFWkLN71yLPmYYKe (324) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `robotics-platforms` msgbatch_01C9XDeamNfo99Y2bALm36ru (270) · `security-keys` msgbatch_01AFCHtGXDeFWxVyYaRLPSmQ (324) · `self-hosted-assistants` msgbatch_01CgjT55Ht9eF57N3nw9kF7i (342) · `software-factory` msgbatch_014nMhpNfkxSSYPMcYEMgEvV (730) · `sso-identity` msgbatch_01B6kWRpLc9dTm6a7m7WWCzk (250) · `stablecoin-payments` msgbatch_01BMCNTKEdnUFRBR4JBigeJt (318) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `tax-automation` msgbatch_01KZTSHpquJRNwWpjqkqWB7J (318) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
+`accounting` msgbatch_01QyvyRnSWgicsiv7D5VR3DZ (583) · `agent-frameworks` msgbatch_0182S9ahmeGKRUJJmYyx7JuS (459) · `agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `ai-code-review` msgbatch_01DpLWbMwBVHUdbNAhEZThyS (318) · `design-tools` msgbatch_01HxHJ9wNU6oJsgwcLPuqVBv (424) · `ecommerce-platforms` msgbatch_01HRfwoCCeoWR7Q7oR7Nn2A3 (270) · `edge-platforms` msgbatch_016F5ueZLZLKfowkrzSFGQMe (576) · `email` msgbatch_01MGnQpJmkG3aDVLaktHWTmE (378) · `email-apis` msgbatch_019oLJFMCHcPocQxpVpq3baM (260) · `equity-management` msgbatch_011Ln9oYycfZK4t3r7KsRSw7 (336) · `error-tracking` msgbatch_01MA6WFY74HDMtiHEhwBg8tA (330) · `expense-management` msgbatch_01EVLYevsABYxwJNV9t5HvXZ (265) · `feature-flags` msgbatch_01UWjXfy43h86JZ7B7UBHZ6y (270) · `frontend-frameworks` msgbatch_01UB9d68qM5ULGfYSYxjYmqr (425) · `frontier-models` msgbatch_011riJv1zhtWTuNBSnmn9suv (488) · `game-engines` msgbatch_01EWuEfAvvVMZ1d32KXG9kQP (456) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `gpus` msgbatch_01STPZTdPvsJ9NzFGdwKj8Gi (344) · `inference-providers` msgbatch_01C5aF11fVbiMhyWn3PQmgX8 (371) · `legal-ops` msgbatch_01TtKLdJENCBh61ZFTwuemfy (378) · `llm-evals-observability` msgbatch_01G85A1ownraAsrasbUkHYPb (416) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mcp-infrastructure` msgbatch_01GygcLmTLRoH4JWsq3ueEqZ (364) · `meeting-ai` msgbatch_01JQwNNka9VPbKZ5n7gP7mfG (270) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `model-gateways` msgbatch_019cpaXyRptoFAMV9kEkvWiF (350) · `package-managers` msgbatch_01ReRXVJGFWkLN71yLPmYYKe (324) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `robotics-platforms` msgbatch_01C9XDeamNfo99Y2bALm36ru (270) · `security-keys` msgbatch_01AFCHtGXDeFWxVyYaRLPSmQ (324) · `self-hosted-assistants` msgbatch_01CgjT55Ht9eF57N3nw9kF7i (342) · `software-factory` msgbatch_014nMhpNfkxSSYPMcYEMgEvV (730) · `sso-identity` msgbatch_01B6kWRpLc9dTm6a7m7WWCzk (250) · `stablecoin-payments` msgbatch_01BMCNTKEdnUFRBR4JBigeJt (318) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `tax-automation` msgbatch_01KZTSHpquJRNwWpjqkqWB7J (318) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
 

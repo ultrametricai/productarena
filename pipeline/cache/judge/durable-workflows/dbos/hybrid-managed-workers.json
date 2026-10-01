@@ -1,23 +1,18 @@
 {
-  "hash": "afe6a7df6aad9c819ea590bcf896cd8d113998b7d05292953d59d45723c5cc8f",
+  "hash": "905aa07a70627592ba15e87017423dee02db063d820d9d2a07c4d8707d83e436",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "DBOS's architecture is exactly this split: the DBOS library runs as workers inside the customer's own application/infrastructure, checkpointing all workflow state to the customer's own Postgres (code and data stay in-network) [dbos-docs-2, dbos-docs-4, dbos-docs-23], while DBOS Conductor is a separate control-plane service (vendor-hosted by default, but also self-hostable) that provides orchestration/observability, workflow management, and recovery routing via a dashboard, HTTP API, and dbosctl CLI [dbos-docs-16, dbos-docs-17, dbos-docs-18, dbos-docs-19, dbos-docs-31, dbos-docs-33, dbos-docs-34]. Community corroboration confirms the no-central-orchestrator, Postgres-in-your-infra execution model [dbos-comm-1, dbos-comm-14], though one user noted observability/self-hosting was initially incomplete before being added [dbos-comm-8]. Missing for 10: independent/hands-on verification that Conductor never touches actual business payload data (only orchestration metadata), and more detail on network/security boundaries between self-hosted workers and the vendor control plane.",
+    "rationale": "DBOS runs as a library inside your own application processes, backed by your own Postgres, so execution and workflow state live in your infrastructure. DBOS also offers a vendor-managed Conductor that monitors and controls workflows and recovers interrupted ones to healthy executors (it can alternatively be self-hosted). The evidence never states that code and workflow data stay inside your network when the DBOS-managed Conductor is used, and orchestration itself happens in the library and Postgres rather than in Conductor. missing for 10: documented data-residency guarantees for managed Conductor, an explanation of how executors connect to the managed control plane, and independent corroboration of the hybrid deployment model.",
     "evidenceIds": [
       "dbos-docs-2",
-      "dbos-docs-4",
-      "dbos-docs-16",
-      "dbos-docs-17",
-      "dbos-docs-18",
-      "dbos-docs-19",
+      "dbos-docs-20",
       "dbos-docs-31",
+      "dbos-docs-16",
       "dbos-docs-33",
       "dbos-docs-34",
-      "dbos-comm-1",
-      "dbos-comm-14",
-      "dbos-comm-8"
+      "dbos-comm-14"
     ],
     "productId": "dbos",
     "storyId": "hybrid-managed-workers"

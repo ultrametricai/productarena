@@ -1,14 +1,14 @@
 {
-  "hash": "c64ca61d5d81118c356c2c60fb4c903fbbee0c28616b25ff1f7d3159a58ab591",
+  "hash": "9e56e6b2016eea752a263256cb931dfb223555e1ce8a8336eac743ae737ae1fc",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "DBOS queues explicitly provide 'managed concurrency' and 'flow control' to cap how many workflows run at once or how often they start, which covers per-workflow/queue concurrency and rate limiting (dbos-docs-6, dbos-docs-26). However, there is no evidence of first-class per-key or per-tenant rate-limit/concurrency scoping (e.g., a tenant-id dimension), and a community critique raises unresolved concerns about coordinating rate limits globally across workers (dbos-comm-6). Missing for 10: documented per-tenant/per-key limiting semantics, worked examples of multi-tenant fairness, and independent verification that limits hold under contention.",
+    "rationale": "DBOS queues provide flow control that limits how many workflows run at once (concurrency caps) and how often workflows are started (rate limits), which covers per-queue and per-workflow throttling. Nothing in the evidence shows per-key or per-tenant partitioning, which is the part of the story that stops one hot customer from starving the rest. A Hatchet co-founder's concern about global rate-limit coordination is skepticism, not a concrete failure, so it lowers confidence only. Missing for 10: per-key or per-tenant concurrency and rate-limit partitioning, detailed docs on limit configuration, and independent hands-on corroboration of fairness under load.",
     "evidenceIds": [
       "dbos-docs-6",
       "dbos-docs-26",
-      "dbos-comm-6"
+      "dbos-gh-1"
     ],
     "productId": "dbos",
     "storyId": "concurrency-rate-controls"

@@ -1,15 +1,18 @@
 {
-  "hash": "f9818abeda4a620c9a4115e63447ba687f6c9b0ac04b3dad85219446d25737df",
+  "hash": "19bb33229c9f851714c75cb7865954f2c1e8bf8d4888c8b55f2d7f672d181803",
   "verdict": {
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Temporal's task-queue model lets any number of Workers poll the same queue, and docs explicitly describe tuning Worker fleets for throughput and efficient resource use (temporal-docs-29, temporal-docs-49), plus serverless autoscaling Worker options (temporal-docs-22, temporal-docs-28). Community users confirm the core promise: 'distribute work across machines without worrying about orchestration... retry any unit easily on failure' and 'full scheduling of work and queues that's cross-machine' (temporal-comm-7, temporal-comm-8), which implies load-balancing and worker-loss tolerance via retries/task requeueing. Missing for 10: explicit documentation/benchmarks of task-queue rebalancing when a worker dies mid-task, and independent throughput-scaling benchmarks beyond anecdotal community reports.",
+    "rationale": "Temporal documents Worker fleets pulling from Task Queues, with tuning guidance (temporal-docs-29, temporal-docs-49) and serverless Workers that autoscale to available work (temporal-docs-22, temporal-docs-28). It also claims execution resumes after crashes and survives Worker restarts (temporal-docs-1, temporal-docs-25), and users confirm it distributes work across machines with retry on failure (temporal-comm-7, temporal-comm-8). Missing for 10: an explicit doc statement that tasks are load-balanced across Workers polling a shared Task Queue, evidence that throughput scales roughly linearly as Workers are added (benchmarks or hands-on reports), and documented reassignment of in-flight tasks when a Worker dies (e.g., timeouts).",
     "evidenceIds": [
       "temporal-docs-29",
       "temporal-docs-49",
       "temporal-docs-22",
       "temporal-docs-28",
+      "temporal-docs-1",
+      "temporal-docs-25",
+      "temporal-docs-4",
       "temporal-comm-7",
       "temporal-comm-8"
     ],
