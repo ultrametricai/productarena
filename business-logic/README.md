@@ -1,6 +1,6 @@
 # Business logic — decision support, calculations, calendars, comparisons
 
-Pillar ③ of [the open startup repo](../README.md#-business-logic): reusable business logic —
+Part of [the open startup repo](../README.md#business-logic): reusable business logic —
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
 the vendor evidence layer (`vendors/`, `data/`). Four modules live in `lib/openstartup/` today
 (cap table, runway & burn, deadline calendar, equity-comp scenarios), every one pure,

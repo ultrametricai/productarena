@@ -1,21 +1,9 @@
 # Ultrametric — the open startup repo
 
-[![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
-[![site](https://img.shields.io/badge/site-ultrametric.ai-000000)](https://ultrametric.ai)
-<!-- stat-badges:start -->
-[![arenas](https://img.shields.io/badge/arenas-94-34d399)](https://ultrametric.ai)
-[![products](https://img.shields.io/badge/products-593-34d399)](https://ultrametric.ai/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-33789-34d399)](https://ultrametric.ai/methodology)
-<!-- stat-badges:end -->
-[![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
-[![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
-
-**The open startup repo: a source-backed operating map for starting and running a company,
-anywhere.** Everything here is a dated, citable, testable record — never opinion — organized
-into three pillars: **[processes](#-processes)** (what a founder does, step by step),
-**[vendors](#-vendors)** (which tools actually deliver, with evidence), and
-**[business logic](#-business-logic)** (the rules and calculations underneath). Built to be
-extended by founders everywhere, one pull request at a time.
+**Everything a founder — or their agent — needs to start and run a company: every
+[process](#processes) step by step, the [tools](#vendors) ranked on evidence, and the
+[business logic](#business-logic) underneath. Every record is dated, cited, and testable —
+never opinion.**
 
 ![The Open Startup mid-run — a simulated company executing the real founder-process corpus, every step routed agent / manual form / human, vendors from the judged rankings](docs/assets/virtual-startup.png)
 
@@ -24,23 +12,11 @@ extended by founders everywhere, one pull request at a time.
 elections, EIN — with each step routed agent / manual form / human and vendors drawn from the
 judged rankings.*
 
-Live site: https://ultrametric.ai (rankings at [/overall](https://ultrametric.ai/overall),
-processes at [/processes](https://ultrametric.ai/processes))
-
-<!-- stats:start -->
-As of the last full pipeline run: **94 arenas, 593 products, 33,789 judged verdicts.**
-<!-- stats:end -->
-
-Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
-`pnpm stats` — never a hand-maintained claim; see "Status & roadmap" for what's next.
-
-> ⭐ **If an open, evidence-based operating map for founders is useful to you,
-> [star the repo](https://github.com/ultrametricai/ultrametric)** — stars are how other
-> founders find this, and every record here is open for you to audit, contest, or extend.
+- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/virtual-startup)
+- **Build on it** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([agents & developers](#for-ai-agents))
+- **Add to it** — [CONTRIBUTING.md](./CONTRIBUTING.md): contest a verdict, add your country, add a module
 
 ## Start here
-
-Three pillars, three ways in. Pick the row that matches what you came for.
 
 **You're a founder starting or running a company:**
 
@@ -86,9 +62,7 @@ described by [/openapi.json](https://ultrametric.ai/openapi.json), and the groun
 [For AI agents](#for-ai-agents) below. (A first-party Ultrametric MCP server + API is coming;
 the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 
-## The three pillars
-
-### ① Processes
+## Processes
 
 **What it is.** The operational corpus: 123 step-by-step founder processes, each a DAG whose
 every step is routed agent / manual form / human, with per-step reversibility
@@ -111,7 +85,7 @@ whole corpus as a simulated company, end to end.
 [`templates/`](templates/), or a chain — all schema-gated by `pnpm test`. Start at
 [`processes/README.md`](processes/README.md) and [`journeys/README.md`](journeys/README.md).
 
-### ② Vendors
+## Vendors
 
 **What it is.** The evidence layer: head-to-head, evidence-graded rankings of the tools
 startups run on — 94 arenas, 593 products, 33,789 judged verdicts over 32,480 dated evidence
@@ -134,7 +108,7 @@ arenas).
 [Contributing](#contributing--how-the-community-can-help). Start at
 [`vendors/README.md`](vendors/README.md).
 
-### ③ Business logic
+## Business logic
 
 **What it is.** The rules and calculations a startup actually runs on, as open,
 source-cited, exhaustively tested records and code:
@@ -176,23 +150,23 @@ transfer, and anything leaning on a legal threshold references a dated rule card
 **Live.** Repo-first by design: the modules are pure libraries usable from tests, scripts, or
 your own agent; the processes and site consume the same rule cards and jurisdiction data.
 
-**Extend it.** [`business-logic/README.md`](business-logic/README.md) is the pillar doc — the
-module index, the contribution bar, and the honesty rules.
+**Extend it.** [`business-logic/README.md`](business-logic/README.md) is the index — the
+modules, the contribution bar, and the honesty rules.
 
-## How it fits together
+## How it works
 
 Two production lines feed one site, one data API, and one set of agent surfaces:
 
 ```mermaid
 flowchart LR
-  subgraph vendors ["② Vendors — the evidence line"]
+  subgraph vendors ["Vendors — the evidence line"]
     crawl["pipeline/ crawl → extract →<br/>normalize → collect-community →<br/>probe → judge → derive"]
     evidence["data/&lt;arena&gt;/evidence/*.json<br/>dated, tiered evidence"]
     verdicts["data/&lt;arena&gt;/verdicts.json<br/>every verdict cites evidence ids"]
     rankings["data/&lt;arena&gt;/rankings.json<br/>HMAC _provenance, deterministic"]
     crawl --> evidence --> verdicts --> rankings
   end
-  subgraph corpus ["① Processes + ③ Business logic — the corpus line"]
+  subgraph corpus ["Processes + business logic — the corpus line"]
     procs["processes/corpus.json + journeys/chains.json"]
     rules["rules/ + sources/ + jurisdictions/<br/>validated by lib/founderOps.ts"]
     modules["lib/openstartup/ modules"]
@@ -224,17 +198,17 @@ simulator at `/virtual-startup` replays the whole corpus end to end.
 
 ## Map of the repo
 
-Everything in the tree, grouped by pillar. The **knowledge layer** is the product — plain JSON
+Everything in the tree. The **knowledge layer** is the product — plain JSON
 and markdown, schema-validated in CI, usable without running any code.
 
-**① Processes**
+**Processes**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
 | [`processes/`](processes/) | `corpus.json` (123 operational processes: DAGs, routing, geo scope, time estimates), the per-step vendor registry, and jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
 | [`journeys/`](journeys/) | `chains.json` — 24 multi-process founder paths | corpus schema + loader tests |
 
-**② Vendors**
+**Vendors**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
@@ -242,14 +216,14 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product (593) | `schemas/vendor-review.schema.json`, deterministic regeneration |
 | `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
 
-**③ Business logic**
+**Business logic**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`) | `schemas/rule.schema.json` + validator |
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
-| [`business-logic/`](business-logic/) | The pillar doc: index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
-| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds pillar ②'s geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
+| [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
+| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds the site's geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
 | [`documents/`](documents/) | 100 canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | 40 canonical startup resources + `LAWS.md` (cited distilled principles) | `lib/resources.ts` + invariant tests |
 
@@ -258,7 +232,7 @@ that renders it. Three directories confuse newcomers, so plainly: **`schemas/`**
 contracts every record validates against; **`catalog/`** is the coverage map
 (`domains.json` = what the corpus intends to cover, `coverage.json` = what it honestly covers
 today, at what maturity); **`rules/`** is cited law the business-logic layer consumes — it
-belongs to pillar ③ above, listed there.
+belongs to [Business logic](#business-logic) above, listed there.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
@@ -397,8 +371,19 @@ are at `/data/<arena>/rankings.json` per arena.*
 
 ## Data releases & freshness
 
-Everything that changes is generated from the committed data, never hand-written, so freshness
-is a property of the repo, not of a news page:
+<!-- stat-badges:start -->
+[![arenas](https://img.shields.io/badge/arenas-94-34d399)](https://ultrametric.ai)
+[![products](https://img.shields.io/badge/products-593-34d399)](https://ultrametric.ai/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-33789-34d399)](https://ultrametric.ai/methodology)
+<!-- stat-badges:end -->
+
+<!-- stats:start -->
+As of the last full pipeline run: **94 arenas, 593 products, 33,789 judged verdicts.**
+<!-- stats:end -->
+
+These counts (and the badges) are regenerated from `data/` by `pnpm stats` — never a
+hand-maintained claim. Everything that changes is generated from the committed data, never
+hand-written, so freshness is a property of the repo, not of a news page:
 
 - **[/reports](https://ultrametric.ai/reports)** — generated weekly arena reports (biggest
   movers, rank flips, new arenas, close races), committed as markdown in `reports/`.
@@ -440,6 +425,8 @@ version. For plain-language answers ("what does `na` mean," "how do I disagree")
   [METHODOLOGY.md § Bias disclosure](./METHODOLOGY.md#bias-disclosure--the-judge-is-an-anthropic-model).
 
 ## Local development
+
+[![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
 
 ```bash
 pnpm install
@@ -599,7 +586,9 @@ treat them as a snapshot, not a promise.
 ## Contributing — how the community can help
 
 Every score on the site is only as good as its evidence, so evidence work is the
-contribution. Pick your angle:
+contribution. (And if the repo is useful to you,
+[a star](https://github.com/ultrametricai/ultrametric) is how other founders find it.)
+Pick your angle:
 
 - **Contest a verdict** — every verdict has a "⚑ contest" link that opens a prefilled
   issue. Bring a citation that contradicts (or supports) the ruling.
@@ -705,6 +694,9 @@ Rankings move as evidence lands — cite the dataset release tag (e.g. `data-202
 you need a pinned snapshot.
 
 ## License
+
+[![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
+[![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
 
 Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LICENSE).
 Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE) — viewable
