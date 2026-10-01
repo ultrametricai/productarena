@@ -4,7 +4,8 @@ import type { z } from 'zod'
 import { CategorySchema, type Category } from '../lib/schemas'
 
 export const ROOT = path.resolve(__dirname, '..')
-export const DATA_DIR = process.env.PA_DATA_DIR ?? path.join(ROOT, 'data')
+// PA_DATA_DIR is the deprecated pre-rename spelling, honored as a fallback.
+export const DATA_DIR = process.env.UM_DATA_DIR ?? process.env.PA_DATA_DIR ?? path.join(ROOT, 'data')
 export const CACHE_DIR = path.join(ROOT, 'pipeline', 'cache')
 
 export function categoryDir(categoryId: string): string {

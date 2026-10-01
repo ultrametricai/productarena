@@ -9,7 +9,7 @@
 // Usage: pnpm tsx pipeline/scripts/assemble-manual-stories.ts --category <id>
 //
 // Refuses to clobber a taxonomy that already has real verdicts (same guard as normalize.ts)
-// unless PA_FORCE_NORMALIZE=1 — rewriting stories.json under committed verdicts silently
+// unless UM_FORCE_NORMALIZE=1 — rewriting stories.json under committed verdicts silently
 // invalidates the judge matrix.
 import fs from 'node:fs'
 import path from 'node:path'
@@ -69,9 +69,9 @@ function main(): void {
 
   const dataDir = categoryDir(cat.id)
   const verdictsPath = path.join(dataDir, 'verdicts.json')
-  if (fs.existsSync(verdictsPath) && process.env.PA_FORCE_NORMALIZE !== '1') {
+  if (fs.existsSync(verdictsPath) && (process.env.UM_FORCE_NORMALIZE ?? process.env.PA_FORCE_NORMALIZE) !== '1') {
     throw new Error(
-      `assemble-manual-stories: verdicts already exist for ${cat.id}; re-run with PA_FORCE_NORMALIZE=1 and re-judge`,
+      `assemble-manual-stories: verdicts already exist for ${cat.id}; re-run with UM_FORCE_NORMALIZE=1 and re-judge`,
     )
   }
 

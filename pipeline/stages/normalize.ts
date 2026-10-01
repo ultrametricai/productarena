@@ -70,12 +70,12 @@ export async function runNormalize({ category }: { category?: string; product?: 
   const dataDir = categoryDir(cat.id)
 
   const verdictsPath = path.join(dataDir, 'verdicts.json')
-  if (fs.existsSync(verdictsPath) && process.env.PA_FORCE_NORMALIZE !== '1') {
+  if (fs.existsSync(verdictsPath) && (process.env.UM_FORCE_NORMALIZE ?? process.env.PA_FORCE_NORMALIZE) !== '1') {
     const verdicts = JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) as { rationale?: string }[]
     const allSample = Array.isArray(verdicts) && verdicts.every((v) => typeof v.rationale === 'string' && v.rationale.includes('SAMPLE:'))
     if (!allSample) {
       throw new Error(
-        `normalize: real verdicts exist for ${cat.id} and would be invalidated. Re-run with PA_FORCE_NORMALIZE=1, then re-run judge for all products in this category.`,
+        `normalize: real verdicts exist for ${cat.id} and would be invalidated. Re-run with UM_FORCE_NORMALIZE=1, then re-run judge for all products in this category.`,
       )
     }
   }
