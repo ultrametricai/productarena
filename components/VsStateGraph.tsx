@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import type { SyntheticArtifact, TopVendorPick } from '@/lib/virtualStartup'
 
@@ -188,7 +189,11 @@ export default function VsStateGraph({
             <ul className="space-y-1">
               {decisions.map((d) => (
                 <li key={d.id} data-testid="vs-sg-decision" data-decision-state={d.state ?? 'asserted'} className="flex items-baseline gap-2 text-[12px]">
-                  <span aria-hidden className="shrink-0">{d.icon}</span>
+                  {/* House icon tokens (the decision/axis maps in VirtualStartup.tsx) render
+                      as the custom duotone glyphs; plain text keeps rendering as text. */}
+                  <span aria-hidden className="shrink-0">
+                    <IconGlyph icon={d.icon} />
+                  </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-400">{d.title}</span>
                   <span className={d.state === 'pending' ? 'text-amber-300/90' : d.state === 'default' ? 'text-zinc-400' : 'text-zinc-300'}>
                     {d.label}

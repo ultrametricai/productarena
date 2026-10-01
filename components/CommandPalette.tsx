@@ -1,5 +1,6 @@
 'use client'
 
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -174,7 +175,11 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
                         {entry.type === 'product' && entry.productId ? (
                           <ProductLogoView product={{ id: entry.productId, name: entry.label }} size={18} hasLogo={!!entry.hasLogo} />
                         ) : entry.icon ? (
-                          <span aria-hidden className="w-[18px] shrink-0 text-center text-sm leading-none">{entry.icon}</span>
+                          // House icon tokens (lib/arenaIcons.ts) render as the custom duotone
+                          // glyphs; plain emoji entries keep rendering as text.
+                          <span aria-hidden className="inline-flex w-[18px] shrink-0 justify-center text-sm leading-none">
+                            <IconGlyph icon={entry.icon} />
+                          </span>
                         ) : null}
                         {entry.label}
                       </span>

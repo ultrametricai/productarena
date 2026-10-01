@@ -16,7 +16,7 @@ import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
 import GeoMark from "@/components/GeoMark";
 import { loadAll, loadCategories } from "@/lib/data";
-import arenaIcons from "@/data/arena-icons.json";
+import { arenaIcon, ARENA_ICONS, EXPLORE_SECTION_ICONS, OVERALL_ICON } from "@/lib/arenaIcons";
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
@@ -210,13 +210,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // The Overall (all-products) rankings view leads the Arenas dropdown (founder 2026-09-29) —
   // it's the cross-arena leaderboard the per-arena entries below drill into.
   const arenaMenuSections = [
-    { name: "", items: [{ id: "overall", name: "Overall — every product ranked", label: "all arenas", icon: "⭐", href: "/overall" }] },
+    { name: "", items: [{ id: "overall", name: "Overall — every product ranked", label: "all arenas", icon: OVERALL_ICON, href: "/overall" }] },
     ...loadArenaSections().map((section) => ({
     name: section.name,
     items: section.arenaIds.flatMap((id): ArenaMenuItem[] => {
       const c = categoryById.get(id);
       return c
-        ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: (arenaIcons as Record<string, string>)[c.id] }]
+        ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: arenaIcon(c.id) }]
         : [];
     }),
     })),
@@ -230,7 +230,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const pageAliases = searchAliases.pages as Record<string, string[]>;
   const searchEntries: SearchEntry[] = [
     ...buildSearchIndex(loadAll(), {
-      arenaIcons: arenaIcons as Record<string, string>,
+      // House icon tokens (lib/arenaIcons.ts) — the palette renders them as the custom duotone
+      // glyphs via IconGlyph; the legacy emoji stay in data/arena-icons.json as guides.
+      arenaIcons: ARENA_ICONS,
       hasLogo,
       keywords: searchAliases.arenas as Record<string, string[]>,
     }),
@@ -323,11 +325,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 geo
                 sections={[
                   {
-                    name: "🏢 Company rankings",
+                    // House glyphs instead of the old 🏢/🔁 emoji (founder 2026-10-01: apply
+                    // the custom icon set to the top-bar menus).
+                    name: "Company rankings",
+                    icon: EXPLORE_SECTION_ICONS.companyRankings,
                     items: GLOBAL_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "companies", href: r.href })),
                   },
                   {
-                    name: "🔁 Process rankings",
+                    name: "Process rankings",
+                    icon: EXPLORE_SECTION_ICONS.processRankings,
                     items: PROCESS_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "processes", href: r.href })),
                   },
                   {

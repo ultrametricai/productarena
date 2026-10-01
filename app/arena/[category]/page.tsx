@@ -7,7 +7,7 @@ import Legend from '@/components/Legend'
 import PersonaStacksSection from '@/components/PersonaStacksSection'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
 import { humanizeTheme } from '@/lib/icons'
@@ -162,9 +162,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           </Link>
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          {/* Same emoji this arena wears in the header's Arenas menu (data/arena-icons.json). */}
+          {/* The same house glyph this arena wears in the header's Arenas menu
+              (lib/arenaIcons.ts) — IconChip renders the `pi:` token as the custom duotone SVG. */}
           <IconChip
-            icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
+            icon={arenaIcon(data.category.id)}
             title={`${data.category.name} arena`}
           />
           {data.category.name}
@@ -220,7 +221,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
               >
                 <p className="flex items-center gap-1.5 font-medium group-hover:text-emerald-300">
                   <IconChip
-                    icon={(arenaIcons as Record<string, string>)[a.categoryId] ?? ''}
+                    icon={arenaIcon(a.categoryId)}
                     title={`${a.categoryName} arena`}
                   />
                   {a.categoryName}

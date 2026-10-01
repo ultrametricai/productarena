@@ -4,11 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import GeoMark from "@/components/GeoMark";
+import { IconGlyph } from "@/components/IconChip";
 
 export interface ArenaMenuItem {
   id: string;
   name: string;
   label: string;
+  /** House icon token (`pi:<glyph>:<hue>`, lib/arenaIcons.ts) — renders as the custom duotone
+      SVG via IconGlyph; any other non-empty string keeps rendering as text (emoji). */
   icon?: string;
   // Explicit destination — overrides `${hrefPrefix}/${id}` for menus whose items live under
   // different roots (e.g. the header's Explore menu: /rankings/*, /icp, /methodology).
@@ -19,6 +22,8 @@ export interface ArenaMenuItem {
 // (data/arena-sections.json via lib/arenaSections.ts); the Explore menu stays flat via `items`.
 export interface ArenaMenuSection {
   name: string;
+  /** Optional house icon token for the section header (same scheme as ArenaMenuItem.icon). */
+  icon?: string;
   items: ArenaMenuItem[];
 }
 
@@ -149,7 +154,12 @@ export default function ArenaMenu({
             {visibleSections.map((section) => (
               <div key={section.name}>
                 {section.name !== "" && (
-                  <p className="px-3 pb-1 pt-2.5 text-[10px] font-semibold uppercase tracking-widest text-emerald-400/90 first:pt-1">
+                  <p className="flex items-center gap-1.5 px-3 pb-1 pt-2.5 text-[10px] font-semibold uppercase tracking-widest text-emerald-400/90 first:pt-1">
+                    {section.icon && (
+                      <span aria-hidden className="inline-flex text-xs leading-none">
+                        <IconGlyph icon={section.icon} />
+                      </span>
+                    )}
                     {section.name}
                   </p>
                 )}
@@ -162,7 +172,11 @@ export default function ArenaMenu({
                     className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
                   >
                     <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
-                      {item.icon && <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80">{item.icon}</span>}
+                      {item.icon && (
+                        <span aria-hidden className="inline-flex w-4 shrink-0 justify-center text-xs leading-none opacity-90">
+                          <IconGlyph icon={item.icon} />
+                        </span>
+                      )}
                       {!item.icon && geo && (
                         <GeoMark seed={item.id} title={item.name} size={16} className="w-4 justify-center text-zinc-500" />
                       )}
