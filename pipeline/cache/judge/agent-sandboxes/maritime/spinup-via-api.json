@@ -1,18 +1,20 @@
 {
-  "hash": "8854d413c53d1cc7fc1f81daf9669f067e0759a2cd588b656a290072479f4834",
+  "hash": "63015d5df846b229029ed07a52126894ddfc77ccde6956a6c98c08cfb31b7bd3",
   "verdict": {
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Maritime's SDK exposes an idempotent `provision` call that creates/returns a live agent environment, and docs claim full agent deployment (image pull → live, chat-ready) in under 5 minutes, with CLI/API equivalents (`maritime keys create`, RESTful API). This matches the 'one call, live environment fast' story well, though the fastest documented time is minutes not literal seconds and there's no independent/hands-on latency benchmark or public OpenAPI spec confirming the exact call shape. Missing for 10: independent timing/benchmark evidence corroborating 'seconds', and a verifiable OpenAPI/API schema (probe shows openapi.json 404).",
+    "rationale": "The SDK's `provision` call creates an agent for each of your users in one idempotent call, and each agent runs in its own micro-VM, with secrets injected only into that agent's VM. That covers single-call provisioning of an isolated environment. However, the environment is a persistent hosted agent rather than an ephemeral sandbox, and the only timing claims are 'under 5 minutes' for a first deploy and 'one image pull from live', not a live environment in seconds. Missing for 10: evidenced seconds-level startup time, an ephemeral or general-purpose sandbox primitive, independent or hands-on corroboration of provisioning speed, and a published API spec (OpenAPI probes returned 404).",
     "evidenceIds": [
       "maritime-docs-2",
       "maritime-docs-45",
-      "maritime-docs-14",
+      "maritime-docs-18",
+      "maritime-docs-37",
+      "maritime-docs-33",
+      "maritime-docs-5",
       "maritime-docs-13",
-      "maritime-docs-36",
-      "maritime-docs-35",
-      "maritime-probe-3"
+      "maritime-docs-14",
+      "maritime-docs-36"
     ],
     "productId": "maritime",
     "storyId": "spinup-via-api"
