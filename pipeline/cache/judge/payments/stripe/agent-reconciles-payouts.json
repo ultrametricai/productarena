@@ -1,16 +1,17 @@
 {
-  "hash": "df965aa5f565a3e0bf9409c670853835cb65fb58b3bfe219ea4acdc4faa3060a",
+  "hash": "ce2fe6afb461cfba42efeb2216e414b21e5b91840209696403d139990e65c3b0",
   "verdict": {
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe's API and MCP tooling explicitly expose payout and balance-transaction data for programmatic/agent access — the documented stripe_api_read method list includes 'payouts, and balance transactions', and stripe_analytics/stripe_report can run balance and payout financial reports, letting an agent pull the data needed to match deposits to charges (stripe-supp-mcp-tools, stripe-supp-analytics-ai, stripe-docs-34/52/68). However, there is no first-party tutorial or worked example specifically demonstrating automated reconciliation logic (matching a bank deposit to its underlying charges), and no independent/hands-on evidence confirming this reconciliation workflow works end-to-end. Missing for 10: a documented reconciliation workflow/tutorial tying payout amounts to constituent balance-transaction charges, and independent verification of an agent successfully performing this reconciliation.",
+    "rationale": "Stripe's hosted MCP server lists payouts and balance transactions among its supported methods, and its generic `stripe_api_read` tool can call any GET endpoint, so an agent can pull this data directly. Restricted API keys and OAuth scope that access safely. `stripe_report` can also create payouts and balance report runs as downloadable CSVs, which gives the agent material for deposit-level reconciliation. Missing for 10: explicit documentation of linking each payout's balance transactions back to the underlying charges (e.g., a payout-itemized reconciliation flow), and independent or hands-on corroboration of an agent completing the reconciliation.",
     "evidenceIds": [
       "stripe-supp-mcp-tools",
       "stripe-supp-analytics-ai",
       "stripe-docs-34",
       "stripe-docs-52",
-      "stripe-docs-68"
+      "stripe-supp-restricted-keys-agents",
+      "stripe-probe-6"
     ],
     "productId": "stripe",
     "storyId": "agent-reconciles-payouts"

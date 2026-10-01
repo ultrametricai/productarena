@@ -1,17 +1,19 @@
 {
-  "hash": "b49927d8e1c3599874248c419f70447596761f438a157c79272c4f85cc3b6208",
+  "hash": "14d55651244817ab835a3077a23720b7f0b6e270c63170730c7e726cc952e045",
   "verdict": {
-    "productId": "paypal",
-    "storyId": "pci-scope-reduction",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "PayPal's hosted checkout button and 'card field customization' checkout (paypal-docs-2, paypal-docs-27) plus Braintree's GraphQL 'Vault a payment method' (paypal-supp-braintree-graphql) imply that raw card data can be tokenized/hosted rather than touching merchant servers, and server-side endpoints only handle refunds/captures rather than card numbers (paypal-docs-19). However, none of the evidence explicitly states PCI DSS scope reduction, SAQ-A eligibility, or a formal compliance statement. Missing for 10: explicit PCI DSS/SAQ-A documentation, third-party compliance audit or certification evidence, and confirmation that card fields are always iframe-hosted (vs. merchant-collected) across all checkout flows.",
+    "rationale": "The evidence only implies that card data stays off merchant servers. In the PayPal button flow, customers pay with funding sources linked to their PayPal account. Invoicing collects payment on a secure PayPal-hosted page without a merchant-built payment flow. Braintree's agentic flows process delegated payment tokens and tokenized Google Pay credentials, and Braintree documents vaulting payment methods. None of these sources mention PCI DSS, hosted card fields or SAQ scope reduction. Missing for 10: explicit documentation that card data is tokenized client-side and never reaches merchant servers, PCI DSS scope or SAQ guidance, details on whether Expanded Checkout card fields are hosted, independent corroboration.",
     "evidenceIds": [
       "paypal-docs-2",
+      "paypal-docs-22",
       "paypal-docs-27",
-      "paypal-docs-19",
-      "paypal-supp-braintree-graphql"
-    ]
+      "paypal-supp-braintree-graphql",
+      "paypal-supp-agent-ready-protocols",
+      "paypal-supp-acp-ucp-guides"
+    ],
+    "productId": "paypal",
+    "storyId": "pci-scope-reduction"
   }
 }
