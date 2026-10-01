@@ -80,7 +80,7 @@ export default function MostTestedRankingPage() {
           Global ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          Most tested — whose verdicts rest on probes, not promises
+          Most tested — ranked by tested-evidence share
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {rows.length} products across every arena, ranked by tested share: the fraction of applicable verdict
