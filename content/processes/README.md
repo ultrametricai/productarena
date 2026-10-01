@@ -17,7 +17,7 @@ Notes use `{ "text": "...", "references": [] }`; references are optional. They c
 - `python3 scripts/shared-processes/check-import.py` checks the initial migration's full value preservation. Run before authoring changes to imported fields; it intentionally rejects such changes.
 - `pnpm exec tsx scripts/shared-processes/check.ts --write-schema` updates the JSON Schema generated from the TypeScript source.
 - `pnpm shared:export --output /path/to/catalog.json` exports a committed, validated catalog with its Git revision, JSON Schema, and content hash.
-- Add `--example` to export only the two synthetic staging records in `fixtures/shared-processes/staging.json`. They demonstrate option branches, a nested process, and a shared downstream step. They are excluded from the real catalog and current site.
+- Add `--example` to export only the two synthetic staging records in `content/processes/examples/staging.json`. They demonstrate option branches, a nested process, and a shared downstream step. They are excluded from the real catalog and current site.
 
 The initial mapping contains 149 records, 694 operational nodes and 522 original connections. The audit lists missing outcomes, guidance, vendor keys, and placement questions. A valid mapped record is not automatically a useful published guide.
 

@@ -19,7 +19,7 @@ function fixture() {
 
 describe('shared process definitions', () => {
   it('validates the staging example separately from the real catalog', () => {
-    const records = validateCatalog(JSON.parse(readFileSync('fixtures/shared-processes/staging.json', 'utf8')))
+    const records = validateCatalog(JSON.parse(readFileSync('content/processes/examples/staging.json', 'utf8')))
     expect(records).toHaveLength(2)
     expect(records.every(record => record.metadata.synthetic === true && record.guidance && record.outcomes.length)).toBe(true)
     expect(collectDecisions(records, 'shared-schema-staging-check')).toHaveLength(1)
