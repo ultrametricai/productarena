@@ -1,4 +1,4 @@
-# Documents — the open-documents map for founders
+# Open documents — the canonical startup documents, mapped
 
 A catalog of every openly licensed or freely published legal document a founder can actually
 use, as dated records in `registry.json` (100 records across formation, fundraising,

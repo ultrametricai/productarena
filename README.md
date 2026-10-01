@@ -5,12 +5,11 @@
 [business logic](#business-logic) underneath. Every record is dated, cited, and testable —
 never opinion.**
 
-![The Open Startup mid-run — a simulated company executing the real founder-process corpus, every step routed agent / manual form / human, vendors from the judged rankings](docs/assets/virtual-startup.png)
+![The founder processes on ultrametric.ai — each process with its phase, agent ceiling, step count, timeline position, and vendors](docs/assets/processes.png)
 
-*[The Open Startup](https://ultrametric.ai/virtual-startup) mid-run: a simulated company
-(every artifact visibly SIMULATED) executing the real corpus — incorporation filings, 83(b)
-elections, EIN — with each step routed agent / manual form / human and vendors drawn from the
-judged rankings.*
+*[ultrametric.ai/processes](https://ultrametric.ai/processes): the founder processes in
+timeline order — each with its phase, the share an agent can run today, and the vendors that
+serve it.*
 
 - **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/virtual-startup)
 - **Build on it** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([agents & developers](#for-ai-agents))
@@ -22,12 +21,12 @@ judged rankings.*
 
 | What you need | Where |
 | --- | --- |
-| What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — every founder process grouped by area, each with its agent ceiling; chained playbooks (incorporate → launch, the VC raise, agent-run back office) on the same page |
-| Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
-| Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · [per-arena leaderboards](https://ultrametric.ai/arenas) (each arena at `/arena/<id>`) · [/compare](https://ultrametric.ai/compare) |
-| Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
-| Deadlines, cap-table math, runway, offer scenarios | [`business-logic/`](business-logic/README.md) — source-cited, exhaustively tested modules in [`lib/openstartup/`](lib/openstartup/) |
-| Does this work outside the US? | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add your country, see [Add your country or state](#add-your-country-or-state) |
+| Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its agent ceiling, plus the chained playbooks |
+| The simulator | [/virtual-startup](https://ultrametric.ai/virtual-startup) — a simulated company runs the corpus end to end |
+| Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
+| Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
+| Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| Your country | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
 
@@ -79,7 +78,9 @@ workflows), [`journeys/`](journeys/) (`chains.json`), and
 
 **Live.** [/processes](https://ultrametric.ai/processes) (each process at `/processes/<id>`),
 and [The Open Startup](https://ultrametric.ai/virtual-startup) — a simulator that replays the
-whole corpus as a simulated company, end to end.
+whole corpus as a simulated company, end to end:
+
+![The Open Startup simulator mid-run — a simulated company executing the process corpus, each step routed agent / manual form / human](docs/assets/virtual-startup.png)
 
 **Extend it.** Add a `geoNotes` country analog, a new process from
 [`templates/`](templates/), or a chain — all schema-gated by `pnpm test`. Start at
@@ -133,7 +134,7 @@ source-cited, exhaustively tested records and code:
     spread, exit outcomes under future dilution), cited to the Holloway Guide and Index
     Ventures' Rewarding Talent; takes the 409A FMV as input, never invents one. Pre-tax by
     design.
-- **Documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
+- **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
 - **Resources** — [`resources/`](resources/): the canonical startup resources plus
@@ -224,7 +225,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
 | [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds the site's geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
-| [`documents/`](documents/) | The canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
+| [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) | `lib/resources.ts` + invariant tests |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
