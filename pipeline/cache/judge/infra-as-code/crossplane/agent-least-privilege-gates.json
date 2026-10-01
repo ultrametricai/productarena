@@ -1,15 +1,16 @@
 {
-  "hash": "1c80068e265b80e3a128e348e407ac057313db860d4a1e3c2b60cab370c770f1",
+  "hash": "07eab2fd4d1b4b330c757d72edf56e6345e176cf4f182e6d99291752df3cdc11",
   "verdict": {
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Crossplane exposes declarative, auditable APIs enforced via Kubernetes RBAC, and its marketing explicitly claims these APIs can be safely acted on by 'automation and AI systems,' which supports least-privilege access control at the API layer. However, there is no documented review-gate or approval workflow specific to AI agents (e.g., a plan/apply staging step, diff approval, or agent-scoped credential issuance) — the RBAC and declarative-API claims are generic platform-engineering primitives, not an agent-oriented guardrail feature. missing for 10: concrete agent-specific review/approval gate mechanism, documented least-privilege credential issuance workflow for agents, independent evidence of this being used to block unapproved AI-driven changes.",
+    "confidence": "medium",
+    "rationale": "Crossplane supports the least-privilege half of this story. It inherits Kubernetes RBAC [docs-17, docs-30] and exposes declarative APIs that it says 'humans, automation, and AI systems can safely act on' [docs-16]. A community comment adds that users are only given permission at the interface they interact with [comm-8]. A plan-like preview exists through CLI rendering of compositions without a cluster [docs-7], but nothing shows a review or approval gate that blocks an agent from applying unapproved changes; the one GitOps mention [comm-9] is a question, not evidence. Missing for 10: a documented approval/review gate before apply, an explicit plan/diff of changes to real resources, agent-specific credential-scoping guidance, and independent corroboration.",
     "evidenceIds": [
       "crossplane-docs-16",
       "crossplane-docs-17",
-      "crossplane-docs-29",
       "crossplane-docs-30",
+      "crossplane-docs-29",
+      "crossplane-docs-7",
       "crossplane-comm-8"
     ],
     "productId": "crossplane",
