@@ -1,17 +1,18 @@
 {
-  "hash": "6eb3a67722870d9779c0a56df18d07c020751181572b9989a43c72c47e05dc93",
+  "hash": "17627b9ae4cf7a166b89de07a901ee9a2c2346d850416ff8fbeef841f02f4248",
   "verdict": {
     "verdict": "partial",
-    "quality": 7,
-    "confidence": "high",
-    "rationale": "Supabase documents multiple mechanisms for scoping agent credentials: publishable vs. secret keys tied to RLS, MCP server flags (read_only=true, project_ref scoping, feature-group toggles disabling account/write tools), and a live OAuth-protected MCP endpoint exposing granular per-scope permissions (projects:read, database:write, storage:read, etc., per supabase-probe-10). However the docs themselves admit PATs used for CI 'require all scopes' for write access rather than fine-grained ones (supabase-supp-mcp-agent-security), and community evidence shows a real-world case where an AI assistant operated via service_role, bypassing RLS entirely (supabase-comm-15) — a concrete gap against the least-privilege ideal. Missing for 10: fully granular PAT/API-key scoping (not just MCP OAuth scopes), and stronger community corroboration that least-privilege defaults are actually followed in practice rather than requiring manual read_only/project_ref configuration.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase offers several ways to narrow an agent's access. The hosted MCP server can be limited per connection with project_ref (project scope), read_only=true (runs as a read-only Postgres user) and features= (tool groups). The OAuth metadata publishes granular scopes such as database:read and edge_functions:write. The publishable key only reaches what RLS allows. However, the docs admit that personal access tokens (PATs) for CI must currently be granted all scopes, with fine-grained scopes promised only 'in the future'. The secret key bypasses RLS, and a community report notes agents running as service_role with RLS bypassed. Missing for 10: fine-grained PAT scopes for headless/CI agents, documented minting of per-agent credentials tied to custom least-privilege Postgres roles, hands-on corroboration that the OAuth scopes are enforced.",
     "evidenceIds": [
       "supabase-supp-mcp-config-params",
-      "supabase-supp-api-key-model",
-      "supabase-probe-10",
       "supabase-supp-mcp-agent-security",
+      "supabase-probe-10",
+      "supabase-supp-api-key-model",
+      "supabase-docs-43",
       "supabase-comm-15",
-      "supabase-docs-43"
+      "supabase-comm-13"
     ],
     "productId": "supabase",
     "storyId": "agentic-scoped-keys"
