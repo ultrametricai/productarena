@@ -26,7 +26,7 @@ judged rankings.*
 | Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
 | Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · [per-arena leaderboards](https://ultrametric.ai/arenas) (each arena at `/arena/<id>`) · [/compare](https://ultrametric.ai/compare) |
 | Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
-| Deadlines, cap-table math, runway, offer scenarios | [`business-logic/`](business-logic/README.md) — source-cited, exhaustively tested modules in [`lib/openstartup/`](lib/openstartup/) |
+| Deadlines, cap-table math, runway, offer scenarios, notes, waterfalls | [`business-logic/`](business-logic/README.md) — source-cited, exhaustively tested modules in [`lib/openstartup/`](lib/openstartup/) |
 | Does this work outside the US? | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add your country, see [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
@@ -133,6 +133,17 @@ source-cited, exhaustively tested records and code:
     spread, exit outcomes under future dilution), cited to the Holloway Guide and Index
     Ventures' Rewarding Talent; takes the 409A FMV as input, never invents one. Pre-tax by
     design.
+  - `convertibleNote.ts` — convertible promissory notes: simple-interest accrual, best-of
+    cap/discount conversion (the cap denominator comes from the note's own capitalization
+    definition, never a guessed convention), maturity surfaced not decided, the three
+    Cooley GO series-pricing methods, and the note-vs-SAFE differences stated plainly.
+  - `waterfall.ts` — liquidity-event waterfalls: the SAFE cash-out-vs-convert choice per
+    the YC User Guide, one preferred series (non-participating vs participating), a pari
+    passu preference tier, proceeds that sum to the sale price exactly, and the
+    conversion-indifference point.
+  - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
+    appraisal-presumption timing), every check citing a dated rule card; a sanity model
+    that takes the FMV as input and never values a company.
 - **Documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
