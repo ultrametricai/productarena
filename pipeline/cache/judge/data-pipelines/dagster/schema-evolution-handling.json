@@ -1,19 +1,15 @@
 {
-  "hash": "33b0bd3d427358b62469699ef624057d1da54278232b607955b9d04516c44ed9",
+  "hash": "c1014cafcb83f7c2d222c5fcf9bd861d6c1bc86c5fb439d3bfe2d3747ceb5104",
   "verdict": {
     "verdict": "partial",
-    "quality": 6,
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Dagster provides asset checks to validate schema/data quality (e.g. verifying a tabular asset adheres to a specified schema) and can model dbt tests as asset checks, plus declarative automation/sensors/schedules to control when downstream assets rerun based on upstream state changes, giving engineers policy-driven propagation rather than silent breakage. However, there is no explicit evidence of automatic upstream schema-change detection (e.g. diffing schemas, alerting specifically on schema drift) as a first-class feature — the asset-check mechanism requires the engineer to author the check rather than Dagster natively detecting schema drift. Missing for 10: dedicated schema-diff/schema-drift detection feature, evidence of automatic column/type change alerts, and independent/hands-on confirmation that this workflow reliably prevents silent breakage in production.",
+    "rationale": "Dagster's asset checks can verify that a tabular asset adheres to a specified schema. Severity levels and UI-surfaced results give some control over how a detected mismatch is treated, so schema drift need not break loads silently. dbt column lineage adds visibility into which downstream columns are affected. However, the evidence shows only detection; nothing shows Dagster propagating or evolving schema changes downstream under a selectable policy such as evolve, fail, or ignore. Missing for 10: a documented schema-change propagation/evolution policy mechanism, automatic upstream schema-change detection (beyond user-written checks), and hands-on or independent corroboration.",
     "evidenceIds": [
       "dagster-docs-3",
-      "dagster-docs-20",
       "dagster-docs-27",
-      "dagster-docs-36",
       "dagster-docs-37",
-      "dagster-docs-6",
-      "dagster-docs-38",
-      "dagster-docs-5"
+      "dagster-docs-43"
     ],
     "productId": "dagster",
     "storyId": "schema-evolution-handling"
