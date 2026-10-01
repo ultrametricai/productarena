@@ -73,16 +73,18 @@ judge is instructed to use **only** the evidence pack, never outside/training kn
 absence of evidence for a well-known capability still yields `none`, not a guess.
 
 Verdicts are cached and keyed on a hash of `(storyId, story title, evidence ids+excerpts, prompt
-version)`, so re-running `judge` is a no-op unless the story or evidence actually changed.
+version, judge model id)`, so re-running `judge` is a no-op unless the story, the evidence,
+the prompt version, or the judge model actually changed.
 
 ### Judge model & prompt version
 
-The judge is an Anthropic model — `claude-sonnet-5` by default, overridable via the
-`PA_MODEL` env var (`pipeline/llm.ts`) — driven by a versioned system prompt in
-`pipeline/stages/judge.ts` (`PROMPT_VERSION`, currently **`v3`**). Because the prompt
-version is part of every cell's cache key, bumping it deliberately invalidates all cached
-verdicts, so a prompt change is always followed by a full re-judge rather than mixing
-verdicts from different prompt generations.
+The judge is an Anthropic model — `claude-opus-5-5` by default since 2026-09-30 (previously
+`claude-sonnet-5`), overridable via the `PA_MODEL` env var (`pipeline/llm.ts`) — driven by a
+versioned system prompt in `pipeline/stages/judge.ts` (`PROMPT_VERSION`, currently **`v4`**;
+the v4 bump marks the judge-model migration — the prompt text is unchanged from v3). Because
+the prompt version AND the judge model id are part of every cell's cache key, changing either
+deliberately invalidates all cached verdicts, so a prompt or model change is always followed
+by a full re-judge rather than silently mixing verdicts from different judge generations.
 
 What each version added:
 
@@ -281,8 +283,9 @@ story title or matrix cell on any product page to see its origin in the tooltip 
 
 ## Re-judge stability policy
 
-Verdicts are cached on a hash of (story id, story title, evidence ids+excerpts, prompt version)
-— re-running `judge` is a no-op unless the story or evidence actually changed. LLM judging still
+Verdicts are cached on a hash of (story id, story title, evidence ids+excerpts, prompt version,
+judge model id) — re-running `judge` is a no-op unless the story, the evidence, the prompt
+version, or the judge model actually changed. LLM judging still
 has measurable re-roll variance (~9% of cells can change verdict or quality on a re-judge with
 no relevant evidence change). To keep rankings evidence-driven rather than noise-driven, large
 re-judge waves are reviewed against the prior state and pure churn is reverted under audited
@@ -290,6 +293,20 @@ rules: applicability (`na`↔`none`) never flips without new evidence, verdicts 
 new don't move close races, and negative mechanical probe results only affect the story axis
 they actually test. Every revert is recorded in the commit that applies it. A future prompt
 version will pass the prior verdict as an anchor to reduce this variance at the source.
+
+**2026-09-30 judge-model migration.** The fleet was re-judged sonnet-5 → opus-5-5 on
+2026-09-30 after a full pilot (docs/OPUS-5-5-JUDGE-PILOT.md: 74% exact verdict agreement on
+the pilot arena; 7 of 10 manually adjudicated disagreements favored Opus 5.5's reading of the
+rubric). The prompt text did not change (v4 = v3 text). Every verdict flip and score move in
+that wave reflects the judge change, not product changes — the wave is labeled as such in
+each arena's `score-history.jsonl` (`note` field) and summarized with before/after
+leaderboards in docs/JUDGE-MIGRATION-2026-09-30.md. The stability policy's
+no-new-evidence revert rule was deliberately NOT applied to the migration wave (under a judge
+change every flip cites no new evidence by construction — applying the rule would revert the
+migration itself). Two behavioral shifts to know when comparing to pre-migration data: Opus
+5.5 reaches `na` and `disputed` far less often (it applies the na-vs-none decision procedure
+and the concrete-contradiction bar more literally), and scores shifted up a few points
+fleet-wide — a judge-scale change, not a capability change.
 
 ## Score intervals — the ± band on every Overall score
 
@@ -394,7 +411,8 @@ audit note in its rationale, applied in the committed judge cache so re-judges p
 corrections moved Foreloop from second to third of four.
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
-(`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
+(`claude-opus-5-5` since the 2026-09-30 migration; `claude-sonnet-5` before it) is made by
+Anthropic, and the `ai-coding` arena includes Anthropic's own
 product, Claude Code, which leads that arena's **Overall score** (29.5) as of v2.4 — though on
 raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
 when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
@@ -446,6 +464,28 @@ What we did about it:
   can independently check any verdict against its source. If you disagree with a call, see
   [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict is a first-class, expected
   workflow, not a one-off.
+
+**2026-09-30 judge-model migration and own-product audit.** On 2026-09-30 the judge migrated
+from `claude-sonnet-5` to `claude-opus-5-5` (same vendor — the conflict above is unchanged)
+and the whole fleet was re-judged; docs/JUDGE-MIGRATION-2026-09-30.md carries the per-arena
+before/after leaderboards. In the pilot, an Anthropic judge model re-graded Anthropic's own
+product upward: claude-code had the second-fewest flips (13) but 10 were upgrades, including
+all three of its `disputed` cells going to `full`. Counter-signals, stated plainly: the
+pilot's largest beneficiary was gemini-cli (+8.0 aiEra, the largest gain of any product), its
+largest loser was a non-Anthropic product on a correct rule application (github-copilot's
+weight-3 MCP-server cell, matching this section's earlier human-adjudication precedent), and
+Opus also downgraded claude-code (`vulnerability-autofix` full→partial, `agentic-scoped-keys`
+partial→none, plus 17 other unfavorable/lateral moves in the final wave). Because of the
+conflict, every favorable migration flip on an owner/affiliated product (claude-code,
+Foreloop, AFK, the Claude rows in other arenas) was adversarially re-read against its cited
+evidence: on claude-code, 10 of 16 favorable flips were kept and 6 were corrected with dated
+audit notes in their rationales (four reverted to the sonnet-5 baseline where a story
+qualifier or the evidence-relevance rule was not clearly satisfied, two quality-trimmed);
+claude-code's rank did not change (#3). The 2026-09-21/24 Foreloop and AFK human
+adjudications were preserved verbatim through the migration — human adjudications outrank any
+model (docs/JUDGE-MIGRATION-2026-09-30-worklist.json records what the fresh judge said on
+each protected cell). The audit calls for every other owner/affiliated row are recorded in
+docs/JUDGE-MIGRATION-2026-09-30.md.
 
 We think shipping this disclosure — including the fact that the audit itself was run by the
 same vendor's model — is more honest than pretending the conflict doesn't exist. Judge for

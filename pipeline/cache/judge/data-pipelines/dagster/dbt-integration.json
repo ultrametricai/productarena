@@ -1,17 +1,20 @@
 {
-  "hash": "8d27c81f63db67151e166c0ff0f9b7efc4d19cfaf321c35d1850dfd52a94c39c",
+  "hash": "8b989c61a39a6ad620531ca64c3094cfc994d609ca1399580b0210adf8037cff",
   "verdict": {
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Dagster's dbt integration lets dbt models be modeled as assets with dependencies, and Declarative Automation / AutomationCondition (e.g. on_cron, eager materialization) can trigger asset materialization based on upstream data freshness rather than a blind timer, plus asset checks can verify freshness before/after runs. missing for 10: no independent/hands-on case study specifically confirming event-driven dbt runs (vs docs-only claims), and no explicit worked example tying sensors/upstream data-loading events directly to dbt run triggers.",
+    "confidence": "medium",
+    "rationale": "Dagster models dbt projects as assets (dagster-docs-7) and represents loaders like Fivetran, dlt and Airbyte as assets that chain with downstream steps (dagster-docs-21, dagster-docs-22, dagster-docs-28). Declarative Automation launches runs based on upstream asset status, and on_cron only fires after all upstream dependencies have updated (dagster-docs-6, dagster-docs-38), so transformations follow fresh loads rather than a blind timer. A community user reports the Dagster + dbt stack works well together (dagster-comm-9). Missing for 10: explicit documentation that dbt sources are automatically wired as downstream dependencies of ingestion assets, and hands-on corroboration of load-triggered dbt runs specifically.",
     "evidenceIds": [
       "dagster-docs-7",
       "dagster-docs-6",
       "dagster-docs-38",
+      "dagster-docs-28",
+      "dagster-docs-21",
+      "dagster-docs-22",
+      "dagster-docs-5",
+      "dagster-docs-17",
       "dagster-docs-36",
-      "dagster-docs-44",
-      "dagster-docs-3",
       "dagster-comm-9"
     ],
     "productId": "dagster",

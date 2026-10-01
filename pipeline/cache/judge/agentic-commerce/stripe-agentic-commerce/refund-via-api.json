@@ -1,16 +1,17 @@
 {
-  "hash": "b437e9e10d1c7a42d6637b435311ae117677140c2dd32c2060b9265111fd8375",
+  "hash": "b3b4aa55917c4e10284c12985e6d6853a8a180cac939435c9fb599d8d6f20d86",
   "verdict": {
-    "productId": "stripe-agentic-commerce",
-    "storyId": "refund-via-api",
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows refunds are available through Stripe's standard Refunds API/Dashboard (inherited by agent-driven orders) and that the Stripe MCP server explicitly supports refunds as a stripe_api_write action, gated by human approval before an agent can execute or retry it. However, there's no agent-specific refund tracking mechanism (e.g., dedicated refund status webhooks tied to agent_details, or refund reporting in the agent-tagged Transactions view) beyond the standard Stripe rails. Missing for 10: dedicated refund tracking/webhooks scoped to agent orders, explicit API examples for programmatic refund initiation on SPT-based orders, and independent/hands-on confirmation of the refund flow working end-to-end.",
+    "rationale": "Agent orders settle on standard Stripe objects: ACS orders arrive as checkout.session.completed with a PaymentIntent, and x402 payments are recorded as PaymentIntents. The machine-payments docs say refunds go through the standard Refunds API and Dashboard, and the MCP server can initiate refunds behind a human approval gate. Refunds for ACS checkout orders are only implied by these shared rails, not documented. missing for 10: explicit refund docs for ACS/ACP agent-placed checkout orders, refund status tracking or webhooks tied to agent orders, refund handling for the third-party-processor custom integration, independent or hands-on corroboration.",
     "evidenceIds": [
       "stripe-ac-supp-machine-payments",
+      "stripe-ac-supp-order-attribution",
       "stripe-ac-supp-mcp-approval",
-      "stripe-ac-supp-order-attribution"
-    ]
+      "stripe-agentic-commerce-docs-33"
+    ],
+    "productId": "stripe-agentic-commerce",
+    "storyId": "refund-via-api"
   }
 }

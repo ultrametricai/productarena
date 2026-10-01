@@ -1,15 +1,14 @@
 {
-  "hash": "d0ba75cc6d610e5503b350acb6588d17ee9b6371bf22e0b2611fe6eb883138d4",
+  "hash": "21ed8d6e8e6bf4d62ddbc4bad7bcee222a1f0735ec9cafe8b3a643a0c78df1db",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Airbyte's incremental sync and CDC log-position tracking imply some checkpointing between syncs, and the Connection Timeline exposes error/logs, but there is no explicit documentation of automatic retry on transient failures or mid-sync resume from checkpoint. A community report even describes needing a manual workaround ('tricked Airbyte into thinking it had done the first sync') to get a large sync to continue, suggesting resume-from-checkpoint isn't fully automatic in practice. missing for 10: explicit retry-on-transient-failure docs, mid-sync checkpoint/resume mechanism, independent confirmation it works reliably at scale.",
+    "rationale": "The evidence shows Airbyte tracks state between runs. Incremental syncs pull only data changed since the previous sync, and CDC tracks the current position in database logs. That implies a cursor or checkpoint mechanism, but nothing shows interrupted syncs resuming mid-run or transient failures being retried automatically. Missing for 10: documented automatic retry of failed or transient sync attempts, explicit resume-from-checkpoint for interrupted syncs, independent or hands-on corroboration.",
     "evidenceIds": [
       "airbyte-docs-22",
       "airbyte-docs-15",
-      "airbyte-docs-10",
-      "airbyte-comm-3"
+      "airbyte-docs-38"
     ],
     "productId": "airbyte",
     "storyId": "retries-error-recovery"

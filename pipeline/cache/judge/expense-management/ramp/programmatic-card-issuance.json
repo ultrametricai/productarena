@@ -1,19 +1,21 @@
 {
-  "hash": "3b267faec7b1b0cf0a07798fb675c7b6749e483775cdd9371ea21940db50b3d1",
+  "hash": "632f1b2595f912430faa30e10529654a88aa66687f0566d3e0f77735bc393faf",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Ramp's Developer API and Vault API let backends create virtual cards with limits (Funds with amount/interval/merchant restrictions), retrieve PAN/CVV synchronously, and the CLI/agent tooling exposes lock and control actions (funds list/activate/creds/lock, cards:write scope, limits:write scope confirmed live in mcp OAuth scopes). OpenAPI schema (174 paths) and scopes like cards:write, limits:write, funds:write are independently probe-verified. missing for 10: no explicit hands-on/independent example of a full REST call sequence (create card → set limit → lock → update controls) purely via the public Developer API outside CLI/MCP wrappers, and no third-party corroboration of reliability.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Ramp's Developer API documents server-side card issuance: the Vault API creates a virtual card and returns PAN/CVV, but it is gated behind the cards:read_vault scope and Ramp approval. The docs also describe fund-based controls (amount, interval, merchant, category and country restrictions) and an 'issue cards, attach controls' guide. Locking cards and editing controls are only evidenced through the CLI ('funds lock') and the MCP server ('Lock my card', cards:write/limits:write scopes), not as public API endpoints. Missing for 10: explicit public-API endpoints for locking/unlocking cards and updating limits or controls on existing cards, ungated card creation, and independent hands-on corroboration.",
     "evidenceIds": [
-      "ramp-docs-7",
-      "ramp-docs-37",
-      "ramp-docs-41",
       "ramp-supp-virtual-cards-vault",
+      "ramp-docs-37",
+      "ramp-docs-7",
+      "ramp-supp-spend-controls-agents",
+      "ramp-docs-41",
+      "ramp-supp-oauth-scopes",
       "ramp-supp-cli-agent-mode",
+      "ramp-docs-30",
       "ramp-probe-4",
-      "ramp-probe-6",
-      "ramp-supp-oauth-scopes"
+      "ramp-probe-6"
     ],
     "productId": "ramp",
     "storyId": "programmatic-card-issuance"

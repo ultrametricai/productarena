@@ -1,14 +1,15 @@
 {
-  "hash": "ca7886711bee25475e0da4ada8c37f677262b19399bf6f60b9bb22b9cb60c426",
+  "hash": "d8d7b8917e16d61d66c0c9d8c0e54cd5544d9afe61b79e7895e5666295db66e1",
   "verdict": {
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe's ACS flow requires sellers to explicitly approve each agent ('Find the agent you want to sell through and review its terms', 'We send the agent an approval request that the agent must accept'), and agent-driven orders are tagged and filterable by agent name in the Dashboard/Transactions, with an agent_details field on CheckoutSessions and an OCA mechanism gating data access between agent and seller. This gives merchants a registered/approved-agent identification and per-agent order attribution, but there's no documented cryptographic signature scheme or formal 'trust tier' system, and the approval flow is private-preview/US-Canada-Europe only, so anonymous-bot-vs-trusted-agent distinction is partial rather than a first-class verifiable identity layer. Missing for 10: cryptographic agent signatures/verifiable credentials, explicit trust-tier scoring, and general availability beyond preview.",
+    "rationale": "Within ACS, agents act as registered counterparties. Sellers pick a specific agent, review its terms, and the agent must accept an approval request. A seller-initiated OCA is required before any data or checkout access, and orders are tagged and filterable by originating agent, with an `agent_details` field in private preview. This gives merchants a known-agent allowlist rather than anonymous traffic. Missing for 10: cryptographic agent signatures or request-level verification, trust tiers or reputation levels, any way to tell agent traffic from bots outside ACS (MPP/x402 machine payments show no agent identity check), GA status (agent_details and ACS are private preview), and independent corroboration.",
     "evidenceIds": [
       "stripe-ac-supp-seller-catalog-feed",
+      "stripe-ac-supp-embedded-checkout-oca",
       "stripe-ac-supp-order-attribution",
-      "stripe-ac-supp-embedded-checkout-oca"
+      "stripe-ac-supp-acp-custom-checkout"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "agent-identity-tiers"

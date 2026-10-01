@@ -1,14 +1,16 @@
 {
-  "hash": "cb9b48f5e3c5973e40ab96e296eee9b49fdf64522a659d86a012ce759c2a7d81",
+  "hash": "9a599f847ba2458d2a728854305acb22356613bf5b380085e8fc173e2b749de9",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "high",
-    "rationale": "Shopify's Order MCP webhooks push UCP-shaped, HMAC-signed order events (fulfillment, refunds, cancellations) with retry logic, but subscription itself is explicitly not self-serve: 'There's no self-serve subscription API today... contact your Shopify partner manager,' and the UCP profile's webhook_url field is documented as unsupported ('Shopify doesn't honor that field today'). So an AI-native user cannot programmatically subscribe/register webhook endpoints themselves. missing for 10: self-serve webhook subscription API, support for the standard UCP profile webhook_url field, independent confirmation of webhook delivery in practice.",
+    "rationale": "Shopify documents UCP-shaped order webhooks pushed to a registered endpoint on committed order changes (fulfillment, refunds, returns, edits, cancellations). Deliveries are HMAC-SHA256 signed and retried up to 8 times over 4 hours. However, subscription is explicitly not self-serve: the URL and topic scoping are registered server-side through a Shopify partner manager, and the profile webhook_url field is not honored, so an agent cannot subscribe programmatically. Missing for 10: self-serve or programmatic subscription API, event coverage beyond order changes, hands-on evidence of webhook delivery.",
     "evidenceIds": [
       "shopify-ucp-supp-order-webhooks",
+      "shopify-ucp-docs-26",
       "shopify-ucp-docs-8",
-      "shopify-ucp-docs-26"
+      "shopify-ucp-supp-order-mcp",
+      "shopify-ucp-supp-ucp-journey"
     ],
     "productId": "shopify-ucp",
     "storyId": "agentic-webhooks"

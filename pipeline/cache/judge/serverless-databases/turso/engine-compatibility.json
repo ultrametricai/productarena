@@ -1,19 +1,19 @@
 {
-  "hash": "7b5dd6ff57870c02a0acee85792e06fec47d02b608c4e19002da20acbd9518b6",
+  "hash": "fe7afd84138072e8bfbbb327df3d349b631b9086c55f5074fae6492ce58e72db",
   "verdict": {
     "verdict": "disputed",
     "quality": 4,
-    "confidence": "high",
-    "rationale": "Turso markets libSQL as 'fully backwards compatible with SQLite' [turso-docs-24, turso-docs-30], but hands-on community reports document concrete dialect/compatibility gaps: missing savepoints, window functions, and ATTACH DATABASE support [turso-comm-9], unimplemented conflict resolution [turso-comm-12], WAL-mode locking behavior differing from real SQLite [turso-comm-4], and file-format compatibility breaking once Turso extensions are used—breaking SQLite CLI, Litestream, sqlite_rsync, and recovery tools [turso-comm-8]. This is a genuine SQLite-family engine (not Postgres/MySQL), so the story only partially applies, and even within that scope real developers report it diverging from a true SQLite superset rather than being fully compatible. Missing for 10: independent verification of Postgres/MySQL wire-protocol support (not offered), and resolution/acknowledgment of the specific missing SQL features reported by users.",
+    "confidence": "medium",
+    "rationale": "Turso's docs claim it is 'fully backwards compatible with SQLite' and can open existing SQLite files, and libSQL is an SQLite fork. Hands-on community reports concretely contradict the 'not a lookalike subset' claim. They cite missing savepoints, window functions and ATTACH DATABASE, and say PRAGMA journal_mode=WAL does not allow reads from another process. They also report that file-format compatibility breaks once Turso extensions are used, so the SQLite CLI, Litestream and recovery tools stop working. missing for 10: independently verified full SQLite dialect coverage (savepoints, window functions, ATTACH), WAL multi-process behavior parity, and file-format compatibility when Turso-specific features are used.",
     "evidenceIds": [
       "turso-docs-24",
       "turso-docs-30",
+      "turso-docs-13",
       "turso-gh-1",
+      "turso-comm-10",
       "turso-comm-4",
-      "turso-comm-7",
       "turso-comm-8",
-      "turso-comm-9",
-      "turso-comm-12"
+      "turso-comm-9"
     ],
     "productId": "turso",
     "storyId": "engine-compatibility"

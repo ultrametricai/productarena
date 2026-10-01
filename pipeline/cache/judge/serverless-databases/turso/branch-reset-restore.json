@@ -1,19 +1,18 @@
 {
-  "hash": "afd93381edac43b25427a27fae9d233abd826debea1a24aaeeb733d894fadc84",
+  "hash": "940e7acb8f5399e6aca6acd07d71ea489545d55f4ba610f3294eaba017f74c82",
   "verdict": {
-    "productId": "turso",
-    "storyId": "branch-reset-restore",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Turso docs show branches can be created fresh from a parent (`turso db create ... --from-db`) and databases can be restored to an earlier point via PITR, both without needing a SQL dump/reload, which covers the two halves of the story. However, there's no documented in-place 'reset this existing branch to its parent' command — you'd recreate/delete-and-recreate the branch — and PITR is described as whole-database recovery, not branch-specific reset. Missing for 10: an explicit branch-reset API/CLI command, and documentation tying PITR restore to a specific branch rather than the whole database.",
+    "rationale": "Turso documents point-in-time recovery, which restores a database to a specific point in time without a dump, so the \"restore to an earlier state\" half is covered. Branches are documented as separate database instances, so PITR should apply to them, though no source says so. Re-syncing from the parent is only possible by creating a new branch with `--from-db`, not by resetting an existing one. Missing for 10: an explicit reset-branch-from-parent operation, documentation that PITR works on branch databases, and independent or hands-on corroboration of either workflow.",
     "evidenceIds": [
+      "turso-docs-42",
+      "turso-docs-33",
       "turso-docs-18",
       "turso-docs-32",
-      "turso-docs-41",
-      "turso-docs-33",
-      "turso-docs-42",
-      "turso-docs-29"
-    ]
+      "turso-docs-41"
+    ],
+    "productId": "turso",
+    "storyId": "branch-reset-restore"
   }
 }

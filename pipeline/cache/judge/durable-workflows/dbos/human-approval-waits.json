@@ -1,19 +1,18 @@
 {
-  "hash": "53c6a4737ed48949ec712b6595cdf66a578a3a55c9a367f8606d0ebfceb4378b",
+  "hash": "ca2bc0f33dab09c612d8b4a0effd9f199a9d494321b5b696175e7203696a2caa",
   "verdict": {
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "DBOS explicitly documents a human-in-the-loop pattern where DBOS.recv(timeout_seconds=...) lets a workflow pause and wait hours or days for a human response, surviving crashes/restarts via checkpointed state, and resuming exactly where it left off once the message arrives (DBOS.send). This is backed by a dedicated HITL guide, a worked agent-inbox example, and general durable-execution/recovery docs plus community corroboration of the checkpointing mechanism. Missing for 10: independent hands-on validation specifically of the long-duration pause/resume behavior (community evidence covers general durability but not this exact HITL scenario).",
+    "rationale": "DBOS has a dedicated human-in-the-loop guide. A workflow blocks on `DBOS.recv(timeout_seconds=...)` for hours or days, survives restarts and upgrades while waiting, and resumes when `DBOS.send()` delivers the response, which DBOSClient can do from external code. An agent-inbox example shows workflows waiting on human input across process restarts and being surfaced for approval. Missing for 10: independent or hands-on corroboration of long-wait human-in-the-loop resumption in practice.",
     "evidenceIds": [
       "dbos-docs-12",
       "dbos-docs-28",
+      "dbos-docs-39",
       "dbos-docs-8",
       "dbos-docs-27",
-      "dbos-docs-39",
-      "dbos-docs-4",
-      "dbos-docs-25",
-      "dbos-comm-13"
+      "dbos-docs-42",
+      "dbos-docs-4"
     ],
     "productId": "dbos",
     "storyId": "human-approval-waits"

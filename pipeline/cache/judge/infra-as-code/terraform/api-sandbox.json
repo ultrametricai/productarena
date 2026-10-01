@@ -1,15 +1,17 @@
 {
-  "hash": "16aa7f3ba1f51ba5e2dba5c8affe6229619e1f9694a4c59b290d3d5f1311d7e9",
+  "hash": "f5a9be580ff9c4b6d071fd5f9f0af5e0073ee38c91c261c81bb56d7cd0c20587",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Terraform's built-in `terraform test` framework explicitly runs against test-specific, short-lived resources to avoid touching real infrastructure/state, and v1.7.0 added provider-response mocking so tests can run without any real cloud calls at all — a genuine sandbox mechanism. However, this is a general IaC testing feature, not something built or documented specifically for 'AI-native' agentic use, and there's no independent/hands-on evidence validating it in an AI-agent context. Missing for 10: explicit AI-agent-oriented sandbox tooling or workflow guidance, and independent corroboration that the test/mock framework reliably isolates AI-driven runs from production.",
+    "rationale": "Terraform's documented `terraform test` framework runs against test-specific, short-lived resources, \"preventing any risk to your existing infrastructure or state.\" Since v1.7.0 it can also mock provider data, so tests can run without real infrastructure. `terraform plan` (with `-json` output) adds a non-mutating preview before any apply, and a community user corroborates that plans make iteration safe. Missing for 10: independent or hands-on corroboration of the test/mock sandbox behaviour, and evidence of first-class environment isolation (e.g. workspaces or separate state for dev vs. prod) beyond module tests.",
     "evidenceIds": [
       "terraform-docs-27",
-      "terraform-docs-28",
       "terraform-docs-7",
-      "terraform-docs-21"
+      "terraform-docs-28",
+      "terraform-docs-2",
+      "terraform-docs-22",
+      "terraform-comm-15"
     ],
     "productId": "terraform",
     "storyId": "api-sandbox"

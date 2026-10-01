@@ -1,15 +1,15 @@
 {
-  "hash": "39f8f347223edfe935da7b3b107e1820edbda9a81be8f7cf2cc0674673e009b9",
+  "hash": "af03d9429446be155a223ef5c7c1c4e33ff92fcc0d132811c7636c930ca4de84",
   "verdict": {
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Inngest's core architecture explicitly separates execution (your functions run on your own infra/servers) from the managed control plane: 'Deploy your functions to your own infrastructure. Sync your application's functions with the Inngest Platform' (inngest-gh-1), and self-hosting is documented as a supported option since 1.0 (inngest-docs-9, inngest-docs-28) alongside encryption middleware for extra data control (inngest-docs-10). This matches the platform-engineer story of workers-in-your-network with vendor-managed orchestration. Missing for 10: independent/hands-on verification of data-residency guarantees in the hybrid (non-fully-self-hosted) mode, and more detail on network isolation/security posture of the control-plane-to-worker connection.",
+    "rationale": "Inngest's model matches the split the story asks for: your functions are deployed to your own infrastructure and synced to the managed Inngest Platform, which runs the orchestration. A community user confirms Inngest does no compute of its own and runs on yours. However, Inngest persists execution state on its side, so data does not truly stay inside your network; the bring-your-own-key encryption middleware only mitigates this by encrypting that data. Missing for 10: documented guarantee that payloads and step state never leave the customer network, private networking or outbound-only worker connectivity docs, and independent hands-on corroboration of the hybrid data-residency setup.",
     "evidenceIds": [
       "inngest-gh-1",
-      "inngest-docs-9",
-      "inngest-docs-28",
-      "inngest-docs-10"
+      "inngest-comm-6",
+      "inngest-docs-10",
+      "inngest-docs-1"
     ],
     "productId": "inngest",
     "storyId": "hybrid-managed-workers"

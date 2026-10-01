@@ -1,18 +1,18 @@
 {
-  "hash": "eea6139bc1eb1c50c40aa649c3b2933c5637c88dea954eeb70c02e2869225808",
+  "hash": "463e46edd90cf79ffad2530d7b6c0f969ea99050d6b8cdd28fd5ce19a2970ef7",
   "verdict": {
-    "productId": "launchdarkly",
-    "storyId": "local-evaluation-latency",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Community evidence confirms LaunchDarkly's core streaming architecture — SDKs download the full flag ruleset once and then stream updates, enabling local evaluation without a per-flag network call (launchdarkly-comm-2, launchdarkly-comm-9), and the Relay Proxy exists specifically to cache rulesets on-prem for resiliency (launchdarkly-docs-13, launchdarkly-docs-32). However there is no first-party SDK doc in this pack explicitly describing the local-evaluation/streaming-store mechanism or microsecond latency claims, and one community comment raises concern about network dependency per request (launchdarkly-comm-6), showing the story is not fully substantiated end-to-end. Missing for 10: dedicated SDK architecture docs describing the in-memory flag store/streaming model, explicit benchmark/latency numbers, and resolution of the community concern about request-time dependency.",
+    "rationale": "Community reports say LaunchDarkly clients download all project flags on connection and then stream changes over SSE with minimal latency. That implies flags are evaluated against a locally cached ruleset rather than through a network call per check. First-party evidence only lists 13 server-side SDKs and the Relay Proxy, without describing the local evaluation mechanism. One older report of API lookup timeouts (3s SDK default) is too vague to concretely contradict local evaluation, but it lowers confidence. Missing for 10: first-party docs confirming server SDKs evaluate in-process from a cached ruleset, evidence of microsecond-level evaluation latency, and explicit confirmation that no per-flag network call occurs.",
     "evidenceIds": [
       "launchdarkly-comm-2",
       "launchdarkly-comm-9",
+      "launchdarkly-docs-41",
       "launchdarkly-docs-13",
-      "launchdarkly-docs-32",
-      "launchdarkly-comm-6"
-    ]
+      "launchdarkly-comm-5"
+    ],
+    "productId": "launchdarkly",
+    "storyId": "local-evaluation-latency"
   }
 }

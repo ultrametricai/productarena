@@ -1,15 +1,17 @@
 {
-  "hash": "b9ebdeaad8bec68d49083ad356784933a8ed0b4754305d83b971da89a2fe12b5",
+  "hash": "345604096f70a212c763eedc050061a0b50501b34d79e99f81f5fdad405d4783",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe PR-triggered scans that post a pass/fail check to GitHub/GitLab, with a configurable fail-on-severity threshold and separation of new vs pre-existing findings, which together enable failing a PR build on new findings. This matches the CI/PR-gating story closely, though it's implemented as a GitHub/GitLab check status rather than an explicit CLI exit code and lacks independent hands-on confirmation of build-failing behavior. Missing for 10: independent verification that the pass/fail check actually blocks merges/builds in practice, and explicit mention of CLI exit-code semantics for non-GitHub CI runners.",
+    "rationale": "Gecko scans pull requests and posts a pass/fail check back to GitHub or GitLab. It applies a configurable fail-on severity threshold and separates findings the PR introduces from pre-existing ones, so new findings can block a PR (gecko-security-docs-5, -28, -29). It does this through a hosted App status check, not a CI runner step. Scans can be triggered from a pipeline via the API with a dedicated CI/CD key (gecko-security-docs-10, -25), but nothing documents a CLI or exit-code behavior that would fail a CI job. missing for 10: CLI or CI-runner integration that returns non-zero exit codes on new findings, documented pipeline examples (e.g., GitHub Actions/GitLab CI job), independent hands-on corroboration of PR gating.",
     "evidenceIds": [
       "gecko-security-docs-5",
       "gecko-security-docs-28",
       "gecko-security-docs-29",
-      "gecko-security-docs-1"
+      "gecko-security-docs-19",
+      "gecko-security-docs-10",
+      "gecko-security-docs-25"
     ],
     "productId": "gecko-security",
     "storyId": "ci-pipeline-gate"

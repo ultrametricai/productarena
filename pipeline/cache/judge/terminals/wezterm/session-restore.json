@@ -1,15 +1,16 @@
 {
-  "hash": "d0077e991e83cfeeb4caf603ff4e97511d541ae1b4a30163be7c40ee1869727b",
+  "hash": "57c01e29b5c8bf7656274d442c4af28e06a463f81a56d9c621b647f710761e5a",
   "verdict": {
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "WezTerm's mux-server/SSH-domain feature lets tabs and panes survive a GUI crash or restart by reconnecting to a persistent multiplexer instance, and OSC7-based cwd tracking lets new tabs inherit a working directory — but these require manually setting up a separate mux-server domain rather than being an automatic 'restore my session' feature, and there's no evidence of full window-layout or automatic state persistence on plain restart. Missing for 10: documented automatic session/workspace save-and-restore across app restarts, evidence of working-directory restoration (not just inheritance) after crash, and independent confirmation the mux-domain workflow reliably recovers full window/tab state.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "WezTerm's multiplexer keeps tabs alive. The docs say a connection to a remote wezterm instance \"preserves your tabs\", and a runtime probe shows a daemonized wezterm-mux-server holding windows, tabs and panes independently of the GUI. That lets a developer reattach after closing or losing the GUI, but nothing shows layouts or working directories surviving a restart of the mux server, a machine reboot or a crash. The OSC 7 working-directory feature only seeds the directory of newly spawned tabs; it does not restore them. Missing for 10: restoring sessions after a reboot or mux-server crash, persisting working directories across restarts, saving and loading layouts, and independent corroboration of session restore.",
     "evidenceIds": [
-      "wezterm-docs-8",
       "wezterm-docs-14",
-      "wezterm-docs-10",
-      "wezterm-docs-9"
+      "wezterm-docs-3",
+      "wezterm-docs-8",
+      "wezterm-probe-rt-1",
+      "wezterm-docs-10"
     ],
     "productId": "wezterm",
     "storyId": "session-restore"

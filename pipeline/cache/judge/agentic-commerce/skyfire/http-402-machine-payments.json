@@ -1,16 +1,19 @@
 {
-  "hash": "928cb339f4a4266c3001f60435d3a308c4e38f16f7ace60fc442fedfcfc7df89",
+  "hash": "6a7def0cfc3f263b1f91499643cb67ed6535bf3945c1dc1edc630ed885d92d53",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Skyfire lets a developer publish a paid service (approval-gated), require buyer-issued `pay`/`kya-pay` tokens, and charge per call via the Charge Token API after delivery — no checkout UI, agent-to-agent settlement (skyfire-docs-3, skyfire-supp-5, skyfire-docs-16). However, the mechanism is a proprietary bearer-token header protocol (kyapay-token), not a documented HTTP 402 challenge/response flow; the only explicit '402' reference is an error code returned on overcharge (skyfire-supp-5), not a payment-required discovery mechanism. Missing for 10: documented HTTP 402 status-based payment-required/retry flow, and independent corroboration of per-call agent payments in production.",
+    "rationale": "Skyfire lets a developer register a seller service with pricing and accept buyer-issued pay or kya-pay tokens via the `kyapay-token` header. The seller then charges each token through the Charge Token API after delivery, and tokens can be charged repeatedly until their balance runs out, so agents pay per call with no checkout UI and the seller is guaranteed settlement. However, the evidence shows no HTTP 402 challenge-response flow: 402 appears only as the PAYMENT_ERROR returned when an overcharge fails, and seller services require Skyfire approval. Missing for 10: a documented HTTP 402 payment-required challenge/response protocol for unpaid requests, a self-serve (non-approval-gated) seller setup, and independent hands-on corroboration of per-call seller monetization.",
     "evidenceIds": [
       "skyfire-docs-3",
-      "skyfire-docs-16",
+      "skyfire-docs-4",
+      "skyfire-docs-7",
+      "skyfire-supp-1",
+      "skyfire-supp-4",
       "skyfire-supp-5",
-      "skyfire-docs-30",
-      "skyfire-supp-4"
+      "skyfire-supp-8",
+      "skyfire-docs-30"
     ],
     "productId": "skyfire",
     "storyId": "http-402-machine-payments"

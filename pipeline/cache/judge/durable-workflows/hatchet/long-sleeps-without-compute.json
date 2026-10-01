@@ -1,15 +1,17 @@
 {
-  "hash": "9dc6fc58944b42b893b6ec525ca6320748e84b716e48c0048cbb313c69d65411",
+  "hash": "6ede031783aa95948352a9ee3fd31bf286f3bc89a90d8b6f1589eb28f8ce3cb2",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Hatchet's docs reference Scheduled Runs and Cron Runs, which imply workflows can be deferred to future times without an always-on process, and the control-plane architecture persists workflow state in Postgres rather than in worker memory. However, no evidence explicitly documents a 'durable sleep' primitive, confirms sleeps can span months, or states that no billable compute/connection is held during a sleep. Missing for 10: explicit sleep/durable-execution API docs, confirmation of long-duration (weeks/months) sleeps, and any statement about compute/connection cost during sleep.",
+    "rationale": "Hatchet is positioned as an orchestration engine for durable workflows, with a control plane separate from workers that schedules tasks (gh-2, gh-3, comm-6, docs-8). It also documents scheduled runs, which implies deferred execution without a worker waiting. However, nothing in the pack explicitly describes a durable sleep or wait-for-event primitive that suspends a running workflow for days or months while releasing compute. missing for 10: documented durable sleep/wait primitive, evidence that long waits release worker slots and connections, maximum wait duration, billing behavior while waiting, hands-on corroboration.",
     "evidenceIds": [
-      "hatchet-docs-26",
+      "hatchet-gh-2",
+      "hatchet-gh-3",
+      "hatchet-gh-1",
       "hatchet-docs-27",
-      "hatchet-docs-8",
-      "hatchet-gh-1"
+      "hatchet-comm-6",
+      "hatchet-docs-8"
     ],
     "productId": "hatchet",
     "storyId": "long-sleeps-without-compute"

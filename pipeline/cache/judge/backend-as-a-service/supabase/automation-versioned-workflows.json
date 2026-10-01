@@ -1,17 +1,18 @@
 {
-  "hash": "7ceab4b269290e3b57de043742a4c78bbff78573a507257bb26546789a34c0b2",
+  "hash": "eb7828603c0956447f538b80fa007320afc130648570e16abb57e38dafd335ba",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Supabase's branching feature (create/merge/reset/rebase branches) lets users version and review schema/config changes in isolated preview environments before merging to production, and the MCP toolset exposes migration tracking (list_migrations, apply_migration) plus branch tools that an AI agent can use to review and roll back changes; PITR/backups also allow rolling back the database to a point in time. However, this is schema/database-centric versioning, not a dedicated versioning/rollback system for 'automations' like Edge Functions, Cron jobs, or Webhooks. Missing for 10: explicit version history and rollback for deployed Edge Functions and Cron jobs, an audit/undo trail for AI-agent-triggered automation actions, and independent hands-on evidence of an agent actually reviewing/rolling back an automation via these tools.",
+    "rationale": "Supabase's automations (Cron, Database Webhooks, Queues, Edge Functions) are defined in Postgres or as deployable code, so they can be versioned and reviewed indirectly. The tools for this are SQL migrations (`list_migrations`/`apply_migration`), branching with per-PR preview environments, and branch merge/reset. Rollback exists only at the database level through daily backups and PITR, and community users call the migration workflow a weakness, though that is criticism rather than a concrete failure. Missing for 10: first-class version history and rollback for cron jobs, webhooks and Edge Function deployments; documentation tying automation definitions to migrations/branch review; granular, non-whole-database rollback; independent hands-on corroboration.",
     "evidenceIds": [
-      "supabase-docs-10",
-      "supabase-docs-17",
-      "supabase-docs-24",
-      "supabase-docs-50",
       "supabase-supp-mcp-tool-groups",
-      "supabase-supp-backups-pitr"
+      "supabase-docs-50",
+      "supabase-docs-17",
+      "supabase-supp-backups-pitr",
+      "supabase-supp-cron",
+      "supabase-supp-db-webhooks",
+      "supabase-comm-7"
     ],
     "productId": "supabase",
     "storyId": "automation-versioned-workflows"

@@ -5,17 +5,23 @@ import {
   type Evidence, EvidenceSchema, ProductSchema, type Story, StorySchema,
   type Verdict, VerdictBaseSchema, VerdictSchema,
 } from '../../lib/schemas'
-import { llmJson } from '../llm'
+import { JUDGE_MODEL, llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, readJson, resolveCategories, writeJson } from '../paths'
 
-export const PROMPT_VERSION = 'v3'
+// v4 (2026-09-30): the prompt TEXT is unchanged from v3 — the bump marks the judge model
+// migration sonnet-5 → claude-opus-5-5 (docs/OPUS-5-5-JUDGE-PILOT.md, adopted). From v4 on the
+// judge model id is also folded into the cellHash payload below, so any future model change is
+// a first-class cache invalidator instead of silently keeping the previous model's verdicts.
+export const PROMPT_VERSION = 'v4'
 
-export function cellHash(story: Story, evidence: Evidence[], promptVersion: string): string {
+export function cellHash(story: Story, evidence: Evidence[], promptVersion: string, judgeModel: string = JUDGE_MODEL): string {
   const payload = JSON.stringify({
     storyId: story.id,
     title: story.title,
     evidence: evidence.map((e) => [e.id, e.excerpt]),
     promptVersion,
+    // Added with v4 — see the PROMPT_VERSION note. Pre-v4 hashes were computed without this key.
+    judgeModel,
   })
   return crypto.createHash('sha256').update(payload).digest('hex')
 }

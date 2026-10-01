@@ -1,18 +1,21 @@
 {
-  "hash": "4c68c4f18e6c059e341722917bacccdd58ccd2b6a5a03a514b615a2f800ba924",
+  "hash": "34023165c7a6bd18cb4cfd3edea9115a2cb629dca27882d3bcff7dcc8d96bedb",
   "verdict": {
-    "productId": "shopify-ucp",
-    "storyId": "human-approval-gate",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Shopify's UCP checkout flow documents explicit pre-purchase gates: complete_checkout must only be called once 'Checkout status is ready_for_complete', the 'Buyer has reviewed and confirmed the order', and the 'Payment credential has been collected', and unresolved cases force a hand-off to the buyer via continue_url (requires_escalation/requires_buyer_review). AP2 integration adds 'cryptographically signed payment authorizations that are mathematically tied to the specific state of the cart', which maps to a signed-mandate model, and trust tiers restrict complete_checkout to Token-tier agents with explicit purchase permission. However, the docs also note 'Trusted agents can complete checkouts directly,' implying some agents can skip buyer-facing confirmation, and enforcement of the 'buyer reviewed' precondition appears to rely on agent self-attestation rather than a Shopify-verified user signature captured at time of purchase. Missing for 10: independent/third-party confirmation that buyer consent is cryptographically captured (not just agent-declared) and clarity on exactly which agents qualify as 'trusted' to bypass buyer review.",
+    "rationale": "Shopify's default checkout flow hands the buyer off to the merchant storefront to pay, and checkouts in requires_escalation must go back to the buyer for input or review. The documented preconditions for complete_checkout include \"Buyer has reviewed and confirmed the order\", and the call is limited to Token-tier agents granted purchase permission. UCP also specifies AP2 payment mandates: cryptographically signed authorizations tied to cart state, with verifiable boundaries. missing for 10: proof that Shopify itself enforces buyer confirmation on direct complete_checkout (it reads as agent-side guidance), explicit evidence that Shopify's servers implement AP2 signed mandates (as opposed to the UCP spec), and hands-on verification of the checkout/consent step (the runtime probe stopped at cart creation).",
     "evidenceIds": [
       "shopify-ucp-supp-checkout-mcp",
       "shopify-ucp-supp-buyer-handoff",
       "shopify-ucp-supp-trust-tiers",
+      "shopify-ucp-supp-ucp-journey",
+      "shopify-ucp-docs-18",
       "shopify-ucp-docs-31",
-      "shopify-ucp-supp-ucp-governance"
-    ]
+      "shopify-ucp-supp-ucp-governance",
+      "shopify-ucp-docs-24"
+    ],
+    "productId": "shopify-ucp",
+    "storyId": "human-approval-gate"
   }
 }

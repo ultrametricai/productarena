@@ -1,14 +1,15 @@
 {
-  "hash": "e68150605bdf1fe849aff675ed6f807b82b78468233b41663eb242e1bfee7188",
+  "hash": "4fd07d22e7f4aff4ad45432adca7d486efbcd11f736ff66254e1a87c2f7532c9",
   "verdict": {
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Supabase's MCP server and BYO-MCP docs describe scoped tool access tied to RLS/service-role permissions (supabase-docs-1, supabase-docs-2, supabase-docs-45), and community reporting confirms Supabase added a read-only-by-default mode plus anti-injection safeguards for the MCP server (supabase-comm-2). However, a concrete hands-on exploit report shows an attacker was able to use prompt injection via the MCP server to have an agent bypass RLS through service_role access and exfiltrate a sensitive table (supabase-comm-1), directly contradicting the 'safely delegate' framing even after mitigations were applied. missing for 10: first-party documentation of a formal read-only vs destructive tool distinction/permission schema, and independent confirmation that the exploit is now fully closed.",
+    "rationale": "Supabase's official MCP server lets agents query the database and manage migrations, and a probe confirms the hosted endpoint is live behind OAuth. A read-only mode is evidenced only by a Supabase engineer's comment that read-only MCP is now encouraged by default, made after a reported prompt-injection exploit that used service_role access to bypass RLS; that engineer also said prompt injection remains unsolved. missing for 10: first-party documentation of read-only vs destructive tool scoping, per-tool permission or confirmation controls for destructive schema changes, independent hands-on corroboration of safe delegation.",
     "evidenceIds": [
       "supabase-docs-1",
       "supabase-docs-2",
-      "supabase-docs-45",
+      "supabase-probe-4",
+      "supabase-probe-rt-2",
       "supabase-comm-1",
       "supabase-comm-2"
     ],

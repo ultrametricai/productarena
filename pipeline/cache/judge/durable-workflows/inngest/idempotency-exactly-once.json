@@ -1,16 +1,15 @@
 {
-  "hash": "7793bfc483919b82d1edc9c009784da17cafd4a193533926081f61373cfbfd1e",
+  "hash": "e6f66582a04df251f6d418344d372c0a0bd6ebb2989103f0eba836893f2e679b",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Inngest provides step memoization, retries, and checkpointed resumption (docs-2, docs-15, docs-26) which help avoid re-executing already-completed side effects on retry, and rate limiting/concurrency keys (docs-12, docs-13) reduce duplicate trigger risk. However, there is no explicit documentation of idempotency keys for event deduplication or a guarantee of exactly-once step execution semantics — Inngest's model is at-least-once with retries plus memoization, not a documented idempotency-key API for dedup. missing for 10: explicit idempotency-key/event-deduplication feature docs, explicit 'exactly-once' guarantee language, and hands-on/community confirmation that duplicate triggers are prevented from double-charging or double-sending.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Inngest documents step memoization: side effects placed in steps have their results memoized, failures are retried independently, and runs resume from the last successful checkpoint. That implies completed steps such as a charge or a send are not re-run on retry. However, nothing in the pack documents idempotency keys or deduplication of duplicate triggering events, and nothing explicitly states exactly-once guarantees. Missing for 10: documented idempotency keys or event deduplication for duplicate triggers, an explicit exactly-once step guarantee, and independent or hands-on corroboration of duplicate-prevention behavior.",
     "evidenceIds": [
       "inngest-docs-2",
-      "inngest-docs-15",
       "inngest-docs-26",
-      "inngest-docs-12",
-      "inngest-docs-13"
+      "inngest-docs-15",
+      "inngest-docs-1"
     ],
     "productId": "inngest",
     "storyId": "idempotency-exactly-once"

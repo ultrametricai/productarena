@@ -1,18 +1,15 @@
 {
-  "hash": "d79ba26d5a76be55592e789632fd46e5e82f618a3d2e922f0635a3be6a7145b9",
+  "hash": "f5cfe60c219ad1c95203c1969d830378eaf1614035e2b0c423112de201bf4f3a",
   "verdict": {
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "uv's docs describe an aggressive global cache that avoids re-downloading and re-building dependencies already fetched previously, and highlight disk-efficient caching for dependency deduplication, which is how installing prebuilt wheels from cache versus recompiling works in the Python packaging ecosystem uv is compatible with. Community reports corroborate large real-world speedups consistent with cache hits avoiding rebuilds. Missing for 10: explicit documentation distinguishing wheel (binary) vs sdist (source) install paths and confirmation cache stores prebuilt wheels specifically rather than just resolution metadata.",
+    "rationale": "uv's docs say it uses aggressive caching to avoid re-downloading and re-building dependencies from prior runs [uv-docs-25]. A global cache deduplicates dependencies [uv-docs-33], and the official setup-uv action can persist that cache in CI [uv-docs-10], so previously built packages are reused rather than recompiled. One user reports uvx sometimes re-downloading dependencies it had just fetched for another tool [uv-comm-4], which lowers confidence but does not contradict the documented capability. Missing for 10: explicit documentation of prebuilt-wheel selection and how built wheels are stored and reused from the cache, and independent hands-on corroboration that cache hits avoid source builds.",
     "evidenceIds": [
       "uv-docs-25",
       "uv-docs-33",
-      "uv-docs-66",
-      "uv-comm-1",
-      "uv-comm-2",
-      "uv-comm-6",
-      "uv-docs-11"
+      "uv-docs-10",
+      "uv-comm-4"
     ],
     "productId": "uv",
     "storyId": "prebuilt-binary-cache"

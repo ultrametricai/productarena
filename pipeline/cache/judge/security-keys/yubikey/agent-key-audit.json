@@ -1,16 +1,17 @@
 {
-  "hash": "e2893a7afe3fd4e1b3de24648596b680a6e19df0b86f715138926833b96ad0ab",
+  "hash": "d4e07d614acdf0c517566884a07d84f991368257d0a60cb309b9a99f1498dcbf",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yubico's official ykman CLI (and underlying python-fido2/yubikey-manager libraries) exposes exactly this data programmatically: serial number, firmware version, enabled applications, PIN/PIV/OATH/OTP slot state, all scriptable without a client GUI — confirmed both in docs (docs-4, docs-15/25) and a keyless runtime probe showing full scriptable device management (probe-rt-1) plus SDK availability on PyPI (probe-rt-3). An agent can shell out to ykman on each key to build a fleet audit, though Yubico provides no built-in cross-fleet aggregation/reporting endpoint (the YubiEnterprise API in probe-rt-2 covers shipping/inventory, not live security-posture state). Missing for 10: a native fleet-wide audit/reporting API or dashboard aggregating multiple keys' state, and independent hands-on confirmation of scripting this across many devices at scale.",
+    "rationale": "Yubico's official ykman CLI is scriptable and documented for device info, enabled applications, and PIV/OATH/OTP slot management. The firmware docs name ykman as a way to read the firmware version, and SDKs (python-fido2, .NET, YubiKit) allow reading from code. Fleet-wide auditing is not covered: the YubiEnterprise REST API only handles delivery, inventory and shipment, not live device state. So an agent would have to run ykman locally against each attached key and aggregate the results itself. Missing for 10: explicit evidence of serial and stored-credential enumeration, documented machine-readable (e.g. JSON) output, a centralized fleet-state API, and hands-on corroboration of an audit workflow.",
     "evidenceIds": [
+      "yubikey-probe-rt-1",
       "yubikey-docs-4",
       "yubikey-docs-15",
       "yubikey-docs-25",
       "yubikey-probe-4",
-      "yubikey-probe-rt-1",
+      "yubikey-docs-19",
       "yubikey-probe-rt-3",
       "yubikey-probe-rt-2"
     ],
