@@ -91,6 +91,8 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('growth_010', 'Launch on Product Hunt & directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
     task('ops_014', 'Lease an office'),
+    // The Apply-to-YC checkbox's composed process (item 6, 2026-10-01).
+    task('fund_007', 'Apply to Y Combinator'),
   ].map((t) => [t.id, t]),
 )
 
@@ -1259,6 +1261,43 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
     expect(corpusLine.className).toContain('text-zinc-400')
     // The terminal status strip sits at zinc-400 (was zinc-500).
     expect(screen.getByTestId('vs-terminal-status').className).toContain('text-zinc-400')
+  })
+})
+
+describe("the 'Apply to YC' checkbox (founder 2026-10-01, item 6)", () => {
+  it('unchecked by default — no application phase; checking composes the real fund_007 process as a chainless phase with its simulated artifact; unchecking removes it', () => {
+    renderIt()
+    const box = screen.getByTestId('vs-yc-apply-input') as HTMLInputElement
+    expect(box.checked).toBe(false)
+    showAll()
+    expect(screen.queryByText('Apply to Y Combinator')).toBeNull()
+    // Check it — a composition change, so the run clears like a decision change.
+    fireEvent.click(box)
+    expect(box.checked).toBe(true)
+    expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
+    showAll()
+    expect(termBody().getByText('Apply to Y Combinator')).toBeTruthy()
+    const phase = termBody().getByText('Apply to YC')
+    // The office/lease pattern: a single committed corpus process, NOT a curated chain — no
+    // playbook link on this phase, and the note says so plus the non-affiliation line.
+    expect(within(phase.closest('li')!).queryByText(/playbook →/)).toBeNull()
+    // Two chainless phases print the honesty line now (the default-asserted Office + this one).
+    expect(termBody().getAllByText(/not a curated chain/).length).toBeGreaterThanOrEqual(2)
+    expect(termBody().getByText(/not affiliated with or endorsed by Y Combinator/)).toBeTruthy()
+    // The phase lands right after formation (the application asks for company + founders).
+    const form = termBody().getByText('Form the company')
+    const raise = termBody().getByText('Raise the seed')
+    expect(form.compareDocumentPosition(phase) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(phase.compareDocumentPosition(raise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // The application artifact prints simulated, never claiming acceptance.
+    const art = screen.getAllByTestId('vs-artifact').find((a) => /YC application/.test(a.textContent ?? ''))!
+    expect(art.getAttribute('data-synthetic')).toBe('true')
+    expect(art.textContent).toContain('submitted')
+    expect(art.textContent).not.toMatch(/accepted/i)
+    // Uncheck: the phase honestly leaves the composition.
+    fireEvent.click(box)
+    showAll()
+    expect(screen.queryByText('Apply to Y Combinator')).toBeNull()
   })
 })
 

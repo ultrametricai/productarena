@@ -405,6 +405,7 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
       picks: {},
       eventChoices: {},
       assistant: null,
+      ycApply: false,
       seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)

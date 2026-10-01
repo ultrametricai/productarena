@@ -143,6 +143,9 @@ interface RunArgs {
   identity: SynthIdentity | null
   preset: PresetId | null
   yc: boolean
+  // 'Apply to YC' (item 6, 2026-10-01): composes the real YC-application corpus process as its
+  // own phase (lib/virtualStartup.ts YC_APPLY_TASK_ID — the ops_014 office pattern).
+  ycApply: boolean
   seed: number
   taskRisks: Record<string, number>
   // Semi-auto: pin the synthetic name/artifact seed to DEFAULT_CHOICES so a mid-run decision
@@ -160,16 +163,17 @@ interface RunBuild {
 }
 
 function buildRunRows(args: RunArgs): RunBuild {
-  const { choices, chains, tasks, roles, access, founder, picks, identity, preset, yc, seed, taskRisks } = args
-  const phases = journeyPhases(choices, chains, { yc })
+  const { choices, chains, tasks, roles, access, founder, picks, identity, preset, yc, ycApply, seed, taskRisks } = args
+  const phases = journeyPhases(choices, chains, { yc, ycApply })
   const outcomeInputs = journeyOutcomeInputs(phases, tasks)
   const outcome = computeStackOutcome(outcomeInputs, picks, roles, access, founder)
   // Seeded, corpus-grounded, plausibility-gated events; deterministic from (combo, preset, yc,
-  // founder axes, seed) — the day span comes from the raw corpus estimates so vendor picks never
-  // reshuffle which events fire.
+  // ycApply, founder axes, seed) — the day span comes from the raw corpus estimates so vendor
+  // picks never reshuffle which events fire (the ycApply token appends only when on, so every
+  // pre-existing run's stream replays byte-identically).
   const drawnEvents = drawVsEvents(
     eligibleVsEvents(choices, phases.flatMap((p) => p.taskIds), taskRisks),
-    eventSeedKey(choices, preset, yc, founder, seed),
+    eventSeedKey(choices, preset, yc, founder, seed, ycApply),
     corpusLaunchDay(outcomeInputs),
   )
   const taskIds = phases.flatMap((p) => p.taskIds)
@@ -528,6 +532,11 @@ export default function VirtualStartup({
   // company presets (the codec extends compatibly), asserts only its partial combo, no identity.
   const [scenario, setScenario] = useState<ScenarioId | null>(null)
   const [yc, setYc] = useState(false)
+  // 'Apply to YC' (item 6, 2026-10-01): the setup-band checkbox — a composition change (the
+  // real fund_007 application process joins as its own phase), so toggling clears the run like
+  // any decision change. Rides the ?run= permalink as the appended 'q' token; legacy links
+  // decode without it and replay phase-free, their era. Independent of YC batch mode (yc).
+  const [ycApply, setYcApply] = useState(false)
   // The controller tab (round 3, item 3): Setup (scenario/founder/geo/decisions rows) vs
   // Vendors (fix a vendor per role before/independent of the run). Default Setup; deliberately
   // NOT persisted in the URL — the chosen tab is ephemeral chrome, the picks themselves ride
@@ -682,6 +691,7 @@ export default function VirtualStartup({
     setPicks(run.picks)
     setEventChoices(run.eventChoices)
     setAssistant(run.assistant)
+    setYcApply(run.ycApply)
     setRunSeed(run.seed)
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -704,8 +714,8 @@ export default function VirtualStartup({
   // ── The whole run, assembled by the shared pure builder (rows, steps, outcome model, drawn
   // events) — the semi-auto pause schedule below reuses the same builder for per-option variants.
   const runArgs = useMemo<Omit<RunArgs, 'choices'>>(
-    () => ({ chains, tasks, roles, access, founder, picks, identity, preset, yc, seed: runSeed, taskRisks, seedCombo }),
-    [chains, tasks, roles, access, founder, picks, identity, preset, yc, runSeed, taskRisks, seedCombo],
+    () => ({ chains, tasks, roles, access, founder, picks, identity, preset, yc, ycApply, seed: runSeed, taskRisks, seedCombo }),
+    [chains, tasks, roles, access, founder, picks, identity, preset, yc, ycApply, runSeed, taskRisks, seedCombo],
   )
   const run = useMemo(() => buildRunRows({ ...runArgs, choices }), [runArgs, choices])
   const { rows: composedRows, steps, stats, outcomeInputs, drawnEvents } = run
@@ -805,10 +815,10 @@ export default function VirtualStartup({
   // Year one — deterministic from the same decision combo (seeded months for annuals the
   // corpus doesn't date; those keep the fuchsia styling + data-synthetic).
   const year = useMemo(() => {
-    const journeyTasks = journeyPhases(choices, chains, { yc }).flatMap((p) => p.taskIds)
+    const journeyTasks = journeyPhases(choices, chains, { yc, ycApply }).flatMap((p) => p.taskIds)
     const rhythm = yearRows(choices, journeyTasks, yearCandidates)
     return { rhythm, stats: yearStats(rhythm) }
-  }, [choices, chains, yc, yearCandidates])
+  }, [choices, chains, yc, ycApply, yearCandidates])
 
   // First 30 / first 90 days — the same rhythm rows sliced by cadence-math day intervals; the
   // launch journey's own day span comes from the corpus estimates (dayOf(stats.totalMinutes)).
@@ -829,8 +839,8 @@ export default function VirtualStartup({
   )
   const burn = useMemo(() => computeBurn(journeyRoles, effectivePicks, pricing), [journeyRoles, effectivePicks, pricing])
   const runState: VsRunState = useMemo(
-    () => ({ choices: asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, seed: runSeed }),
-    [asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, runSeed],
+    () => ({ choices: asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, ycApply, seed: runSeed }),
+    [asserted, preset, yc, founder, mode, companyName, picks, eventChoices, assistant, ycApply, runSeed],
   )
   // The pinned assistant's judged roster entry (null = the judged pick displays alone).
   const assistantPick = useMemo(() => assistants.find((a) => a.id === assistant) ?? null, [assistants, assistant])
@@ -1147,6 +1157,14 @@ export default function VirtualStartup({
     setMode(next)
   }
 
+  // 'Apply to YC' (item 6, 2026-10-01): a composition change — the real fund_007 application
+  // process joins/leaves the journey — so the toggle clears the run like a decision change.
+  function toggleYcApply() {
+    clearRun()
+    clearRunState()
+    setYcApply((v) => !v)
+  }
+
   function start() {
     // A RESTART in semi-auto clears assertions (and the typed name) back to 'Not set' — a fresh
     // interactive run (DEFAULT-ASSERTED decisions reset to their asserted defaults, never to
@@ -1338,6 +1356,31 @@ export default function VirtualStartup({
               </span>
               YC batch mode
             </button>
+            {/* 'Apply to YC' checkbox (founder batch 2026-10-01, item 6): composes the REAL
+                "Apply to Y Combinator" corpus process (fund_007 — steps from YC's own published
+                application guidance) as its own phase, the office/lease pattern. Distinct from
+                YC batch mode (the calibration pill left of it); the two compose. A toggle is a
+                composition change, so it clears the run; the state rides the ?run= permalink as
+                the appended 'q' token — legacy links replay without the phase. */}
+            <label
+              data-testid="vs-yc-apply"
+              title="Adds the real 'Apply to Y Combinator' corpus process (fund_007 — account, written application, one-minute founder video, submission; from YC's published application guidance) to the journey as its own phase. Synthetic run; not affiliated with or endorsed by Y Combinator."
+              className={`flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs transition ${
+                ycApply
+                  ? 'border-orange-400/60 bg-orange-400/10 text-orange-300'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+              }`}
+            >
+              <input
+                type="checkbox"
+                data-testid="vs-yc-apply-input"
+                checked={ycApply}
+                onChange={toggleYcApply}
+                className="h-3 w-3 accent-orange-400"
+                aria-label="Apply to YC"
+              />
+              Apply to YC
+            </label>
           </div>
           {/* The who/where cluster (founder batch 2026-09-29, item 4): the two founder AXES
               (Technical × Experience — a change is a new run, the event stream is seeded by the

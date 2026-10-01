@@ -110,6 +110,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   fund_005: pi('folder', 'emerald'), // 📁 Set up a data room (the diligence folder)
   fund_004: pi('certificate', 'emerald'), // 🎟️ Issue stock options
   fund_006: pi('convert', 'emerald'), // 🔀 Convert SAFEs at the priced round
+  fund_007: pi('paper-plane', 'emerald'), // 🛩 Apply to Y Combinator (the application goes out)
   // VC fund (violet — founder ask 2026-09-23: "a process area for VC processes")
   vc_001: pi('jar', 'violet'), // 🫙 Form a VC fund (the vehicle, stood up and ready to fill)
   vc_002: pi('bottle', 'violet'), // 🍾 Close the fund (the first-and-final close)

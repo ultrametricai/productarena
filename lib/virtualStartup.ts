@@ -636,10 +636,24 @@ function chainOrThrow(chains: VsChain[], id: string): VsChain {
   return hit
 }
 
+// 'Apply to YC' (founder batch 2026-10-01, item 6): the setup-band checkbox composes the REAL
+// "Apply to Y Combinator" corpus process (fund_007 — added 2026-10-01 from YC's own published
+// application guidance, https-cited per step; no YC-application process existed in the corpus
+// and the agent-skills arena holds no judged YC-application skill, checked 2026-10-01) as its
+// own single-process phase — the ops_014 office/lease pattern exactly: committed corpus work,
+// NOT a curated chain, so the phase carries no chainId and the UI renders no playbook link.
+// Distinct from YC batch mode (`yc` — a calibration of the journey's shape); the two compose.
+// Codec: the ?run= state carries it as the APPENDED 'q' token (lib/virtualStartupRun.ts) —
+// legacy links lack it and replay without the phase, their era.
+export const YC_APPLY_TASK_ID = 'fund_007'
+
 export interface JourneyOpts {
   // YC batch calibration: the raise phase compresses to Demo-Day timing (batch end) — same real
   // raise-a-seed-round chain, relocated, never altered.
   yc?: boolean
+  // 'Apply to YC' (item 6, 2026-10-01): compose the real YC-application process (fund_007,
+  // YC_APPLY_TASK_ID above) as its own phase right after formation.
+  ycApply?: boolean
 }
 
 // The whole journey for one decision combo: time-ordered phases, each seeded by a REAL curated
@@ -648,6 +662,7 @@ export interface JourneyOpts {
 // several chains (domain_002, prod_005) run once: first occurrence wins, later phases lose them.
 export function journeyPhases(choices: Choices, chains: VsChain[], opts: JourneyOpts = {}): JourneyPhase[] {
   const yc = opts.yc === true
+  const ycApply = opts.ycApply === true
   const phases: JourneyPhase[] = []
   const push = (id: string, title: string, chainId: string, transform?: (ids: string[]) => string[], note?: string | null) => {
     const chain = chainOrThrow(chains, chainId)
@@ -714,6 +729,19 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
         .filter((id) => id !== 'startup_002' || choices.team === 'cofounders'),
     [entityNote, soloNote].filter((n): n is string => n !== null).join(' · ') || null,
   )
+  // 'Apply to YC' (item 6, 2026-10-01): the real YC-application corpus process, right after the
+  // company exists (the application asks for company, founders, and equity). The ops_014
+  // pattern: a single committed process, not a curated chain — chainId '' and no playbook link.
+  if (ycApply) {
+    phases.push({
+      id: 'yc-apply',
+      title: 'Apply to YC',
+      chainId: '',
+      chainName: '',
+      taskIds: [YC_APPLY_TASK_ID],
+      note: 'Apply to YC — the real "Apply to Y Combinator" corpus process (fund_007, per YC’s published application guidance) joins the journey; a single committed process, not a curated chain. Synthetic run; not affiliated with or endorsed by Y Combinator.',
+    })
+  }
   if (choices.funding === 'seed' && !yc) raisePhase()
   if (complianceEarly) compliancePhase()
   if (choices.ordering === 'name-first') buildPhase()
@@ -816,6 +844,10 @@ export function unionTaskIds(chains: VsChain[]): string[] {
       }
     }
   }
+  // The 'Apply to YC' checkbox (item 6, 2026-10-01) is run state, not a decision — its phase is
+  // reachable from ANY combo, so its task joins the union explicitly (the server page
+  // precomputes payloads for exactly this set).
+  if (!seen.has(YC_APPLY_TASK_ID)) out.push(YC_APPLY_TASK_ID)
   return out
 }
 
@@ -1080,6 +1112,13 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
   ops_014: ({ co }) => [{
     label: 'Office lease',
     value: `LOI → lease executed for ${co.name} HQ · deposit wired $0.00 (placeholder) · COI delivered`,
+  }],
+  // Apply-to-YC process (2026-10-01, item 6 — the setup-band checkbox). No rng (the ops_014
+  // convention), impossible-real batch tag — and never a claim of acceptance: the process ends
+  // at the submitted application and the modeled decision wait.
+  fund_007: ({ co }) => [{
+    label: 'YC application',
+    value: `application for ${co.name} submitted · 1-minute founder video uploaded · batch X00 (placeholder)`,
   }],
   // Land-the-enterprise-deal playbook.
   comp_002: () => [{ label: 'SOC 2 Type II', value: 'report issued — observation window closed' }],

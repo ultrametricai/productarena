@@ -44,6 +44,7 @@ import {
   synthCompany,
   unionTaskIds,
   VS_CHAIN_IDS,
+  YC_APPLY_TASK_ID,
   VS_PRESETS,
   VS_SCENARIOS,
   WINDOW_INTERVAL_DAYS,
@@ -1043,5 +1044,58 @@ describe('discoverability wiring', () => {
     )
     expect(entry?.label).toBe('The Open Startup')
     expect(entry?.keywords).toContain('virtual startup')
+  })
+})
+
+describe("the 'Apply to YC' composition (founder 2026-10-01, item 6) — against the live corpus", () => {
+  it('fund_007 is a real, committed corpus process with https-cited YC sources and honest routes', () => {
+    const task = corpusById.get(YC_APPLY_TASK_ID)
+    expect(task, 'the Apply-to-YC process must exist in processes/corpus.json').toBeTruthy()
+    expect(task!.title).toBe('Apply to Y Combinator')
+    // Every cited step URL is https and on YC's own domains — the application guidance itself.
+    const urls = task!.dag.nodes.flatMap((n) => (n.actionUrl ? [n.actionUrl] : []))
+    expect(urls.length).toBeGreaterThanOrEqual(3)
+    for (const u of urls) expect(u).toMatch(/^https:\/\/(www\.|apply\.)?ycombinator\.com\//)
+    // Honest routes: the written answers and the founder video are person steps; the decision
+    // wait is async; nothing pretends an agent can apply for you.
+    const byLabel = (frag: string) => task!.dag.nodes.find((n) => n.label.includes(frag))!
+    expect(byLabel('written application').route).toBe('person')
+    expect(byLabel('founder video').route).toBe('person')
+    expect(byLabel('Wait for the decision').async).toBe(true)
+    expect(task!.supportLevel).toBe('manual_guide')
+  })
+
+  it('journeyPhases composes the application as its own CHAINLESS phase right after formation — the ops_014 office pattern — and only when asked', () => {
+    const off = journeyPhases(DEFAULT_CHOICES, chains)
+    expect(off.some((p) => p.id === 'yc-apply')).toBe(false)
+    const on = journeyPhases(DEFAULT_CHOICES, chains, { ycApply: true })
+    const phase = on.find((p) => p.id === 'yc-apply')!
+    expect(phase.taskIds).toEqual([YC_APPLY_TASK_ID])
+    expect(phase.chainId).toBe('') // a single committed process, never a fake chain
+    expect(phase.note).toContain('not a curated chain')
+    expect(phase.note).toContain('not affiliated with or endorsed by Y Combinator')
+    const idx = (id: string) => on.findIndex((p) => p.id === id)
+    expect(idx('yc-apply')).toBe(idx('form') + 1)
+    // Everything else composes identically — the phase is purely additive.
+    expect(on.filter((p) => p.id !== 'yc-apply')).toEqual(off)
+    // It composes with YC batch mode independently (the calibration reshapes, the checkbox adds).
+    expect(journeyPhases(applyYcCalibration(DEFAULT_CHOICES), chains, { yc: true, ycApply: true }).some((p) => p.id === 'yc-apply')).toBe(true)
+  })
+
+  it('the union precomputes its payload and its artifact prints simulated, never claiming acceptance', () => {
+    expect(unionTaskIds(chains)).toContain(YC_APPLY_TASK_ID)
+    const taskIds = journeyPhases(DEFAULT_CHOICES, chains, { ycApply: true }).flatMap((p) => p.taskIds)
+    const arts = buildJourneyArtifacts(DEFAULT_CHOICES, taskIds)
+    const art = arts[YC_APPLY_TASK_ID]?.[0]
+    expect(art?.simulated).toBe(true)
+    expect(art?.label).toBe('YC application')
+    expect(art?.value).toContain('submitted')
+    expect(art?.value).not.toMatch(/accepted/i)
+    // Constant draft (the ops_014 convention): no other artifact's seeded stream shifts — the
+    // shared artifacts are byte-identical with and without the application phase.
+    const base = buildJourneyArtifacts(DEFAULT_CHOICES, journeyTaskIds(DEFAULT_CHOICES, chains))
+    for (const [id, a] of Object.entries(base)) {
+      expect(arts[id], `artifact set for ${id}`).toEqual(a)
+    }
   })
 })

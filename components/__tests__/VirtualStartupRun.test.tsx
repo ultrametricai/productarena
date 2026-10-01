@@ -403,6 +403,7 @@ describe('simulated burn — published pricing only, cited; gaps stay gaps', () 
       picks: { payments: 'square' },
       eventChoices: {},
       assistant: null,
+      ycApply: false,
       seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)
@@ -603,6 +604,7 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
       picks: { payments: 'square' },
       eventChoices: {},
       assistant: null,
+      ycApply: false,
       seed: 3,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)
@@ -664,7 +666,7 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
     // only the composition-neutral underlay (entity/team/funding/compliance) asserts.
     const legacy = encodeRunState({
       choices: { entity: 'c-corp' }, preset: null, yc: false, founder: DEFAULT_FOUNDER_AXES,
-      mode: 'auto', companyName: null, picks: {}, eventChoices: {}, assistant: null, seed: 0,
+      mode: 'auto', companyName: null, picks: {}, eventChoices: {}, assistant: null, ycApply: false, seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${legacy}`)
     renderIt()
