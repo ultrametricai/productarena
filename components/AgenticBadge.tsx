@@ -70,7 +70,7 @@ export default function AgenticBadge({
   // keep the numeric render.
   untested?: boolean
   // Optional click-through to where the index is explained (usually /methodology#ai-era, the
-  // PA-Score component table these two indexes feed). Callers must NOT set this when the badge
+  // Overall-score component table these two indexes feed). Callers must NOT set this when the badge
   // already renders inside another link — nested anchors are invalid.
   href?: string
 }) {

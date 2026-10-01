@@ -26,7 +26,7 @@ import { loginUrl, registrationUrl, useSession } from '@/lib/session'
 // localStorage+sync pattern). Anonymous readers get a sign-up prompt instead — the free-form
 // tool below (MyStackBuilder) stays open to everyone.
 //
-// Advice: every number is the arena leaderboard's published PA / agent-ready score
+// Advice: every number is the arena leaderboard's published Overall / agent-ready score
 // (lib/myStack.ts stackAdvice), and every cited score links to the product's /score receipt
 // page where the evidence breakdown lives.
 
@@ -279,7 +279,7 @@ export default function YourStack({
                     #{p.pick.rank} of {p.pick.fieldSize}
                   </span>
                   <span className="font-mono text-xs tabular-nums text-zinc-300" title="Overall score — the arena leaderboard's published headline score">
-                    PA {scoreText(p.pick.aiEra)}
+                    Overall {scoreText(p.pick.aiEra)}
                   </span>
                   <Link href={receiptHref(p.pick)} className="text-[11px] text-zinc-500 underline decoration-zinc-700 hover:text-emerald-300">
                     score receipt
@@ -326,9 +326,9 @@ export default function YourStack({
                   <p className="mt-1.5 text-xs text-emerald-300/90">Leads its arena — nothing above it to upgrade to.</p>
                 ) : (
                   <p className="mt-1.5 text-xs text-zinc-400">
-                    {p.paDelta !== null && p.paDelta > 0 ? (
+                    {p.overallDelta !== null && p.overallDelta > 0 ? (
                       <>
-                        Δ<span className="tabular-nums">{p.paDelta.toFixed(0)}</span> PA behind the
+                        Δ<span className="tabular-nums">{p.overallDelta.toFixed(0)}</span> overall behind the
                         leader {p.leader.name}
                         {p.agentReadyDelta !== null && (
                           <>
@@ -350,9 +350,9 @@ export default function YourStack({
                         <Link href={`/arena/${u.product.arenaId}/product/${u.product.id}`} className="hover:text-emerald-200">
                           {u.product.name}
                         </Link>
-                        {u.paDelta !== null && (
-                          <span className="tabular-nums" title={`PA ${scoreText(u.product.aiEra)} vs your ${scoreText(p.pick.aiEra)}${u.agentReadyDelta !== null ? `; agent-ready Δ${u.agentReadyDelta.toFixed(0)}` : ''}`}>
-                            +{u.paDelta.toFixed(0)} PA
+                        {u.overallDelta !== null && (
+                          <span className="tabular-nums" title={`Overall ${scoreText(u.product.aiEra)} vs your ${scoreText(p.pick.aiEra)}${u.agentReadyDelta !== null ? `; agent-ready Δ${u.agentReadyDelta.toFixed(0)}` : ''}`}>
+                            +{u.overallDelta.toFixed(0)} overall
                           </span>
                         )}
                         <Link href={receiptHref(u.product)} className="text-[10px] text-emerald-400/70 underline decoration-emerald-400/30 hover:text-emerald-200">

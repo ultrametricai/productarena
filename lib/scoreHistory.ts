@@ -56,7 +56,7 @@ export function metricTrendDelta(
 }
 
 // Back-compat alias: the Overall score (aiEra) flavor predates metricTrendDelta.
-export function paScoreTrendDelta(
+export function overallScoreTrendDelta(
   categoryId: string,
   productId: string,
   dir: string = DEFAULT_DIR(),

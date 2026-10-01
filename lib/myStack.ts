@@ -647,7 +647,7 @@ export const STACK_UPGRADE_CANDIDATES = 2
 export interface StackUpgradeCandidate {
   product: MyStackProduct
   /** Overall score gap over the pick (candidate − pick), one decimal. Null when either side is unscored. */
-  paDelta: number | null
+  overallDelta: number | null
   agentReadyDelta: number | null
 }
 
@@ -663,10 +663,10 @@ export interface StackPickAdvice {
   /** Every pick in this arena whose vendor announced a shutdown (best pick included) — each
    *  needs MIGRATE advice regardless of any score gap. */
   shutdownPicks: MyStackProduct[]
-  /** The arena's PA-Score leader (rank 1 among scored rows) — the pick itself when it leads. */
+  /** The arena's Overall-score leader (rank 1 among scored rows) — the pick itself when it leads. */
   leader: MyStackProduct
   /** Leader − pick on each score, one decimal; null when either side is unscored. */
-  paDelta: number | null
+  overallDelta: number | null
   agentReadyDelta: number | null
   /** Up to STACK_UPGRADE_CANDIDATES products scoring strictly above the pick, best first —
    *  never another of the reader's own picks (running it already isn't an upgrade). */
@@ -731,7 +731,7 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
             .slice(0, STACK_UPGRADE_CANDIDATES)
             .map((product) => ({
               product,
-              paDelta: delta(product.aiEra, pick.aiEra),
+              overallDelta: delta(product.aiEra, pick.aiEra),
               agentReadyDelta: delta(product.agentReady, pick.agentReady),
             }))
     picks.push({
@@ -741,7 +741,7 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
       coPicks,
       shutdownPicks: resolved.filter((p) => isShutdown(p)),
       leader,
-      paDelta: delta(leader.aiEra, pick.aiEra),
+      overallDelta: delta(leader.aiEra, pick.aiEra),
       agentReadyDelta: delta(leader.agentReady, pick.agentReady),
       upgrades,
     })

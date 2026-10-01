@@ -143,7 +143,7 @@ export default function RisingRankingPage() {
       name: row.product.name,
       path: `/arena/${row.data.category.id}/product/${row.product.id}`,
       applicationCategory: row.data.category.name,
-      properties: { paScoreDelta30d: row.delta, paScore: row.aiEra },
+      properties: { overallScoreDelta30d: row.delta, overallScore: row.aiEra },
     })),
   )
 

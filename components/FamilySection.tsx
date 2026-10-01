@@ -5,8 +5,8 @@ import { familyForProduct, loadFamilies } from '@/lib/families'
 
 // "Products" block on a product page — rendered for EVERY product that belongs to a
 // family in data/product-families.json (parent or judged sub-product — see lib/families.ts),
-// never vendor-special-cased. A mini leaderboard of the company's judged lines (rank, PA
-// Score, agent-ready, access) with the page-only lines listed honestly below. Acquired lines
+// never vendor-special-cased. A mini leaderboard of the company's judged lines (rank, Overall
+// score, agent-ready, access) with the page-only lines listed honestly below. Acquired lines
 // carry a distinct chip so Clerky-vs-Atlas reads as history, not a contradiction. Renders
 // nothing for the ~all products with no family entry.
 export default function FamilySection({ arenaId, productId }: { arenaId: string; productId: string }) {
@@ -32,7 +32,7 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
         arenaHref: `/arena/${ref.arenaId}`,
         rank: idx + 1,
         fieldSize: data.rankings.leaderboard.length,
-        paScore: entry.aiEra,
+        overallScore: entry.aiEra,
         agentReady: entry.agentReady,
         isCurrent: ref.arenaId === arenaId && ref.productId === productId,
       }]
@@ -109,7 +109,7 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
                     </Link>
                   </td>
                   <td className="px-2 py-1.5">
-                    <AiEraBadge value={s.paScore} size="xs" />
+                    <AiEraBadge value={s.overallScore} size="xs" />
                   </td>
                   <td className="hidden px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
                     {s.agentReady === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></>}

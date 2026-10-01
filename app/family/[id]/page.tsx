@@ -72,7 +72,7 @@ function judgedCard(ref: FamilyProductRef | null) {
       productName: product.name,
       rank: idx + 1,
       of: data.rankings.leaderboard.length,
-      paScore: entry.aiEra,
+      overallScore: entry.aiEra,
       battles,
     }
   } catch {
@@ -168,10 +168,10 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                       Rank <span className="tabular-nums text-zinc-200">#{judged.rank}</span> of{' '}
                       <span className="tabular-nums">{judged.of}</span>
                     </Link>
-                    {judged.paScore !== null && (
+                    {judged.overallScore !== null && (
                       <>
                         <span>· Overall score</span>
-                        <AiEraBadge value={judged.paScore} size="xs" />
+                        <AiEraBadge value={judged.overallScore} size="xs" />
                       </>
                     )}
                   </p>

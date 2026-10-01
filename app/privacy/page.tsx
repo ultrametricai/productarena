@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     'What Ultrametric collects and why: Google Analytics, an anonymous compare-pair counter, a local-only watchlist, and — if you log in — your email. Nothing is sold.',
 }
 
-// Static page, same pattern as app/terms/page.tsx. Plain-language, PA-specific privacy notes on
+// Static page, same pattern as app/terms/page.tsx. Plain-language, site-specific privacy notes on
 // top of the Ultrametric base policy (ultrametric.ai/privacy). Facts here mirror the actual
 // implementation: GA4 in app/layout.tsx, the KV compare-pair counter and WorkOS auth in
 // infra/cloudflare-proxy/worker.js, and the localStorage watchlist in components/WatchButton.tsx.

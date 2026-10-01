@@ -85,6 +85,8 @@ export interface ManifestStep {
 }
 
 export interface ManifestProvenance {
+  // Legacy, pre-rename source id — value immutable: exported manifests carry it, and consumers
+  // key provenance checks on the exact string.
   source: 'productarena'
   url: string
   generatedFrom: string

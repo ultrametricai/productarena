@@ -264,25 +264,25 @@ describe('stackAdvice — every delta recomputed from the fixture leaderboard', 
     product({ id: 'unscored', name: 'Unscored', arenaId: 'crm', arenaName: 'CRM', aiEra: null, agentReady: null, rank: 2, fieldSize: 2 }),
   ]
 
-  it('per pick: rank, delta to the leader (PA + agent-ready), top-2 upgrade candidates with deltas', () => {
+  it('per pick: rank, delta to the leader (Overall + agent-ready), top-2 upgrade candidates with deltas', () => {
     const advice = stackAdvice({ payments: ['mine'] }, catalog)
     expect(advice.picks).toHaveLength(1)
     const p = advice.picks[0]
     expect(p.pick.rank).toBe(3)
     expect(p.coPicks).toEqual([])
     expect(p.leader.id).toBe('leader')
-    expect(p.paDelta).toBe(24.5) // 85 − 60.5
+    expect(p.overallDelta).toBe(24.5) // 85 − 60.5
     expect(p.agentReadyDelta).toBe(40) // 90 − 50
     // Top 2 ABOVE the pick, best first — 'below' (40) never appears.
     expect(p.upgrades.map((u) => u.product.id)).toEqual(['leader', 'second'])
-    expect(p.upgrades[1].paDelta).toBe(17.5) // 78 − 60.5
+    expect(p.upgrades[1].overallDelta).toBe(17.5) // 78 − 60.5
     expect(p.upgrades[1].agentReadyDelta).toBe(20) // 70 − 50
   })
 
   it('a leading pick has no upgrades and zero delta', () => {
     const advice = stackAdvice({ payments: ['leader'] }, catalog)
     expect(advice.picks[0].upgrades).toEqual([])
-    expect(advice.picks[0].paDelta).toBe(0)
+    expect(advice.picks[0].overallDelta).toBe(0)
   })
 
   it('stack score = mean of scored picks; best possible = mean of those arenas\' leaders', () => {
@@ -299,7 +299,7 @@ describe('stackAdvice — every delta recomputed from the fixture leaderboard', 
   it('an unscored pick is listed (leader delta null) but excluded from the stack score', () => {
     const advice = stackAdvice({ crm: ['unscored'] }, catalog)
     expect(advice.picks).toHaveLength(1)
-    expect(advice.picks[0].paDelta).toBeNull()
+    expect(advice.picks[0].overallDelta).toBeNull()
     expect(advice.picks[0].upgrades).toEqual([])
     expect(advice.stackScore).toBeNull()
   })
@@ -311,7 +311,7 @@ describe('stackAdvice — every delta recomputed from the fixture leaderboard', 
     const p = advice.picks[0]
     expect(p.pick.id).toBe('second') // 78 beats 60.5, whatever the stack order says
     expect(p.coPicks.map((c) => c.id)).toEqual(['mine'])
-    expect(p.paDelta).toBe(7) // 85 − 78 — the best pick vs the leader
+    expect(p.overallDelta).toBe(7) // 85 − 78 — the best pick vs the leader
     // Upgrade candidates never include the reader's OWN picks: only 'leader' is above 'second'.
     expect(p.upgrades.map((u) => u.product.id)).toEqual(['leader'])
     // Stack score counts the best pick per arena, not the mean of co-picks.

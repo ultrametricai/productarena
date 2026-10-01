@@ -17,14 +17,14 @@ export interface StackAggregates {
   arenaCount: number
   /** Mean Overall score over products that have one (null when none do). */
   meanAiEra: number | null
-  /** How many products the PA mean rests on — a thin mean must read as thin. */
+  /** How many products the Overall-score mean rests on — a thin mean must read as thin. */
   aiEraCount: number
   meanAgentReady: number | null
   agentReadyCount: number
   /** Verified integration edges between the stack's own products, out of all its pairs. */
   verifiedInterconnects: number
   possiblePairs: number
-  /** Lowest-PA-Score product — the stack's weakest evidence-scored link (null if none scored). */
+  /** Lowest-Overall-score product — the stack's weakest evidence-scored link (null if none scored). */
   weakestLink: MyStackProduct | null
 }
 

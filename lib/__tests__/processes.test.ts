@@ -498,7 +498,7 @@ describe('derived step options (optionsArenaId)', () => {
     }
   })
 
-  it('a derived step lists the arena\'s CURRENT roster in PA-Score (leaderboard) order, every chip tracked', () => {
+  it('a derived step lists the arena\'s CURRENT roster in Overall-score (leaderboard) order, every chip tracked', () => {
     const payrollStep = loadProcesses(DATA_DIR)
       .find((t) => t.id === 'qs_063')!.dag.nodes.find((n) => n.id === 'n3')!
     expect(payrollStep.optionsArenaId).toBe('payroll')

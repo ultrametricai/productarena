@@ -11,7 +11,7 @@ import { SITE_URL } from '@/lib/site'
 
 // The per-vendor transparent calculation page — "the receipt". The generic /methodology says
 // WHY the scores are built this way; this page shows HOW this one product's numbers were
-// actually computed: every story that feeds each PA-Score dimension, its verdict × quality ×
+// actually computed: every story that feeds each Overall-score dimension, its verdict × quality ×
 // weight arithmetic with the cited evidence inline, the dimension fractions, and finally the
 // weighted blend with this vendor's numbers substituted into the equation. Every number on the
 // product page's above-fold pills is reproducible by reading top to bottom — and
@@ -123,7 +123,7 @@ function DimensionSection({ dim, productHref }: { dim: DimensionBreakdown; produ
         <span className="text-base tabular-nums text-emerald-300">
           {dim.score === null ? 'n/a' : <>{fmt1(dim.score)}<span className="text-zinc-500">/100</span></>}
         </span>
-        <span className="text-xs font-normal text-zinc-500">×{fmt2(dim.weight)} of the PA blend</span>
+        <span className="text-xs font-normal text-zinc-500">×{fmt2(dim.weight)} of the Overall-score blend</span>
       </h2>
       <p className="mt-1 max-w-2xl text-sm text-zinc-500">{DIMENSION_MEANINGS[dim.key]}</p>
       {dim.cells.length === 0 ? (
@@ -202,7 +202,8 @@ export default async function ScorePage({
         </p>
       </div>
 
-      {/* The blend — the equation at the top of the receipt, this vendor's numbers substituted. */}
+      {/* The blend — the equation at the top of the receipt, this vendor's numbers substituted.
+          The anchor id is legacy, pre-rename — value immutable: published deep links target it. */}
       <section id="pa-score" className="scroll-mt-16 rounded-xl border border-emerald-400/40 p-5 target:border-emerald-400/80">
         <h2 className="font-display leading-[1.1] flex flex-wrap items-center gap-x-3 text-lg font-semibold">
           Overall score

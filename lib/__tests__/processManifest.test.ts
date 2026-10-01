@@ -63,7 +63,7 @@ describe('stepApprovalRequired — any side-effectful step is gated', () => {
 })
 
 describe('manifestVendorOption', () => {
-  it('resolves a tracked vendor to product id, arena, agent-readiness, MCP endpoint, and PA url', () => {
+  it('resolves a tracked vendor to product id, arena, agent-readiness, MCP endpoint, and arena url', () => {
     const opt = manifestVendorOption('mercury', DATA_DIR)
     expect(opt.vendor).toBe('mercury')
     expect(opt.productId).toBe('mercury')

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // Static page — no data dependency, no dynamic segments. Plain-language terms: this page (plus
 // DATA-LICENSE in the repo) is the single place the dataset copyright, reuse rules, watermark
 // notice, and liability disclaimer live; footers and exports link here instead of restating.
-// PA-specific risk coverage (opinions-not-advice, trademarks, dispute path, scraping/API) layers
+// site-specific risk coverage (opinions-not-advice, trademarks, dispute path, scraping/API) layers
 // on top of the Ultrametric base Terms of Service at ultrametric.ai/tos.
 export const dynamic = 'force-static'
 
