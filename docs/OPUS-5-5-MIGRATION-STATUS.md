@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:38:43.970Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:39:04.064Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 88 ingested+committed / 6 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 30,846 |
-| Cumulative ingested spend | $518.72 (hard stop $800) |
-| Projected fleet ingest total | ~$570 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.7% (7,489 flips / 30,846 comparable cells) |
-| Batch requests / interactive fallbacks | 29,810 / 15 |
+| Arenas done / remaining | 89 ingested+committed / 5 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 31,101 |
+| Cumulative ingested spend | $524.26 (hard stop $800) |
+| Projected fleet ingest total | ~$571 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 75.7% (7,560 flips / 31,101 comparable cells) |
+| Batch requests / interactive fallbacks | 30,065 / 16 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -100,6 +100,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | sso-identity | 250 | 63 | 74.8% | $3.80 |
 | stablecoin-payments | 318 | 77 | 75.8% | $4.94 |
 | tax-automation | 318 | 86 | 73% | $4.82 |
+| team-chat | 255 | 71 | 72.2% | $5.54 |
 | terminals | 324 | 106 | 67.3% | $6.07 |
 | vector-databases | 371 | 77 | 79.2% | $5.88 |
 | vibe-coding | 312 | 68 | 78.2% | $5.36 |
@@ -110,5 +111,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
+`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
 
