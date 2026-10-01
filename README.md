@@ -22,7 +22,7 @@ judged rankings.*
 
 | What you need | Where |
 | --- | --- |
-| What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — 123 processes grouped by area, each with its agent ceiling; chained playbooks (incorporate → launch, the VC raise, agent-run back office) on the same page |
+| What do I actually have to do, step by step? | [/processes](https://ultrametric.ai/processes) — every founder process grouped by area, each with its agent ceiling; chained playbooks (incorporate → launch, the VC raise, agent-run back office) on the same page |
 | Watch a whole company run the corpus | [/virtual-startup](https://ultrametric.ai/virtual-startup) |
 | Which tools are best — and agent-ready? | [/overall](https://ultrametric.ai/overall) rankings · [per-arena leaderboards](https://ultrametric.ai/arenas) (each arena at `/arena/<id>`) · [/compare](https://ultrametric.ai/compare) |
 | Proven toolchains to copy | [/stacks](https://ultrametric.ai/stacks) |
@@ -64,13 +64,13 @@ the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 
 ## Processes
 
-**What it is.** The operational corpus: 123 step-by-step founder processes, each a DAG whose
+**What it is.** The operational corpus: step-by-step founder processes, each a DAG whose
 every step is routed agent / manual form / human, with per-step reversibility
 (reversible / painful / irreversible), vendor options drawn from the judged rankings, time
-estimates, and — on 38 steps — named method variants (e.g. the per-country filing routes).
-Every process carries an honest **agent ceiling** (`full` / `partial` / `manual_guide`: what an
-agent can actually run today), and 44 processes carry per-country geo notes (UK, India,
-Germany, France; the US is the baseline). 24 playbooks chain processes into founder paths —
+estimates, and — where routes genuinely differ — named method variants (e.g. the per-country
+filing routes). Every process carries an honest **agent ceiling** (`full` / `partial` /
+`manual_guide`: what an agent can actually run today), with per-country geo notes (UK, India,
+Germany, France; the US is the baseline). Playbooks chain processes into founder paths —
 incorporate → launch, the VC raise, the agent-run back office.
 
 **Where it lives.** [`processes/`](processes/) (`corpus.json` + the jurisdiction-scoped legal
@@ -88,8 +88,8 @@ whole corpus as a simulated company, end to end.
 ## Vendors
 
 **What it is.** The evidence layer: head-to-head, evidence-graded rankings of the tools
-startups run on — 94 arenas, 593 products, 33,789 judged verdicts over 32,480 dated evidence
-items (committed counts, 2026-10-01). Every verdict cites dated evidence (vendor docs, GitHub,
+startups run on, arena by arena (current counts under
+[Data releases & freshness](#data-releases--freshness)). Every verdict cites dated evidence (vendor docs, GitHub,
 community sources, hands-on probes), rankings recompute bit-identically and carry HMAC
 `_provenance`, honest negatives count as much as positives, and owner-affiliated products are
 disclosed and adversarially bias-audited
@@ -97,7 +97,7 @@ disclosed and adversarially bias-audited
 
 **Where it lives.** [`data/`](data/) (per-arena products, stories, evidence, verdicts,
 rankings), [`vendors/`](vendors/) (the doctrine + `reviews/generated/` — one dated interchange
-record per judged product, 593 today), and
+record per judged product), and
 [`processes/vendor-registry.json`](processes/) (the bridge that links process steps to judged
 arenas).
 
@@ -113,8 +113,8 @@ arenas).
 **What it is.** The rules and calculations a startup actually runs on, as open,
 source-cited, exhaustively tested records and code:
 
-- **Rule cards** — [`rules/`](rules/): 12 dated legal propositions (10 US-FED, 2 US-DE), one
-  stable ID each, every `kind: legal` card citing a primary authority in
+- **Rule cards** — [`rules/`](rules/): dated legal propositions (US federal and Delaware to
+  start), one stable ID each, every `kind: legal` card citing a primary authority in
   [`sources/`](sources/) with an exact provision locator. Status `demonstration` — honest
   maturity, stated on the card.
 - **Open modules** — [`lib/openstartup/`](lib/openstartup/), indexed in
@@ -123,7 +123,7 @@ source-cited, exhaustively tested records and code:
   - `capTable.ts` (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
     in-round pool shuffle, post-money SAFE conversion per the YC Post-Money Safe User Guide
     (Appendix II examples reproduced number-for-number), priced-round PPS solving, dilution
-    waterfalls. Repo-only by founder call (2026-09-28).
+    waterfalls. Repo-only by design.
   - `runway.ts` — Paul Graham's default-alive test as code (constant expenses, compounding
     revenue, month-by-month trajectory), plus growth-adjusted runway and hiring impact.
   - `deadlines.ts` — the founder compliance clock (DE franchise tax, Form 1120, Form 941,
@@ -133,10 +133,10 @@ source-cited, exhaustively tested records and code:
     spread, exit outcomes under future dilution), cited to the Holloway Guide and Index
     Ventures' Rewarding Talent; takes the 409A FMV as input, never invents one. Pre-tax by
     design.
-- **Documents** — [`documents/`](documents/): 100 canonical, openly licensed startup legal
-  documents as dated records — link, never redistribute, every URL verified on its
+- **Documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
+  documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
-- **Resources** — [`resources/`](resources/): 40 canonical startup resources plus
+- **Resources** — [`resources/`](resources/): the canonical startup resources plus
   [`LAWS.md`](resources/LAWS.md), the recurring principles distilled from them, every law
   citing its sources.
 
@@ -205,15 +205,15 @@ and markdown, schema-validated in CI, usable without running any code.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
-| [`processes/`](processes/) | `corpus.json` (123 operational processes: DAGs, routing, geo scope, time estimates), the per-step vendor registry, and jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
-| [`journeys/`](journeys/) | `chains.json` — 24 multi-process founder paths | corpus schema + loader tests |
+| [`processes/`](processes/) | `corpus.json` (the operational processes: DAGs, routing, geo scope, time estimates), the per-step vendor registry, and jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
+| [`journeys/`](journeys/) | `chains.json` — multi-process founder paths | corpus schema + loader tests |
 
 **Vendors**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
 | `data/` | The arena evidence layer: per-arena products, stories, verdicts, evidence packs, fingerprinted rankings | `recompute-check` (bit-identical determinism) |
-| [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product (593) | `schemas/vendor-review.schema.json`, deterministic regeneration |
+| [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product | `schemas/vendor-review.schema.json`, deterministic regeneration |
 | `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
 
 **Business logic**
@@ -224,8 +224,8 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
 | [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds the site's geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
-| [`documents/`](documents/) | 100 canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
-| [`resources/`](resources/) | 40 canonical startup resources + `LAWS.md` (cited distilled principles) | `lib/resources.ts` + invariant tests |
+| [`documents/`](documents/) | The canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
+| [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) | `lib/resources.ts` + invariant tests |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
 that renders it. Three directories confuse newcomers, so plainly: **`schemas/`** holds the JSON
@@ -360,15 +360,6 @@ Regenerated by `pnpm stats` — never hand-edited. …and growing — see the li
 
 See `data/categories.json` for each arena's full description, personas, and themes.
 
-## The rankings, at a glance
-
-![Ultrametric rankings — /overall snapshot](docs/assets/rankings-snapshot.png)
-
-*Dated snapshot (2026-10-01) — rankings move whenever new evidence lands, so treat every
-number in this image as historical. The live table is at
-[ultrametric.ai/overall](https://ultrametric.ai/overall); machine-readable rankings
-are at `/data/<arena>/rankings.json` per arena.*
-
 ## Data releases & freshness
 
 <!-- stat-badges:start -->
@@ -388,7 +379,7 @@ hand-written, so freshness is a property of the repo, not of a news page:
 - **[/reports](https://ultrametric.ai/reports)** — generated weekly arena reports (biggest
   movers, rank flips, new arenas, close races), committed as markdown in `reports/`.
 - **[GitHub releases](https://github.com/ultrametricai/ultrametric/releases)** — point-in-time
-  dataset snapshots (e.g. `data-2026-09-02`) with the full `data/` tree attached, if you want
+  dataset snapshots (e.g. `data-YYYY-MM-DD`) with the full `data/` tree attached, if you want
   a stable dataset to build against instead of tracking `main`.
 - **Score history** — every arena's rank and score movements are committed alongside the data
   (`data/<arena>/score-history.jsonl`), so any flip is reconstructible from the repo alone.
@@ -513,7 +504,7 @@ agents" below.
 
 **Dataset releases.** Point-in-time snapshots of `data/` are periodically tagged and published
 as [GitHub releases](https://github.com/ultrametricai/ultrametric/releases) (e.g.
-`data-2026-09-02`), each with a zip of the full `data/` tree attached and release notes listing
+`data-YYYY-MM-DD`), each with a zip of the full `data/` tree attached and release notes listing
 arena/product/verdict counts at that snapshot — useful if you want a stable dataset to build
 against instead of tracking `main`.
 
@@ -540,9 +531,9 @@ Ultrametric is built to be read by agents, not just browsed by humans:
   [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, PA Score weights,
   story provenance, re-judge stability, bias disclosure), linked from the header next to
   Arenas and from `/llms.txt`.
-- **MCP / CLI** — retired as offerings (2026-09-23): Ultrametric is not served over its own
-  MCP server or CLI; a first-party Ultrametric MCP + API is coming instead. The MCP/CLI
-  packages moved to their own dedicated repo (2026-09-29) and are not published entry points.
+- **MCP / CLI** — Ultrametric is not served over its own MCP server or CLI; a first-party
+  Ultrametric MCP + API is coming instead. The MCP/CLI packages live in their own dedicated
+  repo and are not published entry points.
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking
@@ -690,7 +681,7 @@ paper, post, or dataset card:
 }
 ```
 
-Rankings move as evidence lands — cite the dataset release tag (e.g. `data-2026-09-02`) when
+Rankings move as evidence lands — cite the dataset release tag (e.g. `data-YYYY-MM-DD`) when
 you need a pinned snapshot.
 
 ## License
