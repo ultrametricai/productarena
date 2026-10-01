@@ -2,8 +2,9 @@
 
 Part of [the open startup repo](../README.md#business-logic): reusable business logic —
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
-the vendor evidence layer (`vendors/`, `data/`). Four modules live in `lib/openstartup/` today
-(cap table, runway & burn, deadline calendar, equity-comp scenarios), every one pure,
+the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
+(cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
+liquidity-event waterfalls, 409A grant sanity), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -16,7 +17,7 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
 ## Modules
 
 - **Cap table** — `lib/openstartup/capTable.ts` (+ `capTableCodec.ts`) — repo-only
-  library by founder call (2026-09-28), no site page. Pure functions for founder issuance and vesting (4-year/1-year-cliff
+  library by design, no site page. Pure functions for founder issuance and vesting (4-year/1-year-cliff
   convention per Cooley GO), option pools (including the in-round pool shuffle), post-money
   SAFE conversion per the YC Post-Money Safe User Guide (cap/discount/MFN/pro rata; guide
   Appendix II examples reproduced number-for-number in the tests), priced-round PPS solving,
@@ -58,6 +59,45 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
   the 409A FMV as input — it never invents one. Everything is pre-tax by design (ISO/NSO,
   AMT, QSBS, and 83(b) interactions are out of scope and flagged as such). Worked examples in
   `lib/openstartup/__tests__/equityComp.test.ts`.
+- **Convertible notes** — `lib/openstartup/convertibleNote.ts` — pure, client-safe. Contract:
+  `accruedSimpleInterest` / `noteBalance` (simple interest only, actual-day count over an
+  explicit basis; compounding, 30/360, and default interest are the note's own text, flagged),
+  `noteConversionPrice` / `convertNote` (cap and discount "in the alternative" at the lowest
+  price — Cooley GO's convertible-debt primer; the cap denominator must be supplied from the
+  note's own capitalization definition, which Cooley GO's "Understanding the Valuation Cap"
+  shows is contract-specific — never invented here), `capImpliedDiscountPct` (replays that
+  article's $3M-cap-on-$10M = 70% figure), `maturityStatus` (the three published maturity
+  paths — repay, extend, convert — surfaced, never decided), `seriesPricingWithNotes` (the
+  pre-money / percentage-ownership / dollars-invested methods of Cooley GO's "Calculating
+  Share Price With Outstanding Convertible Notes or Safes", its worked example replayed
+  number-for-number), and `NOTE_VS_SAFE` (the structural note-vs-SAFE differences, each line
+  cited to the YC User Guide and the primer). Tests:
+  `lib/openstartup/__tests__/convertibleNote.test.ts`.
+- **Liquidity-event waterfall** — `lib/openstartup/waterfall.ts` — pure, client-safe.
+  Contract: `liquidityWaterfall` (per-holder proceeds at a sale price: the SAFE
+  cash-out-vs-convert choice per YC Post-Money Safe User Guide §A.3/§C.1, with Appendix II
+  Example 1 Q3/Q4 replayed number-for-number; one preferred series at 1x or a stated
+  multiple, non-participating vs participating per the Cooley GO "Preferred Stock" glossary
+  definitions; a pari passu preference tier per §A.5-A.6; exact-cents largest-remainder
+  allocation so proceeds sum to the price), plus `safeLiquidityShares`,
+  `conversionIndifferencePrice`, and `allocateCents`. Property-tested: proceeds sum to the
+  price exactly, no payout is negative, non-participating holders take the greater of
+  preference and as-converted value. Deliberately out of scope (no citable worked example at
+  this bar): capped participation, stacked seniority, accruing dividends, debt, escrows —
+  the price must be net of debt, and every report carries `needsReview: true`.
+- **409A grant sanity** — `lib/openstartup/grant409aSanity.ts` — a sanity model, NOT a
+  valuation: it takes the 409A FMV as input and never invents one (the equityComp posture;
+  `producesValuation: false` by construction — a credible valuation needs appraisal judgment
+  a pure function cannot honestly package, so this is the deliberately smaller honest
+  version). Contract: `strikeFloorCheck` (rule `us-fed.409a-stock-right-exception`),
+  `fmvAgeCheck` (rule `us-fed.staleness`: the 12-month window, plus term-sheet and
+  material-change flags — the term-sheet convention cited to YC User Guide §B.6),
+  `appraisalPresumptionCheck` (rule `us-fed.independent-appraisal-presumption`, timing only —
+  qualification is counsel's question), `preferredCommonRatioIllustration` (a labeled
+  illustration leaning on rule `us-fed.reasonable-method`'s caveat that a preferred financing
+  price is not common FMV), and `grantSanityReport`. Every check cites a committed rule card
+  by id — the gate (`lib/openstartup/__tests__/grant409aSanity.test.ts`) fails if a card is
+  missing or jurisdiction-mismatched — and every finding is `needsReview: true`.
 
 Still planned: hiring cost comparisons beyond the runway impact (benefits/payroll-tax load
 factors need dated rule cards first). The conservative workflow planner lives in
@@ -69,9 +109,10 @@ factors need dated rule cards first). The conservative workflow planner lives in
   entry in this README. The bar is fixed: pure functions, a citation on every formula's doc
   comment (a published guide, form, or primary source — never "everyone knows"), explicit
   rounding, worked examples reproduced number-for-number from the cited source, and property
-  tests. Candidates: convertible notes, liquidity-event waterfalls, hiring cost
-  comparisons (benefits/payroll-tax load factors, backed by dated rule cards in `rules/`,
-  never hardcoded day counts), 409A sanity models, non-US instruments. Gate:
+  tests. Candidates: hiring cost comparisons (benefits/payroll-tax load factors, backed by
+  dated rule cards in `rules/`, never hardcoded day counts), non-US instruments, and
+  waterfall extensions (capped participation, stacked seniority — each needs a citable
+  worked example before it ships). Gate:
   `npx vitest run lib/openstartup/__tests__/` (and `pnpm test`).
 - **Harden an existing module** — a missed edge case from a cited worked example, a new
   property test, or a correction with the source that proves it (e.g. the YC Post-Money Safe
