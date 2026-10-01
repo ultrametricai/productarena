@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
 import { loadSharedProcesses } from '../shared-processes/load'
 import { collectDecisions, validateCatalog, type SharedRecord, type Part } from '../shared-processes/schema'
 
@@ -17,6 +18,13 @@ function fixture() {
 }
 
 describe('shared process definitions', () => {
+  it('validates the staging example separately from the real catalog', () => {
+    const records = validateCatalog(JSON.parse(readFileSync('fixtures/shared-processes/staging.json', 'utf8')))
+    expect(records).toHaveLength(2)
+    expect(records.every(record => record.metadata.synthetic === true && record.guidance && record.outcomes.length)).toBe(true)
+    expect(collectDecisions(records, 'shared-schema-staging-check')).toHaveLength(1)
+    expect(loadSharedProcesses().some(record => record.id.startsWith('shared-schema-staging'))).toBe(false)
+  })
   it('loads the entire additive catalog with no graph or nesting cycles', () => {
     const all = loadSharedProcesses()
     expect(all).toHaveLength(149)
