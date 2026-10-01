@@ -1,17 +1,20 @@
 {
-  "hash": "f663a32c830a21bad084ab5306d5922bf4c620643bbc339f7f382c778231e91d",
+  "hash": "fc1f69bc55729d9d5b36448aab9e6a8d99aa01625b32e5be02832c36d1d79f65",
   "verdict": {
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Stripe's Shared Payment Token explicitly supports amount, currency, and expiration limits plus per-seller scoping and revocation, and Link CLI issues one-time-use virtual cards/SPTs approved per-request by the customer — directly matching the amount/expiry/merchant-restriction ask. Caveats: ACS/SPT is private preview, geographically limited (US/Canada/select EU), and a community comment flags sparse end-to-end documentation on how SPT mechanics actually resolve, and the virtual-card credential type is explicitly NOT merchant-restricted (works anywhere). Missing for 10: independent/hands-on verification of SPT enforcement in production, broader GA availability, and clearer end-to-end docs on credential resolution.",
+    "confidence": "high",
+    "rationale": "Shared payment tokens are documented as scoped grants to a specific seller. The issuer sets usage_limits (currency, max_amount, expires_at), can revoke the token at any time, and gets webhooks on each state change. Link CLI adds human-approved, one-time-use credentials (virtual cards or SPTs) for a specific spend request, so the agent never handles the real card number. The open-source repo and npm package corroborate that the CLI ships. Missing for 10: merchant restriction is only implied by the per-seller grant (and the Link virtual-card option explicitly works at any merchant), no hands-on or independent verification that limits are enforced, and parts of ACS are private preview or waitlist-gated.",
     "evidenceIds": [
       "stripe-ac-supp-spt-limits",
       "stripe-agentic-commerce-docs-4",
+      "stripe-ac-supp-acp-custom-checkout",
       "stripe-ac-supp-link-wallet",
+      "stripe-agentic-commerce-docs-30",
       "stripe-agentic-commerce-gh-1",
       "stripe-agentic-commerce-gh-2",
-      "stripe-agentic-commerce-comm-10"
+      "stripe-agentic-commerce-gh-3",
+      "stripe-ac-probe-rt-4"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "scoped-payment-tokens"

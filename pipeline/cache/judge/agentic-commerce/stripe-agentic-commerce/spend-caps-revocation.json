@@ -1,15 +1,17 @@
 {
-  "hash": "391d354253f7dd93d362f84f3b3263e9d39902f1fcadc15078039bb706a51c86",
+  "hash": "d02d780910a5c004237ec870ae8f652db9184ce04770a295a44407876688c853",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's Shared Payment Token docs explicitly describe per-agent-issued tokens with configurable usage_limits (currency, max_amount, expiration) and an explicit revoke capability ('Revoke the SPT at any time to prevent the seller from using it to create a payment... Sellers can't create a payment with a revoked SPT'), backed by a documented state machine (active/requires_action/deactivated) and webhooks for each transition. RAK restricted keys further let sellers scope what an agent can do on the account. missing for 10: independent/hands-on confirmation that revocation is truly instant in production and that limits persist across an agent's full session rather than a single token/transaction.",
+    "rationale": "Shared payment tokens carry documented usage limits (currency, max_amount, expires_at) and can be revoked at any time so sellers can't charge them. Link CLI adds human approval of every spend request with one-time-use credentials, and restricted API keys limit what an agent can do in an account. These are per-token and per-request controls, not a user-facing per-agent budget, and the SPT limits are set by the issuing agent rather than the end user. Missing for 10: per-agent aggregate spend caps or budgets configurable by the user, a documented way to revoke all of an agent's payment authority at once (beyond individual SPTs or keys), and independent or hands-on corroboration that revocation is instant.",
     "evidenceIds": [
       "stripe-ac-supp-spt-limits",
       "stripe-agentic-commerce-docs-4",
-      "stripe-agentic-commerce-docs-7",
-      "stripe-agentic-commerce-docs-34"
+      "stripe-ac-supp-acp-custom-checkout",
+      "stripe-ac-supp-link-wallet",
+      "stripe-agentic-commerce-docs-30",
+      "stripe-agentic-commerce-docs-23"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "spend-caps-revocation"

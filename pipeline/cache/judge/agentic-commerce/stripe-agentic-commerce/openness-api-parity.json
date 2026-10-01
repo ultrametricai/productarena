@@ -1,18 +1,23 @@
 {
-  "hash": "0701a8ac37eb7431892ef42a371e887f4ff674fc401ae9c6e3d0d1c53a5383e8",
+  "hash": "f9fe20cbcd62c06f1b4a9a76177e9a1281af8a8c8e7eac2bfd4b639628d4b535",
   "verdict": {
-    "productId": "stripe-agentic-commerce",
-    "storyId": "openness-api-parity",
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's docs show an extensive API surface for agentic commerce (Product Catalog Import API, Checkout Sessions, Shared Payment Tokens, MCP server exposing Stripe API tools, restricted API keys, CLI/sandbox tooling) letting agents perform most seller/agent/consumer actions programmatically, with the MCP server explicitly wrapping the API. However evidence also documents real UI/human dependencies: seller onboarding is described as 'Dashboard self-serve', and Stripe's own MCP server 'requires human confirmation' via a Dashboard approval URL before certain writes (refunds, outbound payments), meaning not all actions can be completed purely via API without a human UI step. Missing for 10: evidence that seller onboarding and gated write actions (refunds, payouts) can be fully completed via API without a Dashboard/human approval step, and independent confirmation of full UI/API feature parity.",
+    "rationale": "Much of the operational surface is exposed programmatically. Catalog publishing goes through the v2 Product Catalog Import API with webhooks, and agent orders arrive as `checkout.session.completed` events that can be bulk-fulfilled via List CheckoutSessions. SPT create, limit and revoke calls, embedded checkout and machine payments are all API-driven, and a hosted MCP server and Link CLI add agent-facing access. However, seller onboarding and per-agent consent are described as Dashboard self-serve steps. Agent attribution filtering is shown in the Dashboard, while the API field `agent_details` is only in private preview. MCP write actions such as refunds require a human to click Approve on a URL. Missing for 10: an API path for seller onboarding and agent selection/consent, GA API parity for agent attribution (agent_details is preview-only), any explicit API/UI parity claim, a discoverable OpenAPI spec (probe 404), and independent hands-on corroboration.",
     "evidenceIds": [
       "stripe-ac-supp-seller-catalog-feed",
+      "stripe-ac-supp-order-attribution",
+      "stripe-ac-supp-spt-limits",
+      "stripe-ac-supp-embedded-checkout-oca",
       "stripe-ac-supp-mcp-approval",
-      "stripe-agentic-commerce-docs-5",
-      "stripe-agentic-commerce-docs-7",
-      "stripe-ac-supp-order-attribution"
-    ]
+      "stripe-agentic-commerce-docs-21",
+      "stripe-ac-probe-rt-1",
+      "stripe-ac-supp-link-wallet",
+      "stripe-agentic-commerce-probe-3",
+      "stripe-ac-supp-machine-payments"
+    ],
+    "productId": "stripe-agentic-commerce",
+    "storyId": "openness-api-parity"
   }
 }

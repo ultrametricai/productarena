@@ -1,19 +1,17 @@
 {
-  "hash": "600021cbbd3f694778f120daa3ee5b24824d7cb63d2c2efe67f25ecedab6577c",
+  "hash": "9e15f1a563dc40524f661e4b108c5e3e479ecbf810aeb5087736d96491ccadc8",
   "verdict": {
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "PayPal documents a full agent-checkout stack: ACP/UCP checkout-session flows with delegated single-use Braintree/Google Pay tokens, a merchant-hosted cart API (createcart/getcart) that PayPal's Shopping Cart service calls to create and confirm orders, and agent-toolkit order/refund/dispute tools plus webhooks for confirmation events. However, eligibility is heavily gated (Braintree-only for Agent Ready, form-gated approval for agentic commerce services, Google-gated UCP enablement) and Store Sync is explicitly limited to US physical goods in USD, with no independent/hands-on evidence of a real end-to-end agent purchase succeeding in production. Missing for 10: independent/hands-on confirmation of a completed live purchase, broader (non-US/digital-goods) coverage, and evidence of self-serve access without gating.",
+    "rationale": "PayPal documents every element of the end-to-end flow. Checkout sessions run through the ACP spec and UCP's /checkout-session/{id}/complete endpoint. The delegated credential is a single-use Braintree token bound to merchant ID, amount and time, delivered via `complete_checkout` or the UCP `credential.token` field. Store Sync agents 'complete purchases' with the order landing in the merchant's order management system. However, the flows require Braintree, form-gated or Google-gated access, and Store Sync is limited to US physical goods in USD. Missing for 10: independent or hands-on confirmation of a completed agent purchase, explicit order-confirmation detail for the ACP and UCP paths, and broader eligibility beyond the gated Braintree and US-only scope.",
     "evidenceIds": [
-      "paypal-ac-supp-agent-ready",
       "paypal-ac-supp-acp-chatgpt",
       "paypal-ac-supp-ucp-googlepay",
+      "paypal-ac-supp-agent-ready",
+      "paypal-ac-supp-store-sync",
       "paypal-ac-supp-cart-reverse-api",
       "paypal-ac-supp-getcart",
-      "paypal-ac-supp-store-sync",
-      "paypal-ac-supp-webhooks",
-      "paypal-ac-supp-refund-dispute-tools",
       "paypal-ac-supp-acs-gate"
     ],
     "productId": "paypal-agent-commerce",

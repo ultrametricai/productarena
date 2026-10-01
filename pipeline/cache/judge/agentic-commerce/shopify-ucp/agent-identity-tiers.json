@@ -1,18 +1,20 @@
 {
-  "hash": "e0dc89d09fe9b353bd15d1ab9bd67c462c3d44c1338b86bf8ced720b7bc7c4d1",
+  "hash": "f341fcffe8eff909c13165b61a0f7f9cb0fbbaf1fedd0cde007e589386a7c308",
   "verdict": {
-    "productId": "shopify-ucp",
-    "storyId": "agent-identity-tiers",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Shopify's UCP documents a concrete three-tier trust model (Token, Signed, Anonymous) tied to agent identity, with Signed-tier requiring RFC 9421 ECDSA P-256 signature verification against a published public key in the agent's UCP profile, and access/rate-limits scaling with identification strength; a live probe confirms the trust gate actually enforces this (invalid_profile_url error when no hosted profile is presented). This gives merchants a verifiable way to distinguish anonymous vs. cryptographically-signed vs. token-authenticated agent traffic. missing for 10: no independent/third-party audit of the signature verification in production merchant traffic, and no merchant-facing dashboard/reporting evidence showing how tier data is surfaced to merchants themselves.",
+    "rationale": "Shopify classifies UCP agent traffic into three trust tiers: Token, Signed (RFC 9421 HTTP Message Signatures with ECDSA P-256, verified against the agent's published well-known UCP profile), and Anonymous. Each tier gets different rate limits and tool access, and every catalog request requires a hosted agent profile URL. A runtime probe confirmed that a request with no profile is rejected with invalid_profile_url. Missing for 10: evidence of merchant-facing visibility or reporting that shows which tier or identity an agent's traffic came from (enforcement is Shopify-side), and independent hands-on verification of the Signed and Token tiers.",
     "evidenceIds": [
       "shopify-ucp-supp-trust-tiers",
-      "shopify-ucp-supp-agent-profiles",
+      "shopify-ucp-supp-global-catalog",
       "shopify-ucp-probe-rt-4",
-      "shopify-ucp-docs-9",
-      "shopify-ucp-docs-27"
-    ]
+      "shopify-ucp-supp-agent-profiles",
+      "shopify-ucp-supp-order-mcp",
+      "shopify-ucp-supp-checkout-mcp",
+      "shopify-ucp-docs-20"
+    ],
+    "productId": "shopify-ucp",
+    "storyId": "agent-identity-tiers"
   }
 }

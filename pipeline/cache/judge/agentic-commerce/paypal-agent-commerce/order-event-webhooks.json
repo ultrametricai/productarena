@@ -1,18 +1,17 @@
 {
-  "hash": "1dea8830f297718d114b3112f7122aa8f3ae46e2002f4f3e125f1ee54cf7cae5",
+  "hash": "ad510a48c3501ae9f5f4897f5f31d6eeae5a05a2043740e22410a4ae132a246e",
   "verdict": {
-    "productId": "paypal-agent-commerce",
-    "storyId": "order-event-webhooks",
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PayPal has a general-purpose webhook system that supports subscribing to event types (with retries and signature verification) over HTTPS, and the REST API surface includes orders/subscriptions that could emit lifecycle events; the agent toolkit also exposes order/refund/dispute tools. However, there is no documented mapping showing that agentic-commerce-specific order lifecycle events (created/updated/fulfilled/canceled for AI-agent-initiated orders/carts) are pushed via webhooks — the cart API (createcart/getcart) is polling-based, not event-push, and Store Sync says the order simply lands in the existing OMS rather than emitting agent-specific lifecycle webhooks. Missing for 10: explicit documentation that agentic/cart orders trigger the general webhook event types, a list of agent-specific lifecycle event names, and confirmation that fulfillment/cancellation of AI-agent orders is webhook-pushed rather than requiring polling via getcart.",
+    "rationale": "PayPal documents a durable push mechanism: HTTPS webhook posts to up to 10 subscribed URLs per app, scoped by event type, with retries over 3 days and signature verification. The REST overview also references a webhook events catalog. The evidence never names order lifecycle event types (created, updated, fulfilled, canceled), and it doesn't show these webhooks covering agentic-commerce or Store Sync orders; the reverse cart API only covers cart creation and reads. Missing for 10: documented order created/updated/fulfilled/canceled event types, evidence that agent-initiated orders emit these events, independent or hands-on corroboration.",
     "evidenceIds": [
       "paypal-ac-supp-webhooks",
+      "paypal-ac-supp-rest-overview",
       "paypal-ac-supp-cart-reverse-api",
-      "paypal-ac-supp-getcart",
-      "paypal-ac-supp-store-sync",
-      "paypal-ac-supp-rest-overview"
-    ]
+      "paypal-ac-supp-store-sync"
+    ],
+    "productId": "paypal-agent-commerce",
+    "storyId": "order-event-webhooks"
   }
 }

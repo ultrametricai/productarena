@@ -1,19 +1,20 @@
 {
-  "hash": "12bdabda51cea8f2b566b1244724b4c2e6136a8fa49a7e894701cd16444bdf70",
+  "hash": "e90938e5909eb69c2c3a0015dd0a8d9bcf6cd0c1f8c49ec94dab5370e6bd3a78",
   "verdict": {
-    "productId": "shopify-ucp",
-    "storyId": "checkout-spec-versioned",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "UCP is documented as a versioned protocol (dated releases like 2026-08-25, 2026-04-08) with a publicly hosted spec and reference implementations on GitHub, and Shopify's MCP servers enforce schema/profile validation at runtime (e.g. `--input-schema` to fetch a merchant's live input schema, and a probed `invalid_profile_url` error when an agent lacks a valid hosted profile), plus an AI Toolkit that validates GraphQL/Liquid/Extensions against Shopify schemas. Missing for 10: an explicit standalone conformance test suite or certification program for third-party UCP implementations, and independent (non-Shopify) corroboration of schema stability across versions.",
+    "rationale": "UCP is clearly a versioned, openly published protocol. A probe found ucp.dev serving a versioned spec index with dated releases (2026-08-25, 2026-04-08), and the live MCP server returns an x-shopify-ucp-mcp-api-version header. Profiles declare protocol version for server-selects negotiation, and the spec and reference implementations live on public GitHub. The conformance/validation half is thin: the only UCP-specific checks are runtime ones, namely live input-schema introspection via `--input-schema` and server-side rejection of invalid profiles (invalid_profile_url). The AI Toolkit's schema validation covers GraphQL, Liquid and Extensions, not UCP payloads. Missing for 10: a dedicated UCP conformance test suite or offline validator, a downloadable machine-readable schema (Shopify OpenAPI paths return 404), and independent hands-on evidence of conformance testing.",
     "evidenceIds": [
+      "shopify-ucp-probe-rt-5",
+      "shopify-ucp-probe-rt-1",
+      "shopify-ucp-supp-ucp-governance",
       "shopify-ucp-supp-agent-profiles",
       "shopify-ucp-supp-storefront-catalog",
       "shopify-ucp-probe-rt-4",
-      "shopify-ucp-supp-ucp-governance",
-      "shopify-ucp-probe-rt-5",
-      "shopify-ucp-docs-10"
-    ]
+      "shopify-ucp-supp-global-catalog"
+    ],
+    "productId": "shopify-ucp",
+    "storyId": "checkout-spec-versioned"
   }
 }

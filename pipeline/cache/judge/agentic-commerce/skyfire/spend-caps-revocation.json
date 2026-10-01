@@ -1,17 +1,20 @@
 {
-  "hash": "0c16a10fb873b347dd7f124921ceac111c14bd65d6d6611cdfe02ef67cda48b4",
+  "hash": "689d2180e9e7bd4007668eedbe57bb752c8d9d6b1101995d51c03799d7c4d9ed",
   "verdict": {
-    "productId": "skyfire",
-    "storyId": "spend-caps-revocation",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Skyfire documents per-token spend caps (committed amount ceilings, balance checks via introspect, overcharge rejection) and identity/verification gating, which functions as a spend-limit mechanism, and live probing confirms the token API is real and key-gated (skyfire-probe-rt-1). However, Skyfire's own docs explicitly state there is no per-token revocation API and that deactivating an account does not void already-issued pay/kya-pay tokens — 'in-flight tokens are honored' and remain chargeable until expiry plus a 24-hour grace window (skyfire-supp-6), directly contradicting the 'revoke instantly' requirement. missing for 10: a documented instant-revoke/kill-switch API for outstanding tokens, dashboard controls for setting/adjusting spend caps after issuance, and independent confirmation that caps can be dynamically tightened mid-session rather than only fixed at token creation.",
+    "rationale": "Skyfire bounds spending per token: each pay token's amount is committed against the buyer agent's wallet, charges above the remaining balance are rejected, and tokens expire within 10 seconds to 24 hours. API keys are scoped to a single agent, and agents can be restricted to set source IP addresses. However, there are no documented per-agent configurable spend caps or usage limits, and revocation is not instant: deactivating an account stops new token creation, but in-flight tokens stay chargeable until expiry plus a 24-hour grace period, with no per-token revocation API. Missing for 10: configurable per-agent spend caps and usage-limit policies, an instant revocation or kill-switch for outstanding payment tokens, and independent corroboration.",
     "evidenceIds": [
       "skyfire-supp-4",
-      "skyfire-docs-5",
+      "skyfire-supp-5",
       "skyfire-supp-6",
-      "skyfire-probe-rt-1"
-    ]
+      "skyfire-docs-1",
+      "skyfire-docs-34",
+      "skyfire-docs-35",
+      "skyfire-supp-7"
+    ],
+    "productId": "skyfire",
+    "storyId": "spend-caps-revocation"
   }
 }
