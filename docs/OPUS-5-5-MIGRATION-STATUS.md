@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:42:28.615Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:42:57.982Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 91 ingested+committed / 3 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 31,933 |
-| Cumulative ingested spend | $540.26 (hard stop $800) |
+| Arenas done / remaining | 92 ingested+committed / 2 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 32,431 |
+| Cumulative ingested spend | $549.43 (hard stop $800) |
 | Projected fleet ingest total | ~$573 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.7% (7,775 flips / 31,933 comparable cells) |
-| Batch requests / interactive fallbacks | 30,897 / 17 |
+| Fleet exact agreement vs sonnet-5 (running) | 75.6% (7,908 flips / 32,431 comparable cells) |
+| Batch requests / interactive fallbacks | 31,395 / 17 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -91,6 +91,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | processors | 352 | 75 | 78.7% | $5.52 |
 | product-analytics | 212 | 52 | 75.5% | $4.98 |
 | product-feedback | 260 | 44 | 83.1% | $3.52 |
+| project-management | 498 | 133 | 73.3% | $9.17 |
 | robotics-platforms | 270 | 86 | 68.1% | $4.65 |
 | scheduling | 275 | 60 | 78.2% | $5.47 |
 | search-infra | 265 | 69 | 74% | $5.40 |
@@ -113,5 +114,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
+`startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
 
