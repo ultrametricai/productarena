@@ -444,6 +444,23 @@ async function main(): Promise<void> {
   const cmd = process.argv[2]
   const cat = arg('category')
   if (cmd === 'submit') { if (!cat) throw new Error('--category required'); await submit(cat); return }
+  if (cmd === 'submit-all') {
+    // Arena ids from a whitespace-separated file — submits every arena that has no batch.json
+    // yet (safe to re-run after a partial failure).
+    const file = arg('file')
+    if (!file) throw new Error('--file required')
+    const cats = fs.readFileSync(path.resolve(file), 'utf8').split(/\s+/).filter(Boolean)
+    for (const c of cats) {
+      if (fs.existsSync(path.join(stateDir, c, 'batch.json'))) { console.log(`${c}: already submitted — skip`); continue }
+      try {
+        await submit(c)
+      } catch (err) {
+        console.error(`SUBMIT FAILED: ${c}: ${err instanceof Error ? err.message : err}`)
+      }
+    }
+    console.log('ALL-SUBMITTED')
+    return
+  }
   if (cmd === 'status') { await status(cat); return }
   if (cmd === 'ingest') { if (!cat) throw new Error('--category required'); await ingest(cat); return }
   if (cmd === 'restamp-pilot') {
