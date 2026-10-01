@@ -1,16 +1,18 @@
 {
-  "hash": "348db06ebd7909d5b6af54ab91a238db9747f3679d395ebaf39231f9e009d6cf",
+  "hash": "3b647c30fb69b5e03390786bbf60c6988e405d5c746bfd2291387d572eb2c26f",
   "verdict": {
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Ramp documents OAuth 2.0 with granular, least-privilege scopes (transactions:read, cards:read_vault, treasury:read, etc.) explicitly recommended via 'configure only the scopes your app needs,' plus an agent-specific identity model (agents.ramp.com) with per-agent keys tied to a human sponsor, flexible read/act permissions, auto-expiring cards, and separate human/agent credential storage in the CLI. A live probe confirms the production MCP server is OAuth-gated and enumerates dozens of granular scopes, corroborating the docs. Missing for 10: no independent third-party audit of scope enforcement or hands-on report of restricting an agent's credentials in practice.",
+    "rationale": "Ramp's OAuth 2.0 model offers granular resource:permission scopes, including a dedicated cards:read_vault scope for sensitive card data, and explicitly recommends least privilege (\"configure only the scopes your app needs\"). The client-credentials grant lets standalone agents authenticate without a browser. agents.ramp.com documents \"one key per agent\" tied to a human sponsor, with flexible per-agent permissions and full attribution. A live probe confirms the MCP server publishes granular read/write scopes, and Agent Cards issue merchant- and amount-scoped single-use credentials. Missing for 10: independent or hands-on corroboration that a scoped agent credential is actually issued and enforced.",
     "evidenceIds": [
       "ramp-supp-oauth-scopes",
       "ramp-supp-agents-site",
-      "ramp-docs-25",
+      "ramp-supp-cli-agent-mode",
       "ramp-probe-4",
-      "ramp-supp-agent-cards"
+      "ramp-supp-agent-cards",
+      "ramp-supp-mcp-server",
+      "ramp-docs-25"
     ],
     "productId": "ramp",
     "storyId": "agentic-scoped-keys"
