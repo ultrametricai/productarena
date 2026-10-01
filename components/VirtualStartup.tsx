@@ -1414,6 +1414,16 @@ export default function VirtualStartup({
             ),
           )}
           </div>
+          {/* The one visible honesty line the removed sublabels leave behind (founder batch
+              2026-10-01, item 4 — our call, said out loud): the dropdowns are names-only now;
+              the per-option corpus-mapping receipts live on in the semi-auto decision cards'
+              tooltips and in the terminal's phase notes, and this single muted line keeps the
+              CONTRACT itself visible before any run. */}
+          <span aria-hidden className="hidden sm:block" />
+          <p data-testid="vs-decisions-info" className="text-[10px] leading-snug text-zinc-500">
+            every option only swaps, reorders, adds, or skips committed corpus processes — the
+            run&apos;s phase notes name each mapping
+          </p>
         </div>
         </div>
 

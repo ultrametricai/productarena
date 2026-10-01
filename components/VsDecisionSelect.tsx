@@ -21,9 +21,12 @@ import { DEFAULT_CHOICES, type DecisionDef } from '@/lib/virtualStartup'
 // aria-label={decision.title}, each option's accessible name is its full canonical label.
 //
 // NO title= tooltips on the trigger or the options (founder batch 2026-09-30, item 3: the
-// tooltips overlapped the open listboxes). The corpus-mapping receipt each option's tooltip
-// carried now renders as a muted SUBLABEL inside the open list (option.detail — the honest
-// mapping stays one click away, never lost); aria-labels stay for accessibility.
+// tooltips overlapped the open listboxes). NO sublabels either (founder batch 2026-10-01,
+// item 4): the open list shows NAMES ONLY — the corpus-mapping receipts the sublabels carried
+// move back to non-blocking surfaces: the semi-auto decision cards' tooltips keep each option's
+// detail, the terminal's phase notes name every mapping as the run composes, and a single muted
+// info line under the decisions row (components/VirtualStartup.tsx) points at that contract.
+// Canonical aria-labels stay untouched.
 export default function VsDecisionSelect({
   decision,
   shortTitle,
@@ -134,7 +137,7 @@ export default function VsDecisionSelect({
           role="listbox"
           id={listboxId}
           aria-label={`${decision.title} options`}
-          className="absolute left-0 top-full z-30 mt-1 w-[300px] max-w-[calc(100vw-2.5rem)] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 w-[260px] max-w-[calc(100vw-2.5rem)] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           <li role="presentation">
             <button
@@ -151,13 +154,9 @@ export default function VsDecisionSelect({
                   : 'border-transparent text-zinc-400 hover:bg-emerald-400/10 hover:text-emerald-300'
               }`}
             >
-              <span className="min-w-0 flex-1">
-                Not set (default: {defaultOption.label})
-                {/* Sublabel (item 3): what unasserted means — composes the default, out of the URL. */}
-                <span className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
-                  leaves the decision unasserted — the journey composes the default branch and the run link omits it
-                </span>
-              </span>
+              {/* Names only (item 4) — the what-unasserted-means explainer moved off the list;
+                  the trigger's aria-label still says 'composes the default (…)'. */}
+              <span className="min-w-0 flex-1">Not set (default: {defaultOption.label})</span>
               {current === null && (
                 <span aria-hidden className="shrink-0 text-emerald-300">
                   ✓
@@ -183,14 +182,9 @@ export default function VsDecisionSelect({
                       : 'border-transparent text-zinc-300 hover:bg-emerald-400/10 hover:text-emerald-300'
                   }`}
                 >
-                  <span className="min-w-0 flex-1">
-                    {o.label}
-                    {/* Sublabel (item 3): the option's corpus-mapping receipt, moved here from
-                        the removed tooltip — the honesty line stays visible in the list. */}
-                    <span data-testid="vs-option-detail" className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
-                      {o.detail}
-                    </span>
-                  </span>
+                  {/* Names only (item 4): o.detail no longer renders here — see the module
+                      header for where the corpus-mapping receipt now lives. */}
+                  <span className="min-w-0 flex-1">{o.label}</span>
                   {active && (
                     <span aria-hidden className="shrink-0 text-emerald-300">
                       ✓

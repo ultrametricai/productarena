@@ -560,14 +560,21 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it("dropdown semantics: picking asserts (the aria-label carries the full label; the corpus mapping rides the option sublabel), 'Not set' clears back, asserting the default value still asserts", () => {
+  it("dropdown semantics: picking asserts (the aria-label carries the full label; options render NAMES ONLY), 'Not set' clears back, asserting the default value still asserts", () => {
     renderIt()
     // Unasserted: the trigger says so and names the default it composes.
     expect(decisionTitle('enterprise')).toContain('not set')
     expect(decisionTitle('enterprise')).toContain('Developers')
-    // The option's corpus-mapping receipt lives in its in-list sublabel (item 3 — no tooltips).
+    // Names only (founder 2026-10-01, item 4): no sublabel, no tooltip — the corpus-mapping
+    // receipt moved to non-blocking surfaces (semi-auto card tooltips, the run's phase notes,
+    // and the single info line under the band).
     fireEvent.click(screen.getByTestId('vs-decision-enterprise'))
-    expect(screen.getByTestId('vs-decision-enterprise-yes').textContent).toContain('land-the-enterprise-deal')
+    const entOption = screen.getByTestId('vs-decision-enterprise-yes')
+    expect(entOption.textContent).not.toContain('land-the-enterprise-deal')
+    expect(entOption.textContent?.trim().replace(/✓$/, '').trim()).toBe('Enterprises')
+    expect(entOption.getAttribute('title')).toBeNull()
+    expect(entOption.getAttribute('aria-label')).toBe('Enterprises')
+    expect(screen.getByTestId('vs-decisions-info').textContent).toContain('phase notes name each mapping')
     fireEvent.click(screen.getByTestId('vs-decision-enterprise')) // close
     pickDecision('enterprise', 'Enterprises')
     expect(decisionTitle('enterprise')).toContain('Enterprises')
@@ -637,10 +644,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.getByTestId('vs-persona-non-technical-first-timer').textContent).toContain('simulation assumption')
     expect(screen.getByTestId('vs-persona-technical-second-timer').textContent).toContain('simulation assumption')
     fireEvent.click(screen.getByTestId('vs-persona-trigger')) // close
-    // …and each decision option keeps its corpus mapping in its in-list sublabel.
+    // …while the decision options are NAMES ONLY (item 4, 2026-10-01): no tooltip, no sublabel.
     fireEvent.click(screen.getByTestId('vs-decision-funding'))
     expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toBeNull()
-    expect(screen.getByTestId('vs-decision-funding-seed').textContent).toContain('Raise a seed round')
+    expect(screen.getByTestId('vs-decision-funding-seed').textContent).not.toContain('playbook')
   })
 })
 
@@ -753,7 +760,7 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
 describe('VirtualStartup — the single Funding selector (decision options + scenario combos)', () => {
   const openFunding = () => fireEvent.click(screen.getByTestId('vs-decision-funding'))
 
-  it("ONE dropdown carries all four options; the scenario rows carry the mapping sublabel; the pills are gone and the Scenario row keeps presets + YC", () => {
+  it("ONE dropdown carries all four options as NAMES ONLY (item 4); the pills are gone and the Scenario row keeps presets + YC", () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     expect(within(band).getByTitle('Scenario — one-tap setups: example companies and YC batch mode')).toBeTruthy()
@@ -763,17 +770,16 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
     for (const name of ['Raise a seed', 'Bootstrap', 'VC backed', 'Bootstrapped']) {
       expect(screen.getByRole('option', { name })).toBeTruthy()
     }
-    // The scenario options document the exact key → DECISIONS-option mapping in their in-list
-    // sublabels (item 3, 2026-09-30: no title= tooltips on dropdown options).
+    // Names only (founder 2026-10-01, item 4): no tooltip AND no sublabel — a scenario's exact
+    // key → DECISIONS-option mapping stays visible through the asserted dropdowns themselves the
+    // moment it is picked (funding/entity/hire triggers show the asserted values), and the
+    // tooltip copy lives on in VS_SCENARIOS for the semi-auto/report surfaces.
     const vc = screen.getByRole('option', { name: 'VC backed' })
     expect(vc.getAttribute('title')).toBeNull()
-    expect(vc.textContent).toContain('Raise a seed')
-    expect(vc.textContent).toContain('Delaware C-Corp')
-    expect(vc.textContent).toContain('Make the first hire')
+    expect(vc.textContent).not.toContain('Delaware C-Corp')
+    expect(vc.textContent).not.toContain('Make the first hire')
     const boot = screen.getByRole('option', { name: 'Bootstrapped' })
-    expect(boot.textContent).toContain('Bootstrap')
-    expect(boot.textContent).toContain('Invoice-billed services')
-    expect(boot.textContent).toContain('Stay founders-only')
+    expect(boot.textContent).not.toContain('Invoice-billed services')
     openFunding() // close
     // The company preset pills are unchanged otherwise.
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
