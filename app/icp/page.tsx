@@ -4,7 +4,7 @@ import { loadAll } from '@/lib/data'
 import { buildIcpRanking, icpTopThemes, loadIcpTypes } from '@/lib/icp'
 
 export const metadata: Metadata = {
-  title: 'ICP lenses — rankings through your buyer type’s eyes — Ultrametric',
+  title: 'ICP lenses — one cross-arena ranking per buyer type — Ultrametric',
   description:
     'Ten cross-arena buyer-type lenses — solo technical founder, Built-in AI startup, privacy-first org, open-source purist and more — each re-weighting the same evidence-judged verdicts into a ranking for that buyer.',
 }
@@ -24,7 +24,7 @@ export default function IcpIndexPage() {
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Lenses</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          Rankings through your eyes
+          ICP lenses — one ranking per buyer type
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           The Overall score is one deliberately-contestable blend — but an open-source purist and an
