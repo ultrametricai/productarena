@@ -1,0 +1,343 @@
+{
+  "schemaVersion": 1,
+  "id": "tax_002",
+  "kind": "process",
+  "title": "File federal tax return",
+  "summary": "Prepare the annual federal corporate tax return (Form 1120) and file with the IRS.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Export financial data from QBO",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "quickbooks",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Send financials to CPA",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gmail",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "decision",
+      "title": "CPA prepares return (2-3 weeks)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "startup-tax-firm",
+          "title": "Startup tax platform",
+          "summary": "Fixed-fee startup tax firms prepare and e-file the federal return straight from your books - the software-plus-service alternative to a traditional CPA engagement.",
+          "when": "No CPA relationship - a startup tax platform prepares and files the return",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "fondo",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "pilot",
+              "role": "candidate"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "situational"
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 20160,
+        "async": true
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Review draft return",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 60
+      }
+    },
+    {
+      "id": "n5b",
+      "kind": "step",
+      "title": "Officer signs the e-file authorization (Form 8879-CORP)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "legalSignature": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "CPA files return with IRS",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "irs",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "painful",
+        "riskLevel": "high",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Pay any tax due",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "irs",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "url",
+          "url": "https://www.irs.gov/payments",
+          "role": "legacy-action-link",
+          "title": "IRS payments",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n8",
+      "kind": "step",
+      "title": "File copy in records",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "google_drive",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n5b",
+      "when": null
+    },
+    {
+      "from": "n5b",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    },
+    {
+      "from": "n7",
+      "to": "n8",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "quickbooks",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "irs",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "gmail",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "compliance",
+    "cadence": "annual",
+    "complexity": "very_complex",
+    "reversibility": "painful",
+    "category": "tax_compliance",
+    "supportLevel": "manual_guide",
+    "supportReason": "Tax filing requires a CPA. System compiles financial data, tracks deadlines, coordinates with accountant.",
+    "contextNeeded": [
+      {
+        "tool": "accounts.list",
+        "query": "recent transactions",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "1099s",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "cpa",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "tax",
+      "compliance",
+      "annual"
+    ],
+    "activeMinutes": 112,
+    "totalEstimatedMinutes": 20272,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "Companies file the ITR-6 return electronically on the Income Tax e-filing portal; the tax year runs April–March rather than the calendar year.",
+        "actionUrl": "https://www.incometax.gov.in/iec/foportal/",
+        "actionLabel": "Income Tax e-filing (ITR-6)"
+      },
+      {
+        "country": "UK",
+        "summary": "The company files a CT600 Company Tax Return with HMRC within 12 months of its accounting period end — plus statutory accounts to Companies House.",
+        "actionUrl": "https://www.gov.uk/company-tax-returns",
+        "actionLabel": "HMRC Company Tax Return (CT600)"
+      },
+      {
+        "country": "DE",
+        "summary": "Corporation tax (Körperschaftsteuer) plus trade tax (Gewerbesteuer) returns are filed electronically through ELSTER, in practice via a Steuerberater.",
+        "actionUrl": "https://www.elster.de/eportal/start",
+        "actionLabel": "ELSTER — corporate tax returns"
+      },
+      {
+        "country": "FR",
+        "summary": "Corporate income tax (impôt sur les sociétés) is declared and paid through the company's espace professionnel on impots.gouv.fr.",
+        "actionUrl": "https://www.impots.gouv.fr/professionnel",
+        "actionLabel": "impots.gouv.fr — espace professionnel"
+      }
+    ],
+    "timeOrder": 93,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "tax_002",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "1660fbf6ec8dcc3051d41159a6fa06b58e043282e4154fd625ce9ca9467d2bbc"
+  }
+}

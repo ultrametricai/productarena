@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "id": "opp_004",
+  "kind": "process",
+  "title": "Issue a refund",
+  "summary": "Refund a customer charge, behind an approval gate.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Locate the charge and check it against the refund policy",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "payments",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Issue the refund (approval)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "irreversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 1
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Notify the customer and log the reason",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "category",
+          "id": "email",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "square",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "paypal",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "finance",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "simple",
+    "reversibility": "irreversible",
+    "category": "opportunity",
+    "supportLevel": "partial",
+    "supportReason": "Refunds are a single API call — an agent can issue one behind an approval gate.",
+    "contextNeeded": [],
+    "tags": [
+      "opportunity",
+      "stripe",
+      "payments"
+    ],
+    "activeMinutes": 5,
+    "totalEstimatedMinutes": 5,
+    "hasAsyncSteps": false,
+    "timeOrder": 62,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "opp_004",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "58e95c410a5c7a675ec171c3e90aed073bb946f33942dbee6beb50da111d0619"
+  }
+}

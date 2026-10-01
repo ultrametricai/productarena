@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "id": "form_002",
+  "kind": "process",
+  "title": "Get EIN",
+  "summary": "Apply for an Employer Identification Number (EIN) from the IRS for the newly incorporated company.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Pre-fill EIN application data",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 1
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Complete IRS SS-4 form online",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "irs",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "url",
+          "url": "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online",
+          "role": "legacy-action-link",
+          "title": "IRS EIN online application",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "riskLevel": "medium",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Store EIN in company records",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 1
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "irs",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "stripe_atlas",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "firstbase",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "legalzoom",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "formation",
+    "cadence": "once",
+    "complexity": "simple",
+    "reversibility": "painful",
+    "category": "company_formation",
+    "supportLevel": "manual_guide",
+    "supportReason": "IRS EIN application is a web form with no API. System provides step-by-step guidance and pre-fills company data.",
+    "contextNeeded": [
+      {
+        "tool": "company.get",
+        "query": "legal name",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "state of incorporation",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "address",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "founder ssn",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "formation",
+      "tax",
+      "day-1"
+    ],
+    "activeMinutes": 12,
+    "totalEstimatedMinutes": 12,
+    "hasAsyncSteps": false,
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "PAN and TAN — the company's tax identifiers — are allotted automatically as part of the SPICe+ incorporation filing; the Income Tax e-filing portal is where the company then uses them.",
+        "actionUrl": "https://www.incometax.gov.in/iec/foportal/",
+        "actionLabel": "Income Tax e-filing portal (PAN/TAN)"
+      },
+      {
+        "country": "UK",
+        "summary": "There is no EIN application: HMRC posts the company a Unique Taxpayer Reference (UTR) automatically after incorporation, and you register for Corporation Tax within 3 months of starting business.",
+        "actionUrl": "https://www.gov.uk/corporation-tax",
+        "actionLabel": "HMRC Corporation Tax (UTR)"
+      },
+      {
+        "country": "DE",
+        "summary": "The tax office issues a Steuernummer after you file the Fragebogen zur steuerlichen Erfassung (tax registration questionnaire) on ELSTER — plus a separate VAT ID from the BZSt if needed.",
+        "actionUrl": "https://www.elster.de/eportal/start",
+        "actionLabel": "ELSTER — tax office registration"
+      },
+      {
+        "country": "FR",
+        "summary": "No application: INSEE allots the SIREN (company) and SIRET (per-establishment) identifiers automatically when the guichet unique registration lands — they arrive with the company's registration.",
+        "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F32135",
+        "actionLabel": "Obtain a SIREN/SIRET number"
+      }
+    ],
+    "timeOrder": 4,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "form_002",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "b950ad7ab2ac5dd0cd429b5102881bb13fa3281643791e33e9b877172e77f82e"
+  }
+}

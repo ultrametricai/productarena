@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "id": "tax_010",
+  "kind": "process",
+  "title": "Claim the R&D tax credit",
+  "summary": "File for the federal research credit (Form 6765): scope the qualified research expenses, run the study, attach the form to the return, and elect the payroll-tax offset (Form 8974) so the credit pays out against payroll — worth up to $500k a year for pre-revenue startups.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Confirm eligibility and pick a study provider",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "pilot",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "fondo",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "neo_tax",
+          "role": "candidate"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Pull payroll and QRE data for the study",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "rippling",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "payroll",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Provider computes the credit and drafts Form 6765",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 4320,
+        "async": true
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Review the study and credit amount",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "File Form 6765 with the federal return",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "irs",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "url",
+          "url": "https://www.irs.gov/pub/irs-pdf/f6765.pdf",
+          "role": "legacy-action-link",
+          "title": "IRS Form 6765 (R&D credit)",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "riskLevel": "high",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Elect the payroll offset and apply it in payroll",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "url",
+          "url": "https://www.irs.gov/forms-pubs/about-form-8974",
+          "role": "legacy-action-link",
+          "title": "IRS Form 8974 (payroll offset)",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "estimatedMinutes": 20
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "gusto",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "quickbooks",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "compliance",
+    "cadence": "annual",
+    "complexity": "complex",
+    "reversibility": "painful",
+    "category": "tax_credits",
+    "supportLevel": "partial",
+    "supportReason": "The QRE data pulls from payroll and accounting are automatable and a study provider drives Form 6765; the eligibility judgment, study review, and the return filing itself stay human.",
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "No US-style credit since the 200% weighted deduction lapsed: R&D spend now deducts at 100%, and DSIR recognition of an in-house R&D unit is the gateway to the remaining incentives (customs/GST concessions, government R&D schemes).",
+        "actionUrl": "https://dsir.gov.in/",
+        "actionLabel": "DSIR — in-house R&D recognition"
+      },
+      {
+        "country": "UK",
+        "summary": "The UK analog is R&D tax relief claimed on the CT600 — a merged SME/RDEC scheme for accounting periods from April 2024, with a mandatory additional-information form before the claim.",
+        "actionUrl": "https://www.gov.uk/guidance/corporation-tax-research-and-development-rd-relief",
+        "actionLabel": "Corporation Tax R&D relief"
+      },
+      {
+        "country": "DE",
+        "summary": "The Forschungszulage (research allowance) refunds 25% of qualifying R&D wages — more for SMEs since 2024 — claimed in two steps: a project certificate from the BSFZ, then the allowance claim with the tax return via ELSTER.",
+        "actionUrl": "https://www.bescheinigung-forschungszulage.de/",
+        "actionLabel": "BSFZ — Forschungszulage certification"
+      },
+      {
+        "country": "FR",
+        "summary": "France's CIR refunds 30% of qualifying R&D spend (with the CII for innovation on top), claimed with the corporate tax return — one of the most generous schemes in Europe.",
+        "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F23533",
+        "actionLabel": "Crédit d'impôt recherche (CIR)"
+      }
+    ],
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "engineering payroll share",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "prior-year gross receipts",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "tax",
+      "compliance",
+      "credits"
+    ],
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1,
+    "activeMinutes": 135,
+    "totalEstimatedMinutes": 4455,
+    "hasAsyncSteps": true,
+    "timeOrder": 94
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "tax_010",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "492fa07ad1b212bd1a7fd402f19be0cab917bf0ee90cdbec5eec37c95d62054a"
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "id": "scale_010",
+  "kind": "process",
+  "title": "Stand up a data warehouse & BI",
+  "summary": "Configure Snowflake/BigQuery with data pipelines from production systems and Metabase dashboards.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "decision",
+      "title": "Set up the data warehouse",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "bigquery-gcp",
+          "title": "BigQuery (GCP-standardized)",
+          "summary": "On a GCP-standardized stack the warehouse is serverless BigQuery - no cluster to size, billing by query.",
+          "when": "GCP-standardized stack - the warehouse is serverless BigQuery",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "bigquery",
+              "role": "stated-vendor"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        },
+        {
+          "id": "motherduck-small-data",
+          "title": "MotherDuck (small data)",
+          "summary": "At seed-stage data volumes a DuckDB-based warehouse is cheaper and simpler than enterprise platforms - and migrates cleanly later if volumes demand it.",
+          "when": "Seed-stage data volumes - a DuckDB-based warehouse over an enterprise platform",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "motherduck",
+              "role": "stated-vendor"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "snowflake",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "snowflake",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "data-warehouses",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 60
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Configure CDP event sources",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "segment",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "segment",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "customer-data-platforms",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 60
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Draft the warehouse data models",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 240
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Connect the CDP to the warehouse",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "segment",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Verify data pipelines",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "riskLevel": "medium",
+        "estimatedMinutes": 120,
+        "async": true
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Set up Metabase dashboards",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "metabase",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "estimatedMinutes": 120
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Create executive dashboard",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "estimatedMinutes": 240
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n1",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "snowflake",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "segment",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "metabase",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "product",
+    "cadence": "once",
+    "geoScope": "global",
+    "complexity": "very_complex",
+    "reversibility": "reversible",
+    "category": "data_analytics",
+    "supportLevel": "partial",
+    "supportReason": "Snowflake/Segment APIs support configuration. Data modeling and dashboard design need human decisions.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "data sources to integrate",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "key metrics and KPIs",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "data",
+      "analytics",
+      "bi",
+      "infrastructure"
+    ],
+    "activeMinutes": 750,
+    "totalEstimatedMinutes": 870,
+    "hasAsyncSteps": true,
+    "timeOrder": 111,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 2,
+    "slugAliases": [
+      {
+        "slug": "data-warehouse-bi",
+        "label": "Data warehouse & BI"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "scale_010",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "4efd4346e8f93c045cd3d2fb962aabf3149b67979a16ee4032a7b0905491d84e"
+  }
+}

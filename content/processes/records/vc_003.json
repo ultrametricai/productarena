@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "id": "vc_003",
+  "kind": "process",
+  "title": "Run the fund back office",
+  "summary": "The running fund's money loop: capital calls issued and the wires verified, the management fee charged, and each investment booked on the fund ledger.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Issue a capital call notice to the LPs",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "angellist",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "juniper_square",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "sydecar",
+          "role": "candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "LPs send the capital call wires",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "category",
+          "id": "workflow-automation",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "medium",
+        "estimatedMinutes": 4320,
+        "async": true
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Verify the capital call wires received",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "brex",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "startup-banking",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Charge the management fee",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Book the investment on the fund ledger",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "angellist",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "juniper_square",
+          "role": "candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 20
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "carta",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "mercury",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "angellist",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "vc",
+    "cadence": "quarterly",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "vc_fund_ops",
+    "supportLevel": "partial",
+    "supportReason": "The capital-call notices, wire checks, fee transfer, and ledger booking run over APIs with GP approval gates; the only human part is waiting on the LPs' wires.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "capital call amount and schedule",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "management fee terms",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "vc",
+      "fund-ops",
+      "finance"
+    ],
+    "activeMinutes": 70,
+    "totalEstimatedMinutes": 4390,
+    "hasAsyncSteps": true,
+    "timeOrder": 122,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "vc_003",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "eb15413b3b5d4ac2e3010d8845d2ce4b93cb6d3e4b9add28636429a4b53dcf57"
+  }
+}

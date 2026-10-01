@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "id": "growth_001",
+  "kind": "process",
+  "title": "Set up subscription billing",
+  "summary": "Configure subscription plans, pricing, and a customer portal for SaaS billing. Stripe is the canonical route; alternatives are ranked in the payments arena.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "decision",
+      "title": "Create products",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "billing-platform",
+          "title": "Dedicated billing platform",
+          "summary": "A billing layer over the processor handles complex plans, entitlements, and mid-cycle changes independently of the PSP - worth it once pricing outgrows simple per-seat plans.",
+          "when": "Complex plans/entitlements independent of the PSP - a dedicated billing layer over the processor",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "chargebee",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "vendor",
+              "id": "chargebee",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "recurly",
+              "role": "candidate"
+            },
+            {
+              "kind": "category",
+              "id": "billing-subscriptions",
+              "role": "rankings"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        },
+        {
+          "id": "merchant-of-record",
+          "title": "Merchant of record (MoR)",
+          "summary": "The MoR is the legal seller: subscriptions, global VAT/sales tax, and chargebacks run on its account - the lowest-ops route for global self-serve SaaS.",
+          "when": "Global self-serve SaaS without a tax footprint - the MoR sells as the seller of record",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "paddle",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "vendor",
+              "id": "paddle",
+              "role": "candidate"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Configure pricing plans",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Set up customer portal",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Configure webhooks",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Test subscriptions",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Configure dunning",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "slugAliases": [
+      {
+        "slug": "set-up-stripe-subscriptions",
+        "label": "Set up Stripe subscriptions"
+      }
+    ],
+    "phase": "growth",
+    "cadence": "once",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "customer_ops",
+    "supportLevel": "full",
+    "supportReason": "Stripe API fully supports product, pricing, subscription, and portal management.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "billing pricing model",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "billing plan tiers",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "billing trial period",
+        "tier": "user_input",
+        "required": false
+      }
+    ],
+    "tags": [
+      "growth",
+      "billing",
+      "subscriptions"
+    ],
+    "activeMinutes": 50,
+    "totalEstimatedMinutes": 50,
+    "hasAsyncSteps": false,
+    "timeOrder": 57,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 4
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "growth_001",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "9787e4addadb7412c9d8548d5c2ba1f7726a1d5beef25ab90b0945755a49e65f"
+  }
+}
