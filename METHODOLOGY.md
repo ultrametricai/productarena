@@ -1,10 +1,18 @@
 # Ultrametric Methodology
 
-The full methodology writeup — evidence tiers, judging, scoring, the PA Score, story
-provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://ultrametric.ai/methodology)
-page is a tight one-screen summary of this document; this file is the source of truth. See also
-[README.md](./README.md) for the arena list, data layout, and pipeline workflow, and
-[CONTRIBUTING.md](./CONTRIBUTING.md) for how to contest a verdict.
+The full methodology writeup — evidence tiers, judging, scoring, the claims-integrity index,
+the Agenticness Index, the PA Score, confidence grades, score intervals, story provenance,
+re-judge stability, and bias disclosure. The on-site
+[/methodology](https://ultrametric.ai/methodology) page is a tight one-screen summary of this
+document, and the [README](./README.md#methodology) carries a short summary; this file is the
+source of truth. See also [README.md](./README.md) for the arena list, data layout, and
+pipeline workflow, and [CONTRIBUTING.md](./CONTRIBUTING.md) for how to contest a verdict.
+
+New to the site and just want plain-language answers ("what does `na` mean," "why does this
+score look low," "how do I disagree")? See **[docs/SCORING.md](./docs/SCORING.md)** — a
+one-page, jargon-free companion to this technical writeup. For a critical self-assessment of
+the scoring formula's limits (coverage sensitivity, judge noise, blend-weight choices) and the
+improvement roadmap, see [docs/SCORING-REVIEW.md](./docs/SCORING-REVIEW.md).
 
 ## Evidence tiers
 
@@ -23,18 +31,28 @@ strongest first:
 Evidence is stored per product at `data/{category}/evidence/{product}.json`, each item with a
 stable id, tier, source URL, verbatim excerpt, and fetch timestamp (`fetchedAt`).
 
-`lib/verification.ts`'s `strongestEvidence()` walks a verdict's cited evidence down this ladder
-and returns the single best-supported item — the source behind every "proof ↗" link on the site
-(product page verdict rows, story matrix cells, and battle round cards). It's a different,
-finer-grained ranking than the coarser `verificationLevel` badge
-(`tested`/`corroborated`/`vendor-claim`/`disputed`), which groups `github` in with `claimed-docs`
-for display purposes.
+A direct, hands-on probe of the product (see "Probe harness" below) outranks a GitHub README,
+which outranks independent community commentary, which outranks the vendor simply describing
+its own product. `lib/verification.ts`'s `strongestEvidence()` walks a verdict's cited
+evidence down this ladder and returns the single best-supported item — that's the source
+behind every "proof ↗" link on the site (product page verdict rows, story matrix cells, and
+battle round cards). It's a different, finer-grained ranking than the coarser
+`verificationLevel` badge (`tested`/`corroborated`/`vendor-claim`/`disputed`), which groups
+`github` in with `claimed-docs` for display purposes; `strongestEvidence` keeps them distinct
+so the proof link always points at the most credible single source, not just the highest
+badge tier.
+
+### Probe harness
 
 `pnpm pipeline probe` runs a small set of keyless, hands-on checks per product and turns each
 *definitive* result — positive or negative — into a `probe`-tier evidence item (ambiguous
 results, e.g. a 403 from a WAF, produce no item rather than a guess): whether `/llms.txt`
-resolves, whether the docs URL serves a `.md` variant, whether a conventional OpenAPI spec path
-resolves, and whether the curated `links.mcp`/`links.cli` URLs are live.
+resolves, whether the docs URL serves a `.md` variant, whether a conventional OpenAPI spec
+path resolves, and whether the curated `links.mcp`/`links.cli` URLs are live. See
+`pipeline/stages/probe.ts` (`runProbeChecks`) for the exact rules and
+`pipeline/__tests__/probe.test.ts` for coverage with a mocked fetcher (no live network calls
+in tests). Like `collect-community`, re-running `probe` for a product replaces only its prior
+`probe`-tier items — other tiers are untouched.
 
 ## Judging
 
@@ -57,6 +75,35 @@ absence of evidence for a well-known capability still yields `none`, not a guess
 Verdicts are cached and keyed on a hash of `(storyId, story title, evidence ids+excerpts, prompt
 version)`, so re-running `judge` is a no-op unless the story or evidence actually changed.
 
+### Judge model & prompt version
+
+The judge is an Anthropic model — `claude-sonnet-5` by default, overridable via the
+`PA_MODEL` env var (`pipeline/llm.ts`) — driven by a versioned system prompt in
+`pipeline/stages/judge.ts` (`PROMPT_VERSION`, currently **`v3`**). Because the prompt
+version is part of every cell's cache key, bumping it deliberately invalidates all cached
+verdicts, so a prompt change is always followed by a full re-judge rather than mixing
+verdicts from different prompt generations.
+
+What each version added:
+
+- `v2` — evidence-only judging (no training knowledge), `na` wrong-axis tier, disputed
+  requires citations from two distinct evidence tiers.
+- `v3` — three calibration fixes, each traceable to an audited defect:
+  1. **`na` vs `none` decision procedure** with few-shot boundary examples (applicability is
+     decided *before* looking at evidence; lack of evidence for an applicable axis is always
+     `none`).
+  2. **Explicit 0–10 quality rubric**, plus a hard requirement that any quality below 10
+     names its gap in the rationale (`"missing for 10: …"`) — mechanically enforced by
+     `validateVerdictRules`, which rejects sub-10 `full`/`partial` verdicts missing the
+     clause.
+  3. **Evidence-relevance rule**: a citation may only support or undermine a verdict if its
+     content is *about the story's subject* — off-topic negative sentiment (e.g. unrelated
+     security news) must not move a verdict or appear in the rationale.
+
+Calibration is gated by `pnpm calibrate` (`pipeline/scripts/calibration-check.ts`), which
+re-runs the live judge against a hand-verified golden-cell set
+(`pipeline/golden/golden-cells.json`) and fails on more than 2 tier mismatches.
+
 ## Scoring formula
 
 A cell's score is `story.weight × quality × verdictFactor`, where the verdict factor is
@@ -74,17 +121,86 @@ and the overall battle winner is whoever wins more story-weight.
 
 **Important:** scores measure **evidenced story coverage**, not absolute product quality. A
 product with a thin crawl (fewer/weaker evidence items) will score lower even if it's
-objectively excellent — the judge can only score what's in the evidence pack.
+objectively excellent — the judge can only score what's in the evidence pack. Conversely, a
+wrong-axis story is marked `na` and excluded rather than counted against a product.
 
-## The PA Score (formerly Arena Score / INIT Score / AI-Era Index)
+### Claims vs reality — the claims-integrity index
 
-Every leaderboard entry carries a **PA Score** — displayed on-site as a bare `{n}/100` badge
-under a "PA Score" label — a
-single number meant to answer "how ready is this product for a world where agents, not just
-humans, are the primary users?" Internally it's still the `aiEra` field; only the display name
-changed (the score, formula, and weights are identical to what shipped as the "Arena Score"
-and, before that, the "AI-Era Index").
-It's a weighted blend of five existing leaderboard components:
+Every product's vendor claims (extracted from its own docs/GitHub materials by
+`pipeline/stages/claims.ts`) are reconciled against our judge's independent verdicts
+(`lib/claims.ts`). Each claim that maps onto a story lands in one of three **testable**
+buckets: *verified* (full/partial verdict backed by corroborated/tested evidence),
+*unverified* (full/partial verdict, but only the vendor's own claim backs it), or
+*contradicted* (verdict disputed/none/na). Claims mapping onto no story are **untestable**
+(a taxonomy gap, not a mark against the product) and are excluded entirely.
+
+The claims-integrity score (`lib/claimsIntegrity.ts`) rewards claims we independently
+verified and actively penalizes ones the evidence contradicts:
+
+```
+testable  = verified + unverified + contradicted        — untestable claims excluded
+integrity = 100 × max(0, verified − 2 × contradicted) / testable
+```
+
+Verified claims count fully, unverified claims count for nothing (they only inflate the
+denominator), and each contradicted claim cancels **two** verified ones — overpromising is
+worse than staying silent — with the score clamped at 0.
+
+**Null, never zero:** a product with no claims data (or no testable claims) gets `null`,
+not a fabricated `0` — same rule as every other index here: "we don't know" is not "the
+worst", and nulls sort last. The full cross-arena ranking lives at
+[/rankings/claims-integrity](https://ultrametric.ai/rankings/claims-integrity),
+and each product page's "Claims vs evidence" section opens with its integrity summary.
+
+## The Agenticness Index
+
+Every arena includes the same 9 canonical "agenticness" stories, injected verbatim (never
+LLM-authored) so agent-readiness is comparable across categories. Defined in
+`pipeline/agentic-stories.ts`:
+
+| Story id | Story | Weight |
+|---|---|---|
+| `agentic-public-api` | I can drive the product through a documented public API | 3 |
+| `agentic-official-cli` | I can use an official CLI | 2 |
+| `agentic-mcp-server` | I can connect an agent via an official MCP server | 3 |
+| `agentic-mcp-client` | I can plug MCP servers into this product so it can use their tools | 3 |
+| `agentic-webhooks` | I can subscribe to events via webhooks | 2 |
+| `agentic-sdks` | I can build against official SDKs | 2 |
+| `agentic-agent-docs` | I can point an agent at llms.txt or agent-oriented docs | 2 |
+| `agentic-scoped-keys` | I can issue scoped/least-privilege API credentials for an agent | 2 |
+| `agentic-headless` | I can run the product headlessly / in CI for automation | 2 |
+
+`agentic-mcp-server` and `agentic-mcp-client` are two ends of the same protocol, deliberately
+split into separate axes: `-server` asks whether the product *ships* an MCP server for other
+agents to connect to, `-client` asks whether the product itself *consumes* MCP servers. For
+agent products (e.g. a coding-agent CLI), the serving axis is often the wrong question — the
+product IS the agent — while the consuming axis is exactly the right one.
+
+A product's "agenticness" score on the leaderboard is its weighted percentage across just
+these 9 cells (theme `agenticness`, group `agent-access`).
+
+Two sibling group-scoped indexes live under the same `agenticness` theme: `agentic-features`
+("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
+`api-quality` (see below).
+
+## The PA Score (formerly Arena Score / AI-Era Index)
+
+v2.4 added a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
+alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
+`api-quality` asks "how good is that surface once an agent is there":
+
+| Story id | Story | Weight |
+|---|---|---|
+| `api-interactive-docs` | I can explore an interactive API reference with runnable examples | 2 |
+| `api-machine-spec` | I can download a machine-readable API spec (OpenAPI or equivalent) | 2 |
+| `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
+| `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
+
+On top of that, every leaderboard entry carries a **PA Score** (`aiEra` internally, displayed
+on-site as a bare "{n}/100" badge under a "PA Score" label — this score used to be called the
+"Arena Score" and before that the "AI-Era Index," same formula, new name) — a single number
+meant to answer "how ready is this product for a world where agents, not just humans, are the
+primary users?" It's a weighted blend of five existing leaderboard components:
 
 | Component | Weight | What it measures |
 |---|---|---|
@@ -99,14 +215,52 @@ aiEra = Σ(component × weight) / Σ(weight)   — over non-null components only
 ```
 
 Weights are renormalized over whichever components are non-null for a given product, so a
-product missing one axis isn't penalized twice — once for the missing axis, once for a shrunken
-blend. `aiEra` is `null` only when every component is null. The exact weights live in
-`AI_ERA_WEIGHTS` in `lib/scoring.ts`. Leaderboards sort primarily by the PA Score (nulls last,
-ties broken by the coverage score).
+product missing one axis (e.g. no `openness` theme applies to its category) isn't penalized
+twice — once for the missing axis, once for a shrunken blend. `aiEra` is `null` only when every
+component is null. The exact weights live in `AI_ERA_WEIGHTS` in `lib/scoring.ts`.
 
-**These weights are a starting position, not a verdict.** If you think the weighting is wrong,
-[contest it via an issue](./CONTRIBUTING.md) — like every verdict on this site, the formula is
-open to challenge.
+**Why lead with this instead of the coverage score.** The coverage score measures evidenced
+story coverage across a product's whole category — useful, but it treats "has a nice settings
+UI" the same as "has an MCP server." As of v2.4, leaderboards sort primarily by `aiEra` (nulls
+last, ties broken by coverage score) because we think products in the AI era should be ranked
+first by how well agents and automation can actually work with them — the coverage score is
+still shown, just demoted to a secondary line.
+
+**These weights are a starting position, not a verdict.** We picked them because agent-access
+and API quality are the most direct proxies for "can an agent use this at all," while
+openness/agenticApp/automation matter but are one step removed. If you think the weighting is
+wrong, [contest it via an issue](./CONTRIBUTING.md) — like every verdict on this site, the
+formula is open to challenge.
+
+## Score confidence grades (A–D)
+
+Scores never pretend: untested cells can't score, and the confidence grade says how much of a
+score is backed by probes. Every PA Score badge carries a small A–D chip
+(`lib/confidence.ts`) derived from two fractions over the product's applicable (non-`na`)
+cells:
+
+| Signal | Meaning |
+|---|---|
+| **coverage** | fraction of applicable cells whose verdict cites *any* evidence — the complement is "we found nothing either way," which already scores 0 but is unknown, not failed |
+| **testedShare** | fraction whose *strongest* cited evidence is a tested tier (`probe` or `github` — hands-on runs or inspectable source), per `lib/verification.ts`'s evidence ladder |
+
+Grades: **A** = coverage ≥ 0.85 and testedShare ≥ 0.40 · **B** = coverage ≥ 0.70 and
+testedShare ≥ 0.25 · **C** = coverage ≥ 0.55 · **D** = below that. The grade never changes any
+published score — two products can post the same 60 while one earned it from probes and the
+other from vendor docs, and the chip is where that difference shows. Thresholds are calibrated
+against the live dataset so the letters actually discriminate (see
+`CONFIDENCE_THRESHOLDS` in `lib/confidence.ts`), and, like the PA Score weights, they're open
+to challenge. In words:
+
+| Grade | Meaning |
+|---|---|
+| A | broad story coverage and a high share of probe/tested verdicts |
+| B | solid coverage, mostly tested — a few cells still rest on vendor docs alone |
+| C | meaningful gaps: thin coverage or verdicts leaning on claimed docs |
+| D | treat the score as provisional — little tested evidence behind it yet |
+
+Grades are display-only — they never move a score or a ranking — and they improve as hands-on
+probes land, so the fastest way to raise one is to submit reproducible evidence.
 
 ## Story provenance
 
@@ -115,9 +269,9 @@ Every story in `data/{category}/stories.json` optionally carries an `origin` fie
 
 | `origin.kind` | Meaning |
 |---|---|
-| `canonical` | one of the 29 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category — never LLM-authored |
+| `canonical` | one of the 29 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category by `normalize.ts`'s `assembleTaxonomy` — never LLM-authored |
 | `normalized` | assembled into the category's taxonomy by the LLM-driven `normalize` stage; carries the judge `promptVersion` in force at the time |
-| `contest` | added or adjusted via a contest issue |
+| `contest` | added or adjusted via a contest issue (not yet exercised — `contest-check.ts` only appends evidence today, never stories) |
 | `manual` | hand-edited |
 
 `origin` is additive and never participates in `cellHash` (`pipeline/stages/judge.ts`) —
@@ -130,45 +284,52 @@ story title or matrix cell on any product page to see its origin in the tooltip 
 Verdicts are cached on a hash of (story id, story title, evidence ids+excerpts, prompt version)
 — re-running `judge` is a no-op unless the story or evidence actually changed. LLM judging still
 has measurable re-roll variance (~9% of cells can change verdict or quality on a re-judge with
-no relevant evidence change), so large re-judge waves are reviewed against the prior state and
-pure churn is reverted under audited rules: applicability (`na`↔`none`) never flips without new
-evidence, verdicts citing nothing new don't move close races, and negative mechanical probe
-results only affect the story axis they actually test.
+no relevant evidence change). To keep rankings evidence-driven rather than noise-driven, large
+re-judge waves are reviewed against the prior state and pure churn is reverted under audited
+rules: applicability (`na`↔`none`) never flips without new evidence, verdicts that cite nothing
+new don't move close races, and negative mechanical probe results only affect the story axis
+they actually test. Every revert is recorded in the commit that applies it. A future prompt
+version will pass the prior verdict as an anchor to reduce this variance at the source.
 
-## Score intervals — the ± band
+## Score intervals — the ± band on every PA Score
 
-Every PA Score carries a 68% confidence band ("42 ±3 /100" on product pages; low–high in the
-score badge tooltip). Analytic v1, no new judging: per-cell verdict noise is modeled from the
-**measured** re-roll statistics in `data/*/uncertainty.json` (evidenced cells resample from the
-measured tier-transition rates; untested zero-evidence `none` cells get wider epistemic
-uncertainty — they may flip to a `partial` of bounded quality [3, 7] at the measured
-any-disagreement rate; `na` applicability is pinned per the stability policy above), then
-propagated through the exact published `weightedPercent` + `computeAiEra` formula via a
-500-draw, deterministically seeded Monte Carlo (`pipeline/scripts/compute-confidence-intervals.ts`,
-math + tolerant-optional loader in `lib/scoreIntervals.ts`, output in
-`data/{category}/score-intervals.json`). The band reflects judge-sampling noise plus
-untested-cell ignorance — **not** cross-model disagreement; a second judge model is future work.
-No interval data ⇒ no band rendered, never a fabricated one. See README §8 for the full writeup.
+Every PA Score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
+low–high band in the score badge's tooltip, including on the homepage mega-table). The band is
+an honest statement of how much the published number could move under the judge noise we have
+actually **measured** — it is *analytic v1*: computed from existing data with **no new judging**.
 
-## Confidence grades (A–D)
+How it's built (`pipeline/scripts/compute-confidence-intervals.ts`, math in
+`lib/scoreIntervals.ts`):
 
-Separately from the ± band, every PA Score carries a letter grade — A, B, C, or D — computed in
-`lib/confidence.ts` from two fractions over a product's applicable (non-`na`) cells: **coverage**
-(the share of cells whose verdict cites any evidence at all) and **tested share** (the share
-whose strongest cited evidence is a tested tier — `probe` or `github` — rather than vendor docs
-or community commentary). The grade rates the receipts, not the product:
+- **Per-cell noise comes from measured re-roll statistics, never invented rates.** The
+  multi-judge uncertainty pass (`data/*/uncertainty.json`, see the re-judge stability policy
+  above) re-judged 650+ decisive cells twice more against unchanged evidence; ~20% showed some
+  disagreement. From those samples we build a cached-tier → re-rolled-tier transition matrix
+  (e.g. a `full` cell re-rolls to `partial` ~7% of the time), and every evidenced
+  `full`/`partial`/`disputed`/`none` cell resamples its verdict from its measured row.
+- **Untested cells carry wider, epistemic uncertainty.** A `none` verdict citing zero evidence
+  means "we found nothing either way", not "it failed" — it scores 0 today but could plausibly
+  be a `partial` on new evidence. Each such cell flips to `partial` with probability equal to
+  the measured any-disagreement rate (~0.20), with quality bounded to the plausible [3, 7]
+  range. Products whose score rests on many untested cells therefore get honestly wider bands.
+- **Applicability is pinned.** `na` cells never resample — the re-judge stability policy
+  reverts `na`↔`none` churn that cites no new evidence, so published applicability is
+  policy-stable and modeling it as noise would overstate the band.
+- **Propagation is exact.** Each of 500 Monte Carlo draws per product resamples every relevant
+  cell and recomputes the score through the *same* `weightedPercent` + `computeAiEra` code that
+  produces the published number (roundings included). The band is the 16th–84th percentile of
+  the resulting distribution; agent-readiness gets its own band the same way. The PRNG is
+  seeded (mulberry32, keyed per product) — builds are byte-reproducible, no `Math.random`.
 
-| Grade | Meaning |
-|---|---|
-| A | broad story coverage and a high share of probe/tested verdicts |
-| B | solid coverage, mostly tested — a few cells still rest on vendor docs alone |
-| C | meaningful gaps: thin coverage or verdicts leaning on claimed docs |
-| D | treat the score as provisional — little tested evidence behind it yet |
+Results land in `data/{category}/score-intervals.json` (committed, re-run post-derive by the
+story-runner). Display is tolerant-optional (`lib/scoreIntervals.ts`): no interval data ⇒ no
+band is ever rendered — never a fabricated one. Fleet-wide as of the first pass the median band
+width is ~4.5 PA Score points.
 
-The exact thresholds live in `CONFIDENCE_THRESHOLDS` (`lib/confidence.ts`), calibrated against
-the live dataset so the letters discriminate rather than clump. Grades are display-only — they
-never move a score or a ranking — and they improve as hands-on probes land, so the fastest way
-to raise one is to submit reproducible evidence.
+**What the band is not (yet):** it reflects propagated judge-*sampling* noise plus
+untested-cell ignorance, **not** model-family disagreement — the same evidence judged by a
+non-Anthropic model could move scores in ways this band doesn't capture. Adding a second judge
+model and folding cross-model disagreement into the interval is listed as future work.
 
 ## Popularity — a signal, not a score
 
@@ -219,13 +380,77 @@ On the site it renders as an outline chip on classified story rows (product page
 
 ## Bias disclosure — the judge is an Anthropic model
 
-The judge model is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
-product, Claude Code — a real conflict of interest. We ran an adversarial bias audit of every
-`claude-code` verdict scored `full` in that arena, made corrections in both directions (one
-against Claude Code's favor, one in favor of a competitor), and documented every cell with a
-caveat. See [README.md](./README.md) §8 for the full writeup, including the specific cells
-adjusted and why.
+**Owner-product disclosure:** the Product Feedback & Intent arena includes Foreloop, built by
+Ultrametric Inc — the company that operates Ultrametric. Foreloop is judged by the identical evidence
+rules as every other product (it placed third of four in its own arena as of this writing), its
+product page carries an affiliation banner, and every one of its verdicts is contestable like
+any other. An adversarial bias audit of Foreloop's verdicts (2026-09-21) found and corrected 14
+overcalls in Foreloop's favor — four quality/tier downgrades on the `agentic-*` cells (including
+`agentic-public-api` `full` 8 → `partial` 5, applying the same "documented public REST/HTTP API"
+bar used for its competitors, per the claude-code precedent below) and ten `na` → `none`
+reclassifications where the wrong-axis call had improperly shrunk Foreloop's score denominator
+relative to peers graded `none` on the same stories. Each corrected verdict carries a dated
+audit note in its rationale, applied in the committed judge cache so re-judges preserve it; the
+corrections moved Foreloop from second to third of four.
+
+**Read this before trusting the `ai-coding` arena's numbers.** The judge model
+(`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
+product, Claude Code, which leads that arena's **PA Score** (29.5) as of v2.4 — though on
+raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
+when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
+the last full audit below, before those cells existed). This is a real conflict of interest and
+we want it visible, not buried.
+
+What we did about it:
+
+- **We ran an adversarial bias audit** of every `claude-code` verdict scored `full` in the
+  `ai-coding` arena (14 cells), checking each cited evidence excerpt against the claim it
+  was used to support, and separately compared every `agentic-*` cell head-to-head against
+  `codex`.
+- **One cell was downgraded** as a result: `live-app-debugging` went from `full` (quality 6)
+  to `partial` (quality 5) after adjudication. The sole citation was a bare, title-only doc
+  fragment ("Debug live web applications | Chrome") with no scope or mechanism detail, while
+  every competing product's comparable-or-better evidence for the same story capped at
+  `partial`/`none`. The verdict's rationale in `data/ai-coding/verdicts.json` documents the
+  downgrade and the shared-vendor conflict explicitly. This changed Claude Code's overall
+  score from 35.5 to 35.2 (it remained the category leader).
+- **A second adversarial review pass, run for v2.4, audited the new api-quality/agent-access
+  cells** and applied two cross-vendor corrections, stated plainly in both directions:
+  one **against** Claude Code's favor (`agentic-public-api` downgraded `full`→`partial`,
+  quality 8→5 — the Agent SDK/CLI don't clear the same "documented public REST/HTTP API" bar
+  applied to competitors), and one **in** Claude Code's favor, applied to a competitor
+  (GitHub Copilot's `agentic-mcp-server` downgraded `partial`→`none`, quality 5→0 — its cited
+  evidence showed MCP *client* administration, not an official MCP server offered by the
+  product). Both corrections are recorded in `data/ai-coding/verdicts.json` with rationale
+  suffixes citing the review.
+- **The audit's calibration samples also found the judge was *harsher* on claude-code in
+  several cells**, not just lenient. The clearest example: on
+  `natural-language-feature-implementation`, Claude Code's own marketing describing its core
+  workflow was judged `disputed` (because cited community complaints contradicted it),
+  while Codex was judged `full` on the same story from its evidence pack. A biased judge that
+  favored its own vendor would not do this.
+- **Two additional cells carry documented caveats** (left as computed, not adjusted,
+  per the audit's own rule of "flag, don't silently override" except where adjudicated
+  above):
+  - `persistent-project-instructions` — `full`, quality 9. The cited community evidence
+    partly complains about the feature's practical downsides (config sprawl, some output
+    degradation), which the verdict's rationale doesn't fully surface. The verdict *tier*
+    (`full`) is considered correct — the feature (CLAUDE.md) unambiguously exists and is used
+    — but the quality score is generous given the mixed community signal.
+  - `background-cloud-tasks` — both `claude-code` and `codex` scored `full`, quality 8. The
+    story specifies an "isolated cloud environment"; Codex's cited evidence explicitly says
+    "isolated cloud environments," while Claude Code's cited evidence confirms background/
+    cloud execution but never uses the word "isolated." Both were scored `full`, but only one
+    product's evidence actually supports that specific qualifier.
+- **Every verdict cites evidence ids** resolvable in `data/{category}/evidence/`, so anyone
+  can independently check any verdict against its source. If you disagree with a call, see
+  [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict is a first-class, expected
+  workflow, not a one-off.
+
+We think shipping this disclosure — including the fact that the audit itself was run by the
+same vendor's model — is more honest than pretending the conflict doesn't exist. Judge for
+yourself using the cited evidence.
 
 ---
 
-[MIT](./LICENSE) © 2026 Ultrametric Inc
+© 2026 Ultrametric Inc — source-available, see [LICENSE](./LICENSE).

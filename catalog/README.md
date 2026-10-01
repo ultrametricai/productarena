@@ -1,10 +1,14 @@
 # Catalog — domains, lifecycle, and coverage
 
-`domains.json` is the full founder-journey taxonomy (formation → governance → finance → tax →
-equity → fundraising → people → product → revenue → trust → operations → international → exit),
-including domains that have no playbook yet. `coverage.json` is the machine-readable coverage
-registry: which scenarios have workflows, at what maturity, with what known gaps. No one may
-claim a country is covered because a few playbooks exist — see `governance/REVIEW_POLICY.md`.
+The coverage map of the founder-ops corpus: `domains.json` records what the corpus *intends*
+to cover, `coverage.json` records what it honestly covers *today*. `domains.json` is the full
+founder-journey taxonomy (formation → governance → finance → tax → equity → fundraising →
+people → product → revenue → trust → operations → international → exit), including domains
+that have no playbook yet. `coverage.json` is the machine-readable coverage registry: which
+scenarios have workflows, at what maturity, with what known gaps — consumed by
+`lib/founderOps.ts`'s coverage checks in CI and by contributors deciding where to land work.
+No one may claim a country is covered because a few playbooks exist — see
+`governance/REVIEW_POLICY.md`.
 
 ## How this maps onto the rest of the repo
 

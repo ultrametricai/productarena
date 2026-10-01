@@ -2,7 +2,7 @@
 
 **Status: proposed, phased rollout.** This document is the design for Ultrametric's next layer of
 agent-readiness measurement — a successor to (not a replacement for) the current
-`agentic-*`/`api-*` verdict cells described in the [README](../README.md#4-the-agenticness-index).
+`agentic-*`/`api-*` verdict cells described in [METHODOLOGY.md](../METHODOLOGY.md#the-agenticness-index).
 Those cells ask *"does documentation/evidence say this product has an MCP server / CLI /
 API?"* The Agentic Depth Program asks the harder question: *"if an agent actually tries to use
 it, how far does it get, and how reliably?"*
