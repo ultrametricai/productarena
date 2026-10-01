@@ -179,6 +179,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | GEO dimension: process geo-scope + IN/UK/EU vendor availability spikes | shipped 2026-09-28 (123 geoScopes, 31 country notes, 114 vendor-geo rows) |
 | "Open startup repo" lift: cap-table engine + founder-ops corpus structure (stage 1) | shipped 2026-09-28 (lib/openstartup, /tools/cap-table, corpus tree + lib/founderOps.ts gates; stages 2–3 in docs/FOUNDER-OPS.md) |
 | Virtual Startup: compact controls so terminal is above the fold | shipped 2026-09-28 |
+| Sim round 7 (founder batch 2026-10-01): /virtual-startup → /startup-sim rename (worker 301, query-preserving), mobile GitHub mark, DAG flicker + setup-band overflow fixes, dropdowns names-only, new demo defaults (seed/cofounders/X launch/office/SOC 2/ChatGPT) with era-safe legacy replay, 'Apply to YC' checkbox + new fund_007 corpus process | shipped 2026-10-01 |
 | Homepage revert: '/' = landing site again, product homepage at /overall, bare /productarena → /overall | shipped 2026-09-28 (worker) |
 | Landing "ProductArena" header link went nowhere (browser-cached old 301) | shipped 2026-09-28 (worker rewrites landing hrefs → /overall; bare redirect now uncacheable 302) |
 | VS: remove 'Simulated' chips from page top + improve top layout | in progress (founder 2026-09-28) |
