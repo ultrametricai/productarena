@@ -107,10 +107,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   // Founder processes + curated chains (see lib/processes.ts and app/processes/*), plus the
-  // decision-driven Virtual Startup journey over the same corpus (app/virtual-startup).
+  // decision-driven Virtual Startup journey over the same corpus (app/startup-sim).
   entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
   entries.push({ url: `${SITE_URL}/processes/operating-rhythm`, lastModified: now })
-  entries.push({ url: `${SITE_URL}/virtual-startup`, lastModified: now })
+  entries.push({ url: `${SITE_URL}/startup-sim`, lastModified: now })
   for (const task of loadProcesses()) {
     entries.push({ url: `${SITE_URL}/processes/${processSlug(task.title)}`, lastModified: now })
   }

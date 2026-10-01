@@ -179,7 +179,7 @@ export default function PopularRankingPage() {
           Global ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          Most popular — measured fairly, segment by segment
+          Most popular — stars, installs, and what&rsquo;s hot
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           You can&rsquo;t rank GitHub stars against a closed SaaS product&rsquo;s adoption — they&rsquo;re different

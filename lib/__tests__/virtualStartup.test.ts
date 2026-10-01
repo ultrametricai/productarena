@@ -44,6 +44,7 @@ import {
   synthCompany,
   unionTaskIds,
   VS_CHAIN_IDS,
+  YC_APPLY_TASK_ID,
   VS_PRESETS,
   VS_SCENARIOS,
   WINDOW_INTERVAL_DAYS,
@@ -68,7 +69,7 @@ const corpusById = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
 const corpusIds = new Set(corpusById.keys())
 const combos = allChoiceCombos()
 
-// The same corpus reshape app/virtual-startup/page.tsx performs — shared by the rhythm suites.
+// The same corpus reshape app/startup-sim/page.tsx performs — shared by the rhythm suites.
 const routeMixOf = (taskId: string): RouteMix => {
   const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
   for (const n of corpusById.get(taskId)!.dag.nodes) {
@@ -95,9 +96,9 @@ describe('decision → journey mapping (against the live corpus)', () => {
     for (const id of VS_CHAIN_IDS) expect(chainIds.has(id), `chain ${id} missing`).toBe(true)
   })
 
-  it('covers every decision combo, derived straight from DECISIONS (8 entities × 5 models × 6 compliance options × 4 ICPs × 2 workplaces × the rest)', () => {
+  it('covers every decision combo, derived straight from DECISIONS (8 entities × 5 models × 6 compliance options × 4 ICPs × 5 launches × 2 workplaces × the rest)', () => {
     const expected = DECISIONS.reduce((acc, d) => acc * d.options.length, 1)
-    expect(expected).toBe(122880) // 8 × 2 × 5 × 2 × 2 × 2 × 6 × 4 × 4 × 2
+    expect(expected).toBe(153600) // 8 × 2 × 2 × 5 × 2 × 2 × 6 × 4 × 5 × 2 ('x' launch appended 2026-10-01)
     expect(combos.length).toBe(expected)
     expect(new Set(combos.map(comboKey)).size).toBe(expected)
     expect(DECISIONS.length).toBe(10)
@@ -296,16 +297,16 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it("compliance 'Basic minimums' (item 8, 2026-09-30): appended codec slot, the new default-asserted value, byte-identical composition to None — honestly named, never a fake playbook", () => {
+  it("compliance 'Basic minimums' (item 8, 2026-09-30): appended codec slot, byte-identical composition to None — honestly named, never a fake playbook; round 7 moves the default-asserted posture to SOC 2", () => {
     const compliance = DECISIONS.find((d) => d.id === 'compliance')!
     expect(compliance.options.map((o) => o.value)).toEqual(['now', 'later', 'none', 'hipaa', 'iso', 'basics'])
     expect(compliance.options.find((o) => o.value === 'basics')!.label).toBe('Basic minimums')
     // The same composition None mapped to — no dedicated compliance playbook runs.
     const none = journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'none' }, chains)
     expect(journeyTaskIds({ ...DEFAULT_CHOICES, compliance: 'basics' }, chains)).toEqual(none)
-    // Default-asserted (the founder's "default onto Basic minimums, not None") — and because it
-    // differs from the composed default, it is NOT in the URL-neutral underlay.
-    expect(DEFAULT_ASSERTED.compliance).toBe('basics')
+    // Round 7 (2026-10-01, item 5): the default-asserted posture is SOC 2 early — equal to the
+    // composed default, so compliance is composition-NEUTRAL again and joins the URL underlay.
+    expect(DEFAULT_ASSERTED.compliance).toBe('now')
     expect(DEFAULT_CHOICES.compliance).toBe('now') // 'Not set' still composes SOC 2 early — old links replay
     // 'None' leaves the display roster (redundant with the honest name); the codec slot stays.
     expect(HIDDEN_OPTION_VALUES.compliance).toEqual(['none'])
@@ -410,20 +411,22 @@ describe('decision → journey mapping (against the live corpus)', () => {
     const ph = DECISIONS.find((d) => d.id === 'ph')!
     // Codec compat: 'yes'/'no' keep indices 0/1 (old digits map to the same options); new
     // venues are appended.
-    expect(ph.options.map((o) => o.value)).toEqual(['yes', 'no', 'show-hn', 'waitlist'])
-    expect(ph.options.map((o) => o.label)).toEqual(['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'])
+    expect(ph.options.map((o) => o.value)).toEqual(['yes', 'no', 'show-hn', 'waitlist', 'x'])
+    expect(ph.options.map((o) => o.label)).toEqual(['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch', 'X launch'])
+    const venueMark: Record<string, string> = { 'show-hn': 'Show HN', waitlist: 'waitlist', x: 'X' }
     for (const base of [DEFAULT_CHOICES, { ...DEFAULT_CHOICES, enterprise: 'yes' as const }]) {
       const phIds = journeyTaskIds({ ...base, ph: 'yes' }, chains)
-      for (const venue of ['show-hn', 'waitlist'] as const) {
+      for (const venue of ['show-hn', 'waitlist', 'x'] as const) {
         const combo = { ...base, ph: venue }
-        // HONESTY: the same corpus playbook, task for task — nothing invented for the venue.
+        // HONESTY: the same corpus playbook, task for task — nothing invented for the venue
+        // ('x' included, 2026-10-01 item 5: launching on X composes ZERO new corpus steps).
         expect(journeyTaskIds(combo, chains)).toEqual(phIds)
         const note = journeyPhases(combo, chains).find((p) => p.chainId === 'launch-on-product-hunt')!.note!
         expect(note).toContain('the same launch playbook')
-        expect(note).toContain(venue === 'show-hn' ? 'Show HN' : 'waitlist')
+        expect(note).toContain(venueMark[venue])
         // The launch-day artifact names the venue, stays simulated and deterministic.
         const arts = buildJourneyArtifacts(combo, journeyTaskIds(combo, chains))
-        expect(arts.growth_010?.[0].value).toContain(venue === 'show-hn' ? 'Show HN' : 'waitlist')
+        expect(arts.growth_010?.[0].value).toContain(venueMark[venue])
         expect(arts.growth_010?.[0].simulated).toBe(true)
       }
       // Stealth genuinely skips the chain — and the run still ends (operations continue).
@@ -433,16 +436,26 @@ describe('decision → journey mapping (against the live corpus)', () => {
     }
   })
 
-  it('DEFAULT-ASSERTED decisions: entity starts asserted at c-corp, compliance at Basic minimums (item 8); only composition-neutral entries underlay decoded run links', () => {
-    expect(DEFAULT_ASSERTED).toEqual({ entity: 'c-corp', compliance: 'basics' })
+  it('DEFAULT-ASSERTED decisions (round 7, 2026-10-01): the demo composition starts asserted; only composition-neutral entries underlay decoded run links (era handling)', () => {
+    expect(DEFAULT_ASSERTED).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', compliance: 'now', ph: 'x', remote: 'office',
+    })
     for (const [id, value] of Object.entries(DEFAULT_ASSERTED)) {
       const d = DECISIONS.find((x) => x.id === id)
       expect(d, `DEFAULT_ASSERTED names unknown decision "${id}"`).toBeTruthy()
       expect(d!.options.map((o) => o.value)).toContain(value)
     }
-    // The URL-neutral subset: entity (equals the composed default) underlies decoded links;
-    // compliance (differs) must NOT — an old link's elided compliance keeps its SOC 2 branch.
-    expect(DEFAULT_ASSERTED_URL_NEUTRAL).toEqual({ entity: 'c-corp' })
+    // ERA RULE: the URL-neutral subset (values equal to the composed default) underlies decoded
+    // links — entity/team/funding/compliance compose identically either way. The NON-neutral
+    // demo defaults (ph 'x', remote 'office') must NOT underlay: an old link's elided launch
+    // keeps its PH venue and its elided workplace stays remote-first (no ops_014 lease phase) —
+    // decoded legacy links replay their own era; only FRESH visits get the new defaults.
+    expect(DEFAULT_ASSERTED_URL_NEUTRAL).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', compliance: 'now',
+    })
+    // The frozen composition era itself: DEFAULT_CHOICES never moved.
+    expect(DEFAULT_CHOICES.ph).toBe('yes')
+    expect(DEFAULT_CHOICES.remote).toBe('remote')
   })
 
   it('tasks shared across chains (domain_002, prod_005) run once — first occurrence wins', () => {
@@ -1015,32 +1028,74 @@ describe("'Likely choice' ordering (round 5, item 7) — committed signals, pres
   })
 })
 
-describe('repo CTA on the right side of the page (round 5 item 6; moved right founder 2026-09-30)', () => {
-  it('the page carries the GitHub-mark CTA to the open startup repo, new tab, pushed to the right edge', () => {
-    const src = readFileSync(path.resolve(__dirname, '../../app/virtual-startup/page.tsx'), 'utf8')
-    expect(src).toContain('data-testid="vs-repo-cta"')
-    expect(src).toContain('href="https://github.com/ultrametricai/ultrametric"')
-    expect(src).toContain('Take part in the open startup repo →')
-    // New tab + the safe rel pair; the GitHub mark is an inline SVG (aria-hidden decoration).
-    const cta = src.slice(src.indexOf('vs-repo-cta'))
-    expect(cta).toContain('target="_blank"')
-    expect(cta).toContain('rel="noopener noreferrer"')
-    expect(cta).toContain('<svg aria-hidden')
-    // Founder 2026-09-30: the CTA moved to the RIGHT side of the page — it still lives in the
-    // header row after the h1, but ml-auto pushes it to the far edge of the flex section.
+describe('repo CTA removed from the simulator page (founder 2026-10-01)', () => {
+  it('the page carries no repo CTA — the header nav repo link covers it', () => {
+    const src = readFileSync(path.resolve(__dirname, '../../app/startup-sim/page.tsx'), 'utf8')
+    expect(src).not.toContain('vs-repo-cta')
+    expect(src).not.toContain('Take part in the open startup repo')
     expect(src.indexOf('The open startup simulator</h1>')).toBeGreaterThan(-1)
-    expect(src.indexOf('vs-repo-cta')).toBeGreaterThan(src.indexOf('The open startup simulator</h1>'))
-    const ctaClass = cta.slice(0, cta.indexOf('>'))
-    expect(ctaClass).toContain('ml-auto')
   })
 })
 
 describe('discoverability wiring', () => {
-  it('/virtual-startup is a ⌘K page entry with committed aliases', () => {
+  it('/startup-sim is a ⌘K page entry with committed aliases', () => {
     const entry = buildPageEntries(searchAliases.pages as Record<string, string[]>).find(
-      (e) => e.href === '/virtual-startup',
+      (e) => e.href === '/startup-sim',
     )
     expect(entry?.label).toBe('The Open Startup')
     expect(entry?.keywords).toContain('virtual startup')
+  })
+})
+
+describe("the 'Apply to YC' composition (founder 2026-10-01, item 6) — against the live corpus", () => {
+  it('fund_007 is a real, committed corpus process with https-cited YC sources and honest routes', () => {
+    const task = corpusById.get(YC_APPLY_TASK_ID)
+    expect(task, 'the Apply-to-YC process must exist in processes/corpus.json').toBeTruthy()
+    expect(task!.title).toBe('Apply to Y Combinator')
+    // Every cited step URL is https and on YC's own domains — the application guidance itself.
+    const urls = task!.dag.nodes.flatMap((n) => (n.actionUrl ? [n.actionUrl] : []))
+    expect(urls.length).toBeGreaterThanOrEqual(3)
+    for (const u of urls) expect(u).toMatch(/^https:\/\/(www\.|apply\.)?ycombinator\.com\//)
+    // Honest routes: the written answers and the founder video are person steps; the decision
+    // wait is async; nothing pretends an agent can apply for you.
+    const byLabel = (frag: string) => task!.dag.nodes.find((n) => n.label.includes(frag))!
+    expect(byLabel('written application').route).toBe('person')
+    expect(byLabel('founder video').route).toBe('person')
+    expect(byLabel('Wait for the decision').async).toBe(true)
+    expect(task!.supportLevel).toBe('manual_guide')
+  })
+
+  it('journeyPhases composes the application as its own CHAINLESS phase right after formation — the ops_014 office pattern — and only when asked', () => {
+    const off = journeyPhases(DEFAULT_CHOICES, chains)
+    expect(off.some((p) => p.id === 'yc-apply')).toBe(false)
+    const on = journeyPhases(DEFAULT_CHOICES, chains, { ycApply: true })
+    const phase = on.find((p) => p.id === 'yc-apply')!
+    expect(phase.taskIds).toEqual([YC_APPLY_TASK_ID])
+    expect(phase.chainId).toBe('') // a single committed process, never a fake chain
+    expect(phase.note).toContain('not a curated chain')
+    expect(phase.note).toContain('not affiliated with or endorsed by Y Combinator')
+    const idx = (id: string) => on.findIndex((p) => p.id === id)
+    expect(idx('yc-apply')).toBe(idx('form') + 1)
+    // Everything else composes identically — the phase is purely additive.
+    expect(on.filter((p) => p.id !== 'yc-apply')).toEqual(off)
+    // It composes with YC batch mode independently (the calibration reshapes, the checkbox adds).
+    expect(journeyPhases(applyYcCalibration(DEFAULT_CHOICES), chains, { yc: true, ycApply: true }).some((p) => p.id === 'yc-apply')).toBe(true)
+  })
+
+  it('the union precomputes its payload and its artifact prints simulated, never claiming acceptance', () => {
+    expect(unionTaskIds(chains)).toContain(YC_APPLY_TASK_ID)
+    const taskIds = journeyPhases(DEFAULT_CHOICES, chains, { ycApply: true }).flatMap((p) => p.taskIds)
+    const arts = buildJourneyArtifacts(DEFAULT_CHOICES, taskIds)
+    const art = arts[YC_APPLY_TASK_ID]?.[0]
+    expect(art?.simulated).toBe(true)
+    expect(art?.label).toBe('YC application')
+    expect(art?.value).toContain('submitted')
+    expect(art?.value).not.toMatch(/accepted/i)
+    // Constant draft (the ops_014 convention): no other artifact's seeded stream shifts — the
+    // shared artifacts are byte-identical with and without the application phase.
+    const base = buildJourneyArtifacts(DEFAULT_CHOICES, journeyTaskIds(DEFAULT_CHOICES, chains))
+    for (const [id, a] of Object.entries(base)) {
+      expect(arts[id], `artifact set for ${id}`).toEqual(a)
+    }
   })
 })

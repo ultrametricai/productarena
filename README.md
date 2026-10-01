@@ -1,9 +1,8 @@
 # Ultrametric — the open startup repo
 
 **Everything a founder — or their agent — needs to start and run a company: every
-[process](#processes) step by step, the [tools](#vendors) ranked on evidence, and the
-[business logic](#business-logic) underneath. Every record is dated, cited, and testable —
-never opinion.**
+[process](#processes) step by step, the [vendors](#vendors) ranked, and the
+[business logic](#business-logic) underneath.**
 
 ![The founder processes on ultrametric.ai — each process with its phase, agent ceiling, step count, timeline position, and vendors](docs/assets/processes.png)
 
@@ -11,7 +10,7 @@ never opinion.**
 timeline order — each with its phase, the share an agent can run today, and the vendors that
 serve it.*
 
-- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/virtual-startup)
+- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
 - **Build on it** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([agents & developers](#for-ai-agents))
 - **Add to it** — [CONTRIBUTING.md](./CONTRIBUTING.md): contest a verdict, add your country, add a module
 
@@ -22,11 +21,11 @@ serve it.*
 | What you need | Where |
 | --- | --- |
 | Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its agent ceiling, plus the chained playbooks |
-| The simulator | [/virtual-startup](https://ultrametric.ai/virtual-startup) — a simulated company runs the corpus end to end |
+| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
 | Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
-| Your country | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
+| Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
 
@@ -77,7 +76,7 @@ workflows), [`journeys/`](journeys/) (`chains.json`), and
 [`processes/vendor-registry.json`](processes/) (every vendor fact the process pages render).
 
 **Live.** [/processes](https://ultrametric.ai/processes) (each process at `/processes/<id>`),
-and [The Open Startup](https://ultrametric.ai/virtual-startup) — a simulator that replays the
+and [The Open Startup](https://ultrametric.ai/startup-sim) — a simulator that replays the
 whole corpus as a simulated company, end to end:
 
 ![The Open Startup simulator mid-run — a simulated company executing the process corpus, each step routed agent / manual form / human](docs/assets/virtual-startup.png)
@@ -167,46 +166,26 @@ modules, the contribution bar, and the honesty rules.
 
 ## How it works
 
-Two production lines feed one site, one data API, and one set of agent surfaces:
+The startup processes are the center of the repo — everything else feeds them:
 
-```mermaid
-flowchart LR
-  subgraph vendors ["Vendors — the evidence line"]
-    crawl["pipeline/ crawl → extract →<br/>normalize → collect-community →<br/>probe → judge → derive"]
-    evidence["data/&lt;arena&gt;/evidence/*.json<br/>dated, tiered evidence"]
-    verdicts["data/&lt;arena&gt;/verdicts.json<br/>every verdict cites evidence ids"]
-    rankings["data/&lt;arena&gt;/rankings.json<br/>HMAC _provenance, deterministic"]
-    crawl --> evidence --> verdicts --> rankings
-  end
-  subgraph corpus ["Processes + business logic — the corpus line"]
-    procs["processes/corpus.json + journeys/chains.json"]
-    rules["rules/ + sources/ + jurisdictions/<br/>validated by lib/founderOps.ts"]
-    modules["lib/openstartup/ modules"]
-    rules --> procs
-    rules --> modules
-  end
-  rankings --> site["ultrametric.ai<br/>static site"]
-  rankings --> api["/data JSON API<br/>+ /openapi.json"]
-  rankings --> agents["agent surfaces<br/>llms.txt + llms.md"]
-  procs --> site
-  procs --> sim["/virtual-startup<br/>the simulator"]
-  registry["processes/vendor-registry.json"] -. links steps to judged arenas .-> procs
-  rankings -.-> registry
-```
+- **Vendor rankings feed the steps.** The pipeline (`pipeline/`) crawls vendor docs, GitHub,
+  and community sources into dated evidence (`data/<arena>/evidence/`), an LLM judge turns
+  each (product, story) pair into a cited verdict (`verdicts.json`), and `derive` computes
+  the rankings (`rankings.json`) — scores are computed, never hand-set, and `recompute-check`
+  proves it bit-identically. `processes/vendor-registry.json` links each process step's
+  vendor options to the arena that judges them, so every "use this tool for this step" is a
+  ranked, cited claim.
+- **Business modules compute what the steps need.** The `lib/openstartup/` modules (cap
+  table, runway, deadlines, equity comp, notes, waterfalls, 409A sanity) are the calculations
+  behind the processes, each formula cited.
+- **The law anchors both.** Rule cards (`rules/`, backed by primary sources in `sources/`)
+  drive the deadline math, the jurisdiction-scoped workflows, and the geo notes
+  (`jurisdictions/`) — a process step that leans on a legal threshold cites a dated card.
 
-Read it left to right. On the evidence line, the local pipeline (`pipeline/`) crawls vendor
-docs, GitHub, and community sources into dated, tiered evidence
-(`data/<arena>/evidence/`), an LLM judge turns each (product, story) pair into a cited verdict
-(`verdicts.json`), and `derive` computes the rankings (`rankings.json`) — scores are computed,
-never hand-set, and `recompute-check` proves it bit-identically. On the corpus line, rule
-cards (`rules/`, backed by `sources/`) anchor both the jurisdiction-scoped workflows in
-`processes/` and the business-logic modules in `lib/openstartup/`, while the operational
-corpus (`processes/corpus.json`) and its playbooks (`journeys/chains.json`) describe what a
-founder actually does. The two lines meet in `processes/vendor-registry.json`: each process
-step's vendor options link to the arena that judges them. Everything lands in the same three
-surfaces — the static site, the `/data` JSON API (mirrored verbatim at build time by
-`scripts/copy-data.mjs`), and the agent endpoints (`/llms.txt`, per-arena `llms.md`) — and the
-simulator at `/virtual-startup` replays the whole corpus end to end.
+The processes themselves live in `processes/corpus.json` (playbooks in
+`journeys/chains.json`), render at [/processes](https://ultrametric.ai/processes), and replay
+end to end in [the simulator](https://ultrametric.ai/startup-sim). Everything is also served
+raw: the `/data` JSON API and the agent endpoints (`/llms.txt`, per-arena `llms.md`).
 
 ## Map of the repo
 
@@ -413,10 +392,10 @@ version. For plain-language answers ("what does `na` mean," "how do I disagree")
   verdicts are cache-keyed on their evidence, so nothing re-judges without a reason.
 - **Scores.** A product's score is its weighted percentage across applicable cells —
   evidenced story coverage, not absolute quality. `na` cells are excluded entirely.
-- **The PA Score** blends five agent-readiness components (agent access 0.30, API quality
+- **The Overall score** blends five agent-readiness components (agent access 0.30, API quality
   0.20, openness 0.20, agentic app 0.15, automation depth 0.15); 9 canonical agenticness
   stories are injected verbatim into every arena so the index is comparable across categories.
-- **Honesty mechanics.** Unknown is `null`, never 0; every PA Score carries an A–D confidence
+- **Honesty mechanics.** Unknown is `null`, never 0; every Overall score carries an A–D confidence
   grade (how much of it is probe-backed) and a measured ±band (68% interval from re-roll
   statistics — see [METHODOLOGY.md](./METHODOLOGY.md)); re-judge churn that cites no new
   evidence is reverted under audited rules; claims vendors make are reconciled against our
@@ -540,7 +519,7 @@ Ultrametric is built to be read by agents, not just browsed by humans:
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
 - **[/methodology](https://ultrametric.ai/methodology)** — a tight, on-site summary of
-  [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, PA Score weights,
+  [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, Overall score weights,
   story provenance, re-judge stability, bias disclosure), linked from the header next to
   Arenas and from `/llms.txt`.
 - **MCP / CLI** — Ultrametric is not served over its own MCP server or CLI; a first-party

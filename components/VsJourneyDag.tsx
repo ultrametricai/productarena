@@ -263,6 +263,15 @@ const FOLLOW_SLACK_PX = 24
 // A hand-rolled in-row edge: short line + arrowhead at one FIXED size (no tiers — nodes never
 // compress anymore), lit emerald once the reveal traversed it (its downstream node is active or
 // done).
+//
+// FOOTPRINT INVARIANT (mobile flicker fix, founder 2026-10-01): Edge and WrapHint MUST occupy
+// the exact same width (16px content + mx-0.5). The wrap detector measures offsetTops after
+// every commit and swaps Edge ↔ WrapHint per item — when the two connectors had different
+// widths (the old WrapHint was ~8px narrower), the swap itself re-flowed the wrap, the next
+// measurement flipped the classification back, and at borderline widths (exactly the narrow
+// mobile viewport) the strip oscillated between the two layouts on every 240ms reveal commit —
+// the reported flicker. Equal footprints make the swap layout-neutral, so the measurement
+// converges in one pass and the reveal/pulse animations stay (nothing animated was the cause).
 function Edge({ lit }: { lit: boolean }) {
   return (
     <svg
@@ -271,7 +280,7 @@ function Edge({ lit }: { lit: boolean }) {
       width="16"
       height="8"
       viewBox="0 0 16 8"
-      className="mx-0.5 shrink-0 self-center"
+      className="mx-0.5 w-4 shrink-0 self-center"
     >
       <line x1="0" y1="4" x2="10" y2="4" strokeWidth="1.5" className={lit ? 'stroke-emerald-400/70' : 'stroke-zinc-700'} />
       <path d="M10 1 L15.5 4 L10 7 Z" className={lit ? 'fill-emerald-400/70' : 'fill-zinc-700'} />
@@ -280,10 +289,15 @@ function Edge({ lit }: { lit: boolean }) {
 }
 
 // The across-a-wrap continuation hint: a subtle ↵ leading the first node of a wrapped row (an
-// arrow there would point at the row edge, not at its upstream node).
+// arrow there would point at the row edge, not at its upstream node). Same 16px + mx-0.5
+// footprint as Edge — see the invariant above; a width change here reintroduces the flicker.
 function WrapHint() {
   return (
-    <span aria-hidden data-testid="vs-dag-wrap-hint" className="mr-1 shrink-0 self-center text-[10px] leading-none text-zinc-600">
+    <span
+      aria-hidden
+      data-testid="vs-dag-wrap-hint"
+      className="mx-0.5 flex w-4 shrink-0 justify-center self-center text-[10px] leading-none text-zinc-600"
+    >
       ↵
     </span>
   )

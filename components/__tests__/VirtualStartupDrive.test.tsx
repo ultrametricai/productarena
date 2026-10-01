@@ -155,27 +155,28 @@ const showAllAuto = () => {
   }
 }
 
-// Entity is DEFAULT-ASSERTED (founder round 4, item 5) — a default semi-auto run never asks it;
-// tests that want the entity card first clear the dropdown back to 'Not set' (clearEntity).
-const clearEntity = () => {
-  fireEvent.click(screen.getByTestId('vs-decision-entity'))
-  fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
+// Round-7 DEFAULT-ASSERTED decisions (2026-10-01, item 5: entity, team, funding, compliance,
+// ph, remote) are never asked by a default semi-auto run; tests that want a card first clear
+// the dropdown back to 'Not set' (clearDecision).
+const clearDecision = (id: string) => {
+  fireEvent.click(screen.getByTestId(`vs-decision-${id}`))
+  fireEvent.click(screen.getByTestId(`vs-decision-${id}-notset`))
 }
+const clearEntity = () => clearDecision('entity')
 
 // NOTE: no 'ordering' answer — the decision left the UI (round 5, item 4) and a semi-auto run
-// must never ask it; driveToEnd's guard fails loudly if an ordering card ever appears.
+// must never ask it; driveToEnd's guard fails loudly if an ordering card ever appears. The
+// default-asserted decisions' answers stay for runs that cleared them back to 'Not set'.
 const DEFAULT_ANSWERS: Record<string, string> = {
   entity: 'c-corp',
   team: 'cofounders',
   funding: 'seed',
   product: 'subscriptions',
   hire: 'yes',
-  // Compliance is DEFAULT-ASSERTED at 'basics' (item 8, 2026-09-30) — a default semi-auto run
-  // never asks it; the answer stays for runs that cleared it back to 'Not set'.
   compliance: 'now',
   enterprise: 'no',
-  ph: 'yes',
-  remote: 'remote',
+  ph: 'x',
+  remote: 'office',
 }
 
 beforeEach(() => {
@@ -298,10 +299,12 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
   })
 
   it('a full semi-auto run answering non-default values matches the same combo in auto structurally (tasks and steps)', () => {
-    // Semi: pick LLC + solo + bootstrap when asked, defaults elsewhere. Entity is
-    // DEFAULT-ASSERTED — clear it first so the run asks it like the others.
+    // Semi: pick LLC + solo + bootstrap when asked, defaults elsewhere. Entity, team, and
+    // funding are DEFAULT-ASSERTED (round 7) — clear them first so the run asks them.
     renderIt()
     clearEntity()
+    clearDecision('team')
+    clearDecision('funding')
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     driveToEnd({ ...DEFAULT_ANSWERS, entity: 'llc', team: 'solo', funding: 'bootstrap' }, null)
     // Scoped to the terminal body — the journey DAG strip mirrors the process titles above it.
@@ -326,7 +329,10 @@ describe('semi-auto — the run pauses at each unasserted decision and asks in t
     try {
       fireEvent.click(screen.getByRole('button', { name: /run it again/i }))
       expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
-      expect(screen.getByTestId('vs-decision-team').textContent).toContain('Not set')
+      // DEFAULT-ASSERTED team (round 7) resets to its asserted default, never to 'Not set'…
+      expect(screen.getByTestId('vs-decision-team').textContent).toContain('Cofounders')
+      // …while a plain decision clears all the way back.
+      expect(screen.getByTestId('vs-decision-product').textContent).toContain('Not set')
       // The first pause (a decision or the naming card) returns within a few rows.
       let card: HTMLElement | null = null
       for (let guard = 0; guard < 200 && card === null; guard++) {
@@ -399,6 +405,7 @@ describe('permalink — the drive mode and typed name replay through ?run=', () 
       picks: {},
       eventChoices: {},
       assistant: null,
+      ycApply: false,
       seed: 0,
     })
     window.history.replaceState(null, '', `/?run=${encoded}`)

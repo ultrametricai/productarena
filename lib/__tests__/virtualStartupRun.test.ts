@@ -375,6 +375,15 @@ describe('event engine — grounded, gated, seeded, deterministic', () => {
     expect(drawVsEvents([], key, 30)).toEqual([])
   })
 
+  it("the Apply-to-YC token is append-only in the seed key (item 6, 2026-10-01): off = byte-identical to the legacy key, on = '|q:1' appended", () => {
+    const key = eventSeedKey(DEFAULT_CHOICES, null, false, TECH_FIRST, 0)
+    // Legacy-stable: the default (off) emits EXACTLY the pre-item-6 key, so every pre-existing
+    // run's event stream replays byte-identically.
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, TECH_FIRST, 0, false)).toBe(key)
+    expect(key).not.toContain('|q:')
+    expect(eventSeedKey(DEFAULT_CHOICES, null, false, TECH_FIRST, 0, true)).toBe(`${key}|q:1`)
+  })
+
   it('the founder seed token is legacy-stable: the three v1 persona ids map to their original tokens, so shared v1 links draw the same events', () => {
     expect(founderSeedToken(TECH_FIRST)).toBe('solo-technical')
     expect(founderSeedToken(NONTECH_FIRST)).toBe('non-technical')
@@ -477,6 +486,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     picks: { payments: 'square', accounting: 'xero' },
     eventChoices: { 'soc2-demand': 'decline', 'processor-review': 'wait' },
     assistant: 'claude',
+    ycApply: true,
     seed: 7,
   }
 
@@ -504,6 +514,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
       picks: {},
       eventChoices: {},
       assistant: null,
+      ycApply: false,
       seed: 0,
     }
     const encoded = encodeRunState(def)
@@ -544,8 +555,11 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     // The appended venues take the next digits — and unknown digits still reject defensively.
     expect(decodeCombo(withPhDigit('2'))!.ph).toBe('show-hn')
     expect(decodeCombo(withPhDigit('3'))!.ph).toBe('waitlist')
-    expect(decodeCombo(withPhDigit('4'))).toBeNull()
+    // 'X launch' appended 2026-10-01 (item 5) — the new default-ASSERTED venue takes digit 4.
+    expect(decodeCombo(withPhDigit('4'))!.ph).toBe('x')
+    expect(decodeCombo(withPhDigit('5'))).toBeNull()
     expect(decodeAssertedCombo(withPhDigit('3'))!.ph).toBe('waitlist')
+    expect(decodeAssertedCombo(withPhDigit('4'))!.ph).toBe('x')
   })
 
   it('round-5 codec compat: entity/product/compliance digits 0/1 still mean what they always meant; the new options append as the next digits', () => {
@@ -638,6 +652,16 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     // Not a judged roster id → the whole payload rejects (defensive-decode convention).
     expect(tamper({ v: 2, c: encodeAssertedCombo({}), a: 'clippy' })).toBeNull()
     expect(tamper({ v: 2, c: encodeAssertedCombo({}), a: 7 })).toBeNull()
+  })
+
+  it("the Apply-to-YC token 'q' (item 6, 2026-10-01): round-trips, defaults false on legacy links, rejects junk", () => {
+    expect(decodeRunState(encodeRunState(state))!.ycApply).toBe(true)
+    expect(decodeRunState(encodeRunState({ ...state, ycApply: false }))!.ycApply).toBe(false)
+    // Legacy payload without 'q' → false (the phase never composes for old links).
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}) })!.ycApply).toBe(false)
+    // Anything but the literal 1 rejects (defensive-decode convention).
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), q: 2 })).toBeNull()
+    expect(tamper({ v: 2, c: encodeAssertedCombo({}), q: 'yes' })).toBeNull()
   })
 
   it('accepts v1 payloads: full combo asserted, legacy persona ids mapped onto the axis pairs, mode auto — shared links keep replaying', () => {

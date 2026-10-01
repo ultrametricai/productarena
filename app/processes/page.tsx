@@ -60,7 +60,7 @@ export default function ProcessesPage() {
         {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
             decision-driven journey with clearly-labeled synthetic artifacts. */}
         <Link
-          href="/virtual-startup"
+          href="/startup-sim"
           className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/50 hover:bg-emerald-400/5"
         >
           <span className="font-medium text-zinc-200">🐣 The open startup simulator</span>

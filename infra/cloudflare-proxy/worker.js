@@ -2127,6 +2127,18 @@ export default {
         headers: { Location: `https://ultrametric.ai/get-started${url.search}`, 'Cache-Control': 'no-store' },
       })
     }
+    // 1c. /virtual-startup → /startup-sim (founder 2026-10-01 rename): the open startup
+    //     simulator moved routes. Old links carry live state in the query (?run= replay
+    //     permalinks, ?preset=/?yc= setups, ?geo=), so the query string rides the 301 verbatim;
+    //     sub-paths keep their tail (the /v2 pattern, but path-preserving — the sim may grow
+    //     sub-routes and old deep links should land on their new twin, not the index).
+    if (url.pathname === '/virtual-startup' || url.pathname.startsWith('/virtual-startup/')) {
+      const tail = url.pathname.slice('/virtual-startup'.length)
+      return new Response(null, {
+        status: 301,
+        headers: { Location: `https://ultrametric.ai/startup-sim${tail}${url.search}`, 'Cache-Control': 'no-store' },
+      })
+    }
     // 2. The landing pages are ported INTO the product app (founder 2026-09-29: "the top bar
     //    we use should be constant through the site") — the separate Astro landing origin, its
     //    HTMLRewriter header-injection shims, and its asset passthroughs (/_astro, /faces) are

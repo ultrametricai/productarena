@@ -18,7 +18,7 @@ import { REPO } from '@/lib/site'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Predictions — Ultrametric',
+  title: 'Predictions — open and settled overtake questions — Ultrametric',
   description:
     'Yes/no questions auto-generated from live close races — will the #2 overtake the #1 within 30 days? Settled mechanically from the public changelog, never by opinion.',
 }
@@ -81,7 +81,7 @@ export default function PredictionsPage() {
     <div className="mx-auto max-w-3xl space-y-10">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Predictions</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Close races, called in advance</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Predictions — open and settled overtake questions</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Whenever an arena&rsquo;s #1 and #2 are within {CLOSE_RACE_THRESHOLD.toFixed(1)} Overall score points — the same
           &ldquo;close race&rdquo; bar that triggers the multi-judge uncertainty pass — a yes/no question opens
