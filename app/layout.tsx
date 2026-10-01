@@ -294,7 +294,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   2026-09-23: Arenas sits LEFT of Processes. Founder 2026-09-24: the dropdowns
                   and buttons are desktop-only — mobile gets the ☰ MobileNav. */}
               <Link
-                href="/virtual-startup"
+                href="/startup-sim"
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
                 The Open Startup

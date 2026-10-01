@@ -68,7 +68,7 @@ const corpusById = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
 const corpusIds = new Set(corpusById.keys())
 const combos = allChoiceCombos()
 
-// The same corpus reshape app/virtual-startup/page.tsx performs — shared by the rhythm suites.
+// The same corpus reshape app/startup-sim/page.tsx performs — shared by the rhythm suites.
 const routeMixOf = (taskId: string): RouteMix => {
   const mix: RouteMix = { agent: 0, form: 0, person: 0, legalSignature: 0 }
   for (const n of corpusById.get(taskId)!.dag.nodes) {
@@ -1017,7 +1017,7 @@ describe("'Likely choice' ordering (round 5, item 7) — committed signals, pres
 
 describe('repo CTA removed from the simulator page (founder 2026-10-01)', () => {
   it('the page carries no repo CTA — the header nav repo link covers it', () => {
-    const src = readFileSync(path.resolve(__dirname, '../../app/virtual-startup/page.tsx'), 'utf8')
+    const src = readFileSync(path.resolve(__dirname, '../../app/startup-sim/page.tsx'), 'utf8')
     expect(src).not.toContain('vs-repo-cta')
     expect(src).not.toContain('Take part in the open startup repo')
     expect(src.indexOf('The open startup simulator</h1>')).toBeGreaterThan(-1)
@@ -1025,9 +1025,9 @@ describe('repo CTA removed from the simulator page (founder 2026-10-01)', () => 
 })
 
 describe('discoverability wiring', () => {
-  it('/virtual-startup is a ⌘K page entry with committed aliases', () => {
+  it('/startup-sim is a ⌘K page entry with committed aliases', () => {
     const entry = buildPageEntries(searchAliases.pages as Record<string, string[]>).find(
-      (e) => e.href === '/virtual-startup',
+      (e) => e.href === '/startup-sim',
     )
     expect(entry?.label).toBe('The Open Startup')
     expect(entry?.keywords).toContain('virtual startup')

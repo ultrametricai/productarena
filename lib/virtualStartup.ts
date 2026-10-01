@@ -4,7 +4,7 @@
 // timeline replays them with clearly-labeled synthetic artifacts ("what each step produces").
 //
 // Client-safe and pure (no node builtins) — same split convention as lib/processSim.ts: the
-// server page (app/virtual-startup/page.tsx) resolves the corpus + judged rankings and hands
+// server page (app/startup-sim/page.tsx) resolves the corpus + judged rankings and hands
 // serializable payloads to components/VirtualStartup.tsx, which calls the pure functions here.
 //
 // Honesty rules (the site's whole brand):
@@ -815,7 +815,7 @@ export interface VsAssistant {
 }
 
 // ---------------------------------------------------------------------------
-// Serializable payload shapes (built server-side by app/virtual-startup/page.tsx)
+// Serializable payload shapes (built server-side by app/startup-sim/page.tsx)
 // ---------------------------------------------------------------------------
 
 // The top JUDGED vendor for one step — lib/processRankings.ts stepRanking()'s #1, carried with

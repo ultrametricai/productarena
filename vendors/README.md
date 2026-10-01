@@ -24,7 +24,7 @@ flowchart LR
   rankings["data/&lt;arena&gt;/rankings.json<br/>deterministic recompute,<br/>HMAC-fingerprinted _provenance"]
   geo["jurisdictions/vendor-geo.json<br/>region availability, honest negatives"]
   reviews["vendors/reviews/generated/<br/>593 interchange records<br/>(schemas/vendor-review.schema.json)"]
-  site["the site: /arena/*, /overall,<br/>process-step vendor chips, /virtual-startup vendor picks"]
+  site["the site: /arena/*, /overall,<br/>process-step vendor chips, /startup-sim vendor picks"]
   evidence --> verdicts --> rankings --> site
   rankings --> reviews
   evidence --> reviews

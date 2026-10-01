@@ -69,8 +69,8 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     // The route-dot legend was removed with the dots (founder 2026-09-29).
     expect(within(container).queryByText('agent-runnable')).toBeNull()
     // 'Virtual Startup' → 'The open startup simulator' (founder batch 2026-09-30, item 1) —
-    // the route and internal vocabulary stay /virtual-startup.
-    expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/virtual-startup')
+    // the route and internal vocabulary stay /startup-sim.
+    expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/startup-sim')
   })
 })
 

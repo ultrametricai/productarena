@@ -18,7 +18,11 @@ import {
 import { buildVsAccess, buildVsAssistants, buildVsPopularity, buildVsPricing, buildVsTaskRisks } from '@/lib/virtualStartupData'
 
 // Virtual Startup (founder ask 2026-09-23): a synthetic company run through the REAL process
-// corpus. This page is fully static: it precomputes, at build time, the payload for every task
+// corpus. Route renamed /virtual-startup → /startup-sim (founder batch 2026-10-01, item 1) —
+// the Cloudflare worker 301s the old path with query strings intact, and the internal
+// vs/virtual-startup vocabulary (testids, lib/virtualStartup*, component names) deliberately
+// stays: renaming identifiers is churn, the URL is the product surface.
+// This page is fully static: it precomputes, at build time, the payload for every task
 // any decision combo can reach (steps via the same buildSimSteps the process pages use, top
 // judged vendor per step via lib/processRankings.ts stepRanking) plus the union vendor roles;
 // components/VirtualStartup.tsx assembles the chosen journey client-side, deterministically.
@@ -26,8 +30,9 @@ import { buildVsAccess, buildVsAssistants, buildVsPopularity, buildVsPricing, bu
 // the SIMULATED label — see lib/virtualStartup.ts for the honesty contract.
 
 export const metadata: Metadata = {
-  // One title (founder 2026-09-29, latest wording): 'Startup Simulator' — the route stays
-  // /virtual-startup, and every internal id/testid keeps the vs/virtual-startup vocabulary.
+  // One title (founder 2026-09-29, latest wording): 'Startup Simulator' — the route is
+  // /startup-sim (renamed 2026-10-01); every internal id/testid keeps the vs/virtual-startup
+  // vocabulary.
   title: 'The open startup simulator — Ultrametric',
   description:
     'The open startup simulator — watch an AI-native company incorporate, bank, hire, and launch: every step routed agent or human, vendors picked from evidence-graded rankings, decisions yours in semi-auto mode.',

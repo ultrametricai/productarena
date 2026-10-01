@@ -4,7 +4,7 @@
 // visible 'simulated' labels from the whole interface, so every generated artifact node carries
 // data-synthetic="true" (asserted per node here) and keeps the distinct fuchsia styling — the
 // honesty contract moved from a visible chip to a machine-checkable attribute, and NO visible
-// 'simulated' string may render anywhere on /virtual-startup (also asserted here).
+// 'simulated' string may render anywhere on /startup-sim (also asserted here).
 // Fixture chains/tasks keep the journey small; the decision→journey mapping itself is tested
 // against the live corpus in lib/__tests__/virtualStartup.test.ts.
 import { act, fireEvent, render, screen, within } from '@testing-library/react'

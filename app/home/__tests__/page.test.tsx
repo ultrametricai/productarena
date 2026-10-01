@@ -12,7 +12,7 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     // "Redefining work in the AI phase transition" was removed by founder ask 2026-09-30.
     expect(screen.queryByText('Redefining work in the AI phase transition')).toBeNull()
     const cta = screen.getByRole('link', { name: /Play with the open startup/ })
-    expect(cta.getAttribute('href')).toBe('/virtual-startup')
+    expect(cta.getAttribute('href')).toBe('/startup-sim')
   })
 
   it('pins the ~70% viewport hero height (founder 2026-09-30, down from 100svh)', () => {

@@ -63,9 +63,9 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
     if (query.trim() === '') {
       const limited = all.slice(0, MAX_RESULTS)
       const grouped = TYPE_ORDER.flatMap((type) => limited.filter((e) => e.type === type))
-      const vs = all.find((e) => e.href === '/virtual-startup')
+      const vs = all.find((e) => e.href === '/startup-sim')
       if (!vs) return grouped
-      return [vs, ...grouped.filter((e) => e.href !== '/virtual-startup')].slice(0, MAX_RESULTS)
+      return [vs, ...grouped.filter((e) => e.href !== '/startup-sim')].slice(0, MAX_RESULTS)
     }
     const limited = all.slice(0, MAX_RESULTS)
     const best = limited[0]?.type
