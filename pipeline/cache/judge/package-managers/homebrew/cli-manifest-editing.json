@@ -1,21 +1,19 @@
 {
-  "hash": "7cef0a073f674f17b24412d3a2bf72de494d242e5f571e2ca1d558e6722ef0b6",
+  "hash": "78b22c41934da37ed44d7ff70376c66afef803e6dede8275dd91133584d594ff",
   "verdict": {
-    "productId": "homebrew",
-    "storyId": "cli-manifest-editing",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Homebrew's CLI (`brew install`/`uninstall`/`upgrade`) mutates installed-package state, and `brew bundle dump`/`brew bundle install`/`brew bundle check` let a Brewfile (manifest) be generated, synced, and verified without hand-editing — docs explicitly compare it to package.json/Gemfile management. However, there is no true lockfile concept (Brewfile mixes manifest+state) and community reports (comm-1, comm-11) describe upgrade commands unpredictably touching unrelated packages, which undercuts the 'safely and predictably rewrites' framing an agent would need. Missing for 10: an explicit lockfile artifact distinct from the manifest, and evidence of deterministic/idempotent CLI-only dependency edits without unexpected side effects.",
+    "rationale": "Homebrew treats a Brewfile as a project dependency manifest, and the CLI covers the main operations: `brew install` adds packages, autoremove uninstalls no-longer-needed dependencies, and `brew bundle dump` regenerates the Brewfile from installed state. That means an agent can rewrite the manifest indirectly through CLI commands rather than by hand. However, there is no evidence of direct add/remove/upgrade commands that edit the Brewfile, and no lockfile mechanism is documented. Missing for 10: CLI commands that directly add, remove or upgrade Brewfile entries, a lockfile that the CLI rewrites safely, and independent corroboration of agent-safe manifest editing.",
     "evidenceIds": [
       "homebrew-docs-1",
       "homebrew-docs-2",
-      "homebrew-docs-13",
+      "homebrew-docs-7",
+      "homebrew-docs-8",
       "homebrew-docs-14",
-      "homebrew-docs-26",
-      "homebrew-docs-30",
-      "homebrew-comm-1",
-      "homebrew-comm-11"
-    ]
+      "homebrew-docs-30"
+    ],
+    "productId": "homebrew",
+    "storyId": "cli-manifest-editing"
   }
 }
