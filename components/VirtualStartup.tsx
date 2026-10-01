@@ -1260,14 +1260,18 @@ export default function VirtualStartup({
         {/* The control panel as a labeled form grid (founder 2026-09-28: the crammed single-row
             band was "poorly designed layout wise") — one aligned label column (Scenario / Founder
             / Decisions), one content column, and a footer bar holding the company info + the Run
-            CTA. Rows keep horizontal scroll on mobile, wrap from sm up. */}
+            CTA. Mobile fix (founder 2026-10-01, item 3b): the rows WRAP at every width now —
+            the old mobile pattern (overflow-x-auto scroll strips) overflowed off the right edge
+            instead of scrolling because the decisions row lacked min-w-0 (a grid item's automatic
+            minimum width tracks its content), so the whole band pushed past the viewport. Wrap +
+            min-w-0 stacks the controls honestly at small widths; no horizontal scrolling. */}
         <div role="tabpanel" id="vs-tabpanel-setup" aria-labelledby="vs-tab-setup" hidden={tab !== 'setup'}>
         <div className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
           <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
             <IconChip icon={ROW_ICONS.scenario.icon} title={ROW_ICONS.scenario.title} className="mr-1" />
             Scenario
           </span>
-          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             {/* One-tap example startups (founder batch 2026-09-30, item 11): the pills name the
                 FUNCTIONAL TYPE of startup ('Typical software' / 'Frontier hardware' / 'Biotech')
                 — the fictional company names left the labels, and the amber ⓘ is gone; the
@@ -1337,7 +1341,7 @@ export default function VirtualStartup({
             <IconChip icon={ROW_ICONS.founder.icon} title={ROW_ICONS.founder.title} className="mr-1" />
             Founder
           </span>
-          <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             <VsPersonaPicker
               axes={founder}
               onSelect={(next) => {
@@ -1364,7 +1368,7 @@ export default function VirtualStartup({
                 <IconChip icon={ROW_ICONS.using.icon} title={ROW_ICONS.using.title} className="mr-1" />
                 I&apos;m using
               </span>
-              <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+              <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                 <VsAssistantSelect assistants={assistants} value={assistant} onChange={setAssistant} />
               </div>
             </>
@@ -1376,7 +1380,7 @@ export default function VirtualStartup({
               obviously the setup); an empty slot keeps the grid columns aligned. Each choice
               still only swaps, reorders, adds, or skips corpus processes. */}
           <span aria-hidden className="hidden sm:block" />
-          <div className="flex items-center gap-2.5 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-2.5">
           {/* 'Start with' is gone from the panel (round 5, item 4 — VISIBLE_DECISIONS); the
               Entity roster follows the geo pick (round 5, item 1 — country-filtered options,
               full codec roster intact underneath); Funding is the SINGLE combined selector

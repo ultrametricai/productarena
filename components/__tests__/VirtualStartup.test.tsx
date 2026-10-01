@@ -1223,3 +1223,25 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
     expect(screen.getByTestId('vs-terminal-status').className).toContain('text-zinc-400')
   })
 })
+
+describe('setup band wraps at small widths (founder 2026-10-01, item 3b)', () => {
+  // The old mobile pattern (per-row overflow-x-auto scroll strips) overflowed off the right edge
+  // instead of scrolling: the decisions row lacked min-w-0, so the grid item's automatic minimum
+  // width pushed the whole band past the viewport. The rows now WRAP at every width.
+  it('every control row is flex-wrap + min-w-0 and nothing in the band scrolls sideways', () => {
+    renderIt()
+    const setup = screen.getByTestId('vs-setup')
+    expect(setup.querySelectorAll('[class*="overflow-x-auto"]').length).toBe(0)
+    const rows = [
+      screen.getByTestId('vs-yc-toggle').parentElement!, // scenario pills + YC mode
+      screen.getByTestId('vs-assistant-row').parentElement!, // the "I'm using" row
+      // The decisions row: the VsDecisionSelect groups' shared parent.
+      screen.getByTestId('vs-decision-entity').closest('div[role="group"]')!.parentElement!,
+    ]
+    for (const row of rows) {
+      expect(row.className).toContain('flex-wrap')
+      expect(row.className).toContain('min-w-0')
+      expect(row.className).not.toContain('overflow-x-auto')
+    }
+  })
+})

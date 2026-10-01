@@ -103,7 +103,7 @@ export default function VsAssistantSelect({
           role="listbox"
           id={listboxId}
           aria-label="Which AI firm are you using? options"
-          className="absolute left-0 top-full z-30 mt-1 min-w-[260px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 min-w-[260px] max-w-[calc(100vw-2.5rem)] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           <li role="presentation">
             <button

@@ -134,7 +134,7 @@ export default function VsDecisionSelect({
           role="listbox"
           id={listboxId}
           aria-label={`${decision.title} options`}
-          className="absolute left-0 top-full z-30 mt-1 w-[300px] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
+          className="absolute left-0 top-full z-30 mt-1 w-[300px] max-w-[calc(100vw-2.5rem)] rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-2xl"
         >
           <li role="presentation">
             <button
