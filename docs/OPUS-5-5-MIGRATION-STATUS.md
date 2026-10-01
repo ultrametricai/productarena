@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:43:16.148Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:43:28.204Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 93 ingested+committed / 1 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 32,949 |
-| Cumulative ingested spend | $558.73 (hard stop $800) |
-| Projected fleet ingest total | ~$573 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.6% (8,036 flips / 32,949 comparable cells) |
-| Batch requests / interactive fallbacks | 31,913 / 18 |
+| Arenas done / remaining | 94 ingested+committed / 0 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 33,789 |
+| Cumulative ingested spend | $570.84 (hard stop $800) |
+| Projected fleet ingest total | ~$571 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 75.5% (8,272 flips / 33,789 comparable cells) |
+| Batch requests / interactive fallbacks | 32,753 / 18 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -103,6 +103,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | sso-identity | 250 | 63 | 74.8% | $3.80 |
 | stablecoin-payments | 318 | 77 | 75.8% | $4.94 |
 | startup-banking | 518 | 128 | 75.3% | $9.30 |
+| startup-law-firms | 840 | 236 | 71.9% | $12.11 |
 | tax-automation | 318 | 86 | 73% | $4.82 |
 | team-chat | 255 | 71 | 72.2% | $5.54 |
 | terminals | 324 | 106 | 67.3% | $6.07 |
@@ -115,5 +116,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
+(none)
 
