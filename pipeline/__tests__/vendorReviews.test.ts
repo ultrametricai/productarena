@@ -61,11 +61,11 @@ describe('generated vendor-review interchange records', () => {
   it('spot-pin: cursor (ai-coding) — dimensions from the committed rankings, probe-first evidence', () => {
     const r = JSON.parse(committed.get('ai-coding--cursor.json')!)
     expect(r.vendor).toBe('Cursor')
-    expect(r.dimensions.agentReady).toBe(76.9)
-    expect(r.dimensions.agentic).toBe(75.8)
-    expect(r.dimensions.aiEra).toBe(52.1)
-    expect(r.tested_on).toBe('2026-09-25')
-    expect(r.recheck_due).toBe('2026-12-24') // tested_on + 90 days
+    expect(r.dimensions.agentReady).toBe(76.2)
+    expect(r.dimensions.agentic).toBe(78)
+    expect(r.dimensions.aiEra).toBe(59.8)
+    expect(r.tested_on).toBe('2026-09-30')
+    expect(r.recheck_due).toBe('2026-12-29') // tested_on + 90 days
     expect(r.evidence[0].kind).toBe('probe')
     expect(r.jurisdictions).toEqual([]) // no geo spike rows for ai-coding
   })
@@ -84,7 +84,7 @@ describe('generated vendor-review interchange records', () => {
     const r = JSON.parse(committed.get('payroll--gusto.json')!)
     expect(r.jurisdictions[0]).toBe('US:available')
     expect(r.jurisdictions).toContain('IN:unavailable')
-    expect(r.tested_on).toBe('2026-09-24')
+    expect(r.tested_on).toBe('2026-10-01')
     expect(r.evidence.length).toBeGreaterThan(0)
   })
 })

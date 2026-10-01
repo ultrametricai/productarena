@@ -122,6 +122,21 @@ worklist's extraction notes; the superseded README §9 ai-coding adjudications f
 wave's own-product audit instead (and its live-app-debugging and copilot-MCP precedents were
 re-applied there where Opus repeated the old errors).
 
+## Noise machinery re-measured under the new judge (memo §5.5)
+
+The transition matrices in data/*/uncertainty.json and the score-interval bands were measured
+from SONNET re-rolls and became invalid at the migration boundary (each entry's first
+judgment is the cached verdict, which the migration replaced). Per the memo's prescription, a
+~100-cell sample was double re-rolled under opus-5-5: 102 decisive cells across three
+close-race arenas — accounting (15% any-disagreement), vector-databases (3%), meeting-ai (9%)
+— mean ≈9%, the same ballpark as sonnet-5's documented ~9% fleet re-roll rate, so the judge
+change does not add re-roll noise (go). The 18 remaining sonnet-era uncertainty.json files
+were deleted rather than silently blended into the new noise model (tolerant-optional display:
+those arenas render no agreement panel until the story-runner re-measures them under the new
+judge), and every arena's score-intervals.json was rebuilt from the opus-measured model —
+median aiEra band width 3.0 points (down from ~4.5 under sonnet, consistent with the memo's
+narrower-profile prediction). Sample cost ≈$9 interactive, per the memo's ~$8 estimate.
+
 ## Per-arena top-5 before → after
 
 Rank arrows show the pre-migration rank of the product now holding each slot; aiEra pairs

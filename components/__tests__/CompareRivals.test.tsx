@@ -19,12 +19,12 @@ describe('CompareRivals', () => {
     expect(rows[0].textContent).toContain('Mercury')
     expect(rows[0].querySelector('a[href="/arena/startup-banking/product/mercury"]')).toBeNull()
     // Rival row links to its product page and to the /vs/ head-to-head with the stored slug;
-    // record is oriented self-first (mercury 12 – 30 ramp in data/startup-banking/rankings.json).
+    // record is oriented self-first (mercury 16 – 28 ramp in data/startup-banking/rankings.json).
     const rampRow = [...rows].find((r) => r.textContent?.includes('Ramp'))!
     expect(rampRow.querySelector('a[href="/arena/startup-banking/product/ramp"]')).not.toBeNull()
     const vsLink = rampRow.querySelector('a[href="/vs/mercury-vs-ramp"]')!
     expect(vsLink).not.toBeNull()
-    expect(vsLink.textContent).toContain('12–30')
+    expect(vsLink.textContent).toContain('16–28')
     // Overall score cells link to each product's /score receipt page.
     expect(rows[0].querySelector('a[href="/arena/startup-banking/product/mercury/score"]')).not.toBeNull()
     expect(rampRow.querySelector('a[href="/arena/startup-banking/product/ramp/score"]')).not.toBeNull()

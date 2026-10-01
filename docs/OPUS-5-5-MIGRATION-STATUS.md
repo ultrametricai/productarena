@@ -1,6 +1,6 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:43:28.204Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T22:10:04.745Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
