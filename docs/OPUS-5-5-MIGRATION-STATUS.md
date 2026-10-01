@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:26:20.304Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:27:51.961Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 78 ingested+committed / 16 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 26,794 |
-| Cumulative ingested spend | $452.62 (hard stop $800) |
-| Projected fleet ingest total | ~$576 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.8% (6,484 flips / 26,794 comparable cells) |
-| Batch requests / interactive fallbacks | 25,758 / 12 |
+| Arenas done / remaining | 79 ingested+committed / 15 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 27,282 |
+| Cumulative ingested spend | $462.25 (hard stop $800) |
+| Projected fleet ingest total | ~$577 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 75.9% (6,578 flips / 27,282 comparable cells) |
+| Batch requests / interactive fallbacks | 26,246 / 12 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -59,6 +59,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | feature-flags | 270 | 57 | 78.9% | $4.88 |
 | fraud-prevention | 270 | 68 | 74.8% | $3.81 |
 | frontend-frameworks | 425 | 101 | 76.2% | $5.83 |
+| frontier-models | 488 | 94 | 80.7% | $9.63 |
 | game-engines | 456 | 110 | 75.9% | $8.85 |
 | gpus | 344 | 106 | 69.2% | $5.68 |
 | identity-verification | 318 | 83 | 73.9% | $4.84 |
@@ -100,5 +101,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`accounting` msgbatch_01QyvyRnSWgicsiv7D5VR3DZ (583) · `agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `ai-code-review` msgbatch_01DpLWbMwBVHUdbNAhEZThyS (318) · `equity-management` msgbatch_011Ln9oYycfZK4t3r7KsRSw7 (336) · `error-tracking` msgbatch_01MA6WFY74HDMtiHEhwBg8tA (330) · `expense-management` msgbatch_01EVLYevsABYxwJNV9t5HvXZ (265) · `frontier-models` msgbatch_011riJv1zhtWTuNBSnmn9suv (488) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `software-factory` msgbatch_014nMhpNfkxSSYPMcYEMgEvV (730) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
+`accounting` msgbatch_01QyvyRnSWgicsiv7D5VR3DZ (583) · `agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `ai-code-review` msgbatch_01DpLWbMwBVHUdbNAhEZThyS (318) · `equity-management` msgbatch_011Ln9oYycfZK4t3r7KsRSw7 (336) · `error-tracking` msgbatch_01MA6WFY74HDMtiHEhwBg8tA (330) · `expense-management` msgbatch_01EVLYevsABYxwJNV9t5HvXZ (265) · `gpu-clouds` msgbatch_014WBHavScgXF2VzxEe7p4Jj (270) · `marketplace-payments` msgbatch_01YNtTLKzneiP4gtYhmUdUum (318) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `software-factory` msgbatch_014nMhpNfkxSSYPMcYEMgEvV (730) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
 

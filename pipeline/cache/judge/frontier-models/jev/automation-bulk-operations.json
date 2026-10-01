@@ -1,17 +1,18 @@
 {
-  "hash": "10b83fa835f85786cb1f31edcadbff9c831b64e1e20ed1461a280cb0ca8abac3",
+  "hash": "52a63db05d277eb8d7a01cb9348488dd970898c287746dd6a3c6840e5b853bfc",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jev's fan-out/parallel-questions pattern lets users batch many questions into a single call (12.2x cheaper, 10x faster) and cookbooks like hierarchical classification and reranking apply this at scale across many items, which supports bulk operations. However, this is batching questions within a context window (bounded by the 64k token/32k state limit), not a documented bulk-job or async batch-processing API for large item counts, and there's no evidence of a dedicated bulk/batch endpoint, job queue, or progress tracking for large-scale item processing. missing for 10: a dedicated bulk-batch API/endpoint or job system for large-scale item processing beyond single-call token limits, independent benchmarks of true bulk throughput at scale, and hands-on community confirmation of bulk operations working reliably.",
+    "rationale": "The docs show batching many typed questions into a single TypeSafe call. The parallel-questions cookbook claims this is 12.2x cheaper and 10.0x faster, the fan-out pattern sends many questions per call, and one guardrails request screens every message. An AsyncTypeSafeClient and published rate limits support high-volume concurrent requests. However, batching is per-request (many questions against one state), not a dedicated bulk job over many items. missing for 10: a documented batch/bulk endpoint for processing many separate items/states in one job, explicit guidance on bulk throughput across large item sets, independent hands-on corroboration of bulk usage.",
     "evidenceIds": [
       "jev-docs-6",
       "jev-docs-11",
-      "jev-docs-18",
-      "jev-docs-19",
-      "jev-docs-24",
-      "jev-supp-context"
+      "jev-docs-22",
+      "jev-docs-17",
+      "jev-docs-5",
+      "jev-docs-40",
+      "jev-supp-rate-limits"
     ],
     "productId": "jev",
     "storyId": "automation-bulk-operations"
