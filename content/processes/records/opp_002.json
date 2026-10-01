@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "id": "opp_002",
+  "kind": "process",
+  "title": "Add a contractor (1099)",
+  "summary": "Onboard a 1099 contractor in payroll so they can be paid and 1099’d at year-end.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Add the contractor in payroll",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "rippling",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "deel",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "justworks",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "payroll",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 3
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "decision",
+      "title": "Contractor completes their own W-9 and bank details",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "india-pan-tds",
+          "title": "India - PAN + TDS on fees",
+          "summary": "Collect the contractor's PAN and deduct TDS from every payment (s.194C/194J), depositing it monthly and reporting quarterly - plus check whether their GST registration applies.",
+          "when": "Engaging a contractor in India",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.incometax.gov.in/iec/foportal/",
+              "role": "legacy-action-link",
+              "title": "Income Tax e-filing (TDS on fees)",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "IN"
+              ]
+            }
+          }
+        },
+        {
+          "id": "uk-ir35-cest",
+          "title": "UK - IR35 status check (CEST)",
+          "summary": "Before the contract: an IR35/off-payroll status check - HMRC's CEST tool gives a rulable answer, and medium/large clients must issue a status determination statement.",
+          "when": "Engaging a contractor in the United Kingdom",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.gov.uk/guidance/check-employment-status-for-tax",
+              "role": "legacy-action-link",
+              "title": "HMRC - check employment status (CEST)",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "route": "form",
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "UK"
+              ]
+            }
+          }
+        },
+        {
+          "id": "germany-status-determination",
+          "title": "Germany - Scheinselbstaendigkeit check",
+          "summary": "A one-client contractor working like staff triggers retroactive social contributions (false self-employment); the DRV Clearingstelle runs the official status-determination procedure.",
+          "when": "Engaging a contractor in Germany",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.deutsche-rentenversicherung.de/",
+              "role": "legacy-action-link",
+              "title": "Deutsche Rentenversicherung (status determination)",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "DE"
+              ]
+            }
+          }
+        },
+        {
+          "id": "france-attestation-vigilance",
+          "title": "France - URSSAF vigilance attestation",
+          "summary": "Contractors must be registered, and for contracts of 5,000 euros+ you must collect and verify their URSSAF attestation de vigilance every six months.",
+          "when": "Engaging a contractor in France",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.urssaf.fr/accueil/attestation-vigilance.html",
+              "role": "legacy-action-link",
+              "title": "URSSAF - attestation de vigilance",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "route": "form",
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "FR"
+              ]
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "async": true,
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Verify the contractor is payable (W-9 on file, payment method set)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "gusto",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "rippling",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "deel",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "justworks",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "hr",
+    "cadence": "event-driven",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "opportunity",
+    "supportLevel": "partial",
+    "supportReason": "Payroll APIs expose contractor onboarding — an agent can add the contractor; the contractor completes their own tax info.",
+    "contextNeeded": [],
+    "tags": [
+      "opportunity",
+      "gusto",
+      "hr"
+    ],
+    "activeMinutes": 5,
+    "totalEstimatedMinutes": 15,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "Onboarding a contractor means collecting their PAN and deducting TDS from every payment (s.194C/194J), depositing it monthly and reporting it quarterly — plus checking whether their GST registration applies to your invoices.",
+        "actionUrl": "https://www.incometax.gov.in/iec/foportal/",
+        "actionLabel": "Income Tax e-filing (TDS on fees)"
+      },
+      {
+        "country": "UK",
+        "summary": "Before the contract: an IR35/off-payroll status check (HMRC's CEST tool gives a rulable answer) — medium and large clients must issue a status determination statement, and misclassification lands the tax bill on you.",
+        "actionUrl": "https://www.gov.uk/guidance/check-employment-status-for-tax",
+        "actionLabel": "HMRC — check employment status (CEST)"
+      },
+      {
+        "country": "DE",
+        "summary": "The risk is Scheinselbständigkeit (false self-employment): a one-client contractor working like staff triggers retroactive social contributions — the DRV Clearingstelle runs an official status-determination procedure when in doubt.",
+        "actionUrl": "https://www.deutsche-rentenversicherung.de/",
+        "actionLabel": "Deutsche Rentenversicherung (status determination)"
+      },
+      {
+        "country": "FR",
+        "summary": "Contractors must be registered (micro-entrepreneur or company), and for contracts of €5,000+ you must collect and verify their URSSAF attestation de vigilance every six months — plus requalification risk if they work like an employee.",
+        "actionUrl": "https://www.urssaf.fr/accueil/attestation-vigilance.html",
+        "actionLabel": "URSSAF — attestation de vigilance"
+      }
+    ],
+    "timeOrder": 51,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "opp_002",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "2c78a80fb79281e9a7a2c1663d07267a6264d91a21aff2c3fa2960fd86850769"
+  }
+}

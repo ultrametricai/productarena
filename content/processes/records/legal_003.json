@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "id": "legal_003",
+  "kind": "process",
+  "title": "Get IP assignments signed",
+  "summary": "Ensure all founders and employees have signed IP assignment agreements (PIIA).",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "List all team members",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gusto",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 1
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Generate PIIA for each person",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Legal review of template",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "medium",
+        "estimatedMinutes": 1440,
+        "async": true
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Send PIIAs for signature",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "docusign",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Track and follow up on unsigned",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "docusign",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2,
+        "async": true
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "File executed copies",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "google_drive",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "docusign",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "gusto",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "google_drive",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "legal",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "Assignments must be in writing and are read narrowly: the Copyright Act (s.19) voids assignments of unspecified future works and defaults unstated terms to five years — so PIIA-style blanket clauses need Indian-law drafting, plus moral-rights waivers.",
+        "actionUrl": "https://copyright.gov.in/",
+        "actionLabel": "Copyright Office India"
+      },
+      {
+        "country": "DE",
+        "summary": "A blanket PIIA cannot capture patents: the Arbeitnehmererfindungsgesetz gives employees rights in their inventions — the employer must actively claim each reported invention (deemed claimed after four months) and owes statutory compensation.",
+        "actionUrl": "https://www.gesetze-im-internet.de/arbnerfg/",
+        "actionLabel": "ArbnErfG — employee inventions act"
+      },
+      {
+        "country": "FR",
+        "summary": "Employee inventions follow Code de la propriété intellectuelle L611-7: 'mission' inventions belong to the employer but carry a mandatory rémunération supplémentaire, and copyright's moral rights are unwaivable — the INPI (home of the CNIS disputes commission) is the anchor.",
+        "actionUrl": "https://www.inpi.fr/",
+        "actionLabel": "INPI (employee inventions)"
+      }
+    ],
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "ip_protection",
+    "supportLevel": "partial",
+    "supportReason": "System generates PIIAs from templates, tracks who has signed, sends via DocuSign. Legal review is person-routed.",
+    "contextNeeded": [
+      {
+        "tool": "company.get",
+        "query": "board members",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "legal name",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "legal",
+      "ip",
+      "compliance"
+    ],
+    "activeMinutes": 13,
+    "totalEstimatedMinutes": 1455,
+    "hasAsyncSteps": true,
+    "timeOrder": 23,
+    "annoyance": 3,
+    "risk": 5,
+    "growthImpact": 1,
+    "slugAliases": [
+      {
+        "slug": "ip-assignments",
+        "label": "IP assignments"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "legal_003",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "261a7efb11494b76f969bb4380e82232c8899316e9756f12b01fe0b693fb0710"
+  }
+}

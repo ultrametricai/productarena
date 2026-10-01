@@ -115,12 +115,16 @@ describe('decision → journey mapping (against the live corpus)', () => {
   })
 
   it('every combo yields only real corpus tasks, each at most once', () => {
+    const violations: string[] = []
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
-      expect(ids.length).toBeGreaterThan(0)
-      expect(new Set(ids).size, `duplicate tasks for ${comboKey(combo)}`).toBe(ids.length)
-      for (const id of ids) expect(corpusIds.has(id), `unknown task ${id} for ${comboKey(combo)}`).toBe(true)
+      if (ids.length === 0) violations.push(`empty journey for ${comboKey(combo)}`)
+      if (new Set(ids).size !== ids.length) violations.push(`duplicate tasks for ${comboKey(combo)}`)
+      for (const id of ids) {
+        if (!corpusIds.has(id)) violations.push(`unknown task ${id} for ${comboKey(combo)}`)
+      }
     }
+    expect(violations).toEqual([])
   })
 
   it('entity: only LLC swaps in form_011; every other entity — non-US ones included — runs form_001, never both', () => {
@@ -449,12 +453,15 @@ describe('decision → journey mapping (against the live corpus)', () => {
 
   it('unionTaskIds is a duplicate-free superset of every combo journey', () => {
     const union = unionTaskIds(chains)
-    expect(new Set(union).size).toBe(union.length)
+    const unionIds = new Set(union)
+    expect(unionIds.size).toBe(union.length)
+    const violations: string[] = []
     for (const combo of combos) {
       for (const id of journeyTaskIds(combo, chains)) {
-        expect(union.includes(id), `union missing ${id}`).toBe(true)
+        if (!unionIds.has(id)) violations.push(`union missing ${id} for ${comboKey(combo)}`)
       }
     }
+    expect(violations).toEqual([])
   })
 
   it('throws on an unknown chain rather than inventing one', () => {

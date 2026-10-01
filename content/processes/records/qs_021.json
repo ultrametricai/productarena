@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "id": "qs_021",
+  "kind": "process",
+  "title": "Connect a payment processor",
+  "summary": "Take payments: pick a processor, activate the account, integrate the API, and confirm money actually lands.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "decision",
+      "title": "Choose a payment processor",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "merchant-of-record",
+          "title": "Merchant of record (MoR)",
+          "summary": "A merchant of record sits between you and the buyer: it is the legal seller, so global VAT/sales-tax registration, remittance, and chargebacks are its problem - traded for a higher take rate.",
+          "when": "Selling software globally without a tax/entity footprint - the MoR is the seller of record",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "paddle",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "vendor",
+              "id": "paddle",
+              "role": "candidate"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        },
+        {
+          "id": "invoice-first",
+          "title": "Invoice-first (no checkout)",
+          "summary": "Skip checkout integration entirely: raise invoices from the accounting system and take bank transfers; add a processor when self-serve volume justifies it.",
+          "when": "B2B with a handful of large contracts - invoice and bank transfer before a checkout exists",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "quickbooks",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "xero",
+              "role": "candidate"
+            },
+            {
+              "kind": "category",
+              "id": "accounting",
+              "role": "rankings"
+            }
+          ],
+          "metadata": {
+            "route": "agent",
+            "context": {
+              "kind": "situational"
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "payments",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Activate the account (business details, KYC)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "form",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20,
+        "async": true
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Integrate the API keys and SDK",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "category",
+          "id": "ai-coding",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Run a test charge and confirm the payout schedule",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "slugAliases": [
+      {
+        "slug": "connect-stripe",
+        "label": "Connect Stripe"
+      }
+    ],
+    "phase": "finance",
+    "cadence": "once",
+    "geoScope": "global",
+    "complexity": "simple",
+    "reversibility": "painful",
+    "category": "quick_start",
+    "supportLevel": "partial",
+    "supportReason": "Account activation and KYC are processor-hosted forms; the integration, test charge, and payout checks run on the API.",
+    "contextNeeded": [
+      {
+        "tool": "integrations.connect",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "quick-start",
+      "setup-wizard",
+      "onboarding",
+      "finance",
+      "payments"
+    ],
+    "activeMinutes": 35,
+    "totalEstimatedMinutes": 55,
+    "hasAsyncSteps": true,
+    "timeOrder": 56,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 4
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "qs_021",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "36dc8e4a57c5597568bc96acd9ee6e906e7ef801f8bc5671c109fb9b11ef99a8"
+  }
+}

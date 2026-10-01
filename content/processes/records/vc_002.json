@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "id": "vc_002",
+  "kind": "process",
+  "title": "Close the fund",
+  "summary": "Run the fund's closing: subscription documents out to the LPs, LP signatures collected, the amended & restated LPA executed with the final LP schedule, and the first and final close held.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Create the subscription documents",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "passthrough",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "angellist",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "sydecar",
+          "role": "candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Send the subscription documents to the LPs for signature",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "docusign",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "docusign",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "passthrough",
+          "role": "candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "LPs sign the subscription documents",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "painful",
+        "legalSignature": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 2880,
+        "async": true
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Create the A&R LPA (amended & restated, with the final LP schedule)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "product",
+          "id": "ai-assistants/chatgpt",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/claude",
+          "role": "additional-candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n4b",
+      "kind": "step",
+      "title": "GP and LPs sign the A&R LPA",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "painful",
+        "legalSignature": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 1440,
+        "async": true
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Hold the first and final close",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "irreversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 60
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n4b",
+      "when": null
+    },
+    {
+      "from": "n4b",
+      "to": "n5",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "passthrough",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "docusign",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "angellist",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "vc",
+    "cadence": "once",
+    "complexity": "complex",
+    "reversibility": "irreversible",
+    "category": "vc_fund_ops",
+    "supportLevel": "partial",
+    "supportReason": "The agent drafts the subscription documents and the A&R LPA and routes everything for e-signature; the LP and GP signatures are legally human, and the close itself is the GP's call.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "LP list with committed amounts",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "target close date",
+        "tier": "user_input",
+        "required": false
+      }
+    ],
+    "tags": [
+      "vc",
+      "fund-closing",
+      "legal"
+    ],
+    "activeMinutes": 165,
+    "totalEstimatedMinutes": 4485,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "Closing mechanics run through the AIF's PPM terms; SEBI expects the first close within 12 months of the PPM being taken on record, and corpus/close details flow into SEBI's periodic AIF reporting.",
+        "actionUrl": "https://www.sebi.gov.in/",
+        "actionLabel": "SEBI (AIF reporting)"
+      },
+      {
+        "country": "UK",
+        "summary": "First closing is when the LP formally exists as a fund: the limited partnership (usually PFLP-designated) is registered at Companies House, LP capital commitments are documented in the LPA, and AIFM notifications to the FCA follow the close.",
+        "actionUrl": "https://www.gov.uk/guidance/set-up-and-run-a-limited-partnership",
+        "actionLabel": "Set up and run a limited partnership"
+      }
+    ],
+    "timeOrder": 121,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "vc_002",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "6b1e0fa05b5f662ec90e42ee45469a1d4cb6c984107ae53404b0dae627cd57a7"
+  }
+}

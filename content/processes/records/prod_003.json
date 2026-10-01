@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "id": "prod_003",
+  "kind": "process",
+  "title": "Set up custom domain",
+  "summary": "Register domain, configure DNS, set up SSL, point to hosting.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Search domain availability",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "namecheap",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "namecheap",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "porkbun",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "name_com",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "cloudflare_registrar",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "domain-registrars",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Register domain",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "namecheap",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 3
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Transfer DNS to Cloudflare",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "cloudflare",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5,
+        "async": true
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Configure DNS records",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "cloudflare",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Add domain to Vercel",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "vercel",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "estimatedMinutes": 3
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Verify SSL",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "cloudflare",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "namecheap",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "cloudflare",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "vercel",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "product",
+    "cadence": "once",
+    "geoScope": "global",
+    "complexity": "simple",
+    "reversibility": "reversible",
+    "category": "product_infra",
+    "supportLevel": "full",
+    "supportReason": "Namecheap and Cloudflare APIs fully support domain/DNS operations. SSL auto-provisioned.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "domain name",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "product",
+      "domain",
+      "dns"
+    ],
+    "activeMinutes": 15,
+    "totalEstimatedMinutes": 20,
+    "hasAsyncSteps": true,
+    "timeOrder": 29,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 2
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "prod_003",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "42e07b6551d0650c63169a5a2ff16be08236fe687a9043d280efa14cf139330d"
+  }
+}

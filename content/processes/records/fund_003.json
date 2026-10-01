@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "id": "fund_003",
+  "kind": "process",
+  "title": "Get a 409A valuation",
+  "summary": "Commission a 409A valuation to establish fair market value for stock options.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Compile financial statements",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "quickbooks",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Gather cap table snapshot",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "decision",
+      "title": "Initiate 409A on Carta",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "uk-emi-valuation",
+          "title": "UK - EMI valuation with HMRC",
+          "summary": "The analog is agreeing an EMI valuation with HMRC's Shares and Assets Valuation team (the VAL231 process): it fixes actual and unrestricted market value for 90 days of option grants.",
+          "when": "Pricing options in the United Kingdom",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.gov.uk/government/collections/employment-related-securities",
+              "role": "legacy-action-link",
+              "title": "HMRC - employment related securities",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "UK"
+              ]
+            }
+          }
+        },
+        {
+          "id": "india-registered-valuer",
+          "title": "India - registered-valuer report",
+          "summary": "No 409A, but pricing is still regulated: share issues need a report from an IBBI-registered valuer (Companies Act) or merchant banker (Income-tax Rule 11UA).",
+          "when": "Pricing shares/ESOPs in India",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://ibbi.gov.in/",
+              "role": "legacy-action-link",
+              "title": "IBBI - registered valuers",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "route": "person",
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "IN"
+              ]
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Answer valuation questionnaire",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "medium",
+        "estimatedMinutes": 60
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Wait for valuation report (2-3 weeks)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "carta",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "category",
+          "id": "workflow-automation",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 14400,
+        "async": true
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Review and accept valuation",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 30
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "carta",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "quickbooks",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "fundraising",
+    "cadence": "annual",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "equity_management",
+    "supportLevel": "partial",
+    "supportReason": "Can initiate through Carta API and provide company financials. Valuation itself is done by third-party appraiser.",
+    "contextNeeded": [
+      {
+        "tool": "accounts.list",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "cap_table.summary",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "last funding round",
+        "tier": "tools",
+        "required": false
+      }
+    ],
+    "tags": [
+      "equity",
+      "valuation",
+      "compliance"
+    ],
+    "activeMinutes": 120,
+    "totalEstimatedMinutes": 14520,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "geoScope": "us",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "No 409A, but pricing is still regulated: share issues need a report from an IBBI-registered valuer (Companies Act) or merchant banker (Income-tax Rule 11UA), and ESOP perquisite tax at exercise runs off fair market value.",
+        "actionUrl": "https://ibbi.gov.in/",
+        "actionLabel": "IBBI — registered valuers"
+      },
+      {
+        "country": "UK",
+        "summary": "The analog is agreeing an EMI valuation with HMRC's Shares and Assets Valuation team (the VAL231 process, now run through HMRC's ERS guidance): it fixes actual and unrestricted market value for 90 days, so grant options inside that window.",
+        "actionUrl": "https://www.gov.uk/government/collections/employment-related-securities",
+        "actionLabel": "HMRC — employment related securities"
+      }
+    ],
+    "timeOrder": 54,
+    "annoyance": 5,
+    "risk": 4,
+    "growthImpact": 1,
+    "slugAliases": [
+      {
+        "slug": "409a-valuation",
+        "label": "409A valuation"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "fund_003",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "5dbc9034650635a71a22d74f151faf454afc68749b616df0ff5437a1f8453ada"
+  }
+}

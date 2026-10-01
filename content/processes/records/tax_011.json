@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "id": "tax_011",
+  "kind": "process",
+  "title": "Register for sales tax where you have nexus",
+  "summary": "Once revenue crosses state thresholds you owe sales tax where your customers are: connect billing to a tax platform, run the nexus study, register with each state’s department of revenue, turn on collection at checkout, and put the filings on autopilot.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Choose a sales-tax platform",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe_tax",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "avalara",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "taxjar",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "anrok",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "tax-automation",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Connect billing data and run the nexus study",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe_tax",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Review the states where thresholds are crossed",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "decision",
+      "title": "Register with each state’s department of revenue",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "india-gst",
+          "title": "India - GST registration",
+          "summary": "GST replaces the per-state sales-tax patchwork with one national regime - registration per state of operation on the GST portal; SaaS sold from abroad falls under the OIDAR rules.",
+          "when": "Indirect-tax registration in India",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.gst.gov.in/",
+              "role": "legacy-action-link",
+              "title": "GST portal registration",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "IN"
+              ]
+            }
+          }
+        },
+        {
+          "id": "uk-vat-mtd",
+          "title": "UK - one VAT registration (MTD)",
+          "summary": "Instead of per-state sales tax there is one national VAT registration - mandatory past 90k pounds of taxable turnover (or immediately for many non-established sellers) - with digital returns under Making Tax Digital.",
+          "when": "Indirect-tax registration in the United Kingdom",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.gov.uk/register-for-vat",
+              "role": "legacy-action-link",
+              "title": "Register for VAT (Making Tax Digital)",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "UK"
+              ]
+            }
+          }
+        },
+        {
+          "id": "germany-vat-oss",
+          "title": "Germany - VAT ID + OSS",
+          "summary": "One German VAT registration (plus a BZSt-issued VAT ID) covers the whole country; for EU-wide B2C digital sales a single OSS (One-Stop-Shop) return replaces per-country registrations.",
+          "when": "Indirect-tax registration in Germany",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.bzst.de/",
+              "role": "legacy-action-link",
+              "title": "BZSt - VAT identification number",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "DE"
+              ]
+            }
+          }
+        },
+        {
+          "id": "france-tva-oss",
+          "title": "France - TVA + OSS",
+          "summary": "One national TVA registration replaces the state-by-state patchwork - declared and paid through the espace professionnel - and a single OSS return covers EU-wide B2C digital sales.",
+          "when": "Indirect-tax registration in France",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "url",
+              "url": "https://www.impots.gouv.fr/professionnel",
+              "role": "legacy-action-link",
+              "title": "impots.gouv.fr - espace professionnel (TVA)",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "FR"
+              ]
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "url",
+          "url": "https://www.streamlinedsalestax.org/",
+          "role": "legacy-action-link",
+          "title": "Streamlined Sales Tax registration",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Enable tax collection on checkout and invoices",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Schedule automated filings and remittance",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "avalara",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe_tax",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "avalara",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "compliance",
+    "cadence": "event-driven",
+    "complexity": "complex",
+    "reversibility": "painful",
+    "category": "tax_sales",
+    "supportLevel": "partial",
+    "supportReason": "Tax platforms watch nexus thresholds, calculate at checkout, and file returns over their APIs; the state registration portals are manual form work and the exposure review is a judgment call.",
+    "region": "us",
+    "geoScope": "us-state",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "GST replaces the per-state sales-tax patchwork with one national regime — registration per state of operation on the GST portal; SaaS sold from abroad falls under the OIDAR rules.",
+        "actionUrl": "https://www.gst.gov.in/",
+        "actionLabel": "GST portal registration"
+      },
+      {
+        "country": "UK",
+        "summary": "Instead of per-state sales tax there is one national VAT registration — mandatory past £90k of taxable turnover (or immediately for many non-established sellers) — with returns filed digitally under Making Tax Digital.",
+        "actionUrl": "https://www.gov.uk/register-for-vat",
+        "actionLabel": "Register for VAT (Making Tax Digital)"
+      },
+      {
+        "country": "DE",
+        "summary": "One German VAT registration (plus a BZSt-issued VAT ID) covers the whole country; for EU-wide B2C digital sales a single OSS (One-Stop-Shop) return replaces per-country registrations.",
+        "actionUrl": "https://www.bzst.de/",
+        "actionLabel": "BZSt — VAT identification number"
+      },
+      {
+        "country": "FR",
+        "summary": "One national TVA registration replaces the state-by-state patchwork — declared and paid through the espace professionnel — and for EU-wide B2C digital sales a single OSS (One-Stop-Shop) return covers every member state.",
+        "actionUrl": "https://www.impots.gouv.fr/professionnel",
+        "actionLabel": "impots.gouv.fr — espace professionnel (TVA)"
+      }
+    ],
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "sales by state",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "tax",
+      "compliance",
+      "sales-tax"
+    ],
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 1,
+    "activeMinutes": 140,
+    "totalEstimatedMinutes": 140,
+    "hasAsyncSteps": false,
+    "timeOrder": 91,
+    "slugAliases": [
+      {
+        "slug": "sales-tax-nexus-registration",
+        "label": "Sales tax nexus & registration"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "tax_011",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "cd161985777a6bc47dee5156bddc3683e9fd399aae41359acf0d611f6ade244e"
+  }
+}

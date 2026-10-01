@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "id": "growth_002",
+  "kind": "process",
+  "title": "Save a churning customer",
+  "summary": "When a customer requests cancellation, execute a save flow with usage data and discount offer.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Pull customer usage data",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Check CRM health score",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "hubspot",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Prepare save offer",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Send retention email",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gmail",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "category",
+          "id": "email-marketing",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Schedule call",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "category",
+          "id": "scheduling",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 30,
+        "async": true
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Apply discount or cancel",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Log outcome in CRM",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "hubspot",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "hubspot",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "gmail",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "growth",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "customer_ops",
+    "supportLevel": "partial",
+    "supportReason": "Stripe/HubSpot APIs provide data. Email automatable. Actual save conversation is person-routed.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "customer id",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "stripe.customers",
+        "query": "subscription",
+        "tier": "connected",
+        "required": true
+      }
+    ],
+    "tags": [
+      "growth",
+      "churn",
+      "retention"
+    ],
+    "activeMinutes": 15,
+    "totalEstimatedMinutes": 45,
+    "hasAsyncSteps": true,
+    "timeOrder": 70,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 3,
+    "slugAliases": [
+      {
+        "slug": "churn-save-attempt",
+        "label": "Churn save attempt"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "growth_002",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "d55c38e05b87c6fe22e5526a8e9f0f12eaf67278f73480c7654ee9e9ab8cf060"
+  }
+}
