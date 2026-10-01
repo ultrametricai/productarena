@@ -26,9 +26,9 @@ The account feature is the ☆/★ watchlist (`/watchlist`,
 `components/WatchButton.tsx` stars on product pages and tables). Starred ids live in
 localStorage for instant UI, and for logged-in readers they sync to the account through the
 worker's session-gated `GET`/`PUT /api/watchlist` (worker.js "Watchlist API"):
-one KV value per account (`watchlist:<WorkOS user id>` in the `PA_COMPARE_STATS` namespace —
+one KV value per account (`watchlist:<WorkOS user id>` in the `UM_COMPARE_STATS` namespace —
 prefix-separated from the compare counters, so **no new KV setup is needed**; bind a dedicated
-`PA_WATCHLIST` namespace later if wanted). First sync after login merges (union) the account
+`UM_WATCHLIST` namespace later if wanted). First sync after login merges (union) the account
 list with the device list; every star/unstar afterwards PUTs the full list. Anonymous readers
 get the "log in to keep a watchlist" prompt (`components/WatchlistGate.tsx`) and their stars
 stay device-local. All failures are fail-open to device-local — the sync layer is
@@ -50,6 +50,9 @@ stay device-local. All failures are fail-open to device-local — the sync layer
    - `wrangler secret put WORKOS_API_KEY` — paste the `sk_…` key.
    - `wrangler secret put PA_SESSION_KEY` — paste a fresh random key, e.g.
      `openssl rand -base64 48`. (Rotating this key logs everyone out; that is the kill switch.)
+     `PA_SESSION_KEY` is the legacy, pre-rename secret name — the deployed secret lives under
+     it, so it stays until a `UM_SESSION_KEY` secret is provisioned and the worker gains a
+     dual-binding read (founder action, tracked in docs/FOUNDER-ASKS.md).
    - `wrangler deploy`
 
 Until all three are set, every `/auth/*` route fails closed with an explicit
