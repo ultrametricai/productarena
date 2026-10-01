@@ -3,23 +3,48 @@
   "id": "brand_002",
   "kind": "process",
   "title": "Generate a brand logo",
-  "summary": "Branding: generate logo images for a chosen brand via AI image generation, store and set a primary logo.",
-  "outcomes": [],
-  "guidance": null,
+  "summary": "Create and refine an icon or logo in chat, reuse the brand brief, and return saved files for the intended uses.",
+  "outcomes": [
+    "Usable logo files for the requested uses, with inspected formats, dimensions, backgrounds, and saved locations.",
+    "A recorded primary selection or clearly identified drafts, with unperformed checks and remaining work explicit."
+  ],
+  "guidance": "Produce an icon or logo in the current chat, refine it from feedback, and return usable files. Reuse the brand brief and existing assets. A logo-only request does not need to restart naming or the full Branding process.\n\nRead the existing brand document, selected name, audience, offer, tone, colors, intended uses, source artwork, and rejected directions. Preserve exact spelling, required colors, prohibited motifs, budget, and supplier or data restrictions. Ask only for a missing fact that changes the design. An icon without text can proceed while a name is provisional.\n\nIf the user wants a small change to an existing logo, inspect that file and edit it. Keep the source and previous version. For an existing vector identity, use its editable vector source; do not regenerate the whole identity for a routine export or color change.",
   "parts": [
+    {
+      "id": "shared-colors",
+      "kind": "reference",
+      "title": "Reuse or establish shared color roles when needed",
+      "guidance": "Reuse supplied colors for a logo-only request. Use the palette process when the goal also needs shared interface color roles; a complete palette is not a prerequisite for a logo draft.",
+      "when": "The request includes shared interface color roles or a palette decision beyond the logo itself.",
+      "ref": "brand_003",
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {}
+    },
     {
       "id": "n1",
       "kind": "decision",
-      "title": "Generate logo images",
-      "guidance": null,
+      "title": "Choose how to create or refine the logo",
+      "guidance": "Recommend using an AI with image generation and editing in the conversation. When the current host has that capability, use it directly: generate the image, show it inline, and refine the same image from the user's feedback. Do not send the user to sign up for a separate logo service or configure an API merely to get a first draft.\n\nCheck the actual tools available. Request a transparent background for a standalone mark when supported. A PNG is a useful first deliverable; do not promise editable vector paths from a raster image tool. Use native vector tools for an existing SVG identity or when editable vector output is required.\n\nIf this chat cannot generate images, provide a ready-to-paste prompt and brief for an image-capable chat, or use the user's existing design tool. Explain which files to bring back. Continue the brand brief and palette while the image is pending. A prompt alone is not a generated logo.\n\nWhen the brief is clear, start with one recommended direction. Offer up to three distinct directions only when a real design choice remains. Generate separate assets, not a board of tiny logos that must be extracted later.\n\nUse this prompt structure, omitting unknown or irrelevant fields:\n\n```text\nCreate a [standalone icon / symbol and wordmark] for [brand and offer].\nAudience and tone: [known brief].\nVisual idea: [one simple concept].\nExact text: [verbatim spelling, or no text].\nColors: [required values, or monochrome].\nUses: [app icon, website header, or other requested uses].\nUse a clear silhouette and simple shapes that remain readable at small sizes.\nBackground: [transparent when supported].\nAvoid: [rejected motifs, extra text, gradients or other excluded treatments].\nReturn the artwork itself, without a mockup, presentation frame, or watermark.\n```\n\nUse the tool's real output options. Do not invent dimensions, file types, model names, or asset URLs. Preserve the prompt and any reference images with the result. Apply known tool costs and input restrictions within the user's budget; ask only if a new charge or upload requires authority.\n\nShow the image and give a short reason it fits the brief. If selection is needed, ask one focused question about the direction. Apply existing delegated design authority without another approval round. For refinements, reference the actual image and specify what changes and what stays: for example, \"Simplify the lower shape; keep the silhouette, color, and spacing.\"",
       "when": null,
       "ref": null,
       "options": [
         {
+          "id": "image-generation",
+          "title": "Image generation or editing",
+          "summary": "Use an available image tool to create a draft or refine an existing raster asset. Preserve the actual output and its format limitations.",
+          "when": "The host has image generation or editing and a raster output meets the current need.",
+          "parts": [],
+          "notes": [],
+          "references": [],
+          "metadata": {}
+        },
+        {
           "id": "design-tool-logo",
           "title": "Hands-on design tool",
           "summary": "Design the mark by hand in a vector tool instead of generating images - full control over the vector asset and its variants.",
-          "when": "You want hands-on vector control rather than generated images",
+          "when": "An editable vector asset is required, an existing vector identity should be preserved, or the user prefers their design tool.",
           "parts": [],
           "notes": [],
           "references": [
@@ -82,10 +107,30 @@
       }
     },
     {
+      "id": "inspect-logo",
+      "kind": "step",
+      "title": "Inspect the logo in its intended uses",
+      "guidance": "Open the generated file. Check spelling when text is present, stray marks, clipping, edges, and actual transparency. Preview at 32 and 128 pixels on the intended backgrounds; include 16 pixels when a favicon is required. If the small mark is unclear, simplify it or adjust its canvas padding with the available image/design tool. Check actual pixels when an exact brand color is required; a color in the prompt does not guarantee an exact match. Do not keep generating alternatives when a targeted edit can fix the chosen direction.\n\nInspect light and dark uses that the user needs. Create a one-color or alternate-background version only when required. An opaque background or incorrect text should be fixed through the image/design tool. If an SVG is supplied, inspect its paths and external dependencies; embedding a PNG in SVG does not create an editable vector logo. See the [SVG viewBox reference](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox) when preparing vector exports.\n\nReuse prior name/conflict work. For public adoption, note obvious resemblance and check the usage rights of supplied fonts, icons, or stock assets. Investigate a concrete conflict or the user's requested clearance scope; do not require a trademark research project to make a draft. Image generation alone does not establish exclusive rights.",
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "url",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox",
+          "title": "SVG viewBox reference",
+          "description": "How the viewBox defines an SVG drawing area for vector exports.",
+          "role": "method"
+        }
+      ],
+      "metadata": {}
+    },
+    {
       "id": "n2",
       "kind": "step",
-      "title": "Set primary logo",
-      "guidance": null,
+      "title": "Save files and record the selection",
+      "guidance": "Save the original output and useful refinements in the existing brand folder or agent workspace. Use clear versioned names and retain the prompt. A brand document in Google Docs or another available editor can link to these image files. Keep a chosen primary asset distinct from unselected drafts.\n\nReopen the saved file and return its exact link or path, actual format/dimensions/background, and relevant preview. State whether it is a candidate or selected asset. Keep the editable source when available; if the output is raster, say so. Prepare only the exports needed now. Do not make vector tracing a prerequisite when a PNG meets the intended use.",
       "when": null,
       "ref": null,
       "options": [],
@@ -100,13 +145,26 @@
   ],
   "links": [
     {
-      "from": "n1",
-      "to": "n2",
-      "when": null
+      "to": "inspect-logo",
+      "option": "image-generation",
+      "from": "n1"
+    },
+    {
+      "to": "inspect-logo",
+      "option": "design-tool-logo",
+      "from": "n1"
+    },
+    {
+      "from": "inspect-logo",
+      "to": "n2"
     }
   ],
   "references": [],
-  "notes": [],
+  "notes": [
+    {
+      "text": "Carry the chosen wording and colors into related brand work. A logo file does not publish a website or change an account. Continue deployment only when it is part of the user’s authorized goal."
+    }
+  ],
   "metadata": {
     "phase": "startup",
     "cadence": "once",
