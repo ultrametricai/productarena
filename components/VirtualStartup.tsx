@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
@@ -371,23 +371,26 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // keeps its canonical full label as the accessible name (aria-label) and full label + corpus
 // mapping in the tooltip, so nothing about the decision semantics or the a11y/test contract moves.
 // Control icons (founder batch 2026-09-29, item 1): small leading icons so the setup band's
-// labeled rows and the nine decision groups read at a glance. House style — emoji through
-// components/IconChip.tsx (required tooltip naming the concept), reusing lib/icons.ts vocabulary
-// where the concept already has an icon (incorporation 📜, fundraising 🏦, billing 🧾,
-// compliance ⚖️). Icons are decoration on top of the existing labels: every control keeps its
+// labeled rows and the nine decision groups read at a glance. House style — since 2026-10-01
+// ("apply the custom icons to the rest of the site, ie the startup sim") these are house icon
+// TOKENS (`pi:<glyph>:<hue>`, the same scheme as lib/processIcons.ts / lib/arenaIcons.ts)
+// rendered by components/IconChip.tsx as the hand-authored duotone SVGs, reusing the designed
+// vocabulary where the concept already has a glyph (incorporation = the scroll, fundraising =
+// the bank, compliance = the scales). The old emoji picks ride in the comments as the semantic
+// guides. Icons are decoration on top of the existing labels: every control keeps its
 // canonical accessible name (the decision groups' aria-label, the options' full-label
 // aria-labels) — tests assert nothing moved.
 // The geo row's adjacent 🌍 IconChip is GONE (founder round 5, item 5) — the selector's own
 // flags suffice; the Founder row icon still names the whole who/where cluster. The 'Decisions'
 // row label is GONE too (founder batch 2026-09-30, item 6: it's obviously the setup) — the
 // decisions grid cell keeps an empty label slot for column alignment only.
-const ROW_ICONS: Record<'scenario' | 'founder' | 'using', { icon: string; title: string }> = {
+export const ROW_ICONS: Record<'scenario' | 'founder' | 'using', { icon: string; title: string }> = {
   // 'Example' → 'Scenario' (round 3, item 1); the funding-scenario pills moved INTO the single
   // Funding selector (addendum 2026-09-30) — the row holds the company presets + YC mode.
-  scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and YC batch mode' },
-  founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
+  scenario: { icon: 'pi:building:sky', title: 'Scenario — one-tap setups: example companies and YC batch mode' }, // 🏢
+  founder: { icon: 'pi:person:orange', title: 'Founder — the who/where cluster: the two founder axes plus the country view' }, // 👤
   // 'Which AI firm are you using' (2026-09-30, item 7) — its own row.
-  using: { icon: '🤖', title: "I'm using — pin your AI assistant on the AI-conversation steps; the judged pick stays visible and no judged number moves" },
+  using: { icon: 'pi:robot:violet', title: "I'm using — pin your AI assistant on the AI-conversation steps; the judged pick stays visible and no judged number moves" }, // 🤖
 }
 
 // The decisions rendered as controls — 'Start with' (ordering) left the panel (founder round 5,
@@ -427,17 +430,17 @@ const FUNDING_SHORT: Record<string, string> = {
   [`${FUNDING_SCENARIO_PREFIX}bootstrapped`]: 'Bootstrapped',
 }
 
-const DECISION_ICONS: Record<keyof Choices, string> = {
-  entity: '📜',
-  team: '👥',
-  funding: '🏦',
-  product: '🧾',
-  ordering: '🔀',
-  hire: '🧑‍💼',
-  compliance: '⚖️',
-  enterprise: '🎯',
-  ph: '🚀',
-  remote: '🏠',
+export const DECISION_ICONS: Record<keyof Choices, string> = {
+  entity: 'pi:scroll:amber', // 📜 the incorporation paperwork
+  team: 'pi:people:orange', // 👥 cofounders vs solo
+  funding: 'pi:bank:emerald', // 🏦 same bank as the fundraising concepts
+  product: 'pi:receipt:emerald', // 🧾 the business model's paper trail
+  ordering: 'pi:convert:violet', // 🔀 name-first vs build-first
+  hire: 'pi:handshake:orange', // 🧑‍💼 same handshake as hr_001 first hire
+  compliance: 'pi:scales:amber', // ⚖️ same scales as the legal phase
+  enterprise: 'pi:target:sky', // 🎯 same target as scale_012 OKRs
+  ph: 'pi:rocket:fuchsia', // 🚀 same rocket as growth_010 launch
+  remote: 'pi:house:orange', // 🏠 working from home
 }
 
 // Visible display titles only — every dropdown keeps its canonical DECISIONS title as the group
@@ -616,7 +619,33 @@ export default function VirtualStartup({
   const followRef = useRef(true)
   const pendingTopRef = useRef(false)
 
+  // The reveal ticker NEVER outlives the page: cleared on unmount (this cleanup — regression-
+  // pinned by components/__tests__/navPerfPins.test.tsx) and paused while the tab is hidden
+  // (below). Both are part of the mobile-nav hang fix (2026-10-01): a ticking 240ms re-render of
+  // the whole sim must not keep burning the main thread when the reader isn't looking at it.
   useEffect(() => () => { if (timer.current) clearInterval(timer.current) }, [])
+
+  // Pause the ticker while the document is hidden, resume on return. Only an ACTIVE ticker is
+  // paused/resumed (hiddenPausedRef): a manual ⏹ Stop or a semi-auto decision pause stays
+  // stopped — visibility must never restart a run the reader (or the run itself) halted.
+  const hiddenPausedRef = useRef(false)
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        if (timer.current) {
+          stop()
+          hiddenPausedRef.current = true
+        }
+      } else if (hiddenPausedRef.current) {
+        hiddenPausedRef.current = false
+        startTicker()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+    // stop/startTicker close only over refs and setState — stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // After every reveal commit: pin the terminal to its newest line while following, or honor the
   // one-shot scroll-to-top after an instant fill. Reading scrollHeight post-commit is the whole
@@ -900,12 +929,12 @@ export default function VirtualStartup({
     const techLabel = VS_TECHNICAL_OPTIONS.find((o) => o.value === founder.technical)?.label ?? founder.technical
     const expLabel = VS_EXPERIENCE_OPTIONS.find((o) => o.value === founder.experience)?.label ?? founder.experience
     const axes = [
-      { id: 'founder-technical', title: 'Founder', icon: '👤', label: techLabel, state: 'asserted' as const },
-      { id: 'founder-experience', title: 'Experience', icon: '🎓', label: expLabel, state: 'asserted' as const },
+      { id: 'founder-technical', title: 'Founder', icon: 'pi:person:orange', label: techLabel, state: 'asserted' as const }, // 👤
+      { id: 'founder-experience', title: 'Experience', icon: 'pi:grad-cap:orange', label: expLabel, state: 'asserted' as const }, // 🎓
     ]
     // The assistant pin (item 7): the panel reflects the "I'm using" selection when one is set.
     const using = assistantPick
-      ? [{ id: 'assistant', title: "I'm using", icon: '🤖', label: `${assistantPick.name} · your assistant`, state: 'asserted' as const }]
+      ? [{ id: 'assistant', title: "I'm using", icon: 'pi:robot:violet', label: `${assistantPick.name} · your assistant`, state: 'asserted' as const }] // 🤖
       : []
     // 'Start with' left the UI entirely (round 5, item 4) — the state panel lists only the
     // decisions the panel offers.
@@ -1007,7 +1036,14 @@ export default function VirtualStartup({
       }
       const next = at + 1
       revealedRef.current = next
-      setRevealed(next)
+      // TRANSITION priority (mobile-nav hang fix, 2026-10-01): each reveal re-renders the whole
+      // sim (terminal rows + DAG + state panel) and the post-commit terminal pin forces layout —
+      // near the 240ms budget on a phone. As default-priority updates these ticks preempted and
+      // restarted the router's navigation transition every 240ms, so tapping the header logo
+      // mid-run starved the navigation ("it just hangs" until the run ended). As a transition
+      // the tick yields to navigation; the pause schedule stays SYNCHRONOUS via the refs above,
+      // so semi-auto semantics and the fake-timer tests are unchanged.
+      startTransition(() => setRevealed(next))
       if (next >= rowsLenRef.current) stop()
     }, CADENCE_MS)
   }

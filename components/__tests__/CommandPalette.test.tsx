@@ -19,7 +19,9 @@ beforeEach(() => {
 })
 
 const ENTRIES: SearchEntry[] = [
-  { type: 'arena', label: 'AI Coding Agents', sublabel: '8 products', href: '/arena/ai-coding' },
+  // Carries a house icon token (lib/arenaIcons.ts) — the palette must render it as the custom
+  // duotone glyph, not as literal text (founder 2026-10-01 custom-icon upgrade).
+  { type: 'arena', label: 'AI Coding Agents', sublabel: '8 products', href: '/arena/ai-coding', icon: 'pi:robot:violet' },
   { type: 'arena', label: 'Online Payments', sublabel: '6 products', href: '/arena/payments' },
   { type: 'page', label: 'Compare', sublabel: 'Any products, side by side', href: '/compare' },
   // Prefix-matches "jev" but only in a LATE group (products render after arenas when browsing) —
@@ -73,5 +75,13 @@ describe('direct-match hoisting (founder 2026-09-23)', () => {
     // Enter opens the active (= first) result: the direct label match, not the sublabel-only arena.
     fireEvent.keyDown(input, { key: 'Enter' })
     expect(push).toHaveBeenCalledWith('/arena/frontier-models/product/jev')
+  })
+})
+
+describe('house icons in the palette (founder 2026-10-01)', () => {
+  it('renders a `pi:` icon token as the custom duotone glyph, never as literal text', () => {
+    openPalette()
+    expect(document.querySelectorAll('svg[data-glyph="robot"]').length).toBeGreaterThan(0)
+    expect(document.body.textContent).not.toContain('pi:robot:violet')
   })
 })
