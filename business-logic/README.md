@@ -1,7 +1,12 @@
 # Business logic — decision support, calculations, calendars, comparisons
 
-Reusable business logic — decision support, calculations, calendars, and comparisons — separate
-from law (`rules/`) and the vendor evidence layer (`vendors/`, `data/`). Every module must ship a contract, version, explicit assumptions,
+Pillar ③ of [the open startup repo](../README.md#-business-logic): reusable business logic —
+decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
+the vendor evidence layer (`vendors/`, `data/`). Four modules live in `lib/openstartup/` today
+(cap table, runway & burn, deadline calendar, equity-comp scenarios), every one pure,
+client-safe, and validated by worked-example and property tests
+(`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
+tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
 worked examples reproduced from cited public sources, deterministic tests, and explicit
 jurisdiction dependencies. Business logic may propose a result; it must never silently
 authorize a tax election, equity grant, bank transfer, contract, or vendor disclosure. A module
@@ -64,9 +69,9 @@ factors need dated rule cards first). The conservative workflow planner lives in
   entry in this README. The bar is fixed: pure functions, a citation on every formula's doc
   comment (a published guide, form, or primary source — never "everyone knows"), explicit
   rounding, worked examples reproduced number-for-number from the cited source, and property
-  tests. Candidates: convertible notes, liquidity-event waterfalls, runway/burn, deadline
-  calendars (backed by dated rule cards in `rules/`, never hardcoded day counts), hiring cost
-  comparisons, 409A sanity models, non-US instruments. Gate:
+  tests. Candidates: convertible notes, liquidity-event waterfalls, hiring cost
+  comparisons (benefits/payroll-tax load factors, backed by dated rule cards in `rules/`,
+  never hardcoded day counts), 409A sanity models, non-US instruments. Gate:
   `npx vitest run lib/openstartup/__tests__/` (and `pnpm test`).
 - **Harden an existing module** — a missed edge case from a cited worked example, a new
   property test, or a correction with the source that proves it (e.g. the YC Post-Money Safe

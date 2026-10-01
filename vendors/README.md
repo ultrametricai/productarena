@@ -1,7 +1,7 @@
 # Vendors — evidence, not an endorsement list
 
 This repo's largest asset lives one directory over: `data/<arena>/` holds dated, reproducible,
-evidence-graded evaluations of 570+ products across 90+ arenas — judged verdicts over a shared
+evidence-graded evaluations of 590+ products across 90+ arenas — judged verdicts over a shared
 story taxonomy citing vendor docs, GitHub, community sources, and hands-on probes with recorded
 transcripts; rankings carry HMAC-fingerprinted `_provenance` and recompute deterministically
 (`pipeline/scripts/recompute-check.ts`). Owner-affiliated products (Foreloop, AFK, Ultrametric)
@@ -14,16 +14,16 @@ cross-arena rankings at [ultrametric.ai/overall](https://ultrametric.ai/overall)
 
 ## How the layer fits together
 
-Committed counts as of 2026-09-30: 93 arenas, 578 evidence packs (32,083 dated evidence
-items), 32,949 judged verdicts, 578 generated interchange records.
+Committed counts as of 2026-10-01: 94 arenas, 593 evidence packs (32,480 dated evidence
+items), 33,789 judged verdicts, 593 generated interchange records.
 
 ```mermaid
 flowchart LR
-  evidence["data/&lt;arena&gt;/evidence/&lt;product&gt;.json<br/>578 packs · 32,083 dated items<br/>(probe · github · community · claimed-docs)"]
-  verdicts["data/&lt;arena&gt;/verdicts.json<br/>32,949 judged verdicts<br/>every one cites evidence ids"]
+  evidence["data/&lt;arena&gt;/evidence/&lt;product&gt;.json<br/>593 packs · 32,480 dated items<br/>(probe · github · community · claimed-docs)"]
+  verdicts["data/&lt;arena&gt;/verdicts.json<br/>33,789 judged verdicts<br/>every one cites evidence ids"]
   rankings["data/&lt;arena&gt;/rankings.json<br/>deterministic recompute,<br/>HMAC-fingerprinted _provenance"]
   geo["jurisdictions/vendor-geo.json<br/>region availability, honest negatives"]
-  reviews["vendors/reviews/generated/<br/>578 interchange records<br/>(schemas/vendor-review.schema.json)"]
+  reviews["vendors/reviews/generated/<br/>593 interchange records<br/>(schemas/vendor-review.schema.json)"]
   site["the site: /arena/*, /overall,<br/>process-step vendor chips, /virtual-startup vendor picks"]
   evidence --> verdicts --> rankings --> site
   rankings --> reviews
