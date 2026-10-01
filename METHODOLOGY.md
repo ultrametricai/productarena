@@ -1,7 +1,7 @@
 # Ultrametric Methodology
 
 The full methodology writeup — evidence tiers, judging, scoring, the claims-integrity index,
-the Agenticness Index, the PA Score, confidence grades, score intervals, story provenance,
+the Agenticness Index, the Overall score, confidence grades, score intervals, story provenance,
 re-judge stability, and bias disclosure. The on-site
 [/methodology](https://ultrametric.ai/methodology) page is a tight one-screen summary of this
 document, and the [README](./README.md#methodology) carries a short summary; this file is the
@@ -183,7 +183,7 @@ Two sibling group-scoped indexes live under the same `agenticness` theme: `agent
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
 `api-quality` (see below).
 
-## The PA Score (formerly Arena Score / AI-Era Index)
+## The Overall score (formerly Arena Score / AI-Era Index)
 
 v2.4 added a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
 alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
@@ -196,8 +196,8 @@ alongside `agent-access`. Where `agent-access` asks "can an agent reach the prod
 | `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
 | `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
 
-On top of that, every leaderboard entry carries a **PA Score** (`aiEra` internally, displayed
-on-site as a bare "{n}/100" badge under a "PA Score" label — this score used to be called the
+On top of that, every leaderboard entry carries an **Overall score** (`aiEra` internally, displayed
+on-site as a bare "{n}/100" badge under an "Overall score" label — this score used to be called the
 "Arena Score" and before that the "AI-Era Index," same formula, new name) — a single number
 meant to answer "how ready is this product for a world where agents, not just humans, are the
 primary users?" It's a weighted blend of five existing leaderboard components:
@@ -235,7 +235,7 @@ formula is open to challenge.
 ## Score confidence grades (A–D)
 
 Scores never pretend: untested cells can't score, and the confidence grade says how much of a
-score is backed by probes. Every PA Score badge carries a small A–D chip
+score is backed by probes. Every Overall score badge carries a small A–D chip
 (`lib/confidence.ts`) derived from two fractions over the product's applicable (non-`na`)
 cells:
 
@@ -249,7 +249,7 @@ testedShare ≥ 0.25 · **C** = coverage ≥ 0.55 · **D** = below that. The gra
 published score — two products can post the same 60 while one earned it from probes and the
 other from vendor docs, and the chip is where that difference shows. Thresholds are calibrated
 against the live dataset so the letters actually discriminate (see
-`CONFIDENCE_THRESHOLDS` in `lib/confidence.ts`), and, like the PA Score weights, they're open
+`CONFIDENCE_THRESHOLDS` in `lib/confidence.ts`), and, like the Overall score weights, they're open
 to challenge. In words:
 
 | Grade | Meaning |
@@ -291,9 +291,9 @@ new don't move close races, and negative mechanical probe results only affect th
 they actually test. Every revert is recorded in the commit that applies it. A future prompt
 version will pass the prior verdict as an anchor to reduce this variance at the source.
 
-## Score intervals — the ± band on every PA Score
+## Score intervals — the ± band on every Overall score
 
-Every PA Score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
+Every Overall score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
 low–high band in the score badge's tooltip, including on the homepage mega-table). The band is
 an honest statement of how much the published number could move under the judge noise we have
 actually **measured** — it is *analytic v1*: computed from existing data with **no new judging**.
@@ -324,7 +324,7 @@ How it's built (`pipeline/scripts/compute-confidence-intervals.ts`, math in
 Results land in `data/{category}/score-intervals.json` (committed, re-run post-derive by the
 story-runner). Display is tolerant-optional (`lib/scoreIntervals.ts`): no interval data ⇒ no
 band is ever rendered — never a fabricated one. Fleet-wide as of the first pass the median band
-width is ~4.5 PA Score points.
+width is ~4.5 Overall score points.
 
 **What the band is not (yet):** it reflects propagated judge-*sampling* noise plus
 untested-cell ignorance, **not** model-family disagreement — the same evidence judged by a
@@ -339,7 +339,7 @@ registries (`api.github.com`, `api.npmjs.org`, `pypistats.org`), no API key requ
 a different question than everything else on this site: not "is this AI-ready" but "will this
 project still be alive tomorrow" — a reader-requested survival/support signal.
 
-It is **deliberately not part of the PA Score** and never affects rankings, leaderboard
+It is **deliberately not part of the Overall score** and never affects rankings, leaderboard
 position, or any battle outcome (`pnpm pipeline popularity` makes no LLM calls and its output,
 `data/{category}/popularity.json`, isn't read by `lib/scoring.ts`). Popularity measures
 *adoption* — how many people already use something — which is a lagging, momentum-driven
@@ -395,7 +395,7 @@ corrections moved Foreloop from second to third of four.
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
-product, Claude Code, which leads that arena's **PA Score** (29.5) as of v2.4 — though on
+product, Claude Code, which leads that arena's **Overall score** (29.5) as of v2.4 — though on
 raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
 when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
 the last full audit below, before those cells existed). This is a real conflict of interest and

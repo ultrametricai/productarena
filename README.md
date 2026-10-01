@@ -392,10 +392,10 @@ version. For plain-language answers ("what does `na` mean," "how do I disagree")
   verdicts are cache-keyed on their evidence, so nothing re-judges without a reason.
 - **Scores.** A product's score is its weighted percentage across applicable cells —
   evidenced story coverage, not absolute quality. `na` cells are excluded entirely.
-- **The PA Score** blends five agent-readiness components (agent access 0.30, API quality
+- **The Overall score** blends five agent-readiness components (agent access 0.30, API quality
   0.20, openness 0.20, agentic app 0.15, automation depth 0.15); 9 canonical agenticness
   stories are injected verbatim into every arena so the index is comparable across categories.
-- **Honesty mechanics.** Unknown is `null`, never 0; every PA Score carries an A–D confidence
+- **Honesty mechanics.** Unknown is `null`, never 0; every Overall score carries an A–D confidence
   grade (how much of it is probe-backed) and a measured ±band (68% interval from re-roll
   statistics — see [METHODOLOGY.md](./METHODOLOGY.md)); re-judge churn that cites no new
   evidence is reverted under audited rules; claims vendors make are reconciled against our
@@ -519,7 +519,7 @@ Ultrametric is built to be read by agents, not just browsed by humans:
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
 - **[/methodology](https://ultrametric.ai/methodology)** — a tight, on-site summary of
-  [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, PA Score weights,
+  [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, Overall score weights,
   story provenance, re-judge stability, bias disclosure), linked from the header next to
   Arenas and from `/llms.txt`.
 - **MCP / CLI** — Ultrametric is not served over its own MCP server or CLI; a first-party
