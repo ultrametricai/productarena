@@ -153,7 +153,7 @@ export default function MissingStartupsPage() {
                     {arena.leader.name}
                   </Link>{' '}
                   <span className="inline-flex items-center gap-1 align-middle" title="The leader's Overall score (0–100) — a low bar is itself the opportunity">
-                    Overall score <AiEraBadge value={arena.leader.paScore} size="xs" />
+                    Overall score <AiEraBadge value={arena.leader.overallScore} size="xs" />
                   </span>{' '}
                   · {arena.productCount} products tracked
                 </>

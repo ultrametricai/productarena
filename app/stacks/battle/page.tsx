@@ -45,8 +45,8 @@ export default function StackBattlePage() {
           <Link href="/stacks" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
             AI stacks
           </Link>{' '}
-          or your own product lists. We compare the aggregates the evidence supports — mean PA
-          Score, agent-readiness, arena coverage, verified interconnects, weakest link — and
+          or your own product lists. We compare the aggregates the evidence supports — mean Overall
+          score, agent-readiness, arena coverage, verified interconnects, weakest link — and
           where both sides field one product in the same arena, we link the real judged battle.
           Have a stack already? Start from{' '}
           <Link href="/my-stack" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">

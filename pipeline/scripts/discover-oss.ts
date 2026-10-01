@@ -70,7 +70,7 @@ async function headRequest(url: string, redirect: 'follow' | 'manual'): Promise<
       method: 'HEAD',
       redirect,
       signal: AbortSignal.timeout(HEAD_TIMEOUT_MS),
-      headers: { 'user-agent': 'productarena-oss-discovery' },
+      headers: { 'user-agent': 'ultrametric-oss-discovery' },
     })
   } catch {
     return null

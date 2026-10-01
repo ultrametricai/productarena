@@ -79,7 +79,7 @@ the prompt version, or the judge model actually changed.
 ### Judge model & prompt version
 
 The judge is an Anthropic model — `claude-opus-5-5` by default since 2026-09-30 (previously
-`claude-sonnet-5`), overridable via the `PA_MODEL` env var (`pipeline/llm.ts`) — driven by a
+`claude-sonnet-5`), overridable via the `UM_JUDGE_MODEL` env var (`pipeline/llm.ts`; the pre-rename `PA_MODEL` spelling still works as a deprecated fallback) — driven by a
 versioned system prompt in `pipeline/stages/judge.ts` (`PROMPT_VERSION`, currently **`v4`**;
 the v4 bump marks the judge-model migration — the prompt text is unchanged from v3). Because
 the prompt version AND the judge model id are part of every cell's cache key, changing either

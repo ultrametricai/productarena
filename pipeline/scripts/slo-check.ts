@@ -109,7 +109,7 @@ const MCP_INIT_BODY = JSON.stringify({
   params: {
     protocolVersion: '2025-06-18',
     capabilities: {},
-    clientInfo: { name: 'productarena-slo', version: '1.0' },
+    clientInfo: { name: 'ultrametric-slo', version: '1.0' },
   },
 })
 

@@ -58,7 +58,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
         ycBatch: row.ycBatch,
         agentReady: row.agentReady,
         builtInAi: row.agenticApp,
-        paScore: row.aiEra,
+        overallScore: row.aiEra,
       },
     })),
   )

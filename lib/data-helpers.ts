@@ -175,7 +175,7 @@ export function isGroupUntested(data: CategoryData, productId: string, group: st
   })
 }
 
-// Theme-scoped twin of isGroupUntested, for the two PA-Score components that are theme scores
+// Theme-scoped twin of isGroupUntested, for the two Overall-score components that are theme scores
 // rather than group scores (openness ← theme 'openness', automation ← theme 'automation-depth'
 // — see lib/scoring.ts). Same honesty rule: a theme score built entirely from zero-evidence
 // none/na cells is "untested", not 0.

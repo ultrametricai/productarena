@@ -827,7 +827,7 @@ export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
 // appended by stepVendorOptions can push a step slightly past this, which is fine.
 export const STEP_OPTIONS_CAP = 8
 
-// Every product of one arena as a VendorChipInfo, in LEADERBOARD ORDER (the arena's PA-Score
+// Every product of one arena as a VendorChipInfo, in LEADERBOARD ORDER (the arena's Overall-score
 // rank — rankings.json is already sorted). Chip rank/agentReady keep vendorChipInfo semantics
 // (position on the agent-readiness ladder) so derived and curated chips read identically.
 function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {

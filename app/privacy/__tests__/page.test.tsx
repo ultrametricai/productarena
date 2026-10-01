@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import PrivacyPage from '@/app/privacy/page'
 
 describe('privacy page', () => {
-  it('renders the PA-specific data practices and the base-policy link', () => {
+  it('renders the site-specific data practices and the base-policy link', () => {
     render(<PrivacyPage />)
     expect(screen.getByRole('heading', { level: 1, name: 'Privacy' })).toBeDefined()
     // Base policy incorporation

@@ -65,7 +65,7 @@ describe('normalizeWatchlistIds', () => {
 describe('/api/watchlist auth gate', () => {
   it('401s with no cookie, a tampered cookie, and a sub-less cookie', async () => {
     const kv = fakeKv()
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv }
     expect((await call('GET', { env })).status).toBe(401)
     const wrongKey = `pa_session=${await createSessionCookieValue('the-wrong-key', { sub: 'u', email: 'a@b.co', sid: undefined })}`
     expect((await call('GET', { cookie: wrongKey, env })).status).toBe(401)
@@ -74,7 +74,7 @@ describe('/api/watchlist auth gate', () => {
   })
 
   it('fails closed (500, explicit message) when PA_SESSION_KEY is missing', async () => {
-    const res = await call('GET', { env: { PA_COMPARE_STATS: fakeKv() } })
+    const res = await call('GET', { env: { UM_COMPARE_STATS: fakeKv() } })
     expect(res.status).toBe(500)
     expect((await res.json()).error).toMatch(/auth not configured.*PA_SESSION_KEY/)
   })
@@ -85,7 +85,7 @@ describe('/api/watchlist auth gate', () => {
   })
 
   it('rejects methods other than GET/PUT', async () => {
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() }
     for (const method of ['POST', 'DELETE']) {
       const res = await call(method, { cookie: await cookieFor(), env })
       expect(res.status).toBe(405)
@@ -97,7 +97,7 @@ describe('/api/watchlist auth gate', () => {
 describe('/api/watchlist storage', () => {
   it('GET starts empty, PUT round-trips, and lists are per-account', async () => {
     const kv = fakeKv()
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv }
     const alice = await cookieFor('user_alice')
     const bob = await cookieFor('user_bob', 'bob@ultrametric.ai')
 
@@ -114,7 +114,7 @@ describe('/api/watchlist storage', () => {
   })
 
   it('PUT normalizes junk ids and 400s when ids is not an array', async () => {
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() }
     const cookie = await cookieFor()
     const put = await call('PUT', { cookie, env, body: { ids: ['Linear', 'linear', 42, 'no spaces here', 'ok-id'] } })
     expect(await put.json()).toEqual({ ok: true, ids: ['linear', 'ok-id'] })
@@ -122,15 +122,25 @@ describe('/api/watchlist storage', () => {
     expect((await call('PUT', { cookie, env, body: {} })).status).toBe(400)
   })
 
+  it('still works with only the legacy pre-rename PA_COMPARE_STATS binding (deploy-skew fallback)', async () => {
+    const kv = fakeKv()
+    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const cookie = await cookieFor('user_legacy')
+    const put = await call('PUT', { cookie, env, body: { ids: ['supabase'] } })
+    expect(await put.json()).toEqual({ ok: true, ids: ['supabase'] })
+    expect(kv.store.get('watchlist:user_legacy')).toBe('["supabase"]')
+    expect(await (await call('GET', { cookie, env })).json()).toEqual({ ok: true, ids: ['supabase'] })
+  })
+
   it('GET degrades corrupted stored values to an empty list', async () => {
     const kv = fakeKv()
     kv.store.set('watchlist:user_01ABC', 'not json at all')
-    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv } })
+    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv } })
     expect(await res.json()).toEqual({ ok: true, ids: [] })
   })
 
   it('never emits CORS headers (same-origin only)', async () => {
-    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() } })
+    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() } })
     expect(res.headers.get('access-control-allow-origin')).toBeNull()
     expect(res.headers.get('cache-control')).toBe('no-store')
   })
@@ -139,7 +149,7 @@ describe('/api/watchlist storage', () => {
 describe('/api/watchlist under mock auth (WORKOS_MOCK=1 on localhost)', () => {
   it('accepts the cookie the mock /auth/login mints — the full dev loop works with zero secrets', async () => {
     const kv = fakeKv()
-    const env = { WORKOS_MOCK: '1', PA_COMPARE_STATS: kv }
+    const env = { WORKOS_MOCK: '1', UM_COMPARE_STATS: kv }
     const login = (await handleAuth(
       new Request('http://localhost:8787/auth/login'),
       env,
@@ -160,7 +170,7 @@ describe('/api/watchlist under mock auth (WORKOS_MOCK=1 on localhost)', () => {
     )) as Response
     const cookie = /pa_session=[^;]+/.exec(login.headers.getSetCookie().join('; '))?.[0]
     // Production env with the real key: the mock cookie's signature does not verify.
-    const res = await call('GET', { cookie, env: { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv } })
+    const res = await call('GET', { cookie, env: { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv } })
     expect(res.status).toBe(401)
   })
 })

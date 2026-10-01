@@ -2,11 +2,11 @@
 // loop, same cellHash) for one category, but writes every artifact to a caller-supplied
 // scratch directory OUTSIDE the repo — committed data/, the judge cache under pipeline/cache/,
 // and rankings.json are never touched. Built for model-migration pilots (e.g. sonnet-5 →
-// opus-5-5): run with PA_MODEL=<candidate> and diff the scratch verdicts against the committed
+// opus-5-5): run with UM_JUDGE_MODEL=<candidate> and diff the scratch verdicts against the committed
 // baseline with pipeline/scripts/rejudge-pilot-diff.ts.
 //
 // Usage:
-//   PA_MODEL=claude-opus-5-5 pnpm tsx pipeline/scripts/rejudge-pilot.ts \
+//   UM_JUDGE_MODEL=claude-opus-5-5 pnpm tsx pipeline/scripts/rejudge-pilot.ts \
 //     --category ai-coding --out /tmp/opus55-pilot [--concurrency 6]
 //
 // Resumable: a cell whose scratch file already exists with the current cellHash is skipped,
@@ -35,7 +35,7 @@ const out = arg('out')
 const onlyProduct = arg('product') // optional: smoke-test a single product before a full run
 const concurrency = Number(arg('concurrency') ?? 6)
 if (!category || !out) {
-  console.error('usage: PA_MODEL=<model> pnpm tsx pipeline/scripts/rejudge-pilot.ts --category <id> --out <scratch-dir> [--product <id>] [--concurrency N]')
+  console.error('usage: UM_JUDGE_MODEL=<model> pnpm tsx pipeline/scripts/rejudge-pilot.ts --category <id> --out <scratch-dir> [--product <id>] [--concurrency N]')
   process.exit(1)
 }
 
@@ -49,7 +49,7 @@ for (const forbidden of [path.join(ROOT, 'data'), path.join(ROOT, 'pipeline', 'c
 }
 
 const usage = {
-  model: process.env.PA_MODEL ?? 'claude-sonnet-5',
+  model: process.env.UM_JUDGE_MODEL ?? process.env.PA_MODEL ?? 'claude-sonnet-5',
   calls: 0,
   inputTokens: 0,
   outputTokens: 0,

@@ -14,10 +14,10 @@ import { categoryDir, readJson, resolveCategories, ROOT } from '../paths'
 //   npm install --prefix .proof-scratch playwright sharp
 //   pnpm pipeline screenshots [--category <id>] [--product <id>] [--force]
 //
-// PA_PLAYWRIGHT_DIR overrides the scratch location.
+// UM_PLAYWRIGHT_DIR overrides the scratch location.
 
 const SCREENSHOTS_DIR = path.join(ROOT, 'public', 'screenshots')
-const SCRATCH = process.env.PA_PLAYWRIGHT_DIR ?? path.resolve(__dirname, '../../.proof-scratch')
+const SCRATCH = process.env.UM_PLAYWRIGHT_DIR ?? process.env.PA_PLAYWRIGHT_DIR ?? path.resolve(__dirname, '../../.proof-scratch')
 
 const VIEWPORT = { width: 1440, height: 900 }
 const OUTPUT_WIDTH = 1200 // downscaled from the 1440px capture; plenty for a gallery thumbnail

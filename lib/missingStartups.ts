@@ -67,8 +67,8 @@ export interface OpportunityComponents {
   // Share (0–1) of non-na fleet cells on agent-access/agentic-features stories judged 'none'
   // (null when the arena has no applicable cells on those groups).
   noneShare: number | null
-  // The arena leader's Overall score (leaderboard is already PA-Score-ordered; null when unranked).
-  leaderPaScore: number | null
+  // The arena leader's Overall score (leaderboard is already Overall-score-ordered; null when unranked).
+  leaderOverallScore: number | null
   // Share (0–1) of applicable stories (≥1 non-na verdict) that no product covers at all.
   unservedShare: number | null
 }
@@ -78,7 +78,7 @@ export interface ArenaOpportunity {
   arenaName: string
   score: number
   components: OpportunityComponents
-  leader: { productId: string; name: string; paScore: number | null } | null
+  leader: { productId: string; name: string; overallScore: number | null } | null
   productCount: number
   unservedStories: UnservedStory[]
 }
@@ -100,7 +100,7 @@ export function computeOpportunityScore(c: OpportunityComponents): number | null
     agentReadyGap: c.meanAgentReady === null ? null : 100 - c.meanAgentReady,
     aiNativeGap: c.meanAiNative === null ? null : 100 - c.meanAiNative,
     noneShare: c.noneShare === null ? null : 100 * c.noneShare,
-    leaderGap: c.leaderPaScore === null ? null : 100 - c.leaderPaScore,
+    leaderGap: c.leaderOverallScore === null ? null : 100 - c.leaderOverallScore,
     unservedShare: c.unservedShare === null ? null : 100 * c.unservedShare,
   }
   let totalWeight = 0
@@ -159,7 +159,7 @@ export function arenaOpportunity(source: MissingSource): ArenaOpportunity {
     ? {
         productId: leaderEntry.productId,
         name: source.products.find((p) => p.id === leaderEntry.productId)?.name ?? leaderEntry.productId,
-        paScore: leaderEntry.aiEra,
+        overallScore: leaderEntry.aiEra,
       }
     : null
 
@@ -173,7 +173,7 @@ export function arenaOpportunity(source: MissingSource): ArenaOpportunity {
     meanAgentReady: meanAgentReady === null ? null : round1(meanAgentReady),
     meanAiNative: meanAiNative === null ? null : round1(meanAiNative),
     noneShare: noneShare === null ? null : Math.round(noneShare * 1000) / 1000,
-    leaderPaScore: leader?.paScore ?? null,
+    leaderOverallScore: leader?.overallScore ?? null,
     unservedShare: unservedShare === null ? null : Math.round(unservedShare * 1000) / 1000,
   }
 

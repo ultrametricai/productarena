@@ -11,12 +11,12 @@ import type { LocalProbe } from '../probes/types'
 // Local, keyless probe commands with replayable recordings ("proofs"). Where probe.ts checks
 // what a vendor *publishes* (llms.txt, OpenAPI, docs), this stage checks what a vendor *ships*:
 // it runs the product's own CLI on this machine — version prints, headless-mode help, real MCP
-// stdio initialize handshakes — and, when PA_RECORD=1, captures the session through the BSD
+// stdio initialize handshakes — and, when UM_RECORD=1, captures the session through the BSD
 // `script` pty recorder so the resulting transcript is a faithful terminal capture, published
 // at data/<category>/proofs/ (layout + sanitization contract: lib/proofs.ts).
 //
 // Deliberately opt-in and side-effect-light:
-//   - without PA_RECORD=1 it only runs the probes and prints pass/fail (a dry run);
+//   - without UM_RECORD=1 it only runs the probes and prints pass/fail (a dry run);
 //   - it never touches data/<category>/evidence/*.json — proof metadata lives in sidecar JSON
 //     until the schema integration phase (docs/PROVE-IT.md, phase 2), because lib/schemas.ts
 //     is owned by another lane;
@@ -72,7 +72,7 @@ function waitForExit(child: ReturnType<typeof spawn>, timeoutMs: number): Promis
   })
 }
 
-// PA_RECORD=1 path: run the probe inside a `script(1)` pty so the transcript is a real
+// UM_RECORD=1 path: run the probe inside a `script(1)` pty so the transcript is a real
 // terminal capture. BSD script tcgetattr()s its stdin, which must therefore be a plain fd
 // (here /dev/null), never a node socketpair — so stdin payloads are piped INSIDE the pty via
 // `sh -c '{ cat payload; sleep 6; } | cmd'` (the sleep keeps stdin open long enough for the
@@ -96,7 +96,7 @@ async function runRecorded(probe: LocalProbe, tmpDir: string): Promise<RunOutcom
   return { transcript, exitCode: exitCodeFor(probe, transcript, code, killed) }
 }
 
-// Dry-run path (no PA_RECORD): same probes, plain stdout/stderr capture, nothing written.
+// Dry-run path (no UM_RECORD): same probes, plain stdout/stderr capture, nothing written.
 async function runPlain(probe: LocalProbe): Promise<RunOutcome> {
   const child = spawn(probe.argv[0], probe.argv.slice(1), { env: minimalEnv(), stdio: ['pipe', 'pipe', 'pipe'] })
   let out = ''
@@ -115,11 +115,11 @@ function exitCodeFor(probe: LocalProbe, transcript: string, code: number | null,
 }
 
 export async function runProbeRecord({ category, product }: { category?: string; product?: string }): Promise<void> {
-  const record = process.env.PA_RECORD === '1'
+  const record = (process.env.UM_RECORD ?? process.env.PA_RECORD) === '1' // PA_RECORD: deprecated pre-rename spelling
   if (record && (process.platform !== 'darwin' || !fs.existsSync('/usr/bin/script'))) {
-    throw new Error('PA_RECORD=1 requires the BSD script(1) pty recorder (macOS)')
+    throw new Error('UM_RECORD=1 requires the BSD script(1) pty recorder (macOS)')
   }
-  if (!record) console.log('probe-record: dry run (set PA_RECORD=1 to write recordings)')
+  if (!record) console.log('probe-record: dry run (set UM_RECORD=1 to write recordings)')
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-probe-record-'))
   try {

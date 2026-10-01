@@ -33,7 +33,8 @@ case "$API_KEY" in sk_*) ;; *) echo "api key should start with sk_" >&2; exit 1;
 perl -pi -e "s/^WORKOS_CLIENT_ID = \"[^\"]*\"/WORKOS_CLIENT_ID = \"$CLIENT_ID\"/" wrangler.toml
 grep -q "WORKOS_CLIENT_ID = \"$CLIENT_ID\"" wrangler.toml && echo "wrangler.toml: client id set"
 
-# 2. Secrets.
+# 2. Secrets. (PA_SESSION_KEY is the legacy, pre-rename secret name the deployed worker reads —
+# keep it until the worker gains a UM_SESSION_KEY dual-binding; see docs/FOUNDER-ASKS.md.)
 printf '%s' "$API_KEY" | npx wrangler secret put WORKOS_API_KEY
 openssl rand -base64 48 | tr -d '\n' | npx wrangler secret put PA_SESSION_KEY
 

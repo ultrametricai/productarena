@@ -12,7 +12,7 @@ describe('terms page', () => {
     expect(screen.getByText(/accepts no responsibility for decisions/)).toBeDefined()
   })
 
-  it('renders the PA-specific risk sections layered on the Ultrametric base terms', () => {
+  it('renders the site-specific risk sections layered on the Ultrametric base terms', () => {
     render(<TermsPage />)
     // Base terms incorporation
     const base = screen.getByRole('link', { name: 'Ultrametric Terms of Service' })

@@ -184,8 +184,8 @@ export default function QueuePage() {
       )}
 
       <p className="max-w-3xl text-xs leading-relaxed text-zinc-500">
-        Honesty notes: priority is a work-ordering signal only — popularity and founder boosts never touch any PA
-        Score (METHODOLOGY.md, &quot;Popularity — a signal, not a score&quot;). A spike pass can only change verdicts
+        Honesty notes: priority is a work-ordering signal only — popularity and founder boosts never touch any Overall
+        score (METHODOLOGY.md, &quot;Popularity — a signal, not a score&quot;). A spike pass can only change verdicts
         through the normal judge with its cellHash cache, and every flip that cites no newly-added evidence is
         reverted (the revert-churn policy). Vendors without llms.txt contribute no discoveries — the absence is
         recorded in the run note, never papered over.
