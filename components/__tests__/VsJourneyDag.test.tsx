@@ -22,6 +22,8 @@
 //   - clicking a node asks the parent to scroll the terminal to that process's first row (smoke);
 //   - a semi-auto recomposition redraws only the unrevealed tail — every already-lit node keeps
 //     its identity and order across each in-run decision pick.
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
@@ -373,6 +375,8 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('hr_002', 'Run payroll'),
     task('growth_010', 'Launch on Product Hunt & directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
+    // The round-7 default composition (2026-10-01, item 5) asserts Office — the lease process.
+    task('ops_014', 'Lease an office'),
   ].map((t) => [t.id, t]),
 )
 
@@ -435,7 +439,7 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
       // Reveal-on-reach mid-run: every visible node has been reached (at most the one just
       // reached is still pending), and the upcoming tail is NOT rendered yet.
       expect(mid.filter((s) => s === 'pending').length).toBeLessThanOrEqual(1)
-      expect(mid.length).toBeLessThan(13)
+      expect(mid.length).toBeLessThan(14)
       // With the ticker stopped, nothing advances (nothing new appears) — no clock of its own.
       const frozen = dagStates()
       fireEvent.click(screen.getByRole('button', { name: /stop/i }))
@@ -447,9 +451,10 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
       act(() => {
         vi.runAllTimers()
       })
-      // Completed run: the WHOLE traversed journey renders in the flow — all 13 nodes done,
-      // every title still legible (fixed node size, no tiers).
-      expect(dagStates()).toHaveLength(12) // the default run composes Basic minimums (item 8) — no compliance node
+      // Completed run: the WHOLE traversed journey renders in the flow — all 14 nodes done,
+      // every title still legible (fixed node size, no tiers). The round-7 default composition
+      // (2026-10-01): SOC 2 early adds ops_005, Office adds ops_014.
+      expect(dagStates()).toHaveLength(14)
       expect(new Set(dagStates())).toEqual(new Set(['done']))
       for (const n of dagNodes()) expect(n.textContent!.length).toBeGreaterThan(1) // icon + title
     } finally {
@@ -476,10 +481,13 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
 
   it('semi-auto: pause markers render for unasserted decisions, and each in-run pick redraws ONLY the unrevealed tail (lit nodes keep identity and order)', () => {
     renderIt()
-    // Entity is DEFAULT-ASSERTED (founder round 4, item 5) — clear it back to Not set so the
-    // run asks it in-run like the other decisions this test answers.
-    fireEvent.click(screen.getByTestId('vs-decision-entity'))
-    fireEvent.click(screen.getByTestId('vs-decision-entity-notset'))
+    // The round-7 DEFAULT-ASSERTED decisions (entity, team, funding, compliance, ph, remote —
+    // 2026-10-01, item 5) are never asked — clear them back to Not set so the run asks them
+    // in-run like the other decisions this test answers.
+    for (const id of ['entity', 'team', 'funding', 'compliance', 'ph', 'remote']) {
+      fireEvent.click(screen.getByTestId(`vs-decision-${id}`))
+      fireEvent.click(screen.getByTestId(`vs-decision-${id}-notset`))
+    }
     fireEvent.click(screen.getByTestId('vs-mode-semi'))
     // Every unasserted decision (plus the naming card) is a diamond on the strip before the run.
     expect(screen.getAllByTestId('vs-dag-marker-pause').length).toBeGreaterThan(0)
@@ -533,5 +541,28 @@ describe('VsJourneyDag inside VirtualStartup — the live viewer above the termi
     expect(new Set(dagStates())).toEqual(new Set(['done']))
     // Answered decisions' pause markers are gone — nothing left to wait on.
     expect(screen.queryByTestId('vs-dag-marker-pause')).toBeNull()
+  })
+})
+
+describe('connector footprint invariant (mobile flicker fix, founder 2026-10-01)', () => {
+  // ROOT CAUSE the invariant guards: the wrap detector measures offsetTops post-commit and swaps
+  // Edge \u2194 WrapHint per item. With different connector widths the swap re-flowed the wrap, the
+  // next measurement flipped the classification back, and at borderline (mobile) widths the strip
+  // oscillated between layouts on every 240ms reveal commit \u2014 visible flicker. Equal footprints
+  // make the swap layout-neutral so the measurement converges in one pass. jsdom does no layout,
+  // so this is a source pin: both connectors must carry the identical w-4 + mx-0.5 footprint.
+  it('Edge and WrapHint occupy the exact same width (w-4 + mx-0.5)', () => {
+    const src = readFileSync(path.resolve(__dirname, '../VsJourneyDag.tsx'), 'utf8')
+    const edge = src.slice(src.indexOf('function Edge'), src.indexOf('function WrapHint'))
+    const hint = src.slice(src.indexOf('function WrapHint'), src.indexOf('export default'))
+    for (const [name, part] of [['Edge', edge], ['WrapHint', hint]] as const) {
+      expect(part, `${name} carries w-4`).toContain('w-4')
+      expect(part, `${name} carries mx-0.5`).toContain('mx-0.5')
+      expect(part, `${name} is shrink-0`).toContain('shrink-0')
+      // No stray one-sided margins that would break the shared footprint.
+      expect(part, `${name} has no mr-/ml- margin`).not.toMatch(/\bm[rl]-/)
+    }
+    // The invariant is documented at the source so a future edit can't miss it.
+    expect(src).toContain('FOOTPRINT INVARIANT')
   })
 })

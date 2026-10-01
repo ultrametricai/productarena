@@ -4,7 +4,7 @@
 // visible 'simulated' labels from the whole interface, so every generated artifact node carries
 // data-synthetic="true" (asserted per node here) and keeps the distinct fuchsia styling — the
 // honesty contract moved from a visible chip to a machine-checkable attribute, and NO visible
-// 'simulated' string may render anywhere on /virtual-startup (also asserted here).
+// 'simulated' string may render anywhere on /startup-sim (also asserted here).
 // Fixture chains/tasks keep the journey small; the decision→journey mapping itself is tested
 // against the live corpus in lib/__tests__/virtualStartup.test.ts.
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
@@ -91,6 +91,8 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
     task('growth_010', 'Launch on Product Hunt & directories'),
     task('comp_002', 'Complete SOC 2 Type II'),
     task('ops_014', 'Lease an office'),
+    // The Apply-to-YC checkbox's composed process (item 6, 2026-10-01).
+    task('fund_007', 'Apply to Y Combinator'),
   ].map((t) => [t.id, t]),
 )
 
@@ -261,12 +263,13 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
   it('the 2026-09-25 toggles: hire, enterprise, PH launch all reshape the journey (build-first now rides presets/permalinks only — round 5, item 4)', () => {
     renderIt()
     showAll()
-    // Defaults: hire yes (playbook in), Developers ICP (no enterprise chain), PH yes, name-first
-    // — and compliance default-asserted at Basic minimums (item 8), so NO compliance chain runs.
+    // Defaults (round 7, 2026-10-01): hire yes (playbook in), Developers ICP (no enterprise
+    // chain), X launch (the same launch chain, venue-noted), name-first — and compliance
+    // default-asserted at SOC 2 early, so the compliance chain RUNS.
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
     expect(screen.queryByText('Complete SOC 2 Type II')).toBeNull()
     expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
-    expect(screen.queryByText('Set up a password manager')).toBeNull() // Basic minimums — the dedicated playbook honestly absent
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // SOC 2 early — the default-asserted posture
 
     pickDecision('hire', 'Stay founders-only')
     pickDecision('enterprise', 'Enterprises')
@@ -305,10 +308,15 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     expect(termBody().getByText(/no storefront step yet/)).toBeTruthy()
   })
 
-  it("compliance options: the default-asserted 'Basic minimums' honestly skips the chain and 'None' is display-hidden (item 8); HIPAA runs the same chain with the framework named", () => {
+  it("compliance options: the round-7 default-asserted 'SOC 2 (early)' runs the chain; 'Basic minimums' honestly skips it and 'None' stays display-hidden", () => {
     renderIt()
-    // The default-asserted 'Basic minimums' composes the none-path — nothing to unskip.
-    expect(decisionTitle('compliance')).toContain('Basic minimums')
+    // The round-7 default (2026-10-01, item 5): compliance default-asserted at SOC 2 early.
+    expect(decisionTitle('compliance')).toContain('SOC 2 (early)')
+    showAll()
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy()
+    expect(termBody().getByText('Stand up compliance')).toBeTruthy()
+    // 'Basic minimums' (round 6) keeps its roster row and still skips the chain honestly.
+    pickDecision('compliance', 'Basic minimums')
     showAll()
     expect(screen.queryByText('Set up a password manager')).toBeNull()
     expect(termBody().queryByText('Stand up compliance')).toBeNull()
@@ -508,8 +516,9 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
       compliance: ['SOC 2 (early)', 'SOC 2 (deferred)', 'HIPAA', 'ISO 27001', 'Basic minimums'],
       // The ICP selector (item 4, 2026-09-30) replaced the enterprise yes/no.
       enterprise: ['Developers', 'Enterprises', 'SMBs', 'Consumers'],
-      // Launch options (founder round 4, item 7): venue-flavored public launches + stealth.
-      ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'],
+      // Launch options (founder round 4, item 7): venue-flavored public launches + stealth;
+      // 'X launch' appended 2026-10-01 (item 5) as the new default-asserted venue.
+      ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch', 'X launch'],
       // Remote vs In-office (item 5, 2026-09-30).
       remote: ['Remote-first', 'Office'],
     }
@@ -520,20 +529,28 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.queryByRole('option', { name: 'Ltd (Companies House)' })).toBeNull()
     expect(screen.queryByRole('option', { name: 'GmbH' })).toBeNull()
     fireEvent.click(within(band).getByTestId('vs-decision-entity')) // close
+    // The round-7 DEFAULT-ASSERTED set (2026-10-01, item 5): the founder's demo composition —
+    // these dropdowns show their value from the first render; everything else starts 'Not set'.
+    const defaultAsserted: Record<string, string> = {
+      entity: 'C-Corp',
+      team: 'Cofounders',
+      funding: 'Seed',
+      compliance: 'SOC 2',
+      ph: 'X',
+      remote: 'Office',
+    }
     for (const [id, names] of Object.entries(optionNames)) {
       const trigger = within(band).getByTestId(`vs-decision-${id}`)
       expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
-      // DEFAULT-ASSERTED decisions show their value: entity (round 4, item 5) and compliance
-      // ('Basic minimums' — item 8, 2026-09-30); everything else starts 'Not set'.
-      if (id === 'entity') expect(trigger.textContent).toContain('C-Corp')
-      else if (id === 'compliance') expect(trigger.textContent).toContain('Basics')
+      const asserted = defaultAsserted[id]
+      if (asserted !== undefined) expect(trigger.textContent).toContain(asserted)
       else expect(trigger.textContent).toContain('Not set')
       fireEvent.click(trigger)
       for (const name of names) expect(screen.getByRole('option', { name })).toBeTruthy()
       // The hidden 'None' never renders as an option (HIDDEN_OPTION_VALUES).
       if (id === 'compliance') expect(screen.queryByRole('option', { name: 'None' })).toBeNull()
       expect(screen.getByTestId(`vs-decision-${id}-notset`).getAttribute('aria-selected')).toBe(
-        id === 'entity' || id === 'compliance' ? 'false' : 'true',
+        asserted !== undefined ? 'false' : 'true',
       )
       fireEvent.click(trigger) // close before the next one
     }
@@ -560,14 +577,21 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(name.compareDocumentPosition(build) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it("dropdown semantics: picking asserts (the aria-label carries the full label; the corpus mapping rides the option sublabel), 'Not set' clears back, asserting the default value still asserts", () => {
+  it("dropdown semantics: picking asserts (the aria-label carries the full label; options render NAMES ONLY), 'Not set' clears back, asserting the default value still asserts", () => {
     renderIt()
     // Unasserted: the trigger says so and names the default it composes.
     expect(decisionTitle('enterprise')).toContain('not set')
     expect(decisionTitle('enterprise')).toContain('Developers')
-    // The option's corpus-mapping receipt lives in its in-list sublabel (item 3 — no tooltips).
+    // Names only (founder 2026-10-01, item 4): no sublabel, no tooltip — the corpus-mapping
+    // receipt moved to non-blocking surfaces (semi-auto card tooltips, the run's phase notes,
+    // and the single info line under the band).
     fireEvent.click(screen.getByTestId('vs-decision-enterprise'))
-    expect(screen.getByTestId('vs-decision-enterprise-yes').textContent).toContain('land-the-enterprise-deal')
+    const entOption = screen.getByTestId('vs-decision-enterprise-yes')
+    expect(entOption.textContent).not.toContain('land-the-enterprise-deal')
+    expect(entOption.textContent?.trim().replace(/✓$/, '').trim()).toBe('Enterprises')
+    expect(entOption.getAttribute('title')).toBeNull()
+    expect(entOption.getAttribute('aria-label')).toBe('Enterprises')
+    expect(screen.getByTestId('vs-decisions-info').textContent).toContain('phase notes name each mapping')
     fireEvent.click(screen.getByTestId('vs-decision-enterprise')) // close
     pickDecision('enterprise', 'Enterprises')
     expect(decisionTitle('enterprise')).toContain('Enterprises')
@@ -609,10 +633,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     for (const [id, name] of [
       ['entity', 'Delaware C-Corp'], ['team', 'Cofounders'], ['funding', 'Raise a seed'],
       ['product', 'SaaS subscriptions'], ['hire', 'Make the first hire'],
-      // Compliance's INITIAL state is the default-asserted 'Basic minimums' (item 8) — the
-      // byte-identity baseline composes it, so the explicit assertion repeats that value.
-      ['compliance', 'Basic minimums'], ['enterprise', 'Developers'], ['ph', 'Product Hunt'],
-      ['remote', 'Remote-first'],
+      // The round-7 default-asserted values (2026-10-01): the byte-identity baseline composes
+      // SOC 2 early + X launch + Office, so the explicit assertions repeat those values.
+      ['compliance', 'SOC 2 (early)'], ['enterprise', 'Developers'], ['ph', 'X launch'],
+      ['remote', 'Office'],
     ] as const) {
       pickDecision(id, name)
     }
@@ -637,10 +661,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.getByTestId('vs-persona-non-technical-first-timer').textContent).toContain('simulation assumption')
     expect(screen.getByTestId('vs-persona-technical-second-timer').textContent).toContain('simulation assumption')
     fireEvent.click(screen.getByTestId('vs-persona-trigger')) // close
-    // …and each decision option keeps its corpus mapping in its in-list sublabel.
+    // …while the decision options are NAMES ONLY (item 4, 2026-10-01): no tooltip, no sublabel.
     fireEvent.click(screen.getByTestId('vs-decision-funding'))
     expect(screen.getByTestId('vs-decision-funding-seed').getAttribute('title')).toBeNull()
-    expect(screen.getByTestId('vs-decision-funding-seed').textContent).toContain('Raise a seed round')
+    expect(screen.getByTestId('vs-decision-funding-seed').textContent).not.toContain('playbook')
   })
 })
 
@@ -753,7 +777,7 @@ describe('VirtualStartup — preset example companies and the ?preset= contract'
 describe('VirtualStartup — the single Funding selector (decision options + scenario combos)', () => {
   const openFunding = () => fireEvent.click(screen.getByTestId('vs-decision-funding'))
 
-  it("ONE dropdown carries all four options; the scenario rows carry the mapping sublabel; the pills are gone and the Scenario row keeps presets + YC", () => {
+  it("ONE dropdown carries all four options as NAMES ONLY (item 4); the pills are gone and the Scenario row keeps presets + YC", () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
     expect(within(band).getByTitle('Scenario — one-tap setups: example companies and YC batch mode')).toBeTruthy()
@@ -763,17 +787,16 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
     for (const name of ['Raise a seed', 'Bootstrap', 'VC backed', 'Bootstrapped']) {
       expect(screen.getByRole('option', { name })).toBeTruthy()
     }
-    // The scenario options document the exact key → DECISIONS-option mapping in their in-list
-    // sublabels (item 3, 2026-09-30: no title= tooltips on dropdown options).
+    // Names only (founder 2026-10-01, item 4): no tooltip AND no sublabel — a scenario's exact
+    // key → DECISIONS-option mapping stays visible through the asserted dropdowns themselves the
+    // moment it is picked (funding/entity/hire triggers show the asserted values), and the
+    // tooltip copy lives on in VS_SCENARIOS for the semi-auto/report surfaces.
     const vc = screen.getByRole('option', { name: 'VC backed' })
     expect(vc.getAttribute('title')).toBeNull()
-    expect(vc.textContent).toContain('Raise a seed')
-    expect(vc.textContent).toContain('Delaware C-Corp')
-    expect(vc.textContent).toContain('Make the first hire')
+    expect(vc.textContent).not.toContain('Delaware C-Corp')
+    expect(vc.textContent).not.toContain('Make the first hire')
     const boot = screen.getByRole('option', { name: 'Bootstrapped' })
-    expect(boot.textContent).toContain('Bootstrap')
-    expect(boot.textContent).toContain('Invoice-billed services')
-    expect(boot.textContent).toContain('Stay founders-only')
+    expect(boot.textContent).not.toContain('Invoice-billed services')
     openFunding() // close
     // The company preset pills are unchanged otherwise.
     expect(within(band).getByTestId('vs-preset-software')).toBeTruthy()
@@ -787,9 +810,11 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
     expect(decisionTitle('funding')).toContain('VC backed')
     expect(decisionTitle('entity')).toContain('Delaware C-Corp')
     expect(decisionTitle('hire')).toContain('Make the first hire')
-    // Partial assert: decisions outside the scenario stay Not set (they compose defaults).
+    // Partial assert: decisions outside the scenario keep their state — product stays Not set;
+    // team keeps its round-7 default-asserted 'Cofounders' (2026-10-01, item 5).
     expect(decisionTitle('product')).toContain('not set')
-    expect(decisionTitle('team')).toContain('not set')
+    expect(decisionTitle('team')).toContain('Cofounders')
+    expect(decisionTitle('team')).not.toContain('not set')
     showAll()
     expect(termBody().getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
@@ -1164,8 +1189,13 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
 
   it("the Workplace decision (item 5): Office composes the real lease-an-office process as a chainless phase (no playbook link); Remote-first composes nothing extra", () => {
     renderIt()
+    // Office is the round-7 DEFAULT-ASSERTED workplace (2026-10-01, item 5) — the lease phase
+    // composes on a fresh visit; Remote-first honestly removes it.
     showAll()
-    expect(screen.queryByText('Lease an office')).toBeNull() // remote-first default
+    expect(termBody().getByText('Lease an office')).toBeTruthy()
+    pickDecision('remote', 'Remote-first')
+    showAll()
+    expect(screen.queryByText('Lease an office')).toBeNull()
     pickDecision('remote', 'Office')
     showAll()
     expect(termBody().getByText('Lease an office')).toBeTruthy()
@@ -1183,10 +1213,20 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
 
   it("the 'I'm using' selector (item 7): picking an assistant pins it on the AI-conversation steps as 'your assistant' while the judged top keeps '(recommended · judged)'", () => {
     renderIt()
-    // Default: judged pick — no pin anywhere.
-    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('Judged pick')
+    // Fresh-visit default (2026-10-01, item 5): ChatGPT is simply pre-selected — and NO
+    // 'judged pick' wording labels the selector anywhere.
+    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('ChatGPT')
+    expect(screen.getByTestId('vs-assistant-row').textContent).not.toMatch(/judged pick/i)
     showAll()
+    // The judged top on the naming step IS ChatGPT — one chip, both labels, no separate pin.
     expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    expect(screen.getByTestId('vs-step-assistant-label').textContent).toContain('your assistant')
+    // Clearing back to 'Not set' (the legacy-link state) removes the pin entirely.
+    fireEvent.click(screen.getByTestId('vs-assistant-trigger'))
+    fireEvent.click(screen.getByTestId('vs-assistant-judged'))
+    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('Not set')
+    expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    expect(screen.queryByTestId('vs-step-assistant-label')).toBeNull()
     // Pick Claude (≠ the judged top ChatGPT on the naming step) — annotation only: the revealed
     // terminal keeps its rows and the pin appears on the ai-assistants-mapped step.
     fireEvent.click(screen.getByTestId('vs-assistant-trigger'))
@@ -1221,5 +1261,64 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
     expect(corpusLine.className).toContain('text-zinc-400')
     // The terminal status strip sits at zinc-400 (was zinc-500).
     expect(screen.getByTestId('vs-terminal-status').className).toContain('text-zinc-400')
+  })
+})
+
+describe("the 'Apply to YC' checkbox (founder 2026-10-01, item 6)", () => {
+  it('unchecked by default — no application phase; checking composes the real fund_007 process as a chainless phase with its simulated artifact; unchecking removes it', () => {
+    renderIt()
+    const box = screen.getByTestId('vs-yc-apply-input') as HTMLInputElement
+    expect(box.checked).toBe(false)
+    showAll()
+    expect(screen.queryByText('Apply to Y Combinator')).toBeNull()
+    // Check it — a composition change, so the run clears like a decision change.
+    fireEvent.click(box)
+    expect(box.checked).toBe(true)
+    expect(screen.queryAllByTestId('vs-artifact')).toHaveLength(0)
+    showAll()
+    expect(termBody().getByText('Apply to Y Combinator')).toBeTruthy()
+    const phase = termBody().getByText('Apply to YC')
+    // The office/lease pattern: a single committed corpus process, NOT a curated chain — no
+    // playbook link on this phase, and the note says so plus the non-affiliation line.
+    expect(within(phase.closest('li')!).queryByText(/playbook →/)).toBeNull()
+    // Two chainless phases print the honesty line now (the default-asserted Office + this one).
+    expect(termBody().getAllByText(/not a curated chain/).length).toBeGreaterThanOrEqual(2)
+    expect(termBody().getByText(/not affiliated with or endorsed by Y Combinator/)).toBeTruthy()
+    // The phase lands right after formation (the application asks for company + founders).
+    const form = termBody().getByText('Form the company')
+    const raise = termBody().getByText('Raise the seed')
+    expect(form.compareDocumentPosition(phase) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(phase.compareDocumentPosition(raise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    // The application artifact prints simulated, never claiming acceptance.
+    const art = screen.getAllByTestId('vs-artifact').find((a) => /YC application/.test(a.textContent ?? ''))!
+    expect(art.getAttribute('data-synthetic')).toBe('true')
+    expect(art.textContent).toContain('submitted')
+    expect(art.textContent).not.toMatch(/accepted/i)
+    // Uncheck: the phase honestly leaves the composition.
+    fireEvent.click(box)
+    showAll()
+    expect(screen.queryByText('Apply to Y Combinator')).toBeNull()
+  })
+})
+
+describe('setup band wraps at small widths (founder 2026-10-01, item 3b)', () => {
+  // The old mobile pattern (per-row overflow-x-auto scroll strips) overflowed off the right edge
+  // instead of scrolling: the decisions row lacked min-w-0, so the grid item's automatic minimum
+  // width pushed the whole band past the viewport. The rows now WRAP at every width.
+  it('every control row is flex-wrap + min-w-0 and nothing in the band scrolls sideways', () => {
+    renderIt()
+    const setup = screen.getByTestId('vs-setup')
+    expect(setup.querySelectorAll('[class*="overflow-x-auto"]').length).toBe(0)
+    const rows = [
+      screen.getByTestId('vs-yc-toggle').parentElement!, // scenario pills + YC mode
+      screen.getByTestId('vs-assistant-row').parentElement!, // the "I'm using" row
+      // The decisions row: the VsDecisionSelect groups' shared parent.
+      screen.getByTestId('vs-decision-entity').closest('div[role="group"]')!.parentElement!,
+    ]
+    for (const row of rows) {
+      expect(row.className).toContain('flex-wrap')
+      expect(row.className).toContain('min-w-0')
+      expect(row.className).not.toContain('overflow-x-auto')
+    }
   })
 })

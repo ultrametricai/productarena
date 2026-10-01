@@ -27,3 +27,30 @@ describe('sitewide footer (app/layout.tsx)', () => {
     expect(anchor).toContain('rel="noopener noreferrer"')
   })
 })
+
+describe('header GitHub links (app/layout.tsx)', () => {
+  const header = layoutSrc.slice(layoutSrc.indexOf('<header'), layoutSrc.indexOf('</header>'))
+
+  it('keeps the desktop star chip desktop-only (hidden below sm)', () => {
+    const chipStart = header.indexOf(`href={\`https://github.com/\${REPO}\`}`)
+    expect(chipStart).toBeGreaterThan(-1)
+    const chip = header.slice(chipStart, header.indexOf('</a>', chipStart))
+    expect(chip).toContain('hidden shrink-0 items-center')
+    expect(chip).toContain('sm:flex')
+  })
+
+  it('renders a compact mobile-only GitHub mark top-right (founder 2026-10-01)', () => {
+    // The mobile mark: icon-only, visible below sm, hidden from sm up — the star chip's
+    // counterpart so the repo stays one tap away on phones.
+    const markIdx = header.indexOf('aria-label="Ultrametric on GitHub"')
+    expect(markIdx).toBeGreaterThan(-1)
+    const anchorStart = header.lastIndexOf('<a', markIdx)
+    const anchor = header.slice(anchorStart, header.indexOf('</a>', markIdx))
+    expect(anchor).toContain('sm:hidden')
+    expect(anchor).toContain('https://github.com/${REPO}')
+    // The same octocat mark as the chip/footer — no star count, no border chip, just the mark.
+    expect(anchor).toContain('M8 0C3.58 0 0 3.58 0 8c0 3.54')
+    expect(anchor).toContain('target="_blank"')
+    expect(anchor).toContain('rel="noopener noreferrer"')
+  })
+})

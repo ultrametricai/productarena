@@ -7,7 +7,7 @@ raise, launch, expand, exit.
 (incorporation → launch, the VC raise, month-end close, tax season, the agent-run back
 office…), referencing 92 distinct processes from `processes/corpus.json` (counts computed from
 the committed files, 2026-09-30). They render as playbooks at `/processes` and are driven
-end-to-end by The Open Startup (`/virtual-startup`), which runs a simulated company through the
+end-to-end by The Open Startup (`/startup-sim`), which runs a simulated company through the
 real corpus with every step routed agent / manual / human.
 
 ## What a chain record is
@@ -51,7 +51,7 @@ for what one box expands into.
 - `lib/processes.ts` `loadChains()` reads `chains.json` and cross-checks every `taskId`
   against the corpus; chain pages render at `/processes/chains/<id>` with the member DAGs
   stitched in order.
-- The Open Startup (`/virtual-startup`) drives a simulated company through these chains —
+- The Open Startup (`/startup-sim`) drives a simulated company through these chains —
   decisions pick which chains run, and every generated artifact is visibly SIMULATED.
 - The ⌘K palette surfaces each chain by name and by the journey phrases people actually type
   ("raise a seed round", "launch on product hunt") via `data/search-aliases.json`.

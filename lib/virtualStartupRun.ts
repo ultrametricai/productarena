@@ -668,15 +668,19 @@ export function eligibleVsEvents(
 
 // The event stream's seed — (combo, preset, founder axes, seed) exactly as the founder spec
 // names, plus the YC calibration flag (it changes the journey the events land on). The founder
-// token is deterministic from the axis pair (legacy-stable — see founderSeedToken).
+// token is deterministic from the axis pair (legacy-stable — see founderSeedToken). The
+// Apply-to-YC flag (item 6, 2026-10-01) appends its token ONLY when on — the comboKey
+// convention — so every pre-existing run's event stream replays byte-identically.
 export function eventSeedKey(
   choices: Choices,
   preset: PresetId | null,
   yc: boolean,
   founder: VsFounderAxes,
   seed: number,
+  ycApply = false,
 ): string {
-  return `vs:events:${comboKey(choices)}|p:${preset ?? '-'}|yc:${yc ? '1' : '0'}|f:${founderSeedToken(founder)}|s:${seed}`
+  const base = `vs:events:${comboKey(choices)}|p:${preset ?? '-'}|yc:${yc ? '1' : '0'}|f:${founderSeedToken(founder)}|s:${seed}`
+  return ycApply ? `${base}|q:1` : base
 }
 
 export interface DrawnVsEvent {
@@ -906,6 +910,10 @@ export interface VsRunState {
   // VS_AI_FIRM_IDS, or null for the judged pick. A DISPLAY PIN only — never the outcome clock.
   // Appended codec token 'a'; old links simply lack it and decode to null.
   assistant: string | null
+  // 'Apply to YC' (2026-10-01, item 6): the setup-band checkbox that composes the real
+  // YC-application corpus process (lib/virtualStartup.ts YC_APPLY_TASK_ID) as its own phase.
+  // Appended codec token 'q'; legacy links lack it and replay WITHOUT the phase — their era.
+  ycApply: boolean
   seed: number
 }
 
@@ -1040,6 +1048,8 @@ export function encodeRunState(state: VsRunState): string {
   if (Object.keys(state.eventChoices).length > 0) compact.e = state.eventChoices
   // Appended token (2026-09-30, item 7) — older decoders never saw 'a'; ours defaults it null.
   if (state.assistant) compact.a = state.assistant
+  // Appended token (2026-10-01, item 6) — 'q' rides only when the Apply-to-YC phase composes.
+  if (state.ycApply) compact.q = 1
   if (state.seed !== 0) compact.s = state.seed
   return toBase64Url(JSON.stringify(compact))
 }
@@ -1087,7 +1097,11 @@ export function decodeRunState(raw: string | null): VsRunState | null {
   // a current judged roster id rejects — the defensive-decode convention (preset precedent).
   if (o.a !== undefined && (typeof o.a !== 'string' || !(VS_AI_FIRM_IDS as readonly string[]).includes(o.a))) return null
   const assistant = typeof o.a === 'string' ? o.a : null
+  // The Apply-to-YC token (appended 'q', 2026-10-01): absent = false (every legacy link — the
+  // phase never composes for them); anything but the literal 1 rejects defensively.
+  if (o.q !== undefined && o.q !== 1) return null
+  const ycApply = o.q === 1
   const seed = o.s === undefined ? 0 : typeof o.s === 'number' && Number.isFinite(o.s) ? o.s : null
   if (seed === null) return null
-  return { choices, preset, yc: o.y === 1, founder, mode, companyName, picks, eventChoices, assistant, seed }
+  return { choices, preset, yc: o.y === 1, founder, mode, companyName, picks, eventChoices, assistant, ycApply, seed }
 }

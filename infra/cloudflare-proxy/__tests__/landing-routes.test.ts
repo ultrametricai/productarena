@@ -108,4 +108,33 @@ describe('landing cutover routing', () => {
     expect(resp.status).toBe(301)
     expect(resp.headers.get('location')).toBe('https://ultrametric.ai/get-started?x=1')
   })
+
+  it('301s /virtual-startup and /virtual-startup/ to /startup-sim (founder 2026-10-01 rename)', async () => {
+    const bare = await get('/virtual-startup')
+    expect(bare.status).toBe(301)
+    expect(bare.headers.get('location')).toBe('https://ultrametric.ai/startup-sim')
+    const slash = await get('/virtual-startup/')
+    expect(slash.status).toBe(301)
+    expect(slash.headers.get('location')).toBe('https://ultrametric.ai/startup-sim/')
+  })
+
+  it('preserves ?run=/?preset= share-link state across the /virtual-startup hop', async () => {
+    // Old share links carry the WHOLE run state in the query — it must survive verbatim.
+    const run = await get('/virtual-startup?run=eyJ2IjoyLCJjIjoiMDAwMDAwMDAwIn0')
+    expect(run.status).toBe(301)
+    expect(run.headers.get('location')).toBe(
+      'https://ultrametric.ai/startup-sim?run=eyJ2IjoyLCJjIjoiMDAwMDAwMDAwIn0',
+    )
+    const preset = await get('/virtual-startup?preset=software&yc=1&geo=UK')
+    expect(preset.status).toBe(301)
+    expect(preset.headers.get('location')).toBe(
+      'https://ultrametric.ai/startup-sim?preset=software&yc=1&geo=UK',
+    )
+  })
+
+  it('301s /virtual-startup/* sub-paths onto their /startup-sim twin, query intact', async () => {
+    const resp = await get('/virtual-startup/opengraph-image?x=1')
+    expect(resp.status).toBe(301)
+    expect(resp.headers.get('location')).toBe('https://ultrametric.ai/startup-sim/opengraph-image?x=1')
+  })
 })

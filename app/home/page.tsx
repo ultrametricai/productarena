@@ -26,7 +26,7 @@ import { buildProcessRows } from '@/lib/processRows'
 //   subtitle, hover hairline + glow, circle-arrow CTA row).
 // - The two deliberate differences from the retired page (both founder-ordered 2026-09-29):
 //   the #products anchor/id is gone and the hero CTA is "Open the startup simulator →" →
-//   /virtual-startup (was "See the products ↓" → #products); and the AFK card's destination
+//   /startup-sim (was "See the products ↓" → #products); and the AFK card's destination
 //   is /company (the ported product page — the old /afk 301s there), Foreloop's is
 //   foreloop.com (the old /foreloop landing page wasn't ported).
 // - The landing footer is not duplicated here: it became the sitewide standard footer in
@@ -106,7 +106,7 @@ export default function HomePage() {
             products that let you focus on creating and skip the automatable.
           </p>
           <Link
-            href="/virtual-startup"
+            href="/startup-sim"
             className="mt-12 inline-flex min-h-11 items-center gap-2 rounded-full border border-zinc-700/80 bg-zinc-950/40 px-6 py-2.5 text-sm text-zinc-200 backdrop-blur-sm transition-colors hover:border-zinc-500 hover:text-white"
           >
             Play with the open startup <span aria-hidden>→</span>

@@ -129,7 +129,7 @@ flowchart TD
   jurisdiction-conditional nodes (they only ever render client-side via the `?juris=` toggle,
   so no judged number moves) and powers `/processes`, every `/processes/<slug>` page
   (`components/ProcessDag.tsx` renders the DAG above with the same route colors), the process
-  rankings (`/rankings/processes/*`), and the open startup simulator at `/virtual-startup`.
+  rankings (`/rankings/processes/*`), and the open startup simulator at `/startup-sim`.
 - `journeys/chains.json` links corpus process IDs into playbooks (see `journeys/README.md`).
 - `lib/founderOps.ts` validates the jurisdiction-scoped workflow layer (`equity/us-de/*`)
   against `schemas/process.schema.json`, resolves its rule-card references into `rules/` and

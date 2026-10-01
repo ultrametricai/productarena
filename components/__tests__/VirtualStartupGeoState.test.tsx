@@ -410,18 +410,23 @@ describe('VirtualStartup — the state-graph panel', () => {
     expect(text).toContain('Technical founder')
     expect(text).toContain('First-time founder')
     // Unasserted decisions show the composed default and say they are not set — while the
-    // DEFAULT-ASSERTED entity (founder round 4, item 5) reads asserted from the first render.
-    expect(text).toContain('Raise a seed · not set')
+    // round-7 DEFAULT-ASSERTED set (entity, team, funding, compliance, ph, remote — 2026-10-01,
+    // item 5) reads asserted from the first render.
+    expect(text).toContain('SaaS subscriptions · not set')
     expect(text).toContain('Delaware C-Corp')
     expect(text).not.toContain('Delaware C-Corp · not set')
+    expect(text).toContain('Raise a seed')
+    expect(text).not.toContain('Raise a seed · not set')
+    expect(text).toContain('X launch')
+    expect(text).toContain('Office')
     // …and asserting one drops the marker (the assertion resets the run; re-run to refill).
-    fireEvent.click(screen.getByTestId('vs-decision-funding'))
-    fireEvent.click(screen.getByRole('option', { name: 'Raise a seed' }))
+    fireEvent.click(screen.getByTestId('vs-decision-product'))
+    fireEvent.click(screen.getByRole('option', { name: 'SaaS subscriptions' }))
     showAll()
     fireEvent.click(screen.getByTestId('vs-sg-tab-decisions'))
     const after = screen.getAllByTestId('vs-sg-decision').map((d) => d.textContent).join(' | ')
-    expect(after).toContain('Raise a seed')
-    expect(after).not.toContain('Raise a seed · not set')
+    expect(after).toContain('SaaS subscriptions')
+    expect(after).not.toContain('SaaS subscriptions · not set')
   })
 
   it('mid-run events land in the Decisions tab as pending, then resolve with the chosen branch', () => {

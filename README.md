@@ -10,7 +10,7 @@
 timeline order — each with its phase, the share an agent can run today, and the vendors that
 serve it.*
 
-- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/virtual-startup)
+- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
 - **Build on it** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([agents & developers](#for-ai-agents))
 - **Add to it** — [CONTRIBUTING.md](./CONTRIBUTING.md): contest a verdict, add your country, add a module
 
@@ -21,7 +21,7 @@ serve it.*
 | What you need | Where |
 | --- | --- |
 | Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its agent ceiling, plus the chained playbooks |
-| The simulator | [/virtual-startup](https://ultrametric.ai/virtual-startup) — a simulated company runs the corpus end to end |
+| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
 | Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
@@ -76,7 +76,7 @@ workflows), [`journeys/`](journeys/) (`chains.json`), and
 [`processes/vendor-registry.json`](processes/) (every vendor fact the process pages render).
 
 **Live.** [/processes](https://ultrametric.ai/processes) (each process at `/processes/<id>`),
-and [The Open Startup](https://ultrametric.ai/virtual-startup) — a simulator that replays the
+and [The Open Startup](https://ultrametric.ai/startup-sim) — a simulator that replays the
 whole corpus as a simulated company, end to end:
 
 ![The Open Startup simulator mid-run — a simulated company executing the process corpus, each step routed agent / manual form / human](docs/assets/virtual-startup.png)
@@ -184,8 +184,8 @@ The startup processes are the center of the repo — everything else feeds them:
 
 The processes themselves live in `processes/corpus.json` (playbooks in
 `journeys/chains.json`), render at [/processes](https://ultrametric.ai/processes), and replay
-end to end in the simulator. Everything is also served raw: the `/data` JSON API and the
-agent endpoints (`/llms.txt`, per-arena `llms.md`).
+end to end in [the simulator](https://ultrametric.ai/startup-sim). Everything is also served
+raw: the `/data` JSON API and the agent endpoints (`/llms.txt`, per-arena `llms.md`).
 
 ## Map of the repo
 
