@@ -5,6 +5,7 @@
 // decision combo.
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+import { isDeepStrictEqual } from 'node:util'
 import { describe, expect, it } from 'vitest'
 import searchAliases from '@/data/search-aliases.json'
 import { GEO_PREF_META } from '@/lib/geoPreference'
@@ -522,11 +523,17 @@ describe('synthetic artifacts — labeled, deterministic, impossible-real', () =
   }, 120_000)
 
   it('replays identically for the same decision combo (seeded, no runtime randomness)', () => {
+    const violations: string[] = []
     for (const combo of combos) {
       const ids = journeyTaskIds(combo, chains)
-      expect(buildJourneyArtifacts(combo, ids)).toEqual(buildJourneyArtifacts(combo, ids))
-      expect(synthCompany(combo)).toEqual(synthCompany(combo))
+      if (!isDeepStrictEqual(buildJourneyArtifacts(combo, ids), buildJourneyArtifacts(combo, ids))) {
+        violations.push(`${comboKey(combo)}: artifacts differ between runs`)
+      }
+      if (!isDeepStrictEqual(synthCompany(combo), synthCompany(combo))) {
+        violations.push(`${comboKey(combo)}: company differs between runs`)
+      }
     }
+    expect(violations).toEqual([])
   })
 
   it('identifiers are constructed impossible-real: 00- EIN, .example domains, entity-true name', () => {
