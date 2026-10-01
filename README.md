@@ -1,9 +1,8 @@
 # Ultrametric — the open startup repo
 
 **Everything a founder — or their agent — needs to start and run a company: every
-[process](#processes) step by step, the [tools](#vendors) ranked on evidence, and the
-[business logic](#business-logic) underneath. Every record is dated, cited, and testable —
-never opinion.**
+[process](#processes) step by step, the [vendors](#vendors) ranked, and the
+[business logic](#business-logic) underneath.**
 
 ![The founder processes on ultrametric.ai — each process with its phase, agent ceiling, step count, timeline position, and vendors](docs/assets/processes.png)
 
@@ -26,7 +25,7 @@ serve it.*
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
 | Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
-| Your country | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
+| Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
 
@@ -167,46 +166,26 @@ modules, the contribution bar, and the honesty rules.
 
 ## How it works
 
-Two production lines feed one site, one data API, and one set of agent surfaces:
+The startup processes are the center of the repo — everything else feeds them:
 
-```mermaid
-flowchart LR
-  subgraph vendors ["Vendors — the evidence line"]
-    crawl["pipeline/ crawl → extract →<br/>normalize → collect-community →<br/>probe → judge → derive"]
-    evidence["data/&lt;arena&gt;/evidence/*.json<br/>dated, tiered evidence"]
-    verdicts["data/&lt;arena&gt;/verdicts.json<br/>every verdict cites evidence ids"]
-    rankings["data/&lt;arena&gt;/rankings.json<br/>HMAC _provenance, deterministic"]
-    crawl --> evidence --> verdicts --> rankings
-  end
-  subgraph corpus ["Processes + business logic — the corpus line"]
-    procs["processes/corpus.json + journeys/chains.json"]
-    rules["rules/ + sources/ + jurisdictions/<br/>validated by lib/founderOps.ts"]
-    modules["lib/openstartup/ modules"]
-    rules --> procs
-    rules --> modules
-  end
-  rankings --> site["ultrametric.ai<br/>static site"]
-  rankings --> api["/data JSON API<br/>+ /openapi.json"]
-  rankings --> agents["agent surfaces<br/>llms.txt + llms.md"]
-  procs --> site
-  procs --> sim["/virtual-startup<br/>the simulator"]
-  registry["processes/vendor-registry.json"] -. links steps to judged arenas .-> procs
-  rankings -.-> registry
-```
+- **Vendor rankings feed the steps.** The pipeline (`pipeline/`) crawls vendor docs, GitHub,
+  and community sources into dated evidence (`data/<arena>/evidence/`), an LLM judge turns
+  each (product, story) pair into a cited verdict (`verdicts.json`), and `derive` computes
+  the rankings (`rankings.json`) — scores are computed, never hand-set, and `recompute-check`
+  proves it bit-identically. `processes/vendor-registry.json` links each process step's
+  vendor options to the arena that judges them, so every "use this tool for this step" is a
+  ranked, cited claim.
+- **Business modules compute what the steps need.** The `lib/openstartup/` modules (cap
+  table, runway, deadlines, equity comp, notes, waterfalls, 409A sanity) are the calculations
+  behind the processes, each formula cited.
+- **The law anchors both.** Rule cards (`rules/`, backed by primary sources in `sources/`)
+  drive the deadline math, the jurisdiction-scoped workflows, and the geo notes
+  (`jurisdictions/`) — a process step that leans on a legal threshold cites a dated card.
 
-Read it left to right. On the evidence line, the local pipeline (`pipeline/`) crawls vendor
-docs, GitHub, and community sources into dated, tiered evidence
-(`data/<arena>/evidence/`), an LLM judge turns each (product, story) pair into a cited verdict
-(`verdicts.json`), and `derive` computes the rankings (`rankings.json`) — scores are computed,
-never hand-set, and `recompute-check` proves it bit-identically. On the corpus line, rule
-cards (`rules/`, backed by `sources/`) anchor both the jurisdiction-scoped workflows in
-`processes/` and the business-logic modules in `lib/openstartup/`, while the operational
-corpus (`processes/corpus.json`) and its playbooks (`journeys/chains.json`) describe what a
-founder actually does. The two lines meet in `processes/vendor-registry.json`: each process
-step's vendor options link to the arena that judges them. Everything lands in the same three
-surfaces — the static site, the `/data` JSON API (mirrored verbatim at build time by
-`scripts/copy-data.mjs`), and the agent endpoints (`/llms.txt`, per-arena `llms.md`) — and the
-simulator at `/virtual-startup` replays the whole corpus end to end.
+The processes themselves live in `processes/corpus.json` (playbooks in
+`journeys/chains.json`), render at [/processes](https://ultrametric.ai/processes), and replay
+end to end in the simulator. Everything is also served raw: the `/data` JSON API and the
+agent endpoints (`/llms.txt`, per-arena `llms.md`).
 
 ## Map of the repo
 
