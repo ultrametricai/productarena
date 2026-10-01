@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:38:27.794Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:38:43.970Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 87 ingested+committed / 7 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 30,432 |
-| Cumulative ingested spend | $512.69 (hard stop $800) |
-| Projected fleet ingest total | ~$571 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.9% (7,341 flips / 30,432 comparable cells) |
-| Batch requests / interactive fallbacks | 29,396 / 14 |
+| Arenas done / remaining | 88 ingested+committed / 6 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 30,846 |
+| Cumulative ingested spend | $518.72 (hard stop $800) |
+| Projected fleet ingest total | ~$570 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 75.7% (7,489 flips / 30,846 comparable cells) |
+| Batch requests / interactive fallbacks | 29,810 / 15 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -78,6 +78,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | marketplace-payments | 318 | 86 | 73% | $4.51 |
 | mcp-infrastructure | 364 | 68 | 81.3% | $5.41 |
 | meeting-ai | 270 | 72 | 73.3% | $4.76 |
+| mobile-dev | 414 | 148 | 64.3% | $6.02 |
 | mobile-payments | 208 | 50 | 76% | $3.36 |
 | model-gateways | 350 | 92 | 73.7% | $6.19 |
 | notes-knowledge | 330 | 71 | 78.5% | $5.94 |
@@ -109,5 +110,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `mobile-dev` msgbatch_0116gwS9uaQqUAgsqdZRdTV7 (414) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
+`agent-skills` msgbatch_01HYHek5Z23gQb13u1gj3uQm (312) · `ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840) · `team-chat` msgbatch_01Bp1rNYryt1kAL2Zpm2PgF4 (255)
 
