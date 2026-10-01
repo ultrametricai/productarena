@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
@@ -619,7 +619,33 @@ export default function VirtualStartup({
   const followRef = useRef(true)
   const pendingTopRef = useRef(false)
 
+  // The reveal ticker NEVER outlives the page: cleared on unmount (this cleanup — regression-
+  // pinned by components/__tests__/navPerfPins.test.tsx) and paused while the tab is hidden
+  // (below). Both are part of the mobile-nav hang fix (2026-10-01): a ticking 240ms re-render of
+  // the whole sim must not keep burning the main thread when the reader isn't looking at it.
   useEffect(() => () => { if (timer.current) clearInterval(timer.current) }, [])
+
+  // Pause the ticker while the document is hidden, resume on return. Only an ACTIVE ticker is
+  // paused/resumed (hiddenPausedRef): a manual ⏹ Stop or a semi-auto decision pause stays
+  // stopped — visibility must never restart a run the reader (or the run itself) halted.
+  const hiddenPausedRef = useRef(false)
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        if (timer.current) {
+          stop()
+          hiddenPausedRef.current = true
+        }
+      } else if (hiddenPausedRef.current) {
+        hiddenPausedRef.current = false
+        startTicker()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+    // stop/startTicker close only over refs and setState — stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // After every reveal commit: pin the terminal to its newest line while following, or honor the
   // one-shot scroll-to-top after an instant fill. Reading scrollHeight post-commit is the whole
@@ -1010,7 +1036,14 @@ export default function VirtualStartup({
       }
       const next = at + 1
       revealedRef.current = next
-      setRevealed(next)
+      // TRANSITION priority (mobile-nav hang fix, 2026-10-01): each reveal re-renders the whole
+      // sim (terminal rows + DAG + state panel) and the post-commit terminal pin forces layout —
+      // near the 240ms budget on a phone. As default-priority updates these ticks preempted and
+      // restarted the router's navigation transition every 240ms, so tapping the header logo
+      // mid-run starved the navigation ("it just hangs" until the run ended). As a transition
+      // the tick yields to navigation; the pause schedule stays SYNCHRONOUS via the refs above,
+      // so semi-auto semantics and the fake-timer tests are unchanged.
+      startTransition(() => setRevealed(next))
       if (next >= rowsLenRef.current) stop()
     }, CADENCE_MS)
   }

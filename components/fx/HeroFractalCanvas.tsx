@@ -98,6 +98,49 @@ export default function HeroFractalCanvas() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
+    // Defer the WebGL bring-up (context + synchronous shader compile/link + first full-screen
+    // draw) behind an idle callback (mobile-nav perf fix 2026-10-01): this component mounts in
+    // the arrival frame of a navigation to the homepage, and on a low-power mobile GPU the
+    // compile/link work blocked the main thread exactly when the new page should paint. The
+    // static .cb-fallback gradient (already the SSG/no-WebGL state) covers the gap; nothing is
+    // removed — the fractal still fades in, just off the critical path.
+    let cancelled = false
+    let cleanup: (() => void) | undefined
+    const start = () => {
+      if (cancelled) return
+      cleanup = initFractal(canvas)
+    }
+    let idleId: number | undefined
+    let timeoutId: ReturnType<typeof setTimeout> | undefined
+    if (typeof requestIdleCallback === 'function') {
+      idleId = requestIdleCallback(start, { timeout: 1500 })
+    } else {
+      // Safari has no requestIdleCallback — a short timeout clears the arrival frame.
+      timeoutId = setTimeout(start, 200)
+    }
+    return () => {
+      cancelled = true
+      if (idleId !== undefined && typeof cancelIdleCallback === 'function') cancelIdleCallback(idleId)
+      if (timeoutId !== undefined) clearTimeout(timeoutId)
+      cleanup?.()
+    }
+  }, [])
+
+  // Matches the original .cb-canvas element: absolute overlay, faded in by script only once a
+  // frame has rendered — the .cb-fallback gradient underneath is what shows otherwise.
+  return (
+    <canvas
+      ref={canvasRef}
+      className="cb-canvas absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000"
+      aria-hidden
+    />
+  )
+}
+
+// The original mount-time body, unchanged in behavior: build the GL pipeline, draw the single
+// static frame, fade in, then run/pause the loop off visibility + viewport. Returns the
+// listener/rAF cleanup (undefined where it bails — no WebGL, shader failure, reduced motion).
+function initFractal(canvas: HTMLCanvasElement): (() => void) | undefined {
     let gl: WebGLRenderingContext | null = null
     try {
       gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' })
@@ -224,15 +267,4 @@ export default function HeroFractalCanvas() {
       canvas.removeEventListener('webglcontextlost', onContextLost)
       io?.disconnect()
     }
-  }, [])
-
-  // Matches the original .cb-canvas element: absolute overlay, faded in by script only once a
-  // frame has rendered — the .cb-fallback gradient underneath is what shows otherwise.
-  return (
-    <canvas
-      ref={canvasRef}
-      className="cb-canvas absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000"
-      aria-hidden
-    />
-  )
 }
