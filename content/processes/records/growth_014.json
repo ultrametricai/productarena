@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "id": "growth_014",
+  "kind": "process",
+  "title": "Roll out a pricing change",
+  "summary": "Change prices without burning the base: model the revenue impact, decide who gets grandfathered, create the new plans, migrate subscriptions, announce it honestly, and watch churn and MRR through the transition.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Model the revenue impact of the new pricing",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Decide grandfathering and migration policy",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Create the new plans in billing",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe_billing",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "stripe_billing",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "chargebee",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "recurly",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "billing-subscriptions",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Migrate or grandfather existing subscriptions",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe_billing",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "high",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Update the site pricing page and docs",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "category",
+          "id": "vibe-coding",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Announce the change to customers",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "loops",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "customer_io",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "mailchimp",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "email-marketing",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "painful",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Monitor churn and MRR through the transition",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "stripe_billing",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "growth",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "pricing",
+    "supportLevel": "partial",
+    "supportReason": "Plan modeling, the billing migration, and the comms are automatable over billing and email APIs; the grandfathering call is a judgment the founder owns.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "new price points",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "pricing",
+      "revenue",
+      "growth"
+    ],
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 4,
+    "activeMinutes": 205,
+    "totalEstimatedMinutes": 205,
+    "hasAsyncSteps": false,
+    "timeOrder": 71
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "growth_014",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "d51c5efd7cb9e16c4a0563fc084e0d290e9672e551779cc67f65171141370b92"
+  }
+}

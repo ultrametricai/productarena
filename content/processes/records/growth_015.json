@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "id": "growth_015",
+  "kind": "process",
+  "title": "Run a win-back campaign",
+  "summary": "Re-engage the customers who churned months ago: build the churned cohort, split it by cancel reason and value, send a win-back sequence with an offer, and track who comes back. Distinct from a churn save attempt, which fires at cancellation time for one account.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Build the churned-customer cohort",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Segment by cancel reason and value",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "posthog",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "amplitude",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "mixpanel",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "product-analytics",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Draft the win-back sequence and offer",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "customer_io",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "customer_io",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "loops",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "mailchimp",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "email-marketing",
+          "role": "rankings"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/chatgpt",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/claude",
+          "role": "additional-candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Approve the discount budget",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Launch the sequence",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "customer_io",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Track reactivations and log them in the CRM",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "hubspot",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "customer_io",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "hubspot",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "growth",
+    "cadence": "quarterly",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "growth_retention",
+    "supportLevel": "partial",
+    "supportReason": "Cohort building, sequence drafting, and the sends are fully API-driven; the discount budget is a founder approval.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "win-back offer budget",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "retention",
+      "email",
+      "growth"
+    ],
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 4,
+    "activeMinutes": 105,
+    "totalEstimatedMinutes": 105,
+    "hasAsyncSteps": false,
+    "timeOrder": 72
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "growth_015",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "2fda5db99a73cb56563205280323f32c229d30f46da2b60df66cc285081d3ce2"
+  }
+}

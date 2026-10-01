@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "id": "qs_023",
+  "kind": "process",
+  "title": "Open bank account",
+  "summary": "Open a business checking account to separate personal and company finances. The application is fully online with the major startup banks; approval typically takes a day or two.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n2",
+      "kind": "decision",
+      "title": "Choose a bank",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [
+        {
+          "id": "uk-eu-multicurrency",
+          "title": "UK/EU - multi-currency account",
+          "summary": "The US neobanks onboard US entities (committed vendor-geo evidence); a UK- or EU-incorporated company opens a multi-currency business account with a provider that operates there.",
+          "when": "The company is incorporated in the UK or EU - the US neobanks don't onboard it",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "wise",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "vendor",
+              "id": "wise",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "airwallex",
+              "role": "candidate"
+            }
+          ],
+          "metadata": {
+            "context": {
+              "kind": "geo",
+              "countries": [
+                "UK",
+                "DE",
+                "FR"
+              ]
+            }
+          }
+        }
+      ],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "brex",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "relay",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "startup-banking",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Complete the online application (company details, EIN, founders)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "brex",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "relay",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "startup-banking",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "reversible",
+        "estimatedMinutes": 15
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Upload founder ID and formation documents (KYC)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "form",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Wait for the bank to open the account (1–2 business days)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "category",
+          "id": "workflow-automation",
+          "role": "additional-rankings"
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2880,
+        "async": true
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Connect the bank feed to the books",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 3
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n4",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "mercury",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "brex",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "relay",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "finance",
+    "cadence": "once",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "quick_start",
+    "supportLevel": "manual_guide",
+    "supportReason": "The application and KYC upload are online forms (no public API); approval is a bank-side wait. Once open, the account connects to the books over the bank API.",
+    "contextNeeded": [
+      {
+        "tool": "company.get",
+        "query": "EIN",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "quick-start",
+      "setup-wizard",
+      "onboarding",
+      "finance",
+      "banking"
+    ],
+    "activeMinutes": 38,
+    "totalEstimatedMinutes": 2918,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "geoScope": "us",
+    "timeOrder": 13,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "qs_023",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "8b2c89d632714dc8cc6cd7d2c0ccf49b70b3fbb152e17868357707559ec92dbb"
+  }
+}

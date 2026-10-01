@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "id": "form_005",
+  "kind": "process",
+  "title": "Register state taxes",
+  "summary": "Register for state income tax, sales tax, and employment tax in operating states.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Identify required state registrations",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 5
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Register with state tax authority",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "state_sos",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Register for sales tax (if applicable)",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "state_sos",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "vendor",
+          "id": "avalara",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "anrok",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "taxjar",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "stripe_tax",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "tax-automation",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "form",
+        "reversibility": "painful",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Store registration numbers",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "jmu1",
+      "kind": "reference",
+      "title": "Register where you have sales-tax nexus",
+      "guidance": null,
+      "when": null,
+      "ref": "tax_011",
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "painful",
+        "jurisdictions": [
+          "MULTI"
+        ],
+        "estimatedMinutes": 10
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n1",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "state_sos",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "avalara",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "anrok",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "taxjar",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "formation",
+    "cadence": "event-driven",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "company_formation",
+    "supportLevel": "manual_guide",
+    "supportReason": "State tax portals have no APIs. System provides state-specific checklists and pre-fills company data.",
+    "contextNeeded": [
+      {
+        "tool": "company.get",
+        "query": "ein",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "company operating states",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "address",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "formation",
+      "tax",
+      "state"
+    ],
+    "activeMinutes": 57,
+    "totalEstimatedMinutes": 57,
+    "hasAsyncSteps": false,
+    "region": "us",
+    "geoScope": "us-state",
+    "geoNotes": [
+      {
+        "country": "IN",
+        "summary": "The state layer is real here: GST registration is per state of operation, and professional tax plus shops-and-establishments registration are state acts — the closest thing to US state tax registration.",
+        "actionUrl": "https://www.gst.gov.in/",
+        "actionLabel": "GST portal (per-state registration)"
+      },
+      {
+        "country": "UK",
+        "summary": "No states: registering for taxes means one national HMRC registration each — Corporation Tax (the UTR arrives automatically), PAYE when you employ, and VAT past the £90k threshold.",
+        "actionUrl": "https://www.gov.uk/register-for-vat",
+        "actionLabel": "HMRC — register for VAT"
+      },
+      {
+        "country": "DE",
+        "summary": "The sub-national layer is municipal: a Gewerbeanmeldung (trade registration) with each municipality you operate in, which drives Gewerbesteuer at that municipality's Hebesatz — plus the one federal tax-office registration via ELSTER.",
+        "actionUrl": "https://www.existenzgruender.de/",
+        "actionLabel": "BMWK founders portal (Gewerbeanmeldung)"
+      },
+      {
+        "country": "FR",
+        "summary": "Registrations are national and flow from the guichet unique filing; local business taxes (the CFE) are then assessed per commune automatically — nothing to register state-by-state.",
+        "actionUrl": "https://www.impots.gouv.fr/professionnel",
+        "actionLabel": "impots.gouv.fr — espace professionnel"
+      }
+    ],
+    "timeOrder": 42,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "form_005",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "88a09e3d69213802181b7aaed8461e6421ee51e6e87140548381265b1b746931"
+  }
+}

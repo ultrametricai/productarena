@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "id": "fin_003",
+  "kind": "process",
+  "title": "Send the board financial report",
+  "summary": "Generate monthly board update with financial metrics, burn rate, runway, and key KPIs.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Pull bank balances",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "mercury",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 1
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Pull revenue from Stripe",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "stripe",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Pull expenses from QBO",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "quickbooks",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 2
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Calculate burn rate and runway",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "product",
+          "id": "ai-assistants/chatgpt",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/claude",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/gemini",
+          "role": "additional-candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 3
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Compile board report draft",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "notion",
+          "role": "stated-vendor"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/chatgpt",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/claude",
+          "role": "additional-candidate"
+        },
+        {
+          "kind": "product",
+          "id": "ai-assistants/gemini",
+          "role": "additional-candidate"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 10
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Founder reviews and edits",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Send to board members",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "gmail",
+          "role": "stated-vendor"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "approvalRequired": true,
+        "riskLevel": "medium",
+        "estimatedMinutes": 2
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    }
+  ],
+  "references": [
+    {
+      "kind": "vendor",
+      "id": "mercury",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "quickbooks",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "stripe",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "notion",
+      "role": "involves"
+    },
+    {
+      "kind": "vendor",
+      "id": "gmail",
+      "role": "involves"
+    }
+  ],
+  "notes": [],
+  "metadata": {
+    "phase": "finance",
+    "cadence": "monthly",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "financial_reporting",
+    "supportLevel": "full",
+    "supportReason": "All data sources (Mercury, QBO, Stripe) have APIs. System compiles metrics, calculates burn/runway, formats report.",
+    "contextNeeded": [
+      {
+        "tool": "accounts.list",
+        "query": "balances",
+        "tier": "tools",
+        "required": true
+      },
+      {
+        "tool": "mercury.transactions",
+        "query": "revenue",
+        "tier": "connected",
+        "required": true
+      },
+      {
+        "tool": "quickbooks.query",
+        "query": "expenses",
+        "tier": "connected",
+        "required": true
+      },
+      {
+        "tool": "company.get",
+        "query": "members",
+        "tier": "tools",
+        "required": true
+      }
+    ],
+    "tags": [
+      "finance",
+      "reporting",
+      "board",
+      "recurring"
+    ],
+    "activeMinutes": 50,
+    "totalEstimatedMinutes": 50,
+    "hasAsyncSteps": false,
+    "timeOrder": 83,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1,
+    "slugAliases": [
+      {
+        "slug": "board-financial-report",
+        "label": "Board financial report"
+      }
+    ]
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "fin_003",
+    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
+    "sha256": "e4f546b8bf8c9508f205d0bc0336cad944fd9bffc0f94ee5cbd5afa71d2cc377"
+  }
+}
