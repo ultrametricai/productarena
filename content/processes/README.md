@@ -12,11 +12,11 @@ Notes use `{ "text": "...", "references": [] }`; references are optional. They c
 
 ## Commands
 
-- `pnpm shared:import` imports new or unedited generated records. It preserves authored edits; if their legacy source changes, it reports conflicts before writing any file. Removed source records also require reconciliation.
+- `pnpm shared:import` imports new or unedited generated records from committed legacy sources. Commit legacy edits first: unstaged, staged-but-uncommitted, and untracked source files are rejected. The importer reads the pinned Git tree so the recorded revision and values agree. It preserves authored edits; if their legacy source changes, it reports conflicts before writing any file. Removed source records also require reconciliation.
 - `pnpm shared:check` validates the catalog, schema, and legacy source drift.
-- `python3 scripts/shared-processes/check-import.py` checks the initial migration's full value preservation. Run before authoring changes to imported fields; it intentionally rejects such changes.
+- `python3 scripts/shared-processes/check-import.py` checks full value preservation against a fresh migration in a temporary directory. CI runs this check without modifying or comparing authored catalog records to the legacy baseline. Authored guidance, outcomes, notes, and graph changes remain allowed. The catalog validator separately rejects legacy `toolCall` and `functionCalls` fields, including inside metadata.
 - `pnpm exec tsx scripts/shared-processes/check.ts --write-schema` updates the JSON Schema generated from the TypeScript source.
-- `pnpm shared:export --output /path/to/catalog.json` exports a committed, validated catalog with its Git revision, JSON Schema, and content hash.
+- `pnpm shared:export --output /path/to/catalog.json` exports a committed, validated catalog with its Git revision, JSON Schema, and content hash. It also rejects a committed JSON Schema that differs from the TypeScript definition, using the same consistency check as `shared:check`.
 - Add `--example` to export only the two synthetic staging records in `content/processes/examples/staging.json`. They demonstrate option branches, a nested process, and a shared downstream step. They are excluded from the real catalog and current site.
 
 The initial mapping contains 149 records, 694 operational nodes and 522 original connections. The audit lists missing outcomes, guidance, vendor keys, and placement questions. A valid mapped record is not automatically a useful published guide.

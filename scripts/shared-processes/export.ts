@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import { loadSharedProcesses } from '../../lib/shared-processes/load'
 import { validateCatalog } from '../../lib/shared-processes/schema'
+import { loadSharedSchema } from '../../lib/shared-processes/json-schema'
 
 const { values } = parseArgs({ options: { output: { type: 'string' }, example: { type: 'boolean', default: false } } })
 if (!values.output) throw new Error('Use --output <catalog.json>')
@@ -11,7 +12,7 @@ const tracked = ['content/processes/records', 'schemas/shared-process.schema.jso
 const dirty = execFileSync('git', ['status', '--porcelain', '--', ...tracked], { encoding: 'utf8' })
 if (dirty.trim()) throw new Error('Commit the shared records and schema before exporting a pinned catalog')
 const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
-const schema = JSON.parse(readFileSync('schemas/shared-process.schema.json', 'utf8'))
+const schema = loadSharedSchema()
 const records = values.example
   ? validateCatalog(JSON.parse(readFileSync('content/processes/examples/staging.json', 'utf8')))
   : loadSharedProcesses()

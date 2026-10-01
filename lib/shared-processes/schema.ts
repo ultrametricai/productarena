@@ -53,6 +53,19 @@ export const sharedRecordSchema = z.strictObject({
 })
 export type SharedRecord = z.infer<typeof sharedRecordSchema>
 
+function rejectLegacyOperations(value: unknown, location: string) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => rejectLegacyOperations(item, `${location}[${index}]`))
+  } else if (value && typeof value === 'object') {
+    for (const [key, item] of Object.entries(value)) {
+      if (key === 'toolCall' || key === 'functionCalls') {
+        throw new Error(`${location}.${key}: legacy operations belong in the migration audit`)
+      }
+      rejectLegacyOperations(item, `${location}.${key}`)
+    }
+  }
+}
+
 function acyclic(graph: Map<string, string[]>, label: string) {
   const active = new Set<string>()
   const done = new Set<string>()
@@ -74,6 +87,7 @@ export function validateCatalog(input: unknown): SharedRecord[] {
   const aliases = new Set(byId.keys())
   const references = new Map<string, string[]>()
   for (const record of records) {
+    rejectLegacyOperations(record, record.id)
     for (const alias of record.aliases ?? []) {
       if (aliases.has(alias)) throw new Error(`Duplicate alias: ${alias}`)
       aliases.add(alias)

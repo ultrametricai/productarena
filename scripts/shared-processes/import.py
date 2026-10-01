@@ -3,17 +3,17 @@ import copy
 import hashlib
 import json
 import re
-import subprocess
-from collections import Counter
 from pathlib import Path
 import claim_audit
+from source_snapshot import read_snapshot
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--write", action="store_true")
+parser.add_argument("--output", type=Path, help="Destination catalog directory; defaults to content/processes.")
 args = parser.parse_args()
 SOURCE = Path(__file__).resolve().parents[2]
-ROOT = SOURCE / "content/processes"
-REVISION = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=SOURCE, text=True).strip()
+ROOT = args.output.resolve() if args.output else SOURCE / "content/processes"
+REVISION, SOURCE_FILES = read_snapshot(SOURCE)
 TRACE = []
 ISSUES = []
 
@@ -205,17 +205,18 @@ def workflow(value, path):
     return r
 
 
-corpus = json.loads((SOURCE / "processes/corpus.json").read_text())
-chains = json.loads((SOURCE / "journeys/chains.json").read_text())
-registry = json.loads((SOURCE / "processes/vendor-registry.json").read_text())
+corpus = SOURCE_FILES["processes/corpus.json"]
+chains = SOURCE_FILES["journeys/chains.json"]
+registry = SOURCE_FILES["processes/vendor-registry.json"]
 def slug(value):
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 TITLES = {p["id"]: p["title"] for p in corpus}
 SLUGS = {slug(p["title"]): p["id"] for p in corpus}
 SLUGS.update({a["slug"]: p["id"] for p in corpus for a in p.get("slugAliases", [])})
 records = [operational(p) for p in corpus] + [chain(c) for c in chains]
-for path in sorted((SOURCE / "processes/equity").rglob("*.json")):
-    records.append(workflow(json.loads(path.read_text()), path.relative_to(SOURCE).as_posix()))
+for path, value in SOURCE_FILES.items():
+    if path.startswith("processes/equity/"):
+        records.append(workflow(value, path))
 def check_vendor_refs(value, record_id):
     if isinstance(value, dict):
         for ref in value.get("references", []):

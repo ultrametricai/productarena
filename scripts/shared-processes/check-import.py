@@ -2,15 +2,22 @@ import copy
 import hashlib
 import json
 import re
+import subprocess
+import sys
+import tempfile
+from source_snapshot import read_snapshot
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT
-records = [json.loads(p.read_text()) for p in sorted((ROOT / "content/processes/records").glob("*.json"))]
+revision, sources = read_snapshot(ROOT)
+with tempfile.TemporaryDirectory() as temporary:
+    output = Path(temporary)
+    subprocess.run([sys.executable, str(ROOT / "scripts/shared-processes/import.py"), "--write", "--output", str(output)], check=True, stdout=subprocess.DEVNULL)
+    records = [json.loads(p.read_text()) for p in sorted((output / "records").glob("*.json"))]
+    audit = json.loads((output / "legacy-audit.json").read_text())["claims"]
 by_id = {r["id"]: r for r in records}
-corpus = json.loads((SOURCE / "processes/corpus.json").read_text())
-chains = json.loads((SOURCE / "journeys/chains.json").read_text())
-manifest = {"files": []}
+corpus = sources["processes/corpus.json"]
+chains = sources["journeys/chains.json"]
 slugs = {re.sub(r"[^a-z0-9]+", "-", p["title"].lower()).strip("-"): p["id"] for p in corpus}
 slugs.update({a["slug"]: p["id"] for p in corpus for a in p.get("slugAliases", [])})
 checks = 0
@@ -75,8 +82,8 @@ def check_part(raw, target, label, workflow=False):
             check_part(before, after, at + "." + before["id"])
 
 
-for file in manifest["files"]:
-    equal(hashlib.sha256((SOURCE / file["path"]).read_bytes()).hexdigest(), file["sha256"], "snapshot " + file["path"])
+for record in records:
+    equal(record["source"]["revision"], revision, record["id"] + ".sourceRevision")
 
 for raw in corpus:
     r = by_id[raw["id"]]
@@ -100,8 +107,9 @@ for raw in chains:
     equal(r["links"], [], raw["id"] + ".noInventedDependencies")
     equal(r["metadata"], {k: v for k, v in raw.items() if k not in {"id", "name", "tagline", "taskIds"}}, raw["id"] + ".metadata")
 
-for path in (SOURCE / "processes/equity").rglob("*.json"):
-    raw = json.loads(path.read_text())
+for path, raw in sources.items():
+    if not path.startswith("processes/equity/"):
+        continue
     r = by_id[raw["id"]]
     equal(r["source"]["sha256"], hashlib.sha256(json.dumps(raw, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest(), raw["id"] + ".sourceHash")
     for field in ("id", "title", "summary"):
@@ -120,7 +128,6 @@ equal(all("relation" not in link for r in records for link in r["links"]), True,
 equal(all(not r["outcomes"] for r in records if r["source"]["path"] in ("processes/corpus.json", "journeys/chains.json")), True, "No invented outcomes")
 
 from collections import Counter
-audit = json.loads((ROOT / "content/processes/legacy-audit.json").read_text())["claims"]
 expected_claims = []
 def find_quarantined(value, record):
     if isinstance(value, dict):
@@ -135,7 +142,6 @@ for raw in corpus:
     find_quarantined(raw, raw["id"])
 actual_claims = [(x["record"], x["field"], json.dumps(x["value"], sort_keys=True)) for x in audit if x["disposition"] == "audit_only"]
 equal(Counter(actual_claims), Counter(expected_claims), "Quarantined source values preserved in separate audit")
-candidate_claims = []
 for r in records:
     def reject_operations(value):
         if isinstance(value, dict):
@@ -155,6 +161,6 @@ except AssertionError:
 else:
     raise AssertionError("Value-preservation check failed to detect a changed estimate")
 
-out = {"records": len(records), "valueChecks": positive_checks, "negativeCheck": negative, "scope": "Field values, nesting, edge order, reference identity, legacy metadata and source hashes checked. This does not validate source claims or approve content."}
+out = {"records": len(records), "valueChecks": positive_checks, "negativeCheck": negative, "scope": "Fresh migration output checked against committed legacy sources. Authored catalog records are not modified or compared to the baseline."}
 
 print(json.dumps(out, indent=2))

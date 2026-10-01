@@ -25,12 +25,10 @@ describe('shared process definitions', () => {
     expect(collectDecisions(records, 'shared-schema-staging-check')).toHaveLength(1)
     expect(loadSharedProcesses().some(record => record.id.startsWith('shared-schema-staging'))).toBe(false)
   })
-  it('loads the entire additive catalog with no graph or nesting cycles', () => {
+  it('validates the authored catalog and accounts for the imported inventory', () => {
     const all = loadSharedProcesses()
-    expect(all).toHaveLength(149)
-    expect(all.reduce((n, r) => n + r.links.length, 0)).toBe(522)
-    expect(all.flatMap(r => r.parts).filter(p => p.kind === 'decision').length).toBeGreaterThan(0)
-    expect(all.find(r => r.id === 'equity.us-de.83b-election')?.metadata.decisions).toHaveLength(3)
+    const imported = JSON.parse(readFileSync('content/processes/import-manifest.json', 'utf8'))
+    expect(all.map(record => record.id)).toEqual(expect.arrayContaining(Object.keys(imported.records)))
   })
   it('supports option branches, shared joins, nesting, and new records without import history', () => {
     const records = validateCatalog(fixture())
@@ -49,6 +47,8 @@ describe('shared process definitions', () => {
     ['graph cycle', (r: SharedRecord[]) => { r[0].links.push({ from: 'review', to: 'method' }) }],
     ['nesting cycle', (r: SharedRecord[]) => { r[1].parts = [part('back', { kind: 'reference', ref: 'build' })] }],
     ['invalid URL', (r: SharedRecord[]) => { r[0].references = [{ kind: 'url', url: 'javascript:alert(1)', title: 'Bad', description: null, role: 'source' }] }],
+    ['legacy tool label in metadata', (r: SharedRecord[]) => { r[0].metadata.toolCall = 'invented-operation' }],
+    ['legacy operations nested inside option metadata', (r: SharedRecord[]) => { r[0].parts[0].options[0].metadata.legacy = [{ functionCalls: [{ method: 'invented-operation' }] }] }],
   ])('rejects %s', (_, mutate) => {
     const records = fixture()
     mutate(records)
@@ -57,6 +57,8 @@ describe('shared process definitions', () => {
   it('keeps notes open and source unknowns explicit', () => {
     const records = fixture()
     records[0].notes = [{ text: 'A contextual recommendation.', references: [{ kind: 'url', url: 'https://example.com/docs', title: null, description: null, role: 'source' }] }]
+    records[0].guidance = 'Authored guidance.'
+    records[0].outcomes = ['An authored outcome.']
     expect(validateCatalog(records)[0].notes[0].text).toBe('A contextual recommendation.')
   })
 })
