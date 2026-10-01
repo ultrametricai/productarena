@@ -1,15 +1,15 @@
 # Opus 5.5 judge-migration status — live tracker
 
-_Last updated 2026-10-01T21:41:01.658Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
+_Last updated 2026-10-01T21:42:28.615Z by the migration lane. Deleted when the migration doc (docs/JUDGE-MIGRATION-2026-09-30.md) supersedes it, or kept as the wave record._
 
 | | |
 |---|---|
-| Arenas done / remaining | 90 ingested+committed / 4 in flight (of 94; ai-coding included in done) |
-| Cells re-judged so far | 31,413 |
-| Cumulative ingested spend | $530.79 (hard stop $800) |
-| Projected fleet ingest total | ~$572 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
-| Fleet exact agreement vs sonnet-5 (running) | 75.6% (7,667 flips / 31,413 comparable cells) |
-| Batch requests / interactive fallbacks | 30,377 / 16 |
+| Arenas done / remaining | 91 ingested+committed / 3 in flight (of 94; ai-coding included in done) |
+| Cells re-judged so far | 31,933 |
+| Cumulative ingested spend | $540.26 (hard stop $800) |
+| Projected fleet ingest total | ~$573 (+ interactive fallbacks + ~$10–25 uncertainty re-measure) |
+| Fleet exact agreement vs sonnet-5 (running) | 75.7% (7,775 flips / 31,933 comparable cells) |
+| Batch requests / interactive fallbacks | 30,897 / 17 |
 
 Churn-policy flag: the no-new-evidence revert rule is deliberately NOT applied to this wave
 (README §7); every flip is labeled `judge model migration` via the score-history `note`.
@@ -24,6 +24,7 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 | agent-sandboxes | 408 | 107 | 73.8% | $6.94 |
 | agent-skills | 312 | 107 | 65.7% | $6.53 |
 | agentic-commerce | 392 | 136 | 65.3% | $9.07 |
+| ai-assistants | 520 | 108 | 79.2% | $9.47 |
 | ai-code-review | 318 | 72 | 77.4% | $5.83 |
 | ai-coding | 1036 | 265 | 74.4% | $0.00 |
 | ai-memory | 342 | 68 | 80.1% | $6.91 |
@@ -112,5 +113,5 @@ Protected human adjudications (18 cells) re-applied per docs/JUDGE-MIGRATION-202
 
 ## Batches in flight
 
-`ai-assistants` msgbatch_012xTeP6QjdVPqJhz2U11eJp (520) · `project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
+`project-management` msgbatch_01B5iFcjoEvZGd1kLXBQJJf5 (498) · `startup-banking` msgbatch_01Uf7GeQZ8HMjub3R31qrWEK (518) · `startup-law-firms` msgbatch_01AADoLUJuMwjW44Y8HKPgc6 (840)
 
