@@ -261,12 +261,13 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
   it('the 2026-09-25 toggles: hire, enterprise, PH launch all reshape the journey (build-first now rides presets/permalinks only — round 5, item 4)', () => {
     renderIt()
     showAll()
-    // Defaults: hire yes (playbook in), Developers ICP (no enterprise chain), PH yes, name-first
-    // — and compliance default-asserted at Basic minimums (item 8), so NO compliance chain runs.
+    // Defaults (round 7, 2026-10-01): hire yes (playbook in), Developers ICP (no enterprise
+    // chain), X launch (the same launch chain, venue-noted), name-first — and compliance
+    // default-asserted at SOC 2 early, so the compliance chain RUNS.
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
     expect(screen.queryByText('Complete SOC 2 Type II')).toBeNull()
     expect(termBody().getByText('Launch on Product Hunt & directories')).toBeTruthy()
-    expect(screen.queryByText('Set up a password manager')).toBeNull() // Basic minimums — the dedicated playbook honestly absent
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy() // SOC 2 early — the default-asserted posture
 
     pickDecision('hire', 'Stay founders-only')
     pickDecision('enterprise', 'Enterprises')
@@ -305,10 +306,15 @@ describe('VirtualStartup — decisions drive the rendered journey', () => {
     expect(termBody().getByText(/no storefront step yet/)).toBeTruthy()
   })
 
-  it("compliance options: the default-asserted 'Basic minimums' honestly skips the chain and 'None' is display-hidden (item 8); HIPAA runs the same chain with the framework named", () => {
+  it("compliance options: the round-7 default-asserted 'SOC 2 (early)' runs the chain; 'Basic minimums' honestly skips it and 'None' stays display-hidden", () => {
     renderIt()
-    // The default-asserted 'Basic minimums' composes the none-path — nothing to unskip.
-    expect(decisionTitle('compliance')).toContain('Basic minimums')
+    // The round-7 default (2026-10-01, item 5): compliance default-asserted at SOC 2 early.
+    expect(decisionTitle('compliance')).toContain('SOC 2 (early)')
+    showAll()
+    expect(termBody().getByText('Set up a password manager')).toBeTruthy()
+    expect(termBody().getByText('Stand up compliance')).toBeTruthy()
+    // 'Basic minimums' (round 6) keeps its roster row and still skips the chain honestly.
+    pickDecision('compliance', 'Basic minimums')
     showAll()
     expect(screen.queryByText('Set up a password manager')).toBeNull()
     expect(termBody().queryByText('Stand up compliance')).toBeNull()
@@ -508,8 +514,9 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
       compliance: ['SOC 2 (early)', 'SOC 2 (deferred)', 'HIPAA', 'ISO 27001', 'Basic minimums'],
       // The ICP selector (item 4, 2026-09-30) replaced the enterprise yes/no.
       enterprise: ['Developers', 'Enterprises', 'SMBs', 'Consumers'],
-      // Launch options (founder round 4, item 7): venue-flavored public launches + stealth.
-      ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch'],
+      // Launch options (founder round 4, item 7): venue-flavored public launches + stealth;
+      // 'X launch' appended 2026-10-01 (item 5) as the new default-asserted venue.
+      ph: ['Product Hunt', 'Stealth mode', 'Show HN', 'Waitlist launch', 'X launch'],
       // Remote vs In-office (item 5, 2026-09-30).
       remote: ['Remote-first', 'Office'],
     }
@@ -520,20 +527,28 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(screen.queryByRole('option', { name: 'Ltd (Companies House)' })).toBeNull()
     expect(screen.queryByRole('option', { name: 'GmbH' })).toBeNull()
     fireEvent.click(within(band).getByTestId('vs-decision-entity')) // close
+    // The round-7 DEFAULT-ASSERTED set (2026-10-01, item 5): the founder's demo composition —
+    // these dropdowns show their value from the first render; everything else starts 'Not set'.
+    const defaultAsserted: Record<string, string> = {
+      entity: 'C-Corp',
+      team: 'Cofounders',
+      funding: 'Seed',
+      compliance: 'SOC 2',
+      ph: 'X',
+      remote: 'Office',
+    }
     for (const [id, names] of Object.entries(optionNames)) {
       const trigger = within(band).getByTestId(`vs-decision-${id}`)
       expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
-      // DEFAULT-ASSERTED decisions show their value: entity (round 4, item 5) and compliance
-      // ('Basic minimums' — item 8, 2026-09-30); everything else starts 'Not set'.
-      if (id === 'entity') expect(trigger.textContent).toContain('C-Corp')
-      else if (id === 'compliance') expect(trigger.textContent).toContain('Basics')
+      const asserted = defaultAsserted[id]
+      if (asserted !== undefined) expect(trigger.textContent).toContain(asserted)
       else expect(trigger.textContent).toContain('Not set')
       fireEvent.click(trigger)
       for (const name of names) expect(screen.getByRole('option', { name })).toBeTruthy()
       // The hidden 'None' never renders as an option (HIDDEN_OPTION_VALUES).
       if (id === 'compliance') expect(screen.queryByRole('option', { name: 'None' })).toBeNull()
       expect(screen.getByTestId(`vs-decision-${id}-notset`).getAttribute('aria-selected')).toBe(
-        id === 'entity' || id === 'compliance' ? 'false' : 'true',
+        asserted !== undefined ? 'false' : 'true',
       )
       fireEvent.click(trigger) // close before the next one
     }
@@ -616,10 +631,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     for (const [id, name] of [
       ['entity', 'Delaware C-Corp'], ['team', 'Cofounders'], ['funding', 'Raise a seed'],
       ['product', 'SaaS subscriptions'], ['hire', 'Make the first hire'],
-      // Compliance's INITIAL state is the default-asserted 'Basic minimums' (item 8) — the
-      // byte-identity baseline composes it, so the explicit assertion repeats that value.
-      ['compliance', 'Basic minimums'], ['enterprise', 'Developers'], ['ph', 'Product Hunt'],
-      ['remote', 'Remote-first'],
+      // The round-7 default-asserted values (2026-10-01): the byte-identity baseline composes
+      // SOC 2 early + X launch + Office, so the explicit assertions repeat those values.
+      ['compliance', 'SOC 2 (early)'], ['enterprise', 'Developers'], ['ph', 'X launch'],
+      ['remote', 'Office'],
     ] as const) {
       pickDecision(id, name)
     }
@@ -793,9 +808,11 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
     expect(decisionTitle('funding')).toContain('VC backed')
     expect(decisionTitle('entity')).toContain('Delaware C-Corp')
     expect(decisionTitle('hire')).toContain('Make the first hire')
-    // Partial assert: decisions outside the scenario stay Not set (they compose defaults).
+    // Partial assert: decisions outside the scenario keep their state — product stays Not set;
+    // team keeps its round-7 default-asserted 'Cofounders' (2026-10-01, item 5).
     expect(decisionTitle('product')).toContain('not set')
-    expect(decisionTitle('team')).toContain('not set')
+    expect(decisionTitle('team')).toContain('Cofounders')
+    expect(decisionTitle('team')).not.toContain('not set')
     showAll()
     expect(termBody().getByText('Raise pre-seed (SAFEs)')).toBeTruthy()
     expect(termBody().getByText('Hire first employee')).toBeTruthy()
@@ -1170,8 +1187,13 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
 
   it("the Workplace decision (item 5): Office composes the real lease-an-office process as a chainless phase (no playbook link); Remote-first composes nothing extra", () => {
     renderIt()
+    // Office is the round-7 DEFAULT-ASSERTED workplace (2026-10-01, item 5) — the lease phase
+    // composes on a fresh visit; Remote-first honestly removes it.
     showAll()
-    expect(screen.queryByText('Lease an office')).toBeNull() // remote-first default
+    expect(termBody().getByText('Lease an office')).toBeTruthy()
+    pickDecision('remote', 'Remote-first')
+    showAll()
+    expect(screen.queryByText('Lease an office')).toBeNull()
     pickDecision('remote', 'Office')
     showAll()
     expect(termBody().getByText('Lease an office')).toBeTruthy()
@@ -1189,10 +1211,20 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
 
   it("the 'I'm using' selector (item 7): picking an assistant pins it on the AI-conversation steps as 'your assistant' while the judged top keeps '(recommended · judged)'", () => {
     renderIt()
-    // Default: judged pick — no pin anywhere.
-    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('Judged pick')
+    // Fresh-visit default (2026-10-01, item 5): ChatGPT is simply pre-selected — and NO
+    // 'judged pick' wording labels the selector anywhere.
+    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('ChatGPT')
+    expect(screen.getByTestId('vs-assistant-row').textContent).not.toMatch(/judged pick/i)
     showAll()
+    // The judged top on the naming step IS ChatGPT — one chip, both labels, no separate pin.
     expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    expect(screen.getByTestId('vs-step-assistant-label').textContent).toContain('your assistant')
+    // Clearing back to 'Not set' (the legacy-link state) removes the pin entirely.
+    fireEvent.click(screen.getByTestId('vs-assistant-trigger'))
+    fireEvent.click(screen.getByTestId('vs-assistant-judged'))
+    expect(screen.getByTestId('vs-assistant-trigger').textContent).toContain('Not set')
+    expect(screen.queryByTestId('vs-step-assistant')).toBeNull()
+    expect(screen.queryByTestId('vs-step-assistant-label')).toBeNull()
     // Pick Claude (≠ the judged top ChatGPT on the naming step) — annotation only: the revealed
     // terminal keeps its rows and the pin appears on the ai-assistants-mapped step.
     fireEvent.click(screen.getByTestId('vs-assistant-trigger'))

@@ -632,17 +632,48 @@ describe('shareable permalink — the exact run replays from ?run=', () => {
     expect(decoded.founder).toEqual(DEFAULT_FOUNDER_AXES)
     expect(decoded.mode).toBe('auto')
     // Nothing was touched in the dropdowns — the link omits every 'Not set' decision and
-    // carries exactly the DEFAULT-ASSERTED state (entity, and since item 8 the Basic-minimums
-    // compliance posture — both asserted from the first render).
-    expect(decoded.choices).toEqual({ entity: 'c-corp', compliance: 'basics' })
-    expect(decoded.assistant).toBeNull()
+    // carries exactly the round-7 DEFAULT-ASSERTED state (2026-10-01, item 5: the founder's
+    // demo composition, asserted from the first render), plus the ChatGPT assistant default.
+    expect(decoded.choices).toEqual({
+      entity: 'c-corp', team: 'cofounders', funding: 'seed', compliance: 'now', ph: 'x', remote: 'office',
+    })
+    expect(decoded.assistant).toBe('chatgpt')
   })
 
   it('a malformed ?run= is ignored (default view, no crash)', () => {
     window.history.replaceState(null, '', '/?run=!!!garbage!!!')
     renderIt()
-    // Default view: entity keeps its DEFAULT-ASSERTED value, everything else reads 'Not set'.
+    // Default view: the round-7 DEFAULT-ASSERTED set keeps its values, the rest reads 'Not set'.
     expect(screen.getByTestId('vs-decision-entity').textContent).toContain('C-Corp')
-    expect(screen.getByTestId('vs-decision-team').textContent).toContain('Not set')
+    expect(screen.getByTestId('vs-decision-team').textContent).toContain('Cofounders')
+    expect(screen.getByTestId('vs-decision-product').textContent).toContain('Not set')
+  })
+
+  it('ERA REPLAY (2026-10-01, item 5): a legacy ?run= with elided launch/workplace slots keeps its own era — PH venue, no lease phase — while a fresh visit composes the new defaults (X launch + office)', () => {
+    // Fresh visit first: the round-7 demo composition — X-venue launch artifact + the ops_014
+    // lease phase, both default-asserted.
+    const fresh = renderIt()
+    showAll()
+    expect(within(screen.getByTestId('vs-terminal-body')).getByText('Lease an office')).toBeTruthy()
+    const freshLaunch = screen.getAllByTestId('vs-artifact').find((a) => /Launch day/.test(a.textContent ?? ''))!
+    expect(freshLaunch.textContent).toContain('drafted on X')
+    fresh.unmount()
+    // A legacy v2 link that asserted only entity (the old default-asserted set) and elided the
+    // rest — exactly what pre-round-7 links carried. The elided slots must replay THEIR era:
+    // the launch artifact keeps the PH-directories venue and the office lease never composes —
+    // only the composition-neutral underlay (entity/team/funding/compliance) asserts.
+    const legacy = encodeRunState({
+      choices: { entity: 'c-corp' }, preset: null, yc: false, founder: DEFAULT_FOUNDER_AXES,
+      mode: 'auto', companyName: null, picks: {}, eventChoices: {}, assistant: null, seed: 0,
+    })
+    window.history.replaceState(null, '', `/?run=${legacy}`)
+    renderIt()
+    expect(screen.getByTestId('vs-decision-ph').textContent).toContain('Not set')
+    expect(screen.getByTestId('vs-decision-remote').textContent).toContain('Not set')
+    showAll()
+    expect(screen.queryByText('Lease an office')).toBeNull()
+    const legacyLaunch = screen.getAllByTestId('vs-artifact').find((a) => /Launch day/.test(a.textContent ?? ''))!
+    expect(legacyLaunch.textContent).toContain('queued on the directories')
+    expect(legacyLaunch.textContent).not.toContain('drafted on X')
   })
 })

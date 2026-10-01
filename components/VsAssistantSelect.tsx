@@ -10,11 +10,14 @@ import type { VsAssistant } from '@/lib/virtualStartup'
 // VS_AI_FIRM_IDS, resolved server-side). The pick is a DISPLAY PIN: the chosen assistant renders
 // as 'your assistant' on the AI-conversation steps while the judged top keeps its
 // '(recommended · judged)' chip — no judged number moves, no clock changes. Rides the ?run=
-// permalink ('a' token); 'Judged pick' (null) is the default and stays out of the URL.
+// permalink ('a' token). Fresh visits arrive pre-selected on ChatGPT (founder 2026-10-01,
+// item 5 — the 'judged pick' wording that used to label the null default is GONE; the null row
+// is plain 'Not set' now and exists for legacy links, which decode without the 'a' token).
 //
 // NO title= tooltips on the trigger or the options (founder batch 2026-09-30, item 3: they
-// overlap the open listbox) — the option sublabels inside the list carry the short descriptions;
-// accessible names stay on aria-label.
+// overlap the open listbox), and NO sublabels (item 4, 2026-10-01: names only) — the pin
+// semantics stay on the row's IconChip tooltip and on the step surface itself ('your assistant'
+// + the untouched '(recommended · judged)' label); accessible names stay on aria-label.
 
 export default function VsAssistantSelect({
   assistants,
@@ -22,7 +25,8 @@ export default function VsAssistantSelect({
   onChange,
 }: {
   assistants: VsAssistant[]
-  // The pinned judged product id, or null for the judged pick (default).
+  // The pinned judged product id, or null for no pin (legacy links; fresh visits arrive
+  // pre-selected — lib/virtualStartup.ts DEFAULT_VS_ASSISTANT).
   value: string | null
   onChange: (next: string | null) => void
 }) {
@@ -92,7 +96,7 @@ export default function VsAssistantSelect({
         }`}
       >
         {current && <ProductLogoView product={{ id: current.id, name: current.name }} size={14} hasLogo={current.hasLogo} />}
-        {current ? current.name : 'Judged pick'}
+        {current ? current.name : 'Not set'}
         <span aria-hidden className="text-[9px] text-zinc-500">
           ▾
         </span>
@@ -119,12 +123,9 @@ export default function VsAssistantSelect({
                   : 'border-transparent text-zinc-400 hover:bg-emerald-400/10 hover:text-emerald-300'
               }`}
             >
-              <span className="min-w-0 flex-1">
-                Judged pick
-                <span className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
-                  the AI-conversation steps show only the judged top vendor — no pin
-                </span>
-              </span>
+              {/* The null row: plain 'Not set' — the 'Judged pick' default labeling is gone
+                  (item 5, 2026-10-01); unpinned steps simply show the step's own ranked chips. */}
+              <span className="min-w-0 flex-1">Not set</span>
               {current === null && (
                 <span aria-hidden className="shrink-0 text-emerald-300">
                   ✓
@@ -151,13 +152,9 @@ export default function VsAssistantSelect({
                   }`}
                 >
                   <ProductLogoView product={{ id: a.id, name: a.name }} size={14} hasLogo={a.hasLogo} />
-                  <span className="min-w-0 flex-1">
-                    {a.name}
-                    <span className="mt-0.5 block text-[10px] leading-snug text-zinc-400">
-                      pins {a.name} as &lsquo;your assistant&rsquo; on the AI-conversation steps — the judged
-                      pick stays visible and no judged number moves
-                    </span>
-                  </span>
+                  {/* Names only (item 4, 2026-10-01) — the pin-semantics sublabel moved to the
+                      row IconChip tooltip and the step surface labels. */}
+                  <span className="min-w-0 flex-1">{a.name}</span>
                   {active && (
                     <span aria-hidden className="shrink-0 text-emerald-300">
                       ✓

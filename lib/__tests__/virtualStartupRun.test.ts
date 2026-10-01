@@ -544,8 +544,11 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
     // The appended venues take the next digits — and unknown digits still reject defensively.
     expect(decodeCombo(withPhDigit('2'))!.ph).toBe('show-hn')
     expect(decodeCombo(withPhDigit('3'))!.ph).toBe('waitlist')
-    expect(decodeCombo(withPhDigit('4'))).toBeNull()
+    // 'X launch' appended 2026-10-01 (item 5) — the new default-ASSERTED venue takes digit 4.
+    expect(decodeCombo(withPhDigit('4'))!.ph).toBe('x')
+    expect(decodeCombo(withPhDigit('5'))).toBeNull()
     expect(decodeAssertedCombo(withPhDigit('3'))!.ph).toBe('waitlist')
+    expect(decodeAssertedCombo(withPhDigit('4'))!.ph).toBe('x')
   })
 
   it('round-5 codec compat: entity/product/compliance digits 0/1 still mean what they always meant; the new options append as the next digits', () => {

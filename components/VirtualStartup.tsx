@@ -22,6 +22,7 @@ import {
   DEFAULT_ASSERTED,
   DEFAULT_ASSERTED_URL_NEUTRAL,
   DEFAULT_CHOICES,
+  DEFAULT_VS_ASSISTANT,
   defaultEntityFor,
   ENTITY_META,
   ENTITY_OPTIONS_BY_COUNTRY,
@@ -467,7 +468,8 @@ const DECISION_SHORT: Record<keyof Choices, { title: string; options: Record<str
   // codec/seed surface and never move; the display is who you sell to.
   enterprise: { title: 'ICP', options: { no: 'Developers', yes: 'Enterprises', smb: 'SMBs', consumer: 'Consumers' } },
   // Launch options (founder round 4, item 7): venue-flavored public launches + Stealth mode.
-  ph: { title: 'Launch', options: { yes: 'PH', no: 'Stealth', 'show-hn': 'HN', waitlist: 'Waitlist' } },
+  // 'x' (2026-10-01, item 5): the X-launch venue — the new default-asserted pick.
+  ph: { title: 'Launch', options: { yes: 'PH', no: 'Stealth', 'show-hn': 'HN', waitlist: 'Waitlist', x: 'X' } },
   // Remote vs In-office (item 5, 2026-09-30).
   remote: { title: 'Workplace', options: { remote: 'Remote', office: 'Office' } },
 }
@@ -553,11 +555,13 @@ export default function VirtualStartup({
   const [pinnedPrefix, setPinnedPrefix] = useState<Row[] | null>(null)
   const [eventChoices, setEventChoices] = useState<Record<string, string>>({})
   const [runSeed, setRunSeed] = useState(0)
-  // ── The assistant pin (item 7, 2026-09-30): a judged ai-assistants product id or null for the
-  // judged pick. DISPLAY annotation only (the geo precedent) — changing it never recomposes or
-  // resets the run; it renames the displayed pick on the AI-conversation steps, shows in the
-  // state panel, and rides the ?run= permalink ('a' token).
-  const [assistant, setAssistant] = useState<string | null>(null)
+  // ── The assistant pin (item 7, 2026-09-30): a judged ai-assistants product id, or null for no
+  // pin. DISPLAY annotation only (the geo precedent) — changing it never recomposes or resets
+  // the run; it renames the displayed pick on the AI-conversation steps, shows in the state
+  // panel, and rides the ?run= permalink ('a' token). FRESH visits start pinned to ChatGPT
+  // (founder 2026-10-01, item 5 — simply pre-selected, no 'judged pick' labeling); a decoded
+  // ?run= link overrides below, so old links without the 'a' token replay unpinned, their era.
+  const [assistant, setAssistant] = useState<string | null>(DEFAULT_VS_ASSISTANT)
   const [win, setWin] = useState<WindowTab>('d30')
   // ── Semi-auto drive state: what the paused run is waiting on (a decision card or the naming
   // card), plus whether it already handled naming. (The title-bar manual pause is GONE — founder
@@ -656,11 +660,15 @@ export default function VirtualStartup({
   useEffect(() => {
     const run = decodeRunState(readParam('run'))
     if (!run) return
-    // Only the composition-NEUTRAL default-asserted decisions underlay the link's choices: a
-    // ?run= may elide entity (old links encode it as '.') and still replay with it asserted —
-    // semi-auto never asks it. Compliance is NOT neutral (its default-asserted 'basics' differs
-    // from the composed default), so an old link's elided compliance keeps composing the SOC 2
-    // branch it always did instead of being silently re-asserted.
+    // ERA HANDLING (lib/virtualStartup.ts DEFAULT_ASSERTED_URL_NEUTRAL): only the composition-
+    // NEUTRAL default-asserted decisions underlay the link's choices — a ?run= may elide a slot
+    // (old links encode it as '.') and still replay with the neutral defaults asserted (entity,
+    // team, funding, compliance — identical composition either way; semi-auto never asks them).
+    // The 2026-10-01 demo defaults that CHANGE composition (ph 'x' → X-venue launch, remote
+    // 'office' → the ops_014 lease phase) are excluded from this underlay by construction, so a
+    // decoded legacy link keeps composing exactly its own era's journey; only FRESH visits get
+    // the new defaults. The same rule covers the assistant pin: run.assistant (null on old
+    // links) simply overwrites the fresh-visit ChatGPT default below.
     setAsserted({ ...DEFAULT_ASSERTED_URL_NEUTRAL, ...run.choices })
     setPreset(run.preset)
     // A run link carries the asserted decisions themselves, never a scenario pill — the pill is

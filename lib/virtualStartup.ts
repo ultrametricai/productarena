@@ -74,10 +74,14 @@ export type RemoteChoice = 'remote' | 'office'
 // Launch options (founder batch 2026-09-29, round 4, item 7). Codec compat rules the values:
 // 'yes' (Product Hunt) and 'no' (Stealth mode — the old Quiet launch, relabeled) keep their
 // original tokens and option indices so every shared digit-codec permalink replays unchanged;
-// 'show-hn' and 'waitlist' are APPENDED. Honesty: the venue options share the SAME real
-// launch-on-product-hunt corpus playbook with the venue named (no invented steps); stealth
-// genuinely skips the launch chain — ongoing operations continue.
-export type PhLaunchChoice = 'yes' | 'no' | 'show-hn' | 'waitlist'
+// 'show-hn' and 'waitlist' are APPENDED. 'x' (founder batch 2026-10-01, item 5: "X launch")
+// APPENDS after them — launching on X is the SAME real launch playbook with the venue noted as
+// X, exactly the Show HN precedent (honest composition: NO invented X-corpus steps), and it is
+// the new DEFAULT-ASSERTED launch for fresh visits (see DEFAULT_ASSERTED — never the composed
+// default, so elided legacy links keep their PH-venue era). Honesty: the venue options share the
+// SAME real launch-on-product-hunt corpus playbook with the venue named (no invented steps);
+// stealth genuinely skips the launch chain — ongoing operations continue.
+export type PhLaunchChoice = 'yes' | 'no' | 'show-hn' | 'waitlist' | 'x'
 
 export interface Choices {
   entity: EntityChoice
@@ -92,6 +96,15 @@ export interface Choices {
   remote: RemoteChoice
 }
 
+// ─── ERA HANDLING (the DEFAULT_ASSERTED_URL_NEUTRAL pattern, extended 2026-10-01) ───────────
+// DEFAULT_CHOICES is the FROZEN composition era: what an UNASSERTED ('Not set' / '.'-elided)
+// decision composes. It never moves — every shared link that elided a decision replays exactly
+// the branch it was shared with (PH-venue launch, remote-first, SOC 2-early compliance, …), and
+// comboKey-seeded artifacts/events stay byte-identical. New house defaults land in
+// DEFAULT_ASSERTED below instead: a FRESH visit starts with those decisions asserted, decoded
+// legacy ?run= links are underlaid ONLY with the composition-neutral subset
+// (DEFAULT_ASSERTED_URL_NEUTRAL) — so a new non-neutral default (X launch, Office) can never
+// rewrite an old link's journey. Committed judged numbers never move either way.
 export const DEFAULT_CHOICES: Choices = {
   entity: 'c-corp',
   funding: 'seed',
@@ -100,30 +113,44 @@ export const DEFAULT_CHOICES: Choices = {
   ordering: 'name-first',
   hire: 'yes',
   // 'Not set' still composes the SOC 2-early branch — old links that elide compliance replay the
-  // exact journey they always did. The item-8 'Basic minimums' default lives in DEFAULT_ASSERTED
-  // (a fresh session starts ASSERTED at 'basics'), never here.
+  // exact journey they always did.
   compliance: 'now',
   enterprise: 'no',
+  // 'Not set' composes the PH-venue launch — the pre-2026-10-01 default. The X-launch demo
+  // default lives in DEFAULT_ASSERTED, never here.
   ph: 'yes',
+  // 'Not set' composes remote-first (nothing extra) — the Office demo default lives in
+  // DEFAULT_ASSERTED, never here.
   remote: 'remote',
 }
 
-// DEFAULT-ASSERTED decisions (founder batch 2026-09-29, round 4, item 5): decisions that start
-// ASSERTED at their listed value instead of 'Not set' — the dropdown shows the value, semi-auto
-// never asks them, and the ?run= codec simply serializes them like any assertion. A per-decision
-// list so more decisions can move here later. Item 8 (2026-09-30): compliance defaults onto
-// 'Basic minimums' — NOTE it differs from DEFAULT_CHOICES.compliance ('now'), so a decoded old
-// link may only be overlaid with the URL-NEUTRAL subset below (values equal to the composed
-// default) — otherwise an old '.'-elided compliance slot would silently lose its SOC 2 chain.
+// DEFAULT-ASSERTED decisions (founder batch 2026-09-29, round 4, item 5; demo composition
+// refresh 2026-10-01, sim round 7 item 5): decisions that start ASSERTED at their listed value
+// instead of 'Not set' — the dropdown shows the value, semi-auto never asks them, and the ?run=
+// codec simply serializes them like any assertion. The founder's chosen demo composition:
+// Raise a seed · Cofounders · X launch · Office · SOC 2 (early) · Delaware C-Corp — with the
+// ai-assistant pin defaulting to ChatGPT (DEFAULT_VS_ASSISTANT below).
+// ERA NOTE: team/funding/compliance equal their DEFAULT_CHOICES values (composition-NEUTRAL —
+// they join the URL-neutral underlay; an elided legacy slot composes identically either way);
+// ph 'x' and remote 'office' are NON-neutral (they change the default composition: Office
+// composes the ops_014 lease phase, X names the launch venue) — they are EXCLUDED from the
+// decoded-link underlay by construction, so legacy links keep their own era. Round-6's
+// compliance 'basics' default is superseded by 'now' (SOC 2) per the founder's round-7 pick;
+// 'basics' keeps its codec slot and roster row, and old links asserting it replay unchanged.
 export const DEFAULT_ASSERTED: Partial<Choices> = {
   entity: 'c-corp',
-  compliance: 'basics',
+  team: 'cofounders',
+  funding: 'seed',
+  compliance: 'now',
+  ph: 'x',
+  remote: 'office',
 }
 
 // The DEFAULT_ASSERTED subset that is composition-NEUTRAL (value === DEFAULT_CHOICES value) —
 // the only safe underlay for a decoded ?run= link: an old link that elided a decision keeps
-// composing exactly the default branch it always did, while entity still replays asserted (so
-// semi-auto never asks it — the original underlay's whole purpose).
+// composing exactly the default branch it always did, while the neutral slots still replay
+// asserted (so semi-auto never asks them — the underlay's whole purpose). Derived, not listed:
+// a non-neutral default (ph 'x', remote 'office') can never leak in by construction.
 export const DEFAULT_ASSERTED_URL_NEUTRAL: Partial<Choices> = Object.fromEntries(
   Object.entries(DEFAULT_ASSERTED).filter(
     ([k, v]) => DEFAULT_CHOICES[k as keyof Choices] === v,
@@ -349,6 +376,9 @@ export const DECISIONS: DecisionDef[] = [
       { value: 'no', label: 'Stealth mode', detail: 'no public launch — the launch playbook is skipped; ongoing operations continue' },
       { value: 'show-hn', label: 'Show HN', detail: 'the same real launch-on-product-hunt playbook, aimed at a Show HN post — venue only, identical corpus steps' },
       { value: 'waitlist', label: 'Waitlist launch', detail: 'the same real launch-on-product-hunt playbook — its email-capture step opens the waitlist; venue only, identical corpus steps' },
+      // Appended 2026-10-01 (item 5) — the new DEFAULT-ASSERTED launch; the Show HN precedent:
+      // venue named, zero invented corpus steps.
+      { value: 'x', label: 'X launch', detail: 'the same real launch-on-product-hunt playbook, aimed at a launch post on X — venue only, identical corpus steps' },
     ],
   },
   {
@@ -744,7 +774,9 @@ export function journeyPhases(choices: Choices, chains: VsChain[], opts: Journey
         ? 'Show HN — the same launch playbook, aimed at a Show HN post (venue only; identical corpus steps)'
         : choices.ph === 'waitlist'
           ? 'waitlist launch — the same launch playbook; the email-capture step opens the waitlist (venue only; identical corpus steps)'
-          : null,
+          : choices.ph === 'x'
+            ? 'X launch — the same launch playbook, aimed at a launch post on X (venue only; identical corpus steps)'
+            : null,
     )
   if (choices.compliance === 'later') compliancePhase()
   // compliance 'none': the chain honestly never runs — neither branch above fires.
@@ -801,6 +833,13 @@ export function unionTaskIds(chains: VsChain[]): string[] {
 
 export const VS_AI_FIRM_IDS = ['chatgpt', 'claude', 'gemini', 'grok', 'muse'] as const
 export type VsAiFirmId = (typeof VS_AI_FIRM_IDS)[number]
+
+// The assistant a FRESH visit starts pinned to (founder batch 2026-10-01, item 5: ChatGPT is
+// simply pre-selected — no 'judged pick' wording labels this default; the '(recommended ·
+// judged)' chip on step vendors is a different surface, the honesty label on rankings, and
+// stays). ERA: decoded ?run= links override this — an old link without the 'a' token replays
+// with no pin, exactly as it was shared. Display pin only; no judged number moves.
+export const DEFAULT_VS_ASSISTANT: VsAiFirmId = 'chatgpt'
 
 // The arena the pin applies to — a step is "an AI-conversation step" exactly when its judged
 // top pick was ranked in this arena (committed step-story mappings, resolved server-side).
@@ -1010,7 +1049,9 @@ const ARTIFACT_GENERATORS: Record<string, (ctx: ArtifactCtx) => Draft[]> = {
         ? `"${co.name}" queued as a Show HN post · assets uploaded`
         : choices.ph === 'waitlist'
           ? `waitlist for "${co.name}" opened · assets uploaded`
-          : `"${co.name}" queued on the directories · assets uploaded`,
+          : choices.ph === 'x'
+            ? `launch post for "${co.name}" drafted on X · assets uploaded`
+            : `"${co.name}" queued on the directories · assets uploaded`,
   }],
   // First-hire playbook (2026-09-25 toggle wave).
   hr_001: () => [{ label: 'Offer', value: 'offer #001 signed — Engineer 1 joins' }],
