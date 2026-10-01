@@ -3,20 +3,21 @@
   "id": "brand_002",
   "kind": "process",
   "title": "Generate a brand logo",
-  "summary": "Create and refine an icon or logo in chat, reuse the brand brief, and return saved files for the intended uses.",
+  "summary": "Use an image model to develop a logo, then refine its colors, icon and wordmark, small-size detail, and black-and-white versions.",
   "outcomes": [
-    "Usable logo files for the requested uses, with inspected formats, dimensions, backgrounds, and saved locations.",
-    "A recorded primary selection or clearly identified drafts, with unperformed checks and remaining work explicit."
+    "A recommended or selected logo direction that fits the company and its first real uses.",
+    "Coherent icon and wordmark arrangements, suitable color and monochrome versions, and a mark that remains recognizable at the sizes needed.",
+    "Usable artwork with a short explanation of its design choices and any unresolved limitations."
   ],
-  "guidance": "Produce an icon or logo in the current chat, refine it from feedback, and return usable files. Reuse the brand brief and existing assets. A logo-only request does not need to restart naming or the full Branding process.\n\nRead the existing brand document, selected name, audience, offer, tone, colors, intended uses, source artwork, and rejected directions. Preserve exact spelling, required colors, prohibited motifs, budget, and supplier or data restrictions. Ask only for a missing fact that changes the design. An icon without text can proceed while a name is provisional.\n\nIf the user wants a small change to an existing logo, inspect that file and edit it. Keep the source and previous version. For an existing vector identity, use its editable vector source; do not regenerate the whole identity for a routine export or color change.",
+  "guidance": "Start with a capable image model and a clear design brief. The useful work is choosing a direction and refining the colors, icon and wordmark, simplicity, and behavior across real uses. Keep existing assets and decisions in use where possible.\n\nReuse the company name, audience, offer, tone, existing artwork, colors, rejected directions, and intended uses from context. Infer a sensible starting direction when you can. Ask only when a missing preference materially changes the work. A new logo does not require a complete brand strategy or UI color system.\n\nDevelop the brief, compare the actual artwork, and make focused improvements. A useful recommendation explains the design choices and tradeoffs. Preserve an existing selection; keep a proposed direction distinct from a final choice.",
   "parts": [
     {
-      "id": "shared-colors",
-      "kind": "reference",
-      "title": "Reuse or establish shared color roles when needed",
-      "guidance": "Reuse supplied colors for a logo-only request. Use the palette process when the goal also needs shared interface color roles; a complete palette is not a prerequisite for a logo draft.",
-      "when": "The request includes shared interface color roles or a palette decision beyond the logo itself.",
-      "ref": "brand_003",
+      "id": "design-brief",
+      "kind": "step",
+      "title": "Turn the company context into a design brief",
+      "guidance": "Choose what the logo should communicate and which uses matter first: a website header, app icon, social avatar, presentation, or another known setting. Carry exact spelling and any existing brand constraints.\n\nDecide whether to start with a wordmark, an icon with a wordmark, or an icon alone. An icon with a wordmark provides a readable company name and a compact mark for small spaces. A wordmark can stand on its own when a separate symbol adds little. An icon alone needs enough surrounding context for people to know whose mark it is. Treat these as design choices you can recommend from context.\n\nDescribe the desired character through shape, typography, and composition. Specify the relationship between icon and name: visual weight, spacing, alignment, and the horizontal or stacked arrangements actually needed. Choose an intentional color direction and require the identity to hold up in solid black and solid white. Do not rely on a gradient or several colors to make an otherwise unreadable symbol work.",
+      "when": null,
+      "ref": null,
       "options": [],
       "notes": [],
       "references": [],
@@ -25,16 +26,26 @@
     {
       "id": "n1",
       "kind": "decision",
-      "title": "Choose how to create or refine the logo",
-      "guidance": "Recommend using an AI with image generation and editing in the conversation. When the current host has that capability, use it directly: generate the image, show it inline, and refine the same image from the user's feedback. Do not send the user to sign up for a separate logo service or configure an API merely to get a first draft.\n\nCheck the actual tools available. Request a transparent background for a standalone mark when supported. A PNG is a useful first deliverable; do not promise editable vector paths from a raster image tool. Use native vector tools for an existing SVG identity or when editable vector output is required.\n\nIf this chat cannot generate images, provide a ready-to-paste prompt and brief for an image-capable chat, or use the user's existing design tool. Explain which files to bring back. Continue the brand brief and palette while the image is pending. A prompt alone is not a generated logo.\n\nWhen the brief is clear, start with one recommended direction. Offer up to three distinct directions only when a real design choice remains. Generate separate assets, not a board of tiny logos that must be extracted later.\n\nUse this prompt structure, omitting unknown or irrelevant fields:\n\n```text\nCreate a [standalone icon / symbol and wordmark] for [brand and offer].\nAudience and tone: [known brief].\nVisual idea: [one simple concept].\nExact text: [verbatim spelling, or no text].\nColors: [required values, or monochrome].\nUses: [app icon, website header, or other requested uses].\nUse a clear silhouette and simple shapes that remain readable at small sizes.\nBackground: [transparent when supported].\nAvoid: [rejected motifs, extra text, gradients or other excluded treatments].\nReturn the artwork itself, without a mockup, presentation frame, or watermark.\n```\n\nUse the tool's real output options. Do not invent dimensions, file types, model names, or asset URLs. Preserve the prompt and any reference images with the result. Apply known tool costs and input restrictions within the user's budget; ask only if a new charge or upload requires authority.\n\nShow the image and give a short reason it fits the brief. If selection is needed, ask one focused question about the direction. Apply existing delegated design authority without another approval round. For refinements, reference the actual image and specify what changes and what stays: for example, \"Simplify the lower shape; keep the silhouette, color, and spacing.\"",
+      "title": "Create or refine the artwork",
+      "guidance": "For new work, generate a promising direction from the brief using a current image model. Compare a few distinct directions when there is a real design question to resolve. For an existing direction, make focused edits instead of starting over. Judge the artwork itself before relying on a decorative product mockup.\n\nThe methods below can be operated by an agent using the tools and connections available in its environment. Consult the linked provider documentation for current capabilities.",
       "when": null,
       "ref": null,
       "options": [
         {
           "id": "image-generation",
-          "title": "Image generation or editing",
-          "summary": "Use an available image tool to create a draft or refine an existing raster asset. Preserve the actual output and its format limitations.",
-          "when": "The host has image generation or editing and a raster output meets the current need.",
+          "title": "Generate a logo direction",
+          "summary": "Call an available image model with the design brief. Inspect the returned artwork, select the strongest direction, and carry that image into refinement.",
+          "when": "A new direction is needed and an image-generation method is available to the agent.",
+          "parts": [],
+          "notes": [],
+          "references": [],
+          "metadata": {}
+        },
+        {
+          "id": "image-editing",
+          "title": "Refine existing artwork",
+          "summary": "Provide the current image to an editing method. Specify the exact change and what must remain consistent: silhouette, icon/wordmark relationship, type character, or color. Inspect the returned image for drift.",
+          "when": "A useful draft or existing raster logo is available and the agent can operate an image-editing method.",
           "parts": [],
           "notes": [],
           "references": [],
@@ -42,127 +53,88 @@
         },
         {
           "id": "design-tool-logo",
-          "title": "Hands-on design tool",
-          "summary": "Design the mark by hand in a vector tool instead of generating images - full control over the vector asset and its variants.",
-          "when": "An editable vector asset is required, an existing vector identity should be preserved, or the user prefers their design tool.",
+          "title": "Edit existing vector artwork",
+          "summary": "Use a connected vector/design tool or edit the SVG source to make the required adjustment. Preserve the established geometry and typography; verify the resulting artwork.",
+          "when": "The existing editable vector identity should be preserved or a real output requirement needs vector work.",
           "parts": [],
           "notes": [],
-          "references": [
-            {
-              "kind": "vendor",
-              "id": "figma",
-              "role": "candidate"
-            },
-            {
-              "kind": "vendor",
-              "id": "canva",
-              "role": "candidate"
-            },
-            {
-              "kind": "vendor",
-              "id": "penpot",
-              "role": "candidate"
-            },
-            {
-              "kind": "category",
-              "id": "design-tools",
-              "role": "rankings"
-            }
-          ],
-          "metadata": {
-            "route": "person",
-            "context": {
-              "kind": "vendor"
-            }
-          }
+          "references": [],
+          "metadata": {}
         }
       ],
       "notes": [],
-      "references": [
-        {
-          "kind": "product",
-          "id": "ai-assistants/chatgpt",
-          "role": "additional-candidate"
-        },
-        {
-          "kind": "product",
-          "id": "ai-assistants/gemini",
-          "role": "additional-candidate"
-        },
-        {
-          "kind": "product",
-          "id": "design-tools/canva",
-          "role": "additional-candidate"
-        },
-        {
-          "kind": "product",
-          "id": "design-tools/figma",
-          "role": "additional-candidate"
-        }
-      ],
-      "metadata": {
-        "route": "agent",
-        "reversibility": "reversible",
-        "estimatedMinutes": 2
-      }
+      "references": [],
+      "metadata": {}
     },
     {
       "id": "inspect-logo",
       "kind": "step",
-      "title": "Inspect the logo in its intended uses",
-      "guidance": "Open the generated file. Check spelling when text is present, stray marks, clipping, edges, and actual transparency. Preview at 32 and 128 pixels on the intended backgrounds; include 16 pixels when a favicon is required. If the small mark is unclear, simplify it or adjust its canvas padding with the available image/design tool. Check actual pixels when an exact brand color is required; a color in the prompt does not guarantee an exact match. Do not keep generating alternatives when a targeted edit can fix the chosen direction.\n\nInspect light and dark uses that the user needs. Create a one-color or alternate-background version only when required. An opaque background or incorrect text should be fixed through the image/design tool. If an SVG is supplied, inspect its paths and external dependencies; embedding a PNG in SVG does not create an editable vector logo. See the [SVG viewBox reference](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox) when preparing vector exports.\n\nReuse prior name/conflict work. For public adoption, note obvious resemblance and check the usage rights of supplied fonts, icons, or stock assets. Investigate a concrete conflict or the user's requested clearance scope; do not require a trademark research project to make a draft. Image generation alone does not establish exclusive rights.",
-      "when": null,
-      "ref": null,
-      "options": [],
-      "notes": [],
-      "references": [
-        {
-          "kind": "url",
-          "url": "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox",
-          "title": "SVG viewBox reference",
-          "description": "How the viewBox defines an SVG drawing area for vector exports.",
-          "role": "method"
-        }
-      ],
-      "metadata": {}
-    },
-    {
-      "id": "n2",
-      "kind": "step",
-      "title": "Save files and record the selection",
-      "guidance": "Save the original output and useful refinements in the existing brand folder or agent workspace. Use clear versioned names and retain the prompt. A brand document in Google Docs or another available editor can link to these image files. Keep a chosen primary asset distinct from unselected drafts.\n\nReopen the saved file and return its exact link or path, actual format/dimensions/background, and relevant preview. State whether it is a candidate or selected asset. Keep the editable source when available; if the output is raster, say so. Prepare only the exports needed now. Do not make vector tracing a prerequisite when a PNG meets the intended use.",
+      "title": "Refine the design across its real uses",
+      "guidance": "Inspect the actual artwork and make targeted edits:\n\n- **Icon and wordmark:** check whether the symbol and letters feel related. Adjust their relative size, visual weight, gap, alignment, and typography. Inspect both together and separately when both will be used. Create a horizontal or stacked arrangement only where that use needs it.\n- **Complexity and scale:** place the icon at a real avatar or favicon size and the full logo at a realistic header size. Remove fine lines, small holes, tiny text, or competing details that collapse. Keep the recognizable silhouette. A simplified small-size version can preserve the same identity instead of shrinking every detail.\n- **Color:** compare the direction on the intended light and dark surfaces. Check exact colors when an existing brand requires them. Use color to reinforce the identity; avoid adding colors merely to decorate it. Keep logo colors separate from the later job of defining a complete UI palette.\n- **Black and white:** produce solid black on a light background and solid white on a dark background. Inspect whether negative space, overlaps, and letterforms remain clear. A grayscale image is not the same test as a single-color mark.\n- **Consistency:** check spelling, stray marks, geometry, spacing, and whether variations still look like the same logo.\n\nState the change you want before each edit, such as “keep the symbol and type character; reduce the icon's visual weight and increase its gap from the wordmark.” Compare the edited output with the previous image. Continue refining the selected direction rather than repeatedly restarting from a blank prompt. Recommend the result that works across the required uses and explain any remaining compromise.",
       "when": null,
       "ref": null,
       "options": [],
       "notes": [],
       "references": [],
-      "metadata": {
-        "route": "agent",
-        "reversibility": "reversible",
-        "estimatedMinutes": 1
-      }
+      "metadata": {}
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Return the useful logo set and design choices",
+      "guidance": "Return the main logo and the variants needed now: the standalone icon when used, the relevant icon/wordmark arrangements, and black and white versions. Include a simplified small mark when the normal icon loses detail. Keep these as consistent variations of one identity.\n\nShow the actual artwork and a short account of why it fits, how to use each variant, and what remains unresolved. Preserve editable sources when available and provide the usable image files. State actual format and background properties; a raster image wrapped in SVG is not editable vector artwork. Carry the selected direction and assets into subsequent work so the next agent can continue from them.",
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {}
     }
   ],
   "links": [
     {
-      "to": "inspect-logo",
-      "option": "image-generation",
-      "from": "n1"
+      "from": "design-brief",
+      "to": "n1"
     },
     {
+      "from": "n1",
       "to": "inspect-logo",
-      "option": "design-tool-logo",
-      "from": "n1"
+      "option": "image-generation"
+    },
+    {
+      "from": "n1",
+      "to": "inspect-logo",
+      "option": "image-editing"
+    },
+    {
+      "from": "n1",
+      "to": "inspect-logo",
+      "option": "design-tool-logo"
     },
     {
       "from": "inspect-logo",
       "to": "n2"
     }
   ],
-  "references": [],
+  "references": [
+    {
+      "kind": "url",
+      "url": "https://help.openai.com/en/articles/11084440-images-in-chatgpt",
+      "title": "Images in ChatGPT",
+      "description": "Current ways to generate and edit images in a conversation, including text and background requests.",
+      "role": "method"
+    },
+    {
+      "kind": "url",
+      "url": "https://support.claude.com/en/articles/9002504-can-claude-produce-images",
+      "title": "Claude image capabilities",
+      "description": "The distinction between Claude’s own visual capabilities and image-generation tools; check the capabilities actually available in the current environment.",
+      "role": "method"
+    }
+  ],
   "notes": [
     {
-      "text": "Carry the chosen wording and colors into related brand work. A logo file does not publish a website or change an account. Continue deployment only when it is part of the user’s authorized goal."
+      "text": "UM’s default recommendation for an early startup logo is to use a capable image model and spend effort on art direction and iteration. A separate design service is useful when the work needs specialist judgment or production requirements that the available agent methods cannot meet."
     }
   ],
   "metadata": {
