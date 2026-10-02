@@ -129,9 +129,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
           {/* Situations (founder 2026-10-01) lead the chip row with their honest clock. */}
           {task.urgency && <UrgencyChip tier={task.urgency} />}
-          <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
-            {task.complexity.replace('_', ' ')}
-          </span>
+          {/* The complexity chip ('simple'/…) removed (founder 2026-10-02) — the field stays
+              corpus data for sorting; the chip told a reader nothing actionable. */}
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
             {SUPPORT_LABELS[task.supportLevel] ?? task.supportLevel}
           </span>
@@ -166,7 +165,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           </p>
         )}
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
-        <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {/* supportReason no longer renders as a second description line (founder 2026-10-02) —
+            it stays corpus data (the ceiling chip's tooltip territory, and the honesty record). */}
         {/* The typed-I/O layer (founder depth wave part 2, 2026-10-01): what this process Needs
             and Produces as registry artifacts (processes/artifacts.json), each Needs chip
             linking to the canonical producer process — contextNeeded prose below the DAG stays
