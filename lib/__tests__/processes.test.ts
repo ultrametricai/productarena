@@ -386,9 +386,12 @@ describe('corpus', () => {
     expect(breach.urgency).toBe('hours')
     expect(breach.reversibility).toBe('irreversible')
     expect(breach.dag.nodes.filter((n) => n.reversibility === 'irreversible').length).toBe(2)
-    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped.
+    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped —
+    // four-country total since the totality pass (the CNIL teleservice URL verified live
+    // 2026-10-02 closed the FR gap the first pass couldn't).
     expect(breach.geoScope).toBe('us-state')
-    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'IN', 'UK'])
+    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'FR', 'IN', 'UK'])
+    expect(breach.geoNotes!.find((n) => n.country === 'FR')!.actionUrl).toContain('cnil.fr')
   })
 
   it('contains no scrubbed vendor names and no AFK-app-legacy framing', () => {
