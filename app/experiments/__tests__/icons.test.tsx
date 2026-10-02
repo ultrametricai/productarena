@@ -10,7 +10,12 @@ import { loadChains, loadProcesses } from '@/lib/processes'
 import IconGalleryPage, { metadata } from '../icons/page'
 
 describe('/experiments/icons gallery', () => {
-  it('renders every designed glyph with its name, and every live process and playbook', () => {
+  // 120s timeout: this smoke test legitimately outgrew vitest's 30s default — it renders the
+  // whole gallery (every glyph at review + 16px size, every process/playbook tile) in jsdom and
+  // then runs a getAllByText scan per glyph, which scales with glyph-count × DOM size. At the
+  // 2026-10-02 corpus it takes ~40s on an idle machine and was timing out on main itself (the
+  // failure predates — and reproduces without — this branch's changes).
+  it('renders every designed glyph with its name, and every live process and playbook', { timeout: 120_000 }, () => {
     const { container, getAllByText } = render(<IconGalleryPage />)
     // One neutral tile per glyph in the full-set grid (plus colorized renders above it).
     for (const [id, glyph] of Object.entries(GLYPHS)) {
