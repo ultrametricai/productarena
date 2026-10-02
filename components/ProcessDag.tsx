@@ -293,8 +293,9 @@ function StepRankingRow({
       <details className="group mt-1.5">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
           <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
-          how these are ranked — {storyCount} judged stories · {merged.length} vendors
-          {extras.length > 0 && ` · ${blocks.length} arenas`}
+          {/* One quiet word (founder 2026-10-02: drop the 'how these are ranked — N judged
+              stories · N vendors' line) — the expandable per-story receipts stay. */}
+          <span title={`${storyCount} judged stories · ${merged.length} vendors${extras.length > 0 ? ` · ${blocks.length} arenas` : ''} — expand for the per-story citations`}>evidence</span>
         </summary>
         <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3 text-[11px] text-zinc-500">
           <p>
