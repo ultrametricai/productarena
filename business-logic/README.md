@@ -6,8 +6,8 @@ the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openst
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
 liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution,
 priced-round mechanics, the priced-round composer, ISO/NSO exercise tax, 83(b) math, QSBS,
-Delaware franchise tax, R&D tax mechanics, employer payroll tax, unit economics), every one
-pure,
+Delaware franchise tax, R&D tax mechanics, employer payroll tax, unit economics, deferred
+revenue), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -317,6 +317,29 @@ election; law-in-flux recorded on the card, never editorialized),
 SS-first-then-Medicare, per-quarter cap, carryforward, conservation-tested). Rules
 `us-fed.research-expenditure-amortization` / `us-fed.rd-payroll-offset`; tests:
 `lib/openstartup/__tests__/rdCredit.test.ts`.
+
+### Deferred revenue (subscriptions)
+
+**Serves:** [Bookkeeping close](https://ultrametric.ai/processes/bookkeeping-close) (n5 `recognitionReport`) · [Set up subscription billing](https://ultrametric.ai/processes/set-up-subscription-billing) · [Roll out a pricing change](https://ultrametric.ai/processes/roll-out-a-pricing-change) (n4 `prorationOnPlanChange`)
+
+`lib/openstartup/deferredRevenue.ts` — pure, client-safe; UTC
+ISO-date arithmetic, cents-exact via the waterfall module's largest-remainder allocation
+(no parallel rounding scheme). The honest scope: straight-line, whole-day recognition of
+TIME-BASED subscription invoice lines — and nothing judgment-shaped (performance
+obligations, SSP allocation, usage pricing, refunds, FX, collectibility are the
+accountant's ASC 606 / IFRS 15 calls, out of scope and flagged). Contract: `serviceDays`
+(inclusive whole days), `recognitionSchedule` (one line split across calendar months,
+months sum to the line exactly), `recognitionReport` (billed vs recognized vs deferred by
+month; negative deferred = unbilled receivable, stated), and `prorationOnPlanChange`
+(mid-period plan change: unused-time credit + remaining-time charge by whole days, returned
+as ready-to-fold revenue lines). Cited to Stripe Docs' Revenue Recognition subscription
+examples (docs.stripe.com/revenue-recognition/examples/subscriptions, verified 2026-10-02)
+and replayed number-for-number in `lib/openstartup/__tests__/deferredRevenue.test.ts`: the
+$31 monthly 17/14 split, the $365 annual year (deferred 334 → 306 → 275), and the $90→$120
+upgrade / $90→$30 downgrade prorations (−30/+40, −30/+10; April recognizing $100 / $70).
+Conservation property-tested (total recognized = total billed, to the cent). Every report
+`needsReview: true` — educational model, not accounting advice; the close's
+accountant-review step owns the books.
 
 ### Unit economics
 
