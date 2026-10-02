@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { isPopulated, loadCategories, loadCategory } from '@/lib/data'
@@ -25,9 +26,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 126 records (124 processes + 2 situations) with unique, non-empty slugs', () => {
+  it('loads all 136 records (124 processes + 12 situations) with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(126)
+    expect(tasks.length).toBe(136)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -284,6 +285,67 @@ describe('corpus', () => {
     expect(CADENCE_ORDER.map(cadenceRank)).toEqual(CADENCE_ORDER.map((_, i) => i))
     expect(cadenceRank('daily')).toBe(0)
     expect(cadenceRank('once')).toBe(CADENCE_ORDER.length - 1)
+  })
+
+  // Situations (founder ask 2026-10-01): reactive, trigger-driven records — the honest-curation
+  // spot pins. Kind invariants (trigger/urgency/timeOrder) are pinned in the orderings test
+  // above; these pin the CONTENT decisions.
+  it('situations: the founder examples and the curated set hold their honest shape', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const byId = (id: string) => tasks.find((t) => t.id === id)!
+    const situations = tasks.filter((t) => t.kind === 'situation')
+    expect(situations.length).toBe(12)
+    // Reactive by definition: every situation is event-driven — no situation sits on a calendar.
+    for (const t of situations) expect(t.cadence, `${t.id} cadence`).toBe('event-driven')
+    // The urgency clock is curated, not uniform — all three tiers exist in the set.
+    expect(new Set(situations.map((t) => t.urgency)).size).toBe(3)
+
+    // C&D (founder example 1): the counsel step routes through the judged startup-law-firms
+    // arena, and the engagement-letter signature is the legally-human step.
+    const cnd = byId('sit_001')
+    expect(cnd.urgency).toBe('days')
+    const counsel = cnd.dag.nodes.find((n) => n.optionsArenaId === 'startup-law-firms')!
+    expect(counsel, 'C&D counsel step routes via the judged law-firm arena').toBeDefined()
+    const engagement = cnd.dag.nodes.find((n) => n.legalSignature)!
+    expect(engagement.route).toBe('person')
+    expect(engagement.label.toLowerCase()).toContain('engagement')
+    // No statutory C&D response clock exists — the honest framing is the letter's own deadline.
+    expect(cnd.dag.nodes.some((n) => n.label.toLowerCase().includes('stated deadline'))).toBe(true)
+
+    // Visa (founder example 2): the real status portals are cited — CEAC and the USCIS tracker —
+    // and premium processing carries its honest scope (petition classes, per USCIS).
+    const visa = byId('sit_002')
+    const urls = visa.dag.nodes.map((n) => n.actionUrl ?? '')
+    expect(urls.some((u) => u.startsWith('https://ceac.state.gov/'))).toBe(true)
+    expect(urls.some((u) => u.startsWith('https://egov.uscis.gov/'))).toBe(true)
+    expect(urls.some((u) => u.includes('uscis.gov/forms/all-forms/how-do-i-request-premium-processing'))).toBe(true)
+    expect(urls.some((u) => u.includes('travel.state.gov')), '221(g) reality cited').toBe(true)
+    expect(taskCeiling(visa).pct, 'a consulate is not an API — the low ceiling is the truth').toBeLessThanOrEqual(25)
+
+    // Legal-deadline honesty: where a situation leans on a statute/rule, its description names
+    // the dated rule card (the deadlines.ts pattern) — and the card is committed on disk.
+    for (const [sid, dir, ruleId] of [
+      ['sit_008', 'US-FED', 'us-fed.frcp-answer-deadline'],
+      ['sit_009', 'US-FED', 'us-fed.trademark-office-action-response'],
+      ['sit_010', 'US-DE', 'us-de.franchise-tax-annual-report'],
+    ] as const) {
+      expect(byId(sid).description, `${sid} cites its rule card`).toContain(ruleId)
+      const file = path.join(__dirname, '..', '..', 'rules', dir, `${ruleId.replace(/\./g, '-')}.json`)
+      expect(fs.existsSync(file), `${ruleId} card committed at ${file}`).toBe(true)
+      expect(JSON.parse(fs.readFileSync(file, 'utf8')).id).toBe(ruleId)
+    }
+
+    // The lawsuit's filed pleading and the office action's TEAS filing are signature acts; the
+    // breach's regulator/individual notifications are the honestly-irreversible steps.
+    expect(byId('sit_008').dag.nodes.filter((n) => n.legalSignature).length).toBeGreaterThanOrEqual(1)
+    expect(byId('sit_009').dag.nodes.find((n) => n.legalSignature)!.label).toContain('TEAS')
+    const breach = byId('sit_003')
+    expect(breach.urgency).toBe('hours')
+    expect(breach.reversibility).toBe('irreversible')
+    expect(breach.dag.nodes.filter((n) => n.reversibility === 'irreversible').length).toBe(2)
+    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped.
+    expect(breach.geoScope).toBe('us-state')
+    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'IN', 'UK'])
   })
 
   it('contains no scrubbed vendor names and no AFK-app-legacy framing', () => {

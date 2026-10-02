@@ -4,8 +4,8 @@ One proposition per stable rule ID, scoped to a jurisdiction and backed by exact
 
 ## What a rule card is
 
-One JSON file per proposition under `rules/<JURISDICTION-CODE>/` — 12 cards committed today
-(10 US-FED, 2 US-DE, counted 2026-09-30), all status `demonstration`. A trimmed real card
+One JSON file per proposition under `rules/<JURISDICTION-CODE>/` — 14 cards committed today
+(12 US-FED, 2 US-DE, counted 2026-10-01), all status `demonstration`. A trimmed real card
 (`rules/US-FED/us-fed-1120-filing-deadline.json`):
 
 ```jsonc
@@ -38,8 +38,8 @@ every affected workflow:
 
 ```mermaid
 flowchart LR
-  sources["sources/registry.json<br/>8 primary authorities<br/>(locator + issued_on + checked_on)"]
-  rules["rules/&lt;CODE&gt;/*.json<br/>12 rule cards<br/>(one proposition per stable ID)"]
+  sources["sources/registry.json<br/>10 primary authorities<br/>(locator + issued_on + checked_on)"]
+  rules["rules/&lt;CODE&gt;/*.json<br/>14 rule cards<br/>(one proposition per stable ID)"]
   workflows["processes/&lt;domain&gt;/&lt;jurisdiction&gt;/*.json<br/>workflows cite cards via rule_ids"]
   registry["jurisdictions/registry.json<br/>every card's jurisdiction must exist"]
   sources -->|source_ids| rules -->|rule_ids| workflows

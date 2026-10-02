@@ -231,6 +231,16 @@ export const PROCESS_ICONS: Record<string, string> = {
   // area groups them.
   sit_001: pi('stop', 'amber'), // 🛑 Respond to a cease-and-desist (the letter says stop)
   sit_002: pi('hourglass', 'orange'), // ⏳ Unstick a delayed US visa (the wait is the problem)
+  sit_003: pi('shield-crack', 'sky'), // 🛡 Respond to a data breach (the shield, breached)
+  sit_004: pi('envelope-alert', 'sky'), // 📨 Answer an IRS or state tax notice (the letter with the !)
+  sit_005: pi('snowflake', 'emerald'), // ❄️ Frozen bank account / bank failure (the money, frozen)
+  sit_006: pi('card-return', 'emerald'), // 💳 Chargeback or fraud spike (the charge pulled back)
+  sit_007: pi('split', 'orange'), // 🔱 Co-founder departure (the paths diverge)
+  sit_008: pi('gavel', 'amber'), // 🔨 Respond to a lawsuit (the court's instrument)
+  sit_009: pi('envelope-alert', 'amber'), // 📨 Trademark office action (the examiner's letter — notice-letter concept, legal hue)
+  sit_010: pi('clock-alert', 'sky'), // ⏰ DE franchise tax delinquency (the overdue clock)
+  sit_011: pi('storm', 'sky'), // ⛈ DDoS attack or major outage (the storm hits the cloud)
+  sit_012: pi('unplug', 'sky'), // 🔌 Migrate off a shutting-down vendor (the plug pulled)
 }
 
 export function processIcon(taskId: string): string {
