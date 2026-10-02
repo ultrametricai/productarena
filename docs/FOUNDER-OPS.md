@@ -17,7 +17,7 @@ workspace, never here.
 | `rules/<jurisdiction>/` | Canonical, dated legal rule cards with stable IDs |
 | `sources/` | Primary authorities: provision locators, issue dates, checked dates |
 | `jurisdictions/` | Registry + overlays; exact-dimension matching, unknown = unsupported |
-| `business-logic/` | Cited, deterministic calculations (cap table first) |
+| `business-logic/` | The open modules — cited, deterministic calculations (cap table first) |
 | `resources/` | Curated canonical startup resources + the distilled startup laws (cited) |
 | `documents/` | The open-documents map: openly licensed legal forms, linked never redistributed |
 | `vendors/` | The evidence layer + the scenario-scoped review interchange format |
