@@ -81,6 +81,20 @@ export const GEO_SCOPE_GLYPH: Record<'global' | 'us' | 'us-state', { glyph: stri
   'us-state': { glyph: '🏛', label: 'US state-level process — a US state is the counterparty' },
 }
 
+// What a committed geo note SAYS about the need behind a US-scoped process in its country
+// (founder ask 2026-10-02: "changing the country should hide the processes that are not used in
+// that country — e.g. an EIN number for India doesn't make sense"). Required on every committed
+// note (lib/processes.ts GeoNoteSchema imports this enum), curated from the note's own summary:
+//   'analog'         — the need exists there as its own doable process (UK incorporation via
+//                      Companies House, India's TDS instead of 1099s).
+//   'absorbed'       — the need is handled automatically inside another process there (EIN →
+//                      India: PAN/TAN arrive with the SPICe+ incorporation filing; the
+//                      registered office is declared at formation everywhere).
+//   'not-applicable' — the need genuinely doesn't exist there (the UK has no 1099 regime).
+// This is the /processes country-view filter's vocabulary — see hiddenInCountryView below.
+export const GEO_NOTE_KINDS = ['analog', 'absorbed', 'not-applicable'] as const
+export type GeoNoteKind = (typeof GEO_NOTE_KINDS)[number]
+
 // One curated per-country analog of a US-scoped process (the client-safe shape of
 // lib/processes.ts GeoNote — same fields, so the server page passes task.geoNotes straight
 // through to components/ProcessGeoBanner.tsx without the client bundle touching node:fs).
@@ -89,6 +103,29 @@ export interface GeoAnalogNote {
   summary: string
   actionUrl: string
   actionLabel: string
+}
+
+// The per-row slice of the committed geo notes an index row carries for the country-view
+// filter: kind + the honest one-liner (the note's own committed summary — what the hidden-rows
+// disclosure renders). Serialized server-side (lib/processRows.ts) for us/us-state rows only —
+// global rows never filter, so they carry none.
+export type GeoNotesByCountry = Partial<Record<GeoSelection, { kind: GeoNoteKind; summary: string }>>
+
+// The /processes country-view filter rule (founder ask 2026-10-02). Under a country selection C:
+//   - global-scope rows always show (the work is the same everywhere);
+//   - us/us-state rows show ONLY when their C note says the need exists there as its own doable
+//     process (kind 'analog');
+//   - us/us-state rows with no C note, or whose C note says the need is absorbed into another
+//     process there or genuinely doesn't exist, HIDE — the EIN row hides under ?geo=in because
+//     PAN/TAN arrive inside the SPICe+ incorporation filing.
+// The no-selection default and the explicit 🌐 Global view never call this — they keep the full
+// corpus (the geo dimension only FILTERS inside a country view; it still never re-ranks).
+export function hiddenInCountryView(
+  row: { geoScope: 'global' | 'us' | 'us-state'; geoNotesByCountry: GeoNotesByCountry },
+  country: GeoSelection,
+): boolean {
+  if (row.geoScope === 'global') return false
+  return row.geoNotesByCountry[country]?.kind !== 'analog'
 }
 
 // One (product, country) availability cell of jurisdictions/vendor-geo.json, pre-serialized

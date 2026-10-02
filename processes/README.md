@@ -62,7 +62,7 @@ run it, the step DAG, and geo scoping. A trimmed real record (`form_002`, Get EI
     "edges": [{ "from": "n2", "to": "n3" }, { "from": "n3", "to": "n4" }]
   },
   "geoScope": "us",
-  "geoNotes": [{ "country": "IN", "summary": "PAN and TAN … are allotted automatically as part of the SPICe+ incorporation filing…", "actionUrl": "https://www.incometax.gov.in/iec/foportal/" } /* …UK/DE/FR analogs trimmed */]
+  "geoNotes": [{ "country": "IN", "kind": "absorbed", "summary": "PAN and TAN … are allotted automatically as part of the SPICe+ incorporation filing…", "actionUrl": "https://www.incometax.gov.in/iec/foportal/" } /* …UK/DE/FR analogs trimmed */]
   // …contextNeeded, tags, time totals, annoyance/risk/growthImpact trimmed
 }
 ```
@@ -280,10 +280,15 @@ flowchart TD
 ## What you can contribute here
 
 - **A country analog for a process** — add a `geoNotes` entry to the process in
-  `processes/corpus.json`: `{country, summary, actionUrl, actionLabel}` with a live, official
-  actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). This renders in the
-  top-of-page geo banner and the "Outside the US" block. Gate: `pnpm test` (corpus loader +
-  schema tests).
+  `processes/corpus.json`: `{country, kind, summary, actionUrl, actionLabel}` with a live,
+  official actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). `kind` is curated
+  from the summary's own truth: `analog` (the need exists there as its own doable process),
+  `absorbed` (handled automatically inside another process there — PAN/TAN arrive with the
+  SPICe+ incorporation), or `not-applicable` (the need genuinely doesn't exist there — the UK
+  has no 1099 regime). This renders in the top-of-page geo banner and the "Outside the US"
+  block, and `kind` drives which US-scoped rows the /processes table shows inside a country
+  view (only `analog` rows stay; the default and Global views keep the full corpus). Gate:
+  `pnpm test` (corpus loader + schema tests).
 - **A new jurisdiction-scoped workflow** — copy `templates/process.json` into
   `processes/<domain>/<jurisdiction>/`, narrow the applicability dimensions, reference rule
   cards in `rules/<CODE>/`, gate every external effect on a named human approval, add a

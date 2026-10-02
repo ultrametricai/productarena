@@ -3,6 +3,7 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
+import { GEO_NOTE_KINDS } from './geoPreference'
 import { JURISDICTIONS, type Jurisdiction, type JurisdictionStepView } from './jurisdictions'
 import { hasLogo } from './logos'
 import { isShutdown } from './shutdown'
@@ -302,11 +303,23 @@ export type SlugAlias = z.infer<typeof SlugAliasSchema>
 // Editorial and honest: every actionUrl is curl-verified live before listing (the
 // VENDOR_SIGNUP_URL house rule — no unverifiable URL is fabricated; official-host blocks get
 // the mca.gov.in→NSWS substitution, never a fabricated link), and a country with no true
-// analog simply carries no note. Display-only: rendered as the "Outside the US" block on
-// /processes/[slug]; no judged number reads these. (GEO_NOTE_COUNTRIES itself is declared
-// above the node schema so method contexts can share the same country codes.)
+// analog simply carries no note. Display-only for every judged number; since the country-view
+// filter (founder ask 2026-10-02: "?geo=in should hide the processes that are not used in that
+// country") each note also carries a required `kind` — analog / absorbed / not-applicable, the
+// vocabulary lives client-safe in lib/geoPreference.ts GEO_NOTE_KINDS — which drives ONLY which
+// rows the /processes table shows inside a country view; the default and Global views keep the
+// full corpus and no judged number reads it. Rendered as the "Outside the US" block on
+// /processes/[slug]. (GEO_NOTE_COUNTRIES itself is declared above the node schema so method
+// contexts can share the same country codes.)
 export const GeoNoteSchema = z.object({
   country: z.enum(GEO_NOTE_COUNTRIES),
+  // What the committed summary SAYS the need becomes in this country (explicitly curated on
+  // every note — no default, so an uncurated note fails the corpus parse):
+  //   'analog'         — the need exists there as its own doable process;
+  //   'absorbed'       — handled automatically inside another process there (EIN → IN: PAN/TAN
+  //                      arrive with the SPICe+ incorporation filing);
+  //   'not-applicable' — the need genuinely doesn't exist there (the UK has no 1099 regime).
+  kind: z.enum(GEO_NOTE_KINDS),
   // What the analog IS and how it differs — one or two honest sentences, not marketing.
   summary: z.string().min(1),
   // The canonical page a founder in that country starts from — verified live before listing.
