@@ -62,6 +62,7 @@ Sources:
 - [An Evening with Legendary Venture Capitalist Arthur Rock (Computer History Museum, 2012)](https://archive.computerhistory.org/resources/access/text/2012/05/102658253-05-01-acc.pdf) — Rock first-person on the defection, shopping ~30 companies, and Fairchild Camera's backing.
 - [The Traitorous Eight and the rise of Fairchild Semiconductor (All About Circuits)](https://www.allaboutcircuits.com/news/the-traitorous-eight-and-the-rise-of-fairchild-semiconductor/) — the $500-per-founder detail, the 1957 timeline, and the Fairchild buyout.
 Related laws: `19`
+Related processes: `form_001`
 
 ### 3. Y Combinator invents batch funding
 

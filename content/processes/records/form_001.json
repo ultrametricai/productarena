@@ -9,12 +9,47 @@
   "parts": [
     {
       "id": "n1",
-      "kind": "step",
+      "kind": "decision",
       "title": "Choose formation service",
       "guidance": "Pick the service that will prepare and file your incorporation paperwork.",
       "when": null,
       "ref": null,
-      "options": [],
+      "options": [
+        {
+          "id": "clerky-formation",
+          "title": "Form through Clerky",
+          "summary": "Clerky's published formation pricing (read live 2026-10-01): $427 one-time pay-per-use incorporation or the $819 Company Lifetime Package — both include expedited Delaware filing fees and the first-year registered agent.",
+          "when": "Forming through Clerky rather than Stripe Atlas — pay-per-document pricing",
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "clerky",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "url",
+              "url": "https://www.clerky.com/pricing",
+              "role": "legacy-action-link",
+              "title": "Clerky pricing",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "cost": {
+              "usd": 427,
+              "kind": "typical-vendor-price",
+              "source": "https://www.clerky.com/pricing",
+              "asOf": "2026-10-01",
+              "note": "Pay-per-use incorporation (includes expedited Delaware filing fees and the first-year registered agent); the $819 Company Lifetime Package adds unlimited standard post-incorporation paperwork products, and post-incorporation setup is $299 separately on pay-per-use."
+            },
+            "context": {
+              "kind": "vendor"
+            }
+          }
+        }
+      ],
       "notes": [],
       "references": [
         {
@@ -82,7 +117,18 @@
       "metadata": {
         "route": "agent",
         "reversibility": "reversible",
-        "estimatedMinutes": 2
+        "estimatedMinutes": 2,
+        "verify": {
+          "how": "The proposed name returns no indistinguishable active entity in the Delaware entity search and carries a required corporate-indicator word — the 8 Del. C. § 102(a)(1) distinguishability standard (rule card us-de.incorporation-certificate-contents).",
+          "url": "https://icis.corp.delaware.gov/ecorp/entitysearch/namesearch.aspx"
+        },
+        "failureModes": [
+          {
+            "what": "The name is not distinguishable from an existing entity of record, or lacks a required corporate word (association, company, corporation, incorporated, limited...).",
+            "then": "Pick a distinguishable name or obtain the consent § 102(a)(1) allows (rule card us-de.incorporation-certificate-contents); a cleared name can be reserved for 120 days for $75 on the published fee schedule.",
+            "source": "https://corpfiles.delaware.gov/Fee_Schedule/AugustFee2026.pdf"
+          }
+        ]
       }
     },
     {
@@ -129,8 +175,18 @@
               "kind": "government-fee",
               "source": "https://corpfiles.delaware.gov/Fee_Schedule/AugustFee2026.pdf",
               "asOf": "2026-10-01",
-              "note": "Minimum state filing fee for a one-page, minimum-stock Certificate of Incorporation — the schedule marks it 'varies based on stock'."
-            }
+              "note": "Minimum state filing fee for a one-page, minimum-stock Certificate of Incorporation — the schedule marks it 'varies based on stock'. Expedited options on the same schedule, per document: $50 24-hour, $100 same-day, $500 2-hour (Priority 2), $1,000 1-hour (Priority 1)."
+            },
+            "documents": [
+              "de-formation-instructions"
+            ],
+            "failureModes": [
+              {
+                "what": "The Division rejects the filing because the certificate is defective — missing § 102(a) required contents or § 103 execution.",
+                "then": "Fix the defect and resubmit: the corporation exists only once the Secretary of State endorses the instrument 'Filed' (rule card us-de.incorporation-filing-mechanics); nothing is committed until that endorsement.",
+                "source": "https://delcode.delaware.gov/title8/c001/sc01/index.html"
+              }
+            ]
           }
         },
         {
@@ -175,6 +231,13 @@
             }
           ],
           "metadata": {
+            "cost": {
+              "usd": null,
+              "kind": "government-fee",
+              "source": "https://www.gov.uk/limited-company-formation/register-your-company",
+              "asOf": "2026-10-01",
+              "note": "£100 Companies House fee for the online incorporation (£124 by post) — published in GBP only, so no USD figure is claimed; online registrations usually complete within 24 hours."
+            },
             "context": {
               "kind": "geo",
               "countries": [
@@ -275,6 +338,13 @@
           ],
           "metadata": {
             "route": "person",
+            "cost": {
+              "usd": null,
+              "kind": "government-fee",
+              "source": "https://www.gesetze-im-internet.de/gnotkg/",
+              "asOf": "2026-10-01",
+              "note": "Notary fees are statutory under GNotKG — value-based (Geschäftswert) via the Kostenverzeichnis (Annex 1 to § 3(2)) — plus Handelsregister fees; the amount scales with share capital, so no single sticker price exists."
+            },
             "context": {
               "kind": "geo",
               "countries": [
@@ -334,7 +404,24 @@
         "reversibility": "reversible",
         "producesArtifact": "certificate-of-incorporation",
         "estimatedMinutes": 2880,
-        "async": true
+        "async": true,
+        "verify": {
+          "how": "The stamped 'Filed' Certificate of Incorporation is in hand — the Secretary of State's endorsement is the filing date (rule card us-de.incorporation-filing-mechanics), and the retained stamped copy is the artifact every bank and investor asks for."
+        },
+        "cost": {
+          "usd": 50,
+          "kind": "government-fee",
+          "source": "https://corpfiles.delaware.gov/Fee_Schedule/AugustFee2026.pdf",
+          "asOf": "2026-10-01",
+          "note": "Optional certified copy of the filed certificate: $50 per document plus $2 per page (expedited $60 same-day / $50 24-hour). The plain stamped copy comes back with the filing itself at no extra fee."
+        },
+        "failureModes": [
+          {
+            "what": "The stamped certificate copy is lost.",
+            "then": "Order a certified copy from the Division — $50 per document plus $2 per page on the published fee schedule; a certified copy is accepted wherever the stamped original would be.",
+            "source": "https://corpfiles.delaware.gov/Fee_Schedule/AugustFee2026.pdf"
+          }
+        ]
       }
     },
     {
@@ -358,7 +445,10 @@
         "reversibility": "reversible",
         "approvalRequired": true,
         "riskLevel": "medium",
-        "estimatedMinutes": 15
+        "estimatedMinutes": 15,
+        "documents": [
+          "cooley-incorporation-package-de"
+        ]
       }
     },
     {
@@ -401,7 +491,10 @@
         "reversibility": "reversible",
         "approvalRequired": true,
         "riskLevel": "high",
-        "estimatedMinutes": 10
+        "estimatedMinutes": 10,
+        "documents": [
+          "cooley-incorporation-package-de"
+        ]
       }
     },
     {
@@ -420,7 +513,10 @@
         "producesArtifact": "founder-stock-issuance",
         "legalSignature": true,
         "riskLevel": "high",
-        "estimatedMinutes": 5
+        "estimatedMinutes": 5,
+        "verify": {
+          "how": "The executed stock purchase agreements plus the matching entries in the company's stock ledger — the retained signed SPAs and the ledger ARE the record; no external registry of private stock issuances exists to query."
+        }
       }
     },
     {
@@ -438,7 +534,10 @@
         "reversibility": "reversible",
         "legalSignature": true,
         "riskLevel": "high",
-        "estimatedMinutes": 5
+        "estimatedMinutes": 5,
+        "documents": [
+          "irs-form-15620"
+        ]
       }
     },
     {
@@ -472,16 +571,23 @@
         "estimatedMinutes": 15,
         "async": true,
         "verify": {
-          "how": "Retain the date-stamped copy and the USPS certified-mail receipt — the IRS sends no confirmation; your proof of mailing within the 30-day window is the record.",
+          "how": "Retain the USPS certified-mail receipt and a date-stamped copy of the election — the IRS sends no acknowledgment, so proof of timely mailing within the 30-day window (rule card us-fed.83b-filing-period) IS the record; if the IRS returns a stamped copy, retain it as the strongest evidence.",
           "url": "https://www.irs.gov/pub/irs-pdf/f15620.pdf"
         },
         "cost": {
-          "usd": 0,
-          "kind": "free",
-          "source": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
+          "usd": 5.55,
+          "kind": "government-fee",
+          "source": "https://pe.usps.com/text/dmm300/Notice123.htm",
           "asOf": "2026-10-01",
-          "note": "No IRS filing fee for an 83(b) election — the cost is certified-mail postage."
-        }
+          "note": "USPS Certified Mail fee (Notice 123, prices effective 2026-07-12), plus First-Class postage ($0.82 stamped 1 oz letter) and optional return receipt ($2.91 electronic / $4.65 mail). The IRS charges nothing for the election itself."
+        },
+        "failureModes": [
+          {
+            "what": "The 30-day window passes with no postmarked election.",
+            "then": "There is no cure: the deadline is jurisdictional (rule card us-fed.83b-filing-period) and an election generally cannot be made late or revoked without IRS consent (rule card us-fed.83b-revocation) — what remains is a tax-counsel conversation about the consequences, not a self-help fix.",
+            "source": "https://www.irs.gov/pub/irs-pdf/f15620.pdf"
+          }
+        ]
       }
     },
     {
@@ -509,7 +615,14 @@
           "CA"
         ],
         "riskLevel": "high",
-        "estimatedMinutes": 30
+        "estimatedMinutes": 30,
+        "cost": {
+          "usd": 100,
+          "kind": "government-fee",
+          "source": "https://www.sos.ca.gov/business-programs/business-entities/forms/corporations-foreign-out-state-or-out-country",
+          "asOf": "2026-10-01",
+          "note": "Statement and Designation by Foreign Corporation (stock corporation) filing fee; filed through bizfile Online. Conditional step — excluded from the default-flow fee headline by construction."
+        }
       }
     },
     {
@@ -699,7 +812,7 @@
   "source": {
     "path": "processes/corpus.json",
     "id": "form_001",
-    "revision": "e22d107d7a326d2a96781e813a53d4e2e8873fd4",
-    "sha256": "a39511fde7ab5d98df89acb878ec8b58b322d1fd7a21288742850f644df32ca2"
+    "revision": "2602ed1845b3074318ef78d4dc4614d911f4ca5d",
+    "sha256": "81e23141b3e9bc4a9c74a86c0001be2e3bd565b52d24595c132706f663b311a8"
   }
 }
