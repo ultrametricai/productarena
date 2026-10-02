@@ -1,15 +1,17 @@
 {
-  "hash": "5ef0e0a28663cad8002819f6b8be925ae8b03496420525a7e1b9754afb437164",
+  "hash": "3514194fef924b1f59ae1625b22f223af9c2831f9c5d30719f50ebd1dd94c600",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Bitwarden documents a general vault export (JSON/CSV) for 'logins and notes' and back-up/transfer purposes, but the evidence never explicitly confirms that TOTP secrets are included in that export or specifies an open, human-readable format for them — only import paths for other authenticators (Google Authenticator QR, LastPass JSON, 2FAS) are detailed, which is the opposite direction (lock-in mitigation on entry, not exit). Missing for 10: explicit confirmation that TOTP seeds are present in the standard export file, documentation of the exact readable TOTP export format, and any independent/hands-on verification that exported TOTP secrets can be reimported elsewhere.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Bitwarden documents vault export of logins and notes [docs-5] and has a dedicated Authenticator import-export page, though the quoted text covers only imports from Google, LastPass and 2FAS [docs-3, docs-14]. The CLI is fully featured, a hands-on report shows `bw list` dumping vault items including TOTP data in plaintext [docs-7, comm-13], and `bw serve` exposes the whole vault over a local REST API [probe-rt-1]. That points to a scriptable way out, but the evidence never confirms that TOTP secrets themselves are exported, or in what open format. missing for 10: explicit documentation that exports include TOTP seeds, a named open/readable export format (e.g. JSON/CSV/otpauth URIs) for the Authenticator app, evidence of exporting to a non-Bitwarden app (the export doc frames transfer as 'to a new Bitwarden vault'), independent corroboration of a successful migration out.",
     "evidenceIds": [
       "bitwarden-docs-5",
-      "bitwarden-docs-16",
       "bitwarden-docs-3",
-      "bitwarden-docs-14"
+      "bitwarden-docs-14",
+      "bitwarden-docs-7",
+      "bitwarden-comm-13",
+      "bitwarden-probe-rt-1"
     ],
     "productId": "bitwarden",
     "storyId": "open-format-export"

@@ -83,8 +83,12 @@ export default function LogoWordmark() {
     }
     if (!ctx) return
     const c2d = ctx
-    const reduced =
-      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Hover effect, HOVER devices only (mobile-nav perf fix 2026-10-01): on touch, the tap that
+    // navigates fires pointerenter (and on Android, focusin — which persists across the
+    // navigation because this header never unmounts), so the per-frame Julia imageData loop
+    // could start on the way out and never stop. No hover capability → no listeners at all.
+    if (typeof window.matchMedia !== 'function' || !window.matchMedia('(hover: hover)').matches) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let raf = 0
     let running = false
 

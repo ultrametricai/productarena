@@ -36,16 +36,16 @@ The Cloudflare Worker on the `ultrametric.ai/productarena*` route. Its jobs:
    kept in sync with `data/live-probes.json` by `__tests__/try.test.ts`) — clients can never
    supply a URL, header, or body, and non-manifest keys 404. Fixed public https URLs only;
    10 s timeout; body excerpt capped at 2 KB; upstream headers (set-cookie included) never
-   forwarded. Rate limit 20/min/IP: per-isolate window + a KV window in `PA_COMPARE_STATS`
+   forwarded. Rate limit 20/min/IP: per-isolate window + a KV window in `UM_COMPARE_STATS`
    (`tryrl:` keys — SHA-256-hashed IPs in minute buckets, 120 s TTL, no raw IPs at rest).
    NOTE: `live-probes.generated.js` is a separate module — deploy with `wrangler deploy`
    (which bundles it); a dashboard paste of `worker.js` alone will not work anymore.
 5. **`POST /productarena/mcp`** — a remote MCP endpoint (see below).
 6. **Compare popularity** — every proxied `GET /productarena/compare?p=…` increments a
-   normalized-pair counter in Workers KV (binding `PA_COMPARE_STATS`; pairs only, never IPs or
+   normalized-pair counter in Workers KV (binding `UM_COMPARE_STATS`; pairs only, never IPs or
    user agents), and the keyless `GET /productarena/api/popular-compares` serves the top ~20
    pairs (5-minute cache) for the `/compare` page's "Most compared" strip. One-time setup:
-   `wrangler kv namespace create PA_COMPARE_STATS`, paste the id into `wrangler.toml`, deploy.
+   `wrangler kv namespace create UM_COMPARE_STATS`, paste the id into `wrangler.toml`, deploy.
    Until then counting no-ops and the endpoint returns 503 (the client renders nothing).
 
 ## Remote MCP endpoint

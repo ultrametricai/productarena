@@ -3,14 +3,19 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { ProcessTitle } from '@/components/shared-processes/ProcessSummary'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
+import UrgencyChip from '@/components/UrgencyChip'
 import { useGeoSelection } from '@/components/useGeoSelection'
-import { GEO_GLOBAL, GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
+import {
+  GEO_GLOBAL, GEO_PREF_META, GEO_SCOPE_GLYPH, hiddenInCountryView, type GeoNotesByCountry,
+} from '@/lib/geoPreference'
 import { phaseEmoji, phaseIcon, phaseTooltip } from '@/lib/processIcons'
+import { URGENCY_TIERS, type ProcessKind, type Urgency } from '@/lib/processSim'
 import { readParams, setParams } from '@/lib/urlState'
 
 // The /processes controller: one dense sortable/filterable table over the whole founder-process
@@ -50,6 +55,7 @@ import { readParams, setParams } from '@/lib/urlState'
 
 export interface ProcessRow {
   slug: string
+  agentClassified?: number | null
   title: string
   // Curated emoji for this process (lib/processIcons.ts), resolved server-side by task id.
   icon: string
@@ -61,15 +67,27 @@ export interface ProcessRow {
   areaRank: number
   // The GEO dimension (founder 2026-09-28) — required on every corpus process. While a non-US
   // country is selected (GeoSwitcher / lib/geoPreference.ts) each row wears its scope glyph
-  // (🌐 global / 🇺🇸 US / 🏛 state); the default view is untouched. Display only — no re-sorting.
+  // (🌐 global / 🇺🇸 US / 🏛 state); the default view is untouched. Never re-sorts — and since
+  // the country-view filter (founder 2026-10-02) the scope also feeds hiddenInCountryView.
   geoScope: 'global' | 'us' | 'us-state'
+  // The country-view filter data (founder 2026-10-02: "?geo=in should hide the processes that
+  // are not used in that country"): per country, the committed note's curated kind + its own
+  // summary (the hidden-rows disclosure one-liner). {} on global rows — they never filter.
+  geoNotesByCountry: GeoNotesByCountry
   pct: number
   agentSteps: number
   totalSteps: number
   complexity: string
+  // Record kind (founder 2026-10-01): 'situation' rows are reactive — they render `trigger`
+  // as their subtitle, wear the `urgency` chip, and carry timeOrder null (no founder-timeline
+  // slot; they sort after the timeline — see timelineRank below).
+  kind: ProcessKind
+  trigger: string | null
+  urgency: Urgency | null
   // The five-orderings fields (curated in processes/corpus.json; cadence label/rank resolved
-  // server-side so this component stays free of the node-only cadence helpers).
-  timeOrder: number
+  // server-side so this component stays free of the node-only cadence helpers). timeOrder is
+  // null on kind 'situation'.
+  timeOrder: number | null
   cadenceLabel: string
   cadenceRank: number
   annoyance: number
@@ -103,6 +121,23 @@ export interface PlaybookRow {
   agentSteps: number
   totalSteps: number
   steps: Array<{ label: string; route: 'agent' | 'form' | 'person'; legalSignature: boolean }>
+  // The combined vendor cell (founder 2026-10-02: show the vendors, not a 'Go to process' link)
+  // — the constituent processes' vendor chips, deduped in journey order, same shape and cap as
+  // a process row's.
+  vendors: Array<{ id: string; label: string; arena: string | null; hasLogo: boolean }>
+}
+
+// Shared records can lack legacy index metrics. Missing values stay blank and sort last.
+type OptionalIndexField = 'geoScope' | 'pct' | 'agentSteps' | 'timeOrder' | 'cadenceLabel' | 'cadenceRank' | 'annoyance' | 'risk' | 'growthImpact'
+export type ProcessTableRow = Omit<ProcessRow, OptionalIndexField> & {
+  [K in OptionalIndexField]: ProcessRow[K] | null
+} & { href?: string }
+
+function compareValues(a: number | string | null, b: number | string | null, direction: Direction = 'asc') {
+  if (a === null) return b === null ? 0 : 1
+  if (b === null) return -1
+  const result = typeof a === 'string' ? a.localeCompare(String(b)) : a - Number(b)
+  return direction === 'desc' ? -result : result
 }
 
 type Column = 'title' | 'phase' | 'pct' | 'steps' | 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
@@ -154,11 +189,21 @@ const METRIC_META: Record<Metric, { header: string; tooltip: string }> = {
   growth: { header: 'Growth impact', tooltip: 'How directly this process drives revenue and user growth (1–5)' },
 }
 
-function fieldOf(row: ProcessRow, col: Column): number | string {
+// The timeline-axis handling for situations, PINNED (founder 2026-10-01): a situation has no
+// timeOrder slot — it is reactive, not a stop on the journey — so on the timeline axis every
+// situation sorts AFTER every timeline process, and the situation tail orders by urgency
+// (hours → days → weeks: the hotter clock reads first), then title. Every OTHER axis (ceiling,
+// risk, annoyance, cadence…) interleaves situations honestly — they have real values there.
+const timelineRank = (row: ProcessTableRow): number => row.timeOrder ?? Number.MAX_SAFE_INTEGER
+const urgencyRank = (row: ProcessTableRow): number => (row.urgency ? URGENCY_TIERS.indexOf(row.urgency) : -1)
+const timelineCompare = (a: ProcessTableRow, b: ProcessTableRow): number =>
+  timelineRank(a) - timelineRank(b) || urgencyRank(a) - urgencyRank(b) || a.title.localeCompare(b.title)
+
+function fieldOf(row: ProcessTableRow, col: Column): number | string | null {
   if (col === 'title') return row.title
   if (col === 'phase') return row.phase
   if (col === 'pct') return row.pct
-  if (col === 'order') return row.timeOrder
+  if (col === 'order') return row.timeOrder === null && row.kind !== 'situation' ? null : timelineRank(row)
   if (col === 'cadence') return row.cadenceRank
   if (col === 'annoyance') return row.annoyance
   if (col === 'risk') return row.risk
@@ -223,7 +268,7 @@ function playbookFieldOf(row: PlaybookRow, col: Column): number | string {
 }
 
 // The flat view's union row type: process and playbook rows sorted through one comparator.
-type FlatItem = { kind: 'process'; row: ProcessRow } | { kind: 'playbook'; row: PlaybookRow }
+type FlatItem = { kind: 'process'; row: ProcessTableRow } | { kind: 'playbook'; row: PlaybookRow }
 
 export default function ProcessesTable({
   rows,
@@ -234,7 +279,7 @@ export default function ProcessesTable({
   // app/processes/page.tsx). null keeps the sitewide US default (the homepage's process mode).
   defaultGeo = null,
 }: {
-  rows: ProcessRow[]
+  rows: ProcessTableRow[]
   phases: string[]
   playbooks?: PlaybookRow[]
   defaultGeo?: typeof GEO_GLOBAL | null
@@ -254,9 +299,21 @@ export default function ProcessesTable({
   // Under the GLOBAL surface default (founder 2026-09-30: /processes opens on the global view)
   // the no-selection glyphs are the sharp set from the server render on — every row still
   // present, US-specific work told apart as 🇺🇸 (federal) vs 🏛 (state) from the global vantage.
-  // Display only: never re-sorts, never filters.
+  // Never re-sorts; since the country-view filter (founder 2026-10-02: "?geo=in should hide the
+  // processes that are not used in that country") a COUNTRY selection also hides the US-scoped
+  // rows whose committed note says the need is absorbed into another process there or doesn't
+  // exist (hiddenInCountryView) — the no-selection default and 🌐 Global keep the full corpus,
+  // and the muted disclosure line under the table keeps the hidden titles reachable.
   const geo = useGeoSelection()
   const scopeGlyphs = geo !== null || defaultGeo === GEO_GLOBAL ? GEO_SCOPE_GLYPH : DEFAULT_GEO_GLYPH
+  // What the active country view hides, for the honesty disclosure under the table — computed
+  // over the WHOLE row set (the country view as such; the phase/text filters narrow the table
+  // above it, never this line), in founder-timeline order so the list reads deterministically.
+  const [hiddenOpen, setHiddenOpen] = useState(false)
+  const hiddenRows = useMemo(
+    () => (geo === null ? [] : rows.filter((r) => hiddenInCountryView(r, geo)).sort(timelineCompare)),
+    [rows, geo],
+  )
 
   // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
   // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
@@ -322,10 +379,14 @@ export default function ProcessesTable({
     const q = query.trim().toLowerCase()
     return rows.filter(
       (r) =>
-        (phase === 'all' || r.phase === phase)
+        // The country-view filter (founder 2026-10-02): under a country selection, US-scoped
+        // rows stay only where the committed note says the need exists there as its own doable
+        // process. No selection / 🌐 Global ⇒ geo is null ⇒ the full corpus, exactly as before.
+        (geo === null || !hiddenInCountryView(r, geo))
+        && (phase === 'all' || r.phase === phase)
         && (q === '' || r.title.toLowerCase().includes(q) || r.vendors.some((v) => v.label.toLowerCase().includes(q))),
     )
-  }, [rows, phase, query])
+  }, [rows, phase, query, geo])
 
   // Playbooks live in the same table under the same controls (founder 2026-09-29): the phase
   // filter keeps a playbook while any of its constituent processes is in that phase; the text
@@ -346,11 +407,12 @@ export default function ProcessesTable({
     return [...filtered].sort((a, b) => {
       const av = fieldOf(a, column)
       const bv = fieldOf(b, column)
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      const cmp = compareValues(av, bv, direction)
       // Ties (cadence buckets, 1–5 scores) fall back to the founder timeline so the order is
-      // deterministic and still reads as a journey inside each bucket.
-      if (cmp === 0) return a.timeOrder - b.timeOrder
-      return direction === 'desc' ? -cmp : cmp
+      // deterministic and still reads as a journey inside each bucket — with the slot-less
+      // situations after the timeline, by urgency then title (timelineCompare).
+      if (cmp === 0) return timelineCompare(a, b)
+      return cmp
     })
   }, [filtered, column, direction])
 
@@ -371,14 +433,15 @@ export default function ProcessesTable({
     return [...processItems, ...playbookItems].sort((a, b) => {
       const av = a.kind === 'process' ? fieldOf(a.row, column) : playbookFieldOf(a.row, column)
       const bv = b.kind === 'process' ? fieldOf(b.row, column) : playbookFieldOf(b.row, column)
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      const cmp = compareValues(av, bv, direction)
       if (cmp === 0) {
-        // Process–process ties keep the founder-timeline fallback the table always had;
-        // ties involving a playbook resolve by title so the order stays deterministic.
-        if (a.kind === 'process' && b.kind === 'process') return a.row.timeOrder - b.row.timeOrder
+        // Process–process ties keep the founder-timeline fallback the table always had
+        // (situations after the timeline — timelineCompare); ties involving a playbook resolve
+        // by title so the order stays deterministic.
+        if (a.kind === 'process' && b.kind === 'process') return timelineCompare(a.row, b.row)
         return a.row.title.localeCompare(b.row.title)
       }
-      return direction === 'desc' ? -cmp : cmp
+      return cmp
     })
   }, [sorted, filteredPlaybooks, column, direction])
 
@@ -413,9 +476,14 @@ export default function ProcessesTable({
         area,
         areaRank: g.areaRank,
         items: [...g.items].sort(
+          // Playbook rows always carry their first constituent's timeOrder; process rows rank
+          // through timelineRank (situations — the whole 'Situations' group — have no slot, so
+          // inside that group the urgency clock orders the rows, hours first, then title).
           (a, b) =>
-            a.row.timeOrder - b.row.timeOrder
+            (a.kind === 'playbook' ? a.row.timeOrder : timelineRank(a.row))
+              - (b.kind === 'playbook' ? b.row.timeOrder : timelineRank(b.row))
             || (a.kind === b.kind ? 0 : a.kind === 'process' ? -1 : 1)
+            || (a.kind === 'process' && b.kind === 'process' ? urgencyRank(a.row) - urgencyRank(b.row) : 0)
             || a.row.title.localeCompare(b.row.title),
         ),
       }))
@@ -427,38 +495,58 @@ export default function ProcessesTable({
     ? (column as Metric)
     : 'cadence'
 
-  function metricCell(r: ProcessRow): ReactNode {
-    if (metric === 'order') return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
+  function metricCell(r: ProcessTableRow): ReactNode {
+    if (metric !== 'order' && fieldOf(r, metric) === null) return null
+    if (metric === 'order' && r.timeOrder === null && r.kind !== 'situation') return null
+    if (metric === 'order') {
+      // A situation has no slot on the founder timeline — an honest dash, not an invented
+      // number (the same convention as the playbook rows' missing per-process metrics).
+      if (r.timeOrder === null) {
+        return (
+          <span className="text-xs text-zinc-600" title="Situation — reactive, trigger-driven: it has no slot on the founder timeline; the urgency chip carries its clock">
+            —
+          </span>
+        )
+      }
+      return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
+    }
     if (metric === 'cadence') return <span className="text-xs text-zinc-400">{r.cadenceLabel}</span>
-    if (metric === 'annoyance') return <ScoreDots value={r.annoyance} label="Annoyance" />
-    if (metric === 'risk') return <ScoreDots value={r.risk} label="Risk" />
-    return <ScoreDots value={r.growthImpact} label="Growth impact" />
+    if (metric === 'annoyance') return <ScoreDots value={r.annoyance!} label="Annoyance" />
+    if (metric === 'risk') return <ScoreDots value={r.risk!} label="Risk" />
+    return <ScoreDots value={r.growthImpact!} label="Growth impact" />
   }
 
   // One process row — identical markup in the grouped and flat views (the founder ask keeps the
   // existing columns/rows unchanged under the area headers).
-  function processRow(r: ProcessRow): ReactNode {
+  function processRow(r: ProcessTableRow): ReactNode {
+    const href = r.href ?? `/processes/${r.slug}`
     return (
       <tr key={r.slug} className="transition hover:bg-zinc-800/70">
         <td className="max-w-[260px] px-2 py-2">
           <span className="flex items-center gap-1.5">
-            <IconChip icon={r.icon} title={`${r.title} — ${r.phase} process`} />
-            <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
-              {r.title}
+            <IconChip icon={r.icon} title={`${r.title} — ${r.phase} ${r.kind === 'situation' ? 'situation' : 'process'}`} />
+            <Link href={href} className="font-medium hover:text-emerald-300">
+              <ProcessTitle title={r.title} agent={r.agentClassified ?? null} />
             </Link>
-            <span
+            {r.geoScope !== null && <span
               aria-hidden
               className="text-[10px] opacity-70"
               title={scopeGlyphs[r.geoScope].label}
             >
               {scopeGlyphs[r.geoScope].glyph}
-            </span>
+            </span>}
+            {r.urgency !== null && <UrgencyChip tier={r.urgency} />}
           </span>
+          {/* Situations (founder 2026-10-01): the trigger — the event that puts a founder
+              here — is the row's subtitle; process rows stay single-line. */}
+          {r.kind === 'situation' && r.trigger !== null && (
+            <span className="mt-0.5 block pl-6 text-[11px] leading-snug text-zinc-500">{r.trigger}</span>
+          )}
         </td>
         <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
           {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
               to that phase; click again (or pick All) to clear. */}
-          <button
+          {r.phase && <button
             type="button"
             onClick={() => changePhase(phase === r.phase ? 'all' : r.phase)}
             title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
@@ -466,18 +554,18 @@ export default function ProcessesTable({
           >
             <IconChip icon={phaseIcon(r.phase)} title={phaseTooltip(r.phase)} />
             {r.phase}
-          </button>
+          </button>}
         </td>
         <td className="px-2 py-2">
-          <CeilingBar pct={r.pct} />
+          {r.pct !== null && <CeilingBar pct={r.pct} />}
         </td>
         <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
           <Link
-            href={`/processes/${r.slug}#steps`}
-            title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
+            href={r.href ? href : `${href}#steps`}
+            title={r.agentSteps === null ? `${r.totalSteps} top-level parts — open this process` : `${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
             className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
           >
-            {r.agentSteps}/{r.totalSteps}
+            {r.agentSteps === null ? r.totalSteps : `${r.agentSteps}/${r.totalSteps}`}
           </Link>
         </td>
         <td className="whitespace-nowrap px-2 py-2">{metricCell(r)}</td>
@@ -487,7 +575,7 @@ export default function ProcessesTable({
               v.arena ? (
                 // Founder 2026-09-25: a vendor chip opens the PROCESS through that
                 // vendor (?via= lens, lib/processLens.ts) — not the vendor's own page.
-                <Link key={v.label} href={`/processes/${r.slug}?via=${v.arena}:${v.id}`} title={`Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                <Link key={v.label} href={r.href ? href : `${href}?via=${v.arena}:${v.id}`} title={r.href ? `Open ${r.title} — view ${v.label} alongside the other options` : `Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
                   <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
                   {v.label}
                 </Link>
@@ -500,7 +588,7 @@ export default function ProcessesTable({
             )}
             {r.vendors.length > 3 && (
               <Link
-                href={`/processes/${r.slug}`}
+                href={href}
                 className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
                 title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
               >
@@ -561,9 +649,33 @@ export default function ProcessesTable({
           </span>
         </td>
         <td className="hidden px-2 py-2 lg:table-cell">
-          <Link href={p.href} className="whitespace-nowrap text-sm font-medium text-emerald-400 transition hover:text-emerald-300" title="A multi-process row spans the software of each process it runs — open it for the per-step options">
-            Go to process →
-          </Link>
+          {/* The vendors themselves (founder 2026-10-02) — the constituents' chips in journey
+              order, the exact process-row cell contract: a chip opens the PLAYBOOK through that
+              vendor (?via= lens), the +x overflow opens the playbook plain. */}
+          <span className="flex flex-wrap gap-1">
+            {p.vendors.slice(0, 3).map((v) =>
+              v.arena ? (
+                <Link key={v.label} href={`${p.href}?via=${v.arena}:${v.id}`} title={`Open ${p.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </Link>
+              ) : (
+                <span key={v.label} title={`${v.label} — not yet judged on Ultrametric`} className="inline-flex items-center gap-1 rounded-full border border-zinc-800 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-500">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </span>
+              ),
+            )}
+            {p.vendors.length > 3 && (
+              <Link
+                href={p.href}
+                className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
+                title={`${p.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
+              >
+                +{p.vendors.length - 3}
+              </Link>
+            )}
+          </span>
         </td>
       </tr>
     )
@@ -631,7 +743,11 @@ export default function ProcessesTable({
                         <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                           <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">{g.area}</span>
                           <span className="text-[11px] text-zinc-500">
-                            {g.items.length} {g.items.length === 1 ? 'process' : 'processes'}
+                            {/* The Situations group counts honestly in its own vocabulary. */}
+                            {g.items.length}{' '}
+                            {g.area === 'Situations'
+                              ? g.items.length === 1 ? 'situation' : 'situations'
+                              : g.items.length === 1 ? 'process' : 'processes'}
                           </span>
                         </span>
                       </th>
@@ -652,6 +768,48 @@ export default function ProcessesTable({
           </tbody>
         </table>
       </div>
+      {/* The country view's honesty disclosure (founder 2026-10-02, house disclosure idiom):
+          hiding a US-specific row must never destroy the information — one muted line says how
+          many rows this country view hides (and how many of those are handled inside other
+          processes there, per the committed note kinds), and expands to the hidden titles with
+          their committed one-liner summaries, each still linking to its process page. */}
+      {geo !== null && hiddenRows.length > 0 && (() => {
+        const country = GEO_PREF_META[geo].label
+        const absorbed = hiddenRows.filter((r) => r.geoNotesByCountry[geo]?.kind === 'absorbed').length
+        return (
+          <div className="px-2 text-xs text-zinc-500">
+            <button
+              type="button"
+              aria-expanded={hiddenOpen}
+              onClick={() => setHiddenOpen((v) => !v)}
+              className="text-left transition hover:text-emerald-300"
+            >
+              {hiddenRows.length} US-specific {hiddenRows.length === 1 ? 'process' : 'processes'} hidden in the {country} view
+              {absorbed > 0 && <> — {absorbed} {absorbed === 1 ? 'is' : 'are'} handled inside other processes there</>}
+              <span aria-hidden className="ml-1 text-[10px]">{hiddenOpen ? '▴' : '▾'}</span>
+            </button>
+            {hiddenOpen && (
+              <ul className="mt-2 space-y-1.5">
+                {hiddenRows.map((r) => {
+                  const note = r.geoNotesByCountry[geo]
+                  return (
+                    <li key={r.slug} className="leading-snug">
+                      <Link href={`/processes/${r.slug}`} className="text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300">
+                        {r.title}
+                      </Link>{' '}
+                      <span className="text-zinc-600">
+                        {/* The committed note summary is the one-liner; a row with no note for
+                            this country says so honestly instead of inventing a reason. */}
+                        — {note ? note.summary : `US-specific — no ${country} note is curated yet.`}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        )
+      })()}
     </div>
   )
 }

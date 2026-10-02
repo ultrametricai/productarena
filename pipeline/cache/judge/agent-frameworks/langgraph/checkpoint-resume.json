@@ -1,18 +1,20 @@
 {
-  "hash": "29905a3719d4df286059559077d66b3c0c9d94e1142828bf8a96ee988e3fb322",
+  "hash": "8ef36d27387580fb9ecfe130ceaff96e73e0b033dbce7cfa5829060c217ec7b8",
   "verdict": {
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe checkpointers persisting thread graph state so execution can resume even from an error state, with production-grade backends like PostgresSaver, and GitHub README states agents 'persist through failures... automatically resuming from exactly where they left off.' Community commentary corroborates the state-machine/time-travel design underlying this durability. Missing for 10: independent hands-on verification of crash-recovery behavior (community only discusses persistence conceptually and flags rough edges in related streaming, not a concrete failure of checkpoint/resume itself).",
+    "rationale": "LangGraph's docs say checkpointers persist a thread's graph state for fault tolerance, and the checkpointer writes the exact graph state so a run can resume later, even from an error state. The README advertises durable execution that resumes from exactly where it left off, and production use is backed by a database checkpointer (PostgresSaver) or the Agent Server's managed checkpoint database. Community comments independently confirm that checkpointing and state management are core framework features. Missing for 10: hands-on or independent evidence of a run actually recovering after a process crash or restart, and documentation of how mid-step (partially completed node) work is handled on resume.",
     "evidenceIds": [
       "langgraph-docs-2",
-      "langgraph-docs-13",
       "langgraph-docs-25",
-      "langgraph-gh-1",
       "langgraph-gh-6",
-      "langgraph-comm-2",
-      "langgraph-comm-4"
+      "langgraph-gh-1",
+      "langgraph-docs-13",
+      "langgraph-docs-30",
+      "langgraph-docs-10",
+      "langgraph-comm-7",
+      "langgraph-comm-11"
     ],
     "productId": "langgraph",
     "storyId": "checkpoint-resume"

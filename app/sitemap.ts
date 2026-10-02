@@ -60,6 +60,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/rankings/popular`, lastModified: now },
     { url: `${SITE_URL}/rankings/most-open`, lastModified: now },
     { url: `${SITE_URL}/rankings/best-api`, lastModified: now },
+    // Arena-scoped company ranking: the judged startup-law-firms leaderboard as a focused view.
+    { url: `${SITE_URL}/rankings/law-firms`, lastModified: now },
     // Control surfaces — abstract technologies (API/MCP/CLI…) ranked from judged verdicts
     // (lib/controlSurfaces.ts, app/technologies/page.tsx).
     { url: `${SITE_URL}/technologies`, lastModified: now },

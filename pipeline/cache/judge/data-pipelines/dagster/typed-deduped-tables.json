@@ -1,18 +1,16 @@
 {
-  "hash": "63eccc807c0b98a183c48f64f563dec8b5189cbec9de2733f975a9c4a400ac51",
+  "hash": "116cca583a53782c558e420dd2e4c85bf8d39500a228008644bb00b5931b23bb",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Dagster's asset-check framework can verify a tabular asset adheres to a schema and check for nulls, and its dbt/Fivetran/Airbyte/dlt integrations let loaded data be represented as typed assets with dbt tests modeled as checks — but Dagster itself is an orchestrator, not a loader: actual typing/deduplication into destination tables depends on the underlying ELT tool or dbt models, not something Dagster guarantees natively for raw JSON ingestion. missing for 10: evidence of Dagster performing schema typing/deduplication itself (vs. relying on dbt/Fivetran/Airbyte/dlt to do it), and no hands-on/independent confirmation that loaded assets land deduplicated and typed by default.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Dagster is an orchestrator, not a loader. It models Fivetran, dlt and Airbyte syncs as assets, and its asset checks can verify that a tabular asset matches a specified schema and has no nulls in a column. Typed, deduplicated destination tables would therefore come from the external ingestion tools, which Dagster only orchestrates and validates. Missing for 10: native typed table loading, deduplication or merge semantics, evidence that orchestrated loaders produce typed rather than raw JSON tables, and independent corroboration.",
     "evidenceIds": [
       "dagster-docs-3",
       "dagster-docs-27",
-      "dagster-docs-36",
-      "dagster-docs-7",
-      "dagster-docs-9",
-      "dagster-docs-10",
-      "dagster-docs-8"
+      "dagster-docs-39",
+      "dagster-docs-40",
+      "dagster-docs-28"
     ],
     "productId": "dagster",
     "storyId": "typed-deduped-tables"

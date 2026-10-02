@@ -1,15 +1,18 @@
 {
-  "hash": "9d6dcdcbbc50ab59f679f19a0d5ea6c55e1472e91dc7793b51628f66f51a5ed7",
+  "hash": "ab61881403c0e042092b947b185381476d67f5ba32a9616f7ffc7486453dd19e",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Intuit's official MCP server exposes environment variables (QUICKBOOKS_DISABLE_WRITE, QUICKBOOKS_DISABLE_UPDATE) and lets you restrict which tool categories are registered, and the OAuth client supports a sandbox/production split—giving some coarse-grained, least-privilege-style control over what an agent can do. However this is app-level config rather than true per-agent scoped OAuth credentials/roles, and there's no documented fine-grained scope system (e.g., read-only vs specific entity scopes) issued per credential. Missing for 10: granular OAuth scope definitions, role-based API key issuance per agent, and independent confirmation these toggles are enforced server-side rather than just client config.",
+    "rationale": "Agents connect through Intuit's official OAuth 2.0 flow with token management and refresh, and can be pointed at an isolated sandbox environment. The official MCP server limits what an agent can do through client-side toggles (QUICKBOOKS_DISABLE_WRITE, QUICKBOOKS_DISABLE_UPDATE) and by restricting which tool categories are registered. However, this least-privilege control is configured in the MCP server rather than enforced on the credential itself, and custom user roles cover human users, not API tokens. Missing for 10: documented granular OAuth scopes or permission-limited API credentials issued per agent, server-side enforcement of read-only or entity-level access on tokens, and independent hands-on corroboration.",
     "evidenceIds": [
+      "quickbooks-gh-1",
+      "quickbooks-docs-31",
+      "quickbooks-docs-39",
       "quickbooks-supp-mcp-sandbox",
       "quickbooks-gh-7",
       "quickbooks-supp-sandbox-oauth",
-      "quickbooks-docs-4"
+      "quickbooks-probe-3"
     ],
     "productId": "quickbooks",
     "storyId": "agentic-scoped-keys"

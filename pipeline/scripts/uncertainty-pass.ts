@@ -12,7 +12,12 @@
 // that isn't a close race gets no file at all (see lib/data.ts's tolerant-optional load).
 //
 // Costs ~2 live LLM calls per decisive cell per qualifying product — deliberately NOT part of
-// `pnpm test`. Usage: pnpm exec tsx pipeline/scripts/uncertainty-pass.ts
+// `pnpm test`. Usage: pnpm exec tsx pipeline/scripts/uncertainty-pass.ts [--category a,b,c]
+//   --category (comma-separated allowlist) limits the pass to specific arenas — added for the
+//   2026-09-30 opus-5-5 judge migration, whose memo prescribes re-measuring the noise model on
+//   a ~100-cell SAMPLE under the new judge (~$8) rather than every qualifying arena (35 arenas
+//   qualified post-migration ≈ $95): measure a few arenas, then rebuild intervals from
+//   opus-measured files only.
 import fs from 'node:fs'
 import path from 'node:path'
 import {
@@ -43,7 +48,10 @@ async function judgeOnce(productName: string, story: Story, evidence: Evidence[]
 }
 
 async function main(): Promise<void> {
-  const categories = readCategories()
+  const catFlag = process.argv.indexOf('--category')
+  const only = catFlag >= 0 ? new Set(process.argv[catFlag + 1].split(',')) : undefined
+  const categories = readCategories().filter((c) => !only || only.has(c.id))
+  if (only && categories.length !== only.size) throw new Error('uncertainty-pass: unknown category in --category list')
   const summary: string[] = []
 
   for (const cat of categories) {

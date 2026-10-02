@@ -1,14 +1,16 @@
 {
-  "hash": "8b5b8d0d7a7ba9150c4f41ff4015180ed4ba400fe74db0b05dbe1639d2cca684",
+  "hash": "8f3dd357aff3e7ef26b42857f47bf308b8c05a638c6962e938cbb30041be9b66",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Stripe's machine-payments rails (x402, MPP, SPT-based checkout) do let agents autonomously trigger and complete payments in the background without a human in the checkout loop for low-value/API-style transactions, and Link CLI lets agents pull financial data and spend within pre-set limits. However, most flows are explicitly human-gated rather than fully autonomous: SPTs carry usage/expiration limits and can be revoked, Link wallet spend requires the customer to 'approve each request' live, and the MCP server 'requires human confirmation before it takes certain stripe_api_write actions' with a 24-hour approval window — undercutting true 'runs autonomously in background' automation. Missing for 10: a documented scheduler/recurring-automation primitive independent of per-transaction human approval, and evidence of unattended multi-step agent workflows beyond single payment/API calls.",
+    "rationale": "Stripe provides building blocks for unattended agent activity. Machine payments over MPP/x402 let agents pay for APIs programmatically without a checkout UI, and shared payment tokens with spend limits and expiry allow pre-scoped delegated spending. Webhooks for catalog imports, completed checkouts and token use support event-driven back-ends. However, it offers no first-party way to define or schedule background automations, and the Link CLI and MCP paths require human approval for each spend or sensitive write. Missing for 10: a user-configurable automation or scheduling feature, fully unattended background execution on the wallet and MCP paths, and hands-on evidence of autonomous runs.",
     "evidenceIds": [
       "stripe-ac-supp-machine-payments",
       "stripe-ac-supp-mpp-agent-build",
       "stripe-ac-supp-spt-limits",
+      "stripe-ac-supp-embedded-checkout-oca",
+      "stripe-ac-supp-seller-catalog-feed",
       "stripe-ac-supp-link-wallet",
       "stripe-ac-supp-mcp-approval"
     ],

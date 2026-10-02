@@ -1,15 +1,19 @@
 {
-  "hash": "fd22ee3c67ab72be6cf600055e54df4dbdbec19d9893099d7d19e05f1263f442",
+  "hash": "622c0dc7c51aafb3c685bf21725bfbabce0c896e6638addad0fd37fc0d1fb9ed",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "RevenueCat documents a secret-key REST API for server-side actions like refunding purchases and granting promotional entitlements, and mentions importing existing subscriptions via API, but there is no documented endpoint for directly creating, updating, pausing, or canceling a subscription's full lifecycle — actual purchase/cancellation flows are handled by the platform stores or via SDK purchase() calls, not a RevenueCat lifecycle API. missing for 10: explicit 'create subscription', 'pause subscription', and 'cancel subscription' API endpoints, and any hands-on confirmation these lifecycle actions work end-to-end without dashboard use.",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "RevenueCat documents a REST API, authenticated with secret keys, that covers some lifecycle actions: refunding purchases and granting promotional entitlements (docs-19), and importing purchases via `POST /receipts` (docs-21). New subscriptions are created through the SDK's `purchase(package:)` call routed to the app stores (docs-14), not through a server-side create endpoint. The MCP server and AI toolkit manage configuration such as products and entitlements, not individual customer subscriptions (docs-8, docs-9). Missing for 10: documented API endpoints to update a subscription's plan or price, to pause, and to cancel; a published OpenAPI spec (the probe returned 404); and hands-on corroboration that the full lifecycle can be run without the dashboard.",
     "evidenceIds": [
       "revenuecat-docs-19",
       "revenuecat-docs-21",
+      "revenuecat-docs-14",
+      "revenuecat-docs-5",
       "revenuecat-docs-15",
-      "revenuecat-docs-4"
+      "revenuecat-gh-4",
+      "revenuecat-docs-9",
+      "revenuecat-probe-3"
     ],
     "productId": "revenuecat",
     "storyId": "subscription-crud-api"

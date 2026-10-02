@@ -2,20 +2,23 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { IconGlyph } from '@/components/IconChip'
+import { MOBILE_NAV_ICONS } from '@/lib/arenaIcons'
 
 // Mobile hamburger (founder 2026-09-24: "the mobile top bar goes off the page — we need a
 // hamburger menu"). Below sm the header shows only logo · ☰ · search · account; every other
 // destination lives here. Desktop never renders this (sm:hidden) — the full button row and the
-// Arenas/Explore dropdowns stay the desktop IA.
+// Arenas/Explore dropdowns stay the desktop IA. Icons: house glyph tokens (lib/arenaIcons.ts,
+// founder 2026-10-01 — the custom set replaces the emoji in the top-bar menus).
 const ITEMS: Array<{ href: string; label: string; icon: string }> = [
-  { href: '/arenas', label: 'Arenas', icon: '🏟' },
-  { href: '/processes', label: 'Processes', icon: '🔁' },
-  { href: '/technologies', label: 'Technologies', icon: '🔌' },
-  { href: '/startup-sim', label: 'The Open Startup', icon: '🧪' },
-  { href: '/stacks', label: 'Stacks', icon: '🧱' },
-  { href: '/compare', label: 'Compare', icon: '⚖' },
-  { href: '/global', label: 'Global rankings', icon: '🌍' },
-  { href: '/methodology', label: 'Methodology', icon: '📐' },
+  { href: '/arenas', label: 'Arenas', icon: MOBILE_NAV_ICONS['/arenas'] },
+  { href: '/processes', label: 'Processes', icon: MOBILE_NAV_ICONS['/processes'] },
+  { href: '/technologies', label: 'Technologies', icon: MOBILE_NAV_ICONS['/technologies'] },
+  { href: '/startup-sim', label: 'The Open Startup', icon: MOBILE_NAV_ICONS['/startup-sim'] },
+  { href: '/stacks', label: 'Stacks', icon: MOBILE_NAV_ICONS['/stacks'] },
+  { href: '/compare', label: 'Compare', icon: MOBILE_NAV_ICONS['/compare'] },
+  { href: '/global', label: 'Global rankings', icon: MOBILE_NAV_ICONS['/global'] },
+  { href: '/methodology', label: 'Methodology', icon: MOBILE_NAV_ICONS['/methodology'] },
 ]
 
 export default function MobileNav() {
@@ -61,7 +64,9 @@ export default function MobileNav() {
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 transition hover:bg-zinc-800 hover:text-emerald-300"
             >
-              <span aria-hidden className="w-5 text-center">{item.icon}</span>
+              <span aria-hidden className="inline-flex w-5 justify-center">
+                <IconGlyph icon={item.icon} />
+              </span>
               {item.label}
             </Link>
           ))}

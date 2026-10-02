@@ -583,15 +583,15 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
     expect(decisionTitle('enterprise')).toContain('not set')
     expect(decisionTitle('enterprise')).toContain('Developers')
     // Names only (founder 2026-10-01, item 4): no sublabel, no tooltip — the corpus-mapping
-    // receipt moved to non-blocking surfaces (semi-auto card tooltips, the run's phase notes,
-    // and the single info line under the band).
+    // receipt lives on non-blocking surfaces (semi-auto card tooltips, the run's phase notes;
+    // the standing info line under the band is GONE since round 8).
     fireEvent.click(screen.getByTestId('vs-decision-enterprise'))
     const entOption = screen.getByTestId('vs-decision-enterprise-yes')
     expect(entOption.textContent).not.toContain('land-the-enterprise-deal')
     expect(entOption.textContent?.trim().replace(/✓$/, '').trim()).toBe('Enterprises')
     expect(entOption.getAttribute('title')).toBeNull()
     expect(entOption.getAttribute('aria-label')).toBe('Enterprises')
-    expect(screen.getByTestId('vs-decisions-info').textContent).toContain('phase notes name each mapping')
+    expect(screen.queryByTestId('vs-decisions-info')).toBeNull()
     fireEvent.click(screen.getByTestId('vs-decision-enterprise')) // close
     pickDecision('enterprise', 'Enterprises')
     expect(decisionTitle('enterprise')).toContain('Enterprises')
@@ -645,9 +645,10 @@ describe('VirtualStartup — the compact setup band (decisions as dropdowns, 202
   })
 
   it("the 'full setup guide' expander is GONE (round 4, item 1) — and since the 2026-09-30 tooltip removal (item 3) the honesty copy lives in pill titles and option SUBLABELS", () => {
-    const { container } = renderIt()
+    renderIt()
     expect(screen.queryByText(/full setup guide/i)).toBeNull()
-    expect(container.querySelector('details')).toBeNull() // no disclosure widget in the band
+    // The only disclosure in the band is round 8's 'Set vendors' row — no explainer expander.
+    expect(screen.queryByText(/full setup/i)).toBeNull()
     // The corpus disclosure folds into the preset PILL (tooltip + sr-only) — the ⓘ is gone
     // (item 11); pills are not dropdowns, so their titles never overlap an open listbox.
     const disclosures = screen.getAllByTestId('vs-preset-disclosure')
@@ -891,46 +892,55 @@ describe('VirtualStartup — the single Funding selector (decision options + sce
   })
 })
 
-// The controller tabs (founder round 3, item 3): Setup | Vendors on the setup band. WAI-ARIA
-// tab semantics, default Setup, the chosen tab never persisted in the URL; the embedded dry-run
-// transcript (the old 'Simulate this playbook' section) is gone from this page entirely.
-describe('VirtualStartup — the controller tabs (Setup | Vendors)', () => {
-  it('accessible tabs: role=tablist, two tabs, Setup selected by default, panels wired via aria-controls', () => {
+// The setup band flows top-to-bottom (founder batch 2026-10-02, item 2): the Setup/Vendors tab
+// pills are GONE — Scenario row → Founder row → "I'm using" row → Choices (the decisions grid)
+// → the collapsible 'Set vendors' disclosure (house <details> idiom, default collapsed). The
+// embedded dry-run transcript (the old 'Simulate this playbook' section) stays gone entirely.
+describe("VirtualStartup — the setup band flows top-to-bottom (round 8: no tabs, 'Set vendors' disclosure)", () => {
+  it('the Setup/Vendors tab pills are gone: no tablist, no vs-tab-* buttons, the rows render directly', () => {
     renderIt()
     const band = screen.getByTestId('vs-setup')
-    const tablist = within(band).getByRole('tablist', { name: 'Open startup simulator controller' })
-    const tabs = within(tablist).getAllByRole('tab')
-    expect(tabs).toHaveLength(2)
-    const [setup, vendors] = tabs
-    expect(setup.textContent).toContain('Setup')
-    expect(vendors.textContent).toContain('Vendors')
-    expect(setup.getAttribute('aria-selected')).toBe('true')
-    expect(vendors.getAttribute('aria-selected')).toBe('false')
-    expect(setup.getAttribute('aria-controls')).toBe('vs-tabpanel-setup')
-    expect(vendors.getAttribute('aria-controls')).toBe('vs-tabpanel-vendors')
-    // Roving tabIndex: only the selected tab is in the Tab order.
-    expect(setup.getAttribute('tabindex')).toBe('0')
-    expect(vendors.getAttribute('tabindex')).toBe('-1')
-    // Setup content shows; the vendors panel exists but is hidden.
+    expect(within(band).queryByRole('tablist')).toBeNull()
+    expect(screen.queryByTestId('vs-tab-setup')).toBeNull()
+    expect(screen.queryByTestId('vs-tab-vendors')).toBeNull()
+    expect(within(band).queryByText('Setup')).toBeNull()
+    // The setup rows render directly — no tabpanel wrapper, nothing hidden.
     expect(within(band).getByTestId('vs-decision-entity')).toBeTruthy()
-    expect((document.getElementById('vs-tabpanel-setup') as HTMLElement).hidden).toBe(false)
-    expect((document.getElementById('vs-tabpanel-vendors') as HTMLElement).hidden).toBe(true)
+    expect(document.getElementById('vs-tabpanel-setup')).toBeNull()
+    expect(document.getElementById('vs-tabpanel-vendors')).toBeNull()
   })
 
-  it('switching to Vendors swaps the panels, arrow keys move between tabs, and the chosen tab never touches the URL', () => {
+  it("band order: Scenario → Founder → I'm using → Choices (the decisions grid) → the 'Set vendors' disclosure", () => {
     renderIt()
-    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
-    expect(screen.getByTestId('vs-tab-vendors').getAttribute('aria-selected')).toBe('true')
-    expect((document.getElementById('vs-tabpanel-setup') as HTMLElement).hidden).toBe(true)
-    expect((document.getElementById('vs-tabpanel-vendors') as HTMLElement).hidden).toBe(false)
+    const rows = screen.getByTestId('vs-setup-rows')
+    const text = rows.textContent ?? ''
+    // The four label-column anchors appear, in flow order ('Choices' is the round-8 visual
+    // anchor for the decisions grid — the retired 'Decisions' label does not return).
+    const idx = ['Scenario', 'Founder', "I'm using", 'Choices'].map((l) => text.indexOf(l))
+    expect(idx.every((v) => v >= 0)).toBe(true)
+    expect([...idx].sort((a, b) => a - b)).toEqual(idx)
+    // The decisions grid sits under the 'Choices' label; the disclosure follows the whole grid.
+    const choices = screen.getByTestId('vs-decision-entity')
+    const vendors = screen.getByTestId('vs-set-vendors')
+    expect(choices.compareDocumentPosition(vendors) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("the 'Set vendors' disclosure: default COLLAPSED, muted summary row (not a tab, not a pill), opens on click, never touches the URL", () => {
+    renderIt()
+    const details = screen.getByTestId('vs-set-vendors')
+    expect(details.tagName).toBe('DETAILS')
+    expect(details.hasAttribute('open')).toBe(false)
+    const summary = screen.getByTestId('vs-set-vendors-summary')
+    expect(summary.tagName).toBe('SUMMARY')
+    expect(summary.textContent).toContain('Set vendors')
+    expect(summary.className).toContain('text-zinc-500') // visually 'unset' until opened
+    fireEvent.click(summary)
+    expect(details.hasAttribute('open')).toBe(true)
     // This fixture passes roles=[] — the panel says so honestly instead of an empty grid.
     expect(screen.getByTestId('vs-vendors-empty')).toBeTruthy()
     expect(window.location.search).toBe('')
-    // Arrow keys (roving tabIndex): ArrowLeft returns to Setup.
-    fireEvent.keyDown(screen.getByTestId('vs-tab-vendors'), { key: 'ArrowLeft' })
-    expect(screen.getByTestId('vs-tab-setup').getAttribute('aria-selected')).toBe('true')
-    expect(screen.getByTestId('vs-tab-setup').getAttribute('tabindex')).toBe('0')
-    expect(screen.getByTestId('vs-tab-vendors').getAttribute('tabindex')).toBe('-1')
+    fireEvent.click(summary) // collapses back
+    expect(details.hasAttribute('open')).toBe(false)
     expect(window.location.search).toBe('')
   })
 
@@ -1040,13 +1050,19 @@ describe('VirtualStartup — the terminal viewport (founder 2026-09-28: the run 
 })
 
 describe('VirtualStartup — YC batch mode', () => {
-  it('toggling YC mode calibrates the combo, shows the non-affiliation disclosure, and writes ?yc=1', () => {
+  it('toggling YC mode calibrates the combo, shows the minimal non-affiliation note, and writes ?yc=1', () => {
     renderIt()
-    expect(screen.queryByTestId('vs-yc-disclosure')).toBeNull()
+    expect(screen.queryByTestId('vs-yc-nonaffiliation')).toBeNull()
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
     expect(window.location.search).toContain('yc=1')
-    const disclosure = screen.getByTestId('vs-yc-disclosure')
-    expect(disclosure.textContent).toContain('not affiliated with or endorsed by Y Combinator')
+    // Round 8 (item 3): the explainer paragraph is GONE; the load-bearing synthetic/affiliation
+    // honesty survives as this muted suffix (full YC_BATCH.disclosure sentence in its tooltip).
+    expect(screen.queryByTestId('vs-yc-disclosure')).toBeNull()
+    expect(screen.queryByText(/Calibrated to the publicly known YC batch shape/)).toBeNull()
+    expect(screen.queryByText(/Batch calendar:/)).toBeNull()
+    const note = screen.getByTestId('vs-yc-nonaffiliation')
+    expect(note.textContent).toBe('synthetic \u00b7 not affiliated with YC')
+    expect(note.getAttribute('title')).toContain('not affiliated with or endorsed by Y Combinator')
     // Launch-early calibration: PH on, seed raise — asserted in the dropdowns; build-first has
     // no control (round 5, item 4) but the calibration still asserts it internally, observable
     // as the composition below.
@@ -1080,8 +1096,8 @@ describe('VirtualStartup — YC batch mode', () => {
     const raise = termBody().getByText('Raise the seed')
     const launch = termBody().getByText('Launch day')
     expect(launch.compareDocumentPosition(raise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    // Named once in the mode disclosure and once on the relocated phase itself.
-    expect(screen.getAllByText(/compresses to Demo-Day timing/)).toHaveLength(2)
+    // Named on the relocated phase's note alone — the band's explainer paragraph is gone (round 8).
+    expect(screen.getAllByText(/compresses to Demo-Day timing/)).toHaveLength(1)
   })
 
   it('adds the synthetic weekly group-partner update to the rhythm views — data-synthetic, unlinked', () => {
@@ -1121,17 +1137,17 @@ describe('VirtualStartup — YC batch mode', () => {
   it('?yc=1 is read on mount only; a manual pick contradicting the calibration exits YC mode', () => {
     window.history.replaceState(null, '', '/?yc=1')
     renderIt()
-    expect(screen.getByTestId('vs-yc-disclosure')).toBeTruthy()
+    expect(screen.getByTestId('vs-yc-nonaffiliation')).toBeTruthy()
     expect(decisionTitle('funding')).toContain('Raise a seed')
     // Contradicting the calibration (quiet launch) turns the mode off and clears ?yc.
     pickDecision('ph', 'Stealth mode')
-    expect(screen.queryByTestId('vs-yc-disclosure')).toBeNull()
+    expect(screen.queryByTestId('vs-yc-nonaffiliation')).toBeNull()
     expect(window.location.search).not.toContain('yc=1')
     // A non-calibration pick keeps the mode on.
     window.history.replaceState(null, '', '/')
     fireEvent.click(screen.getByTestId('vs-yc-toggle'))
     pickDecision('team', 'Solo founder')
-    expect(screen.getByTestId('vs-yc-disclosure')).toBeTruthy()
+    expect(screen.getByTestId('vs-yc-nonaffiliation')).toBeTruthy()
     expect(window.location.search).toContain('yc=1')
   })
 })
@@ -1158,14 +1174,15 @@ describe('VirtualStartup — founder batch 2026-09-30', () => {
     }
   })
 
-  it("the 'Decisions' row label is gone from the setup band (item 6) — the dropdowns simply sit in the grid", () => {
+  it("the 'Decisions' row label stays gone (item 6) — round 8's anchor is 'Choices', never 'Decisions'", () => {
     renderIt()
-    const setupPanel = document.getElementById('vs-tabpanel-setup')!
-    expect(setupPanel.textContent).not.toContain('Decisions')
+    const setupRows = screen.getByTestId('vs-setup-rows')
+    expect(setupRows.textContent).not.toContain('Decisions')
+    expect(setupRows.textContent).toContain('Choices')
     expect(within(screen.getByTestId('vs-setup')).queryByTitle(/Starting decisions/)).toBeNull()
     // The other row labels stay.
-    expect(setupPanel.textContent).toContain('Scenario')
-    expect(setupPanel.textContent).toContain('Founder')
+    expect(setupRows.textContent).toContain('Scenario')
+    expect(setupRows.textContent).toContain('Founder')
   })
 
   it('tooltip removal (item 3): NO title= on the decision/entity/funding/founder/geo/assistant triggers or their options; aria-labels stay', () => {

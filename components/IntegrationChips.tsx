@@ -66,11 +66,9 @@ export default function IntegrationChips({ chips }: { chips: IntegrationChipData
       >
         Verified integrations
       </h2>
-      <p className="mb-3 text-xs text-zinc-500">
-        Connections to other tracked products — hover a chip for the verbatim evidence quote
-        behind it.
-      </p>
-      <div className="flex flex-wrap gap-2">
+      {/* Founder 2026-10-02: no explainer sentence — the chips speak for themselves and each
+          one's tooltip still quotes the verbatim evidence behind the edge. */}
+      <div className="mt-3 flex flex-wrap gap-2">
         {chips.map((chip) => (
           <IntegrationChip key={chip.productId} chip={chip} />
         ))}

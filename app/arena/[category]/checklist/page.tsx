@@ -6,7 +6,7 @@ import IconChip from '@/components/IconChip'
 import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import {
   checklistMarkdown, checklistThemes, checklistWhy, priorityForWeight, storyPassStats,
   VERDICT_GLYPHS, type Priority,
@@ -94,11 +94,8 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
           </Link>
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          {/* Same emoji this arena wears in the header's Arenas menu (data/arena-icons.json). */}
-          <IconChip
-            icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
-            title={`${data.category.name} arena`}
-          />
+          {/* Same house glyph this arena wears in the header's Arenas menu (lib/arenaIcons.ts). */}
+          <IconChip icon={arenaIcon(data.category.id)} title={`${data.category.name} arena`} />
           Buyer checklist
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">

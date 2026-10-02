@@ -1,13 +1,14 @@
 {
-  "hash": "27492048412a37def29af2bbda32c71bb4cc7751fdf6cfcdc6b7542e85cbd83e",
+  "hash": "a9656b1716f3f8c9c26e147c33d34c009c7bd37f037ba38ec2dff010ea672831",
   "verdict": {
     "verdict": "partial",
-    "quality": 6,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Stripe Radar is documented to screen every payment attempt synchronously as part of the charge/PaymentIntent flow, producing a risk_level/risk_score that determines block/allow/review outcomes in real time, and test cards exist to simulate specific risk levels (docs-5, docs-20, docs-27, docs-6). However, the evidence pack never shows a standalone, explicitly synchronous 'get risk score before authorization' API call with a documented request/response schema exposing the numeric score directly to developers outside the charge object — it's implied via risk_level on the charge rather than a dedicated scoring endpoint. Community reports also note friction with programmatic control over outcomes (comm-2). Missing for 10: a dedicated synchronous risk-scoring endpoint/response schema independent of charge creation, clearer documentation of the exact score field and timing guarantee, and independent hands-on confirmation of real-time synchronous scoring latency.",
+    "rationale": "Radar screens every payment attempt in real time and attaches a risk level to the resulting charge, which can be exercised with sandbox test cards (e.g. one that yields `highest`). That is ML scoring inline with the payment flow. However, nothing in the evidence documents an API that returns a risk score synchronously before authorization completes, or exposes a numeric score as an API field. A community report also cites lack of easy programmatic control over Radar. Missing for 10: documented pre-authorization scoring endpoint, API reference for the risk score/level field on charges, evidence of synchronous retrieval timing, independent hands-on corroboration.",
     "evidenceIds": [
       "stripe-radar-docs-5",
       "stripe-radar-docs-20",
+      "stripe-radar-docs-22",
       "stripe-radar-docs-27",
       "stripe-radar-docs-6",
       "stripe-radar-comm-2"

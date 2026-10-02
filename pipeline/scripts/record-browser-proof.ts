@@ -18,9 +18,9 @@ import { upsertProofIndex, writeProofArtifact } from '../proof-io'
 //   npm install --prefix .proof-scratch playwright   # browsers come from ~/Library/Caches/ms-playwright
 //   pnpm exec tsx pipeline/scripts/record-browser-proof.ts
 //
-// PA_PLAYWRIGHT_DIR overrides the scratch location.
+// UM_PLAYWRIGHT_DIR overrides the scratch location.
 
-const SCRATCH = process.env.PA_PLAYWRIGHT_DIR ?? path.resolve(__dirname, '../../.proof-scratch')
+const SCRATCH = process.env.UM_PLAYWRIGHT_DIR ?? process.env.PA_PLAYWRIGHT_DIR ?? path.resolve(__dirname, '../../.proof-scratch')
 
 const PILOT = {
   category: 'web-scraping',

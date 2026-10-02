@@ -855,15 +855,17 @@ export function unionTaskIds(chains: VsChain[]): string[] {
 // 'Which AI firm are you using' (founder batch 2026-09-30, item 7)
 // ---------------------------------------------------------------------------
 // The setup band's "I'm using" selector: REAL judged ai-assistants products only (the roster is
-// pinned against data/ai-assistants/products.json by tests — no grokbot exists there, so the
-// judged 'grok' entry carries the Grok option). The selection is a DISPLAY PIN on the
+// pinned against data/ai-assistants/products.json by tests). The selection is a DISPLAY PIN on the
 // ai-assistants-mapped steps (the LLM-venue curation: steps whose judged step ranking lives in
 // the ai-assistants arena): the chosen assistant renders as 'your assistant' while the judged
 // top keeps its '(recommended · judged)' chip and score — no judged number ever moves, and the
 // pin never touches the outcome clock. Persisted in ?run= as the appended 'a' token
 // (lib/virtualStartupRun.ts — old links simply lack it).
 
-export const VS_AI_FIRM_IDS = ['chatgpt', 'claude', 'gemini', 'grok', 'muse'] as const
+// APPEND-ONLY (the 'a' codec token stores the id string and validates membership — appending
+// keeps every legacy link decoding; removals would reject shared links). dots, grok-bot, kimi,
+// and perplexity-computer joined with the 2026-10-01 roster expansion, judged first.
+export const VS_AI_FIRM_IDS = ['chatgpt', 'claude', 'gemini', 'grok', 'muse', 'dots', 'grok-bot', 'kimi', 'perplexity-computer'] as const
 export type VsAiFirmId = (typeof VS_AI_FIRM_IDS)[number]
 
 // The assistant a FRESH visit starts pinned to (founder batch 2026-10-01, item 5: ChatGPT is

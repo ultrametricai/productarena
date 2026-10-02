@@ -5,7 +5,6 @@
 // decision combo.
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { isDeepStrictEqual } from 'node:util'
 import { describe, expect, it } from 'vitest'
 import searchAliases from '@/data/search-aliases.json'
 import { GEO_PREF_META } from '@/lib/geoPreference'
@@ -69,6 +68,12 @@ const chains: VsChain[] = loadChains(DATA_DIR).map(({ id, name, taskIds }) => ({
 const corpusById = new Map(loadProcesses(DATA_DIR).map((t) => [t.id, t]))
 const corpusIds = new Set(corpusById.keys())
 const combos = allChoiceCombos()
+// Bound each replay test's work without sampling: all combinations run, in source order.
+const REPLAY_BATCH_SIZE = 5_120
+const replayBatches = Array.from({ length: Math.ceil(combos.length / REPLAY_BATCH_SIZE) }, (_, index) => ({
+  batch: index + 1,
+  choices: combos.slice(index * REPLAY_BATCH_SIZE, (index + 1) * REPLAY_BATCH_SIZE),
+}))
 
 // The same corpus reshape app/startup-sim/page.tsx performs — shared by the rhythm suites.
 const routeMixOf = (taskId: string): RouteMix => {
@@ -500,7 +505,7 @@ describe('synthetic artifacts — labeled, deterministic, impossible-real', () =
   })
 
   it('EVERY generated artifact carries the literal simulated flag and non-empty copy', () => {
-    // The sweep is 122,880 combos × ~15 artifacts — plain checks accumulate violations and a
+    // The sweep currently covers 153,600 combos × ~15 artifacts — plain checks accumulate violations and a
     // single expect reports them, so the full honesty sweep stays exhaustive AND fast (millions
     // of expect() calls were the old bottleneck, not the generators).
     const violations: string[] = []
@@ -522,18 +527,21 @@ describe('synthetic artifacts — labeled, deterministic, impossible-real', () =
     expect(violations).toEqual([])
   }, 120_000)
 
-  it('replays identically for the same decision combo (seeded, no runtime randomness)', () => {
-    const violations: string[] = []
-    for (const combo of combos) {
+  it('replay batches cover the full decision product exactly once, without omissions or duplicates', () => {
+    const flattened = replayBatches.flatMap(batch => batch.choices)
+    expect(combos.length).toBe(DECISIONS.reduce((count, decision) => count * decision.options.length, 1))
+    expect(flattened.length).toBe(combos.length)
+    expect(flattened.every((combo, index) => combo === combos[index])).toBe(true)
+    expect(new Set(flattened.map(comboKey)).size).toBe(combos.length)
+    expect(replayBatches.every(batch => batch.choices.length > 0 && batch.choices.length <= REPLAY_BATCH_SIZE)).toBe(true)
+  })
+
+  it.each(replayBatches)('replays identically for the same decision combo — batch $batch (seeded, no runtime randomness)', ({ choices }) => {
+    for (const combo of choices) {
       const ids = journeyTaskIds(combo, chains)
-      if (!isDeepStrictEqual(buildJourneyArtifacts(combo, ids), buildJourneyArtifacts(combo, ids))) {
-        violations.push(`${comboKey(combo)}: artifacts differ between runs`)
-      }
-      if (!isDeepStrictEqual(synthCompany(combo), synthCompany(combo))) {
-        violations.push(`${comboKey(combo)}: company differs between runs`)
-      }
+      expect(buildJourneyArtifacts(combo, ids)).toEqual(buildJourneyArtifacts(combo, ids))
+      expect(synthCompany(combo)).toEqual(synthCompany(combo))
     }
-    expect(violations).toEqual([])
   })
 
   it('identifiers are constructed impossible-real: 00- EIN, .example domains, entity-true name', () => {

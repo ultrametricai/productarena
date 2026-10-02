@@ -99,12 +99,12 @@ describe('runPopularity (integration, fake fetchers, isolated data dir)', () => 
       fs.rmSync(path.join(tmpDir, catDir.name, 'popularity.json'), { force: true })
       fs.rmSync(path.join(tmpDir, catDir.name, 'popularity-history.jsonl'), { force: true })
     }
-    process.env.PA_DATA_DIR = tmpDir
+    process.env.UM_DATA_DIR = tmpDir
     vi.resetModules()
   })
 
   afterEach(() => {
-    delete process.env.PA_DATA_DIR
+    delete process.env.UM_DATA_DIR
     fs.rmSync(tmpDir, { recursive: true, force: true })
     vi.resetModules()
   })

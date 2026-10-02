@@ -2,10 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   GEO_COUNTRIES,
   GEO_GLOBAL,
+  GEO_NOTE_KINDS,
   GEO_PREF_META,
   GEO_SCOPE_GLYPH,
   getGeoChoice,
   getGeoSelection,
+  hiddenInCountryView,
   parseGeo,
   parseGeoChoice,
   serializeGeo,
@@ -13,6 +15,7 @@ import {
   setGeoChoice,
   setGeoSelection,
   subscribeGeoSelection,
+  type GeoNotesByCountry,
 } from '@/lib/geoPreference'
 
 // The geo preference's client-safe half (founder GEO ask 2026-09-28): the ?geo=/pa-geo codec —
@@ -129,5 +132,44 @@ describe('display metadata', () => {
       expect(GEO_SCOPE_GLYPH[s].glyph).toBeTruthy()
       expect(GEO_SCOPE_GLYPH[s].label).toBeTruthy()
     }
+  })
+})
+
+// The /processes country-view filter rule (founder ask 2026-10-02: "?geo=in should hide the
+// processes that are not used in that country"). Pure and pinned per kind here; the table's
+// integration (row set + disclosure) lives in components/__tests__/ProcessesTable.test.tsx.
+describe('hiddenInCountryView (the country-view filter rule)', () => {
+  const row = (geoScope: 'global' | 'us' | 'us-state', geoNotesByCountry: GeoNotesByCountry = {}) =>
+    ({ geoScope, geoNotesByCountry })
+
+  it('global rows never hide — with or without a note slice', () => {
+    expect(hiddenInCountryView(row('global'), 'IN')).toBe(false)
+    expect(hiddenInCountryView(row('global'), 'DE')).toBe(false)
+  })
+
+  it("US-scoped rows show only on an 'analog' note for the selected country", () => {
+    const analog = { kind: 'analog' as const, summary: 'Register with Companies House.' }
+    expect(hiddenInCountryView(row('us', { UK: analog }), 'UK')).toBe(false)
+    expect(hiddenInCountryView(row('us-state', { UK: analog }), 'UK')).toBe(false)
+    // The same row hides under a country its notes don't cover.
+    expect(hiddenInCountryView(row('us', { UK: analog }), 'IN')).toBe(true)
+  })
+
+  it("'absorbed' and 'not-applicable' notes hide the row — the EIN-under-India semantics", () => {
+    const absorbed = { kind: 'absorbed' as const, summary: 'PAN/TAN arrive with the SPICe+ filing.' }
+    const na = { kind: 'not-applicable' as const, summary: 'No 1099 regime.' }
+    expect(hiddenInCountryView(row('us', { IN: absorbed }), 'IN')).toBe(true)
+    expect(hiddenInCountryView(row('us', { UK: na }), 'UK')).toBe(true)
+  })
+
+  it('a US-scoped row with no notes at all hides under every country view', () => {
+    for (const c of ['IN', 'UK', 'DE', 'FR'] as const) {
+      expect(hiddenInCountryView(row('us'), c)).toBe(true)
+      expect(hiddenInCountryView(row('us-state'), c)).toBe(true)
+    }
+  })
+
+  it('exposes the three curated kinds, totality-checked against the schema enum', () => {
+    expect(GEO_NOTE_KINDS).toEqual(['analog', 'absorbed', 'not-applicable'])
   })
 })

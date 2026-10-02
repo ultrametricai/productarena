@@ -1,16 +1,15 @@
 {
-  "hash": "28cc43672c30cb1f093f79d904a47536b319f78152c95dfa9ec6509ceb532b1e",
+  "hash": "317754efdcec53fa2d10526c36f13feec4dccc55350a18e1f141664f322822a3",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe documents push-based events tied to agentic orders — `checkout.session.completed` fires per completed order with agent attribution, and separate webhooks exist for catalog import status and SPT token state transitions (issued/used/revoked) — plus checkout session statuses (incomplete/ready_for_payment/processing/completed/canceled) and a `delegated_checkout.requested_session.completed` webhook for embedded flows. However, there is no explicit documentation of a unified 'order lifecycle' webhook set covering created/updated/fulfilled/canceled as distinct pushed events; fulfillment is described as a bulk pull via the List CheckoutSessions API rather than a push event. Missing for 10: explicit webhook events for order 'updated', 'fulfilled', and 'canceled' beyond checkout-session completion, and independent/hands-on confirmation of subscribing to these events end-to-end.",
+    "rationale": "Stripe pushes order events to sellers through webhooks: a unique `checkout.session.completed` event fires per agent order, and agent builders get `delegated_checkout.requested_session.completed`. In the custom ACP integration, Stripe calls the seller's create/update/confirm endpoints, and sessions move through statuses that include completed and canceled. SPT state-transition webhooks such as `shared_payment.issued_token.used` add payment-side signals, but no dedicated order-updated, fulfilled or canceled event stream is documented. Missing for 10: documented webhook events for order updated/fulfilled/canceled transitions, a unified order-lifecycle event subscription model, independent or hands-on corroboration.",
     "evidenceIds": [
       "stripe-ac-supp-order-attribution",
-      "stripe-ac-supp-acp-custom-checkout",
-      "stripe-ac-supp-spt-limits",
       "stripe-ac-supp-embedded-checkout-oca",
-      "stripe-ac-supp-seller-catalog-feed"
+      "stripe-ac-supp-acp-custom-checkout",
+      "stripe-ac-supp-spt-limits"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "order-event-webhooks"

@@ -1,5 +1,6 @@
 import type { PlaybookRow, ProcessRow } from '@/components/ProcessesTable'
 import { loadCategory } from '@/lib/data'
+import type { GeoNotesByCountry } from '@/lib/geoPreference'
 import { hasLogo } from '@/lib/logos'
 import { isShutdown } from '@/lib/shutdown'
 import { chainIcon, processIcon } from '@/lib/processIcons'
@@ -24,6 +25,12 @@ import {
 //
 // Founder 2026-09-30: 'Starting up' overlapped the formation vocabulary everywhere else on the
 // site — the startup+formation phases now merge into ONE 'Formation' area.
+//
+// Founder 2026-10-01 (Situations): reactive, trigger-driven records (corpus `kind: 'situation'`)
+// get their own 'Situations' area, LAST — they aren't stops on the founder lifecycle, they
+// interrupt it. The KIND drives the area (see areaOfTask below), not a new phase value: a
+// situation keeps its honest domain phase (legal, compliance, finance…) for the phase filter
+// and the phase chip, and the area map over phases stays total and untouched.
 export const AREA_ORDER = [
   'Formation',
   'Fundraising & investors',
@@ -34,7 +41,11 @@ export const AREA_ORDER = [
   'Running operations',
   'Building & shipping',
   'Growth & sales',
+  'Situations',
 ] as const
+
+// The kind-driven area for reactive records — exported so tests can pin the decision.
+export const SITUATIONS_AREA: Area = 'Situations'
 
 export type Area = (typeof AREA_ORDER)[number]
 
@@ -66,6 +77,15 @@ export function areaOf(phase: string): Area {
 /** Founder-lifecycle rank of an area (its AREA_ORDER index) — the grouped table's group order. */
 export function areaRank(area: string): number {
   return (AREA_ORDER as readonly string[]).indexOf(area)
+}
+
+/**
+ * The display area for a corpus RECORD: the kind drives it (founder 2026-10-01). A situation
+ * groups under 'Situations' regardless of its phase — the phase stays the honest domain tag —
+ * while a process keeps the curated phase→area map. Pinned in lib/__tests__/processRows.test.ts.
+ */
+export function areaOfTask(t: Pick<ProcessTask, 'kind' | 'phase'>): Area {
+  return t.kind === 'situation' ? SITUATIONS_AREA : areaOf(t.phase)
 }
 
 // Vendor-cell cap for the index table — founder 2026-09-22 ("we are missing vendors on the
@@ -122,8 +142,10 @@ export function buildPlaybookRows(): PlaybookRow[] {
       dominantArea,
       areaRank: areaRank(dominantArea),
       // The chain's aggregate timeline position — its first constituent's timeOrder, so the
-      // grouped view slots it into the area right where a founder actually starts it.
-      timeOrder: tasks[0].timeOrder,
+      // grouped view slots it into the area right where a founder actually starts it. Present
+      // by construction: loadChains rejects chains composing situations (the only timeOrder-less
+      // records), so the assertion can never fire on committed data.
+      timeOrder: tasks[0].timeOrder!,
       // The constituent processes as icon chips (the old playbooks table's 'Processes' column),
       // plus their phases so the table's phase filter can honestly scope playbooks too.
       processes: tasks.map((t) => ({ id: t.id, icon: processIcon(t.id), title: t.title, phase: t.phase })),
@@ -135,6 +157,21 @@ export function buildPlaybookRows(): PlaybookRow[] {
       totalSteps: ceiling.totalSteps,
       // The route strip: one dot per step, capped client-side (legalSignature wears violet).
       steps: nodes.map((n) => ({ label: n.label, route: n.route, legalSignature: n.legalSignature ?? false })),
+      // The vendor cell (founder 2026-10-02: chips instead of a 'Go to process' link) — each
+      // constituent's derived vendors merged in journey order, deduped, same cap as a process
+      // row. derivedVendorsFor already applies the shutdown filter per task.
+      vendors: (() => {
+        const seen = new Set<string>()
+        const out: { id: string; label: string; arena: string | null; hasLogo: boolean }[] = []
+        for (const t of tasks) {
+          for (const v of derivedVendorsFor(t)) {
+            if (seen.has(v.id) || out.length >= VENDOR_CELL_CAP) continue
+            seen.add(v.id)
+            out.push(v)
+          }
+        }
+        return out
+      })(),
     }
   })
 }
@@ -161,8 +198,9 @@ export function buildProcessRows(): ProcessRowsBundle {
     agentSteps += c.agentSteps
     totalSteps += c.totalSteps
     // Resolved server-side (like cadence below) so the client table never imports this
-    // node-only module — the row carries both the area name and its lifecycle rank.
-    const area = areaOf(t.phase)
+    // node-only module — the row carries both the area name and its lifecycle rank. KIND drives
+    // the area (founder 2026-10-01): situations group under 'Situations', last.
+    const area = areaOfTask(t)
     return {
       slug: processSlug(t.title),
       title: t.title,
@@ -170,16 +208,33 @@ export function buildProcessRows(): ProcessRowsBundle {
       phase: t.phase,
       area,
       areaRank: areaRank(area),
+      // The reactive classification (founder 2026-10-01): situation rows render the trigger as
+      // their subtitle and wear the urgency chip; process rows carry neither.
+      kind: t.kind,
+      trigger: t.trigger ?? null,
+      urgency: t.urgency ?? null,
       // Required on every corpus process (lib/processes.ts) — the index rows carry it for the
       // client-side geo-scope glyph shown while a non-US country is selected (GeoSwitcher).
       geoScope: t.geoScope,
+      // The country-view filter's slice of the committed geo notes (founder 2026-10-02:
+      // "?geo=in should hide the processes that are not used in that country"): per country,
+      // the curated kind plus the note's own summary (the hidden-rows disclosure one-liner).
+      // US/us-state rows only — global rows never filter, so they carry {} and the payload
+      // stays lean (the flavor notes on global processes live on the detail pages).
+      geoNotesByCountry: t.geoScope === 'global'
+        ? {}
+        : Object.fromEntries(
+            (t.geoNotes ?? []).map((n) => [n.country, { kind: n.kind, summary: n.summary }]),
+          ) as GeoNotesByCountry,
       pct: c.pct,
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,
       complexity: t.complexity,
       // The five-orderings fields (curated on the corpus; cadence resolved to its display
-      // label/rank here so the client table never imports the node-only helpers).
-      timeOrder: t.timeOrder,
+      // label/rank here so the client table never imports the node-only helpers). timeOrder is
+      // null on situations — reactive work has NO founder-timeline slot; the table sorts the
+      // situation rows after the timeline instead of inventing a position.
+      timeOrder: t.timeOrder ?? null,
       cadenceLabel: CADENCE_META[t.cadence].label,
       cadenceRank: cadenceRank(t.cadence),
       annoyance: t.annoyance,

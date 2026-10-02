@@ -1,18 +1,21 @@
 {
-  "hash": "cc49662c854ceab068b9dc7c733e8aa5cc1e39c2c025e96c7cfd954787028a15",
+  "hash": "c6004234eba5b558d8cbd57eeaeb93abd07819d2d10fba70dcb111208f97b757",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
+    "productId": "cursor",
+    "storyId": "api-sandbox",
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Cursor documents multiple isolation mechanisms relevant to safe testing: Cloud Agents run in isolated VMs with encrypted, temporary repo copies (cursor-supp-cloud-agents, cursor-supp-privacy-governance), Worktrees keep the main checkout untouched during agent work (cursor-supp-worktrees), agents can spin up dev servers and click through UI flows to verify changes before opening a PR (cursor-docs-28), and Run Modes sandbox shell commands where possible (cursor-supp-run-modes). However, none of this is framed explicitly around separating sandbox vs. production data (e.g. staging DBs, seeded test data, or production-data masking) — it's about isolated git/VM execution rather than data environments, and the docs themselves caveat that 'Auto-review is not a security boundary.' Missing for 10: explicit production-vs-sandbox data separation, staging environment/test-data provisioning features, and independent confirmation that production data is never reachable during agent testing.",
+    "rationale": "Cursor documents isolated execution environments where agents can test changes. Cloud Agents run in isolated VMs with full dev environments, and they can start dev servers, click through UI flows and verify changes before pushing a PR. Auto-review sandboxes shell commands under file and network limits, and worktrees keep the main checkout untouched. Hooks can gate risky operations such as SQL writes, and permission tokens can deny reads of `.env*` secrets. Missing for 10: an explicit guarantee or documented pattern that separates test runs from production data or credentials (e.g., a sandbox/test-mode data tier; session envVars could still carry production credentials), independent or hands-on corroboration, and the docs' own note that 'Auto-review is not a security boundary.'",
     "evidenceIds": [
       "cursor-supp-cloud-agents",
-      "cursor-supp-worktrees",
       "cursor-docs-28",
       "cursor-supp-run-modes",
-      "cursor-supp-privacy-governance"
-    ],
-    "productId": "cursor",
-    "storyId": "api-sandbox"
+      "cursor-supp-worktrees",
+      "cursor-supp-hooks",
+      "cursor-supp-cli-permissions",
+      "cursor-supp-privacy-governance",
+      "cursor-supp-self-hosted"
+    ]
   }
 }

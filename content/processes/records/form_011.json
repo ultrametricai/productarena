@@ -3,7 +3,7 @@
   "id": "form_011",
   "kind": "process",
   "title": "Set up an LLC",
-  "summary": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses — founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead, and an LLC that later takes that path runs the statutory conversion (see Convert an LLC to a C-Corp).",
+  "summary": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses \u2014 founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead, and an LLC that later takes that path runs the statutory conversion (see Convert an LLC to a C-Corp).",
   "outcomes": [],
   "guidance": null,
   "parts": [
@@ -81,6 +81,39 @@
       "when": null,
       "ref": null,
       "options": [
+        {
+          "id": "default",
+          "title": "Default \u2014 File Articles of Organization and appoint a registered agent",
+          "summary": "",
+          "when": null,
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "stripe_atlas",
+              "role": "stated-vendor"
+            }
+          ],
+          "metadata": {
+            "route": "form",
+            "reversibility": "painful",
+            "approvalRequired": true,
+            "riskLevel": "high",
+            "estimatedMinutes": 20,
+            "verify": {
+              "how": "The LLC appears in the Delaware entity search with a file number once the Certificate of Formation is stamped.",
+              "url": "https://icis.corp.delaware.gov/ecorp/entitysearch/namesearch.aspx"
+            },
+            "cost": {
+              "usd": 110,
+              "kind": "government-fee",
+              "source": "https://corpfiles.delaware.gov/Fee_Schedule/AugustFee2026.pdf",
+              "asOf": "2026-10-01",
+              "note": "Delaware domestic LLC Certificate of Formation filing fee."
+            }
+          }
+        },
         {
           "id": "india-llp-fillip",
           "title": "India - LLP via MCA FiLLiP",
@@ -184,20 +217,8 @@
         }
       ],
       "notes": [],
-      "references": [
-        {
-          "kind": "vendor",
-          "id": "stripe_atlas",
-          "role": "stated-vendor"
-        }
-      ],
-      "metadata": {
-        "route": "form",
-        "reversibility": "painful",
-        "approvalRequired": true,
-        "riskLevel": "high",
-        "estimatedMinutes": 20
-      }
+      "references": [],
+      "metadata": {}
     },
     {
       "id": "n4",
@@ -218,6 +239,7 @@
       "metadata": {
         "route": "person",
         "reversibility": "reversible",
+        "producesArtifact": "llc-certificate-of-formation",
         "estimatedMinutes": 2880,
         "async": true
       }
@@ -263,6 +285,7 @@
       "metadata": {
         "route": "person",
         "reversibility": "reversible",
+        "producesArtifact": "operating-agreement",
         "legalSignature": true,
         "riskLevel": "medium",
         "estimatedMinutes": 5
@@ -294,7 +317,19 @@
       "metadata": {
         "route": "form",
         "reversibility": "painful",
-        "estimatedMinutes": 15
+        "producesArtifact": "ein",
+        "estimatedMinutes": 15,
+        "verify": {
+          "how": "The EIN is issued in the XX-XXXXXXX format at the end of the online session \u2014 retain the CP 575 confirmation notice; banks and payroll providers ask for it.",
+          "url": "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online"
+        },
+        "cost": {
+          "usd": 0,
+          "kind": "free",
+          "source": "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online",
+          "asOf": "2026-10-01",
+          "note": "The IRS issues EINs for free; third-party services charge to file on your behalf."
+        }
       }
     },
     {
@@ -321,7 +356,11 @@
       "metadata": {
         "route": "form",
         "reversibility": "painful",
-        "estimatedMinutes": 15
+        "producesArtifact": "bank-account",
+        "estimatedMinutes": 15,
+        "verify": {
+          "how": "The dashboard shows account and routing numbers and a small inbound test transfer clears."
+        }
       }
     },
     {
@@ -337,8 +376,12 @@
       "metadata": {
         "route": "form",
         "reversibility": "painful",
+        "producesArtifact": "state-tax-account",
         "riskLevel": "medium",
-        "estimatedMinutes": 20
+        "estimatedMinutes": 20,
+        "verify": {
+          "how": "The state tax authority issues an account or registration number for each tax you registered."
+        }
       }
     }
   ],
@@ -431,6 +474,16 @@
         "required": false
       }
     ],
+    "produces": [
+      "llc-certificate-of-formation",
+      "operating-agreement",
+      "ein",
+      "bank-account",
+      "state-tax-account"
+    ],
+    "requires": [
+      "company-name"
+    ],
     "tags": [
       "formation",
       "legal",
@@ -444,25 +497,29 @@
     "geoNotes": [
       {
         "country": "IN",
-        "summary": "The Indian analog is the LLP: incorporated with the MCA via the FiLLiP form (mca.gov.in blocks automated checks — the government's NSWS portal fronts MCA services), with a partner-drafted LLP agreement filed within 30 days.",
+        "kind": "analog",
+        "summary": "The Indian analog is the LLP: incorporated with the MCA via the FiLLiP form (mca.gov.in blocks automated checks \u2014 the government's NSWS portal fronts MCA services), with a partner-drafted LLP agreement filed within 30 days.",
         "actionUrl": "https://www.nsws.gov.in/",
         "actionLabel": "NSWS (MCA LLP incorporation)"
       },
       {
         "country": "UK",
-        "summary": "The pass-through analog is the LLP, registered at Companies House — though most UK founders just form a private limited company, since there is no US-style LLC and no check-the-box tax election.",
+        "kind": "analog",
+        "summary": "The pass-through analog is the LLP, registered at Companies House \u2014 though most UK founders just form a private limited company, since there is no US-style LLC and no check-the-box tax election.",
         "actionUrl": "https://www.gov.uk/guidance/set-up-and-run-a-limited-liability-partnership-llp",
         "actionLabel": "Set up and run an LLP"
       },
       {
         "country": "DE",
-        "summary": "No LLC analog with pass-through: the low-capital route is the UG (haftungsbeschränkt) — a mini-GmbH formable from €1 with a notarized deed; the ministry's founders portal walks through the choices.",
+        "kind": "analog",
+        "summary": "No LLC analog with pass-through: the low-capital route is the UG (haftungsbeschr\u00e4nkt) \u2014 a mini-GmbH formable from \u20ac1 with a notarized deed; the ministry's founders portal walks through the choices.",
         "actionUrl": "https://www.existenzgruender.de/",
         "actionLabel": "BMWK founders portal (UG/GmbH)"
       },
       {
         "country": "FR",
-        "summary": "The closest analog is the SARL (or single-member EURL) — a simpler, statute-driven company than the SAS — formed like every French entity through the INPI guichet unique.",
+        "kind": "analog",
+        "summary": "The closest analog is the SARL (or single-member EURL) \u2014 a simpler, statute-driven company than the SAS \u2014 formed like every French entity through the INPI guichet unique.",
         "actionUrl": "https://procedures.inpi.fr/",
         "actionLabel": "INPI guichet unique (SARL/EURL)"
       }
@@ -475,7 +532,7 @@
   "source": {
     "path": "processes/corpus.json",
     "id": "form_011",
-    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
-    "sha256": "89f97367d692f61d4d3ea886412679108bad64c1057bf0ee513660f75f9d5641"
+    "revision": "8d448bd91e50d517bc6688a8cb738b81514dcf68",
+    "sha256": "1c9dee2c3454f574ff038eea22a6c7f2ba57d182baaca5cc2e9d478454488f6e"
   }
 }

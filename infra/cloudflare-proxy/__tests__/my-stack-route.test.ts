@@ -83,7 +83,7 @@ describe('normalizeStackMap', () => {
 describe('/api/my-stack auth gate', () => {
   it('401s with no cookie, a tampered cookie, and a sub-less cookie', async () => {
     const kv = fakeKv()
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv }
     expect((await call('GET', { env })).status).toBe(401)
     const wrongKey = `pa_session=${await createSessionCookieValue('the-wrong-key', { sub: 'u', email: 'a@b.co', sid: undefined })}`
     expect((await call('GET', { cookie: wrongKey, env })).status).toBe(401)
@@ -92,7 +92,7 @@ describe('/api/my-stack auth gate', () => {
   })
 
   it('fails closed (500, explicit message) when PA_SESSION_KEY is missing', async () => {
-    const res = await call('GET', { env: { PA_COMPARE_STATS: fakeKv() } })
+    const res = await call('GET', { env: { UM_COMPARE_STATS: fakeKv() } })
     expect(res.status).toBe(500)
     expect((await res.json()).error).toMatch(/auth not configured.*PA_SESSION_KEY/)
   })
@@ -103,7 +103,7 @@ describe('/api/my-stack auth gate', () => {
   })
 
   it('rejects methods other than GET/PUT', async () => {
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() }
     for (const method of ['POST', 'DELETE']) {
       const res = await call(method, { cookie: await cookieFor(), env })
       expect(res.status).toBe(405)
@@ -115,7 +115,7 @@ describe('/api/my-stack auth gate', () => {
 describe('/api/my-stack storage', () => {
   it('GET starts empty, PUT round-trips, and stacks are per-account under stack:<sub>', async () => {
     const kv = fakeKv()
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv }
     const alice = await cookieFor('user_alice')
     const bob = await cookieFor('user_bob', 'bob@ultrametric.ai')
 
@@ -142,7 +142,7 @@ describe('/api/my-stack storage', () => {
   })
 
   it('PUT accepts the v1 single-string shape (a stale client) and normalizes it to arrays', async () => {
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() }
     const put = await call('PUT', {
       cookie: await cookieFor(),
       env,
@@ -152,7 +152,7 @@ describe('/api/my-stack storage', () => {
   })
 
   it('PUT normalizes junk entries and 400s when stack is not an object', async () => {
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() }
     const cookie = await cookieFor()
     const put = await call('PUT', { cookie, env, body: { stack: { Payments: 'Stripe', payroll: 42, 'bad key!': ['x'] } } })
     expect(await put.json()).toEqual({ ok: true, stack: { payments: ['stripe'] } })
@@ -164,7 +164,7 @@ describe('/api/my-stack storage', () => {
     const kv = fakeKv()
     // A v1 value written before the multi-pick migration round-trips losslessly as arrays.
     kv.store.set('stack:user_01ABC', '{"payments":"stripe"}')
-    const env = { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv }
+    const env = { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv }
     expect(await (await call('GET', { cookie: await cookieFor(), env })).json()).toEqual({
       ok: true,
       stack: { payments: ['stripe'] },
@@ -175,7 +175,7 @@ describe('/api/my-stack storage', () => {
   })
 
   it('never emits CORS headers (same-origin only)', async () => {
-    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: fakeKv() } })
+    const res = await call('GET', { cookie: await cookieFor(), env: { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: fakeKv() } })
     expect(res.headers.get('access-control-allow-origin')).toBeNull()
     expect(res.headers.get('cache-control')).toBe('no-store')
   })
@@ -184,7 +184,7 @@ describe('/api/my-stack storage', () => {
 describe('/api/my-stack under mock auth (WORKOS_MOCK=1 on localhost)', () => {
   it('accepts the cookie the mock /auth/login mints — the full dev loop works with zero secrets', async () => {
     const kv = fakeKv()
-    const env = { WORKOS_MOCK: '1', PA_COMPARE_STATS: kv }
+    const env = { WORKOS_MOCK: '1', UM_COMPARE_STATS: kv }
     const login = (await handleAuth(
       new Request('http://localhost:8787/auth/login'),
       env,
@@ -205,7 +205,7 @@ describe('/api/my-stack under mock auth (WORKOS_MOCK=1 on localhost)', () => {
     )) as Response
     const cookie = /pa_session=[^;]+/.exec(login.headers.getSetCookie().join('; '))?.[0]
     // Production env with the real key: the mock cookie's signature does not verify.
-    const res = await call('GET', { cookie, env: { PA_SESSION_KEY: KEY, PA_COMPARE_STATS: kv } })
+    const res = await call('GET', { cookie, env: { PA_SESSION_KEY: KEY, UM_COMPARE_STATS: kv } })
     expect(res.status).toBe(401)
   })
 })

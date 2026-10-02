@@ -1,16 +1,18 @@
 {
-  "hash": "e9129ee398867cd8a9129b3cf35dfc2c64238e7c924d4d525a013f3368bc8b67",
+  "hash": "0f50f2540ba56c00ede22ec255692115c9322d6054133cf8dd6e0e10bc6ae00c",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Paddle supports API keys with documented granular permissions/scopes (paddle-docs-9, paddle-supp-auth-permissions) and sandbox-only keys (paddle-supp-sandbox) that can be issued for agent use via the MCP server, and Live OAuth MCP connections default to read-only access initially (paddle-supp-mcp-server). However, the MCP server itself explicitly does not gate destructive operations and relies on the user manually creating least-privilege keys rather than the product enforcing scoped credential issuance for agents (paddle-supp-mcp-codemode). missing for 10: no dedicated agent-specific credential/token issuance flow (e.g. per-agent scoped key generation UI or API), no evidence of fine-grained action-level restriction enforced automatically for MCP/agent use, no independent confirmation that permission scoping actually restricts agent behavior in practice.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Paddle's docs say API keys carry granular permissions that grant access to specific entities or actions, with documented default scopes per endpoint. The MCP docs explicitly recommend least-permission API keys for hard-scoping agents, since the MCP server doesn't gate destructive operations. Live OAuth MCP connections start with read-only access, and sandbox keys (`pdl_sdbx_`) only authenticate against sandbox endpoints, which further limits an agent's blast radius. Missing for 10: independent or hands-on corroboration that scoped keys work as documented, and detail on how OAuth connector scopes are widened or narrowed beyond the initial read-only access.",
     "evidenceIds": [
       "paddle-docs-9",
       "paddle-supp-auth-permissions",
-      "paddle-supp-sandbox",
+      "paddle-supp-mcp-codemode",
       "paddle-supp-mcp-server",
-      "paddle-supp-mcp-codemode"
+      "paddle-supp-sandbox",
+      "paddle-docs-8",
+      "paddle-docs-44"
     ],
     "productId": "paddle",
     "storyId": "agentic-scoped-keys"

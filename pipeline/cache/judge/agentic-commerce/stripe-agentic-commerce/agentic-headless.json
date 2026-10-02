@@ -1,18 +1,20 @@
 {
-  "hash": "f30ec440d2eb6c0185fa9016ebcaa217c61b8485d63c25281c95a6330a43acf7",
+  "hash": "a9f4d59a3ec06989de0361177927a04eb96ed984e3e66433aca9c8964c63ca64",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe ships CLI tooling (Stripe CLI sandbox creation with no account registration, Link CLI, mppx validate conformance CLI) and API-key/MCP mechanisms (RAKs, MCP server) that are usable non-interactively/programmatically, supporting CI-style automation of Stripe integrations and payments. However, the MCP server documents a mandatory human-approval gate for write actions (refunds, outbound payments) that blocks full headless automation for those flows, and there is no explicit CI pipeline documentation or independent confirmation of running the whole agentic-commerce stack unattended. Missing for 10: explicit CI/pipeline documentation or examples, confirmation that write-action approval gates can be bypassed or automated in CI, and independent/hands-on verification of headless operation.",
+    "rationale": "The suite is API- and CLI-driven, so it can run without a UI. `stripe sandbox create` provisions an anonymous sandbox with working API keys and no registration, which suits ephemeral CI environments. `mppx validate` tests an MPP implementation end-to-end, and catalog imports, checkout hooks and order fulfillment all run through APIs, webhooks and restricted keys rather than the Dashboard. Link CLI wallet spends and some MCP write actions deliberately require human approval, so fully unattended purchase flows are not possible. Missing for 10: explicit CI/pipeline guidance or examples, independent hands-on corroboration of CI usage, and unattended operation for human-gated Link spends and MCP write actions.",
     "evidenceIds": [
       "stripe-agentic-commerce-docs-24",
-      "stripe-agentic-commerce-docs-35",
-      "stripe-agentic-commerce-docs-7",
-      "stripe-agentic-commerce-docs-34",
       "stripe-ac-supp-mpp-agent-build",
+      "stripe-ac-supp-seller-catalog-feed",
+      "stripe-ac-supp-order-attribution",
+      "stripe-agentic-commerce-docs-23",
+      "stripe-ac-supp-link-wallet",
       "stripe-ac-supp-mcp-approval",
-      "stripe-agentic-commerce-docs-5"
+      "stripe-ac-probe-rt-4",
+      "stripe-ac-probe-rt-2"
     ],
     "productId": "stripe-agentic-commerce",
     "storyId": "agentic-headless"

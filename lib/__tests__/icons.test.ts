@@ -90,7 +90,7 @@ describe('themeExplanation', () => {
 describe('metricIcon / metricTooltip', () => {
   it('has an icon and tooltip for every comparison metric', () => {
     const metrics = [
-      'paScore',
+      'overallScore',
       'agentReady',
       'aiNative',
       'apiQuality',
@@ -109,7 +109,8 @@ describe('metricIcon / metricTooltip', () => {
   })
 
   it('resolves field-name aliases to the same concept', () => {
-    expect(metricIcon('aiEra')).toBe(metricIcon('paScore'))
+    expect(metricIcon('aiEra')).toBe(metricIcon('overallScore'))
+    expect(metricIcon('paScore')).toBe(metricIcon('overallScore')) // legacy, pre-rename spelling
     expect(metricIcon('agenticApp')).toBe(metricIcon('aiNative'))
     expect(metricIcon('stars')).toBe(metricIcon('popularity'))
     expect(metricIcon('openSource')).toBe(metricIcon('openness'))

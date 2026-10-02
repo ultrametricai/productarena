@@ -94,6 +94,7 @@
       "metadata": {
         "route": "person",
         "reversibility": "reversible",
+        "producesArtifact": "employment-agreement",
         "estimatedMinutes": 4320,
         "async": true
       }
@@ -106,6 +107,53 @@
       "when": null,
       "ref": null,
       "options": [
+        {
+          "id": "default",
+          "title": "Default \u2014 Add the employee in your payroll platform",
+          "summary": "",
+          "when": null,
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "gusto",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "vendor",
+              "id": "gusto",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "rippling",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "deel",
+              "role": "candidate"
+            },
+            {
+              "kind": "vendor",
+              "id": "justworks",
+              "role": "candidate"
+            },
+            {
+              "kind": "category",
+              "id": "payroll",
+              "role": "rankings"
+            }
+          ],
+          "metadata": {
+            "route": "agent",
+            "reversibility": "reversible",
+            "approvalRequired": true,
+            "riskLevel": "medium",
+            "estimatedMinutes": 5
+          }
+        },
         {
           "id": "eor-hire",
           "title": "EOR hire (outside the US)",
@@ -169,45 +217,8 @@
         }
       ],
       "notes": [],
-      "references": [
-        {
-          "kind": "vendor",
-          "id": "gusto",
-          "role": "stated-vendor"
-        },
-        {
-          "kind": "vendor",
-          "id": "gusto",
-          "role": "candidate"
-        },
-        {
-          "kind": "vendor",
-          "id": "rippling",
-          "role": "candidate"
-        },
-        {
-          "kind": "vendor",
-          "id": "deel",
-          "role": "candidate"
-        },
-        {
-          "kind": "vendor",
-          "id": "justworks",
-          "role": "candidate"
-        },
-        {
-          "kind": "category",
-          "id": "payroll",
-          "role": "rankings"
-        }
-      ],
-      "metadata": {
-        "route": "agent",
-        "reversibility": "reversible",
-        "approvalRequired": true,
-        "riskLevel": "medium",
-        "estimatedMinutes": 5
-      }
+      "references": [],
+      "metadata": {}
     },
     {
       "id": "n5",
@@ -260,7 +271,11 @@
         "riskLevel": "medium",
         "estimatedMinutes": 1440,
         "async": true,
-        "legalSignature": true
+        "legalSignature": true,
+        "verify": {
+          "how": "A completed I-9 with verified documents is on file within 3 business days of the start date (retain it \u2014 it is inspectable), plus the signed W-4 in payroll.",
+          "url": "https://www.uscis.gov/i-9-central"
+        }
       }
     },
     {
@@ -296,6 +311,34 @@
       "ref": null,
       "options": [
         {
+          "id": "default",
+          "title": "Default \u2014 Google Admin console",
+          "summary": "Create company email",
+          "when": null,
+          "parts": [],
+          "notes": [],
+          "references": [
+            {
+              "kind": "vendor",
+              "id": "gmail",
+              "role": "stated-vendor"
+            },
+            {
+              "kind": "url",
+              "url": "https://admin.google.com/",
+              "role": "legacy-action-link",
+              "title": "Google Admin console",
+              "description": null
+            }
+          ],
+          "metadata": {
+            "route": "form",
+            "reversibility": "reversible",
+            "approvalRequired": true,
+            "estimatedMinutes": 5
+          }
+        },
+        {
           "id": "microsoft-365",
           "title": "Microsoft 365 mailbox",
           "summary": "Create the mailbox in the Microsoft 365 admin center instead of Google Admin - the same step on the other workspace suite.",
@@ -317,26 +360,8 @@
         }
       ],
       "notes": [],
-      "references": [
-        {
-          "kind": "vendor",
-          "id": "gmail",
-          "role": "stated-vendor"
-        },
-        {
-          "kind": "url",
-          "url": "https://admin.google.com/",
-          "role": "legacy-action-link",
-          "title": "Google Admin console",
-          "description": null
-        }
-      ],
-      "metadata": {
-        "route": "form",
-        "reversibility": "reversible",
-        "approvalRequired": true,
-        "estimatedMinutes": 5
-      }
+      "references": [],
+      "metadata": {}
     },
     {
       "id": "n9",
@@ -501,6 +526,16 @@
         "required": false
       }
     ],
+    "produces": [
+      "employment-agreement"
+    ],
+    "requires": [
+      "payroll-account",
+      "benefits-plan",
+      "409a-valuation",
+      "company-email",
+      "team-chat"
+    ],
     "tags": [
       "hr",
       "hiring",
@@ -518,34 +553,38 @@
     "geoNotes": [
       {
         "country": "IN",
-        "summary": "First-hire setup means an appointment letter, checking EPF/ESI applicability thresholds, a state shops-and-establishments registration, and monthly TDS on salary against the company's TAN — the EPFO employer portal anchors the social-security side.",
+        "kind": "analog",
+        "summary": "First-hire setup means an appointment letter, checking EPF/ESI applicability thresholds, a state shops-and-establishments registration, and monthly TDS on salary against the company's TAN \u2014 the EPFO employer portal anchors the social-security side.",
         "actionUrl": "https://unifiedportal-emp.epfindia.gov.in/epfo/",
         "actionLabel": "EPFO employer portal"
       },
       {
         "country": "UK",
+        "kind": "analog",
         "summary": "gov.uk publishes the exact first-hire checklist: right-to-work checks, employers' liability insurance, PAYE registration before the first payday, a written statement of particulars on day one, and pension auto-enrolment.",
         "actionUrl": "https://www.gov.uk/employing-staff",
         "actionLabel": "Employ someone: step by step"
       },
       {
         "country": "DE",
+        "kind": "analog",
         "summary": "Before the first payslip: a Betriebsnummer from the Federal Employment Agency, registration with the employee's health insurer (which routes all social insurance), statutory accident insurance with the sector's Berufsgenossenschaft, and wage tax via ELSTER.",
         "actionUrl": "https://www.arbeitsagentur.de/unternehmen/betriebsnummern-service",
         "actionLabel": "Betriebsnummern-Service (employer number)"
       },
       {
         "country": "FR",
-        "summary": "Every hire starts with the DPAE to URSSAF before the start date; add a written contract (French language), affiliation to the mandatory mutuelle and retirement schemes, and the initial médecine du travail visit.",
+        "kind": "analog",
+        "summary": "Every hire starts with the DPAE to URSSAF before the start date; add a written contract (French language), affiliation to the mandatory mutuelle and retirement schemes, and the initial m\u00e9decine du travail visit.",
         "actionUrl": "https://entreprendre.service-public.fr/vosdroits/F23107",
-        "actionLabel": "DPAE — pre-hire declaration"
+        "actionLabel": "DPAE \u2014 pre-hire declaration"
       }
     ]
   },
   "source": {
     "path": "processes/corpus.json",
     "id": "hr_001",
-    "revision": "48aa4a23ed0c1361b11d5bfd4146173b94a33edc",
-    "sha256": "d06418b59331b571ce8389ee6b5d0c27c52d558bfa079d7ae8c12752a1eb5c96"
+    "revision": "8d448bd91e50d517bc6688a8cb738b81514dcf68",
+    "sha256": "73c0bb85ec2846caced209d9357ec233945c5c6a0417d01d607630c641d24f05"
   }
 }

@@ -164,4 +164,108 @@ export const probes: LocalProbe[] = [
     expect: /"openapi":"3\.1/,
     timeoutMs: 60_000,
   },
+  // Founder roster expansion (2026-10-01): dots (OpenAI), Grok Bot (xAI), Kimi (Moonshot AI),
+  // and Perplexity Computer. Keyless probes only — positives where a real agent surface exists,
+  // honest absence proofs where it doesn't (the muse/gemini pattern).
+  {
+    // learn.chatgpt.com's llms.txt (307 → /docs/llms.txt, text/plain) carries a dedicated
+    // "## Dots" section indexing every dots doc page — agent-discoverable docs, keyless.
+    probeId: 'llms-docs-index',
+    productId: 'dots',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', "curl -sL --max-time 20 https://learn.chatgpt.com/llms.txt | grep -i -m 4 -E '## Dots|docs/dots'"],
+    displayCommand: "curl -sL https://learn.chatgpt.com/llms.txt | grep -iE '## Dots|docs/dots'",
+    expect: /learn\.chatgpt\.com\/docs\/dots(\.md|\/)/,
+    timeoutMs: 60_000,
+  },
+  {
+    // Every dots doc page serves raw markdown at the .md URL (the page itself says "Markdown
+    // versions of documentation pages are available by appending .md") — fetched keylessly.
+    probeId: 'docs-md-endpoint',
+    productId: 'dots',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://learn.chatgpt.com/docs/dots.md | head -4'],
+    displayCommand: 'curl -s https://learn.chatgpt.com/docs/dots.md | head -4',
+    expect: /# Meet dots/,
+    timeoutMs: 60_000,
+  },
+  {
+    // docs.x.ai's llms.txt indexes a full grok-bot/*.md docs section (21 pages, every one
+    // fetchable as markdown) — Grok Bot's agent-oriented docs surface, verified keylessly.
+    probeId: 'llms-docs-index',
+    productId: 'grok-bot',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', "curl -s --max-time 20 https://docs.x.ai/llms.txt | grep -m 4 'grok-bot/'"],
+    displayCommand: "curl -s https://docs.x.ai/llms.txt | grep 'grok-bot/'",
+    expect: /docs\.x\.ai\/grok-bot\/(overview|get-started)\.md/,
+    timeoutMs: 60_000,
+  },
+  {
+    // Honest absence proof: the only OpenAPI spec on the docs origin is "xAI's REST API" (the
+    // api.x.ai model API — a different product), and it contains ZERO grok-bot paths. No public
+    // Grok Bot API surface exists; recorded so the spec's presence can't be misread as one.
+    probeId: 'api-surface-absent',
+    productId: 'grok-bot',
+    storyIds: ['agentic-public-api'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.x.ai/openapi.json | head -c 120; echo; echo "grok-bot mentions in spec: $(curl -s --max-time 20 https://docs.x.ai/openapi.json | grep -c grok-bot)"'],
+    displayCommand: 'curl -s https://docs.x.ai/openapi.json | head -c 120; echo "grok-bot mentions in spec: $(curl -s https://docs.x.ai/openapi.json | grep -c grok-bot)"',
+    expect: /"title":"xAI's REST API"[\s\S]*grok-bot mentions in spec: 0/,
+    timeoutMs: 60_000,
+  },
+  {
+    // Honest absence proof: kimi.com publishes no llms.txt — the path 302-redirects to the SPA
+    // root instead of serving an agent docs index (the assistant app has no docs site at all;
+    // platform.kimi.ai/docs is the vendor's separate API-platform product).
+    probeId: 'llms-txt-absent',
+    productId: 'kimi',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -si --max-time 20 https://www.kimi.com/llms.txt | grep -i -m 3 -E "^HTTP|^location|^content-type"'],
+    displayCommand: 'curl -si https://www.kimi.com/llms.txt | grep -iE "^HTTP|^location|^content-type"',
+    expect: /HTTP\/2 302/,
+    timeoutMs: 60_000,
+  },
+  {
+    // The vendor's own product-plans doc (fetchable as markdown, keyless) states the Kimi
+    // Membership tiers bundle Kimi Code — the official CLI whose docs live at
+    // kimi.com/code/docs/en/, which serves keylessly.
+    probeId: 'membership-code-cli-docs',
+    productId: 'kimi',
+    storyIds: ['agentic-official-cli'],
+    bin: 'curl',
+    argv: ['sh', '-c', "curl -s --max-time 20 https://platform.kimi.ai/docs/guide/product-plans.md | grep -o -m 1 'Kimi Membership currently includes'; curl -s --max-time 20 'https://www.kimi.com/code/docs/en/' | grep -io -m 2 'kimi code' | head -2"],
+    displayCommand: "curl -s https://platform.kimi.ai/docs/guide/product-plans.md | grep -o 'Kimi Membership currently includes'; curl -s https://www.kimi.com/code/docs/en/ | grep -io 'kimi code'",
+    expect: /Kimi Membership currently includes[\s\S]*[Kk]imi [Cc]ode/,
+    timeoutMs: 60_000,
+  },
+  {
+    // Perplexity Computer's documented MCP endpoint answers a keyless JSON-RPC initialize with
+    // a clean structured 401 Bearer/OAuth challenge pointing at its own protected-resource
+    // metadata — live proof the hosted MCP server exists and enforces OAuth, no API key involved.
+    probeId: 'mcp-endpoint-oauth-401',
+    productId: 'perplexity-computer',
+    storyIds: ['agentic-mcp-server'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -si --max-time 20 -X POST https://www.perplexity.ai/rest/computer/mcp -H \'Content-Type: application/json\' -H \'Accept: application/json, text/event-stream\' -d \'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"probe","version":"0.0.1"}}}\' | grep -i -m 3 -E "^HTTP|www-authenticate" | cut -c 1-400'],
+    displayCommand: 'curl -si -X POST https://www.perplexity.ai/rest/computer/mcp -H \'Content-Type: application/json\' -d \'{"jsonrpc":"2.0","id":1,"method":"initialize",...}\' | grep -iE "^HTTP|www-authenticate"',
+    expect: /HTTP\/2 401[\s\S]*www-authenticate: Bearer/i,
+    timeoutMs: 60_000,
+  },
+  {
+    // The endpoint's RFC 9728 OAuth protected-resource metadata is served keylessly at the
+    // .well-known path — naming the MCP resource and its authorization server, the discovery
+    // document an MCP client uses to connect with a Perplexity account instead of an API key.
+    probeId: 'mcp-oauth-resource-metadata',
+    productId: 'perplexity-computer',
+    storyIds: ['agentic-mcp-server'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://www.perplexity.ai/.well-known/oauth-protected-resource/rest/computer/mcp | head -c 300'],
+    displayCommand: 'curl -s https://www.perplexity.ai/.well-known/oauth-protected-resource/rest/computer/mcp | head -c 300',
+    expect: /"resource":"https:\/\/www\.perplexity\.ai\/rest\/computer\/mcp"/,
+    timeoutMs: 60_000,
+  },
 ]

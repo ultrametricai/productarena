@@ -1,15 +1,14 @@
 {
-  "hash": "8c949735498c1dbd29421a3048218e23a0a7bf51187b8722461f7ee7705d2b7e",
+  "hash": "443fdef26c878e268716be078ece6e5e44169dfb127e64efc93389100422078b",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Vercel provides per-environment variables (local/preview/production/custom) so different credentials/secrets can be used per environment, plus preview URL access controls (Vercel Authentication, passwords, trusted IPs) and project/team-scoped access tokens that deny cross-project reach — all of which support isolating non-prod from prod resources. However, community evidence indicates that securely connecting to backend services (e.g., databases) with more than a password requires an 'enterprise' sales conversation, suggesting robust network-level isolation isn't a self-serve default. Missing for 10: documented VPC/network-level segmentation or firewall rules specifically preventing preview environments from reaching production services, and independent confirmation that env-var separation alone effectively blocks cross-environment access.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Vercel documents separate local, preview, production, and custom environments, each with its own variables. That lets a devops lead keep production credentials and endpoints out of preview deployments, but this is configuration-level separation rather than enforced network isolation. Deployment protection (Vercel Authentication, passwords, trusted IPs) controls who can reach preview URLs, not what those environments can reach outbound. Missing for 10: network-level egress isolation of non-production from production services, a private networking or secure-compute boundary per environment, documented guarantees that preview cannot reach production resources, and independent corroboration.",
     "evidenceIds": [
       "vercel-docs-23",
       "vercel-docs-26",
-      "vercel-supp-scoped-tokens",
-      "vercel-comm-11"
+      "vercel-docs-1"
     ],
     "productId": "vercel",
     "storyId": "prod-nonprod-isolation"

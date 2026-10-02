@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
@@ -68,6 +68,7 @@ import {
 // scorecard + shareable ?run= permalink, auto/semi-auto drive. All logic lives in
 // lib/virtualStartupRun.ts (pure, deterministic); the UI pieces are separate components.
 import VsAssistantSelect from '@/components/VsAssistantSelect'
+import VsCopyCommand from '@/components/VsCopyCommand'
 import VsEventCard from '@/components/VsEventCard'
 import VsPersonaPicker from '@/components/VsPersonaPicker'
 import VsScorecard from '@/components/VsScorecard'
@@ -108,7 +109,7 @@ import {
 // runs ("cron jobs") the company now owns, derived from the corpus cadence axis. Everything is
 // precomputed/deterministic; the ~cadenced reveal is presentation only (the same pattern as
 // components/ProcessSimulator.tsx on the per-process pages — this page's role pickers live in
-// the controller's Vendors tab; the embedded dry-run transcript was dropped 2026-09-29).
+// the controller's 'Set vendors' disclosure; the embedded dry-run transcript was dropped 2026-09-29).
 
 const CADENCE_MS = 240
 
@@ -371,23 +372,26 @@ const RHYTHM_TABS: { id: WindowTab; label: string }[] = [
 // keeps its canonical full label as the accessible name (aria-label) and full label + corpus
 // mapping in the tooltip, so nothing about the decision semantics or the a11y/test contract moves.
 // Control icons (founder batch 2026-09-29, item 1): small leading icons so the setup band's
-// labeled rows and the nine decision groups read at a glance. House style — emoji through
-// components/IconChip.tsx (required tooltip naming the concept), reusing lib/icons.ts vocabulary
-// where the concept already has an icon (incorporation 📜, fundraising 🏦, billing 🧾,
-// compliance ⚖️). Icons are decoration on top of the existing labels: every control keeps its
+// labeled rows and the nine decision groups read at a glance. House style — since 2026-10-01
+// ("apply the custom icons to the rest of the site, ie the startup sim") these are house icon
+// TOKENS (`pi:<glyph>:<hue>`, the same scheme as lib/processIcons.ts / lib/arenaIcons.ts)
+// rendered by components/IconChip.tsx as the hand-authored duotone SVGs, reusing the designed
+// vocabulary where the concept already has a glyph (incorporation = the scroll, fundraising =
+// the bank, compliance = the scales). The old emoji picks ride in the comments as the semantic
+// guides. Icons are decoration on top of the existing labels: every control keeps its
 // canonical accessible name (the decision groups' aria-label, the options' full-label
 // aria-labels) — tests assert nothing moved.
 // The geo row's adjacent 🌍 IconChip is GONE (founder round 5, item 5) — the selector's own
 // flags suffice; the Founder row icon still names the whole who/where cluster. The 'Decisions'
 // row label is GONE too (founder batch 2026-09-30, item 6: it's obviously the setup) — the
 // decisions grid cell keeps an empty label slot for column alignment only.
-const ROW_ICONS: Record<'scenario' | 'founder' | 'using', { icon: string; title: string }> = {
+export const ROW_ICONS: Record<'scenario' | 'founder' | 'using', { icon: string; title: string }> = {
   // 'Example' → 'Scenario' (round 3, item 1); the funding-scenario pills moved INTO the single
   // Funding selector (addendum 2026-09-30) — the row holds the company presets + YC mode.
-  scenario: { icon: '🏢', title: 'Scenario — one-tap setups: example companies and YC batch mode' },
-  founder: { icon: '👤', title: 'Founder — the who/where cluster: the two founder axes plus the country view' },
+  scenario: { icon: 'pi:building:sky', title: 'Scenario — one-tap setups: example companies and YC batch mode' }, // 🏢
+  founder: { icon: 'pi:person:orange', title: 'Founder — the who/where cluster: the two founder axes plus the country view' }, // 👤
   // 'Which AI firm are you using' (2026-09-30, item 7) — its own row.
-  using: { icon: '🤖', title: "I'm using — pin your AI assistant on the AI-conversation steps; the judged pick stays visible and no judged number moves" },
+  using: { icon: 'pi:robot:violet', title: "I'm using — pin your AI assistant on the AI-conversation steps; the judged pick stays visible and no judged number moves" }, // 🤖
 }
 
 // The decisions rendered as controls — 'Start with' (ordering) left the panel (founder round 5,
@@ -427,17 +431,17 @@ const FUNDING_SHORT: Record<string, string> = {
   [`${FUNDING_SCENARIO_PREFIX}bootstrapped`]: 'Bootstrapped',
 }
 
-const DECISION_ICONS: Record<keyof Choices, string> = {
-  entity: '📜',
-  team: '👥',
-  funding: '🏦',
-  product: '🧾',
-  ordering: '🔀',
-  hire: '🧑‍💼',
-  compliance: '⚖️',
-  enterprise: '🎯',
-  ph: '🚀',
-  remote: '🏠',
+export const DECISION_ICONS: Record<keyof Choices, string> = {
+  entity: 'pi:scroll:amber', // 📜 the incorporation paperwork
+  team: 'pi:people:orange', // 👥 cofounders vs solo
+  funding: 'pi:bank:emerald', // 🏦 same bank as the fundraising concepts
+  product: 'pi:receipt:emerald', // 🧾 the business model's paper trail
+  ordering: 'pi:convert:violet', // 🔀 name-first vs build-first
+  hire: 'pi:handshake:orange', // 🧑‍💼 same handshake as hr_001 first hire
+  compliance: 'pi:scales:amber', // ⚖️ same scales as the legal phase
+  enterprise: 'pi:target:sky', // 🎯 same target as scale_012 OKRs
+  ph: 'pi:rocket:fuchsia', // 🚀 same rocket as growth_010 launch
+  remote: 'pi:house:orange', // 🏠 working from home
 }
 
 // Visible display titles only — every dropdown keeps its canonical DECISIONS title as the group
@@ -537,11 +541,11 @@ export default function VirtualStartup({
   // any decision change. Rides the ?run= permalink as the appended 'q' token; legacy links
   // decode without it and replay phase-free, their era. Independent of YC batch mode (yc).
   const [ycApply, setYcApply] = useState(false)
-  // The controller tab (round 3, item 3): Setup (scenario/founder/geo/decisions rows) vs
-  // Vendors (fix a vendor per role before/independent of the run). Default Setup; deliberately
-  // NOT persisted in the URL — the chosen tab is ephemeral chrome, the picks themselves ride
-  // the ?run= permalink.
-  const [tab, setTab] = useState<'setup' | 'vendors'>('setup')
+  // The 'Set vendors' disclosure (founder batch 2026-10-02, item 2): the Setup/Vendors TABS are
+  // gone — the band flows top-to-bottom and the vendor-swap pickers live behind a collapsible
+  // disclosure row (house <details> idiom), default COLLAPSED. Ephemeral chrome, deliberately
+  // NOT persisted in the URL — the picks themselves ride the ?run= permalink.
+  const [vendorsOpen, setVendorsOpen] = useState(false)
   // Vendors-tab ordering toggle (founder round 5, item 7): 'Likely choice' (the committed
   // adoption/popularity presentation order) leads; 'Judged' is the arena's agent-readiness
   // ladder. Both orderings are committed data — the toggle only changes presentation.
@@ -616,7 +620,33 @@ export default function VirtualStartup({
   const followRef = useRef(true)
   const pendingTopRef = useRef(false)
 
+  // The reveal ticker NEVER outlives the page: cleared on unmount (this cleanup — regression-
+  // pinned by components/__tests__/navPerfPins.test.tsx) and paused while the tab is hidden
+  // (below). Both are part of the mobile-nav hang fix (2026-10-01): a ticking 240ms re-render of
+  // the whole sim must not keep burning the main thread when the reader isn't looking at it.
   useEffect(() => () => { if (timer.current) clearInterval(timer.current) }, [])
+
+  // Pause the ticker while the document is hidden, resume on return. Only an ACTIVE ticker is
+  // paused/resumed (hiddenPausedRef): a manual ⏹ Stop or a semi-auto decision pause stays
+  // stopped — visibility must never restart a run the reader (or the run itself) halted.
+  const hiddenPausedRef = useRef(false)
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        if (timer.current) {
+          stop()
+          hiddenPausedRef.current = true
+        }
+      } else if (hiddenPausedRef.current) {
+        hiddenPausedRef.current = false
+        startTicker()
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+    // stop/startTicker close only over refs and setState — stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // After every reveal commit: pin the terminal to its newest line while following, or honor the
   // one-shot scroll-to-top after an instant fill. Reading scrollHeight post-commit is the whole
@@ -788,7 +818,7 @@ export default function VirtualStartup({
     return out
   }, [mode, asserted, named, companyName, runArgs, choices, identity, rows.length, offeredValues])
 
-  // Only the roles whose arena the selected journey actually touches — the Vendors tab (and the
+  // Only the roles whose arena the selected journey actually touches — the 'Set vendors' disclosure (and the
   // outcome model, which resolves picks via step.arenaId / step.choiceArenaId) loses nothing.
   const journeyRoles = useMemo(() => {
     const arenas = new Set<string>()
@@ -799,7 +829,7 @@ export default function VirtualStartup({
     return roles.filter((r) => arenas.has(r.arenaId))
   }, [roles, steps])
   // The journey roles the reader has re-picked away from the default judged-top vendor — the
-  // Vendors tab's quiet count badge, the scorecard's user-picked labels, and the post-run
+  // vendors disclosure's quiet count badge, the scorecard's user-picked labels, and the post-run
   // "run again with your vendors" affordance (founder addendum #3) all read this.
   const userPickedArenas = useMemo(
     () =>
@@ -900,12 +930,12 @@ export default function VirtualStartup({
     const techLabel = VS_TECHNICAL_OPTIONS.find((o) => o.value === founder.technical)?.label ?? founder.technical
     const expLabel = VS_EXPERIENCE_OPTIONS.find((o) => o.value === founder.experience)?.label ?? founder.experience
     const axes = [
-      { id: 'founder-technical', title: 'Founder', icon: '👤', label: techLabel, state: 'asserted' as const },
-      { id: 'founder-experience', title: 'Experience', icon: '🎓', label: expLabel, state: 'asserted' as const },
+      { id: 'founder-technical', title: 'Founder', icon: 'pi:person:orange', label: techLabel, state: 'asserted' as const }, // 👤
+      { id: 'founder-experience', title: 'Experience', icon: 'pi:grad-cap:orange', label: expLabel, state: 'asserted' as const }, // 🎓
     ]
     // The assistant pin (item 7): the panel reflects the "I'm using" selection when one is set.
     const using = assistantPick
-      ? [{ id: 'assistant', title: "I'm using", icon: '🤖', label: `${assistantPick.name} · your assistant`, state: 'asserted' as const }]
+      ? [{ id: 'assistant', title: "I'm using", icon: 'pi:robot:violet', label: `${assistantPick.name} · your assistant`, state: 'asserted' as const }] // 🤖
       : []
     // 'Start with' left the UI entirely (round 5, item 4) — the state panel lists only the
     // decisions the panel offers.
@@ -1007,7 +1037,14 @@ export default function VirtualStartup({
       }
       const next = at + 1
       revealedRef.current = next
-      setRevealed(next)
+      // TRANSITION priority (mobile-nav hang fix, 2026-10-01): each reveal re-renders the whole
+      // sim (terminal rows + DAG + state panel) and the post-commit terminal pin forces layout —
+      // near the 240ms budget on a phone. As default-priority updates these ticks preempted and
+      // restarted the router's navigation transition every 240ms, so tapping the header logo
+      // mid-run starved the navigation ("it just hangs" until the run ended). As a transition
+      // the tick yields to navigation; the pause schedule stays SYNCHRONOUS via the refs above,
+      // so semi-auto semantics and the fake-timer tests are unchanged.
+      startTransition(() => setRevealed(next))
       if (next >= rowsLenRef.current) stop()
     }, CADENCE_MS)
   }
@@ -1195,7 +1232,7 @@ export default function VirtualStartup({
   const waitingDecision =
     waitingOn !== null && waitingOn !== 'name' ? DECISIONS.find((x) => x.id === waitingOn) ?? null : null
 
-  // ── Vendor picks (founder addenda #2/#3, 2026-09-29): the Vendors tab stays usable at ALL
+  // ── Vendor picks (founder addenda #2/#3, 2026-09-29): the 'Set vendors' pickers stay usable at ALL
   // times — before a run, mid-run (stopped, paused, or even running), and after completion.
   // MID-RUN (0 < revealed < rows.length) a pick applies IMMEDIATELY at the semi-auto invariant:
   // the already-printed transcript is pinned byte-stable and only the unrevealed tail recomposes
@@ -1235,54 +1272,10 @@ export default function VirtualStartup({
           the very top of the page — Run/Restart is one flick away, never a long timeline away. */}
       <div className="space-y-3">
       <section data-testid="vs-setup" aria-label="Set up the open startup simulator" className="rounded-2xl border border-zinc-800 p-3">
-        {/* The controller tabs (founder round 3, item 3): Setup — the scenario/founder/geo/
-            decisions rows — and Vendors — fix a vendor per market role before/independent of
-            the run (the picks flow through the same controlled-selections contract into the
-            outcome model). WAI-ARIA tabs: role=tablist/tab/tabpanel, aria-selected, roving
-            tabIndex, arrow keys; default Setup; the chosen tab is NOT persisted in the URL.
-            The footer (drive mode + Run CTA) sits below the panels, reachable from both. */}
-        <div
-          role="tablist"
-          aria-label="Open startup simulator controller"
-          className="mb-2.5 flex items-center gap-1 border-b border-zinc-800/70 pb-2"
-          onKeyDown={(e) => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
-            e.preventDefault()
-            const next = tab === 'setup' ? 'vendors' : 'setup'
-            setTab(next)
-            document.getElementById(`vs-tab-${next}`)?.focus()
-          }}
-        >
-          {(
-            [
-              { id: 'setup', label: 'Setup' },
-              { id: 'vendors', label: 'Vendors' },
-            ] as const
-          ).map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              id={`vs-tab-${t.id}`}
-              data-testid={`vs-tab-${t.id}`}
-              aria-selected={tab === t.id}
-              aria-controls={`vs-tabpanel-${t.id}`}
-              tabIndex={tab === t.id ? 0 : -1}
-              onClick={() => setTab(t.id)}
-              className={`rounded-full border px-3 py-1 text-xs transition ${
-                tab === t.id
-                  ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
-                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
-              }`}
-            >
-              {t.label}
-              {t.id === 'vendors' && vendorOverrides > 0 && (
-                <span className="ml-1 text-[10px] text-zinc-400">· {vendorOverrides}</span>
-              )}
-            </button>
-          ))}
-        </div>
-
+        {/* The Setup/Vendors tab pills are GONE (founder batch 2026-10-02, item 2): the band
+            simply flows top-to-bottom — Scenario → Founder → "I'm using" → Choices (the
+            decisions grid) → the collapsible 'Set vendors' disclosure below. The footer (drive
+            mode + Run CTA) sits under everything. */}
         {/* The control panel as a labeled form grid (founder 2026-09-28: the crammed single-row
             band was "poorly designed layout wise") — one aligned label column (Scenario / Founder
             / Decisions), one content column, and a footer bar holding the company info + the Run
@@ -1291,8 +1284,7 @@ export default function VirtualStartup({
             instead of scrolling because the decisions row lacked min-w-0 (a grid item's automatic
             minimum width tracks its content), so the whole band pushed past the viewport. Wrap +
             min-w-0 stacks the controls honestly at small widths; no horizontal scrolling. */}
-        <div role="tabpanel" id="vs-tabpanel-setup" aria-labelledby="vs-tab-setup" hidden={tab !== 'setup'}>
-        <div className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
+        <div data-testid="vs-setup-rows" className="grid grid-cols-1 gap-y-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:items-center sm:gap-x-3">
           <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">
             <IconChip icon={ROW_ICONS.scenario.icon} title={ROW_ICONS.scenario.title} className="mr-1" />
             Scenario
@@ -1330,10 +1322,12 @@ export default function VirtualStartup({
                 Bootstrapped now live as options of the single Funding selector on the Decisions
                 row — same applyScenario semantics, same ?preset= namespace. */}
             <span aria-hidden className="text-zinc-700">|</span>
-            {/* YC batch mode — a calibration applied on top of any setup, never a new process;
-                its full disclosure prints in the info line below while the mode is on. The pill
-                leads with the house YC mark (components/YcBadge.tsx: the YC orange square) —
-                aria-hidden decoration, the accessible name stays 'YC batch mode'. */}
+            {/* YC batch mode — a calibration applied on top of any setup, never a new process.
+                The explainer paragraph is GONE (founder batch 2026-10-02, item 3); the
+                load-bearing non-affiliation honesty survives as the pill tooltip plus the muted
+                suffix that renders while either YC surface is on (below). The pill leads with
+                the house YC mark (components/YcBadge.tsx: the YC orange square) — aria-hidden
+                decoration, the accessible name stays 'YC batch mode'. */}
             <button
               type="button"
               data-testid="vs-yc-toggle"
@@ -1381,6 +1375,19 @@ export default function VirtualStartup({
               />
               Apply to YC
             </label>
+            {/* The surviving MINIMAL non-affiliation note (founder batch 2026-10-02, item 3):
+                the deleted explainer's synthetic/affiliation honesty was load-bearing, so this
+                short muted suffix renders whenever either YC surface is active; the full
+                YC_BATCH.disclosure sentence rides its tooltip. */}
+            {(yc || ycApply) && (
+              <span
+                data-testid="vs-yc-nonaffiliation"
+                title={YC_BATCH.disclosure}
+                className="text-[10px] text-zinc-500"
+              >
+                synthetic · not affiliated with YC
+              </span>
+            )}
           </div>
           {/* The who/where cluster (founder batch 2026-09-29, item 4): the two founder AXES
               (Technical × Experience — a change is a new run, the event stream is seeded by the
@@ -1427,10 +1434,12 @@ export default function VirtualStartup({
           {/* The starting decisions as compact dropdowns (founder addendum 2026-09-29) — the
               house listbox pattern, each with a 'Not set' initial state that composes the
               default branch and stays out of the URL. Canonical accessible names throughout.
-              The 'Decisions' row LABEL is gone (founder batch 2026-09-30, item 6 — it's
-              obviously the setup); an empty slot keeps the grid columns aligned. Each choice
-              still only swaps, reorders, adds, or skips corpus processes. */}
-          <span aria-hidden className="hidden sm:block" />
+              The row label is 'Choices' (founder batch 2026-10-02, item 2 — with the tabs gone
+              and the 'Set vendors' disclosure directly below, the grid needs a visual anchor;
+              the retired 'Decisions' label does not return). Text-only, no icon: each decision
+              dropdown already carries its own icon chip. Each choice still only swaps,
+              reorders, adds, or skips corpus processes. */}
+          <span className="text-[10px] uppercase tracking-wider text-zinc-400 sm:text-right">Choices</span>
           <div className="flex min-w-0 flex-wrap items-center gap-2.5">
           {/* 'Start with' is gone from the panel (round 5, item 4 — VISIBLE_DECISIONS); the
               Entity roster follows the geo pick (round 5, item 1 — country-filtered options,
@@ -1465,26 +1474,40 @@ export default function VirtualStartup({
             ),
           )}
           </div>
-          {/* The one visible honesty line the removed sublabels leave behind (founder batch
-              2026-10-01, item 4 — our call, said out loud): the dropdowns are names-only now;
-              the per-option corpus-mapping receipts live on in the semi-auto decision cards'
-              tooltips and in the terminal's phase notes, and this single muted line keeps the
-              CONTRACT itself visible before any run. */}
-          <span aria-hidden className="hidden sm:block" />
-          <p data-testid="vs-decisions-info" className="text-[10px] leading-snug text-zinc-500">
-            every option only swaps, reorders, adds, or skips committed corpus processes — the
-            run&apos;s phase notes name each mapping
-          </p>
-        </div>
+          {/* The decisions info line is GONE (founder batch 2026-10-02, item 1): the
+              swaps/reorders/adds/skips receipts live on in the terminal's phase notes and the
+              semi-auto decision cards — no standing prose under the grid. */}
         </div>
 
-        {/* Vendor preselection (round 3, item 3): the SimRolePicker grid over the journey's
-            swappable market roles — the reader FIXES a vendor per role and the pick drives the
-            outcome model above (recommended steps keep the judged ranking; the clock, scorecard,
-            and burn follow the pick). The embedded dry-run transcript is deliberately GONE from
-            this page (the per-process pages keep theirs) — the terminal above IS this page's
-            transcript. */}
-        <div role="tabpanel" id="vs-tabpanel-vendors" aria-labelledby="vs-tab-vendors" data-testid="vs-tabpanel-vendors" hidden={tab !== 'vendors'}>
+        {/* The 'Set vendors' disclosure (founder batch 2026-10-02, item 2 — renamed from the
+            'Vendors' tab): the SimRolePicker grid over the journey's swappable market roles,
+            unchanged — the reader FIXES a vendor per role and the pick drives the outcome model
+            above (recommended steps keep the judged ranking; the clock, scorecard, and burn
+            follow the pick). House <details> idiom (the StepVerifyCost/ProcessDag summary
+            pattern), default COLLAPSED and visually muted ('unset') until opened; React controls
+            the open state so the override count and tests stay deterministic. The embedded
+            dry-run transcript stays gone from this page — the terminal above IS the transcript. */}
+        <details
+          data-testid="vs-set-vendors"
+          open={vendorsOpen}
+          className="group mt-2.5 border-t border-zinc-800/70 pt-2"
+        >
+          <summary
+            data-testid="vs-set-vendors-summary"
+            onClick={(e) => {
+              e.preventDefault() // React owns the open state — no native double-toggle
+              setVendorsOpen((v) => !v)
+            }}
+            title="Fix a vendor per market role — optional; collapsed, the run uses the judged defaults plus any picks you already made"
+            className="flex cursor-pointer list-none flex-wrap items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 group-open:text-zinc-300 [&::-webkit-details-marker]:hidden"
+          >
+            <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
+            Set vendors
+            {vendorOverrides > 0 && (
+              <span className="text-[10px] text-zinc-400">· {vendorOverrides}</span>
+            )}
+          </summary>
+          <div className="mt-2">
           <p className="text-[11px] leading-snug text-zinc-400">
             Fix a vendor per market role, before, during, or after the run — the picks drive the
             run&apos;s clock, scorecard, and burn (recommended lines keep the judged ranking).
@@ -1549,7 +1572,8 @@ export default function VirtualStartup({
               no swappable market roles in this journey
             </p>
           )}
-        </div>
+          </div>
+        </details>
 
         {/* Footer bar: the drive-mode control + the Run CTA (founder 2026-09-25: CTA before any
             timeline content; addendum 2026-09-29: the company name is NOT shown upfront — it
@@ -1602,14 +1626,9 @@ export default function VirtualStartup({
             {running ? '⏹ Stop' : done ? '▶ Run it again' : '▶ Run this startup'}
           </button>
         </div>
-        {yc && (
-          <p data-testid="vs-yc-disclosure" className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-400">
-            <span>
-              {YC_BATCH.disclosure} Batch calendar: {YC_BATCH.calendar}. The raise compresses to
-              Demo-Day timing on the standard published deal; PH launch and build-first turn on.
-            </span>
-          </p>
-        )}
+        {/* The YC calibration explainer paragraph is GONE (founder batch 2026-10-02, item 3):
+            the batch-calendar/Demo-Day receipts live on in the relocated raise phase's note; the
+            non-affiliation honesty survives as the muted suffix beside the YC pills above. */}
         {/* No amber assumption lines in the band (founder round 3, item 2): the axis pills'
             tooltips carry the named simulation assumptions; the outcome surfaces (sim badges,
             scorecard) still disclose them per-line where they apply. */}
@@ -1901,7 +1920,10 @@ export default function VirtualStartup({
                             >
                               Ultrametric CLI/MCP
                             </Link>{' '}
-                            — our own product: <code className="text-zinc-400">{um.command}</code>
+                            — our own product: <code className="text-zinc-400">{um.command}</code>{' '}
+                            {/* Copyable shipped command (founder batch 2026-10-02, item 5) —
+                                display-only convenience on the already-disclosed first-party line. */}
+                            <VsCopyCommand command={um.command} />
                             <span className="text-zinc-500"> · MCP {um.mcpTool} — guide + saved records; your agent does the work</span>
                           </p>
                         )
@@ -2352,7 +2374,7 @@ export default function VirtualStartup({
       )}
 
       {/* The embedded ProcessSimulator section is gone (founder round 3, item 3): the vendor
-          role pickers moved into the controller's Vendors tab above, and the dry-run transcript
+          role pickers moved into the controller's 'Set vendors' disclosure above, and the dry-run transcript
           was dropped from this page entirely — the terminal IS this page's transcript, and every
           per-process page keeps its own ProcessSimulator. */}
     </div>

@@ -1,14 +1,17 @@
 {
-  "hash": "be7d1e7c1a7b940951104ca2c787c50a96778a5bf8101e6fda1115bbd40ae1bb",
+  "hash": "ddbf75e225758ba1600d7a538da896370b84a138b566176bb786d3adaf69abc8",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Fivetran's MCP server supports a scope environment variable (FIVETRAN_SCOPE = read/write/read-write-delete) and a DISALLOWED_ACTIONS denylist to restrict credential-endpoint and write/delete operations, which provides a coarse mechanism for limiting an agent's permissions. However, this is a self-configured env var/denylist rather than true API-issued scoped credentials (e.g., no evidence of per-agent API keys, token minting with granular scopes, or OAuth-style least-privilege credential issuance via the REST API). missing for 10: first-party support for generating distinct least-privilege API keys/tokens per agent, granular resource-level scoping beyond a few flags, and independent verification that these controls are enforced robustly.",
+    "rationale": "Fivetran's official MCP server is read-only by default. A `FIVETRAN_SCOPE` setting (read, read/write, read/write/delete) and a `DISALLOWED_ACTIONS` denylist that can block credential endpoints let you limit what an agent can do. Role-based access control is also listed as a platform feature. However, this scoping is enforced in the MCP server's configuration, not in the API credentials themselves, and no evidence shows issuing scoped or least-privilege API keys tied to RBAC roles. Missing for 10: documented creation of API keys with limited, role-bound permissions; per-credential resource or permission scoping on the REST API; credential lifecycle controls (expiry, rotation) for agent keys; independent or hands-on corroboration.",
     "evidenceIds": [
       "fivetran-docs-29",
       "fivetran-docs-60",
-      "fivetran-docs-22"
+      "fivetran-docs-28",
+      "fivetran-docs-16",
+      "fivetran-docs-3",
+      "fivetran-probe-4"
     ],
     "productId": "fivetran",
     "storyId": "agentic-scoped-keys"

@@ -44,8 +44,9 @@ function arena(
   }
 }
 
-// ---- real data: startup-banking (leaderboard ramp, mercury, airwallex, wise, brex, jeeves,
-// relay; battle mercury-vs-ramp stored as a=mercury, b=ramp, record 12–30, 24 drawn) ------------
+// ---- real data: startup-banking (leaderboard ramp, mercury, airwallex, brex, jeeves, wise,
+// relay; battle mercury-vs-ramp stored as a=mercury, b=ramp, record 16–28, 28 drawn —
+// re-pinned 2026-10-01 after the opus-5-5 judge migration) ------------
 
 const banking = loadCategory('startup-banking', path.resolve(__dirname, '../../data'))
 
@@ -59,7 +60,7 @@ describe('compareRivalsFor', () => {
     expect(rows[0].battleSlug).toBeNull()
     expect(rows[0].record).toBeNull()
     // 1 above + 3 below (edge-fill: only one product ranks above #2), in rank order.
-    expect(rows.slice(1).map((r) => r.productId)).toEqual(['ramp', 'airwallex', 'wise', 'brex'])
+    expect(rows.slice(1).map((r) => r.productId)).toEqual(['ramp', 'airwallex', 'brex', 'jeeves'])
     expect(rows.slice(1).map((r) => r.rank)).toEqual([1, 3, 4, 5])
     expect(rows.slice(1).every((r) => !r.isSelf)).toBe(true)
   })
@@ -76,14 +77,14 @@ describe('compareRivalsFor', () => {
 
   it('links each rival to the stored battle slug with the record oriented self-first', () => {
     // data/startup-banking/rankings.json stores the pair as a=mercury, b=ramp with
-    // record { aWins: 12, bWins: 30, draws: 24 } — assert both orientations read from it.
+    // record { aWins: 16, bWins: 28, draws: 28 } — assert both orientations read from it.
     const fromMercury = compareRivalsFor(banking, 'mercury').find((r) => r.productId === 'ramp')!
     expect(fromMercury.battleSlug).toBe('mercury-vs-ramp')
-    expect(fromMercury.record).toEqual({ wins: 12, losses: 30, draws: 24 })
+    expect(fromMercury.record).toEqual({ wins: 16, losses: 28, draws: 28 })
 
     const fromRamp = compareRivalsFor(banking, 'ramp').find((r) => r.productId === 'mercury')!
     expect(fromRamp.battleSlug).toBe('mercury-vs-ramp') // stored (a, b) order, either direction
-    expect(fromRamp.record).toEqual({ wins: 30, losses: 12, draws: 24 })
+    expect(fromRamp.record).toEqual({ wins: 28, losses: 16, draws: 28 })
   })
 
   it('a 3-product arena yields self + 2 rivals', () => {

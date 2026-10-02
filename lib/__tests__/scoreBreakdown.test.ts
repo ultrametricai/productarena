@@ -6,7 +6,7 @@ import type { LeaderboardEntry } from '@/lib/schemas'
 
 // The /score page IS the determinism proof: every number it prints must recompute, from the
 // printed pieces alone, into exactly the published rankings.json entry. These tests replay that
-// reader's arithmetic over real arena data — cell points → dimension fractions → the PA blend —
+// reader's arithmetic over real arena data — cell points → dimension fractions → the Overall-score blend —
 // so any drift between lib/scoreBreakdown.ts's story selectors and lib/scoring.ts's
 // buildRankings (or any silent rankings.json regeneration change) fails the suite.
 
@@ -47,7 +47,7 @@ function checkProduct(categoryId: string, productId: string) {
     }
   }
 
-  // The blend equation at the top of the page: PA = Σ(score×weight) ÷ Σ(weight) over the
+  // The blend equation at the top of the page: Overall = Σ(score×weight) ÷ Σ(weight) over the
   // non-null terms — recomputed from the displayed components, it must equal rankings.json's
   // published aiEra (0.05 tolerance per the transparency spec; in practice it's exact).
   const live = breakdown.blend.terms.filter((t) => t.score !== null)

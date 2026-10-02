@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, type ReactNode, useEffect, useState } from 'react'
+import { IconGlyph } from '@/components/IconChip'
+import { HOME_MODE_ICONS } from '@/lib/arenaIcons'
 import { readParam, setParams } from '@/lib/urlState'
 
 // Homepage mode switch (founder 2026-09-21: "add processes onto the homepage as well, maybe have
@@ -44,8 +46,9 @@ export default function HomeModes({
     setMode(m)
     setParams({ view: m === 'companies' ? null : m, all: null })
   }
-  // Founder 2026-09-24 (mobile): all four tabs on ONE line — emoji and roomy padding are
-  // desktop-only; phones get tight text-only pills.
+  // Founder 2026-09-24 (mobile): all four tabs on ONE line — icons and roomy padding are
+  // desktop-only; phones get tight text-only pills. The icons are house glyph tokens
+  // (lib/arenaIcons.ts HOME_MODE_ICONS), not the old 🏢/📦/🔁/🏟 emoji (founder 2026-10-02).
   const tab = (m: HomeMode, icon: string, label: string, title: string) => (
     <button
       type="button"
@@ -58,7 +61,9 @@ export default function HomeModes({
           : 'text-zinc-400 hover:text-zinc-200'
       }`}
     >
-      <span aria-hidden className="hidden sm:inline">{icon} </span>
+      <span aria-hidden className="mr-1.5 hidden align-[-0.125em] sm:inline-flex">
+        <IconGlyph icon={icon} />
+      </span>
       {label}
     </button>
   )
@@ -67,10 +72,10 @@ export default function HomeModes({
     <HomeModeContext.Provider value={mode}>
       <div>
         <div className="mb-4 inline-flex flex-nowrap items-center gap-0.5 rounded-full border border-zinc-800 p-1 sm:gap-1">
-          {tab('companies', '🏢', 'Companies', 'One row per company — a multi-product family (Stripe, Adyen…) shows only its parent')}
-          {tab('products', '📦', 'Products', 'Every judged product line ranked separately, as it does inside its own arena')}
-          {tab('processes', '🔁', 'Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
-          {arenas !== undefined && tab('arenas', '🏟', 'Arenas', 'Every judged market — visual navigation, grouped by section')}
+          {tab('companies', HOME_MODE_ICONS.companies, 'Companies', 'One row per company — a multi-product family (Stripe, Adyen…) shows only its parent')}
+          {tab('products', HOME_MODE_ICONS.products, 'Products', 'Every judged product line ranked separately, as it does inside its own arena')}
+          {tab('processes', HOME_MODE_ICONS.processes, 'Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
+          {arenas !== undefined && tab('arenas', HOME_MODE_ICONS.arenas, 'Arenas', 'Every judged market — visual navigation, grouped by section')}
         </div>
         <div className={mode === 'companies' || mode === 'products' ? '' : 'hidden'}>{companies}</div>
         <div className={mode === 'processes' ? '' : 'hidden'}>{processes}</div>

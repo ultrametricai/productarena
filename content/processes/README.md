@@ -19,6 +19,15 @@ Notes use `{ "text": "...", "references": [] }`; references are optional. They c
 - `pnpm shared:export --output /path/to/catalog.json` exports a committed, validated catalog with its Git revision, JSON Schema, and content hash. It also rejects a committed JSON Schema that differs from the TypeScript definition, using the same consistency check as `shared:check`.
 - Add `--example` to export only the two synthetic staging records in `content/processes/examples/staging.json`. They demonstrate option branches, a nested process, and a shared downstream step. They are excluded from the real catalog and current site.
 
-The initial mapping contains 149 records, 694 operational nodes and 522 original connections. The audit lists missing outcomes, guidance, vendor keys, and placement questions. A valid mapped record is not automatically a useful published guide.
+The initial mapping contained 149 records, 694 operational nodes and 522 original connections;
+the catalog holds 162 records as of 2026-10-01 (the 12 reactive situations included). The audit lists missing outcomes, guidance, vendor keys, and placement questions. A valid mapped record is not automatically a useful published guide.
 
 Private UM additions live in the API database. They refer to these record/part IDs and exact target content hashes. API publication assembles public guidance and specific private versions without an LLM rewrite. The public export contains no private additions. Production promotes the exact prepared artifact after staging validation.
+
+## Preview explicit defaults
+
+The additive process preview makes 38 legacy base methods explicit default options in
+36 records, preserving their 97 alternatives, links and all incoming metadata. Integration
+uses stable record/part IDs; it retains all 162 records including reactive situations.
+The approved formation chooser guidance is an authored amendment. See
+`default-options-audit.json` and `../../docs/PROCESS-UI-RELEASE.md`.

@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
+import { IconGlyph } from '@/components/IconChip'
+import { EXPLORE_SECTION_ICONS } from '@/lib/arenaIcons'
 
 // The one list of global (cross-arena) COMPANY rankings, in the same order as the header's
 // Explore menu. `id` doubles as the GeoMark seed, so every ranking wears the same concept mark
@@ -15,6 +17,9 @@ export const GLOBAL_RANKINGS = [
   { id: 'popular', name: 'Most popular', href: '/rankings/popular' },
   { id: 'most-open', name: 'Most open', href: '/rankings/most-open' },
   { id: 'best-api', name: 'Best API', href: '/rankings/best-api' },
+  // Arena-scoped, not cross-arena: the judged startup-law-firms leaderboard as a focused view
+  // (founder 2026-10-02: "we need a ranking table for law firms"). Same contract otherwise.
+  { id: 'law-firms', name: 'Startup law firms', href: '/rankings/law-firms' },
 ] as const
 
 // The parallel list of PROCESS rankings (founder ask 2026-09-21: "Explore could include
@@ -35,9 +40,11 @@ export type RankingId = GlobalRankingId | ProcessRankingId
 
 // The two labeled groups every /rankings/* page cross-links — company pages show the process
 // group too (and vice versa): the clarity ask IS seeing both, clearly labeled.
+// Each group leads with its house glyph (lib/arenaIcons.ts) — the same icon the Explore menu's
+// section header wears, not the old 🏢/🔁 emoji (founder 2026-10-02 sweep).
 const GROUPS = [
-  { label: '🏢 Company rankings', rankings: GLOBAL_RANKINGS },
-  { label: '🔁 Process rankings', rankings: PROCESS_RANKINGS },
+  { label: 'Company rankings', icon: EXPLORE_SECTION_ICONS.companyRankings, rankings: GLOBAL_RANKINGS },
+  { label: 'Process rankings', icon: EXPLORE_SECTION_ICONS.processRankings, rankings: PROCESS_RANKINGS },
 ] as const
 
 // Cross-link footer for the /rankings/* pages: every sibling ranking in both groups, with the
@@ -47,7 +54,10 @@ export default function RankingsNav({ current }: { current: RankingId }) {
     <nav aria-label="all global rankings" className="space-y-3 rounded-xl border border-zinc-800 p-4">
       {GROUPS.map((group) => (
         <div key={group.label}>
-          <p className="text-xs uppercase tracking-widest text-zinc-500">{group.label}</p>
+          <p className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-500">
+            <span aria-hidden className="inline-flex"><IconGlyph icon={group.icon} /></span>
+            {group.label}
+          </p>
           <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
             {group.rankings.map((r) => (
               <li key={r.id} className="flex items-center gap-1.5">

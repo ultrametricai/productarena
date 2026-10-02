@@ -53,18 +53,18 @@ describe('computeOpportunityScore', () => {
       meanAgentReady: 20,
       meanAiNative: 40,
       noneShare: 0.5,
-      leaderPaScore: 60,
+      leaderOverallScore: 60,
       unservedShare: 0.2,
     })
     expect(score).toBe(0.3 * 80 + 0.2 * 60 + 0.2 * 50 + 0.2 * 40 + 0.1 * 20) // 56
   })
 
   it('renormalizes over non-null components instead of penalizing missing axes twice', () => {
-    expect(computeOpportunityScore({ meanAgentReady: 20, meanAiNative: null, noneShare: null, leaderPaScore: null, unservedShare: null })).toBe(80)
+    expect(computeOpportunityScore({ meanAgentReady: 20, meanAiNative: null, noneShare: null, leaderOverallScore: null, unservedShare: null })).toBe(80)
   })
 
   it('returns null when nothing is measurable', () => {
-    expect(computeOpportunityScore({ meanAgentReady: null, meanAiNative: null, noneShare: null, leaderPaScore: null, unservedShare: null })).toBeNull()
+    expect(computeOpportunityScore({ meanAgentReady: null, meanAiNative: null, noneShare: null, leaderOverallScore: null, unservedShare: null })).toBeNull()
   })
 
   it('keeps the published formula string in sync with the weights', () => {
@@ -133,7 +133,7 @@ describe('arenaOpportunity', () => {
     expect(arena.components.meanAiNative).toBe(20)
     // 3 applicable agentic cells (access×2 + feature a), 2 of them none.
     expect(arena.components.noneShare).toBeCloseTo(2 / 3, 3)
-    expect(arena.leader).toEqual({ productId: 'a', name: 'A', paScore: 40 })
+    expect(arena.leader).toEqual({ productId: 'a', name: 'A', overallScore: 40 })
     // 4 applicable stories, 3 unserved: api + domain (all none) and feature (a none, b na —
     // no full/partial anywhere). Only 'access' is served (b partial).
     expect(arena.components.unservedShare).toBe(0.75)
@@ -159,7 +159,7 @@ describe('arenaOpportunity', () => {
     const arena = arenaOpportunity(s)
     expect(arena.components.noneShare).toBeNull()
     expect(arena.components.meanAgentReady).toBeNull()
-    expect(arena.components.leaderPaScore).toBeNull()
+    expect(arena.components.leaderOverallScore).toBeNull()
     // Only unservedShare (0) is measurable → score 0.
     expect(arena.score).toBe(0)
   })

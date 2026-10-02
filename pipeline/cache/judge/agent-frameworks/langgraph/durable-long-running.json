@@ -1,19 +1,23 @@
 {
-  "hash": "3e67e294efbd1be3d33d2ca39f9fce84fbd433778e64f24938413dcbf36a9ce5",
+  "hash": "f6a5a01839d02b52ea3c3b4df61a783a2e53a954aeaf63a12ade550e6c83cb41",
   "verdict": {
-    "productId": "langgraph",
-    "storyId": "durable-long-running",
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "LangGraph explicitly advertises 'Durable execution' as a core feature, with checkpointers (including production Postgres-backed checkpointers) that persist thread state so agents 'automatically resume from exactly where they left off' after failures, and interrupts that preserve execution state even in error conditions. This directly matches the engineering-lead's requirement for durable, restart-resilient long-running agents. Missing for 10: independent hands-on verification of actual crash/restart recovery in production, and explicit coverage of third-party durable-execution integrations (e.g., Temporal) beyond LangGraph's native mechanism.",
+    "rationale": "LangGraph advertises native durable execution: agents persist through failures and resume from where they left off. Database-backed checkpointers (PostgresSaver) make thread state survive process restarts, the checkpointer writes exact state so runs can resume even from an error state, and the Agent Server includes a managed checkpointing database. Community comments confirm checkpointing is a core framework feature, while noting persistence could be better developed. Missing for 10: explicit documentation of resuming in-flight runs across deploys/version changes, any evidence of third-party durable-execution integrations (e.g. Temporal-style), and hands-on corroboration of restart recovery.",
     "evidenceIds": [
       "langgraph-gh-6",
       "langgraph-gh-1",
       "langgraph-docs-2",
       "langgraph-docs-13",
       "langgraph-docs-25",
-      "langgraph-gh-9"
-    ]
+      "langgraph-docs-30",
+      "langgraph-gh-9",
+      "langgraph-gh-12",
+      "langgraph-comm-7",
+      "langgraph-comm-4"
+    ],
+    "productId": "langgraph",
+    "storyId": "durable-long-running"
   }
 }

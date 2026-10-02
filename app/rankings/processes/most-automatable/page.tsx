@@ -3,6 +3,7 @@ import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import GeoMark from '@/components/GeoMark'
 import { IconGlyph } from '@/components/IconChip'
+import { EXPLORE_SECTION_ICONS } from '@/lib/arenaIcons'
 import RankingsNav from '@/components/RankingsNav'
 import { loadProcesses, processSlug } from '@/lib/processes'
 import { buildProcessRows } from '@/lib/processRows'
@@ -54,7 +55,10 @@ export default function MostAutomatableProcessesPage() {
         {/* seed "most-automatable": same concept mark as the Explore menu entry and RankingsNav. */}
         <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-sky-400">
           <GeoMark seed="most-automatable" title="Most automatable — process ranking" size={16} className="text-zinc-500" />
-          🔁 Process ranking
+          {/* The house loop glyph (lib/arenaIcons.ts) — same icon the Explore menu's
+              Process-rankings group wears; the eyebrow text names the concept. */}
+          <span aria-hidden className="inline-flex"><IconGlyph icon={EXPLORE_SECTION_ICONS.processRankings} /></span>
+          Process ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           Most automatable — highest agent ceiling today

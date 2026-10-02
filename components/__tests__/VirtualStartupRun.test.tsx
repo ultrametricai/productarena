@@ -297,7 +297,7 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
         }}
       />,
     )
-    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
+    fireEvent.click(screen.getByTestId('vs-set-vendors-summary'))
     // Likely choice is the default ordering.
     expect(screen.getByTestId('vs-vendor-order-likely').getAttribute('aria-pressed')).toBe('true')
     expect(screen.getByTestId('vs-vendor-order-judged').getAttribute('aria-pressed')).toBe('false')
@@ -368,8 +368,8 @@ describe('outcome model surfaces — picks change the simulated clock, disclosed
     showAll()
     expect(screen.getByTestId('vs-step-outnote')).toBeTruthy()
     // Fix the payments vendor on the controller's Vendors tab (SimRolePicker listbox).
-    fireEvent.click(screen.getByTestId('vs-tab-vendors'))
-    const panel = screen.getByTestId('vs-tabpanel-vendors')
+    fireEvent.click(screen.getByTestId('vs-set-vendors-summary'))
+    const panel = screen.getByTestId('vs-set-vendors')
     fireEvent.click(within(panel).getByRole('button', { name: /Stripe/ }))
     fireEvent.click(within(panel).getByRole('option', { name: /Square/ }))
     // Rerun: square carries a judged MCP surface, so the step runs at agent speed — no badge.
@@ -413,12 +413,13 @@ describe('simulated burn — published pricing only, cited; gaps stay gaps', () 
   })
 })
 
-// The Vendors-tab role picker: open the SimRolePicker trigger (the aria-haspopup=listbox
-// button — never matched by name, the reset button's label also carries the vendor name) and
-// click an option.
+// The 'Set vendors' disclosure's role picker (round 8: the Vendors tab became a collapsible
+// disclosure): open the disclosure if collapsed, then the SimRolePicker trigger (the
+// aria-haspopup=listbox button — never matched by name, the reset button's label also carries
+// the vendor name) and click an option.
 const pickVendorInTab = (optionName: RegExp) => {
-  fireEvent.click(screen.getByTestId('vs-tab-vendors'))
-  const panel = screen.getByTestId('vs-tabpanel-vendors')
+  const panel = screen.getByTestId('vs-set-vendors')
+  if (!panel.hasAttribute('open')) fireEvent.click(screen.getByTestId('vs-set-vendors-summary'))
   const trigger = within(panel)
     .getAllByRole('button')
     .find((b) => b.getAttribute('aria-haspopup') === 'listbox')!
@@ -437,8 +438,8 @@ describe('pick your vendors and rerun (founder addenda #2/#3, 2026-09-29)', () =
     showAll() // and again — the pick still holds
     expect(screen.queryByTestId('vs-step-outnote')).toBeNull()
     // The Vendors tab still shows the swap (count badge + swapped marker).
-    expect(screen.getByTestId('vs-tab-vendors').textContent).toContain('· 1')
-    expect(screen.getByTestId('vs-tabpanel-vendors').textContent).toContain('(swapped)')
+    expect(screen.getByTestId('vs-set-vendors-summary').textContent).toContain('· 1')
+    expect(screen.getByTestId('vs-set-vendors').textContent).toContain('(swapped)')
   })
 
   it('swap while a SEMI-AUTO card holds the run (addendum #2 — the title-bar pause is gone, item 2): printed transcript byte-stable, DAG keeps its lit nodes, the resumed tail uses the new vendor', () => {

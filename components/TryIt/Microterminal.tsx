@@ -324,15 +324,13 @@ export default function Microterminal({
               {active.live ? ' · pure-HTTP probe — ▶ run live re-runs it from our edge' : ''}
             </span>
           ) : null}
+          {/* Founder 2026-10-02: the footer "replay ↺ / run again ▶" button is gone — it
+              duplicated the title bar's ▶ replay/run control. Skip stays (it's the only way to
+              fast-forward a replay). */}
           <span className="ml-auto flex shrink-0 gap-2">
             {typing && !liveBusy && (
               <button type="button" onClick={skip} className="rounded border border-zinc-700 px-2 py-0.5 text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300">
                 skip ⏭
-              </button>
-            )}
-            {!typing && activeId && (
-              <button type="button" onClick={() => runStory(activeId)} className="rounded border border-zinc-700 px-2 py-0.5 text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300">
-                {isLive && target === '' ? '▶ run' : isLive ? 'run again ▶' : 'replay ↺'}
               </button>
             )}
           </span>

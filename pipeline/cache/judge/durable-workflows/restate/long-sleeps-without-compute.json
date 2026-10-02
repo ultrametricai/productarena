@@ -1,16 +1,17 @@
 {
-  "hash": "87625dccce068afe82dac26470d0de3d2120f8cfca663fc1c97ac90cd3962f93",
+  "hash": "3c689b41fb0322702edadd1d317f935cfbc780093dc22be9aa98036362dbe769",
   "verdict": {
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Restate's durable timers let handlers sleep, schedule, or wait for events, and docs explicitly state that on FaaS platforms like AWS Lambda the handler is suspended while sleeping to free up resources, and idle agents are suspended to save cost — directly matching the 'no held server/compute' requirement. This is documented across sleep/timer, AI-agent, and FaaS-specific pages, covering days-scale patterns like cron jobs and delayed messages. Missing for 10: independent/hands-on verification of multi-month sleep durations in production and explicit confirmation of zero billable compute during suspension on non-serverless deployments.",
+    "rationale": "Restate documents durable timers for sleeping, scheduling and waiting on external events (restate-docs-5, restate-docs-29). It also says it suspends handlers while they sleep to free up resources and suspends idle long-running agents to save costs (restate-docs-21, restate-docs-36), and its invocations list shows suspended invocations (restate-docs-65). Waits for human approval survive restarts and infrastructure changes (restate-docs-48). Missing for 10: explicit evidence of multi-day-to-month wait durations, documented release of connections and compute on non-FaaS (container/VM) deployments rather than only on platforms like Lambda, and independent or hands-on corroboration.",
     "evidenceIds": [
       "restate-docs-5",
-      "restate-docs-21",
       "restate-docs-29",
+      "restate-docs-21",
       "restate-docs-36",
-      "restate-docs-78"
+      "restate-docs-65",
+      "restate-docs-48"
     ],
     "productId": "restate",
     "storyId": "long-sleeps-without-compute"

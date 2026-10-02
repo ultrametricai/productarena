@@ -10,7 +10,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import TierChip from '@/components/TierChip'
 import VerdictBadge from '@/components/VerdictBadge'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import {
   accessGlyphClass,
   encodeCompareParam,
@@ -285,7 +285,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   // every leaderboard) instead of ScoreCell's winner-tinted text — Overall score never appears as
   // bare text anywhere on the site. Other metrics keep ScoreCell (winner highlighting intact).
   const numericRows: Array<{ label: string; icon: string; iconTitle: string; href?: string; pill?: boolean; values: Array<number | null> }> = [
-    { label: 'Overall score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), href: '/methodology#arena-score', pill: true, values: selected.map((p) => p.aiEra) },
+    { label: 'Overall score', icon: metricIcon('overallScore'), iconTitle: metricTooltip('overallScore'), href: '/methodology#arena-score', pill: true, values: selected.map((p) => p.aiEra) },
     { label: 'Agent-ready', icon: metricIcon('agentReady'), iconTitle: metricTooltip('agentReady'), href: '/methodology#ai-era', values: selected.map((p) => p.agentReady) },
     { label: 'Built-in AI', icon: metricIcon('aiNative'), iconTitle: metricTooltip('aiNative'), href: '/methodology#ai-era', values: selected.map((p) => p.agenticApp) },
     { label: 'API quality', icon: metricIcon('apiQuality'), iconTitle: metricTooltip('apiQuality'), href: '/methodology#ai-era', values: selected.map((p) => p.apiQuality) },
@@ -387,10 +387,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                         href={`/arena/${p.arenaId}`}
                         className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-emerald-300"
                       >
-                        <IconChip
-                          icon={(arenaIcons as Record<string, string>)[p.arenaId] ?? ''}
-                          title={`${p.arenaName} arena`}
-                        />
+                        <IconChip icon={arenaIcon(p.arenaId)} title={`${p.arenaName} arena`} />
                         {p.arenaName}
                       </Link>
                     </div>

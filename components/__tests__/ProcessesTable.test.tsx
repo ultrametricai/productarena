@@ -13,7 +13,7 @@ import { act, fireEvent, render, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { renderToString } from 'react-dom/server'
 import ProcessesTable, { type PlaybookRow, type ProcessRow } from '@/components/ProcessesTable'
-import { GEO_GLOBAL, setGeoSelection } from '@/lib/geoPreference'
+import { GEO_GLOBAL, setGeoChoice, setGeoSelection } from '@/lib/geoPreference'
 
 const PATH = '/'
 const setUrl = (search: string) => window.history.replaceState(null, '', `${PATH}${search}`)
@@ -25,6 +25,10 @@ function row(over: Pick<ProcessRow, 'slug' | 'title' | 'phase'> & Partial<Proces
     area: 'Formation',
     areaRank: 0,
     geoScope: 'global',
+    geoNotesByCountry: {},
+    kind: 'process',
+    trigger: null,
+    urgency: null,
     pct: 50,
     agentSteps: 2,
     totalSteps: 4,
@@ -262,6 +266,11 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
       pct: 70,
       agentSteps: 7,
       totalSteps: 10,
+      // The vendor cell (founder 2026-10-02): chips instead of the old 'Go to process' link.
+      vendors: [
+        { id: 'clerky', label: 'Clerky', arena: 'legal-ops', hasLogo: false },
+        { id: 'stripe-atlas', label: 'Stripe Atlas', arena: 'legal-ops', hasLogo: false },
+      ],
       steps: [
         { label: 'File the charter', route: 'agent' as const, legalSignature: false },
         { label: 'Sign the incorporator consent', route: 'person' as const, legalSignature: true },
@@ -302,6 +311,13 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
     expect(within(tr).queryByTitle('File the charter — agent-runnable')).toBeNull()
     // No timeline/cadence/risk value to show — the metric cell is an honest dash.
     expect(within(tr).getByText('—')).toBeDefined()
+    // The vendor cell carries the chips themselves (founder 2026-10-02), each opening the
+    // playbook through that vendor's ?via= lens — no 'Go to process' link.
+    expect(within(tr).queryByText('Go to process →')).toBeNull()
+    expect(within(tr).getByText('Clerky').closest('a')?.getAttribute('href')).toBe(
+      '/processes/chains/company-in-a-day?via=legal-ops:clerky',
+    )
+    expect(within(tr).getByText('Stripe Atlas')).toBeDefined()
     // Process rows are unchanged next to it (their own links intact).
     expect(within(container).getByText('Run payroll').closest('a')?.getAttribute('href')).toBe('/processes/run-payroll')
   })
@@ -358,10 +374,19 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
 describe('geoScope glyphs (founder GEO ask 2026-09-28; always-on defaults founder 2026-09-30)', () => {
   // The module-level geo store outlives unmounts — always reset.
   afterEach(() => setGeoSelection(null))
+  // The US-scoped rows carry UK ANALOG notes so a UK selection keeps them visible — this
+  // describe pins the GLYPHS; the country-view FILTER (rows without an analog hide) has its
+  // own describe below.
   const GEO_ROWS: ProcessRow[] = [
     row({ slug: 'open-bank-account', title: 'Open a bank account', phase: 'formation', geoScope: 'global' }),
-    row({ slug: 'incorporate', title: 'Incorporate the company', phase: 'formation', geoScope: 'us-state', timeOrder: 2 }),
-    row({ slug: 'get-an-ein', title: 'Get an EIN', phase: 'formation', geoScope: 'us', timeOrder: 3 }),
+    row({
+      slug: 'incorporate', title: 'Incorporate the company', phase: 'formation', geoScope: 'us-state', timeOrder: 2,
+      geoNotesByCountry: { UK: { kind: 'analog', summary: 'Register a private limited company with Companies House.' } },
+    }),
+    row({
+      slug: 'get-an-ein', title: 'Get an EIN', phase: 'formation', geoScope: 'us', timeOrder: 3,
+      geoNotesByCountry: { UK: { kind: 'analog', summary: 'Register for Corporation Tax with HMRC.' } },
+    }),
   ]
   const cellFor = (root: HTMLElement, title: string) =>
     [...root.querySelectorAll('tbody td:first-child')].find((c) => c.textContent?.includes(title))
@@ -416,7 +441,7 @@ describe('geoScope glyphs (founder GEO ask 2026-09-28; always-on defaults founde
       expect(ssr).toContain('US state-level process — a US state is the counterparty')
     })
 
-    it('a country selection behaves exactly as before (sharp glyphs, dropdown shows the country); without defaultGeo the homepage surface keeps its 🇺🇸 defaults', () => {
+    it('a country selection keeps analog-noted rows with sharp glyphs (dropdown shows the country); without defaultGeo the homepage surface keeps its 🇺🇸 defaults', () => {
       const withGlobal = render(<ProcessesTable rows={GEO_ROWS} phases={PHASES} defaultGeo={GEO_GLOBAL} />)
       act(() => setGeoSelection('UK'))
       expect(cellFor(withGlobal.container, 'Incorporate the company')?.textContent).toContain('🏛')
@@ -429,5 +454,118 @@ describe('geoScope glyphs (founder GEO ask 2026-09-28; always-on defaults founde
       expect(cellFor(plain.container, 'Incorporate the company')?.textContent).not.toContain('🏛')
       expect(plain.getByTitle(/Where you operate/).textContent).toContain('USA')
     })
+  })
+})
+
+describe('the country-view filter + hidden-rows disclosure (founder 2026-10-02: "?geo=in should hide the processes that are not used in that country — an EIN for India doesn\'t make sense")', () => {
+  afterEach(() => setGeoChoice(null))
+
+  // A miniature of the real curation: one global row, a full-analog row, the EIN row (absorbed
+  // in IN/UK/FR, a real ELSTER filing in DE), a not-applicable-in-the-UK row, and a US-scoped
+  // SITUATION with no notes at all (the sit_002 visa shape — it hides honestly everywhere).
+  const analog = (summary: string) => ({ kind: 'analog' as const, summary })
+  const FILTER_ROWS: ProcessRow[] = [
+    row({ slug: 'pick-a-name', title: 'Pick a company name', phase: 'formation', geoScope: 'global', timeOrder: 1 }),
+    row({
+      slug: 'incorporate-c-corp', title: 'Incorporate C-Corp', phase: 'formation', geoScope: 'us', timeOrder: 2,
+      geoNotesByCountry: {
+        IN: analog('Incorporate through MCA’s SPICe+ integrated form.'),
+        UK: analog('Register a private limited company with Companies House.'),
+        DE: analog('Form a GmbH (or UG) with a notarized deed.'),
+        FR: analog('Form a SAS/SASU through the INPI guichet unique.'),
+      },
+    }),
+    row({
+      slug: 'get-ein', title: 'Get EIN', phase: 'formation', geoScope: 'us', timeOrder: 3,
+      geoNotesByCountry: {
+        IN: { kind: 'absorbed', summary: 'PAN and TAN are allotted automatically as part of the SPICe+ incorporation filing.' },
+        UK: { kind: 'absorbed', summary: 'HMRC posts the company a UTR automatically after incorporation.' },
+        DE: analog('The tax office issues a Steuernummer after you file the Fragebogen on ELSTER.'),
+        FR: { kind: 'absorbed', summary: 'INSEE allots the SIREN/SIRET automatically when the registration lands.' },
+      },
+    }),
+    row({
+      slug: 'issue-1099s', title: 'Issue 1099s', phase: 'compliance', geoScope: 'us', timeOrder: 4,
+      geoNotesByCountry: {
+        IN: analog('TDS: deduct tax at source from contractor fees and file quarterly returns.'),
+        UK: { kind: 'not-applicable', summary: 'No 1099 regime — ordinary contractors self-assess.' },
+      },
+    }),
+    row({
+      slug: 'visa-is-held-up', title: 'Visa is held up', phase: 'hr', geoScope: 'us', kind: 'situation',
+      timeOrder: null, trigger: 'Your visa petition is stuck in processing.', urgency: 'weeks',
+    }),
+  ]
+  const titles = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) =>
+      ['Pick a company name', 'Incorporate C-Corp', 'Get EIN', 'Issue 1099s', 'Visa is held up'].find((t) => tr.textContent?.includes(t)) ?? '?')
+  const mountFilter = () => render(<ProcessesTable rows={FILTER_ROWS} phases={['formation', 'compliance', 'hr']} defaultGeo={GEO_GLOBAL} />)
+
+  it('the no-selection default and the explicit 🌐 Global view keep the FULL corpus — nothing hidden, no disclosure line', () => {
+    const { container } = mountFilter()
+    expect(titles(container)).toHaveLength(FILTER_ROWS.length)
+    expect(container.textContent).not.toContain('hidden in the')
+    // The explicit Global pick is byte-equal to the pristine row set (only the trigger changes).
+    act(() => setGeoChoice(GEO_GLOBAL))
+    expect(titles(container)).toHaveLength(FILTER_ROWS.length)
+    expect(container.textContent).not.toContain('hidden in the')
+  })
+
+  it('under 🇮🇳 India the EIN row hides (absorbed into SPICe+) and the note-less situation hides; global + analog rows stay', () => {
+    const { container } = mountFilter()
+    act(() => setGeoChoice('IN'))
+    expect(titles(container)).toEqual(['Pick a company name', 'Incorporate C-Corp', 'Issue 1099s'])
+    expect(within(container).queryByText('Get EIN')).toBeNull()
+    expect(within(container).queryByText('Visa is held up')).toBeNull()
+  })
+
+  it('under 🇬🇧 the UK incorporation analog stays visible; the not-applicable 1099 row hides', () => {
+    const { container } = mountFilter()
+    act(() => setGeoChoice('UK'))
+    expect(titles(container)).toEqual(['Pick a company name', 'Incorporate C-Corp'])
+    // Under 🇩🇪 the EIN row RETURNS — Germany's ELSTER registration is a real filing (analog).
+    act(() => setGeoChoice('DE'))
+    expect(titles(container)).toEqual(['Pick a company name', 'Incorporate C-Corp', 'Get EIN'])
+  })
+
+  it('the disclosure line counts honestly, expands to the hidden titles with their committed one-liners, and keeps every page reachable', () => {
+    const { container, getByRole } = mountFilter()
+    act(() => setGeoChoice('IN'))
+    const toggle = getByRole('button', { name: /hidden in the India view/ })
+    expect(toggle.textContent).toContain('2 US-specific processes hidden in the India view')
+    expect(toggle.textContent).toContain('1 is handled inside other processes there')
+    fireEvent.click(toggle)
+    // The absorbed row carries its committed note summary; the note-less situation says so
+    // honestly instead of inventing a reason — and both titles still link to their pages.
+    expect(within(container).getByText('Get EIN').closest('a')?.getAttribute('href')).toBe('/processes/get-ein')
+    expect(container.textContent).toContain('PAN and TAN are allotted automatically')
+    expect(within(container).getByText('Visa is held up').closest('a')?.getAttribute('href')).toBe('/processes/visa-is-held-up')
+    expect(container.textContent).toContain('no India note is curated yet')
+    // Collapse again — the list goes away, the counts stay.
+    fireEvent.click(toggle)
+    expect(container.textContent).not.toContain('PAN and TAN')
+    expect(container.textContent).toContain('2 US-specific processes hidden')
+  })
+
+  it('under 🇬🇧 the counts re-speak the UK truth (3 hidden — 1 absorbed), and clearing the selection restores everything', () => {
+    const { container, getByRole } = mountFilter()
+    act(() => setGeoChoice('UK'))
+    const toggle = getByRole('button', { name: /hidden in the United Kingdom view/ })
+    expect(toggle.textContent).toContain('3 US-specific processes hidden in the United Kingdom view')
+    expect(toggle.textContent).toContain('1 is handled inside other processes there')
+    act(() => setGeoChoice(null))
+    expect(titles(container)).toHaveLength(FILTER_ROWS.length)
+    expect(container.textContent).not.toContain('hidden in the')
+  })
+
+  it('the group headers of the grouped view count the FILTERED set honestly in a country view', () => {
+    setUrl('?order=grouped')
+    const { container } = mountFilter()
+    act(() => setGeoChoice('IN'))
+    const formation = within(container).getByText('Formation').closest('tr') as HTMLElement
+    // The fixture rows all carry the Formation area: of the 5, Get EIN (absorbed) and the
+    // note-less visa situation hide under IN, so the header honestly counts 3 — never 5.
+    expect(formation.textContent).toContain('3 processes')
+    expect(within(container).queryByText('Get EIN')).toBeNull()
   })
 })

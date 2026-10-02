@@ -1,14 +1,16 @@
 'use client'
 
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { filterSearchEntries, prepareSearchEntries, type SearchEntry, type SearchEntryType } from '@/lib/search-index'
 
-const TYPE_ORDER: SearchEntryType[] = ['arena', 'stack', 'page', 'product', 'story']
+const TYPE_ORDER: SearchEntryType[] = ['arena', 'stack', 'process', 'page', 'product', 'story']
 const TYPE_LABEL: Record<SearchEntryType, string> = {
   arena: 'Arenas',
   stack: 'Stacks',
+  process: 'Processes',
   page: 'Pages',
   product: 'Products',
   story: 'Stories',
@@ -57,15 +59,22 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
   // governs the browse view and the remaining groups.
   const results = useMemo(() => {
     const all = filterSearchEntries(prepared, query)
-    // Browse view (no query): the arena list alone fills the cap, so page entries never
-    // surface — Virtual Startup is pulled from the full set and pinned first (founder
-    // 2026-09-29); everything else keeps the standard TYPE_ORDER browse grouping.
+    // Browse view (no query): the arena list alone fills the cap, so later groups never
+    // surface on their own — Virtual Startup is pulled from the full set and pinned first
+    // (founder 2026-09-29), and the curated Processes group is likewise pulled from the full
+    // set (founder 2026-10-02: "⌘K search defaults include processes"). The cap is honored by
+    // reserving their rows before slicing; everything else keeps TYPE_ORDER browse grouping.
     if (query.trim() === '') {
-      const limited = all.slice(0, MAX_RESULTS)
-      const grouped = TYPE_ORDER.flatMap((type) => limited.filter((e) => e.type === type))
       const vs = all.find((e) => e.href === '/startup-sim')
-      if (!vs) return grouped
-      return [vs, ...grouped.filter((e) => e.href !== '/startup-sim')].slice(0, MAX_RESULTS)
+      const processes = all.filter((e) => e.type === 'process')
+      const reserved = processes.length + (vs ? 1 : 0)
+      const limited = all
+        .filter((e) => e.type !== 'process' && e.href !== '/startup-sim')
+        .slice(0, Math.max(0, MAX_RESULTS - reserved))
+      const grouped = TYPE_ORDER.flatMap((type) =>
+        type === 'process' ? processes : limited.filter((e) => e.type === type),
+      )
+      return vs ? [vs, ...grouped] : grouped
     }
     const limited = all.slice(0, MAX_RESULTS)
     const best = limited[0]?.type
@@ -174,7 +183,11 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
                         {entry.type === 'product' && entry.productId ? (
                           <ProductLogoView product={{ id: entry.productId, name: entry.label }} size={18} hasLogo={!!entry.hasLogo} />
                         ) : entry.icon ? (
-                          <span aria-hidden className="w-[18px] shrink-0 text-center text-sm leading-none">{entry.icon}</span>
+                          // House icon tokens (lib/arenaIcons.ts) render as the custom duotone
+                          // glyphs; plain emoji entries keep rendering as text.
+                          <span aria-hidden className="inline-flex w-[18px] shrink-0 justify-center text-sm leading-none">
+                            <IconGlyph icon={entry.icon} />
+                          </span>
                         ) : null}
                         {entry.label}
                       </span>

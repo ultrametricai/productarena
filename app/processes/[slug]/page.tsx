@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ArtifactChips from '@/components/ArtifactChips'
 import DoViaAfk from '@/components/DoViaAfk'
 import GeoSwitcher from '@/components/GeoSwitcher'
-import IconChip from '@/components/IconChip'
+import IconChip, { IconGlyph } from '@/components/IconChip'
 import JurisdictionToggle from '@/components/JurisdictionToggle'
 import ProcessGeoBanner from '@/components/ProcessGeoBanner'
 import MineLink from '@/components/MineLink'
@@ -13,13 +14,16 @@ import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
+import UrgencyChip from '@/components/UrgencyChip'
+import { modulesForProcess } from '@/lib/businessLogicMap'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
-import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
+import { artifactChipRows } from '@/lib/processDeps'
+import { CADENCE_ICON, phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
-  taskCeiling,
+  CADENCE_META, findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
+  slugAliasFor, taskCeiling,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
@@ -55,7 +59,12 @@ export async function generateMetadata({
     title: `${task.title} — Processes — Ultrametric`,
     description: `${task.description} An agent can run ${ceiling.agentSteps} of ${ceiling.totalSteps} steps today.`,
     // Alias slugs point search engines at the one canonical page.
-    alternates: { canonical: `${SITE_URL}/processes/${processSlug(task.title)}` },
+    alternates: {
+      canonical: `${SITE_URL}/processes/${processSlug(task.title)}`,
+      // Machine discovery of the run manifest stays per-page (the visible 'For agents' footer
+      // left the pages — founder 2026-10-02; /llms.txt is the visible once-place).
+      types: { 'application/json': processManifestPath(processSlug(task.title)) },
+    },
   }
 }
 
@@ -82,6 +91,12 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // Jurisdiction-conditional steps (stripped from every default surface by loadProcesses) —
   // serialized for the client-side toggle; [] for the many processes that don't branch.
   const jurisSteps = jurisdictionStepViews(task.id)
+  // Sum of the DATED per-step government fees only (depth wave pt 1, lib/processes.ts) —
+  // derived, never hand-stored; vendor prices deliberately excluded so the headline never
+  // implies a completeness the curation doesn't claim. 0 for most processes → no chip.
+  const knownFees = knownCostUsd(task.dag.nodes)
+  // Open business-logic modules serving this process (processes/business-logic-map.json).
+  const openModules = modulesForProcess(task.id)
 
   return (
     <div className="space-y-10">
@@ -105,7 +120,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.phase}
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
+          <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} ${task.kind === 'situation' ? 'situation' : 'process'}`} />
           {task.title}
           {task.region === 'us' && (
             <span
@@ -120,9 +135,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           )}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
-            {task.complexity.replace('_', ' ')}
-          </span>
+          {/* Situations (founder 2026-10-01) lead the chip row with their honest clock. */}
+          {task.urgency && <UrgencyChip tier={task.urgency} />}
+          {/* The complexity chip ('simple'/…) removed (founder 2026-10-02) — the field stays
+              corpus data for sorting; the chip told a reader nothing actionable. */}
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
             {SUPPORT_LABELS[task.supportLevel] ?? task.supportLevel}
           </span>
@@ -132,17 +148,77 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             title={`${CADENCE_META[task.cadence].label} — ${CADENCE_META[task.cadence].blurb} See the full operating rhythm.`}
             className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
           >
-            🔁 {CADENCE_META[task.cadence].label.toLowerCase()}
+            {/* The house loop glyph (lib/processIcons.ts CADENCE_ICON) — the link's title names
+                the cadence concept, so the bare glyph rides inside it. */}
+            <span aria-hidden className="mr-1 inline-flex align-[-0.125em]"><IconGlyph icon={CADENCE_ICON} /></span>
+            {CADENCE_META[task.cadence].label.toLowerCase()}
           </Link>
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
+          )}
+          {knownFees > 0 && (
+            <span
+              title="Sum of this process's per-step government fees that carry a published, dated source (each step's cost chip links to its fee schedule). Vendor prices are excluded — this is the known government minimum, not a total cost; fees change, each chip carries its as-of date."
+              className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500"
+            >
+              Known government fees: ${knownFees.toLocaleString('en-US')}
+            </span>
           )}
           {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
               for everyone else. The manifest it hands off is public regardless. */}
           <DoViaAfk manifestUrl={processManifestUrl(slug)} />
         </div>
+        {/* The trigger — the event that puts a founder in this situation — leads the prose
+            (founder 2026-10-01), ahead of the description, in the header. */}
+        {task.kind === 'situation' && task.trigger && (
+          <p className="mt-3 max-w-2xl text-sm text-zinc-300">
+            <span className="font-semibold text-amber-300">Trigger:</span> {task.trigger}
+          </p>
+        )}
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
-        <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {/* supportReason no longer renders as a second description line (founder 2026-10-02) —
+            it stays corpus data (the ceiling chip's tooltip territory, and the honesty record). */}
+        {/* The typed-I/O layer (founder depth wave part 2, 2026-10-01): what this process Needs
+            and Produces as registry artifacts (processes/artifacts.json), each Needs chip
+            linking to the canonical producer process — contextNeeded prose below the DAG stays
+            the human context; these chips are the machine truth the cross-process dependency
+            graph (lib/processDeps.ts) is built from. */}
+        <ArtifactChips rows={artifactChipRows(task)} />
+        {/* Business-logic ↔ process wiring (founder 2026-10-02): the open lib/openstartup
+            modules that serve this process, from the committed registry
+            processes/business-logic-map.json — a muted line of chips deep-linking to the
+            module's section in business-logic/README.md on GitHub (the modules are a repo
+            library by design, no site pages). Renders nothing for the many unmapped tasks. */}
+        {openModules.length > 0 && (
+          <p className="mt-3 flex max-w-2xl flex-wrap items-center gap-1.5 text-xs text-zinc-500">
+            <span title="Open-source business-logic modules (lib/openstartup/ in the repo) whose cited, tested math serves this process — cap tables, deadlines, tax mechanics, and friends. Each chip opens the module's documentation.">
+              Open modules:
+            </span>
+            {openModules.map((m) => (
+              <a
+                key={m.id}
+                href={m.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                {m.label} ↗
+              </a>
+            ))}
+          </p>
+        )}
+        {/* Situations routinely touch law (C&Ds, lawsuits, notices, breach statutes) — the
+            posture banner is explicit, the same honest-banner idiom as ProcessGeoBanner:
+            educational operating guidance, never legal advice; stated deadlines are nominal
+            and carry their sources on the steps (the deadlines.ts needs-review doctrine). */}
+        {task.kind === 'situation' && (
+          <p className="mt-4 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
+            This is a reactive situation guide — educational, not legal advice. Deadlines named
+            in the steps are the nominal clocks stated by their linked sources; the real date
+            can differ (service dates, statutory exceptions, your jurisdiction), so verify
+            against the cited source and counsel before relying on one.
+          </p>
+        )}
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
             globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner
@@ -218,20 +294,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             base={{ agentSteps: ceiling.agentSteps, totalSteps: ceiling.totalSteps, pct: ceiling.pct }}
           />
         )}
-        {task.contextNeeded.length > 0 && (
-          <p className="mt-3 text-xs text-zinc-500">
-            Context the agent needs first:{' '}
-            {task.contextNeeded.map((c, i) => (
-              <span key={i}>
-                {i > 0 && ' · '}
-                <span className="whitespace-nowrap">
-                  <span className="font-mono">{c.query ?? c.tool}</span>
-                  {c.tier === 'user_input' && <span className="text-amber-400/80"> (from the founder)</span>}
-                </span>
-              </span>
-            ))}
-          </p>
-        )}
+        {/* The 'Context the agent needs first' line no longer renders (founder 2026-10-02) —
+            contextNeeded stays corpus data (the manifests and typed-I/O layer carry it). */}
       </section>
 
       {/* The GEO dimension (founder 2026-09-28, expanded 2026-09-29): per-country analogs of a
@@ -243,19 +307,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           process pages (founder 2026-09-30) — the per-step route badges and the leaderboard
           carry the story here; chain pages keep both (ProcessVerdict/ProcessSimulator live on). */}
 
-      {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
-      <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
-        <span className="text-[10px] uppercase tracking-widest text-zinc-400">For agents</span>{' '}
-        <Link
-          href={processManifestPath(slug)}
-          className="text-zinc-400 hover:text-emerald-300"
-          title="Versioned machine-readable run plan for this process: steps typed api / computer-use / human, vendor options with agent-readiness and MCP endpoints, approval gates"
-        >
-          Process manifest (JSON)
-        </Link>
-        <span className="mx-1.5 text-zinc-700">·</span>
-        <Link href="/llms.txt" className="text-zinc-400 hover:text-emerald-300">/llms.txt</Link>
-      </section>
+      {/* The visible 'For agents' footer left per-process pages (founder 2026-10-02: "just have
+          it once, not on all the pages") — /llms.txt is the once-place (it documents the
+          manifest scheme), and the manifest stays machine-discoverable from this page via the
+          <link rel="alternate"> in generateMetadata. */}
     </div>
   )
 }

@@ -173,7 +173,7 @@ describe('handleTryProbe', () => {
       put: async (key: string, value: string, opts: unknown) => { puts.push({ key, value, opts }) },
     }
     const { impl, calls } = fetchOnce(new Response('never'))
-    const resp = await handleTryProbe(tryRequest(aKey, '203.0.113.99'), { PA_COMPARE_STATS: kv }, impl)
+    const resp = await handleTryProbe(tryRequest(aKey, '203.0.113.99'), { UM_COMPARE_STATS: kv }, impl)
     expect(resp.status).toBe(429)
     expect(calls).toHaveLength(0)
 
@@ -183,7 +183,7 @@ describe('handleTryProbe', () => {
       put: async (key: string, value: string, opts: unknown) => { puts.push({ key, value, opts }) },
     }
     const { impl: impl2 } = fetchOnce(new Response('ok', { status: aProbe.expectStatus ?? 200 }))
-    const resp2 = await handleTryProbe(tryRequest(aKey, '203.0.113.100'), { PA_COMPARE_STATS: kv2 }, impl2)
+    const resp2 = await handleTryProbe(tryRequest(aKey, '203.0.113.100'), { UM_COMPARE_STATS: kv2 }, impl2)
     expect(resp2.status).toBe(200)
     expect(puts).toHaveLength(1)
     expect(puts[0].key.startsWith('tryrl:')).toBe(true)

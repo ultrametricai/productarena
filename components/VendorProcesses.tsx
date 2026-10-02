@@ -19,10 +19,14 @@ import { processesForVendor, type VendorProcessAppearance } from '@/lib/vendorPr
 
 const VISIBLE_ROWS = 8
 
+// Founder 2026-10-02: the column is named for what the number IS — how well the product fits
+// its best-matching step of this process (its highest judged per-step relevance score here),
+// not a process-wide coverage number.
 const BEST_SCORE_TITLE =
-  'Its best judged step score in this process — weightedPercent over the stories our step→story '
-  + 'mapping deems relevant to the step, derived purely from the arena\'s judged verdicts '
-  + '(full/partial/disputed/none), /100. Same number the process page\'s step pills show.'
+  'How well this product fits its best-matching step of this process — its highest judged '
+  + 'step score here: weightedPercent over the stories our step→story mapping deems relevant '
+  + 'to the step, derived purely from the arena\'s judged verdicts (full/partial/disputed/none), '
+  + '/100. Same number the process page\'s step pills show.'
 
 // A computer-use-ONLY appearance: the vendor never serves a step here, it could merely attempt
 // a manual one. These never take a visible row — collapsed, counted honestly.
@@ -31,6 +35,8 @@ function isComputerUseOnly(a: VendorProcessAppearance): boolean {
 }
 
 // Compact role line, mirroring the process page's own framing of each appearance kind.
+// Founder 2026-10-02: the 'canonical vendor' label is gone from this surface (the kind stays
+// corpus data and the role tooltip still explains it) — canonical-only rows show a muted dash.
 function roleText(a: VendorProcessAppearance): string {
   const parts: string[] = []
   if (a.leaderboardRank !== null) {
@@ -38,9 +44,9 @@ function roleText(a: VendorProcessAppearance): string {
   } else if (a.kinds.includes('cross-arena')) {
     parts.push('cross-arena option')
   }
-  if (a.kinds.includes('canonical')) parts.push('canonical vendor')
   if (parts.length === 0 && a.kinds.includes('api-calls')) parts.push('grounded API calls')
-  if (parts.length === 0) parts.push('🖥 computer-use attempt')
+  if (parts.length === 0 && a.kinds.includes('computer-use')) parts.push('🖥 computer-use attempt')
+  if (parts.length === 0) parts.push('—')
   return parts.join(' · ')
 }
 
@@ -77,36 +83,9 @@ function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
             </span>
           </td>
           <td className="px-2 py-1.5 text-xs text-zinc-300">
+            {/* The per-step "via: …" receipts line is gone (founder 2026-10-02 declutter) — the
+                process page's step blocks still carry every served step with its citations. */}
             <span title={roleTitle(a)}>{roleText(a)}</span>
-            {/* The receipts (founder 2026-09-23): which exact steps this vendor serves, with the
-                story-derived score and mapped-story count behind each — click through to the
-                step blocks for the full verdict citations. */}
-            {a.servedSteps.length > 0 && (
-              <span className="mt-0.5 block text-[11px] text-zinc-500">
-                via:{' '}
-                {a.servedSteps.slice(0, 2).map((s, i) => (
-                  <span key={`${s.label}-${i}`}>
-                    {i > 0 && <span className="text-zinc-700"> · </span>}
-                    <Link
-                      href={`/processes/${a.slug}#steps`}
-                      title={`"${s.label}" — ${s.score.toFixed(0)}/100 from judged verdicts on the ${s.storyCount} stories mapped to this step; the citations are in the step block`}
-                      className="transition hover:text-emerald-300"
-                    >
-                      {s.label}{' '}
-                      <span className="font-mono tabular-nums text-emerald-400/70">{s.score.toFixed(0)}</span>
-                    </Link>
-                  </span>
-                ))}
-                {a.servedSteps.length > 2 && (
-                  <span
-                    className="text-zinc-500"
-                    title={a.servedSteps.slice(2).map((s) => `${s.label} (${s.score.toFixed(0)}/100)`).join('; ')}
-                  >
-                    {' '}+{a.servedSteps.length - 2}
-                  </span>
-                )}
-              </span>
-            )}
           </td>
           <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
             {a.bestStepScore === null ? (
@@ -133,7 +112,7 @@ function AppearanceTable({ rows }: { rows: VendorProcessAppearance[] }) {
             <th scope="col" className="px-2 py-1.5 font-normal"><span title="The founder process this product comes up in — links to its process page">Process</span></th>
             <th scope="col" className="px-2 py-1.5 font-normal"><span title="Company-lifecycle phase the process belongs to">Phase</span></th>
             <th scope="col" className="px-2 py-1.5 font-normal"><span title="How this product comes up: its process-leaderboard rank and step coverage, or a cross-arena / computer-use / canonical role">Role</span></th>
-            <th scope="col" className="px-2 py-1.5 font-normal"><span title={BEST_SCORE_TITLE}>Best step score</span></th>
+            <th scope="col" className="px-2 py-1.5 font-normal"><span title={BEST_SCORE_TITLE}>Best step fit</span></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

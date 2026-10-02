@@ -1,17 +1,17 @@
 {
-  "hash": "dcd11b6305ee9dfecff26a7a8c9a745b096c98b33db43202d340b2c08a1a65dd",
+  "hash": "b7745cac278ee609c2d21a715d1b0cb2f90475403fbfda318f90aeccf44005a8",
   "verdict": {
-    "productId": "cloudflare-ai-gateway",
-    "storyId": "privacy-telemetry-optout",
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "AI Gateway exposes per-request headers (cf-aig-collect-log, cf-aig-collect-log-payload) that let a user bypass logging or avoid storing raw prompt/completion payloads, and docs note this is 'useful when you want to maintain visibility into usage metrics... without persisting sensitive prompt or completion data.' However, these are opt-outs for log/payload storage only, not for the underlying usage/metrics tracking (tokens, cost, request counts) that the gateway inherently collects for billing and rate limiting. missing for 10: a global/account-level telemetry opt-out toggle, documentation of disabling usage-metrics tracking entirely, independent confirmation that opting out actually stops Cloudflare-side usage tracking.",
+    "rationale": "AI Gateway lets you change the default log setting and bypass it per request with the `cf-aig-collect-log` header. The `cf-aig-collect-log-payload` header separately stops prompt and response bodies from being stored. However, the docs frame payload opt-out as keeping usage metrics and request metadata, so usage tracking itself still runs, and nothing covers opting out of Cloudflare's own product telemetry. Missing for 10: a documented way to fully disable usage metrics and analytics collection, an opt-out for vendor or platform telemetry, and independent or hands-on confirmation that disabled logging is honored.",
     "evidenceIds": [
       "cloudflare-ai-gateway-docs-25",
       "cloudflare-ai-gateway-docs-35",
       "cloudflare-ai-gateway-docs-15",
       "cloudflare-ai-gateway-docs-34"
-    ]
+    ],
+    "productId": "cloudflare-ai-gateway",
+    "storyId": "privacy-telemetry-optout"
   }
 }

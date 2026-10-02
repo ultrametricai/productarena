@@ -1,16 +1,20 @@
 {
-  "hash": "7562c86a4708d6b3c8628abb521a96fda30bd9835232dbcab460a5547aae8e92",
+  "hash": "04cde32cfc74b7d6113e85fa1826a875224992ed2dab2d3557b5076f3894443f",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Polar documents automated dunning (fixed retry schedule 2/5/7/7 days, past_due state, customer emails) plus webhooks for async notifications and an official MCP server letting agents 'look up data and take actions' across subscriptions/orders — enough for an agent to monitor failed payments and dunning state via API/webhooks. However, dunning/retries are built-in automatic Polar behavior rather than agent-driven; there's no documented API/webhook event specifically for failed-charge notification or an endpoint for an agent to manually trigger a retry or custom outreach message. Missing for 10: explicit failed-payment webhook event schema, an API to trigger/override retry attempts, and evidence of agent-customized dunning outreach beyond Polar's built-in emails.",
+    "rationale": "Polar documents an automated dunning flow: failed charges move subscriptions to `past_due`, stamp `past_due_at` and `next_payment_attempt_at`, retry on a fixed 2/5/7/7-day schedule, and email customers a portal link. An agent can observe this through webhooks, the Customer State API, and the OAuth MCP server with subscription and order actions. Retries and outreach are Polar-driven on a fixed schedule rather than agent-controlled. Off-session charges against saved payment methods only imply a manual retry path. missing for 10: documented failed-payment webhook event types, an API to trigger or reschedule retries, agent-controllable or customizable dunning outreach, independent hands-on corroboration.",
     "evidenceIds": [
       "polar-supp-dunning",
+      "polar-docs-43",
       "polar-docs-11",
-      "polar-supp-mcp",
+      "polar-docs-13",
       "polar-docs-21",
-      "polar-docs-13"
+      "polar-supp-webhooks",
+      "polar-docs-34",
+      "polar-supp-mcp",
+      "polar-supp-openapi-llms"
     ],
     "productId": "polar",
     "storyId": "agent-monitors-dunning"

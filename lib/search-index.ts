@@ -1,6 +1,6 @@
 import type { Category, Product, Story } from './schemas'
 
-export type SearchEntryType = 'arena' | 'stack' | 'page' | 'product' | 'story'
+export type SearchEntryType = 'arena' | 'stack' | 'process' | 'page' | 'product' | 'story'
 
 export interface SearchEntry {
   type: SearchEntryType
@@ -10,7 +10,8 @@ export interface SearchEntry {
   /** For product rows: render the product's committed logo in the palette. */
   productId?: string
   hasLogo?: boolean
-  /** For arena rows: the arena's emoji from data/arena-icons.json. */
+  /** For arena rows: the arena's house icon token from lib/arenaIcons.ts (the palette renders
+   *  it through IconGlyph as the custom duotone SVG). */
   icon?: string
   /**
    * Alias phrases people actually type ("agent harness", "vector store", "etl") that should
@@ -122,10 +123,43 @@ export function buildChainEntries(chains: ChainSearchSource[], keywords?: Record
   })
 }
 
+// High-traffic founder processes surfaced as the palette's 'Processes' browse group (founder
+// 2026-10-02: "⌘K search defaults include processes"). The group leads with the /processes
+// index entry, then the curated processes the caller passes in (app/layout.tsx picks the ids;
+// slugs/titles come from lib/processes so renames can't strand the palette). Alias phrases come
+// from data/search-aliases.json `pages`, keyed by href — the same convention as chains/pages.
+export interface ProcessSearchSource {
+  slug: string
+  title: string
+  sublabel: string
+}
+
+export function buildProcessEntries(
+  processes: ProcessSearchSource[],
+  keywords?: Record<string, string[]>,
+): SearchEntry[] {
+  const withAliases = (href: string, entry: Omit<SearchEntry, 'keywords'>): SearchEntry => {
+    const aliases = keywords?.[href]
+    return { ...entry, ...(aliases && aliases.length > 0 ? { keywords: aliases.map((k) => k.toLowerCase()) } : {}) }
+  }
+  return [
+    // The index page moved here from PAGE_DEFS — it anchors the group it names.
+    withAliases('/processes', {
+      type: 'process',
+      label: 'All processes',
+      sublabel: 'Every founder process and its agent ceiling',
+      href: '/processes',
+    }),
+    ...processes.map((p) => {
+      const href = `/processes/${p.slug}`
+      return withAliases(href, { type: 'process' as const, label: p.title, sublabel: p.sublabel, href })
+    }),
+  ]
+}
+
 // The key tool pages worth surfacing in ⌘K. Labels/sublabels live here (they're UI copy, not
 // data); alias phrases come from data/search-aliases.json `pages`, keyed by href.
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
-  { href: '/processes', label: 'Processes', sublabel: 'Every founder process and its agent ceiling' },
   { href: '/processes/operating-rhythm', label: 'Operating rhythm', sublabel: 'What a startup actually does, daily through annual' },
   { href: '/startup-sim', label: 'The Open Startup', sublabel: 'Simulate a startup journey through the real processes' },
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },

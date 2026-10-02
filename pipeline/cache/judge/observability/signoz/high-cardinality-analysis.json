@@ -1,15 +1,16 @@
 {
-  "hash": "4babeb87898e09f1b9e1869a6e0f35292e84555177be11af6406406d2cdfc9ad",
+  "hash": "6541bf4a7b2e0b26daf0ffad91790de15a7ead8ade9dbf6d53098ad143dea20e",
   "verdict": {
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs claim traces/logs can be searched and filtered by any span attribute or log field, including arbitrary high-cardinality values like user_id/request_id, without requiring pre-defined indexes (signoz-docs-3, signoz-docs-7). However, community hands-on reports on SigNoz's ClickHouse schema find that accessing map attributes (the mechanism used for flexible, high-cardinality fields) is 10-50x slower than regular columns, indicating real performance limitations for exactly this use case (signoz-comm-6, signoz-comm-7). Missing for 10: first-party benchmarks or documentation addressing high-cardinality query performance, and confirmation that no manual indexing/materialized views are needed in practice.",
+    "rationale": "SigNoz documents filtering traces by any span attribute, querying logs in List, Time Series and Table views, breaking panels out by an attribute, and running ClickHouse SQL. Together these imply ad-hoc filter and group-by on arbitrary attributes without pre-aggregation. However, nothing addresses high-cardinality fields like user or request IDs. A community report also found that querying attributes stored as maps was 10-50x slower than regular columns, which suggests performance depends on schema or column promotion. missing for 10: explicit documentation of high-cardinality group-by (user id, request id), confirmation that no index or column definition is needed for good performance, independent hands-on corroboration.",
     "evidenceIds": [
       "signoz-docs-3",
       "signoz-docs-7",
-      "signoz-comm-6",
-      "signoz-comm-7"
+      "signoz-docs-11",
+      "signoz-docs-14",
+      "signoz-comm-6"
     ],
     "productId": "signoz",
     "storyId": "high-cardinality-analysis"

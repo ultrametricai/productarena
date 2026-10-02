@@ -1,21 +1,21 @@
 {
-  "hash": "b1712475a506a23ccf63a10c10364cd21f2fc135360b79accde82fad98d86b13",
+  "hash": "0c1bdea43c5629ff3520749c138257dce4a6265dc52b32048feca19ce99636ec",
   "verdict": {
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "DBOS's core architecture is built around checkpointing every workflow step to Postgres and automatically resuming from the last completed step after a crash, restart, or deploy, documented extensively (dbos-docs-3,4,23,25,31) and explained by co-founders on HN (dbos-comm-1,13,14). Community testimony corroborates real-world use of this durability model at scale (dbos-comm-9,15), with one nuanced caveat that guarantees depend on Postgres's own replication durability settings (dbos-comm-3), which is a configuration caveat rather than a contradiction of the core recovery mechanism. Missing for 10: independent third-party benchmark or incident report specifically validating crash-recovery behavior in production beyond vendor/community anecdote.",
+    "rationale": "DBOS's docs repeatedly state that it checkpoints workflow and step state to Postgres and automatically recovers interrupted workflows from the last completed step after crashes, restarts, or interruptions. Conductor also moves interrupted workflows to healthy executors, and patching/versioning cover code changes across deploys. Community discussion confirms the step-logging design, with one caveat: durability is only as strong as the Postgres configuration, such as synchronous replication. Missing for 10: independent hands-on corroboration of crash/deploy recovery, beyond vendor docs and co-founder statements.",
     "evidenceIds": [
-      "dbos-docs-3",
       "dbos-docs-4",
       "dbos-docs-23",
       "dbos-docs-25",
+      "dbos-docs-3",
       "dbos-docs-31",
-      "dbos-comm-1",
+      "dbos-docs-10",
+      "dbos-docs-12",
+      "dbos-docs-38",
       "dbos-comm-13",
-      "dbos-comm-14",
-      "dbos-comm-3",
-      "dbos-comm-9"
+      "dbos-comm-3"
     ],
     "productId": "dbos",
     "storyId": "crash-resume-checkpointing"

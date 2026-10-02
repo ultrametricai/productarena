@@ -1,14 +1,15 @@
 {
-  "hash": "6ff814e3f312f767a2c8420ea367f2e8f6396adac9db7d4101a8169eea31d744",
+  "hash": "4a14ae4b6b1079a0e4ab2d13ea1e172e58305a70210559a2c8f364891481c98f",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Hatchet documents per-key concurrency limits driven by CEL expressions that can differentiate tenants/tiers (e.g., premium users get 10 concurrent runs vs 1 for others) and multiple concurrency strategies, which gives some tenant-level fairness/resource allocation. However, there is no documented 'priority' field or priority-based scheduler for runs, nor explicit anti-starvation FIFO-replacement mechanism — the evidence only covers concurrency caps, not priority assignment. Missing for 10: explicit run/task priority attribute, priority-aware scheduler documentation, and independent confirmation that concurrency limits actually produce fair scheduling across tenants under load.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Hatchet documents per-key concurrency limits set with CEL expressions (e.g. premium-tier users get 10 concurrent runs, others get 1). It also supports shared concurrency rules across workflows and per-key queue-depth strategies, so runs are not held in a single FIFO queue and each tenant or user key can be capped. However, nothing in the evidence shows assigning priorities to individual runs or an explicit fair-scheduling algorithm (such as round-robin across tenants). Missing for 10: explicit run-priority assignment, documented fair or round-robin scheduling across tenants, independent or hands-on corroboration.",
     "evidenceIds": [
       "hatchet-docs-5",
       "hatchet-docs-6",
       "hatchet-docs-18",
+      "hatchet-docs-10",
       "hatchet-docs-28"
     ],
     "productId": "hatchet",

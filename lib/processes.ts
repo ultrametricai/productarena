@@ -3,21 +3,23 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
+import { GEO_NOTE_KINDS } from './geoPreference'
 import { JURISDICTIONS, type Jurisdiction, type JurisdictionStepView } from './jurisdictions'
 import { hasLogo } from './logos'
 import { isShutdown } from './shutdown'
-import type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
-import { DECISION_STEP_RE, formatMinutes, gapWhy, REVERSIBILITY_TIERS } from './processSim'
+import type { Cadence, GapResolution, ProcessKind, Reversibility, SimStep, StepRoute, SwapOption, Urgency, VendorRole } from './processSim'
+import { DECISION_STEP_RE, formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_TIERS, URGENCY_TIERS } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
-export { formatMinutes, gapWhy, REVERSIBILITY_TIERS }
-export type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole }
+export { formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_TIERS, URGENCY_TIERS }
+export type { Cadence, GapResolution, ProcessKind, Reversibility, SimStep, StepRoute, SwapOption, Urgency, VendorRole }
 
-// The founder-process corpus (processes/corpus.json): 123 real startup operating processes, each
-// mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
-// API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
-// or a computer-use agent does it: meetings, judgment, waiting on a third party — with
+// The founder-process corpus (processes/corpus.json): 136 real startup operating records — 124
+// timeline processes plus 12 reactive SITUATIONS (kind 'situation', founder ask 2026-10-01) —
+// each mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a
+// recorded API/tool call), 'form' (manual form/portal work — no public API path), or 'person'
+// (a human or a computer-use agent does it: meetings, judgment, waiting on a third party — with
 // legally required signature acts flagged legalSignature, the true human floor). The feature's
 // thesis lives in that routing: the per-process **agent ceiling** (share of steps an agent can
 // run today) and the **gaps** (the non-agent steps) are first-class findings, not footnotes.
@@ -122,6 +124,45 @@ export const DagNodeBaseSchema = z.object({
 })
 
 // ---------------------------------------------------------------------------
+// Depth wave part 1 (founder 2026-10-01): two per-step cited fields — verification checks and
+// real costs. Both OPTIONAL and ADDITIVE; no judged number reads either, so every committed
+// surface is unchanged. Declared ahead of the method-variant schemas so a variant can carry its
+// own published cost (founder spike 2026-10-02 — method sub-steps stay display-level).
+// ---------------------------------------------------------------------------
+
+// "How do I know it worked?" — a concrete, externally checkable test for the step, with the
+// primary-source URL of the checking tool where one exists (the DE entity search, TSDR, EDGAR
+// full-text search, RDAP lookup…). Curation honesty (processes/README.md "Verification
+// checks"): a verify that merely restates the step is worse than absence — drafting steps and
+// internal decisions carry none; URLs are https, primary sources (government portals, registrar
+// tools) preferred, and every one is curl-verified live before it ships.
+export const StepVerifySchema = z.object({
+  how: z.string().min(1),
+  url: z.string().url().optional(),
+})
+
+export type StepVerify = z.infer<typeof StepVerifySchema>
+
+export const COST_KINDS = ['government-fee', 'typical-vendor-price', 'free'] as const
+export type CostKind = (typeof COST_KINDS)[number]
+
+// The real, KNOWABLE cost of a step. Honesty contract (processes/README.md "Cost honesty"):
+// every number carries the source URL of a published fee schedule or sticker-price page plus
+// the asOf date it was read — fees change, the asOf date is the contract, currentness is never
+// claimed. `usd: null` is the honest spelling of "a real cost exists but no published number
+// does" (attorney fees vary) — the source then explains the variability; nothing is estimated
+// or averaged. `note` carries the required caveat (minimums, per-class fees, what's bundled).
+export const StepCostSchema = z.object({
+  usd: z.number().min(0).nullable(),
+  kind: z.enum(COST_KINDS),
+  source: z.string().url(),
+  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'asOf must be an ISO date (YYYY-MM-DD)'),
+  note: z.string().min(1).optional(),
+})
+
+export type StepCost = z.infer<typeof StepCostSchema>
+
+// ---------------------------------------------------------------------------
 // Method variants (founder 2026-09-30: "certain processes have steps that are just ONE way to
 // do it when there are multiple methods depending on context — get multiple options selectable
 // by context … sub-DAGs for all DAG choices that have multiple paths").
@@ -164,10 +205,37 @@ export const StepMethodSchema = z.object({
   functionCalls: FunctionCallSchema.array().optional(),
   estimatedMinutes: z.number().min(0).optional(),
   subSteps: DagNodeBaseSchema.array().min(2).max(5).optional(),
+  // The variant's own real, sourced cost (founder spike 2026-10-02, form_001 reference depth):
+  // same StepCostSchema honesty contract as the full node — published stickers and fee
+  // schedules only, `usd: null` where the real cost has no single published USD number (the
+  // £100 Companies House fee, Germany's value-based GNotKG notary fees). Variant costs are
+  // never averaged into anything: knownCostUsd() and every judged number keep reading the
+  // DEFAULT node only; this field is data-truth for the variant panel (display follow-up is a
+  // later pass — the summary prose carries the figure honestly meanwhile).
+  cost: StepCostSchema.optional(),
 })
 
 export type StepMethodContext = z.infer<typeof StepMethodContextSchema>
 export type StepMethod = z.infer<typeof StepMethodSchema>
+
+// Failure modes (founder spike 2026-10-02, form_001 reference depth): what actually goes wrong
+// at this step and what the honest recovery is. Curated ONLY where the failure is sourced or
+// structurally certain (a name conflict, a defective-certificate rejection, a lost stamped
+// certificate, the missed 83(b) window) — never speculative, never a generic "be careful".
+// `what` names the failure, `then` the recovery — or the honest "no recovery; this is a
+// conversation with counsel" where that is the truth (needs_review posture). `source` is the
+// primary page/statute/fee schedule backing the entry (curl-verified live, like every corpus
+// URL); legal claims additionally cite a dated rule card in rules/ by id inside the prose, the
+// situations-house precedent. 3–6 QUALITY entries per deep process, not coverage — see
+// processes/README.md "Failure modes". Display: ONE collapsed '⚠ if it goes wrong' line per
+// affected step (components/ProcessDag.tsx); no judged number reads the field.
+export const StepFailureModeSchema = z.object({
+  what: z.string().min(1),
+  then: z.string().min(1),
+  source: z.string().url().optional(),
+})
+
+export type StepFailureMode = z.infer<typeof StepFailureModeSchema>
 
 // The full node schema: the base fields (the DEFAULT method) plus optional method variants.
 // COMPAT-ADDITIVE: a node without methods is exactly the pre-variant schema, and no default
@@ -175,6 +243,14 @@ export type StepMethod = z.infer<typeof StepMethodSchema>
 // derived generators all keep consuming the base fields only.
 export const DagNodeSchema = DagNodeBaseSchema.extend({
   methods: StepMethodSchema.array().min(1).optional(),
+  // The artifact layer, node half (founder depth wave part 2, 2026-10-01: typed inputs/outputs
+  // between steps): the registry artifact (processes/artifacts.json) that comes into existence
+  // at THIS step — the certificate received, the account opened, the paper signed. OPTIONAL per
+  // node, but corpus-tested as the exact node-level image of the task's `produces` list (set
+  // equality per task, lib/__tests__/processArtifacts.test.ts), and never on a
+  // jurisdiction-conditional node (those are stripped from the default view). Full-node only —
+  // method-variant subSteps stay display-level.
+  producesArtifact: z.string().min(1).optional(),
   // Reversibility of THIS step's own act (founder 2026-09-30: "map what is irreversible and
   // what is reversible — for ALL processes and process steps"). REQUIRED with no zod default —
   // every node is explicitly curated (an unclassified node fails the corpus parse; totality and
@@ -185,6 +261,23 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // carry the field this phase — variants are display-level; the default flow is the judged
   // surface.
   reversibility: z.enum(REVERSIBILITY_TIERS),
+  // "How do I know it worked?" — see StepVerifySchema above. Optional: absence means the step
+  // has no meaningful external check (drafting, internal decisions), never that one was missed.
+  verify: StepVerifySchema.optional(),
+  // The step's real, sourced cost — see StepCostSchema above. Optional: absence means no
+  // knowable published number, never $0 (that's kind 'free' with usd 0).
+  cost: StepCostSchema.optional(),
+  // What actually goes wrong here and the honest recovery — see StepFailureModeSchema above.
+  // Optional and deliberately sparse: absence means no sourced/structurally-certain failure
+  // mode is curated yet, never that the step can't fail.
+  failureModes: StepFailureModeSchema.array().min(1).optional(),
+  // Canonical open documents for THIS step — ids into documents/registry.json (the Cooley GO
+  // incorporation package for the bylaws-drafting step, IRS Form 15620 for the 83(b) steps).
+  // Added by the founder spike 2026-10-02 after confirming NO prior mechanism linked corpus
+  // steps to the documents registry. Data-level cross-reference only (no new default surface
+  // reads it this phase); referential integrity is corpus-tested (__tests__/documents.test.ts —
+  // every id must resolve in the registry).
+  documents: z.string().min(1).array().min(1).optional(),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -210,11 +303,23 @@ export type SlugAlias = z.infer<typeof SlugAliasSchema>
 // Editorial and honest: every actionUrl is curl-verified live before listing (the
 // VENDOR_SIGNUP_URL house rule — no unverifiable URL is fabricated; official-host blocks get
 // the mca.gov.in→NSWS substitution, never a fabricated link), and a country with no true
-// analog simply carries no note. Display-only: rendered as the "Outside the US" block on
-// /processes/[slug]; no judged number reads these. (GEO_NOTE_COUNTRIES itself is declared
-// above the node schema so method contexts can share the same country codes.)
+// analog simply carries no note. Display-only for every judged number; since the country-view
+// filter (founder ask 2026-10-02: "?geo=in should hide the processes that are not used in that
+// country") each note also carries a required `kind` — analog / absorbed / not-applicable, the
+// vocabulary lives client-safe in lib/geoPreference.ts GEO_NOTE_KINDS — which drives ONLY which
+// rows the /processes table shows inside a country view; the default and Global views keep the
+// full corpus and no judged number reads it. Rendered as the "Outside the US" block on
+// /processes/[slug]. (GEO_NOTE_COUNTRIES itself is declared above the node schema so method
+// contexts can share the same country codes.)
 export const GeoNoteSchema = z.object({
   country: z.enum(GEO_NOTE_COUNTRIES),
+  // What the committed summary SAYS the need becomes in this country (explicitly curated on
+  // every note — no default, so an uncurated note fails the corpus parse):
+  //   'analog'         — the need exists there as its own doable process;
+  //   'absorbed'       — handled automatically inside another process there (EIN → IN: PAN/TAN
+  //                      arrive with the SPICe+ incorporation filing);
+  //   'not-applicable' — the need genuinely doesn't exist there (the UK has no 1099 regime).
+  kind: z.enum(GEO_NOTE_KINDS),
   // What the analog IS and how it differs — one or two honest sentences, not marketing.
   summary: z.string().min(1),
   // The canonical page a founder in that country starts from — verified live before listing.
@@ -231,12 +336,61 @@ export const GEO_COUNTRY_META: Record<GeoNoteCountry, { label: string; flag: str
   FR: { label: 'France', flag: '🇫🇷' },
 }
 
+// Proven runs (founder spike 2026-10-02 — EXECUTED-PROOF SLOT, design only): a dated record
+// that a named operator actually ran this process end to end, with the real wall clock and the
+// real fees paid per step. The shape ships schema-ready and EMPTY — no run is fabricated; the
+// first records will be Ultrametric Inc.'s own receipts, supplied by the founder. Disclosure
+// rules (load-enforced): a run by the corpus's own operator/company sets `ownerRun: true` and
+// MUST carry a `disclosure` sentence saying so — reader trust comes from the disclosure, not
+// from pretending independence. Display-only when records exist; no judged number will read it.
+export const ProvenRunStepSchema = z.object({
+  nodeId: z.string().min(1),
+  // The real elapsed wall clock for the step, as run — honest, not the corpus estimate.
+  wallClockMinutes: z.number().min(0).optional(),
+  // The real fees paid at this step, in USD as settled.
+  feesPaidUsd: z.number().min(0).optional(),
+  note: z.string().min(1).optional(),
+})
+
+export const ProvenRunSchema = z.object({
+  // When the run happened (ISO date).
+  ranOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'ranOn must be an ISO date (YYYY-MM-DD)'),
+  // Who ran it — a named person/company, never "a user".
+  operator: z.string().min(1),
+  // True when the operator is Ultrametric (or the corpus's maintainer) itself.
+  ownerRun: z.boolean(),
+  // REQUIRED when ownerRun (load-enforced): the honest one-sentence disclosure.
+  disclosure: z.string().min(1).optional(),
+  steps: ProvenRunStepSchema.array().min(1),
+})
+
+export type ProvenRunStep = z.infer<typeof ProvenRunStepSchema>
+export type ProvenRun = z.infer<typeof ProvenRunSchema>
+
 export const ProcessTaskSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   slugAliases: SlugAliasSchema.array().optional(),
   description: z.string().min(1),
   phase: z.string().min(1),
+  // Record kind (founder ask 2026-10-01: "Situations — reactive, trigger-driven founder
+  // processes — e.g. your company has a C&D, or you want to get a visa and come to Silicon
+  // Valley but the visa is held up"). A situation is the same machinery as a process — a
+  // routed DAG with ceilings, vendors, reversibility, geo — classified REACTIVE: `trigger`
+  // names the event that puts a founder here, `urgency` is the honest clock on the first step,
+  // and there is NO timeOrder slot (a situation is not a stop on the founder timeline).
+  // ZOD-DEFAULTED to 'process' so every pre-existing record parses byte-identically and the
+  // corpus diff stays additive-only. The kind-conditional invariants (trigger/urgency required
+  // on situations and forbidden on processes; timeOrder the other way around) are enforced at
+  // load time in loadProcesses() — not as zod refinements — so the published JSON schema stays
+  // a plain object shape() can check.
+  kind: z.enum(PROCESS_KINDS).default('process'),
+  // The event that puts a founder in this situation — ONE honest sentence ("A cease-and-desist
+  // letter claiming trademark infringement arrives."). Situations only.
+  trigger: z.string().min(1).optional(),
+  // How fast the first step must honestly happen once the trigger fires — tiers and curation
+  // rules on URGENCY_TIERS/URGENCY_META in lib/processSim.ts. Situations only.
+  urgency: z.enum(URGENCY_TIERS).optional(),
   // How often this process actually recurs in a running company — the operating-rhythm axis
   // (/processes/operating-rhythm). Curated per process, honestly: setup/formation work is
   // 'once', trigger-driven work (a hire, a cancellation, a new vendor) is 'event-driven',
@@ -264,7 +418,10 @@ export const ProcessTaskSchema = z.object({
   // country per process (corpus-tested); unflavored global processes carry none.
   geoNotes: GeoNoteSchema.array().optional(),
   // The five founder orderings (founder ask 2026-09-18) — curated, display-only rank axes for
-  // the /processes table. All four are REQUIRED so coverage is total by construction:
+  // the /processes table. The three 1–5 scores are REQUIRED on every record so coverage is
+  // total by construction; timeOrder is REQUIRED on kind 'process' and FORBIDDEN on kind
+  // 'situation' (load-enforced): a situation is reactive — pretending it has a slot in the
+  // founder timeline would be a lie, so situation rows sort after the timeline instead.
   //   timeOrder   — unique position in the sequence a founder actually hits these processes
   //                 (incorporation first, then banking, payroll, … — the founder timeline).
   //   annoyance   — 1–5 drudgery score: how much of a toil this is to do by hand.
@@ -273,7 +430,7 @@ export const ProcessTaskSchema = z.object({
   //   growthImpact— 1–5 how directly the process drives revenue/user growth (daily feature
   //                 shipping and outbound at 5; compliance filings at 1).
   // The regularity ordering reuses `cadence` (daily → once) — no extra field needed.
-  timeOrder: z.number().int().min(1),
+  timeOrder: z.number().int().min(1).optional(),
   annoyance: z.number().int().min(1).max(5),
   risk: z.number().int().min(1).max(5),
   growthImpact: z.number().int().min(1).max(5),
@@ -300,6 +457,21 @@ export const ProcessTaskSchema = z.object({
     tier: z.string().min(1),
     required: z.boolean(),
   }).array(),
+  // The artifact layer, task half (founder depth wave part 2, 2026-10-01): typed inputs/outputs
+  // between processes, as registry artifact ids (processes/artifacts.json — loadArtifacts below).
+  // `contextNeeded` prose stays the human context; this is the machine truth the cross-process
+  // dependency graph (lib/processDeps.ts) builds from. Both REQUIRED with no zod default — the
+  // whole corpus is explicitly curated (an empty array is an honest "this process produces/needs
+  // no registry artifact", an absent field fails the parse). Integrity is corpus-tested
+  // (lib/__tests__/processArtifacts.test.ts): every id resolves in the registry, no
+  // self-requires, produces matches the node-level producesArtifact tags exactly, and a process
+  // producing an artifact it isn't the canonical producer of must be a documented
+  // alsoProducedBy exception.
+  produces: z.string().min(1).array(),
+  requires: z.string().min(1).array(),
+  // The executed-proof slot — see ProvenRunSchema above. Optional and currently empty
+  // corpus-wide (design shipped ahead of the first real run; nothing is fabricated).
+  provenRuns: ProvenRunSchema.array().min(1).optional(),
   tags: z.string().array(),
   activeMinutes: z.number().min(0),
   totalEstimatedMinutes: z.number().min(0),
@@ -343,7 +515,7 @@ export const CADENCE_META: Record<Cadence, { label: string; blurb: string }> = {
   monthly: { label: 'Monthly', blurb: 'The money drumbeat: payroll runs, books close, invoices go out, runway gets read.' },
   quarterly: { label: 'Quarterly', blurb: 'Governance season: board meetings, minutes, OKRs, review cycles.' },
   annual: { label: 'Annual', blurb: 'The filing calendar: franchise tax, returns, 1099s, insurance, 409A.' },
-  'event-driven': { label: 'When it happens', blurb: 'No calendar — a hire, a cancellation, a new vendor, a round sets these off.' },
+  'event-driven': { label: 'As needed', blurb: 'No calendar — a hire, a cancellation, a new vendor, a round sets these off.' },
   once: { label: 'Once', blurb: 'Setup and formation — done once, then the company runs on everything above.' },
 }
 
@@ -390,6 +562,38 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(corpusFile(dir), 'utf8'))
   const parsed = ProcessTaskSchema.array().parse(raw)
+  // Kind-conditional invariants that zod deliberately doesn't encode (the published JSON schema
+  // stays a plain shape): a situation is reactive — it MUST name its trigger and urgency and
+  // must NOT claim a founder-timeline slot; a process is the exact pre-situation contract —
+  // timeOrder required, trigger/urgency forbidden. Enforced here so an uncurated record fails
+  // the parse loudly instead of rendering a half-classified row.
+  for (const t of parsed) {
+    if (t.kind === 'situation') {
+      if (!t.trigger) throw new Error(`${t.id}: a situation must name its trigger (one sentence)`)
+      if (!t.urgency) throw new Error(`${t.id}: a situation must carry an honest urgency tier`)
+      if (t.timeOrder !== undefined) {
+        throw new Error(`${t.id}: situations are reactive — they carry no founder-timeline timeOrder slot`)
+      }
+    } else {
+      if (t.timeOrder === undefined) throw new Error(`${t.id}: a process must carry its founder-timeline timeOrder`)
+      if (t.trigger !== undefined || t.urgency !== undefined) {
+        throw new Error(`${t.id}: trigger/urgency are situation-only fields`)
+      }
+    }
+  }
+  // Proven-run disclosure rule (founder spike 2026-10-02) that zod deliberately doesn't encode
+  // (the published JSON schema stays a plain shape): an owner-run record must say so.
+  for (const t of parsed) {
+    for (const r of t.provenRuns ?? []) {
+      if (r.ownerRun && !r.disclosure) {
+        throw new Error(`${t.id}: an ownerRun proven-run record must carry its disclosure sentence`)
+      }
+      const nodeIds = new Set(t.dag.nodes.map((n) => n.id))
+      for (const s of r.steps) {
+        if (!nodeIds.has(s.nodeId)) throw new Error(`${t.id}: proven run references unknown step ${s.nodeId}`)
+      }
+    }
+  }
   // Method-variant invariants that zod deliberately doesn't encode (the published JSON schema
   // stays a plain shape): unique method ids per node, geo⇔countries consistency, unique
   // sub-step ids per method, and a derived (never invented) method time where subSteps exist.
@@ -502,13 +706,21 @@ export function loadChains(dir: string = DEFAULT_DIR()): ProcessChain[] {
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(chainsFile(dir), 'utf8'))
   const chains = ProcessChainSchema.array().parse(raw)
-  const taskIds = new Set(loadProcesses(dir).map((t) => t.id))
+  const byId = new Map(loadProcesses(dir).map((t) => [t.id, t]))
   const chainIds = new Set<string>()
   for (const chain of chains) {
     if (chainIds.has(chain.id)) throw new Error(`duplicate chain id ${chain.id}`)
     chainIds.add(chain.id)
     for (const tid of chain.taskIds) {
-      if (!taskIds.has(tid)) throw new Error(`chain ${chain.id} references unknown task ${tid}`)
+      const task = byId.get(tid)
+      if (!task) throw new Error(`chain ${chain.id} references unknown task ${tid}`)
+      // A chain is a timeline journey: it folds into the grouped table at its FIRST
+      // constituent's timeOrder (lib/processRows.ts). A reactive situation has no slot to fold
+      // into, so chains may only compose kind 'process' tasks — this guarantee is what lets
+      // buildPlaybookRows read tasks[0].timeOrder as present.
+      if (task.kind === 'situation') {
+        throw new Error(`chain ${chain.id} composes situation ${tid} — chains are timeline journeys of processes only`)
+      }
     }
   }
   chainsCache.set(dir, chains)
@@ -578,6 +790,20 @@ export function computeCeiling(
 
 export function taskCeiling(task: ProcessTask): ProcessCeiling {
   return computeCeiling(task.dag.nodes)
+}
+
+// The process's known government fees (depth wave pt 1): the sum of the DATED per-step
+// government fees ONLY — kind 'government-fee' with a published usd number. Derived here, never
+// hand-stored. Vendor prices are deliberately excluded from the headline (a partial vendor sum
+// would imply a completeness the curation doesn't claim), and `usd: null` entries contribute
+// nothing. Computed over the DEFAULT flow (loadProcesses strips jurisdiction-conditional nodes),
+// so the number describes the same Delaware-default view every other committed number does.
+export function knownCostUsd(nodes: Array<Pick<DagNode, 'cost'>>): number {
+  let total = 0
+  for (const n of nodes) {
+    if (n.cost && n.cost.kind === 'government-fee' && n.cost.usd !== null) total += n.cost.usd
+  }
+  return total
 }
 
 // The site-wide headline: the agent ceiling across every step of every process in the corpus.
@@ -741,6 +967,64 @@ export function vendorLabel(vendor: string): string {
     .join(' ')
 }
 
+// ---------------------------------------------------------------------------
+// Artifact registry (processes/artifacts.json) — the canonical business artifacts that flow
+// between processes (founder depth wave part 2, 2026-10-01)
+// ---------------------------------------------------------------------------
+
+// One canonical business artifact: a thing a committed process step genuinely brings into
+// existence (the EIN, the signed bylaws, the opened bank account, the 409A report) that at
+// least one OTHER process consumes via `requires` — or, flagged `terminal`, that nothing
+// downstream consumes (the filed 83(b), the dissolution certificate). ONE canonical producer
+// per artifact (`producedBy`); the documented exceptions (the LLC route's EIN, the LLC→C-Corp
+// conversion's re-issued charter paper, the exec hire's offer) live in `alsoProducedBy` — any
+// process listing the artifact in `produces` must be one of these. The registry is sized from
+// the corpus itself; no invented artifacts (all integrity rules are corpus-tested in
+// lib/__tests__/processArtifacts.test.ts). Consumed by lib/processDeps.ts to build the
+// cross-process dependency DAG. Published schema: schemas/process-artifacts.schema.json
+// (generated, drift-tested).
+export const ArtifactSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'artifact id must be kebab-case'),
+    label: z.string().min(1),
+    description: z.string().min(1),
+    // The one canonical producer process (corpus task id).
+    producedBy: z.string().min(1),
+    // Documented exception producers — other committed processes that genuinely also bring this
+    // artifact into existence. Deliberately rare; every entry is corpus-tested to really tag it.
+    alsoProducedBy: z.string().min(1).array().min(1).optional(),
+    // No committed process consumes this artifact — it leaves the graph here (filed elections,
+    // published reports, the dissolution certificate). Mutually exclusive with having consumers;
+    // both directions corpus-tested.
+    terminal: z.literal(true).optional(),
+  })
+  .strict()
+export type Artifact = z.infer<typeof ArtifactSchema>
+
+export const ArtifactRegistrySchema = z
+  .object({
+    $comment: z.string().optional(),
+    artifacts: ArtifactSchema.array().min(1),
+  })
+  .strict()
+
+const artifactsFile = () => path.join(process.cwd(), 'processes', 'artifacts.json')
+let artifactsCache: Artifact[] | null = null
+export function loadArtifacts(): Artifact[] {
+  if (!artifactsCache) {
+    const parsed = ArtifactRegistrySchema.parse(
+      JSON.parse(fs.readFileSync(artifactsFile(), 'utf8')),
+    ).artifacts
+    const seen = new Set<string>()
+    for (const a of parsed) {
+      if (seen.has(a.id)) throw new Error(`duplicate artifact id ${a.id}`)
+      seen.add(a.id)
+    }
+    artifactsCache = parsed
+  }
+  return artifactsCache
+}
+
 function arenaSwapOptions(arenaId: string, dir?: string): SwapOption[] {
   const data = loadCategory(arenaId, dir)
   const nameOf = (pid: string) => data.products.find((p) => p.id === pid)?.name ?? pid
@@ -827,7 +1111,7 @@ export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
 // appended by stepVendorOptions can push a step slightly past this, which is fine.
 export const STEP_OPTIONS_CAP = 8
 
-// Every product of one arena as a VendorChipInfo, in LEADERBOARD ORDER (the arena's PA-Score
+// Every product of one arena as a VendorChipInfo, in LEADERBOARD ORDER (the arena's Overall-score
 // rank — rankings.json is already sorted). Chip rank/agentReady keep vendorChipInfo semantics
 // (position on the agent-readiness ladder) so derived and curated chips read identically.
 function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {

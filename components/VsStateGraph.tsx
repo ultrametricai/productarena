@@ -2,13 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import VsCopyCommand from '@/components/VsCopyCommand'
 import type { SyntheticArtifact, TopVendorPick } from '@/lib/virtualStartup'
 
 // The state-graph viewer (founder batch 2026-09-29, item 3): a compact tabbed panel above (or
 // beside, on wide screens) the terminal that fills as the run progresses — the OBJECTS coming
-// into existence. Three tabs:
-//   Company   — the SyntheticArtifact stream (entity, EIN, bank account, name/logo/site …),
+// into existence. Three tabs (founder batch 2026-10-02, item 4: 'Company' renamed 'Status', and
+// the count badges beside the tab labels are gone — the labels stand alone):
+//   Status    — the SyntheticArtifact stream (entity, EIN, bank account, name/logo/site …),
 //               each carrying the structural data-synthetic="true" attribute and the fuchsia
 //               generated-artifact styling (founder 2026-09-29: no visible 'simulated' label
 //               anywhere on the page — the honesty invariant is the attribute, tests assert it);
@@ -49,7 +52,7 @@ export interface VsUmCliLine {
   command: string
 }
 
-type PanelTab = 'company' | 'vendors' | 'decisions'
+type PanelTab = 'status' | 'vendors' | 'decisions'
 
 export default function VsStateGraph({
   started,
@@ -72,12 +75,13 @@ export default function VsStateGraph({
   // Revealed Ultrametric-driveable processes (ours, disclosed) — optional, additive (2026-09-30).
   umCli?: VsUmCliLine[]
 }) {
-  const [tab, setTab] = useState<PanelTab>('company')
+  const [tab, setTab] = useState<PanelTab>('status')
 
-  const tabs: Array<{ id: PanelTab; label: string; count: number }> = [
-    { id: 'company', label: 'Company', count: started ? artifacts.length : 0 },
-    { id: 'vendors', label: 'Vendors', count: started ? vendors.length : 0 },
-    { id: 'decisions', label: 'Decisions', count: started ? decisions.length + events.length : 0 },
+  // No count badges (founder batch 2026-10-02, item 4) — the labels stand alone.
+  const tabs: Array<{ id: PanelTab; label: string }> = [
+    { id: 'status', label: 'Status' },
+    { id: 'vendors', label: 'Vendors' },
+    { id: 'decisions', label: 'Decisions' },
   ]
 
   return (
@@ -101,7 +105,6 @@ export default function VsStateGraph({
             }`}
           >
             {t.label}
-            <span className="ml-1 text-[10px] tabular-nums opacity-70">{t.count}</span>
           </button>
         ))}
       </div>
@@ -113,7 +116,7 @@ export default function VsStateGraph({
             The company, its vendors, and its decisions appear here object by object as the run
             prints in the terminal.
           </p>
-        ) : tab === 'company' ? (
+        ) : tab === 'status' ? (
           artifacts.length === 0 ? (
             <p className="py-2 text-[11px] text-zinc-400">nothing exists yet — the first artifacts are printing…</p>
           ) : (
@@ -167,9 +170,12 @@ export default function VsStateGraph({
                 </p>
                 <ul className="mt-1 space-y-1">
                   {umCli.map((u) => (
-                    <li key={u.taskId} data-testid="vs-sg-umcli-line" className="flex flex-wrap items-baseline gap-x-2 text-[11px]">
+                    <li key={u.taskId} data-testid="vs-sg-umcli-line" className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[11px]">
                       <span className="text-zinc-300">{u.title}</span>
                       <code className="font-mono text-[10px] text-emerald-300/80">{u.command}</code>
+                      {/* Copyable shipped command (founder batch 2026-10-02, item 5) — display-
+                          only convenience inside the explicitly-labeled first-party block. */}
+                      <VsCopyCommand command={u.command} />
                     </li>
                   ))}
                 </ul>
@@ -188,7 +194,11 @@ export default function VsStateGraph({
             <ul className="space-y-1">
               {decisions.map((d) => (
                 <li key={d.id} data-testid="vs-sg-decision" data-decision-state={d.state ?? 'asserted'} className="flex items-baseline gap-2 text-[12px]">
-                  <span aria-hidden className="shrink-0">{d.icon}</span>
+                  {/* House icon tokens (the decision/axis maps in VirtualStartup.tsx) render
+                      as the custom duotone glyphs; plain text keeps rendering as text. */}
+                  <span aria-hidden className="shrink-0">
+                    <IconGlyph icon={d.icon} />
+                  </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-400">{d.title}</span>
                   <span className={d.state === 'pending' ? 'text-amber-300/90' : d.state === 'default' ? 'text-zinc-400' : 'text-zinc-300'}>
                     {d.label}

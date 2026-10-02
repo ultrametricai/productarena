@@ -7,7 +7,7 @@ import Legend from '@/components/Legend'
 import PersonaStacksSection from '@/components/PersonaStacksSection'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
 import { humanizeTheme } from '@/lib/icons'
@@ -154,17 +154,19 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           arena id, so every arena header is subtly its own) behind the header text. */}
       <div className="relative isolate">
         <GeoBackdrop seed={data.category.id} />
-        {/* The eyebrow doubles as the way back up — this page's children (checklist, report)
-            already link their eyebrows back to the arena; same pattern, one level higher. */}
+        {/* The eyebrow is a breadcrumb back up to the arenas index (founder 2026-10-02) — this
+            page's children (checklist, report) already link their eyebrows back to the arena;
+            same pattern, one level higher. */}
         <p className="text-sm uppercase tracking-widest text-emerald-400">
-          <Link href="/" title="Back to all arenas" className="transition hover:text-emerald-300">
-            Arena
+          <Link href="/arenas" title="All arenas" className="transition hover:text-emerald-300">
+            ‹ Arenas
           </Link>
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          {/* Same emoji this arena wears in the header's Arenas menu (data/arena-icons.json). */}
+          {/* The same house glyph this arena wears in the header's Arenas menu
+              (lib/arenaIcons.ts) — IconChip renders the `pi:` token as the custom duotone SVG. */}
           <IconChip
-            icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
+            icon={arenaIcon(data.category.id)}
             title={`${data.category.name} arena`}
           />
           {data.category.name}
@@ -220,7 +222,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
               >
                 <p className="flex items-center gap-1.5 font-medium group-hover:text-emerald-300">
                   <IconChip
-                    icon={(arenaIcons as Record<string, string>)[a.categoryId] ?? ''}
+                    icon={arenaIcon(a.categoryId)}
                     title={`${a.categoryName} arena`}
                   />
                   {a.categoryName}

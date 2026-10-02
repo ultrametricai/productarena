@@ -21,7 +21,8 @@
 // Also hosts POST /productarena/mcp — a keyless, rate-limited remote MCP endpoint (see the
 // "Remote MCP endpoint" section below and this directory's README.md).
 //
-// Also counts /productarena/compare?p=… selections into Workers KV (binding PA_COMPARE_STATS)
+// Also counts /productarena/compare?p=… selections into Workers KV (binding UM_COMPARE_STATS;
+// the pre-rename PA_COMPARE_STATS binding is still honored as a fallback)
 // and serves the keyless GET /productarena/api/popular-compares top-20 — see the
 // "Compare popularity counter" section below. Pairs only; no IPs or user agents are stored.
 //
@@ -806,7 +807,7 @@ export async function handleMcpProbe(request, fetchImpl = fetch, env = undefined
 //   - The response is reshaped: status + content-type + a <=2 KB body excerpt. Upstream headers
 //     (set-cookie included) are never forwarded; reads are byte-capped; timeout 10 s.
 //   - Rate limit: per-isolate fixed window first, then a KV-backed cross-isolate window
-//     (PA_COMPARE_STATS, `tryrl:` keys). KV keys are SHA-256-hashed IPs in minute buckets with
+//     (UM_COMPARE_STATS, `tryrl:` keys). KV keys are SHA-256-hashed IPs in minute buckets with
 //     a 120 s TTL — no raw IPs at rest, nothing persists beyond two minutes. Missing binding
 //     degrades to the per-isolate limiter.
 
@@ -905,7 +906,7 @@ export async function handleTryProbe(request, env, fetchImpl = fetch) {
   if (request.method !== 'POST') return jsonResponse(request, 405, { error: 'POST only' })
 
   const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
-  if (isRateLimited(tryRateBuckets, ip, TRY_RATE_LIMIT) || (await tryKvRateLimited(env?.PA_COMPARE_STATS, ip))) {
+  if (isRateLimited(tryRateBuckets, ip, TRY_RATE_LIMIT) || (await tryKvRateLimited(env?.UM_COMPARE_STATS ?? env?.PA_COMPARE_STATS, ip))) {
     return jsonResponse(request, 429, { error: 'rate limited (20 live runs / minute) — try again shortly' })
   }
 
@@ -1377,7 +1378,8 @@ export async function handleJsonRpc(message, fetchJson = fetchArenaJson) {
 
 // ---------------------------------------------------------------------------------------------
 // Compare popularity counter: every proxied GET of /productarena/compare?p=a,b(,c…) increments
-// a normalized-pair counter in Workers KV (binding PA_COMPARE_STATS), and the keyless
+// a normalized-pair counter in Workers KV (binding UM_COMPARE_STATS; pre-rename
+// PA_COMPARE_STATS honored as a fallback), and the keyless
 // GET /productarena/api/popular-compares returns the top pairs for the /compare page's
 // "Most compared" strip.
 //
@@ -1554,6 +1556,11 @@ async function handleMcp(request) {
 // WORKOS_API_KEY and PA_SESSION_KEY are worker secrets (`wrangler secret put …`). Until all
 // three are set the routes fail closed with an explicit "auth not configured" 500 — the site
 // itself is unaffected (the client hook degrades to anonymous).
+//
+// PA_SESSION_KEY is a legacy, pre-rename secret name — the deployed Cloudflare secret is
+// stored under it, so renaming the binding here would break auth until the secret is re-put
+// under the new name. Keep the name until the founder provisions a UM_SESSION_KEY secret and
+// this read gains a dual-binding fallback (founder action — see FOUNDER-ASKS).
 
 const WORKOS_API = 'https://api.workos.com'
 const AUTH_SITE = 'https://ultrametric.ai'
@@ -1896,8 +1903,9 @@ export async function handleAuth(request, env, fetchImpl = fetch) {
 // readers stay localStorage-only client-side). Same-origin only: no CORS headers, so a
 // cross-origin page can never read or write a reader's list, and SameSite=Lax means cross-site
 // PUTs never carry the cookie anyway. Storage: one KV value per account under
-// watchlist:<WorkOS user id> — the PA_WATCHLIST namespace when bound, else PA_COMPARE_STATS
-// (the watchlist: prefix can't collide with its pair: keys), so going live needs no new
+// watchlist:<WorkOS user id> — the UM_WATCHLIST namespace when bound, else UM_COMPARE_STATS
+// (pre-rename PA_* binding names honored as fallbacks; the watchlist: prefix can't collide
+// with its pair: keys), so going live needs no new
 // namespace. Ids are product slugs; anything unshaped is dropped and the list is capped —
 // junk could only ever waste bytes, the site resolves ids against its own catalog client-side.
 
@@ -1932,7 +1940,7 @@ export async function handleWatchlist(request, env) {
   if (!claims || typeof claims.sub !== 'string' || claims.sub === '') {
     return authJson(401, { error: 'log in to keep a watchlist' })
   }
-  const kv = env?.PA_WATCHLIST ?? env?.PA_COMPARE_STATS
+  const kv = env?.UM_WATCHLIST ?? env?.PA_WATCHLIST ?? env?.UM_COMPARE_STATS ?? env?.PA_COMPARE_STATS
   if (!kv) return authJson(503, { error: 'watchlist storage not available' })
   const key = `${WATCHLIST_KEY_PREFIX}${claims.sub}`
 
@@ -1984,8 +1992,9 @@ export async function handleWatchlist(request, env) {
 // array; normalized output is always v2 arrays (the same dual-shape contract as the client's
 // parseStackMap).
 //
-// Storage: one KV value per account under stack:<WorkOS user id> — the PA_WATCHLIST namespace
-// when bound, else PA_COMPARE_STATS (the stack: prefix can't collide with pair:/watchlist:/
+// Storage: one KV value per account under stack:<WorkOS user id> — the UM_WATCHLIST namespace
+// when bound, else UM_COMPARE_STATS (pre-rename PA_* binding names honored as fallbacks;
+// the stack: prefix can't collide with pair:/watchlist:/
 // tryrl: keys). Both keys and values must be slug-shaped and the map is capped (arenas AND
 // picks per arena); junk could only ever waste bytes — the site resolves the map against its
 // own judged catalog client-side.
@@ -2036,7 +2045,7 @@ export async function handleMyStack(request, env) {
   if (!claims || typeof claims.sub !== 'string' || claims.sub === '') {
     return authJson(401, { error: 'log in to keep a stack' })
   }
-  const kv = env?.PA_WATCHLIST ?? env?.PA_COMPARE_STATS
+  const kv = env?.UM_WATCHLIST ?? env?.PA_WATCHLIST ?? env?.UM_COMPARE_STATS ?? env?.PA_COMPARE_STATS
   if (!kv) return authJson(503, { error: 'stack storage not available' })
   const key = `${STACK_KEY_PREFIX}${claims.sub}`
 
@@ -2177,7 +2186,7 @@ export default {
     if (url.pathname === '/api/mcp-probe') return handleMcpProbe(request, fetch, env)
     if (url.pathname.startsWith('/api/try/')) return handleTryProbe(request, env)
     if (url.pathname === '/api/popular-compares') {
-      return handlePopularCompares(request, env?.PA_COMPARE_STATS)
+      return handlePopularCompares(request, env?.UM_COMPARE_STATS ?? env?.PA_COMPARE_STATS)
     }
     // /productarena/mcp retired (founder 2026-09-23): ProductArena is not offered over its own
     // MCP server — a first-party Ultrametric MCP + API is coming instead. JSON-RPC POSTs get an
@@ -2192,7 +2201,7 @@ export default {
     // Compare popularity: count pair selections without ever delaying the page (see the
     // "Compare popularity counter" section). GETs only; the response is the plain proxy below.
     if (request.method === 'GET' && url.pathname === '/compare' && url.searchParams.get('p')) {
-      ctx?.waitUntil?.(bumpComparePairs(env?.PA_COMPARE_STATS, url.searchParams.get('p')))
+      ctx?.waitUntil?.(bumpComparePairs(env?.UM_COMPARE_STATS ?? env?.PA_COMPARE_STATS, url.searchParams.get('p')))
     }
 
     const upstream = new URL(url.pathname + url.search, ORIGIN)

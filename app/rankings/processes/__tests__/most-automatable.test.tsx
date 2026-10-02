@@ -8,8 +8,13 @@ describe('most-automatable process ranking page', () => {
   it('is explicitly labeled a process ranking and renders every process, sorted by pct desc', () => {
     const { container } = render(<MostAutomatableProcessesPage />)
 
-    // The can-never-be-mistaken-for-a-company-ranking badge.
-    expect(screen.getByText('🔁 Process ranking')).toBeDefined()
+    // The can-never-be-mistaken-for-a-company-ranking badge — house loop glyph (SVG via
+    // IconGlyph), never the old 🔁 emoji (founder sweep 2026-10-02).
+    const eyebrow = screen.getByText('Process ranking')
+    expect(eyebrow).toBeDefined()
+    expect(eyebrow.querySelector('svg')).not.toBeNull()
+    expect(eyebrow.textContent).not.toContain('🔁')
+    expect(eyebrow.textContent).not.toContain('pi:')
     expect(screen.getByRole('heading', { level: 1, name: /Most automatable/ })).toBeDefined()
 
     const bodyRows = [...container.querySelectorAll('tbody tr')]
@@ -27,8 +32,12 @@ describe('most-automatable process ranking page', () => {
     const topLink = bodyRows[0].querySelector('a')
     expect(topLink?.getAttribute('href')).toMatch(/^\/processes\/[a-z0-9-]+$/)
 
-    // The cross-link footer shows both labeled groups.
-    expect(screen.getByText('🏢 Company rankings')).toBeDefined()
-    expect(screen.getByText('🔁 Process rankings')).toBeDefined()
+    // The cross-link footer shows both labeled groups, each wearing its house glyph (the same
+    // SVG the Explore menu's section header wears), not the old 🏢/🔁 emoji.
+    for (const label of ['Company rankings', 'Process rankings']) {
+      const group = screen.getByText(label)
+      expect(group.querySelector('svg')).not.toBeNull()
+      expect(group.textContent).not.toMatch(/🏢|🔁|pi:/)
+    }
   })
 })

@@ -83,6 +83,11 @@ export function phaseTooltip(phase: string): string {
   return entry ? `${phase} — ${entry.blurb}` : phase
 }
 
+// ---------- Cadence ----------
+// The one glyph for "this process recurs" (was the 🔁 emoji on the process-page cadence chip) —
+// the same recurring loop the Explore menu's Process-rankings group wears (lib/arenaIcons.ts).
+export const CADENCE_ICON = pi('cycle', 'sky')
+
 // ---------- Individual processes (keyed by corpus task id) ----------
 // Glyph = the concept (was: the emoji), hue = the process's area. Comments carry the old emoji
 // pick as the semantic guide each glyph was drawn from.
@@ -225,6 +230,22 @@ export const PROCESS_ICONS: Record<string, string> = {
   growth_013: pi('gift', 'fuchsia'), // 🎁 Referral program (the reward)
   growth_014: pi('coin', 'fuchsia'), // 🪙 Roll out a pricing change (the coin flips)
   growth_015: pi('boomerang', 'fuchsia'), // 🪃 Run a win-back campaign (they come back)
+  // Situations (founder 2026-10-01: reactive, trigger-driven records). The hue stays the
+  // DOMAIN family's — a legal situation reads as legal (amber), a people situation as people
+  // (orange) — so a situation sits recognizably inside its discipline while the 'Situations'
+  // area groups them.
+  sit_001: pi('stop', 'amber'), // 🛑 Respond to a cease-and-desist (the letter says stop)
+  sit_002: pi('hourglass', 'orange'), // ⏳ Unstick a delayed US visa (the wait is the problem)
+  sit_003: pi('shield-crack', 'sky'), // 🛡 Respond to a data breach (the shield, breached)
+  sit_004: pi('envelope-alert', 'sky'), // 📨 Answer an IRS or state tax notice (the letter with the !)
+  sit_005: pi('snowflake', 'emerald'), // ❄️ Frozen bank account / bank failure (the money, frozen)
+  sit_006: pi('card-return', 'emerald'), // 💳 Chargeback or fraud spike (the charge pulled back)
+  sit_007: pi('split', 'orange'), // 🔱 Co-founder departure (the paths diverge)
+  sit_008: pi('gavel', 'amber'), // 🔨 Respond to a lawsuit (the court's instrument)
+  sit_009: pi('envelope-alert', 'amber'), // 📨 Trademark office action (the examiner's letter — notice-letter concept, legal hue)
+  sit_010: pi('clock-alert', 'sky'), // ⏰ DE franchise tax delinquency (the overdue clock)
+  sit_011: pi('storm', 'sky'), // ⛈ DDoS attack or major outage (the storm hits the cloud)
+  sit_012: pi('unplug', 'sky'), // 🔌 Migrate off a shutting-down vendor (the plug pulled)
 }
 
 export function processIcon(taskId: string): string {

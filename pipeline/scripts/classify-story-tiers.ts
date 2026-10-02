@@ -13,7 +13,7 @@
 // Cost shape: one LLM call per product per chunk of ≤MAX_STORIES_PER_CALL stale cells (a
 // product's whole story set usually fits in 1-2 calls), cached per cell by a hash over the
 // verdict + its cited excerpts + the pricing evidence + prompt version, so re-runs are
-// incremental and a mid-run crash resumes for free. PA_TIER_CONCURRENCY products run in
+// incremental and a mid-run crash resumes for free. UM_TIER_CONCURRENCY products run in
 // parallel (default 4).
 //
 // Usage: tsx pipeline/scripts/classify-story-tiers.ts [--category <id>] [--product <id>] [--report]
@@ -295,7 +295,7 @@ function printCoverage(categoryIds: string[]): void {
 }
 
 export async function runClassifier({ category, product }: { category?: string; product?: string }): Promise<void> {
-  const concurrency = Number(process.env.PA_TIER_CONCURRENCY ?? 4)
+  const concurrency = Number(process.env.UM_TIER_CONCURRENCY ?? process.env.PA_TIER_CONCURRENCY ?? 4)
   let totalCalls = 0
   const processed: string[] = []
 

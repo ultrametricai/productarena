@@ -1,15 +1,16 @@
 {
-  "hash": "1207ed688df7d95605526b6d25fcfa89bdc33f24a9095fa34a2cdf57ac63b650",
+  "hash": "b858ed6f1978422091b4ce27a0bd42bd5ef3cd00afbf32107d03f141c69b16bc",
   "verdict": {
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Supabase's SQL/Postgres foundation and MCP tools (execute_sql, apply_migration) inherently support operating on many rows at once, and Queues/Cron provide batch-processing primitives, so an AI agent can issue bulk updates/inserts through these tools. However, there is no explicit documentation of a 'bulk operations' API, batch REST endpoints, or bulk file/storage operations, and no hands-on evidence of an agent executing large multi-row changes via MCP. missing for 10: explicit bulk REST/API batch endpoints, documented bulk storage/file operations, and a concrete example of an AI agent performing a large-scale bulk operation end-to-end.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Through the official MCP server, an AI agent gets `execute_sql` and `apply_migration` against a full Postgres database, so set-based statements can act on many rows in one call. Supabase Cron and Queues add scheduled and background batch processing that runs SQL or functions inside Postgres. Bulk capability is implied by SQL access rather than documented as a feature, so this is a strong inference, not a stated claim. Missing for 10: explicit documentation of bulk insert/upsert/update APIs or batch endpoints, bulk operations beyond the database (e.g. Storage objects or Auth users), and independent hands-on corroboration of agent-driven bulk operations.",
     "evidenceIds": [
       "supabase-supp-mcp-tool-groups",
+      "supabase-docs-51",
+      "supabase-supp-ai-tools-stack",
       "supabase-supp-cron",
-      "supabase-supp-queues",
-      "supabase-docs-15"
+      "supabase-supp-queues"
     ],
     "productId": "supabase",
     "storyId": "automation-bulk-operations"

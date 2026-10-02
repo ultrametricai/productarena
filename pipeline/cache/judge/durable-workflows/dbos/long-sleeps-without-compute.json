@@ -1,18 +1,16 @@
 {
-  "hash": "c757feffce461c1c9af03f848402de454f9eee6b39e82873d34af794e4368cd2",
+  "hash": "d936fddc20316eee7b7513f3118c5e1e64a01af0b92852095247110e8fad6aa3",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "DBOS docs explicitly describe workflows waiting hours-to-days for human input via DBOS.recv(timeout_seconds=...) surviving process restarts and server upgrades, backed by Postgres checkpointing rather than any held server/connection (dbos-docs-12, dbos-docs-28, dbos-docs-39, dbos-docs-2, dbos-docs-4). The architecture is confirmed as a library with no dedicated orchestration server, only Postgres, so a sleeping workflow consumes no compute (dbos-docs-2, dbos-docs-20, dbos-docs-35). missing for 10: explicit mention of multi-month sleep durations (only 'hours or days' is documented), and independent/third-party confirmation of zero billable compute during long sleeps.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "DBOS documents that workflows can durably wait hours or days for a notification via DBOS.recv(timeout_seconds=...) and survive server restarts and upgrades while waiting, because state is checkpointed to Postgres (dbos-docs-12, dbos-docs-28, dbos-docs-39, dbos-docs-4). However, DBOS runs as a library inside your own application process, and nothing in the pack shows that a waiting workflow releases its server, connection, or billable compute. Missing for 10: a documented durable sleep primitive, evidence of waits lasting weeks to months, evidence that waiting consumes no running server, connection, or compute, and independent hands-on corroboration.",
     "evidenceIds": [
       "dbos-docs-12",
       "dbos-docs-28",
       "dbos-docs-39",
-      "dbos-docs-2",
       "dbos-docs-4",
-      "dbos-docs-23",
-      "dbos-docs-20"
+      "dbos-docs-2"
     ],
     "productId": "dbos",
     "storyId": "long-sleeps-without-compute"

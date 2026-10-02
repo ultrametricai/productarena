@@ -1,20 +1,19 @@
 {
-  "hash": "385d39964be974f8dde30c96158f750e99189fbc3f65c1d61dbf5f366022e0c4",
+  "hash": "03378186d6f8861525fea2725b1ef434001126dcd24f4fb453f6c3b92f387591",
   "verdict": {
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Semgrep's CLI clearly supports headless, unauthenticated scanning (`semgrep ci`/`semgrep scan`, no login required, --dry-run) and machine-readable output via SARIF export, which an agent could parse. Community evidence (semgrep-comm-14) shows this pattern used in practice — SARIF output plus LLM triage to surface real findings for human review at Microsoft. Docs also mention 'send alerts/notifications or create tickets to track findings' for Semgrep Code, but this is vague and tied to the platform tier rather than a demonstrated CLI-to-issue-tracker pipeline. Missing for 10: explicit documented JSON/SARIF-to-ticket automation workflow, first-party GitHub/Jira issue-filing integration for CLI findings, and independent hands-on confirmation that filed issues correspond only to 'real' (non-false-positive) findings given community complaints about false positives (semgrep-comm-11).",
+    "rationale": "The Semgrep CLI runs scans locally without login (`semgrep scan`, `--dry-run`) and exports SARIF (`--sarif --sarif-output`). A hands-on report describes feeding Semgrep SARIF to LLMs to triage the most interesting findings, which matches the agent-parse-and-triage loop. Ticket creation is documented only as an AppSec Platform triage feature, and the API is described as listing findings, so issue filing would come from the agent's own tooling or the platform. Missing for 10: documented CLI or agent-driven issue filing, explicit JSON output and exit-code semantics for headless automation, and documented false-positive filtering in a headless CLI flow.",
     "evidenceIds": [
-      "semgrep-docs-19",
       "semgrep-docs-27",
-      "semgrep-docs-33",
       "semgrep-docs-34",
-      "semgrep-docs-3",
+      "semgrep-docs-33",
       "semgrep-docs-20",
+      "semgrep-comm-14",
       "semgrep-docs-22",
-      "semgrep-docs-30",
-      "semgrep-comm-14"
+      "semgrep-docs-17",
+      "semgrep-gh-3"
     ],
     "productId": "semgrep",
     "storyId": "agent-runs-scan-headless"

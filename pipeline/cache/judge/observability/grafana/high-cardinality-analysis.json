@@ -1,16 +1,14 @@
 {
-  "hash": "c69348de8a30d63d7388d31a70103a76bf9d62d807e5c12a605d278af4155c23",
+  "hash": "58beb1e285562613bf5fce884c68f5e9eefecf6df6af587966f60f357ce8171a",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Grafana's backing stores support unindexed, label-based querying (Loki indexes only label metadata, not the full log content, letting you filter/search on arbitrary fields like user_id or request_id at query time) and Tempo enables trace lookups by ID, plus Grafana Explore supports ad-hoc queries/drilldown without pre-built dashboards. However, none of the evidence explicitly discusses high-cardinality field grouping/filtering as a distinct capability, cardinality limits, or performance guarantees at scale, and this capability is largely delegated to the underlying data source rather than being a native Grafana feature. Missing for 10: explicit high-cardinality handling documentation, performance/scale guarantees for ungrouped ad-hoc queries, and independent validation of this specific use case.",
+    "rationale": "Grafana supports ad-hoc exploratory queries (grafana-gh-1). Loki indexes only label metadata (grafana-docs-35), and LogQL filters with labels and operators (grafana-docs-15), which implies you can filter raw log content such as a request id without defining a full-text index. Nothing in the evidence shows grouping or aggregating by high-cardinality fields like user id, or that this works at scale. missing for 10: explicit evidence of group-by on high-cardinality fields, evidence that no pre-aggregation or label design is required, documentation of high-cardinality query performance, independent or hands-on corroboration.",
     "evidenceIds": [
+      "grafana-gh-1",
       "grafana-docs-35",
-      "grafana-docs-15",
-      "grafana-docs-4",
-      "grafana-docs-36",
-      "grafana-gh-1"
+      "grafana-docs-15"
     ],
     "productId": "grafana",
     "storyId": "high-cardinality-analysis"

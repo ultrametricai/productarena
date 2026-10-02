@@ -21,7 +21,7 @@ describe('derive stage', () => {
 
     execFileSync('pnpm', ['pipeline', 'derive', '--category', 'desktop-os'], {
       cwd: repoRoot,
-      env: { ...process.env, PA_DATA_DIR: tmpDir },
+      env: { ...process.env, UM_DATA_DIR: tmpDir },
     })
 
     const productCount = ProductSchema.array().parse(

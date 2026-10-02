@@ -1,10 +1,10 @@
 {
-  "hash": "d798335dad2831078d5142572bafb10a79693a0b4c113f788109455c3a8819d3",
+  "hash": "1c4f52721297f7b87d9a098e4deb74061200861c31ec06fcbb4541acba8b6bff",
   "verdict": {
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "DBOS queues provide 'flow control' letting you limit how many workflows run at once or how often they are started, which can throttle bursty event streams, but there is no documented debounce, dedup, or batching primitive that collapses multiple noisy triggers into a single run. Scheduled workflows (cron) and pub/sub messaging (send/recv) address timing and signaling, not trigger coalescing. Missing for 10: explicit debounce/coalesce API, batch-trigger aggregation, or dedup-by-key mechanism, and any hands-on evidence of collapsing noisy streams into one run.",
+    "rationale": "The only relevant evidence is that DBOS queues provide flow control over how many workflows run at once or how often they start. That amounts to concurrency and rate limiting, which can throttle a noisy stream but does not collapse it. Cron scheduling and per-topic message queues are adjacent primitives, but none of the evidence shows events being merged into fewer runs. Missing for 10: explicit debounce, batching of multiple events into one run, delayed or deferred workflow start, deduplication of rapid triggers, and any hands-on corroboration.",
     "evidenceIds": [
       "dbos-docs-6",
       "dbos-docs-26",

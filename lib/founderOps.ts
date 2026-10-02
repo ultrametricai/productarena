@@ -24,10 +24,24 @@ const OPERATIONAL_CORPUS = path.join('processes', 'corpus.json')
 // own schema/loader/tests live in lib/processes.ts + schemas/process-vendor-registry.schema.json
 // + lib/__tests__/vendorRegistry.test.ts, so the workflow walker skips it like corpus.json.
 const OPERATIONAL_VENDOR_REGISTRY = path.join('processes', 'vendor-registry.json')
+// The corpus's artifact registry (founder depth wave part 2, 2026-10-01) is the operational
+// layer too — its own schema/loader/tests live in lib/processes.ts +
+// schemas/process-artifacts.schema.json + lib/__tests__/processArtifacts.test.ts, so the
+// workflow walker skips it like corpus.json and vendor-registry.json.
+const OPERATIONAL_ARTIFACTS = path.join('processes', 'artifacts.json')
+// The corpus's business-logic ↔ process map (founder 2026-10-02) is the operational layer too —
+// its own schema/loader/tests live in lib/businessLogicMap.ts +
+// lib/__tests__/businessLogicMap.test.ts, so the workflow walker skips it like the other
+// operational registries.
+const OPERATIONAL_BUSINESS_LOGIC_MAP = path.join('processes', 'business-logic-map.json')
 
 function workflowJson(dir: string): string[] {
   return listJson(dir).filter(
-    (f) => !f.endsWith(OPERATIONAL_CORPUS) && !f.endsWith(OPERATIONAL_VENDOR_REGISTRY),
+    (f) =>
+      !f.endsWith(OPERATIONAL_CORPUS) &&
+      !f.endsWith(OPERATIONAL_VENDOR_REGISTRY) &&
+      !f.endsWith(OPERATIONAL_ARTIFACTS) &&
+      !f.endsWith(OPERATIONAL_BUSINESS_LOGIC_MAP),
   )
 }
 

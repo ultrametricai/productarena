@@ -26,7 +26,11 @@ import { cellHash } from '../stages/judge'
 
 const ROOT = path.resolve(__dirname, '..', '..')
 const WRITE = process.argv.includes('--write')
-const PROMPT_VERSION = 'v3' // keep in sync with pipeline/stages/judge.ts
+// Keep in sync with pipeline/stages/judge.ts. NOTE: this script's wave predates the v4
+// judge-model migration (2026-09-30, sonnet-5 → opus-5-5); v4 hashes also fold in the judge
+// model id (cellHash's default 4th arg), so a fresh run of this script against post-migration
+// caches restamps to v4-scheme hashes. The historical v3 restamps it performed are committed.
+const PROMPT_VERSION = 'v4'
 
 // Only the products verified stale-for-intdir-reasons in project-management (the arena the
 // linear fix needed unblocked). Other arenas touched by 54b6a895 carry the same staleness;

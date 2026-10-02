@@ -35,6 +35,9 @@ export async function generateMetadata({
   return {
     title: `${def ? def.name : chain} — End-to-end playbooks — Ultrametric`,
     description: def?.tagline,
+    // Machine discovery of the playbook manifest (the visible 'For agents' line left the
+    // pages — founder 2026-10-02; /llms.txt is the visible once-place).
+    ...(def ? { alternates: { types: { 'application/json': chainManifestPath(def.id) } } } : {}),
   }
 }
 
@@ -135,16 +138,9 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
 
       {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
       <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
-        <span className="text-[10px] uppercase tracking-widest text-zinc-400">For agents</span>{' '}
-        <Link
-          href={chainManifestPath(def.id)}
-          className="text-zinc-400 hover:text-emerald-300"
-          title="Versioned machine-readable run plan for this whole playbook: every process's steps typed api / computer-use / human, vendor options with agent-readiness and MCP endpoints, approval gates"
-        >
-          Process manifest (JSON)
-        </Link>
-        <span className="mx-1.5 text-zinc-700">·</span>
-        <Link href="/llms.txt" className="text-zinc-400 hover:text-emerald-300">/llms.txt</Link>
+        {/* The visible 'For agents' line left playbook pages too (founder 2026-10-02: once,
+            not everywhere) — /llms.txt documents the manifests; <link rel="alternate"> keeps
+            per-page machine discovery. */}
       </section>
     </div>
   )

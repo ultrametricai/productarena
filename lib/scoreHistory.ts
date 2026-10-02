@@ -56,7 +56,7 @@ export function metricTrendDelta(
 }
 
 // Back-compat alias: the Overall score (aiEra) flavor predates metricTrendDelta.
-export function paScoreTrendDelta(
+export function overallScoreTrendDelta(
   categoryId: string,
   productId: string,
   dir: string = DEFAULT_DIR(),
@@ -70,7 +70,10 @@ export function paScoreTrendDelta(
 // run — re-running derive on unchanged verdicts appends nothing, because the rounded values
 // still match the file's tail. Returns the number of lines appended. Mirrors
 // pipeline/stages/popularity.ts's popularity-history.jsonl append, minus the per-run cadence.
-export function appendScoreHistoryOnChange(categoryDir: string, rankings: Rankings, date: string = rankings.generatedAt): number {
+// `note` (optional) labels every appended line with a provenance marker — used by judge-model
+// migration waves so score discontinuities that reflect a judge change, not an evidence change,
+// are stamped as such in the series (ScoreHistoryEntrySchema.note).
+export function appendScoreHistoryOnChange(categoryDir: string, rankings: Rankings, date: string = rankings.generatedAt, note?: string): number {
   const file = path.join(categoryDir, SCORE_HISTORY_FILE)
   const existing = fs.existsSync(file) ? parseScoreHistoryJsonl(fs.readFileSync(file, 'utf8')) : []
   const last = new Map<string, ScoreHistoryEntry>()
@@ -82,7 +85,7 @@ export function appendScoreHistoryOnChange(categoryDir: string, rankings: Rankin
     const agentReady = roundScore(entry.agentReady)
     const prev = last.get(entry.productId)
     if (prev && prev.aiEra === aiEra && prev.agentReady === agentReady) continue
-    lines.push({ productId: entry.productId, date, aiEra, agentReady })
+    lines.push({ productId: entry.productId, date, aiEra, agentReady, ...(note ? { note } : {}) })
   }
   if (lines.length > 0) {
     fs.appendFileSync(file, lines.map((l) => JSON.stringify(l)).join('\n') + '\n')

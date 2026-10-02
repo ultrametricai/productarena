@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { IconGlyph } from '@/components/IconChip'
 import { formatMinutes } from '@/lib/processSim'
 import type { ResolvedVsEvent } from '@/lib/virtualStartupRun'
 
@@ -33,7 +34,10 @@ export default function VsEventCard({
       className="my-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-[13px]"
     >
       <p className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[10px] uppercase tracking-widest text-amber-300/90">⚡ event · day {day}</span>
+        <span className="flex items-center gap-1 text-[10px] uppercase tracking-widest text-amber-300/90">
+          {/* The house bolt glyph (was the ⚡ emoji — founder 2026-10-01: custom icons in the sim). */}
+          <IconGlyph icon="pi:bolt:amber" /> event · day {day}
+        </span>
         <span className="font-medium text-zinc-200">{def.title}</span>
       </p>
       <p className="mt-1 text-zinc-400">{def.blurb}</p>

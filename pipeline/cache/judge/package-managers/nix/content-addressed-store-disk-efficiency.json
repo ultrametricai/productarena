@@ -1,18 +1,16 @@
 {
-  "hash": "4e4c3df57284b397d4d259be5382c9ff0e45a6a24de9350493d8f4d198257883",
+  "hash": "8afa7ea59170286b60c6d6de353fa31bb7dbbc073cdfe0fa0a554493a474bfed",
   "verdict": {
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Docs confirm the Nix store deduplicates dependencies by content-addressed path, never overwriting but adding new versions, allowing multiple versions/variants coexisting once on disk and reused across profiles/projects (nix-docs-5, nix-docs-49, nix-docs-50, nix-docs-54, nix-docs-36). Independent hands-on testimony corroborates real-world sharing across a whole dev team and CI ('Everything is only built once... shared among all of our devs, CI, and deployment infrastructure', nix-comm-9) and cross-project dependency isolation (nix-comm-6). Missing for 10: no explicit first-party diagram/benchmark quantifying disk-space savings across many projects simultaneously.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Nix's docs describe a single Nix store where `nix-shell` only builds or downloads dependencies that are not already present, which implies reuse across projects. Packages are added to the store under different paths, so multiple versions can coexist without overwriting each other, and a garbage collector removes unused ones. A community report adds that things are 'only built once' and then shared. Missing for 10: explicit documentation that store paths are content-addressed/hashed, explicit confirmation of on-disk deduplication across projects, and independent hands-on corroboration of disk-space savings.",
     "evidenceIds": [
-      "nix-docs-5",
+      "nix-docs-2",
       "nix-docs-49",
       "nix-docs-50",
-      "nix-docs-54",
-      "nix-docs-36",
-      "nix-comm-9",
-      "nix-comm-6"
+      "nix-docs-6",
+      "nix-comm-9"
     ],
     "productId": "nix",
     "storyId": "content-addressed-store-disk-efficiency"

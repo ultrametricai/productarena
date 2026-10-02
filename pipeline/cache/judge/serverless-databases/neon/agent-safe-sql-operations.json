@@ -1,16 +1,19 @@
 {
-  "hash": "593255c89e9803b9e61b75745c25a85be97119535364b7476ad847e049f75859",
+  "hash": "7225d4744e206455ee339ff395c8e151e025145d960e91c20c9fb173e0d0cfb9",
   "verdict": {
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon's hosted MCP server exposes a documented 113-tool surface with explicit read-only mode (?readonly=true), category scoping, and project scoping, verified keylessly via the list-tools endpoint returning tools tagged readOnlySafe:true and injecting a guardrail notice that write tools are removed. Runtime probes confirm the server is live, OAuth-gated, and the read-only filtering works as documented, directly matching the story of scoped tools distinguishing read-only from destructive actions. missing for 10: independent third-party (non-Neon) hands-on report of an agent actually being blocked from a destructive action in practice, beyond Neon's own docs/probes.",
+    "rationale": "Neon's hosted MCP server exposes SQL tools (run_sql, run_sql_transaction, explain) and schema tools (prepare/complete migration, compare schema). It offers documented least-privilege controls: `?readonly=true`, category scoping and project scoping. A keyless probe confirmed the read-only scoped tool list, with every tool flagged `readOnlySafe: true` and write tools removed. Branch-based migrations keep production untouched until changes are validated, and project-scoped API keys add credential scoping. Missing for 10: independent community or hands-on reports of agents using the destructive-vs-read-only split in practice, and evidence of per-call confirmation or annotation for destructive tools when write mode is enabled.",
     "evidenceIds": [
+      "neon-supp-mcp-tool-surface",
       "neon-supp-mcp-scoping-readonly",
       "neon-probe-7",
+      "neon-supp-mcp-transport",
       "neon-probe-6",
-      "neon-supp-mcp-tool-surface",
-      "neon-docs-33"
+      "neon-supp-copilot-agents",
+      "neon-supp-api-key-scoping",
+      "neon-docs-45"
     ],
     "productId": "neon",
     "storyId": "agent-safe-sql-operations"

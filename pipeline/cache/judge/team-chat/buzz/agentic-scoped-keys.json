@@ -1,19 +1,17 @@
 {
-  "hash": "b4998f815d135e277ca79c4fd15eb36860ca3a87e3a0eb620daaf09a8aaace54",
+  "hash": "64a9b8b181f5145e7abd96da077a37a8543bd7925867aa0e11f7ad714086f183",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Buzz issues each agent its own Nostr keypair as a distinct credential/identity (buzz-supp-acp-harness, buzz-gh-4), with a dedicated agent-authentication spec (NIP-AA) that scopes agent access to owner enrollment and auto-revokes when the owner's membership is revoked (buzz-supp-nip-aa-agent-auth), a fail-closed owned-agent discovery model where discovery alone does not confer authorization (buzz-supp-owned-agent-guardrails), and an admin API that requires signed per-request events rather than static tokens with a two-tier principal model (buzz-supp-admin-api). Git access is similarly scoped to the agent's own keypair rather than a shared PAT (buzz-supp-git-nostr-credentials).\n\nmissing for 10: independent/hands-on validation of real-world least-privilege enforcement (community members flag that the group/permission rules may not survive real-world edge cases, e.g. buzz-comm-6), and no documented fine-grained per-API-scope (read/write/admin) system beyond channel membership + admin tiers.",
+    "rationale": "Buzz gives each agent its own Nostr keypair, minted per agent with `buzz-admin generate-key` and enrolled via `add-member`. Each agent also has its own channel memberships and audit trail. NIP-AA ties agent access to the owner's membership, so revoking the owner automatically cuts off the agent, and a community commenter confirms channel-based scoping exists. However, the scoping is identity plus channel membership, not fine-grained API credential scopes, so it only partly meets the least-privilege ask. Missing for 10: per-credential permission scopes (e.g., read-only or action-limited keys), credential expiry/rotation, and an explicitly documented least-privilege grant flow for agent keys.",
     "evidenceIds": [
       "buzz-gh-4",
       "buzz-supp-acp-harness",
       "buzz-supp-nip-aa-agent-auth",
-      "buzz-supp-admin-api",
       "buzz-supp-owned-agent-guardrails",
       "buzz-supp-git-nostr-credentials",
-      "buzz-comm-5",
-      "buzz-comm-6"
+      "buzz-comm-5"
     ],
     "productId": "buzz",
     "storyId": "agentic-scoped-keys"

@@ -1,14 +1,13 @@
 {
-  "hash": "9f6121b71cc1175ef1901b1872ce7473627db5565eb9c526e0f2c33dc7b82f33",
+  "hash": "4c3c3ae89593a992120529c12a59c1f2cac822284bd81d747acc3fe724dfdbb0",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Homebrew's Cellar model installs each formula version once and symlinks it into the prefix (homebrew-docs-28), which does mean a given dependency version isn't duplicated per-project like node_modules-style tools — supporting the 'stored once' half of the story. However, there is no evidence of a true content-addressable (hash-keyed) store like Nix/pnpm; kegs are organized by formula name+version, not content hash, and community commentary explicitly contrasts Homebrew unfavorably with Nix's reproducibility/content-addressing model (homebrew-comm-13, homebrew-comm-15). Missing for 10: documentation of hash-based addressing/deduplication, evidence of content-addressable store paths, and independent confirmation that identical content is deduplicated across differing package names/versions.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Homebrew installs each package into its own keg inside a single shared Cellar and symlinks it into the prefix. That gives a global, machine-wide store, so one installed version serves every project that relies on it, including Brewfile-based projects. Nothing in the evidence shows this store is content-addressable: kegs are organized by package, not by content hash. Missing for 10: content-addressable (hash-keyed) storage, documented deduplication guarantees, per-project version isolation backed by a shared store, independent corroboration of disk-space savings.",
     "evidenceIds": [
       "homebrew-docs-28",
-      "homebrew-comm-13",
-      "homebrew-comm-15"
+      "homebrew-docs-1"
     ],
     "productId": "homebrew",
     "storyId": "content-addressed-store-disk-efficiency"

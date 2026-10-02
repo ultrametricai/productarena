@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import AiEraBadge from '@/components/AiEraBadge'
+import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import type { MegaTableRow } from '@/lib/megaTableSort'
 
 // Homepage "Rankings" section (founder 2026-09-30): a compact, static mini table of the TOP 15
@@ -49,8 +50,12 @@ export default function HomeRankingsMini({ rows }: { rows: MegaTableRow[] }) {
                   </td>
                   <td className="hidden max-w-[180px] px-2 py-2 md:table-cell">
                     <Link href={`/arena/${row.arenaId}`} className="block truncate whitespace-nowrap text-xs text-zinc-500 hover:text-emerald-300">
-                      {(arenaIcons as Record<string, string>)[row.arenaId] && (
-                        <span aria-hidden className="mr-1">{(arenaIcons as Record<string, string>)[row.arenaId]}</span>
+                      {/* The arena's house glyph (lib/arenaIcons.ts) — same icon it wears in
+                          the Arenas menu and on its page header. */}
+                      {arenaIcon(row.arenaId) && (
+                        <span aria-hidden className="mr-1 inline-flex align-[-0.125em]">
+                          <IconGlyph icon={arenaIcon(row.arenaId)} />
+                        </span>
                       )}
                       {row.arenaName}
                     </Link>

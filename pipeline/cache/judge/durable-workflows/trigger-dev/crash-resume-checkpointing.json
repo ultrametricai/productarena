@@ -1,18 +1,17 @@
 {
-  "hash": "c2e6fe93a926d13e38592a6fed069a20a3a4c52868eb149b8aae1f234c3f2960",
+  "hash": "64511b41f3d82a014f09449031c11156f256c7f72bbce771b2adecc9e9c3fab8",
   "verdict": {
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Trigger.dev's architecture is explicitly built on checkpoint-resume durability so tasks 'run normal TypeScript with no determinism constraints' and survive infrastructure issues; docs describe automatic retries with backoff, waitpoint tokens that pause/resume runs, version-locking so in-flight runs aren't affected by new deploys, and durable AI chats explicitly 'surviving refreshes, deploys, and crashes.' A community reference (Magic Patterns) also confirms real-world resilience where a custom process crashed under load but Trigger.dev jobs 'just worked.' Missing for 10: independent/hands-on verification of an actual mid-run crash-and-resume test and more detail on exactly how much step-level state is preserved versus re-executed.",
+    "rationale": "Trigger.dev documents checkpoint-resume for durable tasks (docs-38, gh-1, docs-39), and docs-7 locks in-flight runs to their code version across deploys. Survival of crashes and deploys is explicitly claimed only for the AI-chat feature (docs-13). Otherwise the documented recovery mechanism is retries with exponential backoff (docs-4), and nothing shows a generic task resuming from its last completed step with state intact after a process or infrastructure failure. Community wish-list comments asking for wait/resume are old requests, not concrete failures, so they lower confidence rather than create a dispute. Missing for 10: explicit documentation of step-level resume after crash or infrastructure failure for general tasks, detail on how state is persisted, and independent hands-on corroboration of recovery.",
     "evidenceIds": [
       "trigger-dev-docs-38",
       "trigger-dev-docs-13",
-      "trigger-dev-docs-6",
-      "trigger-dev-docs-31",
-      "trigger-dev-docs-4",
       "trigger-dev-docs-7",
-      "trigger-dev-comm-9"
+      "trigger-dev-gh-1",
+      "trigger-dev-docs-39",
+      "trigger-dev-docs-4"
     ],
     "productId": "trigger-dev",
     "storyId": "crash-resume-checkpointing"

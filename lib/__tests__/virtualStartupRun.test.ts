@@ -646,7 +646,7 @@ describe('permalink — the whole run state round-trips through ?run= (v2), and 
   it("the assistant token 'a' (item 7): round-trips, defaults null, rejects junk — only judged VS_AI_FIRM_IDS decode", () => {
     expect(decodeRunState(encodeRunState(state))!.assistant).toBe('claude')
     expect(decodeRunState(encodeRunState({ ...state, assistant: null }))!.assistant).toBeNull()
-    for (const id of ['chatgpt', 'claude', 'gemini', 'grok', 'muse']) {
+    for (const id of ['chatgpt', 'claude', 'gemini', 'grok', 'muse', 'dots', 'grok-bot', 'kimi', 'perplexity-computer']) {
       expect(decodeRunState(encodeRunState({ ...state, assistant: id }))!.assistant).toBe(id)
     }
     // Not a judged roster id → the whole payload rejects (defensive-decode convention).
@@ -813,18 +813,23 @@ describe('server payloads — canonical verdicts, cited pricing, corpus risks', 
 
   it('buildVsAssistants: the founder roster resolved against the JUDGED ai-assistants products, roster order, real names (item 7)', () => {
     const assistants = buildVsAssistants(DATA_DIR)
-    expect(assistants.map((a) => a.id)).toEqual(['chatgpt', 'claude', 'gemini', 'grok', 'muse'])
+    expect(assistants.map((a) => a.id)).toEqual([
+      'chatgpt', 'claude', 'gemini', 'grok', 'muse',
+      // Appended with the 2026-10-01 roster expansion — codec 'a' tokens are append-only.
+      'dots', 'grok-bot', 'kimi', 'perplexity-computer',
+    ])
     const products = JSON.parse(
       fs.readFileSync(path.join(DATA_DIR, 'ai-assistants', 'products.json'), 'utf8'),
     ) as Array<{ id: string; name: string }>
     const byId = new Map(products.map((p) => [p.id, p.name]))
     for (const a of assistants) {
-      // Every option is a real judged product wearing its judged display name — no grokbot
-      // exists in the roster, so none is offered.
+      // Every option is a real judged product wearing its judged display name.
       expect(byId.get(a.id), `${a.id} not judged in ai-assistants`).toBe(a.name)
       expect(typeof a.hasLogo).toBe('boolean')
     }
-    expect(byId.has('grokbot')).toBe(false)
+    // The 2026-10-01 additions resolve to their real judged display names.
+    expect(byId.get('grok-bot')).toBe('Grok Bot')
+    expect(byId.get('perplexity-computer')).toBe('Perplexity Computer')
     // …and the journey actually contains AI-conversation steps for the pin to land on: at least
     // one union step's judged ranking lives in the ai-assistants arena.
     const tasks = union.map((id) => corpusById.get(id)!)

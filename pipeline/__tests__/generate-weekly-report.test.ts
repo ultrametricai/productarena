@@ -5,7 +5,7 @@ import {
 } from '@/pipeline/scripts/generate-weekly-report'
 
 const NOW = new Date('2026-09-06T12:00:00Z')
-const SITE = 'https://example.test/productarena'
+const SITE = 'https://example.test/site'
 
 function entry(productId: string, date: string, aiEra: number | null) {
   return { productId, date, aiEra, agentReady: null }

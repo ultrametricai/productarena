@@ -143,3 +143,15 @@ describe('interactions write params; defaults remove them', () => {
     expect(params().get('rank')).toBe('popularity')
   })
 })
+
+describe('arena column house glyphs (founder sweep 2026-10-02)', () => {
+  it("renders the arena's house SVG via arenaIcon()/IconGlyph, never the legacy emoji or a raw token", () => {
+    const { container } = mount()
+    // 'payments' is a real arena id — its cell link carries the custom duotone SVG.
+    const arenaLink = container.querySelector('a[href="/arena/payments"]') as HTMLElement
+    expect(arenaLink).not.toBeNull()
+    expect(arenaLink.querySelector('svg')).not.toBeNull()
+    expect(arenaLink.textContent).not.toContain('💳') // the old data/arena-icons.json emoji
+    expect(arenaLink.textContent).not.toContain('pi:') // the token renders as SVG, never as text
+  })
+})

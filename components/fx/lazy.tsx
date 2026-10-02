@@ -12,3 +12,4 @@ import dynamic from 'next/dynamic'
 export const HeroFractal = dynamic(() => import('./HeroFractalCanvas'), { ssr: false })
 export const JuliaHero = dynamic(() => import('./JuliaHeroCanvas'), { ssr: false })
 export const FooterAttractor = dynamic(() => import('./FooterAttractorCanvas'), { ssr: false })
+export const AboutFractal = dynamic(() => import('./AboutFractalCanvas'), { ssr: false })

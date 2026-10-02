@@ -3,9 +3,11 @@
 // one table so we have one view for the processes under the process search"), with the same-day
 // vocabulary follow-up ("we don't need to say 'playbook' on those playbooks… playbooks are
 // still processes"): chain rows in the one table — no 'Playbooks' group, no chip, one unified
-// search count, the VS card stays. Founder 2026-09-30: the 'All processes' heading is gone (the
-// table stands alone under the search) and the default view is the flat FOUNDER-TIMELINE sort —
-// process rows in timeOrder, chain rows (no timeOrder of their own in the flat view) after them.
+// search count. Founder 2026-09-30: the 'All processes' heading is gone (the table stands alone
+// under the search) and the default view is the flat FOUNDER-TIMELINE sort — process rows in
+// timeOrder, chain rows (no timeOrder of their own in the flat view) after them. Founder
+// 2026-10-02: the simulator promo card and the vendor-tracing footer line are gone too — the
+// table is the page's bottom (title + search + controls + table).
 import { render, within } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -44,8 +46,12 @@ describe('/processes — one combined table, one processes vocabulary', () => {
       expect(rowIdx, `chain ${p.id} must link to its chain page`).toBeGreaterThanOrEqual(0)
       expect(rowIdx, `chain ${p.id} must follow the timeline-sorted processes`).toBeGreaterThan(lastProcessIdx)
     }
-    // The first two process rows really are in founder-timeline order.
-    const byTime = [...rows].sort((a, b) => a.timeOrder - b.timeOrder)
+    // The first two process rows really are in founder-timeline order. Situations carry no
+    // timeOrder slot (founder 2026-10-01) — they follow the timeline, so the probe scopes to
+    // the timeline rows.
+    const byTime = rows
+      .filter((r) => r.timeOrder !== null)
+      .sort((a, b) => (a.timeOrder ?? 0) - (b.timeOrder ?? 0))
     const idxOf = (slug: string) => trs.findIndex((tr) => tr.querySelector(`a[href="/processes/${slug}"]`) !== null)
     expect(idxOf(byTime[0].slug)).toBeLessThan(idxOf(byTime[byTime.length - 1].slug))
     expect(idxOf(byTime[0].slug)).toBe(0)
@@ -58,7 +64,7 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     }
   })
 
-  it('the fat search counts chains in the one processes N; the simulator card stays (renamed 2026-09-30, item 1)', () => {
+  it('the fat search counts chains in the one processes N; the simulator card and the footer line are gone (founder 2026-10-02)', () => {
     const { container } = render(<ProcessesPage />)
     const playbooks = buildPlaybookRows()
     const { rows } = buildProcessRows()
@@ -68,9 +74,13 @@ describe('/processes — one combined table, one processes vocabulary', () => {
 
     // The route-dot legend was removed with the dots (founder 2026-09-29).
     expect(within(container).queryByText('agent-runnable')).toBeNull()
-    // 'Virtual Startup' → 'The open startup simulator' (founder batch 2026-09-30, item 1) —
-    // the route and internal vocabulary stay /startup-sim.
-    expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/startup-sim')
+    // The simulator promo card is gone (founder 2026-10-02) — no /startup-sim link on this
+    // page; the route stays reachable through the nav and ⌘K.
+    expect(within(container).queryByText('🐣 The open startup simulator')).toBeNull()
+    expect(container.querySelector('a[href="/startup-sim"]')).toBeNull()
+    // So is the vendor-tracing footer line (same founder batch) — the table ends the page.
+    expect(container.textContent).not.toContain('Every mapped vendor traces to a live arena leaderboard')
+    expect(within(container).queryByText('See all rankings →')).toBeNull()
   })
 })
 

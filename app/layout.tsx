@@ -16,13 +16,13 @@ import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
 import GeoMark from "@/components/GeoMark";
 import { loadAll, loadCategories } from "@/lib/data";
-import arenaIcons from "@/data/arena-icons.json";
+import { arenaIcon, ARENA_ICONS, EXPLORE_SECTION_ICONS, OVERALL_ICON } from "@/lib/arenaIcons";
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
-import { buildChainEntries, buildPageEntries, buildSearchIndex, buildStackEntries, V2_PRODUCT_ENTRY, type SearchEntry } from "@/lib/search-index";
+import { buildChainEntries, buildPageEntries, buildProcessEntries, buildSearchIndex, buildStackEntries, V2_PRODUCT_ENTRY, type SearchEntry } from "@/lib/search-index";
 import { loadAiStacks } from "@/lib/aiStacks";
-import { loadChains } from "@/lib/processes";
+import { loadChains, loadProcesses, processSlug } from "@/lib/processes";
 import searchAliases from "@/data/search-aliases.json";
 
 // Short labels used inside the Arenas dropdown alongside full names.
@@ -210,13 +210,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // The Overall (all-products) rankings view leads the Arenas dropdown (founder 2026-09-29) —
   // it's the cross-arena leaderboard the per-arena entries below drill into.
   const arenaMenuSections = [
-    { name: "", items: [{ id: "overall", name: "Overall — every product ranked", label: "all arenas", icon: "⭐", href: "/overall" }] },
+    { name: "", items: [{ id: "overall", name: "Overall — every product ranked", label: "all arenas", icon: OVERALL_ICON, href: "/overall" }] },
     ...loadArenaSections().map((section) => ({
     name: section.name,
     items: section.arenaIds.flatMap((id): ArenaMenuItem[] => {
       const c = categoryById.get(id);
       return c
-        ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: (arenaIcons as Record<string, string>)[c.id] }]
+        ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: arenaIcon(c.id) }]
         : [];
     }),
     })),
@@ -230,7 +230,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const pageAliases = searchAliases.pages as Record<string, string[]>;
   const searchEntries: SearchEntry[] = [
     ...buildSearchIndex(loadAll(), {
-      arenaIcons: arenaIcons as Record<string, string>,
+      // House icon tokens (lib/arenaIcons.ts) — the palette renders them as the custom duotone
+      // glyphs via IconGlyph; the legacy emoji stay in data/arena-icons.json as guides.
+      arenaIcons: ARENA_ICONS,
       hasLogo,
       keywords: searchAliases.arenas as Record<string, string[]>,
     }),
@@ -244,6 +246,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Most open (full ranking)", sublabel: "All products, ranked by openness", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },
     ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
+    // The ⌘K 'Processes' group (founder 2026-10-02: defaults include processes): the
+    // /processes index entry plus the high-traffic processes below. Ids come from
+    // processes/corpus.json; titles/slugs resolve through loadProcesses/processSlug so a
+    // rename can never strand a palette row — a missing id fails the build loudly instead
+    // of silently dropping a founder-curated entry.
+    ...buildProcessEntries(
+      ["form_001", "form_002", "qs_023", "qs_063", "fund_001", "tax_001"].map((id) => {
+        const t = loadProcesses().find((p) => p.id === id);
+        if (!t) throw new Error(`⌘K high-traffic process ${id} missing from processes/corpus.json`);
+        return { slug: processSlug(t.title), title: t.title, sublabel: `Founder process · ${t.phase}` };
+      }),
+      pageAliases,
+    ),
     ...buildPageEntries(pageAliases),
     // The company's own CLI/MCP product page (app/v2) — a `product` row in the palette.
     V2_PRODUCT_ENTRY,
@@ -323,11 +338,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 geo
                 sections={[
                   {
-                    name: "🏢 Company rankings",
+                    // House glyphs instead of the old 🏢/🔁 emoji (founder 2026-10-01: apply
+                    // the custom icon set to the top-bar menus).
+                    name: "Company rankings",
+                    icon: EXPLORE_SECTION_ICONS.companyRankings,
                     items: GLOBAL_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "companies", href: r.href })),
                   },
                   {
-                    name: "🔁 Process rankings",
+                    name: "Process rankings",
+                    icon: EXPLORE_SECTION_ICONS.processRankings,
                     items: PROCESS_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "processes", href: r.href })),
                   },
                   {
@@ -453,26 +472,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
               <div className="flex flex-wrap items-center gap-1 text-sm text-zinc-500">
                 <span>© 2026 Ultrametric.</span>
-                <span className="mx-2 hidden sm:inline">·</span>
-                <span className="flex items-center gap-1">
-                  <span>Made from</span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M3 18h18M5 18V10M19 18V10M5 10l2-6h10l2 6M8 10V7M12 10V4M16 10V7M5 14h14" />
-                    </svg>
-                  </span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M2 20l5-8 4 5 3-4 8 7" />
-                    </svg>
-                  </span>
-                  <span>&amp;</span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-                    </svg>
-                  </span>
-                </span>
+                {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
               </div>
               {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
                   viewport and becomes the page's only source of horizontal scroll. */}

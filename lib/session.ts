@@ -30,7 +30,7 @@ const LOADING: Session = { state: 'loading' }
 const ANONYMOUS: Session = { state: 'anonymous' }
 
 // Worker login flow (302 to the WorkOS AuthKit hosted page). return_to brings the reader back
-// to the exact PA page they were on; the worker only honors ultrametric.ai paths.
+// to the exact page they were on; the worker only honors ultrametric.ai paths.
 export function loginUrl(returnTo: string): string {
   return `${AUTH_BASE}/login?return_to=${encodeURIComponent(returnTo)}`
 }

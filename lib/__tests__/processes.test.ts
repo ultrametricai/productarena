@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { isPopulated, loadCategories, loadCategory } from '@/lib/data'
@@ -25,9 +26,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 124 processes with unique, non-empty slugs', () => {
+  it('loads all 136 records (124 processes + 12 situations) with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(124)
+    expect(tasks.length).toBe(136)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -150,16 +151,31 @@ describe('corpus', () => {
     expect(cadenceOf('sw_002')).toBe('weekly')
   })
 
-  it('the five orderings are fully curated: timeOrder unique, 1–5 scores everywhere', () => {
+  it('the five orderings are fully curated: timeOrder unique over processes, 1–5 scores everywhere', () => {
     const tasks = loadProcesses(DATA_DIR)
+    // Situations (founder 2026-10-01) are reactive: NO timeOrder slot, a trigger sentence and
+    // an honest urgency tier instead. Processes keep the exact pre-situation contract. The
+    // loader enforces both directions; these assertions name offenders precisely.
+    const processes = tasks.filter((t) => t.kind === 'process')
+    const situations = tasks.filter((t) => t.kind === 'situation')
+    for (const t of processes) {
+      expect(Number.isInteger(t.timeOrder) && (t.timeOrder ?? 0) >= 1, `${t.id} timeOrder`).toBe(true)
+      expect(t.trigger, `${t.id}: trigger is situation-only`).toBeUndefined()
+      expect(t.urgency, `${t.id}: urgency is situation-only`).toBeUndefined()
+    }
+    for (const t of situations) {
+      expect(t.timeOrder, `${t.id}: situations carry no timeline slot`).toBeUndefined()
+      expect((t.trigger ?? '').length, `${t.id}: a situation names its trigger`).toBeGreaterThan(20)
+      expect(['hours', 'days', 'weeks'], `${t.id} urgency`).toContain(t.urgency)
+    }
     for (const t of tasks) {
-      expect(Number.isInteger(t.timeOrder) && t.timeOrder >= 1, `${t.id} timeOrder`).toBe(true)
       for (const [field, v] of [['annoyance', t.annoyance], ['risk', t.risk], ['growthImpact', t.growthImpact]] as const) {
         expect(Number.isInteger(v) && v >= 1 && v <= 5, `${t.id} ${field}=${v} must be an integer 1–5`).toBe(true)
       }
     }
-    // The founder timeline is a total order: every position unique, so the sort is deterministic.
-    expect(new Set(tasks.map((t) => t.timeOrder)).size).toBe(tasks.length)
+    // The founder timeline is a total order OVER PROCESSES: every position unique, so the sort
+    // is deterministic; situations sit outside it by design.
+    expect(new Set(processes.map((t) => t.timeOrder)).size).toBe(processes.length)
     // …and every score axis actually discriminates (not a wall of 3s).
     for (const field of ['annoyance', 'risk', 'growthImpact'] as const) {
       expect(new Set(tasks.map((t) => t[field])).size, `${field} should span multiple values`).toBeGreaterThanOrEqual(4)
@@ -169,8 +185,9 @@ describe('corpus', () => {
   it('ordering anchors: the founder spot checks hold', () => {
     const tasks = loadProcesses(DATA_DIR)
     const byId = (id: string) => tasks.find((t) => t.id === id)!
-    // Incorporation is where the founder timeline starts.
-    const first = tasks.reduce((min, t) => (t.timeOrder < min.timeOrder ? t : min))
+    // Incorporation is where the founder timeline starts (situations sit outside the timeline).
+    const timeline = tasks.filter((t) => t.kind === 'process')
+    const first = timeline.reduce((min, t) => ((t.timeOrder ?? Infinity) < (min.timeOrder ?? Infinity) ? t : min))
     expect(first.id).toBe('form_001')
     expect(byId('form_001').timeOrder).toBe(1)
     // DE franchise tax: high risk, annual.
@@ -260,6 +277,49 @@ describe('corpus', () => {
     }
   })
 
+  // The geo-note KIND (founder ask 2026-10-02: "?geo=in should hide the processes that are not
+  // used in that country — an EIN for India doesn't make sense"). Required with no zod default,
+  // so totality over every committed note is enforced by the parse itself; these pin the
+  // curation decisions and the honest distribution.
+  it('every geoNote carries a curated kind; the distribution and the worked examples hold', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const kinds = { analog: 0, absorbed: 0, 'not-applicable': 0 }
+    for (const t of tasks) {
+      for (const n of t.geoNotes ?? []) {
+        expect(['analog', 'absorbed', 'not-applicable'], `${t.id}/${n.country} kind`).toContain(n.kind)
+        kinds[n.kind]++
+        // A note on a GLOBAL process is a per-country flavor of work that exists everywhere —
+        // by construction it can only be 'analog' (the other kinds would contradict the scope).
+        if (t.geoScope === 'global') expect(n.kind, `${t.id}/${n.country}: global flavor notes are analogs`).toBe('analog')
+      }
+    }
+    // Honest distribution: most mapped needs exist abroad as their own processes; the absorbed/
+    // not-applicable tails are real but small (each entry is individually curated).
+    expect(kinds.analog).toBeGreaterThan(kinds.absorbed + kinds['not-applicable'])
+    expect(kinds.absorbed).toBeGreaterThan(0)
+    expect(kinds['not-applicable']).toBeGreaterThan(0)
+
+    const noteKind = (id: string, country: string) =>
+      tasks.find((t) => t.id === id)!.geoNotes!.find((n) => n.country === country)?.kind
+    // The founder's example, pinned: an EIN doesn't make sense in India — PAN/TAN arrive inside
+    // the SPICe+ incorporation filing. The UK's UTR and France's SIREN/SIRET are automatic too;
+    // Germany's ELSTER tax-office registration is a real filing of its own.
+    expect(noteKind('form_002', 'IN')).toBe('absorbed')
+    expect(noteKind('form_002', 'UK')).toBe('absorbed')
+    expect(noteKind('form_002', 'FR')).toBe('absorbed')
+    expect(noteKind('form_002', 'DE')).toBe('analog')
+    // Incorporation has a true doable analog in all four countries.
+    for (const c of ['IN', 'UK', 'DE', 'FR']) expect(noteKind('form_001', c), `form_001/${c}`).toBe('analog')
+    // No country has a US-style registered-agent industry — the registered office is declared
+    // inside formation everywhere.
+    for (const c of ['IN', 'UK', 'DE', 'FR']) expect(noteKind('qs_043', c), `qs_043/${c}`).toBe('absorbed')
+    // The need genuinely absent: no UK 1099 regime; nothing to foreign-qualify for inside the
+    // UK; no German franchise-tax ritual (the IHK-Beitrag arrives automatically).
+    expect(noteKind('tax_003', 'UK')).toBe('not-applicable')
+    expect(noteKind('qs_045', 'UK')).toBe('not-applicable')
+    expect(noteKind('tax_001', 'DE')).toBe('not-applicable')
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()
@@ -268,6 +328,67 @@ describe('corpus', () => {
     expect(CADENCE_ORDER.map(cadenceRank)).toEqual(CADENCE_ORDER.map((_, i) => i))
     expect(cadenceRank('daily')).toBe(0)
     expect(cadenceRank('once')).toBe(CADENCE_ORDER.length - 1)
+  })
+
+  // Situations (founder ask 2026-10-01): reactive, trigger-driven records — the honest-curation
+  // spot pins. Kind invariants (trigger/urgency/timeOrder) are pinned in the orderings test
+  // above; these pin the CONTENT decisions.
+  it('situations: the founder examples and the curated set hold their honest shape', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const byId = (id: string) => tasks.find((t) => t.id === id)!
+    const situations = tasks.filter((t) => t.kind === 'situation')
+    expect(situations.length).toBe(12)
+    // Reactive by definition: every situation is event-driven — no situation sits on a calendar.
+    for (const t of situations) expect(t.cadence, `${t.id} cadence`).toBe('event-driven')
+    // The urgency clock is curated, not uniform — all three tiers exist in the set.
+    expect(new Set(situations.map((t) => t.urgency)).size).toBe(3)
+
+    // C&D (founder example 1): the counsel step routes through the judged startup-law-firms
+    // arena, and the engagement-letter signature is the legally-human step.
+    const cnd = byId('sit_001')
+    expect(cnd.urgency).toBe('days')
+    const counsel = cnd.dag.nodes.find((n) => n.optionsArenaId === 'startup-law-firms')!
+    expect(counsel, 'C&D counsel step routes via the judged law-firm arena').toBeDefined()
+    const engagement = cnd.dag.nodes.find((n) => n.legalSignature)!
+    expect(engagement.route).toBe('person')
+    expect(engagement.label.toLowerCase()).toContain('engagement')
+    // No statutory C&D response clock exists — the honest framing is the letter's own deadline.
+    expect(cnd.dag.nodes.some((n) => n.label.toLowerCase().includes('stated deadline'))).toBe(true)
+
+    // Visa (founder example 2): the real status portals are cited — CEAC and the USCIS tracker —
+    // and premium processing carries its honest scope (petition classes, per USCIS).
+    const visa = byId('sit_002')
+    const urls = visa.dag.nodes.map((n) => n.actionUrl ?? '')
+    expect(urls.some((u) => u.startsWith('https://ceac.state.gov/'))).toBe(true)
+    expect(urls.some((u) => u.startsWith('https://egov.uscis.gov/'))).toBe(true)
+    expect(urls.some((u) => u.includes('uscis.gov/forms/all-forms/how-do-i-request-premium-processing'))).toBe(true)
+    expect(urls.some((u) => u.includes('travel.state.gov')), '221(g) reality cited').toBe(true)
+    expect(taskCeiling(visa).pct, 'a consulate is not an API — the low ceiling is the truth').toBeLessThanOrEqual(25)
+
+    // Legal-deadline honesty: where a situation leans on a statute/rule, its description names
+    // the dated rule card (the deadlines.ts pattern) — and the card is committed on disk.
+    for (const [sid, dir, ruleId] of [
+      ['sit_008', 'US-FED', 'us-fed.frcp-answer-deadline'],
+      ['sit_009', 'US-FED', 'us-fed.trademark-office-action-response'],
+      ['sit_010', 'US-DE', 'us-de.franchise-tax-annual-report'],
+    ] as const) {
+      expect(byId(sid).description, `${sid} cites its rule card`).toContain(ruleId)
+      const file = path.join(__dirname, '..', '..', 'rules', dir, `${ruleId.replace(/\./g, '-')}.json`)
+      expect(fs.existsSync(file), `${ruleId} card committed at ${file}`).toBe(true)
+      expect(JSON.parse(fs.readFileSync(file, 'utf8')).id).toBe(ruleId)
+    }
+
+    // The lawsuit's filed pleading and the office action's TEAS filing are signature acts; the
+    // breach's regulator/individual notifications are the honestly-irreversible steps.
+    expect(byId('sit_008').dag.nodes.filter((n) => n.legalSignature).length).toBeGreaterThanOrEqual(1)
+    expect(byId('sit_009').dag.nodes.find((n) => n.legalSignature)!.label).toContain('TEAS')
+    const breach = byId('sit_003')
+    expect(breach.urgency).toBe('hours')
+    expect(breach.reversibility).toBe('irreversible')
+    expect(breach.dag.nodes.filter((n) => n.reversibility === 'irreversible').length).toBe(2)
+    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped.
+    expect(breach.geoScope).toBe('us-state')
+    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'IN', 'UK'])
   })
 
   it('contains no scrubbed vendor names and no AFK-app-legacy framing', () => {
@@ -498,7 +619,7 @@ describe('derived step options (optionsArenaId)', () => {
     }
   })
 
-  it('a derived step lists the arena\'s CURRENT roster in PA-Score (leaderboard) order, every chip tracked', () => {
+  it('a derived step lists the arena\'s CURRENT roster in Overall-score (leaderboard) order, every chip tracked', () => {
     const payrollStep = loadProcesses(DATA_DIR)
       .find((t) => t.id === 'qs_063')!.dag.nodes.find((n) => n.id === 'n3')!
     expect(payrollStep.optionsArenaId).toBe('payroll')

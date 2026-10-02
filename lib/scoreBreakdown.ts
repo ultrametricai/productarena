@@ -1,7 +1,7 @@
 // The full audit trail behind one product's Overall score — the data spine of the per-vendor
 // /arena/{cat}/product/{id}/score page ("the receipt"). For each of the five blend dimensions
 // it lists exactly which stories feed it, each cell's verdict × quality × weight arithmetic and
-// the evidence the judge cited, then reproduces the dimension score and the weighted PA blend
+// the evidence the judge cited, then reproduces the dimension score and the weighted Overall-score blend
 // with THIS product's numbers substituted. Everything here is a pure re-derivation from
 // CategoryData through the same lib/scoring.ts primitives buildRankings uses — no second
 // formula to drift. lib/__tests__/scoreBreakdown.test.ts asserts the recomputed numbers equal
@@ -44,7 +44,7 @@ export const DIMENSION_ANCHORS: Record<DimensionKey, string> = {
 
 // Which stories feed each dimension — the exact selectors buildRankings (lib/scoring.ts) uses:
 // three group-scoped slices of the agenticness theme, plus two whole themes. The determinism
-// test is the drift guard: if these ever diverge from buildRankings, the recomputed PA stops
+// test is the drift guard: if these ever diverge from buildRankings, the recomputed Overall score stops
 // matching rankings.json and the suite fails.
 const DIMENSION_STORIES: Record<DimensionKey, (s: Story) => boolean> = {
   agentReady: (s) => s.theme === 'agenticness' && s.group === 'agent-access',
@@ -84,7 +84,7 @@ export interface DimensionBreakdown {
   score: number | null
 }
 
-// One term of the PA blend equation, in AI_ERA_WEIGHTS order. Null-score terms are excluded
+// One term of the Overall-score blend equation, in AI_ERA_WEIGHTS order. Null-score terms are excluded
 // from both the weighted sum and the total weight (computeAiEra's renormalization).
 export interface BlendTerm {
   key: DimensionKey
@@ -99,7 +99,7 @@ export interface ScoreBreakdown {
   dimensions: DimensionBreakdown[]
   blend: {
     terms: BlendTerm[]
-    // Σ score×weight and Σ weight over the non-null terms — PA = round1(weightedSum/totalWeight).
+    // Σ score×weight and Σ weight over the non-null terms — Overall = round1(weightedSum/totalWeight).
     weightedSum: number
     totalWeight: number
     aiEra: number | null

@@ -31,7 +31,7 @@ beforeEach(() => {
   commit()
 })
 
-afterEach(() => rmSync(root, { recursive: true, force: true }))
+afterEach(() => rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }))
 
 describe('pinned catalog export', () => {
   it.each([false, true])('rejects a committed stale schema (example=%s) before writing an artifact', (example) => {

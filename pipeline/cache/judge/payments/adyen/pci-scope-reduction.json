@@ -1,14 +1,17 @@
 {
-  "hash": "ad74e562b639f313944d1a387d837ea1affc442c51388805884d982131c6a138",
+  "hash": "9e1b2d04a7479a823d5dda1d3de41f48671a94b84bf4d364fb03d9d8bc33c51a",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Adyen's Checkout API/sessions flow shows card data handled client-side and passed via Adyen's hosted fields/client key rather than touching the merchant's server (adyen-docs-1, adyen-docs-44), which implies the tokenization pattern developers rely on for reduced PCI scope. However, none of the evidence explicitly discusses PCI DSS, SAQ levels, or scope-reduction guidance, so the compliance benefit is only inferable from the technical integration pattern, not documented directly. missing for 10: explicit PCI DSS scope-reduction documentation, SAQ-A eligibility guidance, independent compliance certification evidence.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The evidence shows a client-side integration model: a /sessions flow where data goes to your client app, client SDKs for web and mobile, and a client key restricted to allowed origins. Tokenization appears only in agentic contexts: agent platforms 'securely tokenize shopper payment credentials and pass tokens to merchants', ACP delegated payments use encrypted payment data, and Google agent flows pass an encrypted token to Adyen. None of this explicitly states that raw card data bypasses merchant servers or reduces PCI DSS scope. Missing for 10: explicit PCI DSS scope-reduction documentation (e.g. SAQ A eligibility), a statement that card data never touches merchant servers, documented tokenization or client-side encryption for standard card checkout, independent corroboration.",
     "evidenceIds": [
       "adyen-docs-1",
+      "adyen-docs-14",
       "adyen-docs-44",
-      "adyen-docs-14"
+      "adyen-docs-46",
+      "adyen-supp-agentic-protocols-both-sides",
+      "adyen-supp-google-ucp"
     ],
     "productId": "adyen",
     "storyId": "pci-scope-reduction"

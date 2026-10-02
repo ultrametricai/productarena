@@ -62,4 +62,28 @@ describe('ArenaMenu (grouped + searchable)', () => {
     expect(screen.getByText('Capability adoption').closest('a')?.getAttribute('href')).toBe('/global')
     expect(screen.queryByLabelText('Search explore')).toBeNull() // not searchable unless asked
   })
+
+  it('renders house icon tokens as the custom duotone glyphs — items and section headers alike', () => {
+    // The custom-icon upgrade (founder 2026-10-01): a `pi:` token renders the hand-authored SVG
+    // via IconGlyph; a plain emoji string keeps rendering as text (two systems coexist).
+    const { container } = render(
+      <ArenaMenu
+        sections={[
+          {
+            name: 'Fintech & Back Office',
+            icon: 'pi:building:sky',
+            items: [
+              { id: 'startup-banking', name: 'Startup Banking', label: 'Banking', icon: 'pi:bank:emerald' },
+              { id: 'legacy', name: 'Legacy Emoji Arena', label: 'legacy', icon: '🏦' },
+            ],
+          },
+        ]}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /Arenas/ }))
+    expect(container.querySelectorAll('svg[data-glyph="bank"]').length).toBe(1) // the item glyph
+    expect(container.querySelectorAll('svg[data-glyph="building"]').length).toBe(1) // the section glyph
+    expect(container.querySelectorAll('svg[data-glyph="unknown"]').length).toBe(0) // never the placeholder
+    expect(screen.getByText('🏦')).toBeTruthy() // emoji passthrough unchanged
+  })
 })

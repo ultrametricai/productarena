@@ -1,13 +1,17 @@
 {
-  "hash": "8698d43e25f8a8614278162066f75654232b9ddf2276bc194108b65e7899b41c",
+  "hash": "856e54e716f22e4c8a92d13409fc79b849111c49fb05e2ef4657add1d1e96d43",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Solo 2 is a physical security key requiring human touch confirmation for every action, and while a CLI exists (solo2 list, admin commands), there's no documented support for headless/CI automation; a runtime probe shows the official CLI is bit-rotted (ImportError, incompatible fido2 dependency) with no firmware release in 4 years, further undermining any automation use case.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "The Solo 2 ships a scriptable `solo2` CLI (`list`, `update` with SHA-256 verification, `app admin set led`), works with standard tooling like `fido2-token -R`, and firmware can be built and tested with cargo. These pieces could be wired into automation, but credential operations require a physical touch on the capacitive sensor, which limits true headless use. The legacy Python Solo CLI (solo-python, used with Solo 1) was also found broken against current python-fido2. Missing for 10: documented headless/CI mode or touch-free automation path, CI integration guidance, independent hands-on evidence that the solo2 CLI works unattended, a maintained Python tooling path.",
     "evidenceIds": [
-      "solokeys-docs-1",
+      "solokeys-gh-2",
+      "solokeys-gh-3",
       "solokeys-gh-4",
+      "solokeys-docs-10",
+      "solokeys-gh-10",
+      "solokeys-docs-1",
       "solokeys-probe-rt-1"
     ],
     "productId": "solokeys",
