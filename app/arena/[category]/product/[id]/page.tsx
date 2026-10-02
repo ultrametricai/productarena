@@ -28,6 +28,7 @@ import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
 import SloUptimeLine from '@/components/SloUptimeLine'
 import StoryMap from '@/components/StoryMap'
+import StoryThemeDag from '@/components/StoryThemeDag'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import ThemeIcon from '@/components/ThemeIcon'
 import StoryViewToggle from '@/components/StoryViewToggle'
@@ -497,6 +498,14 @@ export default async function ProductPage({
           table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} processes={storyProcessesForArena(category)} />}
         />
       </div>
+
+      {/* Story-DAG prototype (founder 2026-10-02: "i want to see what a story DAG looks like for
+          a vendor — test on the mercury page"): the judged stories as a theme → story DAG,
+          verdict-tinted, committed data only. GATED to exactly this one page this round — a
+          clearly-marked experiment for the founder to judge before any wider rollout. */}
+      {category === 'startup-banking' && id === 'mercury' && (
+        <StoryThemeDag data={data} productId={id} productName={product.name} />
+      )}
 
       {/* The vendor's to-do list: every none/partial verdict above, ranked by score headroom
           (lib/opportunities.ts) — collapsed by default, pure derivation from the verdicts. */}

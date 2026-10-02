@@ -9,7 +9,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProductPage, { generateMetadata } from '@/app/arena/[category]/product/[id]/page'
-import { loadAll } from '@/lib/data'
+import { loadAll, loadCategory } from '@/lib/data'
 import { isGroupUntested } from '@/lib/data-helpers'
 
 const ARENA = 'startup-banking'
@@ -86,6 +86,31 @@ describe('product page — founder 2026-10-02 batch', () => {
     expect(container.textContent).not.toContain('Connections to other tracked products')
     expect(container.textContent).not.toContain('a point per change, not per day')
     expect(screen.getByText('Verified integrations')).toBeTruthy()
+  })
+
+  it('story-DAG experiment (founder 2026-10-02): theme → story map renders on the mercury page, verdict-tinted, nodes deep-linking to the table', async () => {
+    const { container } = await renderPage()
+    expect(screen.getByRole('heading', { name: /Story map \(experiment\)/ })).toBeTruthy()
+    const section = container.querySelector('#story-map-experiment')!
+    expect(section).not.toBeNull()
+    // Every story node links to its judged #story-<id> row; every committed story is a node.
+    const nodes = section.querySelectorAll('a[href^="#story-"]')
+    expect(nodes.length).toBe(loadCategory(ARENA).stories.length)
+    // Verdict tints per the founder spec: full emerald, partial amber, na dashed.
+    expect(section.querySelector('a.border-emerald-400\\/50')).not.toBeNull()
+    expect(section.querySelector('a.border-amber-400\\/40')).not.toBeNull()
+    expect([...nodes].some((n) => n.className.includes('border-dashed'))).toBe(true)
+    // Theme headers carry the honest delivered count — judged verdicts, never a new score.
+    expect(section.textContent).toMatch(/\d+\/\d+ delivered/)
+  })
+
+  it('the story-DAG experiment is gated to mercury ONLY — no other product page renders it', async () => {
+    // Same arena, different product: the experiment must not leak.
+    const { container } = render(
+      await ProductPage({ params: Promise.resolve({ category: ARENA, id: 'ramp' }) }),
+    )
+    expect(container.textContent).not.toContain('Story map (experiment)')
+    expect(container.querySelector('#story-map-experiment')).toBeNull()
   })
 
   it('generateMetadata preserves the agent-discovery pointers as alternates (llms.md + data JSON)', async () => {
