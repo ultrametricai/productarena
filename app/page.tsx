@@ -104,16 +104,9 @@ export default function Home() {
 
   const processesMode = (
     <div className="space-y-8">
-      <section>
-        {/* Founder 2026-09-23: no "Startup processes, run by agents" heading here — the h1 above
-            the tabs is the only title; this pane opens straight with the numbers. */}
-        <p className="max-w-2xl text-sm text-zinc-400">
-          {processes.totalProcesses} founder processes mapped step-by-step — an agent can run{' '}
-          <span className="tabular-nums text-emerald-300">{processes.agentStepPct}%</span> of the steps
-          today. Every step routed (agent / manual form / human), every vendor ranked from
-          judged evidence. Sort by automatability, timeline, regularity, annoyance, risk, or growth.
-        </p>
-      </section>
+      {/* Founder 2026-09-23: no "Startup processes, run by agents" heading here; founder
+          2026-10-02: the "N founder processes mapped step-by-step…" intro paragraph is gone
+          too — the pane opens straight onto the table (its controls carry the orderings). */}
       <ProcessesTable rows={processes.rows} phases={processes.phases} />
       <p className="text-sm">
         <Link
