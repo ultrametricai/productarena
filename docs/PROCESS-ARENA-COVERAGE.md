@@ -94,8 +94,8 @@ No vendor on these resolves to an arena and no step claims one directly (`option
 | Recover from an app-store rejection or removal `sit_016` | situation | — none — |
 | Report and manage a workplace injury `sit_021` | situation | — none — |
 
-## Registry keys no corpus reference uses (7)
+## Registry keys no corpus reference uses (18)
 
 Informational: registered vendors the corpus never references. Not gaps — the registry also serves non-corpus surfaces — but the first place to look when a key was meant to match a corpus vendor and missed (a typo would show up as one row here plus one in the unregistered list).
 
-`box`, `dynadot`, `firebase`, `onedrive`, `sprinto`, `supabase`, `thoropass`
+`alma`, `box`, `casium`, `daryanani_law`, `deel_immigration`, `dynadot`, `ellis_porter`, `firebase`, `founder_law`, `green_and_spiegel`, `legalos`, `lighthouse`, `onedrive`, `plymouth_street`, `siskind_susser`, `sprinto`, `supabase`, `thoropass`
