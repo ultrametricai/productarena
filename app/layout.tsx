@@ -259,6 +259,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       }),
       pageAliases,
     ),
+    // The Situations index (founder 2026-10-02: situations moved out of /processes onto their
+    // own area) — one ⌘K entry beside the process group; the 12 detail pages stay reachable
+    // as /processes/<slug> rows via the fat search and their aliases.
+    {
+      type: "process",
+      label: "Situations",
+      sublabel: "When something hits — lawsuit, breach, tax notice… trigger + urgency",
+      href: "/situations",
+      keywords: (pageAliases["/situations"] ?? []).map((k) => k.toLowerCase()),
+    },
     ...buildPageEntries(pageAliases),
     // The company's own CLI/MCP product page (app/v2) — a `product` row in the palette.
     V2_PRODUCT_ENTRY,
@@ -322,6 +332,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
                 Processes
+              </Link>
+              {/* Situations (founder 2026-10-02): the reactive records' own index, a sibling of
+                  Processes — same house nav pattern as the link it sits beside. */}
+              <Link
+                href="/situations"
+                className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
+              >
+                Situations
               </Link>
               {/* Technologies moved back under Explore → More views (founder 2026-09-29,
                   reversing the 2026-09-24 top-level entry). */}

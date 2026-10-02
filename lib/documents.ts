@@ -92,16 +92,30 @@ export function validateDocumentRegistry(doc: DocumentRegistry, asOf: Date): str
 }
 
 /** The README's grouped tables must stay in sync: every registry id appears in the README,
- * and every backticked slug in a README table row resolves to a registry id. */
+ * every backticked slug in a README table row resolves to a registry id, and every table row
+ * links OUT to its record's canonical URL (founder 2026-10-02: the public documents layer must
+ * link to the actual documents on the web — names without links are drift). */
 export function validateDocumentReadme(readme: string, registry: DocumentRegistry): string[] {
   const errors: string[] = []
-  const known = new Set(registry.documents.map((d) => d.id))
-  for (const id of known) {
-    if (!readme.includes(`\`${id}\``)) errors.push(`README: missing registry id ${id}`)
+  const byId = new Map(registry.documents.map((d) => [d.id, d]))
+  for (const id of byId.keys()) {
+    // Every record gets a TABLE row (not just a prose mention) — the row is what carries the
+    // clickable canonical link checked below.
+    if (!readme.includes(`| \`${id}\` |`)) errors.push(`README: missing table row for registry id ${id}`)
   }
   for (const line of readme.split('\n')) {
     const m = /^\| `([^`]+)` \|/.exec(line.trim())
-    if (m && !known.has(m[1])) errors.push(`README: table row cites unknown id ${m[1]}`)
+    if (!m) continue
+    const doc = byId.get(m[1])
+    if (!doc) {
+      errors.push(`README: table row cites unknown id ${m[1]}`)
+      continue
+    }
+    // The row's Document cell must be a markdown link to the committed, checked_on-dated
+    // canonical URL — the registry record, not a re-typed (driftable) copy of it.
+    if (!line.includes(`](${doc.url})`)) {
+      errors.push(`README: row ${doc.id} must link its canonical URL ${doc.url}`)
+    }
   }
   return errors
 }
@@ -110,6 +124,22 @@ const ROOT = process.cwd()
 
 export function loadDocumentRegistry(): DocumentRegistry {
   return JSON.parse(fs.readFileSync(path.join(ROOT, 'documents/registry.json'), 'utf8')) as DocumentRegistry
+}
+
+// Cached id → record lookup for the render path (ProcessDag's per-step document chips read it
+// once per build, not once per chip). Same memo idiom as lib/stepPrompts.ts.
+let byIdCache: Map<string, OpenDocument> | null = null
+
+/** The registry record for a step-level document id (DagNode.documents) — throws on an unknown
+ * id so a typo'd corpus reference fails the BUILD loudly, the same bar the corpus test
+ * (lib/__tests__/processDocuments.test.ts) enforces. */
+export function openDocumentById(id: string): OpenDocument {
+  if (byIdCache === null) {
+    byIdCache = new Map(loadDocumentRegistry().documents.map((d) => [d.id, d]))
+  }
+  const doc = byIdCache.get(id)
+  if (!doc) throw new Error(`Unknown document id ${id} — not in documents/registry.json`)
+  return doc
 }
 
 /** The full gate: registry invariants + README/registry sync. Empty array = pass. */

@@ -13,6 +13,7 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import ProcessesPage from '@/app/processes/page'
 import { GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
+import { loadProcesses, processSlug } from '@/lib/processes'
 import { areaOf, buildPlaybookRows, buildProcessRows } from '@/lib/processRows'
 
 describe('/processes — one combined table, one processes vocabulary', () => {
@@ -55,6 +56,27 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     const idxOf = (slug: string) => trs.findIndex((tr) => tr.querySelector(`a[href="/processes/${slug}"]`) !== null)
     expect(idxOf(byTime[0].slug)).toBeLessThan(idxOf(byTime[byTime.length - 1].slug))
     expect(idxOf(byTime[0].slug)).toBe(0)
+  })
+
+  it('shows NO kind=situation rows — they moved to /situations (founder 2026-10-02); their detail pages stay reachable', () => {
+    const { container } = render(<ProcessesPage />)
+    const table = container.querySelector('table') as HTMLElement
+    const situations = loadProcesses().filter((t) => t.kind === 'situation')
+    expect(situations).toHaveLength(12)
+    for (const t of situations) {
+      expect(
+        table.querySelector(`a[href="/processes/${processSlug(t.title)}"]`),
+        `${t.id} must not render on /processes`,
+      ).toBeNull()
+    }
+    // No situation vocabulary left on the page: no trigger subtitles, no urgency chips, and —
+    // with the rows gone — no 'Situations' area group can ever materialize in the grouped view.
+    expect(container.textContent).not.toContain(situations[0].trigger!)
+    expect(within(container).queryByText('Situations')).toBeNull()
+    // The row set is exactly processes + playbooks (count pins above already derive from
+    // buildProcessRows, which excludes situations by construction).
+    const { rows } = buildProcessRows()
+    expect(rows.some((r) => r.kind === 'situation')).toBe(false)
   })
 
   it('every chain row carries its dominant area (first constituent) and that constituent timeOrder', () => {

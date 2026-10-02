@@ -99,10 +99,23 @@ describe('documents validators (failure modes)', () => {
     expect(validateDocumentRegistry(noWindow, AS_OF).join(';')).toContain('review_window_days')
   })
 
-  it('catches README drift in both directions', () => {
+  it('catches README drift in every direction: missing rows, ghost rows, and unlinked rows', () => {
     const registry = reg(record({ id: 'present-doc' }))
-    expect(validateDocumentReadme('no table at all', registry).join(';')).toContain('missing registry id present-doc')
-    const rogue = '| `present-doc` | x |\n| `ghost-doc` | y |'
+    expect(validateDocumentReadme('no table at all', registry).join(';')).toContain(
+      'missing table row for registry id present-doc',
+    )
+    const rogue = '| `present-doc` | [x](https://example.com/doc) |\n| `ghost-doc` | y |'
     expect(validateDocumentReadme(rogue, registry).join(';')).toContain('unknown id ghost-doc')
+    // A row that names the document without LINKING its canonical URL is drift too (founder
+    // 2026-10-02: the documents layer links OUT to the real documents on the web).
+    const unlinked = '| `present-doc` | x |'
+    expect(validateDocumentReadme(unlinked, registry).join(';')).toContain(
+      'row present-doc must link its canonical URL https://example.com/doc',
+    )
+    // A row linking a DIFFERENT URL than the committed, checked_on-dated one fails the same way.
+    const wrongUrl = '| `present-doc` | [x](https://example.com/other) |'
+    expect(validateDocumentReadme(wrongUrl, registry).join(';')).toContain('must link its canonical URL')
+    // The committed-shape row passes clean.
+    expect(validateDocumentReadme('| `present-doc` | [x](https://example.com/doc) |', registry)).toEqual([])
   })
 })

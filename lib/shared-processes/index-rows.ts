@@ -1,4 +1,4 @@
-import { buildPlaybookRows, buildProcessRows, AREA_ORDER } from '../processRows'
+import { buildPlaybookRows, buildProcessRows, buildSituationRows, AREA_ORDER } from '../processRows'
 import { loadProcesses, processSlug } from '../processes'
 import type { ProcessTableRow } from '@/components/ProcessesTable'
 import { buildPreviewRoutes, readSharedCatalog } from './reader'
@@ -12,9 +12,13 @@ export function buildPreviewIndex() {
   const href = (id: string) => `/processes/preview/${encodeURIComponent(routes.get(id)!)}`
   const used = new Set<string>()
   const original = buildProcessRows()
+  // The preview table keeps FULL corpus coverage: /processes proper excludes kind=situation
+  // rows (founder 2026-10-02 — they live on /situations now), but every shared record still
+  // needs its preview row here, situations included, with their trigger/urgency presentation.
+  const sourceRows = [...original.rows, ...buildSituationRows()]
   const tasks = new Map(loadProcesses().map(task => [processSlug(task.title), task]))
   const bindings: Record<string, { icon: string }> = iconBindings
-  const rows: ProcessTableRow[] = original.rows.map(row => {
+  const rows: ProcessTableRow[] = sourceRows.map(row => {
     const task = tasks.get(row.slug)!
     const record = byId.get(task.id)
     if (!record) throw new Error(`Missing shared record for index process ${task.id}`)

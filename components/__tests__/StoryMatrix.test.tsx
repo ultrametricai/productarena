@@ -24,12 +24,22 @@ describe('StoryMatrix', () => {
 
   it('filters visible story rows when a persona is selected', () => {
     const data = loadCategory('ai-coding', path.resolve(__dirname, '../../data'))
-    render(<StoryMatrix data={data} logoMap={{}} />)
+    const { container } = render(<StoryMatrix data={data} logoMap={{}} />)
     const select = screen.getByLabelText('Filter by persona') as HTMLSelectElement
     const persona = data.stories[0].persona
     fireEvent.change(select, { target: { value: persona } })
     const expectedCount = data.stories.filter((s) => s.persona === persona).length
-    expect(screen.getByText(`${expectedCount}/${data.stories.length} stories shown`, { exact: false })).toBeDefined()
+    expect(container.querySelectorAll('tbody tr').length).toBe(expectedCount)
+  })
+
+  it("the 'N/N stories shown · legend' line next to the persona filter is gone (founder 2026-10-02)", () => {
+    // The count line and its #legend jump link were removed; the Legend section itself still
+    // renders at #legend on the arena page (app/arena/[category]/page.tsx), so the legend
+    // content stays reachable where it explains the tables.
+    const data = loadCategory('ai-coding', path.resolve(__dirname, '../../data'))
+    const { container } = render(<StoryMatrix data={data} logoMap={{}} />)
+    expect(container.textContent).not.toContain('stories shown')
+    expect(container.querySelector('a[href="#legend"]')).toBeNull()
   })
 
   it('shows the action-primitives theme under its plain-language name (founder 2026-09-30)', () => {

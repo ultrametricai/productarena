@@ -9,12 +9,12 @@ import ReversibilityBadge from '@/components/ReversibilityBadge'
 import StepYourPick from '@/components/StepYourPick'
 import StepAfkChip from '@/components/StepAfkChip'
 import StepApiCalls from '@/components/StepApiCalls'
-import StepPromptBox from '@/components/StepPromptBox'
 import StepMethodDefault from '@/components/StepMethodDefault'
 import StepMethodPicker from '@/components/StepMethodPicker'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
 import { StepCostChip, StepFailureModes, StepVerifyLine } from '@/components/StepVerifyCost'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
+import { openDocumentById } from '@/lib/documents'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
 import { showComputerUseChips } from '@/lib/humanStepsUi'
@@ -26,7 +26,6 @@ import { crossArenaStepRankings, stepRanking, type StepCite, type StepRanking, t
 import { VERDICT_FACTORS } from '@/lib/scoring'
 import { buildStepMethodViews } from '@/lib/stepMethodData'
 import { stepMethodNodeKey } from '@/lib/stepMethods'
-import { stepPromptFor } from '@/lib/stepPrompts'
 import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 import { vendorGeoLookup } from '@/lib/vendorGeo'
 
@@ -393,13 +392,6 @@ function NodeBlock({
   // "get to the bottom of why, and why computer use can't be used there"). Null until the
   // audited entry exists — renderers then fall back to today's behavior.
   const audit = taskId && node.route !== 'agent' ? humanStepAudit(taskId, node.id) : null
-  // Copy-pasteable agent prompt for the step (founder pilot 2026-09-21, data/step-prompts.json —
-  // currently generated for set-up-transactional-email only; renders wherever data exists).
-  const stepPrompt = taskId ? stepPromptFor(taskId, node.id) : null
-  const promptVendors = [
-    ...(ranking?.vendors ?? []).map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name })),
-    ...extras.flatMap((r) => r.vendors.map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name }))),
-  ]
   // Does this step surface a MARKET (a ranked row or a "via:" roster)? Then no canonical chip
   // renders at all (founder 2026-09-30: the step's vendors are ONE ranked line, highest score
   // first, no 'e.g.'-prefixed reference chip — which retires the 2026-09-23 StepCanonicalVendor
@@ -407,12 +399,13 @@ function NodeBlock({
   // full-strength chip.
   const hasMarket = ranking !== null || extras.length > 0 || options.length > 0
 
-  // The step's action row, AI path first, manual path last (founder 2026-09-25): the "Do it
-  // with AI" prompt affordances (components/StepPromptBox.tsx), then the staff-gated per-step
-  // AFK computer-use trigger, then the canonical external "do it yourself" page a human uses
-  // (data-level actionUrl, verified live before it ships — e.g. the IRS EIN application or
-  // Delaware's filing portal; deliberately distinct from the vendor chips, which link to our
-  // judged product pages).
+  // The step's action row (the per-step agent-prompt affordances — StepPromptBox's copy box,
+  // '🪄 do it with AI' and Open-in-Claude/ChatGPT links — were removed, founder 2026-10-02;
+  // the generated data/step-prompts.json stays committed, just no longer rendered): the
+  // staff-gated per-step AFK computer-use trigger, then the canonical external "do it
+  // yourself" page a human uses (data-level actionUrl, verified live before it ships — e.g.
+  // the IRS EIN application or Delaware's filing portal; deliberately distinct from the vendor
+  // chips, which link to our judged product pages).
   const afkChip = node.actionUrl && manifestUrl && (
     <StepAfkChip manifestUrl={manifestUrl} nodeId={node.id} />
   )
@@ -474,26 +467,44 @@ function NodeBlock({
         {node.cost && <StepCostChip cost={node.cost} />}
       </div>
 
-      {/* The primary action row — [Do it with AI: copy / Claude / ChatGPT] → [⚡ run with AFK
-          (staff)] → [do it yourself ↗]. Steps without a generated prompt keep the manual
-          affordances in a plain row; steps with neither render nothing extra. */}
-      {stepPrompt ? (
-        <StepPromptBox
-          prompt={stepPrompt.prompt}
-          vendors={promptVendors}
-          lensKey={lensKey}
-          legalSignature={node.legalSignature}
-        >
+      {/* The primary action row — [⚡ run with AFK (staff)] → [do it yourself ↗]. Steps
+          without an actionUrl render nothing extra. */}
+      {node.actionUrl && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
           {afkChip}
           {doItYourself}
-        </StepPromptBox>
-      ) : (
-        node.actionUrl && (
-          <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
-            {afkChip}
-            {doItYourself}
-          </div>
-        )
+        </div>
+      )}
+
+      {/* The step's canonical open documents (founder 2026-10-02): small chips linking OUT to
+          the registry record's real URL (documents/registry.json — link, never redistribute),
+          labeled with the registry title. External-link hygiene matches 'do it yourself' above;
+          an unknown id throws at build time (lib/documents.ts openDocumentById). Most steps
+          carry none and render nothing. */}
+      {node.documents && node.documents.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+          <span
+            className="text-[10px] uppercase tracking-wide text-zinc-500"
+            title="The canonical open documents this step is done on — each chip opens the publisher's live page (documents/registry.json; link, never redistribute)"
+          >
+            open docs:
+          </span>
+          {node.documents.map((id) => {
+            const doc = openDocumentById(id)
+            return (
+              <a
+                key={id}
+                href={doc.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`${doc.name} — ${doc.publisher}, checked ${doc.checked_on} (external site)`}
+                className="inline-flex items-center gap-1 rounded-md border border-zinc-700/80 px-1.5 py-0.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                {doc.name} ↗
+              </a>
+            )
+          })}
+        </div>
       )}
 
       {(ranking !== null || extras.length > 0) && (
