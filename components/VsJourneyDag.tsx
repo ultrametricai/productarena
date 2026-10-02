@@ -483,7 +483,7 @@ export default function VsJourneyDag({
                     data-testid={`vs-dag-node-${node.taskId}`}
                     data-dag-state={state}
                     aria-label={node.title}
-                    title={`${node.title} — ${node.stepCount} step${node.stepCount === 1 ? '' : 's'}, ${node.agentSteps} agent-runnable (~${pct}% agent ceiling). Click to jump to it in the terminal.`}
+                    title={`${node.title} — ${node.stepCount} step${node.stepCount === 1 ? '' : 's'}, ${node.agentSteps} agent-runnable (Agentic % ~${pct}). Click to jump to it in the terminal.`}
                     onClick={() => onNodeClick?.(node.taskId)}
                     className={`flex max-w-[180px] items-center gap-1 rounded-md border px-2 py-1.5 leading-none transition ${
                       state === 'done'

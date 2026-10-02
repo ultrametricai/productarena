@@ -14,7 +14,7 @@ Two layers, deliberately separate:
    [ultrametric.ai/processes](https://ultrametric.ai/processes) — each process at
    `/processes/<id>` — contract in `schemas/operational-process.schema.json`):
    step-by-step operating DAGs with agent/manual/human routing, judged vendor rankings per
-   step, agent ceilings, and time estimates. These are operating guides, not legal advice, and
+   step, the Agentic % of each process, and time estimates. These are operating guides, not legal advice, and
    they carry no jurisdiction warranty — the site's jurisdiction toggle (`lib/jurisdictions.ts`)
    and geo scoping annotate where steps are US- or state-specific.
 
@@ -40,7 +40,7 @@ side under this directory as promised.
 ## What a corpus record is
 
 One record per founder process: identity and classification (`phase`, `cadence`,
-`complexity`), an honest agent ceiling (`supportLevel` + `supportReason`), the vendors that can
+`complexity`), an honest Agentic % (`supportLevel` + `supportReason`), the vendors that can
 run it, the step DAG, and geo scoping. A trimmed real record (`form_002`, Get EIN):
 
 ```jsonc
@@ -338,7 +338,7 @@ flowchart TD
   fictional fixture in `fixtures/`, and record honest maturity in `catalog/coverage.json`.
   Gate: `npx vitest run __tests__/founder-ops.test.ts`.
 - **Corrections to an operational process** — step routing (agent / manual form / human),
-  agent ceilings, or time estimates in `corpus.json`, with a source or reproduction for the
+  Agentic % values, or time estimates in `corpus.json`, with a source or reproduction for the
   claim. Gate: `pnpm test`.
 - **An artifact or a typed dependency** — a missing `requires` a committed step genuinely
   consumes, a missing registry artifact a committed step genuinely produces, or a terminal

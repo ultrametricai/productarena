@@ -4,7 +4,7 @@
 [process](#processes) step by step, the [vendors](#vendors) ranked, and the
 [open modules](#business-logic) underneath.**
 
-![The founder processes on ultrametric.ai — each process with its phase, agent ceiling, step count, timeline position, and vendors](docs/assets/processes.png)
+![The founder processes on ultrametric.ai — each process with its phase, Agentic %, step count, timeline position, and vendors](docs/assets/processes.png)
 
 *[ultrametric.ai/processes](https://ultrametric.ai/processes): the founder processes in
 timeline order — each with its phase, the share an agent can run today, and the vendors that
@@ -20,7 +20,7 @@ serve it.*
 
 | What you need | Where |
 | --- | --- |
-| Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its agent ceiling, plus the chained playbooks |
+| Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its Agentic %, plus the chained playbooks |
 | The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
@@ -66,7 +66,7 @@ the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 every step is routed agent / manual form / human, with per-step reversibility
 (reversible / painful / irreversible), vendor options drawn from the judged rankings, time
 estimates, and — where routes genuinely differ — named method variants (e.g. the per-country
-filing routes). Every process carries an honest **agent ceiling** (`full` / `partial` /
+filing routes). Every process carries an honest **Agentic %** — the share of steps an agent can run today (`full` / `partial` /
 `manual_guide`: what an agent can actually run today), with per-country geo notes (UK, India,
 Germany, France; the US is the baseline). Playbooks chain processes into founder paths —
 incorporate → launch, the VC raise, the agent-run back office.

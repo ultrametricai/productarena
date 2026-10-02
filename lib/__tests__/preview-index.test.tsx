@@ -50,7 +50,7 @@ describe('existing index presentation over shared records', () => {
     const equity = table.querySelector('a[href*="review-common-stock"]')!.closest('tr')!
     expect(equity.querySelectorAll('td')[2].textContent).toBe('')
     expect(equity.querySelectorAll('td')[4].textContent).toBe('')
-    fireEvent.click(within(table).getByRole('button', { name: /Agent ceiling/ }))
+    fireEvent.click(within(table).getByRole('button', { name: /Agentic %/ }))
     expect([...table.querySelectorAll('tbody tr')].slice(-2).some(row => row.contains(equity.querySelector('a')))).toBe(true)
     fireEvent.change(el.getByRole('combobox', { name: 'Rank by' }), { target: { value: 'order' } })
     fireEvent.click(within(table).getByRole('button', { name: /^Timeline/ }))

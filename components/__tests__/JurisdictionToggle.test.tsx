@@ -105,7 +105,7 @@ describe('URL ⇄ localStorage ⇄ pills', () => {
     const { container, getByRole } = render(tree)
     expect(pressed(getByRole('button', { name: 'Delaware-only' }))).toBe('true')
     expect(container.textContent).toContain('Delaware-only view')
-    expect(container.textContent).not.toContain('Ceiling with')
+    expect(container.textContent).not.toContain('Agentic % with')
   })
 
   it('?juris=ca mounts with California on: badge, step, and the recomputed ceiling labelled against the default', () => {
@@ -116,7 +116,7 @@ describe('URL ⇄ localStorage ⇄ pills', () => {
     expect(container.textContent).toContain('File the CA foreign qualification')
     expect(container.textContent).toContain('CA')
     // 5 of 11 → 45%, with the Delaware-only default named alongside.
-    expect(container.textContent).toContain('Ceiling with CA steps')
+    expect(container.textContent).toContain('Agentic % with CA steps')
     expect(container.textContent).toContain('45%')
     expect(container.textContent).toContain('5 of 11')
     expect(container.textContent).toContain('default: 50%')
