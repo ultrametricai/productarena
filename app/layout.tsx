@@ -20,9 +20,9 @@ import { arenaIcon, ARENA_ICONS, EXPLORE_SECTION_ICONS, OVERALL_ICON } from "@/l
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
-import { buildChainEntries, buildPageEntries, buildSearchIndex, buildStackEntries, V2_PRODUCT_ENTRY, type SearchEntry } from "@/lib/search-index";
+import { buildChainEntries, buildPageEntries, buildProcessEntries, buildSearchIndex, buildStackEntries, V2_PRODUCT_ENTRY, type SearchEntry } from "@/lib/search-index";
 import { loadAiStacks } from "@/lib/aiStacks";
-import { loadChains } from "@/lib/processes";
+import { loadChains, loadProcesses, processSlug } from "@/lib/processes";
 import searchAliases from "@/data/search-aliases.json";
 
 // Short labels used inside the Arenas dropdown alongside full names.
@@ -246,6 +246,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Most open (full ranking)", sublabel: "All products, ranked by openness", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },
     ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
+    // The ⌘K 'Processes' group (founder 2026-10-02: defaults include processes): the
+    // /processes index entry plus the high-traffic processes below. Ids come from
+    // processes/corpus.json; titles/slugs resolve through loadProcesses/processSlug so a
+    // rename can never strand a palette row — a missing id fails the build loudly instead
+    // of silently dropping a founder-curated entry.
+    ...buildProcessEntries(
+      ["form_001", "form_002", "qs_023", "qs_063", "fund_001", "tax_001"].map((id) => {
+        const t = loadProcesses().find((p) => p.id === id);
+        if (!t) throw new Error(`⌘K high-traffic process ${id} missing from processes/corpus.json`);
+        return { slug: processSlug(t.title), title: t.title, sublabel: `Founder process · ${t.phase}` };
+      }),
+      pageAliases,
+    ),
     ...buildPageEntries(pageAliases),
     // The company's own CLI/MCP product page (app/v2) — a `product` row in the palette.
     V2_PRODUCT_ENTRY,
