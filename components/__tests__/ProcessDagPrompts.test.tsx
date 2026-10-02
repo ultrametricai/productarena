@@ -7,6 +7,7 @@
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import ProcessDag from '@/components/ProcessDag'
+import { openDocumentById } from '@/lib/documents'
 import { loadProcesses } from '@/lib/processes'
 import { loadStepPrompts } from '@/lib/stepPrompts'
 
@@ -39,6 +40,23 @@ describe('ProcessDag — step prompts removed from the render path (founder 2026
     for (const a of el.querySelectorAll('a')) {
       expect(a.getAttribute('href')).not.toMatch(/claude\.ai|chat\.openai\.com|chatgpt\.com/)
     }
+  })
+
+  it('renders the step document chips: registry title as label, canonical URL as an external link (founder 2026-10-02)', () => {
+    const task = loadProcesses().find((t) => t.id === 'form_001')!
+    const div = document.createElement('div')
+    div.innerHTML = renderToString(
+      <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} taskId={task.id} lensKey={task.id} />,
+    )
+    const cooley = openDocumentById('cooley-incorporation-package-de')
+    const chip = [...div.querySelectorAll('a')].find((a) => a.getAttribute('href') === cooley.url)
+    expect(chip, 'the bylaws step must chip-link the Cooley DE package at its registry URL').toBeDefined()
+    expect(chip!.textContent).toContain(cooley.name)
+    // External-link hygiene — same bar as the 'do it yourself' affordance.
+    expect(chip!.getAttribute('target')).toBe('_blank')
+    expect(chip!.getAttribute('rel')).toContain('noopener')
+    const irs = openDocumentById('irs-form-15620')
+    expect([...div.querySelectorAll('a')].some((a) => a.getAttribute('href') === irs.url)).toBe(true)
   })
 
   it('keeps the manual do-it-yourself affordance on actionUrl steps', () => {

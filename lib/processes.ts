@@ -274,9 +274,11 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // Canonical open documents for THIS step — ids into documents/registry.json (the Cooley GO
   // incorporation package for the bylaws-drafting step, IRS Form 15620 for the 83(b) steps).
   // Added by the founder spike 2026-10-02 after confirming NO prior mechanism linked corpus
-  // steps to the documents registry. Data-level cross-reference only (no new default surface
-  // reads it this phase); referential integrity is corpus-tested (__tests__/documents.test.ts —
-  // every id must resolve in the registry).
+  // steps to the documents registry; extended across the corpus and RENDERED the same day
+  // (founder batch 2026-10-02): components/ProcessDag.tsx shows each id as an external-link
+  // chip (registry title as label, canonical URL as target). Referential integrity is
+  // corpus-tested both ways (lib/__tests__/processDocuments.test.ts — every id must resolve in
+  // the registry, and the render lookup throws on an unknown id).
   documents: z.string().min(1).array().min(1).optional(),
 })
 

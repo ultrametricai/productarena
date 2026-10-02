@@ -166,9 +166,14 @@ is. Curation rules, stricter than coverage:
 Steps that are genuinely done ON a canonical open document may carry `documents: string[]` —
 ids into `documents/registry.json` (the Cooley GO Delaware incorporation package for the
 bylaws/stock-paperwork drafting steps, IRS Form 15620 for the 83(b) election). Added by the
-same spike after confirming no prior mechanism linked corpus steps to the documents registry.
-Data-level cross-reference only this phase (no new default surface reads it); referential
-integrity is corpus-tested — every id must resolve in the registry.
+form_001 spike after confirming no prior mechanism linked corpus steps to the documents
+registry; extended across the corpus the same day (founder 2026-10-02: SAFEs on the SAFE-prep
+step, the NVCA suite on the definitive-docs step, offer letters, SS-4, the open NDAs/DPAs/
+cloud terms — `scripts/tmp-wire-step-documents.py`) — only where the document is plainly the
+step's instrument, never forced totality. Rendered on the process pages as small external-link
+chips (`components/ProcessDag.tsx`, registry title as label, canonical URL as target).
+Referential integrity is corpus-tested both ways (`lib/__tests__/processDocuments.test.ts`) —
+every id must resolve in the registry, and the render lookup throws on an unknown id.
 
 ## Proven runs (`provenRuns`) — the executed-proof slot (design only)
 

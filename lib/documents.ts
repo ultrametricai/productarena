@@ -126,6 +126,22 @@ export function loadDocumentRegistry(): DocumentRegistry {
   return JSON.parse(fs.readFileSync(path.join(ROOT, 'documents/registry.json'), 'utf8')) as DocumentRegistry
 }
 
+// Cached id → record lookup for the render path (ProcessDag's per-step document chips read it
+// once per build, not once per chip). Same memo idiom as lib/stepPrompts.ts.
+let byIdCache: Map<string, OpenDocument> | null = null
+
+/** The registry record for a step-level document id (DagNode.documents) — throws on an unknown
+ * id so a typo'd corpus reference fails the BUILD loudly, the same bar the corpus test
+ * (lib/__tests__/processDocuments.test.ts) enforces. */
+export function openDocumentById(id: string): OpenDocument {
+  if (byIdCache === null) {
+    byIdCache = new Map(loadDocumentRegistry().documents.map((d) => [d.id, d]))
+  }
+  const doc = byIdCache.get(id)
+  if (!doc) throw new Error(`Unknown document id ${id} — not in documents/registry.json`)
+  return doc
+}
+
 /** The full gate: registry invariants + README/registry sync. Empty array = pass. */
 export function validateDocuments(asOf?: Date): string[] {
   const registry = loadDocumentRegistry()
