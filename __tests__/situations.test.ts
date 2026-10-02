@@ -16,7 +16,7 @@ describe('processes/SITUATIONS.md', () => {
 
   it('lists all 12 situations with their triggers, urgency-then-title order', () => {
     const records = situationRecords()
-    expect(records).toHaveLength(20)
+    expect(records).toHaveLength(22)
     for (const r of records) {
       expect(r.trigger.length, `${r.id} trigger`).toBeGreaterThan(20)
       expect(['hours', 'days', 'weeks']).toContain(r.urgency)

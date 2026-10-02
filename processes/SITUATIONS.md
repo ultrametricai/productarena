@@ -44,12 +44,13 @@ description says so.
 
 <!-- situations:table:start (generated — scripts/generate-situations-md.ts) -->
 
-The 20 situations, hottest clock first (urgency, then title — the /situations order):
+The 22 situations, hottest clock first (urgency, then title — the /situations order):
 
 | id | Situation | Trigger | Urgency | Geo |
 | --- | --- | --- | --- | --- |
 | `sit_018` | Recover a hijacked domain or social account | Your domain, DNS, or a company social/email account is taken over — logins fail, records change, or posts you didn't write appear. | hours | global |
 | `sit_005` | Recover from a frozen bank account or bank failure | Your operating account is frozen by the bank's compliance review — or the bank itself fails. | hours | global |
+| `sit_021` | Report and manage a workplace injury | Someone is hurt at work — an injury on the job just happened and the reporting clocks may already be running. | hours | us-state |
 | `sit_003` | Respond to a data breach | You discover unauthorized access to customer or company data — a breach is live or just happened. | hours | us-state |
 | `sit_011` | Survive a DDoS attack or major outage | Traffic spikes take the product down — a DDoS attack is live, or a major outage looks like one. | hours | global |
 | `sit_020` | Absorb a pulled term sheet | The lead pulls the term sheet — by call or silence — and the round you planned around is gone. | days | global |
@@ -61,6 +62,7 @@ The 20 situations, hottest clock first (urgency, then title — the /situations 
 | `sit_013` | Recover from a payment-processor account termination | Your payment processor emails that your account is terminated or restricted — payouts pause and a final processing date is set. | days | global |
 | `sit_016` | Recover from an app-store rejection or removal | Your app is rejected in review — or pulled from the App Store or Google Play with a policy notice. | days | global |
 | `sit_001` | Respond to a cease-and-desist | A cease-and-desist letter claiming trademark or IP infringement arrives by mail or email. | days | us |
+| `sit_022` | Respond to a harassment complaint | An employee reports harassment — by complaint, by email, or in a conversation that just became one. | days | us |
 | `sit_008` | Respond to a lawsuit | You've been served — a process server hands you a summons and complaint naming the company. | days | us |
 | `sit_002` | Unstick a delayed US visa | Your US visa is stuck — 221(g) administrative processing after the interview, or a petition sitting past posted times — while the company needs you in Silicon Valley. | days | us |
 | `sit_015` | Answer a data-subject access request | Someone exercises their data rights — a GDPR subject access request or CCPA request to know/delete lands in any inbox. | weeks | global |

@@ -255,6 +255,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_018: pi('key', 'sky'), // 🔑 Domain or social account hijacked (the access-keys concept — stolen, then retaken)
   sit_019: pi('person-out', 'orange'), // 👋 Key employee resigns (the same offboarding concept as hr_005)
   sit_020: pi('chart-down', 'emerald'), // 📉 Term sheet pulled (the runway chart is suddenly the whole story)
+  sit_021: pi('hard-hat', 'orange'), // 👷 Workplace injury (the safety hat — worn too late)
+  sit_022: pi('envelope-alert', 'orange'), // 📨 Harassment complaint (the notice-letter concept, people hue)
 }
 
 export function processIcon(taskId: string): string {

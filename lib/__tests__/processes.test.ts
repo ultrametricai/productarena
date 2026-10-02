@@ -26,9 +26,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 144 records (124 processes + 20 situations) with unique, non-empty slugs', () => {
+  it('loads all 146 records (124 processes + 22 situations) with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(144)
+    expect(tasks.length).toBe(146)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -367,7 +367,7 @@ describe('corpus', () => {
     const tasks = loadProcesses(DATA_DIR)
     const byId = (id: string) => tasks.find((t) => t.id === id)!
     const situations = tasks.filter((t) => t.kind === 'situation')
-    expect(situations.length).toBe(20)
+    expect(situations.length).toBe(22)
     // Reactive by definition: every situation is event-driven — no situation sits on a calendar.
     for (const t of situations) expect(t.cadence, `${t.id} cadence`).toBe('event-driven')
     // The urgency clock is curated, not uniform — all three tiers exist in the set.
@@ -401,6 +401,10 @@ describe('corpus', () => {
       ['sit_008', 'US-FED', 'us-fed.frcp-answer-deadline'],
       ['sit_009', 'US-FED', 'us-fed.trademark-office-action-response'],
       ['sit_010', 'US-DE', 'us-de.franchise-tax-annual-report'],
+      // Wave 3 (founder boost 2026-10-02): the GDPR one-month DSAR clock and the OSHA
+      // 8/24-hour severe-injury clocks, carded against their primary sources.
+      ['sit_015', 'EU', 'eu.gdpr-dsar-response-deadline'],
+      ['sit_021', 'US-FED', 'us-fed.osha-severe-injury-reporting'],
     ] as const) {
       expect(byId(sid).description, `${sid} cites its rule card`).toContain(ruleId)
       const file = path.join(__dirname, '..', '..', 'rules', dir, `${ruleId.replace(/\./g, '-')}.json`)
