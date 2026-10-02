@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import ExternalLinkMark from './ExternalLinkMark'
+import StepMetadata, { SharedArtifacts } from './StepMetadata'
+import { PreviewGuidance, PreviewScope, ProviderScope } from './PreviewContent'
+import { previewBriefs, previewContext } from '@/lib/shared-processes/preview-context'
 import { referencedCatalog } from '@/lib/shared-processes/composed-preview'
 import { ProcessOverview } from './ProcessViews'
 import Image from 'next/image'
@@ -99,10 +102,11 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
       const clerkyContext = sourceId === 'form_001' && part.id === 'n1' ? part.options.find(option => option.id === 'clerky-formation') : undefined
       const clerky = clerkyContext ? resolveServiceCandidates(part.references.filter(ref => ref.kind === 'vendor' && ref.id === 'clerky'))[0] : undefined
       const providerDetails = clerky && clerkyContext ? { [clerky.id]: <div className="space-y-3"><Prose>{clerkyContext.summary}</Prose><Notes notes={clerkyContext.notes} /><References references={clerkyContext.references} /></div> } : undefined
+      const briefs = previewBriefs(part.metadata).flatMap(brief => resolveServiceCandidates([{ kind: 'vendor', id: brief.vendor, role: 'candidate' }]).map(candidate => ({ candidateId: candidate.id, guidance: brief.guidance })))
       const visibleOptions = part.options.filter(option => option !== clerkyContext)
       const icon = stepIcons[anchor(scope, part.id)]
       const jurisdictions = Array.isArray(part.metadata.jurisdictions) ? part.metadata.jurisdictions.filter((value): value is string => typeof value === 'string' && value.toLowerCase() !== 'multi') : []
-      return <article key={part.id} id={anchor(scope, part.id)} className={`min-w-0 scroll-mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 ${nested ? 'p-3 sm:p-4' : 'p-5 sm:p-6'}`}>
+      return <PreviewScope key={part.id} context={previewContext(part.metadata)} recordScope={scope}><article id={anchor(scope, part.id)} className={`min-w-0 scroll-mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 ${nested ? 'p-3 sm:p-4' : 'p-5 sm:p-6'}`}>
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h3 className="flex min-w-0 items-start gap-2.5 break-words text-xl font-medium leading-snug text-zinc-100">{icon && <Image src={icon} alt="" width={24} height={24} className="mt-0.5 shrink-0" />}<span>{referenced ? <Link href={sharedPreviewHref(referenced.id, records)} className="rounded-sm hover:text-emerald-300 focus-visible:outline-2 focus-visible:outline-emerald-300">{part.title ?? referenced.title}</Link> : <RegionalDecisionTitle scope={anchor(scope, part.id)} title={part.title ?? part.id} />}</span></h3>
         <StepAssessment metadata={part.metadata} unverified={`${sourceId}:${part.id}` === 'form_001:n3'} />
@@ -110,7 +114,8 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
         <div className="mt-3 space-y-3 text-sm empty:hidden">
           {part.when && <p className="text-zinc-400">When: {part.when}</p>}
           {jurisdictions.length > 0 && <p className="text-zinc-400">Jurisdictions: {jurisdictions.join(', ')}</p>}
-          <Guidance text={part.guidance} />
+          <PreviewGuidance guidance={part.guidance} briefs={briefs} scope={anchor(scope, part.id)} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(scope, part.id)]} parentChoiceScope={vendorPreview?.parentChoiceScope} />
+          {sourceId === 'form_001' && part.id === 'n1' ? <><ProviderScope candidateId="legal-ops/stripe-atlas" choiceScope={vendorPreview?.choiceScope} parentChoiceScope={vendorPreview?.parentChoiceScope}><StepMetadata metadata={part.metadata} sourceId={sourceId} records={records} /></ProviderScope>{clerky && clerkyContext && <ProviderScope candidateId={clerky.id} choiceScope={vendorPreview?.choiceScope} parentChoiceScope={vendorPreview?.parentChoiceScope}><StepMetadata metadata={clerkyContext.metadata} sourceId={sourceId} records={records} /></ProviderScope>}</> : <StepMetadata metadata={part.metadata} sourceId={sourceId} records={records} />}
           {referenced && <div className="space-y-2">
             <Guidance text={referenced.summary} />
           </div>}
@@ -123,7 +128,8 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
           {visibleOptions.length > 0 && <div className="space-y-3 border-t border-zinc-800/50 pt-3">
             <div className="divide-y divide-zinc-800/70 overflow-hidden rounded-xl border border-zinc-800">
             {visibleOptions.map(option => <RegionalOption key={option.id} scope={anchor(scope, part.id)} optionId={option.id} id={anchor(anchor(scope, part.id), option.id)} assessment={<StepAssessment metadata={option.metadata} />} heading={<>{option.title}<StepAssessment metadata={option.metadata} spaced /></>}>
-                <Guidance text={option.summary} />
+                <PreviewGuidance guidance={option.summary} scope={anchor(anchor(scope, part.id), option.id)} />
+                <StepMetadata metadata={option.metadata} sourceId={sourceId} records={records} />
                 {option.when && <p className="text-zinc-400">When: {option.when}</p>}
                 <Notes notes={option.notes} />
                 {comparisons[anchor(anchor(scope, part.id), option.id)] ? <StepComparisonTable bordered={!(sourceId === 'form_001' && part.id === 'n4' && option.id === 'default')} parentChoiceScope={vendorPreview?.parentChoiceScope} scope={anchor(anchor(scope, part.id), option.id)} comparison={comparisons[anchor(anchor(scope, part.id), option.id)]} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(anchor(scope, part.id), option.id)]} /> : vendorPreview && <SelectedCapability parentChoiceScope={vendorPreview?.parentChoiceScope} choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(anchor(scope, part.id), option.id)] ?? []} />}
@@ -137,7 +143,7 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
           {comparison ? <StepComparisonTable parentChoiceScope={vendorPreview?.parentChoiceScope} scope={anchor(scope, part.id)} comparison={comparison} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(scope, part.id)]} /> : vendorPreview && <SelectedCapability parentChoiceScope={vendorPreview?.parentChoiceScope} choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(scope, part.id)] ?? []} />}
           <References references={part.references.filter(ref => comparison || !isServiceCandidate(ref))} />
         </div>
-      </article>
+      </article></PreviewScope>
     })}
     {!parts.length && <p className="text-zinc-400">No parts specified.</p>}
   </div>
@@ -168,6 +174,7 @@ export default function SharedProcessReader({ record, records, supplementary, ve
       {icon && <Image src={icon} alt="" width={256} height={256} priority className="hidden h-64 w-64 justify-self-end md:block" />}
     </header>
     <RegionalVariantSelector />
+    <PreviewScope recordScope={record.id} context={record.id === 'form_001' ? { decision: 'n4', option: 'default' } : undefined}><SharedArtifacts metadata={record.metadata} sourceId={record.id} records={records} /></PreviewScope>
     <ProcessOverview processHrefs={Object.fromEntries(records.map(item => [item.id, sharedPreviewHref(item.id, records)]))} record={record} records={referencedCatalog(record, records)} />
     {processChoice && <ProcessProviderSelector choice={processChoice} />}
     {(record.when || record.guidance || record.outcomes.length > 0 || record.notes.length > 0) && <section aria-label="Process overview" className="space-y-4">
