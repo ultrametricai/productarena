@@ -92,16 +92,30 @@ export function validateDocumentRegistry(doc: DocumentRegistry, asOf: Date): str
 }
 
 /** The README's grouped tables must stay in sync: every registry id appears in the README,
- * and every backticked slug in a README table row resolves to a registry id. */
+ * every backticked slug in a README table row resolves to a registry id, and every table row
+ * links OUT to its record's canonical URL (founder 2026-10-02: the public documents layer must
+ * link to the actual documents on the web — names without links are drift). */
 export function validateDocumentReadme(readme: string, registry: DocumentRegistry): string[] {
   const errors: string[] = []
-  const known = new Set(registry.documents.map((d) => d.id))
-  for (const id of known) {
-    if (!readme.includes(`\`${id}\``)) errors.push(`README: missing registry id ${id}`)
+  const byId = new Map(registry.documents.map((d) => [d.id, d]))
+  for (const id of byId.keys()) {
+    // Every record gets a TABLE row (not just a prose mention) — the row is what carries the
+    // clickable canonical link checked below.
+    if (!readme.includes(`| \`${id}\` |`)) errors.push(`README: missing table row for registry id ${id}`)
   }
   for (const line of readme.split('\n')) {
     const m = /^\| `([^`]+)` \|/.exec(line.trim())
-    if (m && !known.has(m[1])) errors.push(`README: table row cites unknown id ${m[1]}`)
+    if (!m) continue
+    const doc = byId.get(m[1])
+    if (!doc) {
+      errors.push(`README: table row cites unknown id ${m[1]}`)
+      continue
+    }
+    // The row's Document cell must be a markdown link to the committed, checked_on-dated
+    // canonical URL — the registry record, not a re-typed (driftable) copy of it.
+    if (!line.includes(`](${doc.url})`)) {
+      errors.push(`README: row ${doc.id} must link its canonical URL ${doc.url}`)
+    }
   }
   return errors
 }
