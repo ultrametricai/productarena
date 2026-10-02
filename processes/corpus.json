@@ -165,6 +165,7 @@
           "label": "Receive Certificate of Incorporation",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "certificate-of-incorporation",
           "estimatedMinutes": 2880,
           "async": true,
           "extraOptionArenas": [
@@ -186,6 +187,7 @@
           "label": "Sign the bylaws and initial board consent",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "bylaws",
           "legalSignature": true,
           "riskLevel": "medium",
           "estimatedMinutes": 5
@@ -205,6 +207,7 @@
           "label": "Founders sign the stock purchase agreements",
           "route": "person",
           "reversibility": "irreversible",
+          "producesArtifact": "founder-stock-issuance",
           "legalSignature": true,
           "riskLevel": "high",
           "estimatedMinutes": 5
@@ -223,6 +226,7 @@
           "label": "File 83(b) election with the IRS",
           "route": "form",
           "reversibility": "irreversible",
+          "producesArtifact": "83b-election",
           "actionUrl": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
           "actionLabel": "IRS Form 15620 (83(b) election)",
           "vendor": "irs",
@@ -337,6 +341,16 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "certificate-of-incorporation",
+      "bylaws",
+      "founder-stock-issuance",
+      "83b-election"
+    ],
+    "requires": [
+      "company-name",
+      "registered-agent"
     ],
     "tags": [
       "formation",
@@ -514,6 +528,7 @@
           "label": "Receive the stamped Certificate of Formation",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "llc-certificate-of-formation",
           "estimatedMinutes": 2880,
           "async": true,
           "extraOptionArenas": [
@@ -543,6 +558,7 @@
           "label": "Members sign the operating agreement",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "operating-agreement",
           "legalSignature": true,
           "riskLevel": "medium",
           "estimatedMinutes": 5
@@ -552,6 +568,7 @@
           "label": "Apply for an EIN",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "ein",
           "actionUrl": "https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number",
           "actionLabel": "IRS EIN application",
           "vendor": "irs",
@@ -569,6 +586,7 @@
           "label": "Open a business bank account",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "bank-account",
           "optionsArenaId": "startup-banking",
           "vendorOptions": [
             "mercury"
@@ -580,6 +598,7 @@
           "label": "Register for state taxes",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "state-tax-account",
           "riskLevel": "medium",
           "estimatedMinutes": 20
         }
@@ -644,6 +663,16 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "llc-certificate-of-formation",
+      "operating-agreement",
+      "ein",
+      "bank-account",
+      "state-tax-account"
+    ],
+    "requires": [
+      "company-name"
     ],
     "tags": [
       "formation",
@@ -725,6 +754,7 @@
           "label": "Complete IRS SS-4 form online",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "ein",
           "actionUrl": "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online",
           "actionLabel": "IRS EIN online application",
           "vendor": "irs",
@@ -783,6 +813,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "ein"
+    ],
+    "requires": [
+      "certificate-of-incorporation"
     ],
     "tags": [
       "formation",
@@ -856,6 +892,7 @@
           "label": "Register with state tax authority",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "state-tax-account",
           "vendor": "state_sos",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -943,6 +980,12 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "state-tax-account"
+    ],
+    "requires": [
+      "ein"
     ],
     "tags": [
       "formation",
@@ -1198,6 +1241,7 @@
           "label": "Send SAFEs for signature",
           "route": "agent",
           "reversibility": "painful",
+          "producesArtifact": "executed-safes",
           "vendor": "docusign",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -1345,6 +1389,13 @@
         "tier": "tools",
         "required": false
       }
+    ],
+    "produces": [
+      "executed-safes"
+    ],
+    "requires": [
+      "cap-table",
+      "bank-account"
     ],
     "tags": [
       "fundraising",
@@ -1503,6 +1554,7 @@
           "label": "Verify the wires and issue the shares",
           "route": "agent",
           "reversibility": "irreversible",
+          "producesArtifact": "priced-round-closing",
           "vendor": "carta",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -1645,6 +1697,15 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "priced-round-closing"
+    ],
+    "requires": [
+      "data-room",
+      "cap-table",
+      "bank-account",
+      "board-minutes"
+    ],
     "tags": [
       "fundraising",
       "priced-round",
@@ -1736,6 +1797,7 @@
           "label": "Set access controls and share links",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "data-room",
           "estimatedMinutes": 10,
           "functionCalls": [
             {
@@ -1769,6 +1831,17 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "data-room"
+    ],
+    "requires": [
+      "doc-storage",
+      "certificate-of-incorporation",
+      "bylaws",
+      "cap-table",
+      "financial-statements",
+      "ip-assignments"
+    ],
     "tags": [
       "fundraising",
       "data-room",
@@ -1906,6 +1979,7 @@
           "label": "Review and accept valuation",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "409a-valuation",
           "approvalRequired": true,
           "riskLevel": "high",
           "estimatedMinutes": 30
@@ -1951,6 +2025,13 @@
         "tier": "tools",
         "required": false
       }
+    ],
+    "produces": [
+      "409a-valuation"
+    ],
+    "requires": [
+      "financial-statements",
+      "cap-table"
     ],
     "tags": [
       "equity",
@@ -2079,6 +2160,7 @@
           "label": "Record grant on Carta",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "option-grant",
           "vendor": "carta",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -2146,6 +2228,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "option-grant"
+    ],
+    "requires": [
+      "409a-valuation",
+      "cap-table"
     ],
     "tags": [
       "equity",
@@ -2280,6 +2369,7 @@
           "label": "File executed copy",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "executed-nda",
           "vendor": "google_drive",
           "estimatedMinutes": 1,
           "functionCalls": [
@@ -2330,6 +2420,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "executed-nda"
+    ],
+    "requires": [],
     "tags": [
       "legal",
       "contracts"
@@ -2426,6 +2520,7 @@
           "label": "File application on USPTO.gov",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "trademark-serial",
           "actionUrl": "https://www.uspto.gov/trademarks/apply",
           "actionLabel": "USPTO trademark application",
           "vendor": "uspto",
@@ -2549,6 +2644,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "trademark-serial"
+    ],
+    "requires": [
+      "company-name",
+      "brand-logo"
     ],
     "tags": [
       "legal",
@@ -2700,6 +2802,7 @@
           "label": "File executed copies",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "ip-assignments",
           "vendor": "google_drive",
           "estimatedMinutes": 2,
           "functionCalls": [
@@ -2748,6 +2851,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "ip-assignments"
+    ],
+    "requires": [],
     "tags": [
       "legal",
       "ip",
@@ -2798,6 +2905,7 @@
           "label": "Draft SaaS agreement template",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "saas-agreement-template",
           "vendorOptions": [
             "chatgpt",
             "claude",
@@ -2814,6 +2922,7 @@
           "label": "Draft Terms of Service",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "terms-of-service",
           "vendorOptions": [
             "chatgpt",
             "claude",
@@ -2830,6 +2939,7 @@
           "label": "Draft Privacy Policy",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "privacy-policy",
           "vendorOptions": [
             "chatgpt",
             "claude",
@@ -2902,6 +3012,14 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "saas-agreement-template",
+      "terms-of-service",
+      "privacy-policy"
+    ],
+    "requires": [
+      "website"
     ],
     "tags": [
       "legal",
@@ -3054,6 +3172,11 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "certificate-of-incorporation",
+      "cap-table"
     ],
     "tags": [
       "tax",
@@ -3210,6 +3333,7 @@
           "label": "CPA files return with IRS",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "federal-tax-return",
           "vendor": "irs",
           "riskLevel": "high",
           "estimatedMinutes": 20
@@ -3285,6 +3409,14 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "federal-tax-return"
+    ],
+    "requires": [
+      "ein",
+      "accounting-ledger",
+      "financial-statements"
     ],
     "tags": [
       "tax",
@@ -3431,6 +3563,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "payroll-account",
+      "contractor-record"
+    ],
     "tags": [
       "tax",
       "contractors",
@@ -3561,6 +3698,7 @@
           "label": "Select and bind coverage",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "insurance-policy",
           "vendor": "embroker",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -3608,6 +3746,13 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "insurance-policy"
+    ],
+    "requires": [
+      "ein",
+      "business-address"
     ],
     "tags": [
       "insurance",
@@ -3672,6 +3817,7 @@
           "label": "Create an account with your compliance platform",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "compliance-platform",
           "vendor": "vanta",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -3750,6 +3896,7 @@
           "label": "Generate security policies",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "security-policies",
           "vendor": "vanta",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -3824,6 +3971,7 @@
           "label": "Complete audit",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "soc2-type1-report",
           "riskLevel": "high",
           "estimatedMinutes": 20160,
           "async": true
@@ -3887,6 +4035,14 @@
         "required": true
       }
     ],
+    "produces": [
+      "compliance-platform",
+      "security-policies",
+      "soc2-type1-report"
+    ],
+    "requires": [
+      "identity-provider"
+    ],
     "tags": [
       "compliance",
       "soc2",
@@ -3937,6 +4093,7 @@
           "label": "Create the account and set the folder structure",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "doc-storage",
           "estimatedMinutes": 15
         },
         {
@@ -3983,6 +4140,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "doc-storage"
+    ],
+    "requires": [],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -4072,6 +4233,7 @@
           "label": "Activate the account (business details, KYC)",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "payment-processor",
           "estimatedMinutes": 20,
           "async": true
         },
@@ -4130,6 +4292,13 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "payment-processor"
+    ],
+    "requires": [
+      "ein",
+      "bank-account"
     ],
     "tags": [
       "quick-start",
@@ -4223,6 +4392,7 @@
           "label": "Wait for the bank to open the account (1\u20132 business days)",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "bank-account",
           "estimatedMinutes": 2880,
           "async": true,
           "extraOptionArenas": [
@@ -4271,6 +4441,13 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "bank-account"
+    ],
+    "requires": [
+      "ein",
+      "certificate-of-incorporation"
     ],
     "tags": [
       "quick-start",
@@ -4339,6 +4516,7 @@
           "label": "Apply for the corporate card online",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "corporate-card",
           "vendorOptions": [
             "brex",
             "ramp",
@@ -4378,6 +4556,13 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "corporate-card"
+    ],
+    "requires": [
+      "bank-account",
+      "accounting-ledger"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -4429,6 +4614,7 @@
           "label": "Sign up online and designate the agent",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "registered-agent",
           "estimatedMinutes": 15,
           "async": true
         },
@@ -4458,6 +4644,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "registered-agent"
+    ],
+    "requires": [],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -4536,6 +4726,7 @@
           "label": "Sign up and pick an address plan",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "business-address",
           "estimatedMinutes": 10
         },
         {
@@ -4588,6 +4779,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "business-address"
+    ],
+    "requires": [],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -4656,6 +4851,7 @@
           "label": "File foreign qualifications on the state portals",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "foreign-qualification",
           "approvalRequired": true,
           "riskLevel": "medium",
           "estimatedMinutes": 30,
@@ -4684,6 +4880,12 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "foreign-qualification"
+    ],
+    "requires": [
+      "certificate-of-incorporation"
     ],
     "tags": [
       "quick-start",
@@ -4823,6 +5025,10 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "certificate-of-incorporation"
     ],
     "tags": [
       "quick-start",
@@ -4985,6 +5191,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "bank-account"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -5054,6 +5264,7 @@
           "label": "Enter founding shares",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "cap-table",
           "riskLevel": "medium",
           "estimatedMinutes": 15,
           "methods": [
@@ -5144,6 +5355,12 @@
         "required": true
       }
     ],
+    "produces": [
+      "cap-table"
+    ],
+    "requires": [
+      "founder-stock-issuance"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -5233,6 +5450,11 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "cap-table",
+      "executed-safes"
     ],
     "tags": [
       "quick-start",
@@ -5328,6 +5550,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "cap-table",
+      "founder-agreement",
+      "executed-safes"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -5395,6 +5623,7 @@
           "label": "Sign up and configure payroll online",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "payroll-account",
           "vendorOptions": [
             "gusto",
             "rippling",
@@ -5583,6 +5812,15 @@
         "required": true
       }
     ],
+    "produces": [
+      "payroll-account"
+    ],
+    "requires": [
+      "ein",
+      "bank-account",
+      "accounting-ledger",
+      "state-tax-account"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -5703,6 +5941,7 @@
           "label": "Sign up and configure the chart of accounts",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "accounting-ledger",
           "vendorOptions": [
             "quickbooks",
             "xero",
@@ -5801,6 +6040,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "accounting-ledger"
+    ],
+    "requires": [
+      "bank-account"
+    ],
     "tags": [
       "quick-start",
       "setup-wizard",
@@ -5874,6 +6119,7 @@
           "label": "Candidate accepts (1-3 days)",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "employment-agreement",
           "estimatedMinutes": 4320,
           "async": true,
           "extraOptionArenas": [
@@ -6114,6 +6360,16 @@
         "required": false
       }
     ],
+    "produces": [
+      "employment-agreement"
+    ],
+    "requires": [
+      "payroll-account",
+      "benefits-plan",
+      "409a-valuation",
+      "company-email",
+      "team-chat"
+    ],
     "tags": [
       "hr",
       "hiring",
@@ -6286,6 +6542,11 @@
         "required": false
       }
     ],
+    "produces": [],
+    "requires": [
+      "payroll-account",
+      "employment-agreement"
+    ],
     "tags": [
       "hr",
       "payroll",
@@ -6449,6 +6710,8 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [],
     "tags": [
       "hr",
       "contractors",
@@ -6485,6 +6748,7 @@
           "label": "Create ATS account",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "ats",
           "vendor": "lever",
           "approvalRequired": true,
           "estimatedMinutes": 15,
@@ -6580,6 +6844,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "ats"
+    ],
+    "requires": [
+      "website"
     ],
     "tags": [
       "hr",
@@ -6877,6 +7147,16 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "payroll-account",
+      "benefits-plan",
+      "option-grant",
+      "employment-agreement",
+      "company-email",
+      "team-chat",
+      "code-hosting-org"
+    ],
     "tags": [
       "hr",
       "offboarding"
@@ -7002,6 +7282,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "bank-account",
+      "accounting-ledger",
+      "team-chat"
+    ],
     "tags": [
       "finance",
       "payments",
@@ -7117,6 +7403,7 @@
           "label": "Generate Balance Sheet",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "financial-statements",
           "vendor": "quickbooks",
           "estimatedMinutes": 2,
           "functionCalls": [
@@ -7198,6 +7485,13 @@
         "tier": "connected",
         "required": true
       }
+    ],
+    "produces": [
+      "financial-statements"
+    ],
+    "requires": [
+      "bank-account",
+      "accounting-ledger"
     ],
     "tags": [
       "finance",
@@ -7412,6 +7706,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "bank-account",
+      "payment-processor",
+      "accounting-ledger"
+    ],
     "tags": [
       "finance",
       "reporting",
@@ -7460,6 +7760,7 @@
           "label": "Create the team chat workspace",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "team-chat",
           "vendor": "slack",
           "optionsArenaId": "team-chat",
           "vendorOptions": [
@@ -7543,6 +7844,10 @@
         "required": false
       }
     ],
+    "produces": [
+      "team-chat"
+    ],
+    "requires": [],
     "tags": [
       "operations",
       "communication",
@@ -7584,6 +7889,7 @@
           "label": "Create the project tracker workspace",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "project-tracker",
           "vendor": "linear",
           "optionsArenaId": "project-management",
           "vendorOptions": [
@@ -7689,6 +7995,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "project-tracker"
+    ],
+    "requires": [],
     "tags": [
       "operations",
       "project-management",
@@ -7730,6 +8040,7 @@
           "label": "Create the team wiki workspace",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "team-wiki",
           "vendor": "notion",
           "vendorOptions": [
             "notion",
@@ -7825,6 +8136,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "team-wiki"
+    ],
+    "requires": [],
     "tags": [
       "operations",
       "documentation",
@@ -7867,6 +8182,7 @@
           "label": "Create the company email workspace",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "company-email",
           "actionUrl": "https://workspace.google.com/",
           "actionLabel": "Google Workspace signup",
           "vendor": "gmail",
@@ -7986,6 +8302,13 @@
         "required": true
       }
     ],
+    "produces": [
+      "company-email"
+    ],
+    "requires": [
+      "domain",
+      "dns-control"
+    ],
     "tags": [
       "operations",
       "email",
@@ -8029,6 +8352,7 @@
           "label": "Create the password manager business account",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "password-manager",
           "vendor": "onepassword",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -8113,6 +8437,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "password-manager"
+    ],
+    "requires": [],
     "tags": [
       "operations",
       "security",
@@ -8266,6 +8594,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "employment-agreement"
+    ],
     "tags": [
       "hr",
       "performance",
@@ -8358,6 +8690,7 @@
           "label": "Configure benefits in Gusto",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "benefits-plan",
           "vendor": "gusto",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -8434,6 +8767,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "benefits-plan"
+    ],
+    "requires": [
+      "payroll-account"
     ],
     "tags": [
       "hr",
@@ -8558,6 +8897,7 @@
           "label": "Publish to Notion",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "employee-handbook",
           "vendor": "notion",
           "approvalRequired": true,
           "estimatedMinutes": 15,
@@ -8623,6 +8963,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "employee-handbook"
+    ],
+    "requires": [
+      "team-wiki",
+      "team-chat"
     ],
     "tags": [
       "hr",
@@ -8754,6 +9101,11 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "corporate-card",
+      "team-chat"
     ],
     "tags": [
       "finance",
@@ -8989,6 +9341,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "accounting-ledger",
+      "payment-processor",
+      "team-wiki"
+    ],
     "tags": [
       "finance",
       "board",
@@ -9168,6 +9526,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "project-tracker",
+      "team-chat",
+      "team-wiki"
+    ],
     "tags": [
       "operations",
       "project-management",
@@ -9214,6 +9578,7 @@
           "label": "Set up your identity provider tenant",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "identity-provider",
           "vendor": "okta",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -9357,6 +9722,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "identity-provider"
+    ],
+    "requires": [
+      "company-email"
     ],
     "tags": [
       "security",
@@ -9530,6 +9901,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "ats",
+      "team-chat"
+    ],
     "tags": [
       "hr",
       "recruiting",
@@ -9575,6 +9951,7 @@
           "label": "Create services in your incident platform",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "incident-platform",
           "vendor": "pagerduty",
           "optionsArenaId": "incident-management",
           "vendorOptions": [
@@ -9707,6 +10084,13 @@
         "required": true
       }
     ],
+    "produces": [
+      "incident-platform"
+    ],
+    "requires": [
+      "error-tracking",
+      "team-chat"
+    ],
     "tags": [
       "product",
       "incident-response",
@@ -9751,6 +10135,7 @@
           "label": "Set up the data warehouse",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "data-warehouse",
           "vendor": "snowflake",
           "optionsArenaId": "data-warehouses",
           "vendorOptions": [
@@ -9882,6 +10267,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "data-warehouse"
+    ],
+    "requires": [
+      "cloud-infrastructure",
+      "product-analytics"
     ],
     "tags": [
       "data",
@@ -10023,6 +10415,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "vendor-contract",
+      "compliance-platform"
+    ],
     "tags": [
       "compliance",
       "security",
@@ -10148,6 +10545,11 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "team-wiki",
+      "project-tracker"
     ],
     "tags": [
       "operations",
@@ -10338,6 +10740,7 @@
           "label": "Configure monitoring",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "cloud-infrastructure",
           "vendor": "aws",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -10414,6 +10817,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "cloud-infrastructure"
+    ],
+    "requires": [],
     "tags": [
       "product",
       "infrastructure",
@@ -10450,6 +10857,7 @@
           "label": "Create the CI workflow in your code host",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "ci-pipeline",
           "vendor": "github",
           "optionsArenaId": "code-hosting",
           "vendorOptions": [
@@ -10570,6 +10978,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "ci-pipeline"
+    ],
+    "requires": [
+      "code-hosting-org"
     ],
     "tags": [
       "product",
@@ -10733,6 +11147,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "domain",
+      "dns-control"
+    ],
     "tags": [
       "product",
       "domain",
@@ -10835,6 +11254,7 @@
           "label": "Install SDK in codebase",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "error-tracking",
           "approvalRequired": true,
           "estimatedMinutes": 10,
           "extraOptionArenas": [
@@ -10874,6 +11294,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "error-tracking"
+    ],
+    "requires": [
+      "team-chat",
+      "code-hosting-org"
     ],
     "tags": [
       "product",
@@ -10938,6 +11365,7 @@
           "label": "Install SDK in codebase",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "product-analytics",
           "approvalRequired": true,
           "estimatedMinutes": 20,
           "extraOptionArenas": [
@@ -11040,6 +11468,12 @@
         "required": true
       }
     ],
+    "produces": [
+      "product-analytics"
+    ],
+    "requires": [
+      "code-hosting-org"
+    ],
     "tags": [
       "product",
       "analytics",
@@ -11081,6 +11515,7 @@
           "label": "Create your code hosting organization",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "code-hosting-org",
           "vendor": "github",
           "optionsArenaId": "code-hosting",
           "vendorOptions": [
@@ -11194,6 +11629,10 @@
         "required": true
       }
     ],
+    "produces": [
+      "code-hosting-org"
+    ],
+    "requires": [],
     "tags": [
       "product",
       "github",
@@ -11236,6 +11675,7 @@
           "label": "Create your CRM account",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "crm",
           "vendor": "hubspot",
           "optionsArenaId": "crm",
           "vendorOptions": [
@@ -11356,6 +11796,12 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "crm"
+    ],
+    "requires": [
+      "company-email"
     ],
     "tags": [
       "sales",
@@ -11582,6 +12028,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "payment-processor"
+    ],
     "tags": [
       "sales",
       "invoicing"
@@ -11669,6 +12119,7 @@
           "label": "Configure pricing plans",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "subscription-billing",
           "vendor": "stripe",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -11793,6 +12244,12 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "subscription-billing"
+    ],
+    "requires": [
+      "payment-processor"
     ],
     "tags": [
       "growth",
@@ -11980,6 +12437,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "product-analytics",
+      "crm",
+      "subscription-billing"
+    ],
     "tags": [
       "growth",
       "churn",
@@ -12058,6 +12521,7 @@
           "label": "Set up audience list",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "email-audience",
           "vendor": "mailchimp",
           "approvalRequired": true,
           "estimatedMinutes": 10,
@@ -12144,6 +12608,12 @@
         "required": false
       }
     ],
+    "produces": [
+      "email-audience"
+    ],
+    "requires": [
+      "website"
+    ],
     "tags": [
       "growth",
       "marketing",
@@ -12185,6 +12655,7 @@
           "label": "Create your support platform account",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "support-desk",
           "vendor": "intercom",
           "optionsArenaId": "ai-support-agents",
           "vendorOptions": [
@@ -12291,6 +12762,12 @@
         "required": true
       }
     ],
+    "produces": [
+      "support-desk"
+    ],
+    "requires": [
+      "website"
+    ],
     "tags": [
       "growth",
       "support",
@@ -12346,6 +12823,7 @@
           "label": "Authenticate sending domain",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "transactional-email",
           "vendor": "sendgrid",
           "approvalRequired": true,
           "riskLevel": "medium",
@@ -12446,6 +12924,13 @@
         "tier": "tools",
         "required": true
       }
+    ],
+    "produces": [
+      "transactional-email"
+    ],
+    "requires": [
+      "domain",
+      "dns-control"
     ],
     "tags": [
       "growth",
@@ -12566,6 +13051,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "bank-account"
+    ],
     "tags": [
       "opportunity",
       "mercury",
@@ -12693,6 +13182,7 @@
           "label": "Verify the contractor is payable (W-9 on file, payment method set)",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "contractor-record",
           "vendor": "gusto",
           "functionCalls": [
             {
@@ -12716,6 +13206,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "contractor-record"
+    ],
+    "requires": [
+      "payroll-account"
+    ],
     "tags": [
       "opportunity",
       "gusto",
@@ -12837,6 +13333,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "payment-processor"
+    ],
     "tags": [
       "opportunity",
       "stripe",
@@ -12928,6 +13428,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "payment-processor"
+    ],
     "tags": [
       "opportunity",
       "stripe",
@@ -13027,6 +13531,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "project-tracker"
+    ],
     "tags": [
       "opportunity",
       "asana",
@@ -13134,6 +13642,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "company-email",
+      "identity-provider",
+      "employment-agreement"
+    ],
     "tags": [
       "opportunity",
       "google",
@@ -13211,6 +13725,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "company-email"
+    ],
     "tags": [
       "opportunity",
       "gmail",
@@ -13305,6 +13823,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "project-tracker"
+    ],
     "tags": [
       "opportunity",
       "linear",
@@ -13397,6 +13919,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "domain",
+      "dns-control",
+      "company-email"
+    ],
     "tags": [
       "opportunity",
       "cloudflare",
@@ -13468,6 +13996,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "company-name"
+    ],
     "tags": [
       "opportunity",
       "legal"
@@ -13563,6 +14095,7 @@
           "label": "Present ranked candidates",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "company-name",
           "vendorOptions": [
             "chatgpt",
             "claude",
@@ -13585,6 +14118,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "company-name"
+    ],
+    "requires": [],
     "tags": [
       "branding",
       "naming",
@@ -13661,6 +14198,7 @@
           "label": "Set primary logo",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "brand-logo",
           "estimatedMinutes": 1
         }
       ],
@@ -13672,6 +14210,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "brand-logo"
+    ],
+    "requires": [
+      "company-name"
+    ],
     "tags": [
       "branding",
       "logo",
@@ -13740,6 +14284,7 @@
           "label": "Set the palette as design tokens in the design tool",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "brand-palette",
           "vendorOptions": [
             "figma",
             "canva"
@@ -13767,6 +14312,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "brand-palette"
+    ],
+    "requires": [],
     "tags": [
       "branding",
       "native"
@@ -13833,6 +14382,7 @@
           "label": "Shortlist candidates with pricing and renewal costs",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "domain-shortlist",
           "estimatedMinutes": 2
         }
       ],
@@ -13848,6 +14398,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "domain-shortlist"
+    ],
+    "requires": [
+      "company-name"
+    ],
     "tags": [
       "domains",
       "vendor"
@@ -13885,6 +14441,7 @@
           "label": "Register and pay at your registrar",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "domain",
           "vendor": "name_com",
           "optionsArenaId": "domain-registrars",
           "vendorOptions": [
@@ -13914,6 +14471,7 @@
           "label": "Provision DNS/SSL",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "dns-control",
           "vendor": "cloudflare",
           "estimatedMinutes": 5,
           "async": true
@@ -13927,6 +14485,13 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "domain",
+      "dns-control"
+    ],
+    "requires": [
+      "domain-shortlist"
+    ],
     "tags": [
       "domains",
       "payments",
@@ -14019,6 +14584,7 @@
           "label": "Publish to the CDN (edge deploy + SSL)",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "website",
           "vendorOptions": [
             "cloudflare",
             "vercel"
@@ -14043,6 +14609,14 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "website"
+    ],
+    "requires": [
+      "domain",
+      "brand-logo",
+      "brand-palette"
+    ],
     "tags": [
       "sitegen",
       "website",
@@ -14134,6 +14708,10 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "team-chat"
+    ],
     "tags": [
       "team",
       "native"
@@ -14216,6 +14794,8 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [],
     "tags": [
       "integrations",
       "mcp",
@@ -14334,6 +14914,7 @@
           "label": "Sign the agreement",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "vendor-contract",
           "legalSignature": true,
           "riskLevel": "medium",
           "estimatedMinutes": 5
@@ -14407,6 +14988,10 @@
         "required": false
       }
     ],
+    "produces": [
+      "vendor-contract"
+    ],
+    "requires": [],
     "tags": [
       "operations",
       "vendor-management",
@@ -14737,6 +15322,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "team-wiki"
+    ],
     "tags": [
       "startup",
       "validation",
@@ -14870,6 +15459,7 @@
           "label": "Founders sign the agreements",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "founder-agreement",
           "legalSignature": true,
           "estimatedMinutes": 10
         },
@@ -14900,6 +15490,7 @@
           "label": "File 83(b) elections with the IRS",
           "route": "form",
           "reversibility": "irreversible",
+          "producesArtifact": "83b-election",
           "actionUrl": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
           "actionLabel": "IRS Form 15620 (83(b) election)",
           "vendor": "irs",
@@ -14916,6 +15507,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "founder-agreement",
+      "83b-election"
+    ],
+    "requires": [
+      "cap-table"
     ],
     "tags": [
       "startup",
@@ -15108,6 +15706,7 @@
           "label": "Publish policies to the website",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "privacy-policy",
           "vendor": "vercel",
           "vendorOptions": [
             "vercel",
@@ -15151,6 +15750,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "privacy-policy"
+    ],
+    "requires": [
+      "website"
     ],
     "tags": [
       "compliance",
@@ -15240,6 +15845,7 @@
           "label": "Circulate minutes for signature",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "board-minutes",
           "vendor": "docusign",
           "approvalRequired": true,
           "estimatedMinutes": 5
@@ -15259,6 +15865,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [
+      "board-minutes"
+    ],
+    "requires": [
+      "data-room"
+    ],
     "tags": [
       "compliance",
       "governance",
@@ -15406,6 +16018,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "website",
+      "brand-logo",
+      "product-analytics"
+    ],
     "tags": [
       "growth",
       "launch",
@@ -15522,6 +16140,10 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "website"
     ],
     "tags": [
       "growth",
@@ -15652,6 +16274,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "crm",
+      "company-email"
+    ],
     "tags": [
       "growth",
       "sales",
@@ -15743,6 +16370,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "payment-processor",
+      "email-audience",
+      "product-analytics"
+    ],
     "tags": [
       "growth",
       "referral",
@@ -15946,6 +16579,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "code-hosting-org",
+      "project-tracker",
+      "ci-pipeline"
+    ],
     "tags": [
       "software",
       "engineering",
@@ -16046,6 +16685,12 @@
       ]
     },
     "contextNeeded": [],
+    "produces": [],
+    "requires": [
+      "code-hosting-org",
+      "ci-pipeline",
+      "error-tracking"
+    ],
     "tags": [
       "software",
       "release",
@@ -16197,6 +16842,7 @@
           "label": "Wait for the dissolution to be accepted",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "certificate-of-dissolution",
           "estimatedMinutes": 10080,
           "async": true,
           "extraOptionArenas": [
@@ -16332,6 +16978,16 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "certificate-of-dissolution"
+    ],
+    "requires": [
+      "certificate-of-incorporation",
+      "bank-account",
+      "payroll-account",
+      "foreign-qualification",
+      "vendor-contract"
     ],
     "tags": [
       "legal",
@@ -16499,6 +17155,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "executed-safes",
+      "priced-round-closing",
+      "cap-table"
+    ],
     "tags": [
       "fundraising",
       "equity",
@@ -16624,6 +17286,7 @@
           "label": "Board signs the consent approving the budget",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "annual-budget",
           "legalSignature": true,
           "riskLevel": "medium",
           "estimatedMinutes": 5
@@ -16665,6 +17328,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "annual-budget"
+    ],
+    "requires": [
+      "accounting-ledger",
+      "financial-statements"
     ],
     "tags": [
       "finance",
@@ -16838,6 +17508,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "payroll-account",
+      "federal-tax-return"
+    ],
     "tags": [
       "tax",
       "compliance",
@@ -16938,6 +17613,7 @@
           "label": "Register with each state\u2019s department of revenue",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "sales-tax-registration",
           "actionUrl": "https://www.streamlinedsalestax.org/",
           "actionLabel": "Streamlined Sales Tax registration",
           "riskLevel": "high",
@@ -17063,6 +17739,12 @@
         "required": true
       }
     ],
+    "produces": [
+      "sales-tax-registration"
+    ],
+    "requires": [
+      "payment-processor"
+    ],
     "tags": [
       "tax",
       "compliance",
@@ -17169,6 +17851,7 @@
           "label": "Receive the report and publish to the trust center",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "soc2-type2-report",
           "vendor": "vanta",
           "estimatedMinutes": 15
         }
@@ -17211,6 +17894,15 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "soc2-type2-report"
+    ],
+    "requires": [
+      "soc2-type1-report",
+      "compliance-platform",
+      "identity-provider",
+      "pentest-report"
     ],
     "tags": [
       "compliance",
@@ -17323,6 +18015,7 @@
           "label": "Request the retest and attestation letter",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "pentest-report",
           "estimatedMinutes": 15
         }
       ],
@@ -17360,6 +18053,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "pentest-report"
+    ],
+    "requires": [
+      "cloud-infrastructure",
+      "project-tracker"
     ],
     "tags": [
       "security",
@@ -17495,6 +18195,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "incident-platform",
+      "project-tracker",
+      "status-page"
+    ],
     "tags": [
       "reliability",
       "incidents",
@@ -17564,6 +18270,7 @@
           "label": "Publish the page on your domain",
           "route": "agent",
           "reversibility": "reversible",
+          "producesArtifact": "status-page",
           "vendor": "cloudflare",
           "estimatedMinutes": 10,
           "functionCalls": [
@@ -17638,6 +18345,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "status-page"
+    ],
+    "requires": [
+      "domain",
+      "saas-agreement-template"
     ],
     "tags": [
       "reliability",
@@ -17786,6 +18500,11 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "brand-logo",
+      "privacy-policy"
     ],
     "tags": [
       "launch",
@@ -17950,6 +18669,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "subscription-billing",
+      "website"
+    ],
     "tags": [
       "pricing",
       "revenue",
@@ -18060,6 +18784,7 @@
           "label": "Candidate accepts and onboarding starts",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "employment-agreement",
           "estimatedMinutes": 2880,
           "async": true
         }
@@ -18110,6 +18835,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "employment-agreement"
+    ],
+    "requires": [
+      "cap-table",
+      "409a-valuation"
     ],
     "tags": [
       "hiring",
@@ -18292,6 +19024,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "payroll-account"
+    ],
     "tags": [
       "immigration",
       "hiring",
@@ -18374,6 +19110,7 @@
           "label": "Sign the plan adoption agreement",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "401k-plan",
           "legalSignature": true,
           "riskLevel": "medium",
           "estimatedMinutes": 10
@@ -18445,6 +19182,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "401k-plan"
+    ],
+    "requires": [
+      "payroll-account"
     ],
     "tags": [
       "benefits",
@@ -18587,6 +19330,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "company-email"
+    ],
     "tags": [
       "hiring",
       "global",
@@ -18670,6 +19417,7 @@
           "label": "Enroll the fleet\u2019s devices",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "mdm",
           "estimatedMinutes": 60
         },
         {
@@ -18707,6 +19455,12 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "mdm"
+    ],
+    "requires": [
+      "compliance-platform"
     ],
     "tags": [
       "security",
@@ -18806,6 +19560,7 @@
           "label": "Sign the lease and any guarantee",
           "route": "person",
           "reversibility": "painful",
+          "producesArtifact": "office-lease",
           "legalSignature": true,
           "riskLevel": "high",
           "estimatedMinutes": 10
@@ -18889,6 +19644,13 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "office-lease"
+    ],
+    "requires": [
+      "insurance-policy",
+      "bank-account"
     ],
     "tags": [
       "office",
@@ -19014,6 +19776,11 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [],
+    "requires": [
+      "security-policies",
+      "privacy-policy"
     ],
     "tags": [
       "security",
@@ -19166,6 +19933,10 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "code-hosting-org"
+    ],
     "tags": [
       "devtools",
       "ai",
@@ -19312,6 +20083,12 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "subscription-billing",
+      "crm",
+      "email-audience"
+    ],
     "tags": [
       "retention",
       "email",
@@ -19402,6 +20179,7 @@
           "label": "Receive the stamped LP certificate",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "fund-lp-certificate",
           "estimatedMinutes": 2880,
           "async": true,
           "extraOptionArenas": [
@@ -19455,6 +20233,7 @@
           "label": "GP signs the LPA and the operating agreement",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "fund-lpa",
           "legalSignature": true,
           "riskLevel": "high",
           "estimatedMinutes": 10
@@ -19481,6 +20260,7 @@
           "label": "Open the fund bank account",
           "route": "form",
           "reversibility": "painful",
+          "producesArtifact": "fund-bank-account",
           "optionsArenaId": "startup-banking",
           "vendorOptions": [
             "mercury",
@@ -19551,6 +20331,12 @@
         "required": true
       }
     ],
+    "produces": [
+      "fund-lp-certificate",
+      "fund-lpa",
+      "fund-bank-account"
+    ],
+    "requires": [],
     "tags": [
       "vc",
       "fund-formation",
@@ -19689,6 +20475,7 @@
           "label": "Hold the first and final close",
           "route": "person",
           "reversibility": "irreversible",
+          "producesArtifact": "fund-closing",
           "approvalRequired": true,
           "riskLevel": "high",
           "estimatedMinutes": 60
@@ -19730,6 +20517,14 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [
+      "fund-closing"
+    ],
+    "requires": [
+      "fund-lp-certificate",
+      "fund-lpa",
+      "fund-bank-account"
     ],
     "tags": [
       "vc",
@@ -19907,6 +20702,11 @@
         "required": true
       }
     ],
+    "produces": [],
+    "requires": [
+      "fund-closing",
+      "fund-bank-account"
+    ],
     "tags": [
       "vc",
       "fund-ops",
@@ -20035,6 +20835,7 @@
           "label": "Receive the stamped conversion and incorporation certificates",
           "route": "person",
           "reversibility": "reversible",
+          "producesArtifact": "certificate-of-incorporation",
           "estimatedMinutes": 2880,
           "async": true
         },
@@ -20043,6 +20844,7 @@
           "label": "Adopt bylaws and issue founder stock under the C-Corp",
           "route": "form",
           "reversibility": "reversible",
+          "producesArtifact": "bylaws",
           "vendor": "clerky",
           "approvalRequired": true,
           "riskLevel": "high",
@@ -20053,6 +20855,7 @@
           "label": "Founders sign the new stock purchase agreements",
           "route": "person",
           "reversibility": "irreversible",
+          "producesArtifact": "founder-stock-issuance",
           "legalSignature": true,
           "riskLevel": "high",
           "estimatedMinutes": 5
@@ -20071,6 +20874,7 @@
           "label": "File the 83(b) elections with the IRS",
           "route": "form",
           "reversibility": "irreversible",
+          "producesArtifact": "83b-election",
           "actionUrl": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
           "actionLabel": "IRS Form 15620 (83(b) election)",
           "vendor": "irs",
@@ -20150,6 +20954,19 @@
         "tier": "user_input",
         "required": true
       }
+    ],
+    "produces": [
+      "certificate-of-incorporation",
+      "bylaws",
+      "founder-stock-issuance",
+      "83b-election"
+    ],
+    "requires": [
+      "llc-certificate-of-formation",
+      "operating-agreement",
+      "bank-account",
+      "payroll-account",
+      "state-tax-account"
     ],
     "tags": [
       "formation",
@@ -20276,6 +21093,10 @@
         "tier": "user_input",
         "required": false
       }
+    ],
+    "produces": [],
+    "requires": [
+      "founder-agreement"
     ],
     "tags": [
       "fundraising",
