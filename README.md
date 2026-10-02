@@ -24,7 +24,7 @@ serve it.*
 | The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
-| Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
@@ -144,6 +144,31 @@ source-cited, exhaustively tested records and code:
   - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
     that takes the FMV as input and never values a company.
+  - `optionTax.ts` — ISO vs NSO exercise mechanics: NSO spread-at-exercise income and the
+    published supplemental-withholding rates, ISO no-regular-tax-at-exercise with the AMT
+    adjustment, the $100,000 ISO limit replaying the regulation's own examples,
+    qualifying/disqualifying disposition math with the loss cap, and a clearly-labeled AMT
+    exposure illustration with asOf-dated parameters.
+  - `election83b.ts` — the 83(b) money math (the deadline clock stays in `deadlines.ts`):
+    tax-at-grant vs tax-at-vesting scenarios from explicit inputs, the zero-spread founder
+    case, forfeiture outcomes with the cited no-refund risk, and the early-exercise
+    interplay — all six of the IRS revenue procedure's examples replayed.
+  - `qsbs.ts` — § 1202 mechanics: eligibility as cited conditions (needs review wherever
+    facts decide), the holding clock with the 83(b)/vesting interplay, exclusion
+    percentages by acquisition date across both statutory regimes, the per-issuer cap
+    (greater of the dollar cap or 10× basis), and the § 1045 rollover explained, cited,
+    never computed.
+  - `deFranchiseTax.ts` — both published Delaware franchise-tax methods computed exactly
+    (the Division of Corporations' worked examples replayed number-for-number), the
+    which-method-is-cheaper comparator for the famous March recalculation, and the Large
+    Corporate Filer amount surfaced.
+  - `rdCredit.ts` — R&D tax mechanics at honest scope: § 174/§ 174A
+    capitalization/amortization arithmetic with the midpoint convention, and the § 41
+    payroll-tax-offset election mechanics (eligibility conditions, the cap, quarterly
+    application) — computation over explicit inputs, eligibility always needs review.
+  - `payrollTax.ts` — employer-side federal payroll mechanics: FICA with the asOf-dated
+    wage base, Additional Medicare labeled employee-only, FUTA with the bounded state
+    credit, and per-employee annual cost with a stated state-tax out-of-scope boundary.
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.

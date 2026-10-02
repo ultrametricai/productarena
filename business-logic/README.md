@@ -4,7 +4,8 @@ Part of [the open startup repo](../README.md#business-logic): reusable business 
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
 the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
-liquidity-event waterfalls, 409A grant sanity), every one pure,
+liquidity-event waterfalls, 409A grant sanity, ISO/NSO exercise tax, 83(b) math, QSBS,
+Delaware franchise tax, R&D tax mechanics, employer payroll tax), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -99,9 +100,73 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
   by id — the gate (`lib/openstartup/__tests__/grant409aSanity.test.ts`) fails if a card is
   missing or jurisdiction-mismatched — and every finding is `needsReview: true`.
 
-Still planned: hiring cost comparisons beyond the runway impact (benefits/payroll-tax load
-factors need dated rule cards first). The conservative workflow planner lives in
-`lib/founderOps.ts` and is gated by `__tests__/founder-ops.test.ts`.
+- **ISO / NSO exercise tax** — `lib/openstartup/optionTax.ts` — pure, client-safe. Contract:
+  `nsoExerciseIncome` (spread-at-exercise ordinary income per Pub 525, rule
+  `us-fed.nso-spread-ordinary-income`), `supplementalWithholdingIllustration` (the published
+  22%/37% supplemental rates, asOf-dated — rule `us-fed.supplemental-wage-withholding-2026`),
+  `isoExerciseOutcome` (§ 421(a) no regular income + the § 56(b)(3) AMT inclusion with dual
+  basis; the equity lane's early-exercise flag defers the inclusion under § 83 timing),
+  `iso100kAttribution` (§ 422(d): grant-date FMV, order-granted, NSO spillover and
+  bifurcation — Treas. Reg. § 1.422-4(d) Examples 1-3 replayed number-for-number),
+  `isoDisposition` (2y/1y holding periods, § 421(b) disqualifying income, the § 422(c)(2)
+  loss cap, flagged anniversary boundaries), and `amtExposureIllustration` (a clearly-labeled
+  ILLUSTRATION whose Rev. Proc. 2024-40 parameters replay every published complete-phaseout
+  amount; `producesFilingComputation: false` by construction). Vesting-year attribution and
+  FMVs are inputs — never derived. Tests: `lib/openstartup/__tests__/optionTax.test.ts`.
+- **83(b) election math** — `lib/openstartup/election83b.ts` — pure, client-safe; the MONEY
+  only (`deadlines.ts` owns the 30-day clock). Contract: `compare83bScenario` /
+  `scenarioTax83b` (tax-at-grant vs tax-at-vesting from explicit FMV-trajectory and rate
+  inputs; the zero-spread founder case flagged — $0 income now), `forfeitureAfterElection`
+  (no deduction, loss capped at paid − realized, the inclusion never recovered — the cited
+  risk statement rides on every result), and `earlyExercise83b` (consumes the equity lane's
+  early-exercise flag; locks NSO income / ISO AMT inclusion at the exercise spread). All six
+  of Rev. Proc. 2012-29's published examples replayed number-for-number (rule
+  `us-fed.83b-scenario-arithmetic`) in `lib/openstartup/__tests__/election83b.test.ts`.
+- **QSBS (§ 1202)** — `lib/openstartup/qsbs.ts` — pure, client-safe. Contract:
+  `qsbsEligibilityChecklist` (C corp, original issuance, the gross-assets test routed by
+  issuance date, active business ALWAYS needs_review, excluded fields — each a cited
+  condition, rule `us-fed.qsbs-eligibility`), `qsbsHoldingClock` (the 5-year — or
+  post-applicable-date 3/4/5-year — clock with the 83(b)/vesting start per rule
+  `us-fed.restricted-property-holding-period`), `qsbsExclusionPercentage` (50/75/100 by
+  acquisition date incl. the tiered post-2025 regime, boundaries pinned),
+  `qsbsPerIssuerCap` (greater of the dollar cap or 10× basis; the standard $2M-basis →
+  $20M-cap worked example re-derived from § 1202(b)(1)), `qsbsExclusionIllustration`, and
+  `SECTION_1045_ROLLOVER` (explained, cited, never computed). Tests:
+  `lib/openstartup/__tests__/qsbs.test.ts`.
+- **Delaware franchise tax** — `lib/openstartup/deFranchiseTax.ts` — pure, client-safe.
+  Contract: `authorizedSharesMethodTax` and `assumedParValueCapitalTax` (BOTH published
+  methods computed exactly per 8 Del. C. § 503 and the Division of Corporations' own
+  calculation page, with the Division's worked examples — 10,005 shares → $335; 100,000 →
+  $1,015; the $2.061856 assumed-par example → $1,600 — replayed number-for-number; explicit
+  rounding: 6-decimal half-up assumed par, round-up-to-next-million),
+  `compareFranchiseTaxMethods` (the March recalculation: which method is cheaper),
+  `largeCorporateFilerTax` (fixed amount surfaced, qualification unverified), and the
+  $5,000 quarterly-installment flag. No-par stock refused as out of scope. Rules
+  `us-de.franchise-tax-authorized-shares-method` / `us-de.franchise-tax-assumed-par-method`;
+  tests: `lib/openstartup/__tests__/deFranchiseTax.test.ts`.
+- **R&D tax mechanics** — `lib/openstartup/rdCredit.ts` — honest scope: cited explanation +
+  straight-line arithmetic, never a credit computation. Contract:
+  `midpointAmortizationSchedule` / `domesticSre5YearSchedule` / `foreignSre15YearSchedule`
+  (the statutory midpoint convention — the 10/20/20/20/20/10 domestic pattern replayed,
+  cents-exact), `domesticSre2025Treatment` (§ 174A current deduction or the ≥60-month
+  election; law-in-flux recorded on the card, never editorialized),
+  `qsbPayrollOffsetEligibility` (§ 41(h)(3) conditions, always needs_review overall),
+  `payrollOffsetElectionCap`, and `quarterlyOffsetApplication` (Form 8974:
+  SS-first-then-Medicare, per-quarter cap, carryforward, conservation-tested). Rules
+  `us-fed.research-expenditure-amortization` / `us-fed.rd-payroll-offset`; tests:
+  `lib/openstartup/__tests__/rdCredit.test.ts`.
+- **Employer payroll tax** — `lib/openstartup/payrollTax.ts` — pure, client-safe; FEDERAL
+  ONLY with the state-tax boundary stated on every result. Contract: `employerFicaAnnual`
+  (6.2% on the asOf-dated wage base, 1.45% Medicare, the 0.9% Additional Medicare computed
+  but labeled employee-only withholding — rule `us-fed.fica-rates-2026`), `futaAnnual`
+  (6.0% on the first $7,000 with the bounded state credit — rule `us-fed.futa-2025`), and
+  `employerPayrollCostAnnual` (per-employee annual arithmetic + federal-only load factor).
+  The published maxima are pinned in the tests from the cited figures. Tests:
+  `lib/openstartup/__tests__/payrollTax.test.ts`.
+
+Still planned: hiring cost comparisons beyond the federal payroll load (benefits and state
+payroll-tax load factors need dated rule cards first). The conservative workflow planner
+lives in `lib/founderOps.ts` and is gated by `__tests__/founder-ops.test.ts`.
 
 ## What you can contribute here
 
