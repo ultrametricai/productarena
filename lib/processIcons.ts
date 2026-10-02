@@ -31,9 +31,9 @@ export const PROCESS_ICON_PREFIX = 'pi:'
 
 // The house accent families (tailwind names; hexes live with the glyphs in
 // components/icons/ProcessIcon.tsx). zinc is the neutral fallback tone.
-export type IconHue = 'emerald' | 'amber' | 'sky' | 'violet' | 'fuchsia' | 'orange' | 'zinc'
+export type IconHue = 'emerald' | 'amber' | 'sky' | 'violet' | 'fuchsia' | 'orange' | 'red' | 'zinc'
 
-const HUES: ReadonlySet<string> = new Set(['emerald', 'amber', 'sky', 'violet', 'fuchsia', 'orange', 'zinc'])
+const HUES: ReadonlySet<string> = new Set(['emerald', 'amber', 'sky', 'violet', 'fuchsia', 'orange', 'red', 'zinc'])
 
 // Compose a token. Kept private — the curated maps below are the only place tokens are minted.
 const pi = (glyph: string, hue: IconHue): string => `${PROCESS_ICON_PREFIX}${glyph}:${hue}`
@@ -87,6 +87,17 @@ export function phaseTooltip(phase: string): string {
 // The one glyph for "this process recurs" (was the 🔁 emoji on the process-page cadence chip) —
 // the same recurring loop the Explore menu's Process-rankings group wears (lib/arenaIcons.ts).
 export const CADENCE_ICON = pi('cycle', 'sky')
+
+// ---------- Urgency (situations) ----------
+// House glyphs for the UrgencyChip tiers (founder 2026-10-02: the 🚨/⏰/🗓 emoji join the custom
+// set). Glyph = the tier's old emoji concept, hue = the tier's existing semantic color: the
+// siren for "within hours" (red), the overdue clock for "within days" (amber), the calendar for
+// "within weeks" (sky). Keyed by the lib/processSim.ts Urgency tier names.
+export const URGENCY_ICONS: Record<'hours' | 'days' | 'weeks', string> = {
+  hours: pi('siren', 'red'), // 🚨
+  days: pi('clock-alert', 'amber'), // ⏰
+  weeks: pi('calendar', 'sky'), // 🗓
+}
 
 // ---------- Individual processes (keyed by corpus task id) ----------
 // Glyph = the concept (was: the emoji), hue = the process's area. Comments carry the old emoji
