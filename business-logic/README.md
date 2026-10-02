@@ -6,7 +6,8 @@ the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openst
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
 liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution,
 priced-round mechanics, the priced-round composer, ISO/NSO exercise tax, 83(b) math, QSBS,
-Delaware franchise tax, R&D tax mechanics, employer payroll tax), every one pure,
+Delaware franchise tax, R&D tax mechanics, employer payroll tax, unit economics), every one
+pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -316,6 +317,28 @@ election; law-in-flux recorded on the card, never editorialized),
 SS-first-then-Medicare, per-quarter cap, carryforward, conservation-tested). Rules
 `us-fed.research-expenditure-amortization` / `us-fed.rd-payroll-offset`; tests:
 `lib/openstartup/__tests__/rdCredit.test.ts`.
+
+### Unit economics
+
+**Serves:** [Track runway](https://ultrametric.ai/processes/track-runway) · [Send the board financial report](https://ultrametric.ai/processes/send-the-board-financial-report) (n4 `burnMultiple`) · [Prepare a board meeting](https://ultrametric.ai/processes/prepare-a-board-meeting) (n4 `burnMultiple`, n4 `ruleOf40`) · [Save a churning customer](https://ultrametric.ai/processes/save-a-churning-customer) (n3 `ltv`) · [Roll out a pricing change](https://ultrametric.ai/processes/roll-out-a-pricing-change) (n7 `netMrrChurnRatePct`)
+
+`lib/openstartup/unitEconomics.ts` — pure, client-safe; the
+efficiency ratios over explicit inputs (the runway module owns the cash trajectories).
+Contract: `customerLifetimePeriods` / `ltvSimple` / `ltv` / `cac` / `ltvToCacRatio` /
+`cacPaybackMonths` and the MRR movement formulas `netNewMrr` / `netMrrChurnRatePct` /
+`annualizedNetChurnPct` (all per David Skok's SaaS Metrics 2.0 detailed definitions, with
+the source's lifetime figures and the "2%/month ≈ 22%/year" arithmetic replayed),
+`burnMultiple` (net burn ÷ net new ARR — David Sacks, "The Burn Multiple", 2020-04-23; the
+post's $2M/$1M = 2x and $5M/$1M = 5x examples replayed, and its caveat honored: not
+computable when net new ARR ≤ 0), `ruleOf40` (growth % + profit % against the published 40
+— Brad Feld, 2015-02-03, his three scenarios replayed; which profit measure was supplied is
+the caller's statement), and `magicNumber` (quarterly revenue change × 4 ÷ the earlier
+quarter's S&M — Rory O'Driscoll, "Magic Number Math", 2010-04-20). House posture
+throughout: benchmarks are INPUTS, never encoded — `compareToBenchmark` requires the
+caller to cite the band's source, and every comparison is `needsReview`. ARPA, churn,
+margins, burn, and spend are all explicit inputs — nothing is derived from books this
+module cannot see. Educational model, not financial advice. Tests:
+`lib/openstartup/__tests__/unitEconomics.test.ts`.
 
 ### Employer payroll tax
 
