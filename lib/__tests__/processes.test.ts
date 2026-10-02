@@ -320,6 +320,36 @@ describe('corpus', () => {
     expect(noteKind('tax_001', 'DE')).toBe('not-applicable')
   })
 
+  // Geo coverage to totality (founder boost 2026-10-02: "close EVERY gap … pin totality:
+  // uncovered = 0"). Every US-scoped record — processes and situations alike — now says what
+  // the need becomes in all four countries, with the honesty carried by the note KIND (a
+  // not-applicable note is a closed gap too: sit_002 is inherently US-inbound, Germany has no
+  // 409A ritual and no 1099 regime). The four-country set is the whole enum, so this is the
+  // uncovered=0 pin.
+  it('geo totality: every US-scoped record carries all four countries (uncovered = 0)', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    for (const t of tasks.filter((x) => x.geoScope !== 'global')) {
+      expect(
+        (t.geoNotes ?? []).map((n) => n.country).sort(),
+        `${t.id} (${t.title}): four-country geo totality`,
+      ).toEqual(['DE', 'FR', 'IN', 'UK'])
+    }
+    // The worked decisions of the closing pass, pinned: bank-account analogs exist in all four
+    // countries (vendor-geo-aligned); 409A and 1099s honestly have no DE equivalent; the visa
+    // situation is honestly not-applicable everywhere (inherently US-inbound).
+    const noteKind = (id: string, country: string) =>
+      tasks.find((t) => t.id === id)!.geoNotes!.find((n) => n.country === country)?.kind
+    for (const c of ['IN', 'UK', 'DE', 'FR']) {
+      expect(noteKind('qs_023', c), `qs_023/${c}`).toBe('analog')
+      expect(noteKind('sit_002', c), `sit_002/${c}`).toBe('not-applicable')
+    }
+    expect(noteKind('fund_003', 'DE')).toBe('not-applicable')
+    expect(noteKind('fund_003', 'FR')).toBe('not-applicable')
+    expect(noteKind('fund_003', 'UK')).toBe('analog') // the EMI valuation precedent
+    expect(noteKind('tax_003', 'DE')).toBe('not-applicable')
+    expect(noteKind('vc_002', 'DE')).toBe('analog') // AIFMD/BaFin is real, doable work
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()
