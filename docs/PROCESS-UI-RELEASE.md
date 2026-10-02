@@ -96,8 +96,8 @@ Current-main YC content and all 12 reactive situations are preserved.
   Title navigation targets retain at least 44px height. Graph regions scroll within the viewport. Keyboard or pointer activation of a title
   returns to Details, opens enclosing option details, and focuses the exact card. Switching
   views preserves mounted provider, override, evidence and regional selection state.
-- Existing overall coverage leaderboard remains at bottom; narrow header and long labels
-  wrap without hiding navigation/account actions.
+- Existing overall coverage leaderboard remains at bottom. The shared header is unchanged
+  from the PR base; its responsive behavior is outside the preview change.
 
 Scores measure weighted mapped-story coverage, including manual/API workflows. They are
 not agent-only scores, automation probabilities, or complete-service equivalence.
@@ -195,3 +195,16 @@ ordering are unchanged, and original public routes receive no new scope copy.
 Validation: 2,796 tests across 258 files, TypeScript, lint (zero errors; 23 existing warnings),
 production build, and targeted Chromium checks at 320/390/1440px. Logs and screenshots use
 `review-fixes-*` in sibling evidence. No merge or deployment is included.
+
+## Shared header held at base
+
+The app/layout.tsx styling change was removed at the user's request. This file matches
+pinned base 06fa7b8 exactly; no shared-header changes remain in PR97. Future header work
+must keep one line at every width and belongs in a separate PR, which is not started here.
+Narrow-screen verification distinguishes preview main-content bounds from inherited global
+header overflow. Evidence uses `header-restore-*` in sibling evidence.
+
+Header-restoration checks passed: 13 affected tests, TypeScript, layout lint, production
+build, and nine browser cases across three routes at 320/390/1440px. At 320 and 390px the
+unchanged header makes the page 463px wide; preview main content remains viewport-bounded.
+This inherited header overflow is intentionally left for separate work.
