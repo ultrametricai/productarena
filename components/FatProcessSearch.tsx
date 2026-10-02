@@ -19,7 +19,7 @@ export interface FatSearchRow {
   // The process's phase — or the literal 'playbook' for a chain row, kept as invisible matching
   // data so typing "playbook" still surfaces them (the visible copy never says it).
   phase: string
-  pct: number
+  pct: number | null
   playbook?: boolean
 }
 
@@ -69,9 +69,9 @@ export default function FatProcessSearch({ rows }: { rows: FatSearchRow[] }) {
             >
               <IconChip icon={r.icon} title={r.playbook ? `${r.title} — multi-process` : `${r.title} — ${r.phase} process`} />
               <span className="min-w-0 flex-1 truncate">{r.title}</span>
-              <span className="shrink-0 font-mono text-[11px] tabular-nums text-zinc-500" title="Agent ceiling — share of steps an agent can run today">
+              {r.pct !== null && <span className="shrink-0 font-mono text-[11px] tabular-nums text-zinc-500" title="Agent ceiling — share of steps an agent can run today">
                 {r.pct}%
-              </span>
+              </span>}
             </Link>
           ))}
         </div>

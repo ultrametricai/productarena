@@ -10,6 +10,7 @@
 // keeps rendering as text. That makes this file the single choke point: every consumer —
 // tables, DAG, search, sim — upgraded to the custom set the moment the maps switched tokens,
 // with zero layout edits.
+import Image from 'next/image'
 import ProcessIcon from '@/components/icons/ProcessIcon'
 import { parseProcessIconToken } from '@/lib/processIcons'
 
@@ -17,6 +18,9 @@ import { parseProcessIconToken } from '@/lib/processIcons'
 // carries the concept-naming title/aria-label (DAG node buttons, linked table rows). Everything
 // else goes through IconChip below, which enforces the title.
 export function IconGlyph({ icon, className }: { icon: string; className?: string }) {
+  if (icon.startsWith('asset:/process-icons/index/')) {
+    return <Image src={icon.slice('asset:'.length)} alt="" width={24} height={24} className={`h-6 w-6 shrink-0 ${className ?? ''}`} />
+  }
   const token = parseProcessIconToken(icon)
   if (token) return <ProcessIcon id={token.glyph} hue={token.hue} className={className} />
   return <>{icon}</>

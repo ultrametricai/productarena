@@ -128,9 +128,39 @@ def part(value, source_path, target_path, record, workflow=False):
         option["metadata"] = mm.metadata()
         option["metadata"]["context"] = context
         result["options"].append(option)
-    if methods and result["kind"] == "step":
-        result["kind"] = "decision"
     result["metadata"] = m.metadata()
+    if methods:
+        if result["kind"] != "step":
+            raise ValueError(f"{source_path}: method-bearing references need an authored base option")
+        if any(option["id"] == "default" for option in result["options"]):
+            raise ValueError(f"{source_path}: legacy method ID collides with explicit default")
+        # The old renderer supplied an implicit default from the node itself. Preserve that
+        # choice in the source graph, rather than treating its fields as common to all methods.
+        # Labels come only from existing source text; no country/applicability is inferred.
+        base_label = value.get("actionLabel") if value.get("actionUrl") else None
+        default = {
+            "id": "default",
+            "title": "Default — " + (base_label or result["title"]),
+            "summary": result["title"] if base_label else "",
+            "when": None,
+            "parts": [],
+            "notes": [],
+            "references": result["references"],
+            "metadata": result["metadata"],
+        }
+        result["kind"] = "decision"
+        result["references"] = []
+        result["metadata"] = {}
+        result["options"].insert(0, default)
+        for trace in TRACE:
+            for field in ("references", "metadata"):
+                prefix = f"{target_path}.{field}"
+                if trace["to"] == prefix or trace["to"].startswith(prefix + ".") or trace["to"].startswith(prefix + "["):
+                    trace["to"] = trace["to"].replace(prefix, f"{target_path}.options[default].{field}", 1)
+        TRACE.append({"from": f"{source_path}.label", "to": f"{target_path}.options[default]", "note": "Materialize the legacy renderer's base method from its preserved label, action label, references and annotations. No conditions or edges added."})
+        issue(record, "implicit_default_made_explicit", f"Part {result['id']}: base-method fields live in option default; alternative IDs and graph connections are unchanged.")
+        if any(option["metadata"].get("context", {}).get("kind") == "geo" for option in result["options"][1:]):
+            issue(record, "geographic_downstream_unresolved", f"Part {result['id']}: geographic alternatives exist but the source has no option-specific downstream connections. Existing connections are preserved, not asserted applicable to every alternative.")
     if result["metadata"].get("jurisdictions"):
         issue(record, "jurisdiction_flag_needs_guidance", f"Part {result['id']}: preserve the source flags; applicability prose is not invented.")
     return result
