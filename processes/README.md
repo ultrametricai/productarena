@@ -89,6 +89,46 @@ reversible steps until the wire goes out. Irreversible is deliberately rare at b
 totality and distribution are pinned by `lib/__tests__/reversibility.test.ts`. No zod default
 exists: an unclassified process or step fails the corpus parse.
 
+## Verification checks (`verify`)
+
+Every step should answer **"how do I know it worked?"** — steps that have a concrete, externally
+checkable test carry an optional `verify: { how, url? }` (depth wave pt 1, 2026-10-01):
+
+- **What qualifies**: a check a founder can actually run against an external source of truth —
+  the Delaware entity search showing the new entity, TSDR showing the trademark serial number,
+  EDGAR full-text search showing the accepted Form D, an RDAP/WHOIS lookup showing the domain,
+  the CP 575 notice for an EIN, pay stubs plus the provider's tax-deposit confirmation for a
+  payroll run. Artifacts to *retain* (a date-stamped 83(b) copy, a certified-mail receipt, an
+  executed Form 1583) qualify: the retained artifact IS the check.
+- **What does not**: a restatement of the step ("account created" for a create-account step),
+  internal drafting or decisions, anything with no external source of truth. A `verify` that
+  restates the step is worse than absence — those steps simply carry no field.
+- **URLs**: https only, primary sources preferred (government portals, registrar tools), and
+  every URL is verified live before it ships — same bar as `actionUrl`. Steps whose check has
+  no canonical tool carry `how` alone.
+
+## Cost honesty (`cost`)
+
+Steps with a real, KNOWABLE cost carry an optional
+`cost: { usd, kind, source, asOf, note? }`. The rules:
+
+- **Every number carries a source URL and an asOf date.** Fees change — the `asOf` date (when
+  the number was read off the cited page) is the contract; currentness is never claimed.
+- **Kinds**: `government-fee` (published fee schedules: Delaware filing fees and franchise-tax
+  minimums, USPTO trademark fees, state filing fees), `free` (`usd: 0` where the authority says
+  so — the IRS issues EINs for free, the SEC charges nothing for a Form D), and
+  `typical-vendor-price` ONLY where a published sticker price exists (Stripe Atlas's $500,
+  Apple's $99/yr — the pricing page is the source).
+- **Never estimate.** A real cost with no published number ships as `usd: null` with the source
+  explaining the variability ("attorney fees vary") — nothing is averaged or guessed. Anything
+  that cannot be sourced does not ship at all.
+- **`note`** carries the required caveat: minimums that scale (DE incorporation varies with
+  authorized stock), per-class fees (USPTO), what a vendor price bundles.
+- **Derived, never hand-stored**: the process-page "Known government fees: $X" headline is
+  `knownCostUsd()` in `lib/processes.ts` — the sum of the dated per-step `government-fee`
+  numbers ONLY. Vendor prices are excluded from the headline so it never implies a completeness
+  the curation doesn't claim.
+
 ## A real process DAG
 
 This is `form_001` (Incorporate C-Corp) exactly as committed in `corpus.json` at
