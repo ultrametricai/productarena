@@ -144,6 +144,12 @@ source-cited, exhaustively tested records and code:
   - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
     that takes the FMV as input and never values a company.
+  - `vesting.ts` — vesting schedules and mechanics with real date math: cliff + periodic
+    schedules per the Cooley GO convention, back-loaded tranches (Amazon's published
+    5/15/40/40), departure and unvested-repurchase summaries, single- and double-trigger
+    acceleration outcomes, refresh grants as additive composition, the FAST advisor grid,
+    and an early-exercise interface that hands the 83(b) and tax questions to the modules
+    that own them.
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
