@@ -488,9 +488,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <p className="mt-1 text-sm text-zinc-500">Applied intelligence for companies and beyond.</p>
             </div>
             <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-              <div className="flex flex-wrap items-center gap-1 text-sm text-zinc-500">
-                <span>© 2026 Ultrametric.</span>
-                {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
+              <div className="flex flex-col gap-1 text-sm text-zinc-500">
+                <div className="flex flex-wrap items-center gap-1">
+                  <span>© 2026 Ultrametric.</span>
+                  {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
+                </div>
+                {/* One muted disclaimer line sitewide, nothing louder (founder liability pass
+                    2026-10-02); the full exclusions live at /terms, which this links. */}
+                <p className="text-xs text-zinc-600">
+                  Research content — not legal, tax, or financial advice. See{' '}
+                  <Link href="/terms" className="underline decoration-zinc-800 transition-colors hover:text-zinc-400">
+                    terms
+                  </Link>
+                  .
+                </p>
               </div>
               {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
                   viewport and becomes the page's only source of horizontal scroll. */}

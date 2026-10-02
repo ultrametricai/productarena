@@ -26,6 +26,18 @@ describe('sitewide footer (app/layout.tsx)', () => {
     expect(anchor).toContain('target="_blank"')
     expect(anchor).toContain('rel="noopener noreferrer"')
   })
+
+  it('carries ONE muted disclaimer line near the © line, linking /terms (founder liability pass 2026-10-02)', () => {
+    const footer = layoutSrc.slice(layoutSrc.indexOf('<footer'))
+    // The exact line — research content, not advice — and nothing louder than text-xs zinc-600.
+    const lineIdx = footer.indexOf('Research content — not legal, tax, or financial advice. See')
+    expect(lineIdx).toBeGreaterThan(-1)
+    const block = footer.slice(footer.lastIndexOf('<p', lineIdx), footer.indexOf('</p>', lineIdx))
+    expect(block).toContain('text-xs text-zinc-600')
+    expect(block).toContain('href="/terms"')
+    // It sits in the © column, next to the copyright line.
+    expect(footer.indexOf('© 2026 Ultrametric.')).toBeLessThan(lineIdx)
+  })
 })
 
 describe('header GitHub links (app/layout.tsx)', () => {
