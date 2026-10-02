@@ -24766,5 +24766,325 @@
     "growthImpact": 1,
     "produces": [],
     "requires": []
+  },
+  {
+    "id": "sit_019",
+    "title": "Handle a key employee's resignation",
+    "description": "Not the co-founder split (that's its own situation) — the senior engineer or first AE handing in notice. The company-protecting mechanics: take the conversation properly (counter or clean exit, decided honestly), confirm what the offer letter and handbook actually say about notice (US baseline is at-will — the real lever is goodwill and the transition plan), run the equity math, and put the post-termination exercise window IN WRITING to the departing employee — plans commonly give 90 days, and ISOs lose ISO tax treatment if exercised more than 3 months after employment ends (IRS Topic 427 cited); a missed window is the classic post-exit dispute. Then knowledge transfer with named successors, same-day offboarding on the last day, the exit interview that tells you why people actually leave, and the cap-table/rotation updates. Educational guidance, not legal or tax advice.",
+    "phase": "hr",
+    "kind": "situation",
+    "trigger": "A key employee resigns — notice is in hand and the transition clock starts.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "region": "us",
+    "geoScope": "us",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "hr",
+    "supportLevel": "manual_guide",
+    "supportReason": "The conversations — resignation, transition, exit interview — are irreducibly human; an agent can run the vesting math, draft the exercise-window notice, and execute the last-day offboarding checklist.",
+    "vendors": [
+      "carta"
+    ],
+    "geoNotes": [
+      {
+        "country": "UK",
+        "kind": "analog",
+        "summary": "Notice is statutory and contractual: a week's statutory minimum after a month's service, with contracts usually setting more — ACAS's notice-period guidance is the reference — and EMI options carry their own post-cessation tax rules, so the written-window step matters just as much.",
+        "actionUrl": "https://www.acas.org.uk/notice-periods",
+        "actionLabel": "ACAS: notice periods"
+      },
+      {
+        "country": "DE",
+        "kind": "analog",
+        "summary": "Kündigungsfristen are statutory — §622 BGB sets four weeks to the 15th or month-end as the baseline, lengthening with tenure — and termination/resignation requires wet-ink written form (§623 BGB), so the paper is law, not courtesy.",
+        "actionUrl": "https://www.gesetze-im-internet.de/bgb/__622.html",
+        "actionLabel": "BGB §622 — notice periods"
+      },
+      {
+        "country": "FR",
+        "kind": "analog",
+        "summary": "The préavis comes from the convention collective more than the Code du travail — check your branch agreement — and the exit paperwork is mandatory: solde de tout compte, certificat de travail, and the attestation France Travail.",
+        "actionUrl": "https://www.service-public.fr/particuliers/vosdroits/F2883",
+        "actionLabel": "service-public — démission"
+      },
+      {
+        "country": "IN",
+        "kind": "analog",
+        "summary": "Notice runs off the employment contract and the state's Shops & Establishments Act; the full-and-final settlement timeline and gratuity after five years' service are the statutory tail — the labour ministry is the canonical starting point.",
+        "actionUrl": "https://labour.gov.in/",
+        "actionLabel": "Ministry of Labour & Employment (India)"
+      }
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Take the resignation conversation properly: last day, transition shape, and whether a counter or a clean exit is honest",
+          "route": "person",
+          "reversibility": "reversible",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n2",
+          "label": "Confirm the notice terms from the offer letter and handbook — at-will is the US baseline, so goodwill and the transition plan are the real levers",
+          "route": "person",
+          "reversibility": "reversible",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n3",
+          "label": "Run the equity math: vested vs unvested at the last day, and the plan's post-termination exercise window",
+          "route": "agent",
+          "reversibility": "reversible",
+          "vendor": "carta",
+          "optionsArenaId": "equity-management",
+          "vendorOptions": [
+            "carta",
+            "pulley"
+          ],
+          "actionUrl": "https://www.irs.gov/taxtopics/tc427",
+          "actionLabel": "IRS Topic 427 (stock options)",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n4",
+          "label": "Put the exercise window in writing to the departing employee — a missed window (and the ISO 3-month rule) is the classic post-exit dispute",
+          "route": "person",
+          "reversibility": "painful",
+          "riskLevel": "high",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n5",
+          "label": "Plan the knowledge transfer: owned systems, in-flight work, credentials inventory, named successors",
+          "route": "person",
+          "reversibility": "reversible",
+          "estimatedMinutes": 90
+        },
+        {
+          "id": "n6",
+          "label": "Offboard on the last day: access revocation, device return, final pay on the state's required timeline",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n7",
+          "label": "Run the exit interview — the honest 30 minutes that tells you why people actually leave",
+          "route": "person",
+          "reversibility": "reversible",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n8",
+          "label": "Update the cap table, the org chart, and the on-call rotations",
+          "route": "agent",
+          "reversibility": "reversible",
+          "vendor": "carta",
+          "estimatedMinutes": 20
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        },
+        {
+          "from": "n7",
+          "to": "n8"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the resignation terms: last day and what was agreed",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "the option grant and plan documents (vesting, post-termination window)",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "hr",
+      "resignation",
+      "offboarding",
+      "equity"
+    ],
+    "activeMinutes": 315,
+    "totalEstimatedMinutes": 315,
+    "hasAsyncSteps": false,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1,
+    "produces": [],
+    "requires": []
+  },
+  {
+    "id": "sit_020",
+    "title": "Absorb a pulled term sheet",
+    "description": "The round you were counting on just evaporated — and the first honest hour is about facts, not feelings. Get the real reason if you can (a diligence finding you can fix is different from partner politics or the market turning); check what you actually signed — term sheets are mostly non-binding EXCEPT exclusivity/no-shop and confidentiality, so note when the no-shop expires before re-opening conversations (the NVCA model documents show the standard shape); re-run the runway math on real numbers; then pick the path: re-open the process wide, bridge with insiders on SAFEs (YC's published documents are the standard), or cut to default-alive. Tell the investors who were waiting the truth — the round changed, the company didn't — and if cash is the issue, start the cost plan now: the weeks of denial are the expensive part. Editorial guidance from the standard documents; nothing here is legal or financial advice.",
+    "phase": "fundraising",
+    "kind": "situation",
+    "trigger": "The lead pulls the term sheet — by call or silence — and the round you planned around is gone.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "fundraising",
+    "supportLevel": "manual_guide",
+    "supportReason": "The investor conversations and the path decision are founder work; an agent can re-run the runway scenarios from the books and rebuild the pipeline and data room for the re-opened process.",
+    "vendors": [],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Get the real reason if you can — a fixable diligence finding, partner politics, or the market are three different problems",
+          "route": "person",
+          "reversibility": "reversible",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n2",
+          "label": "Check what you signed: term sheets are mostly non-binding except exclusivity/no-shop and confidentiality — note when the no-shop expires",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "medium",
+          "actionUrl": "https://nvca.org/model-legal-documents/",
+          "actionLabel": "NVCA model legal documents",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n3",
+          "label": "Re-run the runway on real numbers: months left, the cut scenarios, the honest minimum raise",
+          "route": "agent",
+          "reversibility": "reversible",
+          "optionsArenaId": "accounting",
+          "vendorOptions": [
+            "quickbooks",
+            "xero"
+          ],
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n4",
+          "label": "Pick the path: re-open the process wide, bridge with insiders on SAFEs, or cut to default-alive",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://www.ycombinator.com/documents",
+          "actionLabel": "YC SAFE documents",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n5",
+          "label": "Tell the other investors who were waiting, honestly — the round changed, the company didn't",
+          "route": "person",
+          "reversibility": "painful",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n6",
+          "label": "Rebuild the raise machine: refresh the data room, the target list, and the weekly cadence",
+          "route": "agent",
+          "reversibility": "reversible",
+          "optionsArenaId": "equity-management",
+          "vendorOptions": [
+            "carta"
+          ],
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n7",
+          "label": "If cash is the issue, start the cost plan now — the weeks of denial are the expensive part",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 60
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the signed term sheet (no-shop/confidentiality terms and dates)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "current cash, burn, and committed-but-unclosed checks",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "fundraising",
+      "term-sheet",
+      "runway",
+      "bridge"
+    ],
+    "activeMinutes": 345,
+    "totalEstimatedMinutes": 345,
+    "hasAsyncSteps": false,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 2,
+    "produces": [],
+    "requires": []
   }
 ]

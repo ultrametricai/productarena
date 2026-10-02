@@ -253,6 +253,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_016: pi('phone', 'sky'), // 📱 App-store rejection/removal (the app-stores concept, interrupted)
   sit_017: pi('megaphone', 'fuchsia'), // 📣 Ad/platform account suspension (the marketing megaphone, muted)
   sit_018: pi('key', 'sky'), // 🔑 Domain or social account hijacked (the access-keys concept — stolen, then retaken)
+  sit_019: pi('person-out', 'orange'), // 👋 Key employee resigns (the same offboarding concept as hr_005)
+  sit_020: pi('chart-down', 'emerald'), // 📉 Term sheet pulled (the runway chart is suddenly the whole story)
 }
 
 export function processIcon(taskId: string): string {
