@@ -6,7 +6,6 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import { AuthGatedChip } from '@/components/AuthGatedMarker'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
-import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
 import CompareRivals from '@/components/CompareRivals'
@@ -28,7 +27,6 @@ import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
 import SloUptimeLine from '@/components/SloUptimeLine'
-import SpikeDepthChip from '@/components/SpikeDepthChip'
 import StoryMap from '@/components/StoryMap'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import ThemeIcon from '@/components/ThemeIcon'
@@ -61,8 +59,6 @@ import { loadStoryTiers, storyTiersByCell, tierCountsFor } from '@/lib/storyTier
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 import { hasTryIt } from '@/lib/tryit'
 import { processesForVendor } from '@/lib/vendorProcesses'
-
-const AI_MODE_STORY_ID = 'agentic-builtin-assistant'
 
 // schema.org SoftwareApplication for one product. No aggregateRating (see arena page's
 // comment) — our custom metrics go in additionalProperty instead.
@@ -219,7 +215,9 @@ export default async function ProductPage({
               <YcBadge ycBatch={product.ycBatch} />
               <EnterpriseBadge enterprise={product.enterprise} />
               <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
-              <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
+              {/* Founder 2026-10-02: no '✨ Built-in AI assistant' chip up here — the verdict
+                  stays data (the Built-in AI pill below and the story row carry it); the index
+                  tables keep their AiModeBadge column. */}
             </div>
             {/* The OssPill beside the name is the one open-source signal (founder 2026-09-23:
                 no "commercial" tag — nearly everything is, so it said nothing).
@@ -235,7 +233,9 @@ export default async function ProductPage({
                 title={`${product.vendor} — ${product.urls.site} (the vendor's own site, from our committed product data)`}
                 className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
               >
-                {product.vendor} <span aria-hidden>↗</span>
+                {/* Founder 2026-10-02: no ↗ glyph after the company name — the name itself stays
+                    the external link (target/rel/tooltip unchanged). */}
+                {product.vendor}
               </a>
             </p>
           </div>
@@ -280,7 +280,12 @@ export default async function ProductPage({
               and a number would overstate; the Overall score above still applies. */}
           <AgenticBadge kind="agent-ready" value={naDims.has('agentReady') ? null : entry.agentReady} untested={!naDims.has('agentReady') && isGroupUntested(data, id, 'agent-access')} href={naDims.has('agentReady') ? undefined : `/arena/${category}/product/${id}/score#agent-ready`} />
           <AgenticBadge kind="agentic-app" value={naDims.has('agenticApp') ? null : entry.agenticApp} untested={!naDims.has('agenticApp') && isGroupUntested(data, id, 'agentic-features')} href={naDims.has('agenticApp') ? undefined : `/arena/${category}/product/${id}/score#built-in-ai`} />
-          <AgenticBadge kind="api-quality" value={naDims.has('apiQuality') ? null : entry.apiQuality} untested={!naDims.has('apiQuality') && isGroupUntested(data, id, 'api-quality')} href={naDims.has('apiQuality') ? undefined : `/arena/${category}/product/${id}/score#api-quality`} />
+          {/* Founder 2026-10-02: no 'API untested' tag on this page — when the api-quality group
+              is untested the pill simply doesn't render (untested stays data: the /score page and
+              the index tables still say it; the API access glyph below keeps its slot). */}
+          {!(!naDims.has('apiQuality') && isGroupUntested(data, id, 'api-quality')) && (
+            <AgenticBadge kind="api-quality" value={naDims.has('apiQuality') ? null : entry.apiQuality} href={naDims.has('apiQuality') ? undefined : `/arena/${category}/product/${id}/score#api-quality`} />
+          )}
           {/* Founder 2026-09-23: when the api-quality pill above shows an actual score, the API
               glyph is redundant — the score IS the tick. The glyph stays only when the pill has
               no number to show (n/a arena, untested, or no judged score). MCP/CLI always render. */}
@@ -301,8 +306,10 @@ export default async function ProductPage({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <MomentumChip popularity={data.popularity[id]} />
           <MomentumTrend series={momentumSeries} />
-          <SpikeDepthChip arenaId={category} productId={id} />
-          {/* Vendor doc links (app/API/CLI/MCP docs ↗) — inline here since the old top rail's
+          {/* Founder 2026-10-02: the '◉ deep-spiked · N ev' verification-depth chip is gone from
+              this page (display only — evidence counts and spike dates stay committed data;
+              components/SpikeDepthChip.tsx remains for any surface that wants it back). */}
+          {/* Vendor doc links (API/CLI/MCP docs ↗) — inline here since the old top rail's
               lone "Access" box read as an empty frame (founder 2026-09-23). */}
           <ProductLinkChips product={product} variant="label" />
           {vendorResponseCount > 0 && (
