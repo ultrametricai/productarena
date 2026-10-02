@@ -11,15 +11,17 @@
 //   3. picks write as before: a country/Global writes BOTH ?geo= and pa-geo; 🇺🇸 USA clears both
 //      (the US default never appears in the URL) — on a global-default surface the trigger then
 //      settles back on the surface's Global framing (the index rows are identical either way);
-//   4. the detail-page seam: GeoSwitcher (process detail pages) keeps its US default — this
-//      round changes only the /processes index framing.
+//   4. the detail-page seam (flipped 2026-10-02: process detail pages now render THIS dropdown
+//      with defaultChoice=GEO_GLOBAL): the surface default is trigger FRAMING only — the shared
+//      store stays null, so the page's banner/notes/toggles keep their US-default no-selection
+//      render byte-identical. GeoSwitcher (the WhereItWorks pill row) keeps its US default.
 import { render, fireEvent, act } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { hydrateRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import GeoDropdown from '@/components/GeoDropdown'
 import GeoSwitcher from '@/components/GeoSwitcher'
-import { GEO_GLOBAL, PROCESSES_INDEX_DEFAULT_GEO, setGeoChoice } from '@/lib/geoPreference'
+import { GEO_GLOBAL, PROCESSES_INDEX_DEFAULT_GEO, getGeoChoice, setGeoChoice } from '@/lib/geoPreference'
 
 // Same in-memory localStorage stand-in as components/__tests__/GeoSwitcher.test.tsx.
 function stubLocalStorage() {
@@ -171,8 +173,16 @@ describe('picks write the param/storage exactly as before (the codec is untouche
   })
 })
 
-describe('the detail-page seam (deliberately NOT flipped this round)', () => {
-  it('GeoSwitcher — the process DETAIL page switcher — still SSRs the 🇺🇸 US default as pressed', () => {
+describe('the detail-page seam (flipped this round — founder 2026-10-02: detail pages render the dropdown, Global-first)', () => {
+  it('defaultChoice=GEO_GLOBAL is trigger framing ONLY: after mount with no param/storage the shared store still reads null, so ProcessGeoBanner/notes/toggles keep the US-default no-selection render', () => {
+    const r = render(<GeoDropdown defaultChoice={GEO_GLOBAL} />)
+    expect(trigger(r).textContent).toContain('Global')
+    // The SSR contract behind the page-level byte-identity pins: no explicit choice means NO
+    // store write — every geo-aware consumer on the page still sees "nothing chosen".
+    expect(getGeoChoice()).toBeNull()
+  })
+
+  it('GeoSwitcher (the remaining pill-row consumer, WhereItWorksStrip) still SSRs the 🇺🇸 US default as pressed', () => {
     const ssr = renderToString(<GeoSwitcher />)
     const container = document.createElement('div')
     container.innerHTML = ssr

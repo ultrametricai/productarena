@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ArtifactChips from '@/components/ArtifactChips'
 import DoViaAfk from '@/components/DoViaAfk'
-import GeoSwitcher from '@/components/GeoSwitcher'
-import IconChip, { IconGlyph } from '@/components/IconChip'
+import GeoDropdown from '@/components/GeoDropdown'
+import IconChip from '@/components/IconChip'
 import JurisdictionToggle from '@/components/JurisdictionToggle'
 import ProcessGeoBanner from '@/components/ProcessGeoBanner'
 import MineLink from '@/components/MineLink'
@@ -16,13 +16,14 @@ import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
 import UrgencyChip from '@/components/UrgencyChip'
 import { modulesForProcess } from '@/lib/businessLogicMap'
+import { GEO_GLOBAL } from '@/lib/geoPreference'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { artifactChipRows } from '@/lib/processDeps'
-import { CADENCE_ICON, phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
+import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  CADENCE_META, findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
+  findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
   slugAliasFor, taskCeiling,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
@@ -66,12 +67,6 @@ export async function generateMetadata({
       types: { 'application/json': processManifestPath(processSlug(task.title)) },
     },
   }
-}
-
-const SUPPORT_LABELS: Record<string, string> = {
-  full: 'fully automatable',
-  partial: 'partially automatable',
-  manual_guide: 'guided manual',
 }
 
 export default async function ProcessPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -139,20 +134,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.urgency && <UrgencyChip tier={task.urgency} />}
           {/* The complexity chip ('simple'/…) removed (founder 2026-10-02) — the field stays
               corpus data for sorting; the chip told a reader nothing actionable. */}
-          <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
-            {SUPPORT_LABELS[task.supportLevel] ?? task.supportLevel}
-          </span>
-          {/* How often this really recurs in a running company — links to the rhythm board. */}
-          <Link
-            href="/processes/operating-rhythm"
-            title={`${CADENCE_META[task.cadence].label} — ${CADENCE_META[task.cadence].blurb} See the full operating rhythm.`}
-            className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-          >
-            {/* The house loop glyph (lib/processIcons.ts CADENCE_ICON) — the link's title names
-                the cadence concept, so the bare glyph rides inside it. */}
-            <span aria-hidden className="mr-1 inline-flex align-[-0.125em]"><IconGlyph icon={CADENCE_ICON} /></span>
-            {CADENCE_META[task.cadence].label.toLowerCase()}
-          </Link>
+          {/* The support-level ('fully automatable') and cadence ('once'/'as needed') chips are
+              gone too (founder 2026-10-02) — both fields stay corpus data (sorting, the rhythm
+              board); the urgency and known-government-fees chips stay. */}
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
           )}
@@ -221,11 +205,13 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         )}
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
-            globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner
-            below it renders the selected country's committed story — nothing for the US
-            default, so the static HTML stays the one shared view and no judged number moves. */}
+            globe"), as the house dropdown with 🌐 Global leading (founder 2026-10-02 — the
+            /processes idiom replaces the pill row; defaultChoice is trigger FRAMING only). The
+            selection is global (?geo= + pa-geo, lib/geoPreference.ts); the banner below renders
+            the selected country's committed story — nothing without an explicit choice, so the
+            static HTML stays the one shared US-default view and no judged number moves. */}
         <div className="mt-4">
-          <GeoSwitcher />
+          <GeoDropdown defaultChoice={GEO_GLOBAL} />
         </div>
         <ProcessGeoBanner geoScope={task.geoScope} notes={task.geoNotes ?? []} />
         {/* Vendor selection at the TOP of the page (founder 2026-09-30: 'Select vendor for
@@ -256,15 +242,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Step-by-step: what an agent can do vs you</h2>
-        <p className="mt-1 text-sm text-zinc-400">
-          Route-coded block flow: <span className="text-emerald-300">emerald = agent</span>,{' '}
-          <span className="text-amber-300">amber = manual form/portal</span>,{' '}
-          <span className="text-sky-300">sky = human or computer use</span>,{' '}
-          {/* Stale-copy fix (SSOT audit 2026-09-30): the '⏳ async' chip left the step blocks on
-              2026-09-30 (it survives inside method sub-steps) — the legend advertises only what
-              the diagram renders. */}
-          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate.
-        </p>
+        {/* The route-coded legend sentence is gone (founder 2026-10-02) — the route colors keep
+            their per-badge labels and tooltips inside the diagram itself. */}
         {/* Client-side lens banner (founder 2026-09-21: click a vendor → the process adapts to
             run via it). Renders nothing in the static HTML — hydrates in only for readers with
             a clicked vendor or an "I'm using" stack pick. */}
