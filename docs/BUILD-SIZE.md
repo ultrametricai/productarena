@@ -58,7 +58,7 @@ path in `collect-build-traces.js`, which DOES NOT RUN under Turbopack):
 - Excludes do not disturb the `next-server.js.nft.json` trace (it contains only
   `node_modules` files).
 
-### 2. Prerender artifacts are huge (measured, reported, NOT fixed here)
+### 2. Prerender artifacts are huge (the palette-index share fixed 2026-10-02)
 
 `.next/server/app` holds the prerendered output: 11.7 GB of `.rsc` (31,304 files,
 avg 372 KB) + 6.9 GB of `.html` (6,261 files, avg 1.1 MB). Each page is materialized
@@ -66,15 +66,26 @@ avg 372 KB) + 6.9 GB of `.html` (6,261 files, avg 1.1 MB). Each page is material
 (+ per-segment files). By directory: `arena/` 9.5 GB, `vs/` 6.5 GB, `alternatives/`
 0.5 GB, `processes/` 0.5 GB.
 
-The single biggest shared cost: `app/layout.tsx` passes the full command-palette search
+The single biggest shared cost: `app/layout.tsx` passed the full command-palette search
 index (`buildSearchIndex(loadAll(), ...)` — every arena, every product, all alias
-keywords) as props to the `CommandPalette` **client** component. That serializes a
-~160 KB flight blob into every artifact of every page: ~160 KB x 4 copies x 7,118 pages
-≈ 4.5 GB of the 17 GB, and ~160 KB of every page's wire HTML. A near-empty page
-(`/about`) is 215 KB of HTML + 172 KB rsc + 348 KB segments mostly because of it.
-Candidate fix (own change, not done here): stop passing the index as props; serve it as
-a static JSON (it is already buildable at `public/`-time) and fetch it when the palette
-opens.
+keywords) as props to the `CommandPalette` **client** component. That serialized a
+~160 KB flight blob into every artifact of every page, and ~160 KB of every page's
+wire HTML. A near-empty page (`/about`) was 215 KB of HTML + 172 KB rsc + 348 KB
+segments mostly because of it.
+
+Fixed by moving the index out of props: `lib/search-entries.ts` builds it,
+`app/search-index.json/route.ts` (force-static, rendered once at build: a 140 KB
+`.body` file) serves it, and `CommandPalette` fetches it on first open with a visible
+loading row. Measured on 2026-10-02 (same machine, same corpus, 7,338 pages):
+`.next/server/app` 18,841,528 KB → 15,107,488 KB (−3.6 GB); `/about` 218,559 B html +
+176,148 B rsc + 356 KB segments → 55,580 B + 33,258 B + 76 KB. The cost that remains
+is one JSON round-trip on the palette's first open per page load (state-cached after;
+browser HTTP cache covers reloads). `scripts/check-preview-runtime.mjs` guards the new
+route's trace alongside the other static routes.
+
+`.next/server/app` still holds ~14.4 GB of per-page prerender volume (the arena/vs
+page bodies themselves); any further reduction has to come from the pages' own markup,
+not shared layout props.
 
 `.next/cache` (Turbopack) was ~300-360 MB across builds — not part of the problem, and
 fine to keep persisted in CI/Vercel build caching.
