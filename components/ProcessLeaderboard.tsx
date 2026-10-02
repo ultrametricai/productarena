@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import ProcessDagStrip from '@/components/ProcessDagStrip'
 import ProcessYourVendor from '@/components/ProcessYourVendor'
@@ -24,7 +25,12 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 // How many leaderboard rows to show — same legibility cap as the per-step chip roster.
 const LEADERBOARD_CAP = 8
 
-export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTask; mineHref?: string }) {
+export default function ProcessLeaderboard({ task, mineHref, showStepStrip = true, scopeNote }: {
+  task: ProcessTask
+  mineHref?: string
+  showStepStrip?: boolean
+  scopeNote?: ReactNode
+}) {
   const lb = processLeaderboard(task)
   if (lb.entries.length === 0 || lb.rankableSteps === 0) return null
   const entries = lb.entries.slice(0, LEADERBOARD_CAP)
@@ -40,13 +46,14 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
       <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">
         Who covers this process best
       </h2>
+      {scopeNote}
       {/* The 'No vendor assumed — …' explainer paragraph is gone (founder 2026-09-30): the
           heading stands alone; the scoring story lives in the row tooltips and /methodology. */}
 
       {/* The process at a glance (founder 2026-09-23): the SAME Kahn layers as the full vertical
           diagram, compressed to a horizontal dot strip — scan the shape, then click through to
           #steps. Process pages only: this component never renders on chain pages. */}
-      <ProcessDagStrip nodes={task.dag.nodes} edges={task.dag.edges} />
+      {showStepStrip && <ProcessDagStrip nodes={task.dag.nodes} edges={task.dag.edges} />}
 
       {/* Client-side "you run X" banner (founder 2026-09-21): hydrates in only for readers whose
           "I'm using" stack matches a covering arena — built from the FULL entry list so the
@@ -135,7 +142,7 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
           best per step:
         </span>
         {lb.bestPerStep.map((s, i) => (
-          <span key={s.nodeId} className="whitespace-nowrap">
+          <span key={s.nodeId} className="inline-block max-w-full break-words align-top">
             {i > 0 && <span className="mx-1.5 text-zinc-700">→</span>}
             <span className="text-zinc-400">{s.label}:</span>{' '}
             <Link

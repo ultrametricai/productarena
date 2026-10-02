@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { ProcessTitle } from '@/components/shared-processes/ProcessSummary'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -52,6 +53,7 @@ import { readParams, setParams } from '@/lib/urlState'
 
 export interface ProcessRow {
   slug: string
+  agentClassified?: number | null
   title: string
   // Curated emoji for this process (lib/processIcons.ts), resolved server-side by task id.
   icon: string
@@ -118,6 +120,19 @@ export interface PlaybookRow {
   vendors: Array<{ id: string; label: string; arena: string | null; hasLogo: boolean }>
 }
 
+// Shared records can lack legacy index metrics. Missing values stay blank and sort last.
+type OptionalIndexField = 'geoScope' | 'pct' | 'agentSteps' | 'timeOrder' | 'cadenceLabel' | 'cadenceRank' | 'annoyance' | 'risk' | 'growthImpact'
+export type ProcessTableRow = Omit<ProcessRow, OptionalIndexField> & {
+  [K in OptionalIndexField]: ProcessRow[K] | null
+} & { href?: string }
+
+function compareValues(a: number | string | null, b: number | string | null, direction: Direction = 'asc') {
+  if (a === null) return b === null ? 0 : 1
+  if (b === null) return -1
+  const result = typeof a === 'string' ? a.localeCompare(String(b)) : a - Number(b)
+  return direction === 'desc' ? -result : result
+}
+
 type Column = 'title' | 'phase' | 'pct' | 'steps' | 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
 type Direction = 'asc' | 'desc'
 
@@ -172,16 +187,16 @@ const METRIC_META: Record<Metric, { header: string; tooltip: string }> = {
 // situation sorts AFTER every timeline process, and the situation tail orders by urgency
 // (hours → days → weeks: the hotter clock reads first), then title. Every OTHER axis (ceiling,
 // risk, annoyance, cadence…) interleaves situations honestly — they have real values there.
-const timelineRank = (row: ProcessRow): number => row.timeOrder ?? Number.MAX_SAFE_INTEGER
-const urgencyRank = (row: ProcessRow): number => (row.urgency ? URGENCY_TIERS.indexOf(row.urgency) : -1)
-const timelineCompare = (a: ProcessRow, b: ProcessRow): number =>
+const timelineRank = (row: ProcessTableRow): number => row.timeOrder ?? Number.MAX_SAFE_INTEGER
+const urgencyRank = (row: ProcessTableRow): number => (row.urgency ? URGENCY_TIERS.indexOf(row.urgency) : -1)
+const timelineCompare = (a: ProcessTableRow, b: ProcessTableRow): number =>
   timelineRank(a) - timelineRank(b) || urgencyRank(a) - urgencyRank(b) || a.title.localeCompare(b.title)
 
-function fieldOf(row: ProcessRow, col: Column): number | string {
+function fieldOf(row: ProcessTableRow, col: Column): number | string | null {
   if (col === 'title') return row.title
   if (col === 'phase') return row.phase
   if (col === 'pct') return row.pct
-  if (col === 'order') return timelineRank(row)
+  if (col === 'order') return row.timeOrder === null && row.kind !== 'situation' ? null : timelineRank(row)
   if (col === 'cadence') return row.cadenceRank
   if (col === 'annoyance') return row.annoyance
   if (col === 'risk') return row.risk
@@ -246,7 +261,7 @@ function playbookFieldOf(row: PlaybookRow, col: Column): number | string {
 }
 
 // The flat view's union row type: process and playbook rows sorted through one comparator.
-type FlatItem = { kind: 'process'; row: ProcessRow } | { kind: 'playbook'; row: PlaybookRow }
+type FlatItem = { kind: 'process'; row: ProcessTableRow } | { kind: 'playbook'; row: PlaybookRow }
 
 export default function ProcessesTable({
   rows,
@@ -257,7 +272,7 @@ export default function ProcessesTable({
   // app/processes/page.tsx). null keeps the sitewide US default (the homepage's process mode).
   defaultGeo = null,
 }: {
-  rows: ProcessRow[]
+  rows: ProcessTableRow[]
   phases: string[]
   playbooks?: PlaybookRow[]
   defaultGeo?: typeof GEO_GLOBAL | null
@@ -369,12 +384,12 @@ export default function ProcessesTable({
     return [...filtered].sort((a, b) => {
       const av = fieldOf(a, column)
       const bv = fieldOf(b, column)
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      const cmp = compareValues(av, bv, direction)
       // Ties (cadence buckets, 1–5 scores) fall back to the founder timeline so the order is
       // deterministic and still reads as a journey inside each bucket — with the slot-less
       // situations after the timeline, by urgency then title (timelineCompare).
       if (cmp === 0) return timelineCompare(a, b)
-      return direction === 'desc' ? -cmp : cmp
+      return cmp
     })
   }, [filtered, column, direction])
 
@@ -395,7 +410,7 @@ export default function ProcessesTable({
     return [...processItems, ...playbookItems].sort((a, b) => {
       const av = a.kind === 'process' ? fieldOf(a.row, column) : playbookFieldOf(a.row, column)
       const bv = b.kind === 'process' ? fieldOf(b.row, column) : playbookFieldOf(b.row, column)
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      const cmp = compareValues(av, bv, direction)
       if (cmp === 0) {
         // Process–process ties keep the founder-timeline fallback the table always had
         // (situations after the timeline — timelineCompare); ties involving a playbook resolve
@@ -403,7 +418,7 @@ export default function ProcessesTable({
         if (a.kind === 'process' && b.kind === 'process') return timelineCompare(a.row, b.row)
         return a.row.title.localeCompare(b.row.title)
       }
-      return direction === 'desc' ? -cmp : cmp
+      return cmp
     })
   }, [sorted, filteredPlaybooks, column, direction])
 
@@ -457,7 +472,9 @@ export default function ProcessesTable({
     ? (column as Metric)
     : 'cadence'
 
-  function metricCell(r: ProcessRow): ReactNode {
+  function metricCell(r: ProcessTableRow): ReactNode {
+    if (metric !== 'order' && fieldOf(r, metric) === null) return null
+    if (metric === 'order' && r.timeOrder === null && r.kind !== 'situation') return null
     if (metric === 'order') {
       // A situation has no slot on the founder timeline — an honest dash, not an invented
       // number (the same convention as the playbook rows' missing per-process metrics).
@@ -471,29 +488,30 @@ export default function ProcessesTable({
       return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
     }
     if (metric === 'cadence') return <span className="text-xs text-zinc-400">{r.cadenceLabel}</span>
-    if (metric === 'annoyance') return <ScoreDots value={r.annoyance} label="Annoyance" />
-    if (metric === 'risk') return <ScoreDots value={r.risk} label="Risk" />
-    return <ScoreDots value={r.growthImpact} label="Growth impact" />
+    if (metric === 'annoyance') return <ScoreDots value={r.annoyance!} label="Annoyance" />
+    if (metric === 'risk') return <ScoreDots value={r.risk!} label="Risk" />
+    return <ScoreDots value={r.growthImpact!} label="Growth impact" />
   }
 
   // One process row — identical markup in the grouped and flat views (the founder ask keeps the
   // existing columns/rows unchanged under the area headers).
-  function processRow(r: ProcessRow): ReactNode {
+  function processRow(r: ProcessTableRow): ReactNode {
+    const href = r.href ?? `/processes/${r.slug}`
     return (
       <tr key={r.slug} className="transition hover:bg-zinc-800/70">
         <td className="max-w-[260px] px-2 py-2">
           <span className="flex items-center gap-1.5">
             <IconChip icon={r.icon} title={`${r.title} — ${r.phase} ${r.kind === 'situation' ? 'situation' : 'process'}`} />
-            <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
-              {r.title}
+            <Link href={href} className="font-medium hover:text-emerald-300">
+              <ProcessTitle title={r.title} agent={r.agentClassified ?? null} />
             </Link>
-            <span
+            {r.geoScope !== null && <span
               aria-hidden
               className="text-[10px] opacity-70"
               title={scopeGlyphs[r.geoScope].label}
             >
               {scopeGlyphs[r.geoScope].glyph}
-            </span>
+            </span>}
             {r.urgency !== null && <UrgencyChip tier={r.urgency} />}
           </span>
           {/* Situations (founder 2026-10-01): the trigger — the event that puts a founder
@@ -505,7 +523,7 @@ export default function ProcessesTable({
         <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
           {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
               to that phase; click again (or pick All) to clear. */}
-          <button
+          {r.phase && <button
             type="button"
             onClick={() => changePhase(phase === r.phase ? 'all' : r.phase)}
             title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
@@ -513,18 +531,18 @@ export default function ProcessesTable({
           >
             <IconChip icon={phaseIcon(r.phase)} title={phaseTooltip(r.phase)} />
             {r.phase}
-          </button>
+          </button>}
         </td>
         <td className="px-2 py-2">
-          <CeilingBar pct={r.pct} />
+          {r.pct !== null && <CeilingBar pct={r.pct} />}
         </td>
         <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
           <Link
-            href={`/processes/${r.slug}#steps`}
-            title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
+            href={r.href ? href : `${href}#steps`}
+            title={r.agentSteps === null ? `${r.totalSteps} top-level parts — open this process` : `${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
             className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
           >
-            {r.agentSteps}/{r.totalSteps}
+            {r.agentSteps === null ? r.totalSteps : `${r.agentSteps}/${r.totalSteps}`}
           </Link>
         </td>
         <td className="whitespace-nowrap px-2 py-2">{metricCell(r)}</td>
@@ -534,7 +552,7 @@ export default function ProcessesTable({
               v.arena ? (
                 // Founder 2026-09-25: a vendor chip opens the PROCESS through that
                 // vendor (?via= lens, lib/processLens.ts) — not the vendor's own page.
-                <Link key={v.label} href={`/processes/${r.slug}?via=${v.arena}:${v.id}`} title={`Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                <Link key={v.label} href={r.href ? href : `${href}?via=${v.arena}:${v.id}`} title={r.href ? `Open ${r.title} — view ${v.label} alongside the other options` : `Open ${r.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
                   <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
                   {v.label}
                 </Link>
@@ -547,7 +565,7 @@ export default function ProcessesTable({
             )}
             {r.vendors.length > 3 && (
               <Link
-                href={`/processes/${r.slug}`}
+                href={href}
                 className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
                 title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
               >

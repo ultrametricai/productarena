@@ -23,3 +23,11 @@ The initial mapping contained 149 records, 694 operational nodes and 522 origina
 the catalog holds 162 records as of 2026-10-01 (the 12 reactive situations included). The audit lists missing outcomes, guidance, vendor keys, and placement questions. A valid mapped record is not automatically a useful published guide.
 
 Private UM additions live in the API database. They refer to these record/part IDs and exact target content hashes. API publication assembles public guidance and specific private versions without an LLM rewrite. The public export contains no private additions. Production promotes the exact prepared artifact after staging validation.
+
+## Preview explicit defaults
+
+The additive process preview makes 38 legacy base methods explicit default options in
+36 records, preserving their 97 alternatives, links and all incoming metadata. Integration
+uses stable record/part IDs; it retains all 162 records including reactive situations.
+The approved formation chooser guidance is an authored amendment. See
+`default-options-audit.json` and `../../docs/PROCESS-UI-RELEASE.md`.

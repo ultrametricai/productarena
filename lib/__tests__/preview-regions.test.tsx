@@ -1,0 +1,86 @@
+// @vitest-environment jsdom
+import { afterEach, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, within } from '@testing-library/react'
+import { loadSharedProcesses } from '../shared-processes/load'
+import { regionalDecision } from '../shared-processes/regions'
+import { buildVendorPreview } from '../shared-processes/vendor-preview'
+import { buildStepComparisons } from '../shared-processes/step-comparisons'
+import SharedProcessReader from '@/components/shared-processes/SharedProcessReader'
+
+const records = loadSharedProcesses()
+afterEach(cleanup)
+const record = (id: string) => structuredClone(records.find(record => record.id === id)!)
+
+describe('scoped regional presentation', () => {
+  it('switches only authored regional options, hides default filing scores, retains nested content and resets', () => {
+    const corporation = record('form_001')
+    const el = render(<SharedProcessReader record={corporation} records={records} vendorPreview={buildVendorPreview(corporation)} comparisons={buildStepComparisons(corporation)} />)
+    const select = el.getByRole('combobox', { name: 'Regional variant' })
+    const chooser = el.container.querySelector('[id="form_001:n1"]')!
+    expect(chooser.querySelectorAll('[title^="Filing story coverage"]')).toHaveLength(4)
+    fireEvent.change(select, { target: { value: 'germany-notary-gmbh' } })
+    expect(el.container.querySelector('[id="form_001:n4:default"]')).toBeNull()
+    expect(chooser.querySelector('[title^="Filing story coverage"]')).toBeNull()
+    expect(el.container.querySelector('[id="form_001:n4:germany-notary-gmbh"]')?.querySelectorAll('article')).toHaveLength(4)
+    expect(el.container.querySelector('[id="form_001:n4:germany-notary-gmbh"] [aria-label="Step product comparison"]')).toBeNull()
+    expect(el.getByText(/Other steps have not been adapted/)).toBeDefined()
+    expect(el.queryByRole('definition', { name: 'Agent' })).toBeNull()
+    fireEvent.change(select, { target: { value: 'default' } })
+    expect(chooser.querySelectorAll('[title^="Filing story coverage"]')).toHaveLength(4)
+    expect(el.container.querySelector('[id="form_001:n4:default"]')).not.toBeNull()
+    fireEvent.change(select, { target: { value: 'uk-companies-house' } })
+    el.rerender(<SharedProcessReader record={record('opp_002')} records={records} />)
+    expect((el.getByRole('combobox', { name: 'Regional variant' }) as HTMLSelectElement).value).toBe('default')
+  })
+
+  it('preserves non-geographic choices and does not assume one country per option', () => {
+    const payroll = render(<SharedProcessReader record={record('qs_063')} records={records} />)
+    expect(payroll.container.querySelector('[id="qs_063:n3:eor-international"] summary')).not.toBeNull()
+    fireEvent.change(payroll.getByRole('combobox'), { target: { value: 'uk-paye-rti' } })
+    expect(payroll.container.querySelector('[id="qs_063:n3:uk-paye-rti"]')?.querySelectorAll('article')).toHaveLength(3)
+    expect(payroll.container.querySelector('[id="qs_063:n3:eor-international"] summary')).not.toBeNull()
+    const multi = regionalDecision(record('qs_023'))!
+    expect(multi.options.filter(option => option.id === 'uk-eu-multicurrency')).toHaveLength(1)
+    expect(records.filter(record => regionalDecision(record))).toHaveLength(18)
+  })
+
+  it('shows source-supported agent and approval classifications without inferring missing or non-agent settings', () => {
+    const contractor = record('opp_002')
+    contractor.parts[0].metadata.approvalRequired = true
+    contractor.parts[2].metadata.approvalRequired = false
+    const el = render(<SharedProcessReader record={contractor} records={[contractor]} />)
+    expect(el.getByRole('heading', { level: 1 }).textContent).toBe('Add a contractor (1099) using AI')
+    expect(el.container.querySelector('[id="opp_002:n1"]')?.textContent).toContain('Needs approval')
+    expect(el.container.querySelector('[id="opp_002:n3"]')?.textContent).toContain('Automatic')
+    expect(el.getByText('Agent-step approvals')).toBeDefined()
+    expect(el.container.querySelector('[id="opp_002:n2:default"]')?.textContent).not.toContain('Automatic')
+    fireEvent.change(el.getByRole('combobox'), { target: { value: 'india-pan-tds' } })
+    expect(el.queryByText('Agent-step approvals')).toBeNull()
+    expect(el.container.querySelector('[aria-label="Process summary"]')).toBeNull()
+    expect(el.getByRole('heading', { level: 1 }).textContent).toBe(contractor.title)
+    cleanup()
+    const original = render(<SharedProcessReader record={record('opp_002')} records={records} />)
+    expect(original.queryByText('Automatic')).toBeNull()
+    expect(original.queryByText('Needs approval')).toBeNull()
+  })
+
+  it('restores irreversibility independently of risk and only on its exact scope', () => {
+    const corporation = record('form_001')
+    corporation.parts.find(part => part.id === 'n4')!.options.find(option => option.id === 'default')!.metadata.reversibility = 'irreversible'
+    const el = render(<SharedProcessReader record={corporation} records={records} />)
+    const filing = el.container.querySelector('[id="form_001:n4"]')!
+    expect(filing.querySelector(':scope > div:first-child')?.textContent).not.toContain('Irreversible')
+    expect(filing.querySelector('[id="form_001:n4:default"]')?.textContent).toContain('Irreversible')
+    expect(el.container.querySelector('[id="form_001:n1"]')?.textContent).not.toContain('Irreversible')
+    fireEvent.change(el.getByRole('combobox'), { target: { value: 'india-spice-plus' } })
+    expect(within(filing as HTMLElement).queryByText('Irreversible')).toBeNull()
+    cleanup()
+    const simple = record('opp_002')
+    simple.parts = [{ ...simple.parts[0], metadata: { route: 'form', reversibility: 'irreversible', riskLevel: 'low', approvalRequired: true } }]
+    simple.links = []
+    const low = render(<SharedProcessReader record={simple} records={[simple]} />)
+    expect(low.getByText('Irreversible')).toBeDefined()
+    expect(low.queryByText('High risk')).toBeNull()
+    expect(low.queryByText('Needs approval')).toBeNull()
+  })
+})
