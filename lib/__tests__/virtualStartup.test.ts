@@ -901,7 +901,8 @@ describe('cadence sweep + event-driven examples (richer rhythm, 2026-09-25)', ()
     }
   })
 
-  it('sweep rows gate on the decisions that plausibly activate them', () => {
+  // 90s: exhaustive 122,880-combo sweep — flaked at 30s under multi-lane load (2026-10-02).
+  it('sweep rows gate on the decisions that plausibly activate them', { timeout: 90000 }, () => {
     for (const combo of combos) {
       const rows = new Set(yearRows(combo, journeyTaskIds(combo, chains), candidates).map((r) => r.taskId))
       for (const id of ['opp_008', 'opp_009', 'sw_001', 'sw_002', 'growth_011', 'growth_012', 'opp_012', 'fin_010', 'ins_001', 'qs_045', 'qs_047']) {
