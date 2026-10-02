@@ -143,7 +143,10 @@ source-cited, exhaustively tested records and code:
     conversion-indifference point.
   - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
-    that takes the FMV as input and never values a company.
+    that takes the FMV as input and never values a company — now with the three §409A
+    valuation presumptions as structured cited data, method-eligibility checks over
+    explicit inputs, a refresh-trigger checklist, and the penalty mechanics as a labeled
+    arithmetic illustration.
   - `vesting.ts` — vesting schedules and mechanics with real date math: cliff + periodic
     schedules per the Cooley GO convention, back-loaded tranches (Amazon's published
     5/15/40/40), departure and unvested-repurchase summaries, single- and double-trigger

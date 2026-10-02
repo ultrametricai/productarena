@@ -96,7 +96,19 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
   `appraisalPresumptionCheck` (rule `us-fed.independent-appraisal-presumption`, timing only —
   qualification is counsel's question), `preferredCommonRatioIllustration` (a labeled
   illustration leaning on rule `us-fed.reasonable-method`'s caveat that a preferred financing
-  price is not common FMV), and `grantSanityReport`. Every check cites a committed rule card
+  price is not common FMV), and `grantSanityReport`. Extended with the posture-is-law deep
+  pass: `PRESUMPTION_METHODS` (the three §409A valuation presumptions as structured, cited
+  data — independent appraisal; binding formula with the nonlapse-restriction standard; the
+  illiquid-startup route with its actual regulatory conditions, rules
+  `us-fed.binding-formula-presumption` and `us-fed.illiquid-startup-presumption`),
+  `checkMethodEligibility` (explicit inputs only; computed date windows, relayed assertions,
+  judgments always flag), `refreshTriggerChecklist` (the staleness ceiling, closed
+  financings, and the term-sheet convention as cited triggers), and
+  `penaltyIllustration409a` (rule `us-fed.409a-penalty-additions`, IRC §409A(a)(1)(B): the
+  20% additional tax plus a labeled simple-interest illustration of the underpayment-rate-
+  plus-one-point premium — explicit hypotheticals in, never a tax computation). OPM,
+  backsolve, and every other appraisal method are deliberately OUT — `producesValuation`
+  stays false everywhere. Every check cites a committed rule card
   by id — the gate (`lib/openstartup/__tests__/grant409aSanity.test.ts`) fails if a card is
   missing or jurisdiction-mismatched — and every finding is `needsReview: true`.
 - **Vesting mechanics** — `lib/openstartup/vesting.ts` — pure, client-safe; real date math
