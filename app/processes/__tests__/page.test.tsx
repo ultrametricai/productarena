@@ -74,7 +74,12 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     expect(within(container).queryByText('agent-runnable')).toBeNull()
     // 'Virtual Startup' → 'The open startup simulator' (founder batch 2026-09-30, item 1) —
     // the route and internal vocabulary stay /startup-sim.
-    expect(within(container).getByText('🐣 The open startup simulator').closest('a')?.getAttribute('href')).toBe('/startup-sim')
+    // The sim card wears the house flask glyph as SVG, not the old 🐣 emoji (founder sweep
+    // 2026-10-02) — same icon the mobile menu's /startup-sim entry wears.
+    const simLabel = within(container).getByText('The open startup simulator')
+    expect(simLabel.closest('a')?.getAttribute('href')).toBe('/startup-sim')
+    expect(simLabel.querySelector('svg')).not.toBeNull()
+    expect(simLabel.textContent).not.toMatch(/🐣|pi:/)
   })
 })
 

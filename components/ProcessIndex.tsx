@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import FatProcessSearch from '@/components/FatProcessSearch'
+import { IconGlyph } from '@/components/IconChip'
+import { MOBILE_NAV_ICONS } from '@/lib/arenaIcons'
 import ProcessesTable, { type ProcessTableRow, type PlaybookRow } from '@/components/ProcessesTable'
 import { PROCESSES_INDEX_DEFAULT_GEO } from '@/lib/geoPreference'
 
@@ -51,7 +53,12 @@ export default function ProcessIndex({ tableRows, phases, playbooks, preview = f
           href="/startup-sim"
           className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/50 hover:bg-emerald-400/5"
         >
-          <span className="font-medium text-zinc-200">🐣 The open startup simulator</span>
+          {/* The sim's house flask glyph (lib/arenaIcons.ts MOBILE_NAV_ICONS['/startup-sim']) —
+              was the 🐣 emoji; the label text names the concept. */}
+          <span className="inline-flex items-center gap-1.5 font-medium text-zinc-200">
+            <span aria-hidden className="inline-flex"><IconGlyph icon={MOBILE_NAV_ICONS['/startup-sim']} /></span>
+            The open startup simulator
+          </span>
           <span className="text-sm text-zinc-400">
             pick the starting decisions — entity, team, funding, business model — and watch a
             simulated company run these real processes day by day
