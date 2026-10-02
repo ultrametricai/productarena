@@ -18,8 +18,8 @@ import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
-  taskCeiling,
+  CADENCE_META, findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
+  slugAliasFor, taskCeiling,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
@@ -82,6 +82,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // Jurisdiction-conditional steps (stripped from every default surface by loadProcesses) —
   // serialized for the client-side toggle; [] for the many processes that don't branch.
   const jurisSteps = jurisdictionStepViews(task.id)
+  // Sum of the DATED per-step government fees only (depth wave pt 1, lib/processes.ts) —
+  // derived, never hand-stored; vendor prices deliberately excluded so the headline never
+  // implies a completeness the curation doesn't claim. 0 for most processes → no chip.
+  const knownFees = knownCostUsd(task.dag.nodes)
 
   return (
     <div className="space-y-10">
@@ -136,6 +140,14 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           </Link>
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
+          )}
+          {knownFees > 0 && (
+            <span
+              title="Sum of this process's per-step government fees that carry a published, dated source (each step's cost chip links to its fee schedule). Vendor prices are excluded — this is the known government minimum, not a total cost; fees change, each chip carries its as-of date."
+              className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500"
+            >
+              Known government fees: ${knownFees.toLocaleString('en-US')}
+            </span>
           )}
           {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
               for everyone else. The manifest it hands off is public regardless. */}
