@@ -1,7 +1,7 @@
 'use client'
 
 import { useGeoChoice } from '@/components/useGeoSelection'
-import { GEO_GLOBAL, GEO_GLOBAL_META, GEO_PREF_META, type GeoAnalogNote } from '@/lib/geoPreference'
+import { GEO_GLOBAL, GEO_PREF_META, type GeoAnalogNote } from '@/lib/geoPreference'
 
 // The top-of-page geo banner (founder GEO ask 2026-09-28: "make GEO a top-level process driver
 // at the top of a particular process page"): under a non-US selection it says, from COMMITTED
@@ -35,31 +35,21 @@ export default function ProcessGeoBanner({
   // UI (jurisdiction steps, geo auto-preselects, vendor availability marks) stands down. A
   // display lens over the same committed data: no judged number moves.
   if (geo === GEO_GLOBAL) {
+    // No explainer banner in the Global view (founder 2026-10-02) — the view speaks for
+    // itself; only the availability line survives, and only when mappings exist.
+    if (notes.length === 0) return null
     return (
-      <div className="mt-3 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm">
-        <p className="text-zinc-300">
-          <span aria-hidden className="mr-1.5">{GEO_GLOBAL_META.flag}</span>
-          <span className="font-medium text-zinc-100">Global view</span> — the process in its
-          country-agnostic form
-          {geoScope !== 'global' && (
-            <span className="text-zinc-400"> (the flow itself is documented US-first)</span>
-          )}
-          : country-specific steps, per-country analogs and vendor availability marks are hidden.
-        </p>
-        {notes.length > 0 && (
-          <p className="mt-1.5 text-xs text-zinc-400">
-            Country mappings exist for{' '}
-            {notes.map((n, i) => (
-              <span key={n.country} title={`${GEO_PREF_META[n.country].label} — pick the country to see its curated mapping`}>
-                {i > 0 && ' · '}
-                <span aria-hidden className="mr-0.5">{GEO_PREF_META[n.country].flag}</span>
-                {GEO_PREF_META[n.country].label}
-              </span>
-            ))}{' '}
-            — pick a country above for the detail.
-          </p>
-        )}
-      </div>
+      <p className="mt-3 max-w-2xl text-xs text-zinc-400">
+        Country mappings exist for{' '}
+        {notes.map((n, i) => (
+          <span key={n.country} title={`${GEO_PREF_META[n.country].label} — pick the country to see its curated mapping`}>
+            {i > 0 && ' · '}
+            <span aria-hidden className="mr-0.5">{GEO_PREF_META[n.country].flag}</span>
+            {GEO_PREF_META[n.country].label}
+          </span>
+        ))}{' '}
+        — pick a country above for the detail.
+      </p>
     )
   }
 

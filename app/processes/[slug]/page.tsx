@@ -58,7 +58,12 @@ export async function generateMetadata({
     title: `${task.title} — Processes — Ultrametric`,
     description: `${task.description} An agent can run ${ceiling.agentSteps} of ${ceiling.totalSteps} steps today.`,
     // Alias slugs point search engines at the one canonical page.
-    alternates: { canonical: `${SITE_URL}/processes/${processSlug(task.title)}` },
+    alternates: {
+      canonical: `${SITE_URL}/processes/${processSlug(task.title)}`,
+      // Machine discovery of the run manifest stays per-page (the visible 'For agents' footer
+      // left the pages — founder 2026-10-02; /llms.txt is the visible once-place).
+      types: { 'application/json': processManifestPath(processSlug(task.title)) },
+    },
   }
 }
 
@@ -260,20 +265,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             base={{ agentSteps: ceiling.agentSteps, totalSteps: ceiling.totalSteps, pct: ceiling.pct }}
           />
         )}
-        {task.contextNeeded.length > 0 && (
-          <p className="mt-3 text-xs text-zinc-500">
-            Context the agent needs first:{' '}
-            {task.contextNeeded.map((c, i) => (
-              <span key={i}>
-                {i > 0 && ' · '}
-                <span className="whitespace-nowrap">
-                  <span className="font-mono">{c.query ?? c.tool}</span>
-                  {c.tier === 'user_input' && <span className="text-amber-400/80"> (from the founder)</span>}
-                </span>
-              </span>
-            ))}
-          </p>
-        )}
+        {/* The 'Context the agent needs first' line no longer renders (founder 2026-10-02) —
+            contextNeeded stays corpus data (the manifests and typed-I/O layer carry it). */}
       </section>
 
       {/* The GEO dimension (founder 2026-09-28, expanded 2026-09-29): per-country analogs of a
@@ -285,19 +278,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           process pages (founder 2026-09-30) — the per-step route badges and the leaderboard
           carry the story here; chain pages keep both (ProcessVerdict/ProcessSimulator live on). */}
 
-      {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
-      <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
-        <span className="text-[10px] uppercase tracking-widest text-zinc-400">For agents</span>{' '}
-        <Link
-          href={processManifestPath(slug)}
-          className="text-zinc-400 hover:text-emerald-300"
-          title="Versioned machine-readable run plan for this process: steps typed api / computer-use / human, vendor options with agent-readiness and MCP endpoints, approval gates"
-        >
-          Process manifest (JSON)
-        </Link>
-        <span className="mx-1.5 text-zinc-700">·</span>
-        <Link href="/llms.txt" className="text-zinc-400 hover:text-emerald-300">/llms.txt</Link>
-      </section>
+      {/* The visible 'For agents' footer left per-process pages (founder 2026-10-02: "just have
+          it once, not on all the pages") — /llms.txt is the once-place (it documents the
+          manifest scheme), and the manifest stays machine-discoverable from this page via the
+          <link rel="alternate"> in generateMetadata. */}
     </div>
   )
 }
