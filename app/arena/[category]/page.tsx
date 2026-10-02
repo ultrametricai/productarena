@@ -10,6 +10,7 @@ import StoryMatrix from '@/components/StoryMatrix'
 import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
+import arenaSections from '@/data/arena-sections.json'
 import { humanizeTheme } from '@/lib/icons'
 import { hotReasonsForCategory } from '@/lib/hotProducts'
 import { hasLogo } from '@/lib/logos'
@@ -124,6 +125,8 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   // components, so they can't call lib/logos.ts's fs-based hasLogo() themselves (see
   // components/ProductLogoView.tsx for why).
   const adjacent = adjacentArenas(loadAll(), data)
+  // The breadcrumb's middle segment — the section this arena lives under in the Arenas index.
+  const section = (arenaSections as { sections: { id: string; name: string; arenaIds: string[] }[] }).sections.find((x) => x.arenaIds.includes(data.category.id)) ?? null
   const logoMap = Object.fromEntries(data.products.map((p) => [p.id, hasLogo(p.id)]))
   // Pricing transparency index (lib/pricing.ts): serializable headline cells for the covered
   // arenas' "$ / unit" leaderboard column, computed server-side (fs) for the client-side table.
@@ -154,13 +157,17 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           arena id, so every arena header is subtly its own) behind the header text. */}
       <div className="relative isolate">
         <GeoBackdrop seed={data.category.id} />
-        {/* The eyebrow is a breadcrumb back up to the arenas index (founder 2026-10-02) — this
-            page's children (checklist, report) already link their eyebrows back to the arena;
-            same pattern, one level higher. */}
-        <p className="text-sm uppercase tracking-widest text-emerald-400">
-          <Link href="/arenas" title="All arenas" className="transition hover:text-emerald-300">
-            ‹ Arenas
-          </Link>
+        {/* The eyebrow breadcrumb, matching the process pages' idiom exactly (founder
+            2026-10-02: "the breadcrumb on the arena pages doesn't match the processes page"):
+            'Arenas / {section}' — same sizes, same slash, both halves linked. */}
+        <p className="text-[10px] uppercase tracking-widest text-zinc-400">
+          <Link href="/arenas" className="hover:text-emerald-300">Arenas</Link>
+          {section && (
+            <>
+              <span className="mx-1 text-zinc-600">/</span>
+              <Link href={`/arenas/${section.id}`} className="hover:text-emerald-300">{section.name}</Link>
+            </>
+          )}
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
           {/* The same house glyph this arena wears in the header's Arenas menu
