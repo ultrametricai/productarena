@@ -20,11 +20,13 @@ export default function AboutPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-10">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">About</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">About Ultrametric</h1>
+        {/* The 'About Ultrametric' heading was removed (founder 2026-10-02) — the eyebrow
+            carries the h1 semantics so the page keeps an accessible name without the big title. */}
+        <h1 className="text-sm uppercase tracking-widest text-emerald-400">About</h1>
         <p className="mt-4 text-zinc-400">
           We started Ultrametric to automate the boring processes in startups so that you can
-          focus on your mission.
+          focus on your mission. We are developing tools for founders to navigate the AI phase
+          transition and beyond. If you are interested in helping us and are skilled, contact us.
         </p>
       </div>
 
