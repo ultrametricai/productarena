@@ -50,7 +50,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/integrations`, lastModified: now },
     { url: `${SITE_URL}/my-stack`, lastModified: now },
     { url: `${SITE_URL}/stacks/battle`, lastModified: now },
-    // Open-startup toolkit (lib/openstartup/): founder-usable business-logic tools.
+    // Open-startup toolkit (lib/openstartup/): the founder-usable open modules.
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
     { url: `${SITE_URL}/rankings/ai-native`, lastModified: now },
     { url: `${SITE_URL}/rankings/claims-integrity`, lastModified: now },
