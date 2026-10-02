@@ -78,6 +78,34 @@ describe('direct-match hoisting (founder 2026-09-23)', () => {
   })
 })
 
+describe('browse view Processes group (founder 2026-10-02)', () => {
+  it('surfaces the pinned VS entry first and the full Processes group even when arenas fill the cap', () => {
+    // 45 arenas alone exceed MAX_RESULTS (40) — without reservation the process entries and
+    // the VS pin would be sliced away before grouping.
+    const manyArenas: SearchEntry[] = Array.from({ length: 45 }, (_, i) => ({
+      type: 'arena' as const,
+      label: `Arena ${i}`,
+      sublabel: `${i} products`,
+      href: `/arena/a${i}`,
+    }))
+    const entries: SearchEntry[] = [
+      ...manyArenas,
+      { type: 'process', label: 'All processes', sublabel: 'Every founder process', href: '/processes' },
+      { type: 'process', label: 'Incorporate C-Corp', sublabel: 'Founder process · formation', href: '/processes/incorporate-c-corp' },
+      { type: 'page', label: 'The Open Startup', sublabel: 'Simulate a startup journey', href: '/startup-sim' },
+    ]
+    render(<CommandPalette entries={entries} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Open search' }))
+    // Pinned-first contract: the VS entry is row one.
+    const rows = screen.getAllByRole('button').filter((b) => b.getAttribute('aria-label') !== 'Open search')
+    expect(rows[0].textContent).toContain('The Open Startup')
+    // The Processes group header and both process rows render despite the arena flood.
+    expect(screen.getByText('Processes')).toBeDefined()
+    expect(screen.getByText('All processes')).toBeDefined()
+    expect(screen.getByText('Incorporate C-Corp')).toBeDefined()
+  })
+})
+
 describe('house icons in the palette (founder 2026-10-01)', () => {
   it('renders a `pi:` icon token as the custom duotone glyph, never as literal text', () => {
     openPalette()

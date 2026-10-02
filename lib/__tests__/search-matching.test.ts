@@ -4,6 +4,7 @@ import categories from '@/data/categories.json'
 import aiStacks from '@/data/ai-stacks.json'
 import {
   buildPageEntries,
+  buildProcessEntries,
   buildSearchIndex,
   buildStackEntries,
   filterSearchEntries,
@@ -43,6 +44,13 @@ const entries: SearchEntry[] = [
   ...buildStackEntries(
     (aiStacks as { id: string; name: string; tagline: string }[]).map(({ id, name, tagline }) => ({ id, name, tagline })),
     stackAliases,
+  ),
+  ...buildProcessEntries(
+    [
+      { slug: 'incorporate-c-corp', title: 'Incorporate C-Corp', sublabel: 'Founder process · formation' },
+      { slug: 'get-ein', title: 'Get EIN', sublabel: 'Founder process · formation' },
+    ],
+    pageAliases,
   ),
   ...buildPageEntries(pageAliases),
 ]
@@ -137,6 +145,20 @@ describe('filterSearchEntries — the classic queries', () => {
     expect(firstHref('compare products')).toBe('/compare')
     expect(firstHref('certified agent ready')).toBe('/certified')
     expect(firstHref('my stack')).toBe('/my-stack')
+  })
+
+  it('process entries resolve by title and by alias (founder 2026-10-02)', () => {
+    // buildProcessEntries leads with the /processes index entry, then the curated processes.
+    const processEntries = entries.filter((e) => e.type === 'process')
+    expect(processEntries[0].href).toBe('/processes')
+    expect(processEntries.map((e) => e.href)).toEqual([
+      '/processes',
+      '/processes/incorporate-c-corp',
+      '/processes/get-ein',
+    ])
+    expect(firstHref('get ein')).toBe('/processes/get-ein')
+    expect(firstHref('employer identification number')).toBe('/processes/get-ein')
+    expect(firstHref('delaware c-corp')).toBe('/processes/incorporate-c-corp')
   })
 
   it('empty query returns every entry in index order', () => {
