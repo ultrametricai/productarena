@@ -17,6 +17,9 @@ export const GLOBAL_RANKINGS = [
   { id: 'popular', name: 'Most popular', href: '/rankings/popular' },
   { id: 'most-open', name: 'Most open', href: '/rankings/most-open' },
   { id: 'best-api', name: 'Best API', href: '/rankings/best-api' },
+  // Arena-scoped, not cross-arena: the judged startup-law-firms leaderboard as a focused view
+  // (founder 2026-10-02: "we need a ranking table for law firms"). Same contract otherwise.
+  { id: 'law-firms', name: 'Startup law firms', href: '/rankings/law-firms' },
 ] as const
 
 // The parallel list of PROCESS rankings (founder ask 2026-09-21: "Explore could include
