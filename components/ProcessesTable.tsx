@@ -10,7 +10,9 @@ import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
 import UrgencyChip from '@/components/UrgencyChip'
 import { useGeoSelection } from '@/components/useGeoSelection'
-import { GEO_GLOBAL, GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
+import {
+  GEO_GLOBAL, GEO_PREF_META, GEO_SCOPE_GLYPH, hiddenInCountryView, type GeoNotesByCountry,
+} from '@/lib/geoPreference'
 import { phaseEmoji, phaseIcon, phaseTooltip } from '@/lib/processIcons'
 import { URGENCY_TIERS, type ProcessKind, type Urgency } from '@/lib/processSim'
 import { readParams, setParams } from '@/lib/urlState'
@@ -63,8 +65,13 @@ export interface ProcessRow {
   areaRank: number
   // The GEO dimension (founder 2026-09-28) — required on every corpus process. While a non-US
   // country is selected (GeoSwitcher / lib/geoPreference.ts) each row wears its scope glyph
-  // (🌐 global / 🇺🇸 US / 🏛 state); the default view is untouched. Display only — no re-sorting.
+  // (🌐 global / 🇺🇸 US / 🏛 state); the default view is untouched. Never re-sorts — and since
+  // the country-view filter (founder 2026-10-02) the scope also feeds hiddenInCountryView.
   geoScope: 'global' | 'us' | 'us-state'
+  // The country-view filter data (founder 2026-10-02: "?geo=in should hide the processes that
+  // are not used in that country"): per country, the committed note's curated kind + its own
+  // summary (the hidden-rows disclosure one-liner). {} on global rows — they never filter.
+  geoNotesByCountry: GeoNotesByCountry
   pct: number
   agentSteps: number
   totalSteps: number
@@ -277,9 +284,21 @@ export default function ProcessesTable({
   // Under the GLOBAL surface default (founder 2026-09-30: /processes opens on the global view)
   // the no-selection glyphs are the sharp set from the server render on — every row still
   // present, US-specific work told apart as 🇺🇸 (federal) vs 🏛 (state) from the global vantage.
-  // Display only: never re-sorts, never filters.
+  // Never re-sorts; since the country-view filter (founder 2026-10-02: "?geo=in should hide the
+  // processes that are not used in that country") a COUNTRY selection also hides the US-scoped
+  // rows whose committed note says the need is absorbed into another process there or doesn't
+  // exist (hiddenInCountryView) — the no-selection default and 🌐 Global keep the full corpus,
+  // and the muted disclosure line under the table keeps the hidden titles reachable.
   const geo = useGeoSelection()
   const scopeGlyphs = geo !== null || defaultGeo === GEO_GLOBAL ? GEO_SCOPE_GLYPH : DEFAULT_GEO_GLYPH
+  // What the active country view hides, for the honesty disclosure under the table — computed
+  // over the WHOLE row set (the country view as such; the phase/text filters narrow the table
+  // above it, never this line), in founder-timeline order so the list reads deterministically.
+  const [hiddenOpen, setHiddenOpen] = useState(false)
+  const hiddenRows = useMemo(
+    () => (geo === null ? [] : rows.filter((r) => hiddenInCountryView(r, geo)).sort(timelineCompare)),
+    [rows, geo],
+  )
 
   // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
   // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
@@ -345,10 +364,14 @@ export default function ProcessesTable({
     const q = query.trim().toLowerCase()
     return rows.filter(
       (r) =>
-        (phase === 'all' || r.phase === phase)
+        // The country-view filter (founder 2026-10-02): under a country selection, US-scoped
+        // rows stay only where the committed note says the need exists there as its own doable
+        // process. No selection / 🌐 Global ⇒ geo is null ⇒ the full corpus, exactly as before.
+        (geo === null || !hiddenInCountryView(r, geo))
+        && (phase === 'all' || r.phase === phase)
         && (q === '' || r.title.toLowerCase().includes(q) || r.vendors.some((v) => v.label.toLowerCase().includes(q))),
     )
-  }, [rows, phase, query])
+  }, [rows, phase, query, geo])
 
   // Playbooks live in the same table under the same controls (founder 2026-09-29): the phase
   // filter keeps a playbook while any of its constituent processes is in that phase; the text
@@ -727,6 +750,48 @@ export default function ProcessesTable({
           </tbody>
         </table>
       </div>
+      {/* The country view's honesty disclosure (founder 2026-10-02, house disclosure idiom):
+          hiding a US-specific row must never destroy the information — one muted line says how
+          many rows this country view hides (and how many of those are handled inside other
+          processes there, per the committed note kinds), and expands to the hidden titles with
+          their committed one-liner summaries, each still linking to its process page. */}
+      {geo !== null && hiddenRows.length > 0 && (() => {
+        const country = GEO_PREF_META[geo].label
+        const absorbed = hiddenRows.filter((r) => r.geoNotesByCountry[geo]?.kind === 'absorbed').length
+        return (
+          <div className="px-2 text-xs text-zinc-500">
+            <button
+              type="button"
+              aria-expanded={hiddenOpen}
+              onClick={() => setHiddenOpen((v) => !v)}
+              className="text-left transition hover:text-emerald-300"
+            >
+              {hiddenRows.length} US-specific {hiddenRows.length === 1 ? 'process' : 'processes'} hidden in the {country} view
+              {absorbed > 0 && <> — {absorbed} {absorbed === 1 ? 'is' : 'are'} handled inside other processes there</>}
+              <span aria-hidden className="ml-1 text-[10px]">{hiddenOpen ? '▴' : '▾'}</span>
+            </button>
+            {hiddenOpen && (
+              <ul className="mt-2 space-y-1.5">
+                {hiddenRows.map((r) => {
+                  const note = r.geoNotesByCountry[geo]
+                  return (
+                    <li key={r.slug} className="leading-snug">
+                      <Link href={`/processes/${r.slug}`} className="text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300">
+                        {r.title}
+                      </Link>{' '}
+                      <span className="text-zinc-600">
+                        {/* The committed note summary is the one-liner; a row with no note for
+                            this country says so honestly instead of inventing a reason. */}
+                        — {note ? note.summary : `US-specific — no ${country} note is curated yet.`}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        )
+      })()}
     </div>
   )
 }

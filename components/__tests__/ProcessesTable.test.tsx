@@ -25,6 +25,7 @@ function row(over: Pick<ProcessRow, 'slug' | 'title' | 'phase'> & Partial<Proces
     area: 'Formation',
     areaRank: 0,
     geoScope: 'global',
+    geoNotesByCountry: {},
     kind: 'process',
     trigger: null,
     urgency: null,
@@ -373,10 +374,19 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
 describe('geoScope glyphs (founder GEO ask 2026-09-28; always-on defaults founder 2026-09-30)', () => {
   // The module-level geo store outlives unmounts — always reset.
   afterEach(() => setGeoSelection(null))
+  // The US-scoped rows carry UK ANALOG notes so a UK selection keeps them visible — this
+  // describe pins the GLYPHS; the country-view FILTER (rows without an analog hide) has its
+  // own describe below.
   const GEO_ROWS: ProcessRow[] = [
     row({ slug: 'open-bank-account', title: 'Open a bank account', phase: 'formation', geoScope: 'global' }),
-    row({ slug: 'incorporate', title: 'Incorporate the company', phase: 'formation', geoScope: 'us-state', timeOrder: 2 }),
-    row({ slug: 'get-an-ein', title: 'Get an EIN', phase: 'formation', geoScope: 'us', timeOrder: 3 }),
+    row({
+      slug: 'incorporate', title: 'Incorporate the company', phase: 'formation', geoScope: 'us-state', timeOrder: 2,
+      geoNotesByCountry: { UK: { kind: 'analog', summary: 'Register a private limited company with Companies House.' } },
+    }),
+    row({
+      slug: 'get-an-ein', title: 'Get an EIN', phase: 'formation', geoScope: 'us', timeOrder: 3,
+      geoNotesByCountry: { UK: { kind: 'analog', summary: 'Register for Corporation Tax with HMRC.' } },
+    }),
   ]
   const cellFor = (root: HTMLElement, title: string) =>
     [...root.querySelectorAll('tbody td:first-child')].find((c) => c.textContent?.includes(title))

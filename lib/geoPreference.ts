@@ -52,8 +52,9 @@ export const GEO_GLOBAL_META = { label: 'Global', flag: '🌐', prose: 'a geo-ne
 // The /processes INDEX default framing (founder 2026-09-30: "default /processes onto a global
 // view — you can include the US specific ones in the first view"): with nothing chosen (no
 // ?geo=, no pa-geo) the index PRESENTS as 🌐 Global — server-rendered, not a mount flash — while
-// the row set stays complete (the geo dimension annotates, never filters; the always-on scope
-// glyphs keep saying which rows are US-specific). DISPLAY FRAMING ONLY: the store stays null,
+// the row set stays complete (only a COUNTRY selection filters — hiddenInCountryView below; the
+// always-on scope glyphs keep saying which rows are US-specific). DISPLAY FRAMING ONLY: the
+// store stays null,
 // the param/storage codec is untouched, and an explicit choice (param, stored pref, dropdown)
 // wins exactly as before. SEAM: process DETAIL pages keep the sitewide US default — their
 // byte-identical US SSR contract (GeoSwitcher tests) is deliberately NOT re-pinned this round;

@@ -31,8 +31,9 @@ import { readParam, setParams } from '@/lib/urlState'
 // null, no param/storage is written, and an explicit ?geo=/pa-geo/pick wins exactly as before.
 // On a global-default surface the 🇺🇸 USA entry keeps its sitewide meaning — clear the param and
 // the stored pref (the US default never appears in the URL) — so after picking it the trigger
-// settles back on the surface's default framing; the index rows are identical either way (the
-// geo dimension annotates, never filters), and detail pages return to their US default.
+// settles back on the surface's default framing; the index rows are identical either way (USA,
+// Global and the pristine default all show the full corpus — only a COUNTRY view filters, per
+// the committed note kinds, founder 2026-10-02), and detail pages return to their US default.
 
 export default function GeoDropdown({ defaultChoice = null }: { defaultChoice?: typeof GEO_GLOBAL | null } = {}) {
   const [geo, setGeo] = useState<GeoChoice | null>(null)
@@ -102,7 +103,7 @@ export default function GeoDropdown({ defaultChoice = null }: { defaultChoice?: 
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        title="Where you operate — annotates processes and vendor availability from committed evidence; never re-ranks"
+        title="Where you operate — a country view keeps the processes with a real analog there (committed evidence) and lists what it hides below the table; never re-ranks"
         className="flex items-center gap-1.5 rounded-lg border border-zinc-800 px-2 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
       >
         <span aria-hidden>{current ? current.flag : '🇺🇸'}</span>

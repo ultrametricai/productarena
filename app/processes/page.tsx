@@ -53,9 +53,11 @@ export default function ProcessesPage() {
             onto a global view — you can include the US specific ones in the first view"): the
             geo dropdown opens on 🌐 Global and the always-on scope glyphs run sharp (🌐/🇺🇸/🏛)
             — server-rendered via this prop, not a mount flash, with every US-specific row still
-            in the first view (the geo dimension annotates, never filters). ?geo=/pa-geo win as
-            before; process DETAIL pages keep their US default (the seam is documented on
-            lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO). */}
+            in the first view. A COUNTRY selection (?geo=in…) now FILTERS honestly (founder
+            2026-10-02): US-scoped rows stay only where the committed note says the need exists
+            there as its own process, and a muted disclosure under the table lists what hid.
+            ?geo=/pa-geo win as before; process DETAIL pages keep their US default (the seam is
+            documented on lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO). */}
         <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} defaultGeo={PROCESSES_INDEX_DEFAULT_GEO} />
         {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
             decision-driven journey with clearly-labeled synthetic artifacts. */}
