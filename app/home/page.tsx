@@ -71,9 +71,12 @@ export default function HomePage() {
     DEFAULT_DIRECTION,
   ).slice(0, HOME_RANKINGS_COUNT)
   // The processes mini table: ~20 rows from the same server-side rows /processes renders, in
-  // founder-timeline order (the "Founder timeline" preset's ordering).
-  const topProcesses = [...buildProcessRows().rows]
-    .sort((a, b) => a.timeOrder - b.timeOrder || a.title.localeCompare(b.title))
+  // founder-timeline order (the "Founder timeline" preset's ordering). Situations (founder
+  // 2026-10-01) are reactive — no timeline slot — so the timeline teaser honestly excludes
+  // them; they live on /processes under their own area.
+  const topProcesses = buildProcessRows().rows
+    .filter((r) => r.timeOrder !== null)
+    .sort((a, b) => (a.timeOrder ?? 0) - (b.timeOrder ?? 0) || a.title.localeCompare(b.title))
     .slice(0, HOME_PROCESSES_COUNT)
   return (
     // Full-bleed breakout of the layout's max-w-7xl px-5 py-10 main: the landing ran its hero

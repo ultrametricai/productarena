@@ -150,16 +150,31 @@ describe('corpus', () => {
     expect(cadenceOf('sw_002')).toBe('weekly')
   })
 
-  it('the five orderings are fully curated: timeOrder unique, 1–5 scores everywhere', () => {
+  it('the five orderings are fully curated: timeOrder unique over processes, 1–5 scores everywhere', () => {
     const tasks = loadProcesses(DATA_DIR)
+    // Situations (founder 2026-10-01) are reactive: NO timeOrder slot, a trigger sentence and
+    // an honest urgency tier instead. Processes keep the exact pre-situation contract. The
+    // loader enforces both directions; these assertions name offenders precisely.
+    const processes = tasks.filter((t) => t.kind === 'process')
+    const situations = tasks.filter((t) => t.kind === 'situation')
+    for (const t of processes) {
+      expect(Number.isInteger(t.timeOrder) && (t.timeOrder ?? 0) >= 1, `${t.id} timeOrder`).toBe(true)
+      expect(t.trigger, `${t.id}: trigger is situation-only`).toBeUndefined()
+      expect(t.urgency, `${t.id}: urgency is situation-only`).toBeUndefined()
+    }
+    for (const t of situations) {
+      expect(t.timeOrder, `${t.id}: situations carry no timeline slot`).toBeUndefined()
+      expect((t.trigger ?? '').length, `${t.id}: a situation names its trigger`).toBeGreaterThan(20)
+      expect(['hours', 'days', 'weeks'], `${t.id} urgency`).toContain(t.urgency)
+    }
     for (const t of tasks) {
-      expect(Number.isInteger(t.timeOrder) && t.timeOrder >= 1, `${t.id} timeOrder`).toBe(true)
       for (const [field, v] of [['annoyance', t.annoyance], ['risk', t.risk], ['growthImpact', t.growthImpact]] as const) {
         expect(Number.isInteger(v) && v >= 1 && v <= 5, `${t.id} ${field}=${v} must be an integer 1–5`).toBe(true)
       }
     }
-    // The founder timeline is a total order: every position unique, so the sort is deterministic.
-    expect(new Set(tasks.map((t) => t.timeOrder)).size).toBe(tasks.length)
+    // The founder timeline is a total order OVER PROCESSES: every position unique, so the sort
+    // is deterministic; situations sit outside it by design.
+    expect(new Set(processes.map((t) => t.timeOrder)).size).toBe(processes.length)
     // …and every score axis actually discriminates (not a wall of 3s).
     for (const field of ['annoyance', 'risk', 'growthImpact'] as const) {
       expect(new Set(tasks.map((t) => t[field])).size, `${field} should span multiple values`).toBeGreaterThanOrEqual(4)
@@ -169,8 +184,9 @@ describe('corpus', () => {
   it('ordering anchors: the founder spot checks hold', () => {
     const tasks = loadProcesses(DATA_DIR)
     const byId = (id: string) => tasks.find((t) => t.id === id)!
-    // Incorporation is where the founder timeline starts.
-    const first = tasks.reduce((min, t) => (t.timeOrder < min.timeOrder ? t : min))
+    // Incorporation is where the founder timeline starts (situations sit outside the timeline).
+    const timeline = tasks.filter((t) => t.kind === 'process')
+    const first = timeline.reduce((min, t) => ((t.timeOrder ?? Infinity) < (min.timeOrder ?? Infinity) ? t : min))
     expect(first.id).toBe('form_001')
     expect(byId('form_001').timeOrder).toBe(1)
     // DE franchise tax: high risk, annual.

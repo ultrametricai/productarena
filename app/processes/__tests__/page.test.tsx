@@ -44,8 +44,12 @@ describe('/processes — one combined table, one processes vocabulary', () => {
       expect(rowIdx, `chain ${p.id} must link to its chain page`).toBeGreaterThanOrEqual(0)
       expect(rowIdx, `chain ${p.id} must follow the timeline-sorted processes`).toBeGreaterThan(lastProcessIdx)
     }
-    // The first two process rows really are in founder-timeline order.
-    const byTime = [...rows].sort((a, b) => a.timeOrder - b.timeOrder)
+    // The first two process rows really are in founder-timeline order. Situations carry no
+    // timeOrder slot (founder 2026-10-01) — they follow the timeline, so the probe scopes to
+    // the timeline rows.
+    const byTime = rows
+      .filter((r) => r.timeOrder !== null)
+      .sort((a, b) => (a.timeOrder ?? 0) - (b.timeOrder ?? 0))
     const idxOf = (slug: string) => trs.findIndex((tr) => tr.querySelector(`a[href="/processes/${slug}"]`) !== null)
     expect(idxOf(byTime[0].slug)).toBeLessThan(idxOf(byTime[byTime.length - 1].slug))
     expect(idxOf(byTime[0].slug)).toBe(0)
