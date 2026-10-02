@@ -4,7 +4,8 @@ Part of [the open startup repo](../README.md#business-logic): reusable business 
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
 the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
-liquidity-event waterfalls, 409A grant sanity), every one pure,
+liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution,
+priced-round mechanics), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -95,9 +96,65 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
   `appraisalPresumptionCheck` (rule `us-fed.independent-appraisal-presumption`, timing only —
   qualification is counsel's question), `preferredCommonRatioIllustration` (a labeled
   illustration leaning on rule `us-fed.reasonable-method`'s caveat that a preferred financing
-  price is not common FMV), and `grantSanityReport`. Every check cites a committed rule card
+  price is not common FMV), and `grantSanityReport`. Extended with the posture-is-law deep
+  pass: `PRESUMPTION_METHODS` (the three §409A valuation presumptions as structured, cited
+  data — independent appraisal; binding formula with the nonlapse-restriction standard; the
+  illiquid-startup route with its actual regulatory conditions, rules
+  `us-fed.binding-formula-presumption` and `us-fed.illiquid-startup-presumption`),
+  `checkMethodEligibility` (explicit inputs only; computed date windows, relayed assertions,
+  judgments always flag), `refreshTriggerChecklist` (the staleness ceiling, closed
+  financings, and the term-sheet convention as cited triggers), and
+  `penaltyIllustration409a` (rule `us-fed.409a-penalty-additions`, IRC §409A(a)(1)(B): the
+  20% additional tax plus a labeled simple-interest illustration of the underpayment-rate-
+  plus-one-point premium — explicit hypotheticals in, never a tax computation). OPM,
+  backsolve, and every other appraisal method are deliberately OUT — `producesValuation`
+  stays false everywhere. Every check cites a committed rule card
   by id — the gate (`lib/openstartup/__tests__/grant409aSanity.test.ts`) fails if a card is
   missing or jurisdiction-mismatched — and every finding is `needsReview: true`.
+- **Vesting mechanics** — `lib/openstartup/vesting.ts` — pure, client-safe; real date math
+  (UTC ISO, anniversaries CLAMPED to short months — the stated convention, plan documents
+  control). Contract: `vestingEvents` / `vestedAsOf` (cliff + monthly/quarterly/annual
+  schedules per the Cooley GO founder-stock convention — nothing before the cliff, exactly
+  the cliff fraction AT it, cumulative-floor rounding with the remainder on the final date),
+  back-loaded tranche schedules (Amazon's published 5/15/40/40 replayed number-for-number
+  from the cited Forbes coverage), `cliffVesting`, `departureSummary` (the unvested-repurchase
+  mechanics at departure — terms stay with the plan documents), `applyAcceleration`
+  (single- and double-trigger per the Cooley GO definitions; full / %-of-unvested /
+  months-of-service specs, the double trigger requiring termination to follow the sale),
+  `portfolioVestedAsOf` (refresh/evergreen grants as additive composition — the Rewarding
+  Talent practice), `fastAdvisorGrant` (the published FAST agreement grid, encoded and
+  gate-tested), and `earlyExerciseSnapshot` (the 83(b) interface STATED: restricted-share
+  counts only; the election window belongs to the deadlines module via rule
+  `us-fed.83b-filing-period`, and all ISO/NSO/AMT/83(b) tax math belongs to the tax module).
+  Worked examples and properties in `lib/openstartup/__tests__/vesting.test.ts`.
+- **Anti-dilution** — `lib/openstartup/antiDilution.ts` — pure, client-safe. Contract:
+  `weightedAverageConversionPrice` (the NVCA model COD formula CP2 = CP1 × (A + B) ÷ (A + C),
+  also printed by Cooley GO's down-round explainer; broad base via `broadBase` — common +
+  preferred as-converted + options as-exercised — narrow base = the subject series' own
+  as-converted common, the denominator difference stated), `fullRatchetConversionPrice`
+  (Cooley GO's worked example replayed), `applyAntiDilution` (a published worked example
+  replayed number-for-number for all three bases — the Springmeyer $2.00 → $1.7059 broad /
+  $1.4444 narrow / $1.00 ratchet down round), conversion-price → conversion-ratio mechanics
+  (`conversionRatio`, `asConvertedShares`), `payToPlayConsequence` (a flag/explanation per
+  Fenwick and the Holloway VC guide — never a computed payout), and `toWaterfallSeries`
+  (the stated waterfall interface: hand the post-adjustment as-converted count as `shares`,
+  satisfying that module's 1:1 assumption without modifying it). Only dilutive issuances
+  adjust; exempt-issuance carve-outs are charter text the caller resolves first. Ordering
+  invariants property-tested (ratchet ≤ narrow ≤ broad ≤ CP1) in
+  `lib/openstartup/__tests__/antiDilution.test.ts`.
+- **Priced-round mechanics** — `lib/openstartup/round.ts` — pure, client-safe; reuses the
+  cap-table module's types and pool algebra and composes the anti-dilution module (no
+  parallel cap-table representation). Contract: `proRataShares` / `maintainOwnership`
+  (pro rata per the YC User Guide §E — the Appendix II purchase replayed, and the algebra
+  showing "maintain my %" IS "buy my pro rata of the issuance"), `poolTargetFromHiringPlan`
+  with `hiringPlanPoolIncrease` / `hiringPlanPoolTopUp` (bottom-up pool sizing per
+  Rewarding Talent's approach — per-role sizes stay in the book's published grant grids,
+  supplied as inputs, never invented; the pool algebra is capTable's, already cited),
+  `downRoundModel` (a dilutive round over snapshot rows composing per-series anti-dilution
+  adjustments — the Springmeyer example replayed end-to-end, including who absorbs the
+  dilution), and `founderSecondary` (Cooley GO glossary: a secondary transfers outstanding
+  shares, issues nothing, dilutes no one — proceeds go to the seller, never the company).
+  Worked examples in `lib/openstartup/__tests__/round.test.ts`.
 
 Still planned: hiring cost comparisons beyond the runway impact (benefits/payroll-tax load
 factors need dated rule cards first). The conservative workflow planner lives in

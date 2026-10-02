@@ -143,7 +143,24 @@ source-cited, exhaustively tested records and code:
     conversion-indifference point.
   - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
-    that takes the FMV as input and never values a company.
+    that takes the FMV as input and never values a company — now with the three §409A
+    valuation presumptions as structured cited data, method-eligibility checks over
+    explicit inputs, a refresh-trigger checklist, and the penalty mechanics as a labeled
+    arithmetic illustration.
+  - `vesting.ts` — vesting schedules and mechanics with real date math: cliff + periodic
+    schedules per the Cooley GO convention, back-loaded tranches (Amazon's published
+    5/15/40/40), departure and unvested-repurchase summaries, single- and double-trigger
+    acceleration outcomes, refresh grants as additive composition, the FAST advisor grid,
+    and an early-exercise interface that hands the 83(b) and tax questions to the modules
+    that own them.
+  - `antiDilution.ts` — round-protection mechanics: the NVCA model weighted-average
+    formula (broad- and narrow-based, the denominator difference stated), full ratchet,
+    conversion-price-to-ratio mechanics, pay-to-play as explanation, and a stated interface
+    into the waterfall module — published worked examples replayed number-for-number.
+  - `round.ts` — priced-round mechanics on top of the cap table: pro rata math (maintaining
+    ownership is buying your pro rata, shown by algebra), option-pool sizing bottom-up from
+    a hiring plan, down-round modeling that composes the anti-dilution adjustments, and
+    founder secondaries (which dilute no one — the shares just change hands).
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
