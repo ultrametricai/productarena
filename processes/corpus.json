@@ -24205,5 +24205,289 @@
     "growthImpact": 1,
     "produces": [],
     "requires": []
+  },
+  {
+    "id": "sit_015",
+    "title": "Answer a data-subject access request",
+    "description": "A DSAR is a legal letter wearing an email's clothes. Under GDPR you must respond without undue delay and within ONE MONTH of receipt — extendable by two further months for complex or numerous requests only if you tell the requester within the first month (Art. 12(3), rule card eu.gdpr-dsar-response-deadline, EUR-Lex cited); the CCPA's clock is 45 days, on the California AG's own page. Verify identity proportionately, inventory honestly (product DB, analytics, support desk, email tools, processor), and let counsel check the exemptions before anything ships — a delivered over-disclosure cannot be unsent, which is why that step is the irreversible one. Educational guidance, not legal advice; the controlling clock is the statute's, verified at the primary source.",
+    "phase": "compliance",
+    "kind": "situation",
+    "trigger": "Someone exercises their data rights — a GDPR subject access request or CCPA request to know/delete lands in any inbox.",
+    "urgency": "weeks",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "painful",
+    "category": "privacy",
+    "supportLevel": "partial",
+    "supportReason": "The data inventory and the export assembly are agent work across your own systems; identity verification judgment, the exemptions review, and the decision to send are human — counsel's where it's close.",
+    "vendors": [],
+    "geoNotes": [
+      {
+        "country": "UK",
+        "kind": "analog",
+        "summary": "UK GDPR's subject access request runs on the same one-month clock with the same two-month extension — the ICO's right-of-access guidance is the canonical employer-side playbook, including the identity-check and exemptions reality.",
+        "actionUrl": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-of-access/",
+        "actionLabel": "ICO: right of access (SARs)"
+      }
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Log the request and start the clock: one month under GDPR Art. 12(3), 45 days under CCPA — the extension needs notice inside month one",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+          "actionLabel": "GDPR (EUR-Lex, Art. 12)",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n2",
+          "label": "Verify the requester's identity proportionately — enough to stop impersonation, never a data grab of its own",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n3",
+          "label": "Inventory where this person's data lives: product DB, analytics, support desk, email tools, payment processor",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n4",
+          "label": "Assemble the export and draft the response: what you hold, purposes, recipients, retention, sources",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 90
+        },
+        {
+          "id": "n5",
+          "label": "Review the exemptions with privacy counsel where it's close: third-party data, privilege, trade secrets",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "optionsArenaId": "startup-law-firms",
+          "vendorOptions": [
+            "cooley",
+            "orrick",
+            "fenwick",
+            "gunderson_dettmer"
+          ],
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n6",
+          "label": "Deliver securely by the deadline and record what was sent (or send the extension notice inside month one)",
+          "route": "form",
+          "reversibility": "irreversible",
+          "riskLevel": "high",
+          "actionUrl": "https://oag.ca.gov/privacy/ccpa",
+          "actionLabel": "California AG: CCPA (45-day clock)",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n7",
+          "label": "Fix the intake: a records-of-processing map and a standing DSAR runbook so the next one is routine",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 45
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the request itself and the date it was received (the clock runs from receipt)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "where personal data lives: your systems and processors",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "privacy",
+      "gdpr",
+      "ccpa",
+      "dsar"
+    ],
+    "activeMinutes": 335,
+    "totalEstimatedMinutes": 335,
+    "hasAsyncSteps": false,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1,
+    "produces": [],
+    "requires": []
+  },
+  {
+    "id": "sit_016",
+    "title": "Recover from an app-store rejection or removal",
+    "description": "A rejection names its guideline; a removal names its policy — the recovery starts by reading WHICH one, calmly. Apple's App Review publishes its guidelines and a real appeal path (disagreements go to the App Review Board through the published contact flow); Google Play publishes its removal reasons and appeal process in the Play Console help. The honest fork: fix-and-resubmit beats contesting unless the reviewer is genuinely wrong about your app. If store revenue is material, say something honest to users while the review runs — the review clock is the stores', modeled here as the wait it is.",
+    "phase": "product",
+    "kind": "situation",
+    "trigger": "Your app is rejected in review — or pulled from the App Store or Google Play with a policy notice.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "mobile",
+    "supportLevel": "manual_guide",
+    "supportReason": "Review and appeals run inside Apple's and Google's own consoles on their own judgment — an agent can diff your build against the cited guideline and assemble the evidence; the appeal and the resubmission decisions are yours.",
+    "vendors": [],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Read the rejection/removal notice: which guideline or policy is cited, and what exactly the reviewer saw",
+          "route": "person",
+          "reversibility": "reversible",
+          "actionUrl": "https://developer.apple.com/app-store/review/guidelines/",
+          "actionLabel": "App Store Review Guidelines",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n2",
+          "label": "Diff your build and metadata against the cited guideline and assemble the evidence: screens, flows, policy docs",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n3",
+          "label": "Decide the fork: fix and resubmit, or contest — contest only when the reviewer is genuinely wrong about your app",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "medium",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n4",
+          "label": "Apple path: resubmit the fixed build, or appeal to the App Review Board through the published flow",
+          "route": "form",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://developer.apple.com/contact/app-store/?topic=appeal",
+          "actionLabel": "Apple: appeal an App Review decision",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n5",
+          "label": "Google Play path: follow the published removal/appeal flow in the Play Console help",
+          "route": "form",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://support.google.com/googleplay/android-developer/answer/2477981",
+          "actionLabel": "Play Console: app removals & appeals",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n6",
+          "label": "If store revenue is material, tell users honestly what's happening and what still works",
+          "route": "person",
+          "reversibility": "painful",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n7",
+          "label": "Wait for the review decision — the clock is the stores'",
+          "route": "person",
+          "reversibility": "reversible",
+          "async": true,
+          "estimatedMinutes": 4320
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the rejection/removal notice (guideline or policy cited)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "how much of your revenue and install base rides the affected store",
+        "tier": "user_input",
+        "required": false
+      }
+    ],
+    "tags": [
+      "situation",
+      "mobile",
+      "app-store",
+      "rejection",
+      "appeal"
+    ],
+    "activeMinutes": 225,
+    "totalEstimatedMinutes": 4545,
+    "hasAsyncSteps": true,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 3,
+    "produces": [],
+    "requires": []
   }
 ]

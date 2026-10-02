@@ -44,7 +44,7 @@ description says so.
 
 <!-- situations:table:start (generated — scripts/generate-situations-md.ts) -->
 
-The 14 situations, hottest clock first (urgency, then title — the /situations order):
+The 16 situations, hottest clock first (urgency, then title — the /situations order):
 
 | id | Situation | Trigger | Urgency | Geo |
 | --- | --- | --- | --- | --- |
@@ -55,9 +55,11 @@ The 14 situations, hottest clock first (urgency, then title — the /situations 
 | `sit_007` | Handle a co-founder departure | A co-founder is leaving — resignation or a split — and the vesting, IP, and access mechanics start now. | days | us |
 | `sit_014` | Handle a security-vulnerability report | A security researcher (or a customer, or a stranger) reports a vulnerability in your product — responsibly, so far. | days | global |
 | `sit_013` | Recover from a payment-processor account termination | Your payment processor emails that your account is terminated or restricted — payouts pause and a final processing date is set. | days | global |
+| `sit_016` | Recover from an app-store rejection or removal | Your app is rejected in review — or pulled from the App Store or Google Play with a policy notice. | days | global |
 | `sit_001` | Respond to a cease-and-desist | A cease-and-desist letter claiming trademark or IP infringement arrives by mail or email. | days | us |
 | `sit_008` | Respond to a lawsuit | You've been served — a process server hands you a summons and complaint naming the company. | days | us |
 | `sit_002` | Unstick a delayed US visa | Your US visa is stuck — 221(g) administrative processing after the interview, or a petition sitting past posted times — while the company needs you in Silicon Valley. | days | us |
+| `sit_015` | Answer a data-subject access request | Someone exercises their data rights — a GDPR subject access request or CCPA request to know/delete lands in any inbox. | weeks | global |
 | `sit_004` | Answer an IRS or state tax notice | An IRS or state tax notice arrives claiming a discrepancy, a balance due, or a missing filing. | weeks | us |
 | `sit_010` | Cure a Delaware franchise tax delinquency | A Delaware delinquency notice arrives — the March 1 annual report/franchise tax was missed and good standing is gone or going. | weeks | us-state |
 | `sit_012` | Migrate off a shutting-down vendor | A vendor you depend on announces a shutdown or sunsets the product you're built on. | weeks | global |

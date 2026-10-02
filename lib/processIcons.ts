@@ -249,6 +249,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   // Wave 3 (founder boost 2026-10-02) — same rule: domain hue, situation grouped by kind.
   sit_013: pi('unplug', 'emerald'), // 🔌 Processor account termination (the same pulled-plug concept as sit_012, money hue — the processor pulls YOURS)
   sit_014: pi('eye', 'sky'), // 👁 Security-vulnerability report (someone saw through the shield)
+  sit_015: pi('padlock', 'sky'), // 🔒 Data-subject access request (privacy is the lock site-wide)
+  sit_016: pi('phone', 'sky'), // 📱 App-store rejection/removal (the app-stores concept, interrupted)
 }
 
 export function processIcon(taskId: string): string {
