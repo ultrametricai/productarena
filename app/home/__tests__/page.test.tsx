@@ -95,6 +95,9 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     render(<HomePage />)
     const section = document.querySelector('section[aria-labelledby="home-processes-heading"]') as HTMLElement
     expect(section).not.toBeNull()
+    // Founder 2026-10-02: the intro paragraph is gone — heading + table stand alone.
+    expect(section.textContent).not.toContain('mapped step-by-step')
+    expect(section.textContent).not.toContain('In the order a founder hits them')
     const rows = section.querySelectorAll('tbody tr')
     expect(rows.length).toBe(HOME_PROCESSES_COUNT)
     // Every row links to its process page and carries an agent-ceiling bar; the icon renders
