@@ -10,13 +10,23 @@ Two layers, deliberately separate:
    Delaware equity workflows (409A valuation review, 83(b) election) — status `demonstration`,
    not production-certified; see `governance/REVIEW_POLICY.md` for the maturity ladder.
 
-2. **The operational corpus** (`corpus.json` in this directory, 123 processes rendered live at
+2. **The operational corpus** (`corpus.json` in this directory, 136 records rendered live at
    [ultrametric.ai/processes](https://ultrametric.ai/processes) — each process at
    `/processes/<id>` — contract in `schemas/operational-process.schema.json`):
    step-by-step operating DAGs with agent/manual/human routing, judged vendor rankings per
    step, agent ceilings, and time estimates. These are operating guides, not legal advice, and
    they carry no jurisdiction warranty — the site's jurisdiction toggle (`lib/jurisdictions.ts`)
    and geo scoping annotate where steps are US- or state-specific.
+
+   Since 2026-10-01 the corpus carries two kinds of record: 124 **processes** (the proactive
+   founder timeline) and 12 **situations** (`kind: "situation"` — reactive, trigger-driven:
+   a cease-and-desist arrives, a visa is stuck, a breach is live). A situation is the same
+   machinery — DAG, routing, ceilings, vendors, reversibility, geo — plus a one-sentence
+   `trigger` and an honest `urgency` clock (`hours`/`days`/`weeks`), and deliberately NO
+   `timeOrder` slot: reactive work is not a stop on the founder timeline, so /processes groups
+   situations under their own area and sorts them after the timeline. Where a situation leans
+   on a legal deadline, its description cites a dated rule card in `rules/` (the
+   `lib/openstartup/deadlines.ts` needs-review doctrine) and its steps link the primary source.
 
 A process here may cite operational corpus pages for the how-to mechanics; the operational
 corpus links back when a step crosses into fact-specific legal territory. The two layers keep
