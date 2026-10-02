@@ -57,7 +57,7 @@ describe('canonical shared process reader', () => {
     const record = findSharedRecord(records, 'form_001')!
     const el = mount(renderToStaticMarkup(<SharedProcessReader record={record} records={records} />))
     expect(el.querySelectorAll('article')).toHaveLength(12) // only the selected default geographic option is rendered
-    expect(el.textContent).toContain('India - MCA SPICe+ filing')
+    expect(el.querySelector('input[aria-label="India - MCA SPICe+ filing"]')).not.toBeNull()
     expect(el.textContent).toContain('Jurisdictions: CA')
     expect(el.textContent).not.toContain('Jurisdictions: MULTI')
     expect(el.querySelectorAll('a[href^="#"]')).toHaveLength(0)

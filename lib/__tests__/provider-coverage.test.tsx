@@ -57,9 +57,9 @@ it('labels existing aggregate scores as default-scope when a regional option cha
   const comparisons = buildComposedComparisons(record, records)
   const choice = buildProcessProviderChoice(record, comparisons)!
   const el = render(<SharedProcessReader record={record} records={records} comparisons={comparisons} processChoice={choice} />)
-  const selector = el.getByRole('combobox', { name: 'Regional variant' }) as HTMLSelectElement
-  const alternate = [...selector.options].find(option => option.value !== 'default')!
-  fireEvent.change(selector, { target: { value: alternate.value } })
+  const selector = el.getByRole('group', { name: 'Regional variant' })
+  const alternate = selector.querySelector('input:not([value="default"])')!
+  fireEvent.click(alternate)
   const providers = within(el.getByRole('region', { name: 'Process providers' }))
   expect(providers.getAllByText('These scores do not assess the selected regional variant.').length).toBeGreaterThan(0)
   expect(providers.getAllByText(/Default-scope coverage across/).length).toBeGreaterThan(0)
