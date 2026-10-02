@@ -1,0 +1,77 @@
+# Situations — the reactive records in the process corpus
+
+A **situation** is a corpus record with `kind: 'situation'` (`processes/corpus.json`): reactive,
+trigger-driven work that interrupts the founder journey instead of sitting on it. A lawsuit is
+served, a breach is live, a tax notice arrives — nobody plans these into a timeline, so
+situations deliberately carry **no `timeOrder` slot** and never appear on the founder-timeline
+orderings. Their detail pages render at `/processes/<slug>` (URL stability); their index is
+[`/situations`](https://ultrametric.ai/situations), which moved them out of the `/processes`
+table (founder 2026-10-02 — that table is processes only now).
+
+## The trigger / urgency model
+
+Two fields carry the reactive classification, both required on every situation and forbidden on
+plain processes (schema-enforced in `lib/processes.ts`, kind-conditionally):
+
+- **`trigger`** — the concrete event that puts a founder here, written as the event, not the
+  task ("A process server hands you a summons and complaint", not "handle lawsuits"). It
+  renders as the row subtitle on `/situations` and leads the prose on the detail page.
+- **`urgency`** — the honest clock tier once the trigger lands: `hours` (a breach, a frozen
+  operating account, a live DDoS), `days` (served papers, a cease-and-desist), or `weeks` (a
+  tax notice, an office action, a franchise-tax delinquency). Tier definitions live in
+  `lib/processSim.ts` (`URGENCY_META`) and render as the urgency chip
+  (`components/UrgencyChip.tsx`). The `/situations` index sorts by urgency, then title — the
+  hotter clock reads first. Deadlines inside a situation are the NOTICE's own printed deadline
+  or the statute's, cited on the steps; the tier is a reading aid, never a legal clock.
+
+Everything else is the ordinary corpus machinery: a DAG of steps routed agent / manual form /
+human, curated `risk`/`annoyance` scores (situations interleave honestly on those orderings),
+`geoScope`, and jurisdiction notes.
+
+## The honest low-ceiling posture
+
+Situations have deliberately LOW agent ceilings, and that is the point, not a gap to engineer
+away: reading a legal demand, the counsel/CPA judgment call, the response signed under penalty
+of perjury, and the counterparty's processing clock are human by nature (several are
+legally-human signature acts, `legalSignature`). What an agent honestly does is the mechanical
+core — preserve the evidence file, pull the period's records, recompute the asserted mismatch,
+pull the cited marks from TSDR — and the corpus routes exactly those steps `agent`, nothing
+more. Async waits (the IRS processing the response, the examiner's next action) are modeled as
+waits, never promised away. Educational guidance, not legal advice — every situation's
+description says so.
+
+## The 12 situations
+
+<!-- situations:table:start (generated — scripts/generate-situations-md.ts) -->
+
+The 12 situations, hottest clock first (urgency, then title — the /situations order):
+
+| id | Situation | Trigger | Urgency | Geo |
+| --- | --- | --- | --- | --- |
+| `sit_005` | Recover from a frozen bank account or bank failure | Your operating account is frozen by the bank's compliance review — or the bank itself fails. | hours | us |
+| `sit_003` | Respond to a data breach | You discover unauthorized access to customer or company data — a breach is live or just happened. | hours | us-state |
+| `sit_011` | Survive a DDoS attack or major outage | Traffic spikes take the product down — a DDoS attack is live, or a major outage looks like one. | hours | global |
+| `sit_006` | Contain a chargeback or fraud spike | Your dispute rate jumps — a chargeback wave or a card-testing/fraud spike is hitting your payments. | days | global |
+| `sit_007` | Handle a co-founder departure | A co-founder is leaving — resignation or a split — and the vesting, IP, and access mechanics start now. | days | us |
+| `sit_001` | Respond to a cease-and-desist | A cease-and-desist letter claiming trademark or IP infringement arrives by mail or email. | days | us |
+| `sit_008` | Respond to a lawsuit | You've been served — a process server hands you a summons and complaint naming the company. | days | us |
+| `sit_002` | Unstick a delayed US visa | Your US visa is stuck — 221(g) administrative processing after the interview, or a petition sitting past posted times — while the company needs you in Silicon Valley. | days | us |
+| `sit_004` | Answer an IRS or state tax notice | An IRS or state tax notice arrives claiming a discrepancy, a balance due, or a missing filing. | weeks | us |
+| `sit_010` | Cure a Delaware franchise tax delinquency | A Delaware delinquency notice arrives — the March 1 annual report/franchise tax was missed and good standing is gone or going. | weeks | us-state |
+| `sit_012` | Migrate off a shutting-down vendor | A vendor you depend on announces a shutdown or sunsets the product you're built on. | weeks | global |
+| `sit_009` | Respond to a trademark office action | The USPTO examiner issues an office action against your trademark application — refusals or requirements with a response clock. | weeks | us |
+
+<!-- situations:table:end -->
+
+## How to add one
+
+1. Add the record to `processes/corpus.json` with `kind: 'situation'`, a `trigger` written as
+   the event, an honest `urgency` tier, **no `timeOrder`**, and the usual DAG/scores/geoScope.
+   Legal claims in descriptions cite dated rule cards in `rules/` by id; deadlines cite the
+   notice or statute, curl-verified like every corpus URL.
+2. Route steps honestly: `agent` only for the mechanical core; signatures under penalty of
+   perjury get `legalSignature`; third-party clocks are `person` waits.
+3. Regenerate this file's table: `pnpm exec tsx scripts/generate-situations-md.ts`.
+4. Run the gates — the drift test (`__tests__/situations.test.ts`) fails if this list and the
+   corpus disagree, the schema tests enforce the kind-conditional fields, and
+   `pnpm shared:check` re-imports the shared record.

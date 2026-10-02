@@ -11,6 +11,12 @@ describe('sitemap registration', () => {
     }
   })
 
+  it('lists the /situations index and keeps the situation detail pages at /processes/<slug> (founder 2026-10-02)', () => {
+    expect(urls.has(`${SITE_URL}/situations`)).toBe(true)
+    // Detail URLs stay stable — the index moved, the pages did not.
+    expect(urls.has(`${SITE_URL}/processes/respond-to-a-lawsuit`)).toBe(true)
+  })
+
   it('keeps the root entry for the landing homepage (served at / by the worker)', () => {
     expect(urls.has(SITE_URL)).toBe(true)
     // /home is deliberately unlisted — its canonical is the root.

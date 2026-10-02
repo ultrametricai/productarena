@@ -163,6 +163,7 @@ export const EXPLORE_SECTION_ICONS = {
 export const MOBILE_NAV_ICONS: Record<string, string> = {
   '/arenas': pi('stadium', 'emerald'), // 🏟 the arenas themselves
   '/processes': pi('cycle', 'sky'), // 🔁
+  '/situations': pi('siren', 'amber'), // 🚨 reactive, trigger-driven — amber: urgent, not an error
   '/technologies': pi('plug', 'sky'), // 🔌 same concept as vendor_010
   '/startup-sim': pi('flask', 'emerald'), // 🧪 same flask as startup_001
   '/stacks': pi('bricks', 'sky'), // 🧱

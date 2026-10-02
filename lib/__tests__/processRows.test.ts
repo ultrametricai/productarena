@@ -5,9 +5,10 @@
 import { describe, expect, it } from 'vitest'
 import { chainTasks, computeCeiling, loadChains, loadProcesses, processSlug } from '@/lib/processes'
 import {
-  AREA_ORDER, areaOf, areaOfTask, areaRank, buildPlaybookRows, buildProcessRows, PHASE_AREA,
-  SITUATIONS_AREA,
+  AREA_ORDER, areaOf, areaOfTask, areaRank, buildPlaybookRows, buildProcessRows,
+  buildSituationRows, PHASE_AREA, SITUATIONS_AREA,
 } from '@/lib/processRows'
+import { URGENCY_TIERS } from '@/lib/processSim'
 
 describe('phase → area display map (lib/processRows.ts)', () => {
   it('is total over the live corpus: every phase maps to exactly one curated area', () => {
@@ -32,30 +33,49 @@ describe('phase → area display map (lib/processRows.ts)', () => {
     expect(areaRank('Not an area')).toBe(-1)
   })
 
-  it('built rows carry the area + rank the grouped table renders — KIND drives the area', () => {
-    // The Situations decision, pinned (founder 2026-10-01): kind — not a phase value — routes a
-    // record into the 'Situations' area (last in AREA_ORDER); the phase stays the honest domain
-    // tag on the row. Processes keep the exact phase→area map.
-    const byKind = new Map(loadProcesses().map((t) => [processSlug(t.title), t.kind]))
-    const { rows } = buildProcessRows()
+  it('buildProcessRows is PROCESSES ONLY (founder 2026-10-02: situations moved to /situations) — every row keeps the phase→area map', () => {
+    const { rows, totalProcesses } = buildProcessRows()
+    const corpus = loadProcesses()
+    const situations = corpus.filter((t) => t.kind === 'situation')
+    expect(situations.length).toBeGreaterThan(0)
+    // No situation row reaches the processes surfaces — the table's 'Situations' area group is
+    // gone with them; /situations renders them via buildSituationRows instead.
+    const situationSlugs = new Set(situations.map((t) => processSlug(t.title)))
     for (const r of rows) {
-      if (byKind.get(r.slug) === 'situation') {
-        expect(r.area).toBe(SITUATIONS_AREA)
-        expect(r.kind).toBe('situation')
-        expect(r.timeOrder, `${r.slug}: situations carry no timeline slot`).toBeNull()
-        expect(r.trigger, `${r.slug}: situation rows carry their trigger subtitle`).toBeTruthy()
-        expect(r.urgency).not.toBeNull()
-      } else {
-        expect(r.area).toBe(areaOf(r.phase))
-        expect(r.kind).toBe('process')
-        expect(r.trigger).toBeNull()
-        expect(r.urgency).toBeNull()
-      }
+      expect(situationSlugs.has(r.slug), `${r.slug} must not appear in the processes rows`).toBe(false)
+      expect(r.kind).toBe('process')
+      expect(r.trigger).toBeNull()
+      expect(r.urgency).toBeNull()
+      expect(r.area).toBe(areaOf(r.phase))
+      expect(r.area).not.toBe(SITUATIONS_AREA)
       expect(r.areaRank).toBe(areaRank(r.area))
     }
+    expect(rows.length).toBe(corpus.length - situations.length)
+    expect(totalProcesses).toBe(rows.length)
+    // The kind-driven area decision stays pinned for the surfaces that still mix kinds (the
+    // shared preview index) — and 'Situations' keeps its last-in-lifecycle rank there.
     expect(AREA_ORDER[AREA_ORDER.length - 1]).toBe(SITUATIONS_AREA)
     expect(areaOfTask({ kind: 'situation', phase: 'legal' })).toBe(SITUATIONS_AREA)
     expect(areaOfTask({ kind: 'process', phase: 'legal' })).toBe('Legal')
+  })
+
+  it('buildSituationRows: the 12 reactive records, urgency (hours → days → weeks) then title, trigger/urgency/area intact', () => {
+    const rows = buildSituationRows()
+    const situations = loadProcesses().filter((t) => t.kind === 'situation')
+    expect(rows).toHaveLength(situations.length)
+    expect(rows).toHaveLength(12)
+    for (const r of rows) {
+      expect(r.kind).toBe('situation')
+      expect(r.area).toBe(SITUATIONS_AREA)
+      expect(r.timeOrder, `${r.slug}: situations carry no timeline slot`).toBeNull()
+      expect(r.trigger, `${r.slug}: situation rows carry their trigger subtitle`).toBeTruthy()
+      expect(r.urgency).not.toBeNull()
+    }
+    const tiers = rows.map((r) => URGENCY_TIERS.indexOf(r.urgency!))
+    expect([...tiers].sort((a, b) => a - b)).toEqual(tiers)
+    for (let i = 1; i < rows.length; i++) {
+      if (tiers[i] === tiers[i - 1]) expect(rows[i - 1].title.localeCompare(rows[i].title)).toBeLessThan(0)
+    }
   })
 
   // The country-view filter data (founder 2026-10-02): every row carries the per-country

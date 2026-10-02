@@ -107,8 +107,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   // Founder processes + curated chains (see lib/processes.ts and app/processes/*), plus the
-  // decision-driven Virtual Startup journey over the same corpus (app/startup-sim).
+  // decision-driven Virtual Startup journey over the same corpus (app/startup-sim). The
+  // /situations index (founder 2026-10-02) lists the reactive records; their detail pages stay
+  // /processes/<slug> rows in the loadProcesses loop below.
   entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
+  entries.push({ url: `${SITE_URL}/situations`, lastModified: now })
   entries.push({ url: `${SITE_URL}/processes/operating-rhythm`, lastModified: now })
   entries.push({ url: `${SITE_URL}/startup-sim`, lastModified: now })
   for (const task of loadProcesses()) {
