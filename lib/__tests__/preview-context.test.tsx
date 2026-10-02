@@ -75,3 +75,19 @@ it('reuses sourced metadata without treating a vendor package as a process-wide 
   expect(uk.getByText('cost varies · as of 2026-10-01')).toBeDefined()
   expect(uk.queryByText('✓ verify:')).toBeNull()
 })
+
+
+it('renders corrected verification alongside the authored briefs while retaining source provenance', () => {
+  const record = records.find(record => record.id === 'form_001')!
+  const el = render(<SharedProcessReader record={record} records={records} />)
+  const name = el.container.querySelector('[id="form_001:n3"]')!
+  expect(name.textContent).toContain('dedicated name-availability checker')
+  expect(name.querySelector('a[href="https://icis.corp.delaware.gov/Ecorp/NameReserv/NameReservation.aspx"]')).not.toBeNull()
+  const filing = el.container.querySelector('[id="form_001:n4:default"]')!
+  expect(filing.textContent).not.toContain('with a file number and Good Standing status')
+  expect(filing.textContent).toContain('returned Certificate of Incorporation')
+  const certificate = el.container.querySelector('[id="form_001:n5"]')!
+  expect(certificate.textContent).not.toContain('every bank and investor')
+  expect(certificate.textContent).not.toContain('accepted wherever')
+  expect(record.source?.sha256).toMatch(/^[a-f0-9]{64}$/)
+})

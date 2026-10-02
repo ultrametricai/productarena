@@ -65,3 +65,24 @@ claims. Existing metadata must not be presented as newly verified guidance.
 
 The 18 previously reported downstream geography findings remain unresolved by
 country classification or this scoped presentation treatment.
+
+## Integration corrections to visible verification metadata
+
+On 2026-10-02, the preview integration corrected the exposed `verify` fields on
+`n3`, `n4/default` and `n5`, and the overbroad replacement-copy claim in
+`n5.failureModes`. The dedicated name-availability result is distinguished from
+name reservation; filing acceptance uses the returned Filed endorsement; and
+certified-copy/good-standing requirements depend on the recipient. The old
+general entity-search link remains a source reference, not the verification test.
+The legacy corpus, raw migration audit, record source provenance and generated
+manifest baseline remain unchanged.
+
+Checked primary sources:
+- https://corp.delaware.gov/howtoform/ (name reservation, submission, recipient-specific copies)
+- https://icis.corp.delaware.gov/Ecorp/NameReserv/NameReservation.aspx (dedicated availability service)
+- https://corp.delaware.gov/onlinestatus/ (status checks do not issue a good-standing certificate)
+- https://delcode.delaware.gov/title8/c001/sc01/index.html (filing endorsement and effectiveness)
+
+These narrow corrections supersede the corresponding retained-metadata caveat
+above. They do not re-verify every imported metadata field or add graph state for
+83(b) eligibility, transfer date, or confirmed service handling.

@@ -27,9 +27,11 @@ it('moves only the existing Clerky context above its filing stories without chan
   fireEvent.click(chooser.getByRole('button', { name: 'Show Stripe Atlas story evidence' }))
   expect(within(chooser.getByRole('region', { name: 'Stripe Atlas story evidence' })).queryByText(option.summary!)).toBeNull()
   fireEvent.click(el.container.querySelector('input[value="germany-notary-gmbh"]')!)
-  expect(chooser.queryByText(option.summary!)).toBeNull()
+  expect(el.container.querySelector('[id="form_001:n1"]')).toBeNull()
   fireEvent.click(el.container.querySelector('input[value="default"]')!)
-  expect(chooser.getAllByText(option.summary!)).toHaveLength(1)
+  const restored = within(el.container.querySelector('[id="form_001:n1"]') as HTMLElement)
+  fireEvent.click(restored.getByRole('button', { name: 'Show Clerky story evidence' }))
+  expect(restored.getAllByText(option.summary!)).toHaveLength(1)
   expect(JSON.stringify(record)).toBe(before)
 })
 
