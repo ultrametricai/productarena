@@ -187,4 +187,31 @@ describe('VirtualStartup — the Ultrametric CLI/MCP line on mapped process rows
     for (const j of judged) expect(j.textContent).not.toContain('Ultrametric')
   })
 
+  it('round 8 (item 5): every revealed UM-CLI line carries a copy button that copies the exact shipped command — display-only, inside the first-party surfaces alone', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(window.navigator, 'clipboard', { value: { writeText }, configurable: true })
+    renderIt()
+    showAll()
+    // Terminal lines: one copy button per vs-um-cli line.
+    const termLines = within(screen.getByTestId('vs-terminal')).getAllByTestId('vs-um-cli')
+    for (const line of termLines) {
+      expect(within(line).getByTestId('vs-um-cli-copy')).toBeTruthy()
+    }
+    // State-panel block: one per vs-sg-umcli-line, still under the explicit first-party label.
+    fireEvent.click(screen.getByTestId('vs-sg-tab-vendors'))
+    const block = screen.getByTestId('vs-sg-umcli')
+    const blockLines = within(block).getAllByTestId('vs-sg-umcli-line')
+    for (const line of blockLines) {
+      expect(within(line).getByTestId('vs-um-cli-copy')).toBeTruthy()
+    }
+    // No copy button outside the UM-CLI surfaces (the judged vendor list stays untouched).
+    for (const j of within(screen.getByTestId('vs-stategraph-body')).getAllByTestId('vs-sg-vendor')) {
+      expect(within(j).queryByTestId('vs-um-cli-copy')).toBeNull()
+    }
+    // Clicking copies the exact shipped command from the curated map (form_001 is revealed).
+    const formLine = termLines.find((l) => l.textContent?.includes(ULTRAMETRIC_CLI_STEPS.form_001.command))!
+    fireEvent.click(within(formLine).getByTestId('vs-um-cli-copy'))
+    expect(await within(formLine).findByText('copied ✓')).toBeTruthy()
+    expect(writeText).toHaveBeenCalledWith(ULTRAMETRIC_CLI_STEPS.form_001.command)
+  })
 })

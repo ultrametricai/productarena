@@ -68,6 +68,7 @@ import {
 // scorecard + shareable ?run= permalink, auto/semi-auto drive. All logic lives in
 // lib/virtualStartupRun.ts (pure, deterministic); the UI pieces are separate components.
 import VsAssistantSelect from '@/components/VsAssistantSelect'
+import VsCopyCommand from '@/components/VsCopyCommand'
 import VsEventCard from '@/components/VsEventCard'
 import VsPersonaPicker from '@/components/VsPersonaPicker'
 import VsScorecard from '@/components/VsScorecard'
@@ -1919,7 +1920,10 @@ export default function VirtualStartup({
                             >
                               Ultrametric CLI/MCP
                             </Link>{' '}
-                            — our own product: <code className="text-zinc-400">{um.command}</code>
+                            — our own product: <code className="text-zinc-400">{um.command}</code>{' '}
+                            {/* Copyable shipped command (founder batch 2026-10-02, item 5) —
+                                display-only convenience on the already-disclosed first-party line. */}
+                            <VsCopyCommand command={um.command} />
                             <span className="text-zinc-500"> · MCP {um.mcpTool} — guide + saved records; your agent does the work</span>
                           </p>
                         )

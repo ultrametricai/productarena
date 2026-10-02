@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import VsCopyCommand from '@/components/VsCopyCommand'
 import type { SyntheticArtifact, TopVendorPick } from '@/lib/virtualStartup'
 
 // The state-graph viewer (founder batch 2026-09-29, item 3): a compact tabbed panel above (or
@@ -169,9 +170,12 @@ export default function VsStateGraph({
                 </p>
                 <ul className="mt-1 space-y-1">
                   {umCli.map((u) => (
-                    <li key={u.taskId} data-testid="vs-sg-umcli-line" className="flex flex-wrap items-baseline gap-x-2 text-[11px]">
+                    <li key={u.taskId} data-testid="vs-sg-umcli-line" className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[11px]">
                       <span className="text-zinc-300">{u.title}</span>
                       <code className="font-mono text-[10px] text-emerald-300/80">{u.command}</code>
+                      {/* Copyable shipped command (founder batch 2026-10-02, item 5) — display-
+                          only convenience inside the explicitly-labeled first-party block. */}
+                      <VsCopyCommand command={u.command} />
                     </li>
                   ))}
                 </ul>
