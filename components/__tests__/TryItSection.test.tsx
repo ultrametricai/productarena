@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
-// Pins for the "Try it agentically" panel declutter (founder 2026-10-02): the Experimental chip,
-// the long explainer paragraph (docs/TRY-IT.md link included), and the microterminal's footer
-// "replay ↺ / run again ▶" button are gone — while the HONESTY CONTRACT survives verbatim: the
-// per-run recorded/live badge, the per-story footer provenance line, and the ▶ run-live
-// affordance for live-capable recordings. Data libs are mocked so these pins don't depend on
-// which products currently carry recorded proofs.
+// Pins for the "Test it in sandbox" panel (founder 2026-10-02, two passes): the Experimental
+// chip, the long explainer paragraph (docs/TRY-IT.md link included), the microterminal's footer
+// "replay ↺ / run again ▶" button, the title-bar ▶ replay/run control, AND the per-run
+// "recorded session — replayed, not live" badge are all gone; the heading is renamed from
+// "Try it agentically" (founder-decided). The HONESTY CONTRACT survives: the per-story footer
+// provenance line (recorded date · exit code · "captured verbatim…") marks every recording, live
+// output alone carries a live badge, and the ▶ run-live affordance stays per line. Data libs are
+// mocked so these pins don't depend on which products currently carry recorded proofs.
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import TryItSection from '@/components/TryIt/TryItSection'
@@ -26,33 +28,40 @@ vi.mock('@/lib/tryit', () => ({
 }))
 vi.mock('@/lib/mcpEndpoints', () => ({ mcpEndpointFor: () => null }))
 
-describe('TryItSection — founder 2026-10-02 declutter', () => {
-  it('keeps the heading but drops the Experimental chip and the explainer paragraph', () => {
+describe('TryItSection — founder 2026-10-02 batch', () => {
+  it('heading reads "Test it in sandbox" (renamed from "Try it agentically"); no Experimental chip, no explainer', () => {
     const { container } = render(
       <TryItSection category="payments" productId="stripe" productName="Stripe" stories={[]} />,
     )
-    expect(screen.getByRole('heading', { name: 'Try it agentically' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Test it in sandbox' })).toBeTruthy()
+    expect(container.textContent).not.toContain('Try it agentically')
     expect(screen.queryByText('Experimental')).toBeNull()
     expect(container.textContent).not.toContain('See what an agent can do')
     expect(container.textContent).not.toContain('docs/TRY-IT.md')
     expect(container.querySelector('a[href*="TRY-IT.md"]')).toBeNull()
   })
 
-  it('HONESTY GUARD: the per-line recorded/live labeling and run-live affordance survive', () => {
-    render(<TryItSection category="payments" productId="stripe" productName="Stripe" stories={[]} />)
-    // The per-run badge still says, out loud, that this is a replayed recording…
-    expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
-    // …the provenance footer still carries date / exit code / verbatim-capture line…
-    expect(screen.getByText(/captured verbatim by our probe harness/)).toBeTruthy()
+  it('HONESTY GUARD: the recorded badge is gone, but the provenance footer still marks every recording', () => {
+    const { container } = render(
+      <TryItSection category="payments" productId="stripe" productName="Stripe" stories={[]} />,
+    )
+    // The per-run badge is gone (founder 2026-10-02)…
+    expect(screen.queryByText(/recorded session — replayed, not live/)).toBeNull()
+    // …but the distinction stays visible: the footer leads with the recorded date / exit code /
+    // verbatim-capture line, and NO live badge renders for a pure replay.
+    expect(screen.getByText(/recorded 2026-09-01 · exit 0 · captured verbatim by our probe harness/)).toBeTruthy()
+    expect(container.textContent).not.toContain('live — run just now')
     // …and the live-capable story keeps its ▶ run live affordance and tag.
     expect(screen.getByRole('button', { name: /run live/i })).toBeTruthy()
     expect(screen.getByText('live-capable')).toBeTruthy()
   })
 
-  it('the footer replay/run-again button is gone (the title bar ▶ replay control remains)', () => {
+  it('the title-bar ▶ replay/run control is gone too (second founder ask) — the story chips are the play affordance', () => {
     render(<TryItSection category="payments" productId="stripe" productName="Stripe" stories={[]} />)
     expect(screen.queryByRole('button', { name: /replay ↺/ })).toBeNull()
     expect(screen.queryByRole('button', { name: /run again/ })).toBeNull()
-    expect(screen.getByRole('button', { name: /▶ replay/ })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /▶ replay/ })).toBeNull()
+    // The story-menu chip (auto-plays on mount, re-plays on click) remains.
+    expect(screen.getByRole('button', { name: /read the docs/ })).toBeTruthy()
   })
 })

@@ -70,8 +70,14 @@ describe('Microterminal live tiers', () => {
       { ok: true, auth: 'keyless', reachable: true, handshake: true, call: { tool: 'search_docs', label: 'search the docs', ok: true, resultText: 'found 4 results', truncated: false } },
     ])
     renderLive()
+    // With the title-bar ▶ control gone (founder 2026-10-02), the empty live terminal points at
+    // the menu chip, which is the one way to fire the handshake.
+    expect(screen.getByText(/press ▶ Live MCP handshake above/)).toBeTruthy()
     runHandshake()
 
+    // Live output wears the live badge — the one per-run badge left after the recorded badge
+    // was removed (founder 2026-10-02).
+    expect(screen.getByText(/live — run just now from our edge/)).toBeTruthy()
     const runCall = await screen.findByRole('button', { name: /run a real call — search the docs/ })
     expect(sent[0]).toEqual({ arena: 'payments', product: 'stripe' }) // keyless probe: no token, no action
     fireEvent.click(runCall)
@@ -128,18 +134,21 @@ describe('Microterminal live tiers', () => {
         probe={null}
       />,
     )
-    expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
+    // Founder 2026-10-02: no per-run recorded badge — the provenance footer marks the recording
+    // and no live badge renders until a live re-run actually happens.
+    expect(screen.queryByText(/recorded session — replayed, not live/)).toBeNull()
+    expect(screen.getByText(/recorded 2026-09-01 · exit 0 · captured verbatim/)).toBeTruthy()
     expect(screen.getByText('live-capable')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('button', { name: /run live/i }))
     await waitFor(() => expect(urls).toHaveLength(1))
     expect(urls[0]).toBe('https://ultrametric.ai/api/try/payments/stripe/llms-txt')
     expect(await screen.findByText(/recorded replay \+ live re-run/)).toBeTruthy()
-    // Founder 2026-10-02: the footer "replay ↺ / run again ▶" duplicate is gone — the title
-    // bar's ▶ replay/run control is the one replay affordance.
+    // Founder 2026-10-02 (two passes): the footer "replay ↺ / run again ▶" duplicate AND the
+    // title-bar ▶ replay/run control are both gone — the story chips are the play affordance.
     expect(screen.queryByRole('button', { name: /replay ↺/ })).toBeNull()
     expect(screen.queryByRole('button', { name: /run again/ })).toBeNull()
-    expect(screen.getByRole('button', { name: /▶ replay/ })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /▶ replay/ })).toBeNull()
   })
 
   it('a replay-only story (CLI/pty probe) offers no run-live affordance', () => {
@@ -154,7 +163,10 @@ describe('Microterminal live tiers', () => {
     )
     expect(screen.queryByRole('button', { name: /run live/i })).toBeNull()
     expect(screen.queryByText('live-capable')).toBeNull()
-    expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
+    // No recorded badge (founder 2026-10-02) — the provenance footer is the recording's marker.
+    expect(screen.queryByText(/recorded session — replayed, not live/)).toBeNull()
+    expect(screen.getByText(/captured verbatim by our probe harness/)).toBeTruthy()
+    expect(screen.queryByText(/live — run just now/)).toBeNull()
   })
 
 })
