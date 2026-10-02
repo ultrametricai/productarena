@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ArtifactChips from '@/components/ArtifactChips'
 import DoViaAfk from '@/components/DoViaAfk'
 import GeoSwitcher from '@/components/GeoSwitcher'
 import IconChip from '@/components/IconChip'
@@ -15,6 +16,7 @@ import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
+import { artifactChipRows } from '@/lib/processDeps'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
@@ -143,6 +145,12 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         </div>
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {/* The typed-I/O layer (founder depth wave part 2, 2026-10-01): what this process Needs
+            and Produces as registry artifacts (processes/artifacts.json), each Needs chip
+            linking to the canonical producer process — contextNeeded prose below the DAG stays
+            the human context; these chips are the machine truth the cross-process dependency
+            graph (lib/processDeps.ts) is built from. */}
+        <ArtifactChips rows={artifactChipRows(task)} />
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
             globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner
