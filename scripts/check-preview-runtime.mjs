@@ -31,6 +31,33 @@ export async function verifyTraces(root, traces) {
   console.log('Preview traces include both runtime data files for all three routes.')
 }
 
+// Static routes are fully prerendered (force-static, or generateStaticParams with
+// dynamicParams=false), so their fs reads happen at build time only. next.config.ts's
+// outputFileTracingExcludes keeps these build-time-only directories out of their deployment
+// traces — the regression this guards is the one that ENOSPC'd Vercel's output packaging
+// (10.17 GB of traced bytes before the excludes; see docs/BUILD-SIZE.md).
+export const staticTargets = [
+  { trace: 'page.js.nft.json', route: '/' },
+  { trace: 'vs/[slug]/page.js.nft.json', route: '/vs/[slug]' },
+  { trace: 'arena/[category]/product/[id]/page.js.nft.json', route: '/arena/[category]/product/[id]' },
+  { trace: 'ops/page.js.nft.json', route: '/ops' },
+]
+const excludedDirs = ['data', 'public', 'pipeline', 'docs', 'content', 'processes', 'journeys', 'vendors']
+
+export async function verifyStaticTraceExcludes(root) {
+  for (const target of staticTargets) {
+    const filename = path.join(root, '.next/server/app', target.trace)
+    const manifest = JSON.parse(await readFile(filename, 'utf8'))
+    for (const file of manifest.files) {
+      const relative = path.relative(root, path.resolve(path.dirname(filename), file))
+      const top = relative.split(path.sep)[0]
+      assert(!excludedDirs.includes(top),
+        `${target.route}: deployment trace still carries build-time-only file ${relative} — outputFileTracingExcludes regressed (docs/BUILD-SIZE.md)`)
+    }
+  }
+  console.log(`Static traces carry no build-time-only directories (${staticTargets.length} routes checked).`)
+}
+
 async function unusedPort() {
   const server = createServer()
   server.listen(0, '127.0.0.1')
@@ -108,6 +135,7 @@ async function main() {
   const root = path.resolve(rootFlag === -1 ? process.cwd() : args[rootFlag + 1])
   const traces = await readTraces(root)
   await verifyTraces(root, traces)
+  await verifyStaticTraceExcludes(root)
   if (!args.includes('--trace-only')) await smokeRuntime(root, traces)
 }
 
