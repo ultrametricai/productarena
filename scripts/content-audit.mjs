@@ -47,6 +47,9 @@ export function buildContentAudit(files, metadata) {
     record.reviewDue = isoDate(due) ? due : null
     check(record, 'Recorded review date', record.checkedOn ? 'present' : 'unknown', record.checkedOn ?? 'No dated review recorded.')
     if (due && !record.reviewDue) check(record, 'Review due date', 'needs_review', 'The recorded date is invalid.')
+    if (record.checkedOn && record.checkedOn > metadata.generatedAt.slice(0, 10)) check(record, 'Recorded review date', 'needs_review', 'The review date is in the future.')
+    if (record.reviewDue && record.checkedOn && record.reviewDue < record.checkedOn) check(record, 'Review due date', 'needs_review', 'The due date precedes the recorded review.')
+    if (record.reviewDue && record.reviewDue < metadata.generatedAt.slice(0, 10)) check(record, 'Review overdue', 'needs_review', `The recorded review was due ${record.reviewDue}.`)
   }
   const walk = (value, visit) => {
     if (Array.isArray(value)) value.forEach(item => walk(item, visit))
@@ -71,6 +74,7 @@ export function buildContentAudit(files, metadata) {
       processKeys.set(alias, record.key)
     }
     if (situation && value.kind !== 'situation') check(record, 'Situation classification', 'needs_review', 'Legacy metadata declares a situation; the shared kind is process.')
+    date(record, value.metadata?.reviewed_on, value.metadata?.review_due)
     presence(record, 'Summary', nonempty(value.summary))
     presence(record, 'Outcomes', Array.isArray(value.outcomes) && value.outcomes.length > 0)
     return { record, value }
@@ -133,6 +137,7 @@ export function buildContentAudit(files, metadata) {
   metrics.push({ label: 'Arenas in the declared roadmap', covered: roadmap.filter(item => categories.some(category => category.id === item.id)).length, total: roadmap.length, meaning: 'Presence in the category registry; does not establish complete vendor coverage.' })
 
   const documents = json('documents/registry.json')
+  if (!Number.isInteger(documents.review_window_days) || documents.review_window_days <= 0) throw new Error('Documents require a positive review_window_days.')
   for (const value of array(documents.documents, 'documents')) {
     const record = add('documents', value.id, value.name, 'documents/registry.json', [value.use_case, value.jurisdiction])
     presence(record, 'License or terms note', nonempty(value.license_note))
@@ -236,7 +241,12 @@ export function buildContentAudit(files, metadata) {
       unresolved: rows.reduce((total, record) => total + record.links.filter(ref => ref.state === 'unresolved').length, 0) }
   })
   const coverage = json('catalog/coverage.json')
-  const declaredCoverage = { claim: coverage.coverage_claim, uncovered: array(coverage.uncovered, 'uncovered scopes') }
+  const scopes = array(coverage.coverage, 'coverage scopes').map(value => ({
+    scenario: value.scenario, processKey: processTarget(value.process_id), entityJurisdiction: value.entity_jurisdiction,
+    taxJurisdiction: value.tax_jurisdiction, status: value.status, reviewedOn: value.reviewed_on,
+    reviewDue: value.review_due, limits: array(value.limits, 'scope limits'),
+  }))
+  const declaredCoverage = { claim: coverage.coverage_claim, uncovered: array(coverage.uncovered, 'uncovered scopes'), scopes }
   const inputDigest = createHash('sha256').update(JSON.stringify([...inputs].sort(([a], [b]) => a.localeCompare(b, 'en')))).digest('hex')
   const report = { schemaVersion: 1, repository: 'ultrametricai/ultrametric', ...metadata, inputDigest, inputFiles: inputs.size,
     collections, metrics, declaredCoverage, records }

@@ -21,7 +21,7 @@ function fixture() {
     'rules/US-DE/rule.json': { id: 'rule', statement: 'A rule', source_ids: ['statute'], jurisdiction: 'US-DE', status: 'demonstration', reviewed_on: '2026-10-01', review_due: '2027-01-01' },
     'processes/artifacts.json': { artifacts: [{ id: 'result', label: 'Result', description: 'Prepared result', producedBy: 'start' }] },
     'processes/business-logic-map.json': { modules: { module: { label: 'Module', file: 'lib/openstartup/module.ts', processes: ['start'] } } },
-    'catalog/coverage.json': { coverage_claim: 'One demonstration only.', uncovered: ['Other scenarios'] },
+    'catalog/coverage.json': { coverage_claim: 'One demonstration only.', uncovered: ['Other scenarios'], coverage: [] },
   }
   const files = new Map(Object.entries(data).map(([file, value]) => [file, JSON.stringify(value)]))
   files.set('lib/openstartup/module.ts', 'export const value = 1')
@@ -105,4 +105,38 @@ test('rejects a changed shared schema rather than misreading it as the old forma
   const files = fixture()
   change(files, 'content/processes/records/start.json', value => value.schemaVersion = 2)
   assert.throws(() => buildContentAudit(files, metadata), /Unsupported shared schema/)
+})
+
+
+test('preserves process review dates and flags overdue or reversed schedules', () => {
+  const files = fixture()
+  change(files, 'content/processes/records/start.json', value => {
+    value.metadata.reviewed_on = '2026-09-30'
+    value.metadata.review_due = '2026-09-29'
+  })
+  const item = record(buildContentAudit(files, metadata), 'situations:start')
+  assert.equal(item.checkedOn, '2026-09-30')
+  assert.equal(item.reviewDue, '2026-09-29')
+  assert.ok(item.checks.some(check => check.label === 'Review overdue' && check.state === 'needs_review'))
+  assert.ok(item.checks.some(check => check.detail.includes('precedes')))
+})
+
+test('rejects missing or invalid document review windows', () => {
+  for (const window of [undefined, 0, -1, '120']) {
+    const files = fixture()
+    change(files, 'documents/registry.json', value => value.review_window_days = window)
+    assert.throws(() => buildContentAudit(files, metadata), /positive review_window_days/)
+  }
+})
+
+test('preserves each narrow coverage claim and its limits', () => {
+  const files = fixture()
+  change(files, 'catalog/coverage.json', value => value.coverage.push({
+    scenario: 'One event', process_id: 'start', entity_jurisdiction: 'US-DE', tax_jurisdiction: 'US-FED',
+    status: 'example', reviewed_on: '2026-09-30', review_due: '2026-12-30', limits: ['One example only'],
+  }))
+  assert.deepEqual(buildContentAudit(files, metadata).declaredCoverage.scopes, [{
+    scenario: 'One event', processKey: 'situations:start', entityJurisdiction: 'US-DE', taxJurisdiction: 'US-FED',
+    status: 'example', reviewedOn: '2026-09-30', reviewDue: '2026-12-30', limits: ['One example only'],
+  }])
 })

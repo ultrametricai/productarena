@@ -42,7 +42,7 @@ checks).
 
 ## Source-library audit
 
-`node scripts/content-audit.mjs /path/to/content-audit.json` exports a source-library audit. Keep exports outside the public data tree. The API operator command `node scripts/publish-content-audit.ts --file <report.json>` validates and stores a committed-source export in its private database. Only the API's authenticated staff dashboard serves the stored report. Exporting does not publish or deploy anything.
+`node scripts/content-audit.mjs /path/to/content-audit.json` exports a source-library audit. Keep exports outside the public data tree. From a checkout of the private [ultrametric-api repository](https://github.com/ultrametricai/ultrametric-api), the operator command `node scripts/publish-content-audit.ts --file <report.json>` validates and stores a committed-source export in its private database. Only the API's authenticated staff dashboard serves the stored report. Exporting does not publish or deploy anything.
 
 The audit inventories shared processes and legacy situation markers, vendors and arena stories, documents, module source files, registered jurisdictions, rules, sources, resources, and business artifacts. It resolves explicit IDs, module-to-process mappings, and declared document and artifact links. It reports missing outcomes or guidance, incomplete verdict evidence, missing review metadata, and unresolved references without changing records. Vendor products use arena-qualified IDs. A shared record with `metadata.kind: situation` stays identifiable as a legacy situation marker when its shared `kind` is still `process`.
 
