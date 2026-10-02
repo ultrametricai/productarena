@@ -277,6 +277,49 @@ describe('corpus', () => {
     }
   })
 
+  // The geo-note KIND (founder ask 2026-10-02: "?geo=in should hide the processes that are not
+  // used in that country — an EIN for India doesn't make sense"). Required with no zod default,
+  // so totality over every committed note is enforced by the parse itself; these pin the
+  // curation decisions and the honest distribution.
+  it('every geoNote carries a curated kind; the distribution and the worked examples hold', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const kinds = { analog: 0, absorbed: 0, 'not-applicable': 0 }
+    for (const t of tasks) {
+      for (const n of t.geoNotes ?? []) {
+        expect(['analog', 'absorbed', 'not-applicable'], `${t.id}/${n.country} kind`).toContain(n.kind)
+        kinds[n.kind]++
+        // A note on a GLOBAL process is a per-country flavor of work that exists everywhere —
+        // by construction it can only be 'analog' (the other kinds would contradict the scope).
+        if (t.geoScope === 'global') expect(n.kind, `${t.id}/${n.country}: global flavor notes are analogs`).toBe('analog')
+      }
+    }
+    // Honest distribution: most mapped needs exist abroad as their own processes; the absorbed/
+    // not-applicable tails are real but small (each entry is individually curated).
+    expect(kinds.analog).toBeGreaterThan(kinds.absorbed + kinds['not-applicable'])
+    expect(kinds.absorbed).toBeGreaterThan(0)
+    expect(kinds['not-applicable']).toBeGreaterThan(0)
+
+    const noteKind = (id: string, country: string) =>
+      tasks.find((t) => t.id === id)!.geoNotes!.find((n) => n.country === country)?.kind
+    // The founder's example, pinned: an EIN doesn't make sense in India — PAN/TAN arrive inside
+    // the SPICe+ incorporation filing. The UK's UTR and France's SIREN/SIRET are automatic too;
+    // Germany's ELSTER tax-office registration is a real filing of its own.
+    expect(noteKind('form_002', 'IN')).toBe('absorbed')
+    expect(noteKind('form_002', 'UK')).toBe('absorbed')
+    expect(noteKind('form_002', 'FR')).toBe('absorbed')
+    expect(noteKind('form_002', 'DE')).toBe('analog')
+    // Incorporation has a true doable analog in all four countries.
+    for (const c of ['IN', 'UK', 'DE', 'FR']) expect(noteKind('form_001', c), `form_001/${c}`).toBe('analog')
+    // No country has a US-style registered-agent industry — the registered office is declared
+    // inside formation everywhere.
+    for (const c of ['IN', 'UK', 'DE', 'FR']) expect(noteKind('qs_043', c), `qs_043/${c}`).toBe('absorbed')
+    // The need genuinely absent: no UK 1099 regime; nothing to foreign-qualify for inside the
+    // UK; no German franchise-tax ritual (the IHK-Beitrag arrives automatically).
+    expect(noteKind('tax_003', 'UK')).toBe('not-applicable')
+    expect(noteKind('qs_045', 'UK')).toBe('not-applicable')
+    expect(noteKind('tax_001', 'DE')).toBe('not-applicable')
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()

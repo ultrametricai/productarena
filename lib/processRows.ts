@@ -1,5 +1,6 @@
 import type { PlaybookRow, ProcessRow } from '@/components/ProcessesTable'
 import { loadCategory } from '@/lib/data'
+import type { GeoNotesByCountry } from '@/lib/geoPreference'
 import { hasLogo } from '@/lib/logos'
 import { isShutdown } from '@/lib/shutdown'
 import { chainIcon, processIcon } from '@/lib/processIcons'
@@ -215,6 +216,16 @@ export function buildProcessRows(): ProcessRowsBundle {
       // Required on every corpus process (lib/processes.ts) — the index rows carry it for the
       // client-side geo-scope glyph shown while a non-US country is selected (GeoSwitcher).
       geoScope: t.geoScope,
+      // The country-view filter's slice of the committed geo notes (founder 2026-10-02:
+      // "?geo=in should hide the processes that are not used in that country"): per country,
+      // the curated kind plus the note's own summary (the hidden-rows disclosure one-liner).
+      // US/us-state rows only — global rows never filter, so they carry {} and the payload
+      // stays lean (the flavor notes on global processes live on the detail pages).
+      geoNotesByCountry: t.geoScope === 'global'
+        ? {}
+        : Object.fromEntries(
+            (t.geoNotes ?? []).map((n) => [n.country, { kind: n.kind, summary: n.summary }]),
+          ) as GeoNotesByCountry,
       pct: c.pct,
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,

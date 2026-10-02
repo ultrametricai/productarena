@@ -57,6 +57,28 @@ describe('phase → area display map (lib/processRows.ts)', () => {
     expect(areaOfTask({ kind: 'situation', phase: 'legal' })).toBe(SITUATIONS_AREA)
     expect(areaOfTask({ kind: 'process', phase: 'legal' })).toBe('Legal')
   })
+
+  // The country-view filter data (founder 2026-10-02): every row carries the per-country
+  // kind+summary slice of its committed geo notes — us/us-state rows only (global rows never
+  // filter, so they stay lean with {}).
+  it('rows carry geoNotesByCountry — the committed note kinds/summaries on US-scoped rows, {} on global rows', () => {
+    const bySlug = new Map(loadProcesses().map((t) => [processSlug(t.title), t]))
+    const { rows } = buildProcessRows()
+    for (const r of rows) {
+      const t = bySlug.get(r.slug)!
+      if (t.geoScope === 'global') {
+        expect(r.geoNotesByCountry, `${r.slug}: global rows carry no filter notes`).toEqual({})
+      } else {
+        const expected = Object.fromEntries((t.geoNotes ?? []).map((n) => [n.country, { kind: n.kind, summary: n.summary }]))
+        expect(r.geoNotesByCountry, r.slug).toEqual(expected)
+      }
+    }
+    // The founder's example rides all the way to the row: the EIN row says IN is absorbed.
+    const ein = rows.find((r) => r.slug === 'get-ein')!
+    expect(ein.geoScope).toBe('us')
+    expect(ein.geoNotesByCountry.IN?.kind).toBe('absorbed')
+    expect(ein.geoNotesByCountry.DE?.kind).toBe('analog')
+  })
 })
 
 // The combined-table playbook rows (founder 2026-09-29): the curated chains serialized for the

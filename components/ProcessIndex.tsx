@@ -45,33 +45,16 @@ export default function ProcessIndex({ tableRows, phases, playbooks, preview = f
             before; process DETAIL pages keep their US default (the seam is documented on
             lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO). */}
         <ProcessesTable rows={tableRows} phases={phases} playbooks={playbooks} defaultGeo={PROCESSES_INDEX_DEFAULT_GEO} />
-        {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
-            decision-driven journey with clearly-labeled synthetic artifacts. */}
-        <Link
-          href="/startup-sim"
-          className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/50 hover:bg-emerald-400/5"
-        >
-          <span className="font-medium text-zinc-200">🐣 The open startup simulator</span>
-          <span className="text-sm text-zinc-400">
-            pick the starting decisions — entity, team, funding, business model — and watch a
-            simulated company run these real processes day by day
-          </span>
-          <span className="text-sm text-emerald-400">→</span>
-        </Link>
+        {/* The 🐣 open-startup-simulator promo card and the 'Every mapped vendor traces…
+            See all rankings →' footer were removed (founder 2026-10-02) — the nav carries the
+            simulator; the table speaks for itself. */}
       </section>
 
-      <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
-        <p>
-          {/* Stale-copy fix (SSOT audit 2026-09-30): the simulator left process pages on
-              2026-09-30 (chain pages keep it) — the footer now claims only what the process
-              page actually does. */}
-          {preview ? <>Preview records use the existing index assessments where available; blank cells have no matching assessment.</> : <>Every mapped vendor traces to a live arena leaderboard — pick a vendor on the process
-          page and every step re-resolves to the calls actually recorded for it.</>}{' '}
-          <Link href="/" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-            See all rankings →
-          </Link>
-        </p>
-      </section>
+      {preview && (
+        <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
+          <p>Preview records use the existing index assessments where available; blank cells have no matching assessment.</p>
+        </section>
+      )}
     </div>
   )
 }
