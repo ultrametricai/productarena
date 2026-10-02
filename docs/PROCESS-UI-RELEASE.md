@@ -183,3 +183,15 @@ schema are preserved exactly from the pinned main commit.
 Final compatibility evidence: `pr96-preservation.json`, `pr96-tests.log`, `pr96-lint.log`,
 `pr96-types.log`, `pr96-build.log`, `pr96-import-preservation.log`, `pr96-schema.log`,
 `pr96-rankings.log`, `pr96-browser.log`, and `pr96-main-browser.log` in sibling evidence.
+
+## PR97 review follow-up
+
+Non-geographic default options now open initially; alternatives remain collapsible and
+closed initially. Manual collapse persists across Details/Graph switches. The supplementary
+leaderboard has one concise default-scope label on processes with a bound regional decision;
+selecting a nondefault region states that the selected variant is not assessed. Scores and
+ordering are unchanged, and original public routes receive no new scope copy.
+
+Validation: 2,796 tests across 258 files, TypeScript, lint (zero errors; 23 existing warnings),
+production build, and targeted Chromium checks at 320/390/1440px. Logs and screenshots use
+`review-fixes-*` in sibling evidence. No merge or deployment is included.

@@ -42,5 +42,12 @@ export function RegionalOption({ scope, optionId, id, heading, assessment, child
   if (bound) return state.selected === optionId
     ? <div id={id} className="min-w-0 px-3 py-3 sm:px-4"><div>{assessment}</div><div className="mt-3 space-y-3">{children}</div></div>
     : null
-  return <details id={id} className="min-w-0 px-3 py-3 sm:px-4"><summary className="cursor-pointer break-words font-medium text-zinc-100">{heading}</summary><div className="mt-3 space-y-3">{children}</div></details>
+  return <details id={id} open={optionId === 'default'} className="min-w-0 px-3 py-3 sm:px-4"><summary className="cursor-pointer break-words font-medium text-zinc-100">{heading}</summary><div className="mt-3 space-y-3">{children}</div></details>
+}
+
+// Qualify the existing scores without changing their calculation or ordering.
+export function RegionalCoverageNote() {
+  const state = useRegionalVariant()
+  if (!state?.decision) return null
+  return <p className="mt-2 text-xs text-zinc-400">Default-scope coverage{state.selected !== 'default' && ' · selected regional variant not assessed'}</p>
 }

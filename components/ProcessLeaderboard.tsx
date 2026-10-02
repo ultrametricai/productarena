@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import ProcessDagStrip from '@/components/ProcessDagStrip'
 import ProcessYourVendor from '@/components/ProcessYourVendor'
@@ -24,10 +25,11 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 // How many leaderboard rows to show — same legibility cap as the per-step chip roster.
 const LEADERBOARD_CAP = 8
 
-export default function ProcessLeaderboard({ task, mineHref, showStepStrip = true }: {
+export default function ProcessLeaderboard({ task, mineHref, showStepStrip = true, scopeNote }: {
   task: ProcessTask
   mineHref?: string
   showStepStrip?: boolean
+  scopeNote?: ReactNode
 }) {
   const lb = processLeaderboard(task)
   if (lb.entries.length === 0 || lb.rankableSteps === 0) return null
@@ -44,6 +46,7 @@ export default function ProcessLeaderboard({ task, mineHref, showStepStrip = tru
       <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">
         Who covers this process best
       </h2>
+      {scopeNote}
       {/* The 'No vendor assumed — …' explainer paragraph is gone (founder 2026-09-30): the
           heading stands alone; the scoring story lives in the row tooltips and /methodology. */}
 

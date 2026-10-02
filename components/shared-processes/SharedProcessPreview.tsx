@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { RegionalCoverageNote } from './RegionalVariant'
 import SharedProcessReader from './SharedProcessReader'
 import { findSharedRecord, readSharedCatalog } from '@/lib/shared-processes/reader'
 import { loadProcesses } from '@/lib/processes'
@@ -20,6 +21,6 @@ export default function SharedProcessPreview({ id }: { id: string }) {
     vendorPreview={buildVendorPreview(record)}
     comparisons={comparisons}
     processChoice={buildProcessProviderChoice(record, comparisons)}
-    supplementary={coverage ? <ProcessLeaderboard task={coverage} showStepStrip={false} /> : undefined}
+    supplementary={coverage ? <ProcessLeaderboard task={coverage} showStepStrip={false} scopeNote={<RegionalCoverageNote />} /> : undefined}
   />
 }
