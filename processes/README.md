@@ -139,6 +139,53 @@ Steps with a real, KNOWABLE cost carry an optional
   numbers ONLY. Vendor prices are excluded from the headline so it never implies a completeness
   the curation doesn't claim.
 
+## Failure modes (`failureModes`) — spike-introduced
+
+Introduced by the founder spike (2026-10-02) that took `form_001` to reference depth: steps
+where something concretely goes wrong may carry
+`failureModes: [{ what, then, source? }]` — what the failure is, and what the honest recovery
+is. Curation rules, stricter than coverage:
+
+- **Only sourced or structurally certain entries.** A Delaware name conflict (the §102(a)(1)
+  distinguishability standard), a defective-certificate rejection (§103 — nothing exists until
+  the 'Filed' endorsement), a lost stamped certificate (the published certified-copy fee), the
+  missed 83(b) window (jurisdictional, no cure). Never speculation, never a generic "be
+  careful".
+- **`then` is the honest recovery** — including the honest *absence* of one: the missed 83(b)
+  window entry says there is no self-help fix, only a tax-counsel conversation (the
+  needs-review posture). Legal claims cite a dated rule card in `rules/` by id inside the
+  prose, the same convention situation descriptions use.
+- **`source`** is the primary page/statute/fee schedule backing the entry, curl-verified live
+  like every corpus URL.
+- **3–6 quality entries per deep process**, not totality — absence means nothing is curated
+  yet, never that the step can't fail. Display: one collapsed "⚠ if it goes wrong" line per
+  affected step (`components/ProcessDag.tsx`); no judged number reads the field.
+
+## Step documents (`documents`)
+
+Steps that are genuinely done ON a canonical open document may carry `documents: string[]` —
+ids into `documents/registry.json` (the Cooley GO Delaware incorporation package for the
+bylaws/stock-paperwork drafting steps, IRS Form 15620 for the 83(b) election). Added by the
+same spike after confirming no prior mechanism linked corpus steps to the documents registry.
+Data-level cross-reference only this phase (no new default surface reads it); referential
+integrity is corpus-tested — every id must resolve in the registry.
+
+## Proven runs (`provenRuns`) — the executed-proof slot (design only)
+
+A corpus record can carry `provenRuns`: dated evidence that a named operator actually ran the
+process end to end. The shape (`ProvenRunSchema` in `lib/processes.ts`):
+
+- `ranOn` (ISO date), `operator` (a named person/company, never "a user"), `ownerRun`
+  (boolean), `disclosure` (one honest sentence — **required whenever `ownerRun` is true**,
+  load-enforced: reader trust comes from the disclosure, not from pretending independence);
+- `steps: [{ nodeId, wallClockMinutes?, feesPaidUsd?, note? }]` — the REAL elapsed wall clock
+  and the REAL fees paid per step, as run, never the corpus estimates re-stated.
+
+The field ships **empty and schema-ready**: no run is fabricated, and the corpus estimates
+stay estimates until a real record lands (the first will be Ultrametric Inc.'s own receipts,
+supplied by the founder). When records exist they are display-only; no judged number reads
+them.
+
 ## The artifact layer (typed inputs/outputs)
 
 `artifacts.json` (founder depth wave part 2, 2026-10-01) is the vocabulary of canonical
