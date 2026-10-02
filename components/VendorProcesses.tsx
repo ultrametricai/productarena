@@ -94,7 +94,7 @@ function ServedStepLines({ a }: { a: VendorProcessAppearance }) {
               {' — '}
               <span className="font-mono tabular-nums" title={STEP_SCORE_TITLE}>
                 {s.score}
-                <span className="text-zinc-600">/100</span>
+                <span className="text-zinc-500">/100</span>
               </span>
             </li>
           ))}

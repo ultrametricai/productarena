@@ -241,7 +241,7 @@ export default function LawFirmsRankingPage() {
                       {value === null ? (
                         <span className="font-sans text-xs text-zinc-500">n/a</span>
                       ) : (
-                        <>{score(value)}<span className="text-zinc-600">/100</span></>
+                        <>{score(value)}<span className="text-zinc-500">/100</span></>
                       )}
                     </td>
                   )
@@ -250,7 +250,7 @@ export default function LawFirmsRankingPage() {
                   {row.entry.agentReady === null ? (
                     <span className="font-sans text-xs text-zinc-500">n/a</span>
                   ) : (
-                    <>{score(row.entry.agentReady)}<span className="text-zinc-600">/100</span></>
+                    <>{score(row.entry.agentReady)}<span className="text-zinc-500">/100</span></>
                   )}
                 </td>
                 <td className="px-3 py-2">
