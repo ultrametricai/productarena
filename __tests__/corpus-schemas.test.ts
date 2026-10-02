@@ -2,8 +2,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { shape } from '@/lib/founderOps'
-import { VendorRegistrySchema } from '@/lib/processes'
+import { ArtifactRegistrySchema, VendorRegistrySchema } from '@/lib/processes'
 import {
+  ARTIFACT_REGISTRY_SCHEMA_FILE, artifactRegistrySchemaJson,
   OPERATIONAL_PROCESS_SCHEMA_FILE, operationalProcessSchemaJson,
   VENDOR_REGISTRY_SCHEMA_FILE, vendorRegistrySchemaJson,
 } from '../scripts/generate-corpus-schemas'
@@ -73,5 +74,30 @@ describe('process vendor-registry schema publication', () => {
     // zod source of truth validates every entry strictly, exactly as the site loader does.
     expect(() => VendorRegistrySchema.parse(registry)).not.toThrow()
     expect(Object.keys(registry.vendors).length).toBeGreaterThanOrEqual(150)
+  })
+})
+
+// The artifact-registry schema (founder depth wave part 2, 2026-10-01): same two contracts —
+// no drift, and the committed registry conforms to what we publish. The artifact layer's
+// SEMANTIC invariants (one canonical producer, producer steps exist, consumed-or-terminal) are
+// corpus-tested in lib/__tests__/processArtifacts.test.ts; this file pins only the published
+// contract.
+describe('process artifact-registry schema publication', () => {
+  const committed = fs.readFileSync(ARTIFACT_REGISTRY_SCHEMA_FILE, 'utf8')
+
+  it('regenerating produces byte-identical committed output (no drift)', () => {
+    expect(artifactRegistrySchemaJson()).toBe(committed)
+  })
+
+  it('the committed registry conforms: shape() on the published schema + the zod source', () => {
+    const schema = JSON.parse(committed)
+    const registry = JSON.parse(
+      fs.readFileSync(path.join(ROOT, 'processes', 'artifacts.json'), 'utf8'),
+    )
+    const errors: string[] = []
+    shape(registry, schema, 'artifact registry', errors)
+    expect(errors).toEqual([])
+    expect(() => ArtifactRegistrySchema.parse(registry)).not.toThrow()
+    expect(registry.artifacts.length).toBeGreaterThanOrEqual(40)
   })
 })

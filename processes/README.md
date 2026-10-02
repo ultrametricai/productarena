@@ -129,6 +129,51 @@ Steps with a real, KNOWABLE cost carry an optional
   numbers ONLY. Vendor prices are excluded from the headline so it never implies a completeness
   the curation doesn't claim.
 
+## The artifact layer (typed inputs/outputs)
+
+`artifacts.json` (founder depth wave part 2, 2026-10-01) is the vocabulary of canonical
+business artifacts that flow BETWEEN processes — the EIN, the Certificate of Incorporation,
+the bank account, the cap table, the 409A report, the payroll account. Each registry entry:
+`id` (kebab-case), `label`, `description`, `producedBy` (the ONE canonical producer process),
+optional `alsoProducedBy` (documented exceptions), optional `terminal: true`. On the corpus
+side every process carries two required typed fields — `produces: string[]` and
+`requires: string[]` (artifact ids) — and the specific step where an artifact comes into
+existence is pinned with node-level `producesArtifact`. The `contextNeeded` prose stays the
+human context; the typed layer is the machine truth, and `lib/processDeps.ts` builds the
+company-level dependency DAG from it (process page "Needs / Produces" chips, the derived
+topological ordering, and the committed `docs/TIMELINE-INVERSIONS.md` renumbering worklist).
+
+**What qualifies as an artifact.** A nameable business thing a committed corpus step genuinely
+brings into existence AND that at least one other process genuinely consumes — or, rarely, a
+real terminal output nothing downstream reads (the filed 83(b), the dissolution certificate),
+flagged `terminal`. Not artifacts: judgments, meetings, recurring acts ("payroll was run"),
+or anything no committed step produces. The registry is sized from the corpus itself — no
+invented artifacts, no aspirational vocabulary.
+
+**The one-producer rule.** Every artifact names exactly one canonical producer (`producedBy`)
+so the dependency graph stays a DAG with unambiguous edges. Where a second committed process
+genuinely also births the artifact — the LLC route applies for its own EIN, the LLC→C-Corp
+conversion re-issues the charter paper, the exec hire signs an offer — that process is listed
+in `alsoProducedBy` and may carry the artifact in its `produces`; graph edges still point at
+the canonical producer, and an exception page's "Produces" chip links back to the canonical
+process.
+
+**How to add one.** Add the registry entry; add the artifact to the producer's `produces` and
+tag the birth step with `producesArtifact` (never on a jurisdiction-conditional node — those
+are stripped from the default view); add it to at least one other process's `requires` (or
+flag it `terminal` with the reason in the description). Gates: the corpus tests
+(`lib/__tests__/processArtifacts.test.ts` — totality, one-producer, consumed-or-terminal;
+`lib/__tests__/processDeps.test.ts` — acyclicity, resolvable edges, no self-requires), and
+regenerate the derived report: `npx tsx scripts/generate-timeline-inversions.ts` (drift-tested
+— a stale `docs/TIMELINE-INVERSIONS.md` fails the suite). Published schema:
+`schemas/process-artifacts.schema.json` (generated from `ArtifactRegistrySchema` in
+`lib/processes.ts` by `scripts/generate-corpus-schemas.ts`).
+
+**Reported, not auto-fixed.** The derived topological ordering is compared against the curated
+`timeOrder` founder timeline; every inversion (a consumer curated before its producer) is a
+row in `docs/TIMELINE-INVERSIONS.md` — the founder's renumbering worklist, never a silent
+re-sort.
+
 ## A real process DAG
 
 This is `form_001` (Incorporate C-Corp) exactly as committed in `corpus.json` at
@@ -190,3 +235,8 @@ flowchart TD
 - **Corrections to an operational process** — step routing (agent / manual form / human),
   agent ceilings, or time estimates in `corpus.json`, with a source or reproduction for the
   claim. Gate: `pnpm test`.
+- **An artifact or a typed dependency** — a missing `requires` a committed step genuinely
+  consumes, a missing registry artifact a committed step genuinely produces, or a terminal
+  flag that should be a real consumer. Follow "The artifact layer" rules above (one canonical
+  producer, no invented artifacts), regenerate `docs/TIMELINE-INVERSIONS.md`. Gate:
+  `pnpm test` (`processArtifacts` + `processDeps` suites).
