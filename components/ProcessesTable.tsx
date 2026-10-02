@@ -112,6 +112,10 @@ export interface PlaybookRow {
   agentSteps: number
   totalSteps: number
   steps: Array<{ label: string; route: 'agent' | 'form' | 'person'; legalSignature: boolean }>
+  // The combined vendor cell (founder 2026-10-02: show the vendors, not a 'Go to process' link)
+  // — the constituent processes' vendor chips, deduped in journey order, same shape and cap as
+  // a process row's.
+  vendors: Array<{ id: string; label: string; arena: string | null; hasLogo: boolean }>
 }
 
 type Column = 'title' | 'phase' | 'pct' | 'steps' | 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
@@ -604,9 +608,33 @@ export default function ProcessesTable({
           </span>
         </td>
         <td className="hidden px-2 py-2 lg:table-cell">
-          <Link href={p.href} className="whitespace-nowrap text-sm font-medium text-emerald-400 transition hover:text-emerald-300" title="A multi-process row spans the software of each process it runs — open it for the per-step options">
-            Go to process →
-          </Link>
+          {/* The vendors themselves (founder 2026-10-02) — the constituents' chips in journey
+              order, the exact process-row cell contract: a chip opens the PLAYBOOK through that
+              vendor (?via= lens), the +x overflow opens the playbook plain. */}
+          <span className="flex flex-wrap gap-1">
+            {p.vendors.slice(0, 3).map((v) =>
+              v.arena ? (
+                <Link key={v.label} href={`${p.href}?via=${v.arena}:${v.id}`} title={`Open ${p.title} viewed via ${v.label} — every step resolved to it where it serves`} className="inline-flex items-center gap-1 rounded-full border border-zinc-700 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </Link>
+              ) : (
+                <span key={v.label} title={`${v.label} — not yet judged on Ultrametric`} className="inline-flex items-center gap-1 rounded-full border border-zinc-800 py-px pl-0.5 pr-1.5 text-[10px] text-zinc-500">
+                  <ProductLogoView product={{ id: v.id, name: v.label }} size={14} hasLogo={v.hasLogo} />
+                  {v.label}
+                </span>
+              ),
+            )}
+            {p.vendors.length > 3 && (
+              <Link
+                href={p.href}
+                className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
+                title={`${p.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
+              >
+                +{p.vendors.length - 3}
+              </Link>
+            )}
+          </span>
         </td>
       </tr>
     )

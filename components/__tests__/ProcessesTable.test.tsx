@@ -265,6 +265,11 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
       pct: 70,
       agentSteps: 7,
       totalSteps: 10,
+      // The vendor cell (founder 2026-10-02): chips instead of the old 'Go to process' link.
+      vendors: [
+        { id: 'clerky', label: 'Clerky', arena: 'legal-ops', hasLogo: false },
+        { id: 'stripe-atlas', label: 'Stripe Atlas', arena: 'legal-ops', hasLogo: false },
+      ],
       steps: [
         { label: 'File the charter', route: 'agent' as const, legalSignature: false },
         { label: 'Sign the incorporator consent', route: 'person' as const, legalSignature: true },
@@ -305,6 +310,13 @@ describe('chain rows in the combined table (founder 2026-09-29: one view under t
     expect(within(tr).queryByTitle('File the charter — agent-runnable')).toBeNull()
     // No timeline/cadence/risk value to show — the metric cell is an honest dash.
     expect(within(tr).getByText('—')).toBeDefined()
+    // The vendor cell carries the chips themselves (founder 2026-10-02), each opening the
+    // playbook through that vendor's ?via= lens — no 'Go to process' link.
+    expect(within(tr).queryByText('Go to process →')).toBeNull()
+    expect(within(tr).getByText('Clerky').closest('a')?.getAttribute('href')).toBe(
+      '/processes/chains/company-in-a-day?via=legal-ops:clerky',
+    )
+    expect(within(tr).getByText('Stripe Atlas')).toBeDefined()
     // Process rows are unchanged next to it (their own links intact).
     expect(within(container).getByText('Run payroll').closest('a')?.getAttribute('href')).toBe('/processes/run-payroll')
   })
