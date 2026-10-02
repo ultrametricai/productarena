@@ -14,11 +14,11 @@ import { URGENCY_META, URGENCY_TIERS } from '@/lib/processSim'
 describe('/situations', () => {
   const situations = loadProcesses().filter((t) => t.kind === 'situation')
 
-  it('renders ALL 12 situations as rows linking to their /processes/<slug> detail pages', () => {
+  it('renders ALL 22 situations as rows linking to their /processes/<slug> detail pages', () => {
     const { container } = render(<SituationsPage />)
-    expect(situations).toHaveLength(12)
+    expect(situations).toHaveLength(22)
     const table = container.querySelector('table') as HTMLElement
-    expect(table.querySelectorAll('tbody tr')).toHaveLength(12)
+    expect(table.querySelectorAll('tbody tr')).toHaveLength(22)
     for (const t of situations) {
       expect(
         table.querySelector(`a[href="/processes/${processSlug(t.title)}"]`),
