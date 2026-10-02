@@ -225,6 +225,12 @@ export const PROCESS_ICONS: Record<string, string> = {
   growth_013: pi('gift', 'fuchsia'), // 🎁 Referral program (the reward)
   growth_014: pi('coin', 'fuchsia'), // 🪙 Roll out a pricing change (the coin flips)
   growth_015: pi('boomerang', 'fuchsia'), // 🪃 Run a win-back campaign (they come back)
+  // Situations (founder 2026-10-01: reactive, trigger-driven records). The hue stays the
+  // DOMAIN family's — a legal situation reads as legal (amber), a people situation as people
+  // (orange) — so a situation sits recognizably inside its discipline while the 'Situations'
+  // area groups them.
+  sit_001: pi('stop', 'amber'), // 🛑 Respond to a cease-and-desist (the letter says stop)
+  sit_002: pi('hourglass', 'orange'), // ⏳ Unstick a delayed US visa (the wait is the problem)
 }
 
 export function processIcon(taskId: string): string {
