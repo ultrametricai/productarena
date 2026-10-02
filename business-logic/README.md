@@ -5,8 +5,8 @@ decision support, calculations, calendars, and comparisons — separate from law
 the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
 liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution,
-priced-round mechanics, ISO/NSO exercise tax, 83(b) math, QSBS, Delaware franchise tax,
-R&D tax mechanics, employer payroll tax), every one pure,
+priced-round mechanics, the priced-round composer, ISO/NSO exercise tax, 83(b) math, QSBS,
+Delaware franchise tax, R&D tax mechanics, employer payroll tax), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -212,6 +212,30 @@ adjustments — the Springmeyer example replayed end-to-end, including who absor
 dilution), and `founderSecondary` (Cooley GO glossary: a secondary transfers outstanding
 shares, issues nothing, dilutes no one — proceeds go to the seller, never the company).
 Worked examples in `lib/openstartup/__tests__/round.test.ts`.
+
+### Priced-round composer
+
+**Serves:** [Close a priced equity round](https://ultrametric.ai/processes/close-a-priced-equity-round) (n1 `termSheetEconomics`, n7 `replayPricedRound`, n9 `replayPricedRound`) · [Convert SAFEs at the priced round](https://ultrametric.ai/processes/convert-safes-at-the-priced-round) (n4 `replayPricedRound`)
+
+`lib/openstartup/roundComposer.ts` — pure, client-safe; the
+end-to-end priced-round replay (founder ask 2026-10-02: go deep and connect the modules to
+the processes). One narrative COMPOSITION — no parallel arithmetic — over the cap-table
+engine, round mechanics, anti-dilution, and the waterfall, read back as the closing
+process's own stages. Contract: `termSheetEconomics` (post-money, the % the new money buys
+per YC User Guide Quick Start §2, and the Quick Start §3 "Adding it all up" dilution
+estimate via capTable.estimateRoundDilution), `replayPricedRound` (the history + round
+folded through capTable.buildCapTable and narrated stage by stage: the closing wires to
+verify — new cash + exercised pro rata, SAFE conversions wire nothing — and the post-close
+table with the new series' at-close conversion terms, ratio 1.0 via
+antiDilution.conversionRatio), `postCloseLiquidityCheck` (the signed table at a sale price
+through waterfall.liquidityWaterfall: all round preferred as one pari passu 1x series whose
+preference basis is the dollars actually paid, plus the conversion-indifference price), and
+`downRoundPreview` (the anti-dilution clause quantified: round.downRoundModel over the
+post-close table with the new series protected at its at-close conversion price). The YC
+Post-Money Safe User Guide Appendix II Example 1 pro-forma is replayed END TO END in
+`lib/openstartup/__tests__/roundComposer.test.ts` — the same numbers capTable.test.ts
+re-derives function by function — with composition-equality tests proving the composer
+invents nothing. Every report `needsReview: true`; counsel's closing mechanics control.
 
 ### ISO / NSO exercise tax
 
