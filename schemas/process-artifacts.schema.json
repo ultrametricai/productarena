@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ultrametric process artifact registry",
+  "description": "The artifact vocabulary beside the operational-process corpus (processes/artifacts.json): the canonical business artifacts that flow between processes — per artifact its id, label, description, one canonical producer process, documented exception producers, and a terminal flag for artifacts nothing downstream consumes. Generated from ArtifactRegistrySchema in lib/processes.ts by scripts/generate-corpus-schemas.ts — edit the zod schema, never this file.",
+  "type": "object",
+  "properties": {
+    "$comment": {
+      "type": "string"
+    },
+    "artifacts": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "producedBy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "alsoProducedBy": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "terminal": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description",
+          "producedBy"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "artifacts"
+  ],
+  "additionalProperties": false
+}

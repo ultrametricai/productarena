@@ -169,12 +169,58 @@ export const StepMethodSchema = z.object({
 export type StepMethodContext = z.infer<typeof StepMethodContextSchema>
 export type StepMethod = z.infer<typeof StepMethodSchema>
 
+// ---------------------------------------------------------------------------
+// Depth wave part 1 (founder 2026-10-01): two per-step cited fields — verification checks and
+// real costs. Both OPTIONAL and ADDITIVE on the full node schema only (method sub-steps stay
+// display-level); no judged number reads either, so every committed surface is unchanged.
+// ---------------------------------------------------------------------------
+
+// "How do I know it worked?" — a concrete, externally checkable test for the step, with the
+// primary-source URL of the checking tool where one exists (the DE entity search, TSDR, EDGAR
+// full-text search, RDAP lookup…). Curation honesty (processes/README.md "Verification
+// checks"): a verify that merely restates the step is worse than absence — drafting steps and
+// internal decisions carry none; URLs are https, primary sources (government portals, registrar
+// tools) preferred, and every one is curl-verified live before it ships.
+export const StepVerifySchema = z.object({
+  how: z.string().min(1),
+  url: z.string().url().optional(),
+})
+
+export type StepVerify = z.infer<typeof StepVerifySchema>
+
+export const COST_KINDS = ['government-fee', 'typical-vendor-price', 'free'] as const
+export type CostKind = (typeof COST_KINDS)[number]
+
+// The real, KNOWABLE cost of a step. Honesty contract (processes/README.md "Cost honesty"):
+// every number carries the source URL of a published fee schedule or sticker-price page plus
+// the asOf date it was read — fees change, the asOf date is the contract, currentness is never
+// claimed. `usd: null` is the honest spelling of "a real cost exists but no published number
+// does" (attorney fees vary) — the source then explains the variability; nothing is estimated
+// or averaged. `note` carries the required caveat (minimums, per-class fees, what's bundled).
+export const StepCostSchema = z.object({
+  usd: z.number().min(0).nullable(),
+  kind: z.enum(COST_KINDS),
+  source: z.string().url(),
+  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'asOf must be an ISO date (YYYY-MM-DD)'),
+  note: z.string().min(1).optional(),
+})
+
+export type StepCost = z.infer<typeof StepCostSchema>
+
 // The full node schema: the base fields (the DEFAULT method) plus optional method variants.
 // COMPAT-ADDITIVE: a node without methods is exactly the pre-variant schema, and no default
 // surface reads methods — computeCeiling, buildSimSteps, the manifest, the rankings and the
 // derived generators all keep consuming the base fields only.
 export const DagNodeSchema = DagNodeBaseSchema.extend({
   methods: StepMethodSchema.array().min(1).optional(),
+  // The artifact layer, node half (founder depth wave part 2, 2026-10-01: typed inputs/outputs
+  // between steps): the registry artifact (processes/artifacts.json) that comes into existence
+  // at THIS step — the certificate received, the account opened, the paper signed. OPTIONAL per
+  // node, but corpus-tested as the exact node-level image of the task's `produces` list (set
+  // equality per task, lib/__tests__/processArtifacts.test.ts), and never on a
+  // jurisdiction-conditional node (those are stripped from the default view). Full-node only —
+  // method-variant subSteps stay display-level.
+  producesArtifact: z.string().min(1).optional(),
   // Reversibility of THIS step's own act (founder 2026-09-30: "map what is irreversible and
   // what is reversible — for ALL processes and process steps"). REQUIRED with no zod default —
   // every node is explicitly curated (an unclassified node fails the corpus parse; totality and
@@ -185,6 +231,12 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // carry the field this phase — variants are display-level; the default flow is the judged
   // surface.
   reversibility: z.enum(REVERSIBILITY_TIERS),
+  // "How do I know it worked?" — see StepVerifySchema above. Optional: absence means the step
+  // has no meaningful external check (drafting, internal decisions), never that one was missed.
+  verify: StepVerifySchema.optional(),
+  // The step's real, sourced cost — see StepCostSchema above. Optional: absence means no
+  // knowable published number, never $0 (that's kind 'free' with usd 0).
+  cost: StepCostSchema.optional(),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -300,6 +352,18 @@ export const ProcessTaskSchema = z.object({
     tier: z.string().min(1),
     required: z.boolean(),
   }).array(),
+  // The artifact layer, task half (founder depth wave part 2, 2026-10-01): typed inputs/outputs
+  // between processes, as registry artifact ids (processes/artifacts.json — loadArtifacts below).
+  // `contextNeeded` prose stays the human context; this is the machine truth the cross-process
+  // dependency graph (lib/processDeps.ts) builds from. Both REQUIRED with no zod default — the
+  // whole corpus is explicitly curated (an empty array is an honest "this process produces/needs
+  // no registry artifact", an absent field fails the parse). Integrity is corpus-tested
+  // (lib/__tests__/processArtifacts.test.ts): every id resolves in the registry, no
+  // self-requires, produces matches the node-level producesArtifact tags exactly, and a process
+  // producing an artifact it isn't the canonical producer of must be a documented
+  // alsoProducedBy exception.
+  produces: z.string().min(1).array(),
+  requires: z.string().min(1).array(),
   tags: z.string().array(),
   activeMinutes: z.number().min(0),
   totalEstimatedMinutes: z.number().min(0),
@@ -580,6 +644,20 @@ export function taskCeiling(task: ProcessTask): ProcessCeiling {
   return computeCeiling(task.dag.nodes)
 }
 
+// The process's known government fees (depth wave pt 1): the sum of the DATED per-step
+// government fees ONLY — kind 'government-fee' with a published usd number. Derived here, never
+// hand-stored. Vendor prices are deliberately excluded from the headline (a partial vendor sum
+// would imply a completeness the curation doesn't claim), and `usd: null` entries contribute
+// nothing. Computed over the DEFAULT flow (loadProcesses strips jurisdiction-conditional nodes),
+// so the number describes the same Delaware-default view every other committed number does.
+export function knownCostUsd(nodes: Array<Pick<DagNode, 'cost'>>): number {
+  let total = 0
+  for (const n of nodes) {
+    if (n.cost && n.cost.kind === 'government-fee' && n.cost.usd !== null) total += n.cost.usd
+  }
+  return total
+}
+
 // The site-wide headline: the agent ceiling across every step of every process in the corpus.
 export function siteCeiling(tasks: ProcessTask[]): ProcessCeiling {
   return computeCeiling(tasks.flatMap((t) => t.dag.nodes))
@@ -739,6 +817,64 @@ export function vendorLabel(vendor: string): string {
     .split(/[_-]+/)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ')
+}
+
+// ---------------------------------------------------------------------------
+// Artifact registry (processes/artifacts.json) — the canonical business artifacts that flow
+// between processes (founder depth wave part 2, 2026-10-01)
+// ---------------------------------------------------------------------------
+
+// One canonical business artifact: a thing a committed process step genuinely brings into
+// existence (the EIN, the signed bylaws, the opened bank account, the 409A report) that at
+// least one OTHER process consumes via `requires` — or, flagged `terminal`, that nothing
+// downstream consumes (the filed 83(b), the dissolution certificate). ONE canonical producer
+// per artifact (`producedBy`); the documented exceptions (the LLC route's EIN, the LLC→C-Corp
+// conversion's re-issued charter paper, the exec hire's offer) live in `alsoProducedBy` — any
+// process listing the artifact in `produces` must be one of these. The registry is sized from
+// the corpus itself; no invented artifacts (all integrity rules are corpus-tested in
+// lib/__tests__/processArtifacts.test.ts). Consumed by lib/processDeps.ts to build the
+// cross-process dependency DAG. Published schema: schemas/process-artifacts.schema.json
+// (generated, drift-tested).
+export const ArtifactSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'artifact id must be kebab-case'),
+    label: z.string().min(1),
+    description: z.string().min(1),
+    // The one canonical producer process (corpus task id).
+    producedBy: z.string().min(1),
+    // Documented exception producers — other committed processes that genuinely also bring this
+    // artifact into existence. Deliberately rare; every entry is corpus-tested to really tag it.
+    alsoProducedBy: z.string().min(1).array().min(1).optional(),
+    // No committed process consumes this artifact — it leaves the graph here (filed elections,
+    // published reports, the dissolution certificate). Mutually exclusive with having consumers;
+    // both directions corpus-tested.
+    terminal: z.literal(true).optional(),
+  })
+  .strict()
+export type Artifact = z.infer<typeof ArtifactSchema>
+
+export const ArtifactRegistrySchema = z
+  .object({
+    $comment: z.string().optional(),
+    artifacts: ArtifactSchema.array().min(1),
+  })
+  .strict()
+
+const artifactsFile = () => path.join(process.cwd(), 'processes', 'artifacts.json')
+let artifactsCache: Artifact[] | null = null
+export function loadArtifacts(): Artifact[] {
+  if (!artifactsCache) {
+    const parsed = ArtifactRegistrySchema.parse(
+      JSON.parse(fs.readFileSync(artifactsFile(), 'utf8')),
+    ).artifacts
+    const seen = new Set<string>()
+    for (const a of parsed) {
+      if (seen.has(a.id)) throw new Error(`duplicate artifact id ${a.id}`)
+      seen.add(a.id)
+    }
+    artifactsCache = parsed
+  }
+  return artifactsCache
 }
 
 function arenaSwapOptions(arenaId: string, dir?: string): SwapOption[] {

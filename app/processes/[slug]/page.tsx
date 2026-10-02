@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ArtifactChips from '@/components/ArtifactChips'
 import DoViaAfk from '@/components/DoViaAfk'
 import GeoSwitcher from '@/components/GeoSwitcher'
 import IconChip from '@/components/IconChip'
@@ -15,11 +16,12 @@ import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
+import { artifactChipRows } from '@/lib/processDeps'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  CADENCE_META, findProcessBySlug, jurisdictionStepViews, loadProcesses, processSlug, slugAliasFor,
-  taskCeiling,
+  CADENCE_META, findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
+  slugAliasFor, taskCeiling,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
@@ -82,6 +84,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // Jurisdiction-conditional steps (stripped from every default surface by loadProcesses) —
   // serialized for the client-side toggle; [] for the many processes that don't branch.
   const jurisSteps = jurisdictionStepViews(task.id)
+  // Sum of the DATED per-step government fees only (depth wave pt 1, lib/processes.ts) —
+  // derived, never hand-stored; vendor prices deliberately excluded so the headline never
+  // implies a completeness the curation doesn't claim. 0 for most processes → no chip.
+  const knownFees = knownCostUsd(task.dag.nodes)
 
   return (
     <div className="space-y-10">
@@ -137,12 +143,26 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
           )}
+          {knownFees > 0 && (
+            <span
+              title="Sum of this process's per-step government fees that carry a published, dated source (each step's cost chip links to its fee schedule). Vendor prices are excluded — this is the known government minimum, not a total cost; fees change, each chip carries its as-of date."
+              className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500"
+            >
+              Known government fees: ${knownFees.toLocaleString('en-US')}
+            </span>
+          )}
           {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
               for everyone else. The manifest it hands off is public regardless. */}
           <DoViaAfk manifestUrl={processManifestUrl(slug)} />
         </div>
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
+        {/* The typed-I/O layer (founder depth wave part 2, 2026-10-01): what this process Needs
+            and Produces as registry artifacts (processes/artifacts.json), each Needs chip
+            linking to the canonical producer process — contextNeeded prose below the DAG stays
+            the human context; these chips are the machine truth the cross-process dependency
+            graph (lib/processDeps.ts) is built from. */}
+        <ArtifactChips rows={artifactChipRows(task)} />
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
             globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner

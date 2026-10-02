@@ -591,6 +591,10 @@
                   "additionalProperties": false
                 }
               },
+              "producesArtifact": {
+                "type": "string",
+                "minLength": 1
+              },
               "reversibility": {
                 "type": "string",
                 "enum": [
@@ -598,6 +602,66 @@
                   "painful",
                   "irreversible"
                 ]
+              },
+              "verify": {
+                "type": "object",
+                "properties": {
+                  "how": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "how"
+                ],
+                "additionalProperties": false
+              },
+              "cost": {
+                "type": "object",
+                "properties": {
+                  "usd": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "government-fee",
+                      "typical-vendor-price",
+                      "free"
+                    ]
+                  },
+                  "source": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "asOf": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "note": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "usd",
+                  "kind",
+                  "source",
+                  "asOf"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -663,6 +727,20 @@
         "additionalProperties": false
       }
     },
+    "produces": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "tags": {
       "type": "array",
       "items": {
@@ -700,6 +778,8 @@
     "vendors",
     "dag",
     "contextNeeded",
+    "produces",
+    "requires",
     "tags",
     "activeMinutes",
     "totalEstimatedMinutes",

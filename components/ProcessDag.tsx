@@ -13,6 +13,7 @@ import StepPromptBox from '@/components/StepPromptBox'
 import StepMethodDefault from '@/components/StepMethodDefault'
 import StepMethodPicker from '@/components/StepMethodPicker'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
+import { StepCostChip, StepVerifyLine } from '@/components/StepVerifyCost'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
@@ -468,6 +469,9 @@ function NodeBlock({
             {node.riskLevel} risk
           </span>
         )}
+        {/* The step's sourced real cost (depth wave pt 1) — a muted suffix chip linking to the
+            cited fee schedule / pricing page, as-of date on its face. Most steps carry none. */}
+        {node.cost && <StepCostChip cost={node.cost} />}
       </div>
 
       {/* The primary action row — [Do it with AI: copy / Claude / ChatGPT] → [⚡ run with AFK
@@ -610,6 +614,10 @@ function NodeBlock({
           {closer.caution && <span className="text-amber-400/80"> · {closer.caution}</span>}
         </p>
       )}
+
+      {/* "How do I know it worked?" (depth wave pt 1) — the step's concrete external check,
+          curated only where a real one exists; renders nothing for the many steps without. */}
+      {node.verify && <StepVerifyLine verify={node.verify} />}
     </>
   )
 
