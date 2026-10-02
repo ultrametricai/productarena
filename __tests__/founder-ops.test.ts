@@ -12,9 +12,9 @@ const readFixture = (name: string) =>
 
 describe('founder-ops corpus validation', () => {
   it('the committed corpus passes every invariant', () => {
-    // Pinned to the newest checked_on in sources/registry.json (2026-09-29 deadline-calendar
+    // Pinned to the newest checked_on in sources/registry.json (2026-10-01 tax-mechanics
     // sources) so the "checked date is in the future" invariant stays meaningful.
-    expect(validateFounderOps(new Date('2026-09-29T00:00:00Z'))).toEqual([])
+    expect(validateFounderOps(new Date('2026-10-01T00:00:00Z'))).toEqual([])
   })
 
   it('all fixtures are synthetic with full scenario dimensions', () => {
