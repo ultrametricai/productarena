@@ -56,7 +56,7 @@ function MethodChip({ chip }: { chip: StepMethodChipView }) {
       <ProductLogoView product={{ id: chip.productId ?? chip.vendor, name: chip.label }} size={28} hasLogo={chip.hasLogo} />
       <span className="truncate">{chip.label}</span>
       {chip.agentReady !== null && (
-        <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{chip.agentReady.toFixed(0)}</span>
+        <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{chip.agentReady.toFixed(0)}<span className="text-zinc-500">/100</span></span>
       )}
     </>
   )
@@ -311,7 +311,7 @@ export default function StepMethodPicker({
           {selected.subSteps.length > 0 && <SubStepFlow subSteps={selected.subSteps} />}
           {selected.ceiling && defaultView.ceiling && (
             <p className="mt-2 text-[11px] text-zinc-400">
-              Ceiling with this method:{' '}
+              Agentic % with this method:{' '}
               <span className="font-medium text-emerald-300">{selected.ceiling.pct}%</span>{' '}
               <span className="text-zinc-500">
                 — an agent can run {selected.ceiling.agentSteps} of {selected.ceiling.totalSteps} steps

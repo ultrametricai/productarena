@@ -9,6 +9,7 @@ import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
 import { globallyUnservedStories, OPPORTUNITY_FORMULA, rankMissingStartups } from '@/lib/missingStartups'
+import { ordinal } from '@/lib/ordinal'
 
 // The agent-startup gap map: every arena ranked by how much room it leaves a new agent-native
 // entrant (lib/missingStartups.ts) — low fleet agent-readiness, hard "none" verdicts on the
@@ -103,7 +104,7 @@ export default function MissingStartupsPage() {
         {ranked.map((arena, i) => (
           <section key={arena.arenaId} className="flex flex-col rounded-xl border border-zinc-800 p-4">
             <p className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs tabular-nums text-zinc-500">#{i + 1}</span>
+              <span className="font-mono text-xs tabular-nums text-zinc-500">{ordinal(i + 1)}</span>
               {/* The arena's house glyph (lib/arenaIcons.ts) — the adjacent link names the
                   arena, so the bare glyph needs no tooltip of its own. */}
               {arenaIcon(arena.arenaId) && (

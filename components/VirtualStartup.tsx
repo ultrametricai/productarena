@@ -2024,7 +2024,7 @@ export default function VirtualStartup({
                             size={14}
                             hasLogo={row.top.hasLogo === true}
                           />
-                          {row.top.name} · {row.top.score.toFixed(0)}
+                          {row.top.name} · {row.top.score.toFixed(0)}<span className="text-zinc-500">/100</span>
                         </Link>
                         <span className="text-[10px] text-zinc-400">(recommended · judged)</span>
                         {/* The judged top IS the chosen assistant — one chip, both labels. */}
@@ -2051,7 +2051,7 @@ export default function VirtualStartup({
                                     href={`/arena/${row.top!.arenaId}/product/${r.productId}`}
                                     className="hover:text-emerald-300"
                                   >
-                                    {r.name} · {r.score.toFixed(0)}
+                                    {r.name} · {r.score.toFixed(0)}/100
                                   </Link>
                                 </span>
                               ))}
@@ -2233,7 +2233,7 @@ export default function VirtualStartup({
                       </th>
                       <th scope="col" className="py-2 pr-3 text-right font-normal"><span title="Runs per year">Runs/yr</span></th>
                       <th scope="col" className="py-2 pr-3 font-normal">Route mix</th>
-                      <th scope="col" className="py-2 font-normal">Agent ceiling</th>
+                      <th scope="col" className="py-2 font-normal">Agentic %</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800/70">
@@ -2317,7 +2317,7 @@ export default function VirtualStartup({
                           <th scope="col" className="py-2 pr-3 text-right font-normal">First run</th>
                           <th scope="col" className="py-2 pr-3 text-right font-normal">Runs in window</th>
                           <th scope="col" className="py-2 pr-3 font-normal">Route mix</th>
-                          <th scope="col" className="py-2 font-normal">Agent ceiling</th>
+                          <th scope="col" className="py-2 font-normal">Agentic %</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-800/70">

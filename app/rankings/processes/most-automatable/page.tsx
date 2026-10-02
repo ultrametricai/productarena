@@ -7,6 +7,7 @@ import { EXPLORE_SECTION_ICONS } from '@/lib/arenaIcons'
 import RankingsNav from '@/components/RankingsNav'
 import { loadProcesses, processSlug } from '@/lib/processes'
 import { buildProcessRows } from '@/lib/processRows'
+import { ordinal } from '@/lib/ordinal'
 
 // 🔁 PROCESS ranking (founder 2026-09-21: Explore's views, done for processes — clearly
 // labeled so it can never be mistaken for a company ranking). Ranks the process corpus by
@@ -36,9 +37,9 @@ function buildRows() {
 export function generateMetadata(): Metadata {
   const rows = buildRows()
   return {
-    title: `Most automatable processes — all ${rows.length} ranked by agent ceiling — Ultrametric`,
+    title: `Most automatable processes — all ${rows.length} ranked by Agentic % — Ultrametric`,
     description:
-      'Every founder process ranked by its current agent ceiling: the share of its steps an AI agent can run today. Derived from the judged process corpus, with legally-required signature steps counted separately.',
+      'Every founder process ranked by its current Agentic %: the share of its steps an AI agent can run today. Derived from the judged process corpus, with legally-required signature steps counted separately.',
   }
 }
 
@@ -61,11 +62,11 @@ export default function MostAutomatableProcessesPage() {
           Process ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          Most automatable — highest agent ceiling today
+          Most automatable — highest Agentic % today
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           This ranks <strong className="font-semibold text-zinc-200">processes, not companies</strong>: all {rows.length} founder
-          processes ordered by their current agent ceiling — the percentage of each process&rsquo;s steps an AI agent can run
+          processes ordered by their current Agentic % — the percentage of each process&rsquo;s steps an AI agent can run
           today (steps routed &lsquo;agent&rsquo; in the corpus DAG, over total steps; lib/processes.ts taskCeiling). Ties break
           on step count, then title. The ✍ column counts legally-required human signature acts — the floor no agent removes.
         </p>
@@ -83,8 +84,8 @@ export default function MostAutomatableProcessesPage() {
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">
               <th className="w-10 px-3 py-2 font-normal">#</th>
               <th className="px-3 py-2 font-normal">Process</th>
-              <th className="px-3 py-2 font-normal" title="Agent ceiling: the share of this process's steps an AI agent can run today">
-                Agent ceiling
+              <th className="px-3 py-2 font-normal" title="Agentic %: the share of this process's steps an AI agent can run today">
+                Agentic %
               </th>
               <th className="px-3 py-2 font-normal" title="Agent-runnable steps / total steps in the process DAG">
                 Steps
@@ -97,7 +98,7 @@ export default function MostAutomatableProcessesPage() {
           <tbody className="divide-y divide-zinc-800/70">
             {rows.map((r, i) => (
               <tr key={r.slug} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{ordinal(i + 1)}</td>
                 <td className="px-3 py-2">
                   <Link href={`/processes/${r.slug}`} className="flex items-center gap-2 font-medium hover:text-emerald-300">
                     <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80"><IconGlyph icon={r.icon} /></span>

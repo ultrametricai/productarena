@@ -131,7 +131,7 @@ function VendorChipButton({
             {vendor.arenaName}
           </span>
         )}
-        <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
+        <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}<span className="text-zinc-500">/100</span></span>
         <VendorGeoMark geo={geo} />
       </Link>
       {selected === 'lens' ? (
@@ -296,7 +296,7 @@ export default function StepVendorRow({
           className="text-amber-300/90"
           title={`Your selected vendor has no judged evidence on the ${checkStep.storyCount} stories mapped to this step — the step's best-scored vendor is shown instead of guessing`}
         >
-          not covered by {gapName} — best here: {checkStep.best.name} {checkStep.best.score.toFixed(0)}
+          not covered by {gapName} — best here: {checkStep.best.name} {checkStep.best.score.toFixed(0)}/100
         </span>
       )}
       {arenaLink && (

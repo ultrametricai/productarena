@@ -7,6 +7,7 @@ import { hasLogo } from '@/lib/logos'
 import type { ProcessTask } from '@/lib/processes'
 import { processLeaderboard } from '@/lib/processRankings'
 import { vendorGeoLookup } from '@/lib/vendorGeo'
+import { ordinal } from '@/lib/ordinal'
 
 // "Who covers this process best" — the process-level, story-derived ranking (founder ask:
 // don't assume the user has a vendor; look at what stories the vendors support for the process
@@ -18,8 +19,8 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 //     process's rankable steps (steps it can't serve count 0), normalized 0–100 — literally
 //     coverage × step quality;
 //   - the best-vendor-per-step chain: the top-ranked vendor of each rankable step.
-// Each leaderboard row expands to its per-step scores; the full verdict citations behind every
-// step score live in the step blocks of the diagram below ("how these are ranked").
+// Rows are plain (founder 2026-10-02 — no expander, no per-row step receipts); the full verdict
+// citations behind every step score live in the step blocks of the diagram below.
 
 // How many leaderboard rows to show — same legibility cap as the per-step chip roster.
 const LEADERBOARD_CAP = 8
@@ -83,7 +84,7 @@ export default function ProcessLeaderboard({ task, mineHref, scopeNote }: {
               are gone — vendor, score, and the links carry the row; the per-step citations live
               in the step blocks of the diagram below. */}
           <div className="flex items-center gap-3 px-4 py-2.5 transition hover:bg-zinc-900/60">
-            <span className="w-7 shrink-0 font-mono text-xs tabular-nums text-zinc-500">{i + 1}</span>
+            <span className="w-7 shrink-0 font-mono text-xs tabular-nums text-zinc-500">{ordinal(i + 1)}</span>
             <span className="flex min-w-0 grow items-center gap-2">
               <ProductLogoView product={{ id: e.productId, name: e.name }} size={18} hasLogo={hasLogo(e.productId)} />
               <Link
@@ -102,10 +103,11 @@ export default function ProcessLeaderboard({ task, mineHref, scopeNote }: {
               <VendorGeoMark geo={geoLookup[e.productId]} />
             </span>
             <span
-              className="w-12 shrink-0 text-right font-mono text-sm tabular-nums text-emerald-400"
+              className="w-16 shrink-0 text-right font-mono text-sm tabular-nums text-emerald-400"
               title="Process score: sum of step scores over ALL rankable steps (unserved steps count 0), 0-100 — coverage × step quality"
             >
               {e.processScore.toFixed(0)}
+              <span className="text-zinc-500">/100</span>
             </span>
           </div>
           </VendorGeoShade>
