@@ -45,7 +45,7 @@ export default function ComputerUseChips({ taskId, nodeId }: { taskId: string; n
         >
           <ProductLogoView product={{ id: o.productId, name: o.name }} size={14} hasLogo={hasLogo(o.productId)} />
           <span className="truncate">{o.name}</span>
-          <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{o.score.toFixed(0)}</span>
+          <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{o.score.toFixed(0)}<span className="text-zinc-500">/100</span></span>
         </Link>
       ))}
       <span className="text-[10px] text-zinc-500">assisted, still human-owned</span>

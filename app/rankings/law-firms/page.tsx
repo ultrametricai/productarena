@@ -6,6 +6,7 @@ import ProductLogo from '@/components/ProductLogo'
 import RankingsNav from '@/components/RankingsNav'
 import { loadCategory, type CategoryData } from '@/lib/data'
 import { rankingJsonLd } from '@/lib/rankingJsonLd'
+import { ordinal } from '@/lib/ordinal'
 import {
   VENDOR_GEO_COUNTRY_META,
   VENDOR_GEO_STATUS_META,
@@ -216,7 +217,7 @@ export default function LawFirmsRankingPage() {
           <tbody className="divide-y divide-zinc-800/70">
             {rows.map((row) => (
               <tr key={row.product.id} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{row.rank}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{ordinal(row.rank)}</td>
                 <td className="px-3 py-2">
                   <Link
                     href={`/arena/${ARENA_ID}/product/${row.product.id}`}
@@ -275,7 +276,7 @@ export default function LawFirmsRankingPage() {
             const ip = row.entry.themeScores['ip-protection'] ?? null
             return (
               <li key={row.product.id} className="flex items-center gap-1.5">
-                <span className="font-mono text-xs tabular-nums text-zinc-500">{i + 1}.</span>
+                <span className="font-mono text-xs tabular-nums text-zinc-500">{ordinal(i + 1)}</span>
                 <Link
                   href={`/arena/${ARENA_ID}/product/${row.product.id}`}
                   className="text-zinc-300 transition hover:text-emerald-300"

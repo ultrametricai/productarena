@@ -298,7 +298,7 @@ export default function YourStack({
                           {cp.name}
                         </Link>
                         {cp.aiEra !== null && (
-                          <span className="font-mono tabular-nums text-zinc-500">{cp.aiEra.toFixed(0)}</span>
+                          <span className="font-mono tabular-nums text-zinc-500">{cp.aiEra.toFixed(0)}/100</span>
                         )}
                       </span>
                     ))}

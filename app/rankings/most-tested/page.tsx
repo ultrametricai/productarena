@@ -10,6 +10,7 @@ import VerificationMixChip from '@/components/VerificationMixChip'
 import { confidenceFor, type ProductConfidence } from '@/lib/confidence'
 import { loadAll, type CategoryData } from '@/lib/data'
 import { rankingJsonLd } from '@/lib/rankingJsonLd'
+import { ordinal } from '@/lib/ordinal'
 
 interface TestedRow {
   data: CategoryData
@@ -126,7 +127,7 @@ export default function MostTestedRankingPage() {
           <tbody className="divide-y divide-zinc-800/70">
             {rows.map((row, i) => (
               <tr key={`${row.data.category.id}:${row.product.id}`} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{ordinal(i + 1)}</td>
                 <td className="px-3 py-2">
                   <Link
                     href={`/arena/${row.data.category.id}/product/${row.product.id}`}

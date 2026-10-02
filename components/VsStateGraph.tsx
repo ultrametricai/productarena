@@ -153,7 +153,7 @@ export default function VsStateGraph({
                       className="min-w-0 truncate text-[11px] text-zinc-400"
                       title={`Why picked: the top judged vendor for its step — ${v.arenaName}, scored over the step's mapped stories`}
                     >
-                      {v.arenaName} · top judged · {v.score.toFixed(0)}
+                      {v.arenaName} · top judged · {v.score.toFixed(0)}<span className="text-zinc-500">/100</span>
                     </span>
                   </li>
                 ))}

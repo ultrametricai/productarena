@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import LawFirmsRankingPage from '@/app/rankings/law-firms/page'
 import { loadCategory } from '@/lib/data'
 import { VENDOR_GEO_COUNTRIES, VENDOR_GEO_STATUS_META, vendorGeoFor } from '@/lib/vendorGeo'
+import { ordinal } from '@/lib/ordinal'
 
 const ARENA_ID = 'startup-law-firms'
 
@@ -26,8 +27,9 @@ describe('startup law firms ranking page', () => {
 
     bodyRows.forEach((tr, i) => {
       const cells = tr.querySelectorAll('td')
-      // Rank is the committed position, 1-based — never re-sorted.
-      expect(cells[0].textContent).toBe(String(i + 1))
+      // Rank is the committed position, 1-based, read as an ordinal (founder 2026-10-02) —
+      // never re-sorted.
+      expect(cells[0].textContent).toBe(ordinal(i + 1))
       // The firm cell carries the committed product's name, linking to its product page.
       const link = cells[1].querySelector('a')
       expect(link?.textContent).toContain(nameOf(leaderboard[i].productId))
@@ -72,7 +74,7 @@ describe('startup law firms ranking page', () => {
     const { container } = render(<LawFirmsRankingPage />)
     const tr = [...container.querySelectorAll('tbody tr')][idx]
     const cells = tr.querySelectorAll('td')
-    expect(cells[0].textContent).toBe(String(idx + 1))
+    expect(cells[0].textContent).toBe(ordinal(idx + 1))
     expect(cells[1].textContent).toContain('Cooley')
     expect(cells[2].textContent).toBe(`${cooley.aiEra!.toFixed(0)}/100`)
     // The IP-protection dimension column (rank, firm, overall, venture-financing, formation,

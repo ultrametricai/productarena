@@ -4,8 +4,9 @@ import { GLYPHS } from '@/components/icons/ProcessIcon'
 import { loadChains, loadProcesses } from '@/lib/processes'
 import {
   CHAIN_ICONS, chainIcon, parseProcessIconToken, PHASE_ICONS, phaseEmoji, phaseIcon,
-  phaseTooltip, PROCESS_ICONS, processIcon,
+  phaseTooltip, PROCESS_ICONS, processIcon, URGENCY_ICONS,
 } from '@/lib/processIcons'
+import { URGENCY_TIERS } from '@/lib/processSim'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
@@ -59,6 +60,17 @@ describe('process icon coverage (totality over the live corpus)', () => {
     for (const id of Object.keys(CHAIN_ICONS)) {
       expect(chainIds.has(id), `CHAIN_ICONS has stale chain id ${id}`).toBe(true)
     }
+  })
+
+  it('every urgency tier has a designed glyph in its tier hue (founder 2026-10-02: the 🚨/⏰/🗓 emoji retired)', () => {
+    expect(Object.keys(URGENCY_ICONS).sort()).toEqual([...URGENCY_TIERS].sort())
+    for (const tier of URGENCY_TIERS) {
+      expect(resolvesToDesignedGlyph(URGENCY_ICONS[tier]), `urgency ${tier} needs a designed glyph`).toBe(true)
+    }
+    // The hue IS the tier semantics (UrgencyChip's red/amber/sky), pinned.
+    expect(parseProcessIconToken(URGENCY_ICONS.hours)?.hue).toBe('red')
+    expect(parseProcessIconToken(URGENCY_ICONS.days)?.hue).toBe('amber')
+    expect(parseProcessIconToken(URGENCY_ICONS.weeks)?.hue).toBe('sky')
   })
 
   it('unknown ids resolve to empty string (callers render nothing, never a wrong icon)', () => {

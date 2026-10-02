@@ -19,10 +19,11 @@ import { readParam, setParams } from '@/lib/urlState'
 
 // The global geo switcher (founder GEO ask 2026-09-28: "make GEO a top-level process driver at
 // the top of a particular process page or a vendor, so we know how it works across the globe").
-// Compact country pills — 🇺🇸 US (default) · 🇬🇧 UK · 🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR — rendered at the
-// top of process pages, in the product-page header, and on the /processes index header. It is
-// the ONLY writer of the shared selection (lib/geoPreference.ts store) that the banner, step
-// markers, vendor annotations and index glyphs consume via components/useGeoSelection.ts.
+// Compact country pills — 🇺🇸 US (default) · 🇬🇧 UK · 🇮🇳 IN · 🇩🇪 DE · 🇫🇷 FR — now rendered only
+// in the WhereItWorks strip (process detail pages and the /processes index moved to the
+// GeoDropdown form, founder 2026-09-29/2026-10-02). With GeoDropdown it co-writes the shared
+// selection (lib/geoPreference.ts store) that the banner, step markers, vendor annotations and
+// index glyphs consume via components/useGeoSelection.ts.
 //
 // Static-HTML/hydration contract (the components/JurisdictionToggle.tsx precedent): the server
 // snapshot always renders the 🇺🇸 US default — the selection only appears after the mount effect

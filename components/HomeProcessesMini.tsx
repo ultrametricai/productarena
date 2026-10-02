@@ -33,7 +33,7 @@ export default function HomeProcessesMini({ rows }: { rows: ProcessRow[] }) {
                 <th scope="col" className="hidden px-3 py-2 font-normal lg:table-cell">
                   <span title="The main vendors this process runs on — judged vendors link to their product page">Vendor</span>
                 </th>
-                <th scope="col" className="px-3 py-2 font-normal">Agent ceiling</th>
+                <th scope="col" className="px-3 py-2 font-normal">Agentic %</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">

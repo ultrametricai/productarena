@@ -10,6 +10,7 @@ import {
   type SurfaceRow,
 } from '@/lib/controlSurfaces'
 import { readParam, setParams } from '@/lib/urlState'
+import { ordinal } from '@/lib/ordinal'
 
 // The /technologies ranking table: canonical control surfaces re-ranked client-side by the
 // toggle pills, each row expandable to its editorial pros/cons + the computed fleet stats +
@@ -240,7 +241,7 @@ function SurfaceRows({
   return (
     <>
       <tr className="cursor-pointer transition hover:bg-zinc-900/50" onClick={onToggle}>
-        <td className="w-8 px-3 py-2 font-mono tabular-nums text-zinc-500">{index ?? '·'}</td>
+        <td className="w-12 px-3 py-2 font-mono tabular-nums text-zinc-500">{index !== null ? ordinal(index) : '·'}</td>
         <td className="max-w-[420px] px-3 py-2">
           <button
             type="button"

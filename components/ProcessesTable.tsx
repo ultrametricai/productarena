@@ -720,7 +720,7 @@ export default function ProcessesTable({
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="A real startup operating process, mapped step by step">Process</span></SortableTh>
               <SortableTh col="phase" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
-              <SortableTh col="pct" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Agent ceiling</span></SortableTh>
+              <SortableTh col="pct" current={grouped ? null : column} direction={direction} onSort={handleSort}><span title="Agentic %: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Agentic %</span></SortableTh>
               <SortableTh col="steps" current={grouped ? null : column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}

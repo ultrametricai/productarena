@@ -181,7 +181,7 @@ export default function JurisdictionToggle({
             ))}
           </ul>
           <p className="mt-3 text-sm text-zinc-300">
-            Ceiling with {activeNoun} steps:{' '}
+            Agentic % with {activeNoun} steps:{' '}
             <span className="font-medium text-emerald-300">{ceiling.pct}%</span>{' '}
             <span className="text-zinc-500">
               — an agent can run {ceiling.agentSteps} of {ceiling.totalSteps} steps (Delaware-only

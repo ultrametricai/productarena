@@ -21,6 +21,6 @@ export default function SharedProcessPreview({ id }: { id: string }) {
     vendorPreview={buildVendorPreview(record)}
     comparisons={comparisons}
     processChoice={buildProcessProviderChoice(record, comparisons)}
-    supplementary={coverage ? <ProcessLeaderboard task={coverage} showStepStrip={false} scopeNote={<RegionalCoverageNote />} /> : undefined}
+    supplementary={coverage ? <ProcessLeaderboard task={coverage} scopeNote={<RegionalCoverageNote />} /> : undefined}
   />
 }

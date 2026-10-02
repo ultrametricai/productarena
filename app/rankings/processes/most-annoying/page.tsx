@@ -5,6 +5,7 @@ import { IconGlyph } from '@/components/IconChip'
 import { EXPLORE_SECTION_ICONS } from '@/lib/arenaIcons'
 import RankingsNav from '@/components/RankingsNav'
 import { buildProcessRows } from '@/lib/processRows'
+import { ordinal } from '@/lib/ordinal'
 
 // 🔁 PROCESS ranking (founder 2026-09-21). Ranks processes by the corpus's curated `annoyance`
 // ordering (processes/corpus.json, 1–5: how much of a toil the process is by hand). Ties break
@@ -71,7 +72,7 @@ export default function MostAnnoyingProcessesPage() {
           <tbody className="divide-y divide-zinc-800/70">
             {rows.map((r, i) => (
               <tr key={r.slug} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{ordinal(i + 1)}</td>
                 <td className="px-3 py-2">
                   <Link href={`/processes/${r.slug}`} className="flex items-center gap-2 font-medium hover:text-emerald-300">
                     <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80"><IconGlyph icon={r.icon} /></span>

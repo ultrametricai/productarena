@@ -30,7 +30,7 @@ human, curated `risk`/`annoyance` scores (situations interleave honestly on thos
 
 ## The honest low-ceiling posture
 
-Situations have deliberately LOW agent ceilings, and that is the point, not a gap to engineer
+Situations have a deliberately LOW Agentic %, and that is the point, not a gap to engineer
 away: reading a legal demand, the counsel/CPA judgment call, the response signed under penalty
 of perjury, and the counterparty's processing clock are human by nature (several are
 legally-human signature acts, `legalSignature`). What an agent honestly does is the mechanical

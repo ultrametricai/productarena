@@ -147,7 +147,7 @@ export function buildProcessEntries(
     withAliases('/processes', {
       type: 'process',
       label: 'All processes',
-      sublabel: 'Every founder process and its agent ceiling',
+      sublabel: 'Every founder process and its Agentic %',
       href: '/processes',
     }),
     ...processes.map((p) => {

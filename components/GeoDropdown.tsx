@@ -20,9 +20,9 @@ import { readParam, setParams } from '@/lib/urlState'
 
 // The geo switcher as ONE compact dropdown (founder 2026-09-29: "make the geo switcher on
 // /processes a single dropdown so the filter controls don't go to 2 lines") — the same shared
-// store, URL param, and honesty contract as components/GeoSwitcher.tsx (which keeps the pill
-// form used on process/product page headers); this is the table-controls-sized variant. House
-// listbox pattern (SimRolePicker/VsGeoSelector family), never a native <select>.
+// store, URL param, and honesty contract as components/GeoSwitcher.tsx (the pill form, now only
+// the WhereItWorks strip — process detail pages render THIS dropdown too, founder 2026-10-02).
+// House listbox pattern (SimRolePicker/VsGeoSelector family), never a native <select>.
 //
 // `defaultChoice` is the SURFACE's no-selection framing (founder 2026-09-30: the /processes
 // index defaults onto the global view — lib/geoPreference.ts PROCESSES_INDEX_DEFAULT_GEO): with

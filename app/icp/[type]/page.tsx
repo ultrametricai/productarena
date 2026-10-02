@@ -9,6 +9,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import { humanizeTheme } from '@/lib/icons'
 import { hasLogo } from '@/lib/logos'
 import { buildIcpRanking, icpTopThemes, loadIcpTypes, MIN_ICP_APPLICABLE } from '@/lib/icp'
+import { ordinal } from '@/lib/ordinal'
 
 // Cross-arena ranking through one ICP lens (see lib/icp.ts): every in-scope product across
 // every arena, ordered by the lens-weighted score. Fully static — params come from
@@ -85,7 +86,7 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
               <tr key={`${row.arenaId}:${row.productId}`} className="transition hover:bg-zinc-900/50">
                 <td className="max-w-[240px] px-2 py-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 shrink-0 font-mono tabular-nums text-zinc-400">{i + 1}</span>
+                    <span className="w-9 shrink-0 font-mono tabular-nums text-zinc-400">{ordinal(i + 1)}</span>
                     <Link
                       href={`/arena/${row.arenaId}/product/${row.productId}`}
                       className="flex min-w-0 items-center gap-2 hover:text-emerald-300"

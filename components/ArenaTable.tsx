@@ -19,6 +19,7 @@ import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { confidenceFor } from '@/lib/confidence'
 import type { PricingCell } from '@/lib/pricing'
 import { isGroupUntested, isThemeUntested, type CategoryData } from '@/lib/data-helpers'
+import { ordinal } from '@/lib/ordinal'
 import {
   type ArenaTableColumn,
   type ArenaTableRow,
@@ -233,7 +234,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
               return (
                 <tr key={row.productId} className="transition hover:bg-zinc-800/70">
                   <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
-                    {rank}
+                    {ordinal(rank)}
                   </td>
                   <td className="min-w-[220px] max-w-[320px] px-2 py-2">
                     <Link

@@ -22,6 +22,7 @@ import { readParams, setParams } from '@/lib/urlState'
 import { arenaIcon } from '@/lib/arenaIcons'
 import { IconGlyph } from '@/components/IconChip'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
+import { ordinal } from '@/lib/ordinal'
 import {
   DEFAULT_COLUMN,
   DEFAULT_DIRECTION,
@@ -283,7 +284,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <tr key={megaRowKey(row)} className="transition hover:bg-zinc-800/70">
                   <td className="min-w-[240px] max-w-[340px] px-2 py-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 shrink-0 font-mono tabular-nums text-zinc-400">{rank}</span>
+                      <span className="w-9 shrink-0 font-mono tabular-nums text-zinc-400">{ordinal(rank)}</span>
                       <Link
                         href={`/arena/${row.arenaId}/product/${row.productId}`}
                         className="flex min-w-0 items-center gap-2 hover:text-emerald-300"

@@ -45,8 +45,8 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 // time against live arenas) keep their compact "⚡ agentic workaround" line inside the block.
 
 // Re-exported from the shared layout helper (lib/dagLayers.ts) so existing importers keep
-// working — the layering itself now lives there, shared with the mini strip
-// (components/ProcessDagStrip.tsx).
+// working — the layering itself lives there (the mini strip that once shared it left the
+// leaderboard, founder 2026-10-02).
 export type { DagEdge }
 
 // One task's slice of a chained run — rendered as a labeled header block inside the same
@@ -128,6 +128,7 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
       {info.agentReady !== null && (
         <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">
           {info.agentReady.toFixed(0)}
+          <span className="text-zinc-500">/100</span>
         </span>
       )}
     </>
@@ -326,7 +327,7 @@ function StepRankingRow({
                     <Link href={`/arena/${v.arenaId}/product/${v.productId}`} className="text-zinc-300 transition hover:text-emerald-300">
                       {v.name}
                     </Link>{' '}
-                    <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}</span>{' '}
+                    <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}<span className="text-zinc-500">/100</span></span>{' '}
                     — <VendorCiteLine vendor={v} />
                   </li>
                 ))}
@@ -589,6 +590,7 @@ function NodeBlock({
                   title={`${o.agentReady.toFixed(0)}/100 agent-ready`}
                 >
                   {o.agentReady.toFixed(0)}
+                  <span className="text-zinc-500">/100</span>
                 </span>
               )}
             </span>

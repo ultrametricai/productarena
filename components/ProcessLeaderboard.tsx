@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import ProcessDagStrip from '@/components/ProcessDagStrip'
 import ProcessYourVendor from '@/components/ProcessYourVendor'
 import ProductLogoView from '@/components/ProductLogoView'
 import VendorGeoMark, { VendorGeoShade } from '@/components/VendorGeoMark'
@@ -8,6 +7,7 @@ import { hasLogo } from '@/lib/logos'
 import type { ProcessTask } from '@/lib/processes'
 import { processLeaderboard } from '@/lib/processRankings'
 import { vendorGeoLookup } from '@/lib/vendorGeo'
+import { ordinal } from '@/lib/ordinal'
 
 // "Who covers this process best" — the process-level, story-derived ranking (founder ask:
 // don't assume the user has a vendor; look at what stories the vendors support for the process
@@ -19,16 +19,15 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 //     process's rankable steps (steps it can't serve count 0), normalized 0–100 — literally
 //     coverage × step quality;
 //   - the best-vendor-per-step chain: the top-ranked vendor of each rankable step.
-// Each leaderboard row expands to its per-step scores; the full verdict citations behind every
-// step score live in the step blocks of the diagram below ("how these are ranked").
+// Rows are plain (founder 2026-10-02 — no expander, no per-row step receipts); the full verdict
+// citations behind every step score live in the step blocks of the diagram below.
 
 // How many leaderboard rows to show — same legibility cap as the per-step chip roster.
 const LEADERBOARD_CAP = 8
 
-export default function ProcessLeaderboard({ task, mineHref, showStepStrip = true, scopeNote }: {
+export default function ProcessLeaderboard({ task, mineHref, scopeNote }: {
   task: ProcessTask
   mineHref?: string
-  showStepStrip?: boolean
   scopeNote?: ReactNode
 }) {
   const lb = processLeaderboard(task)
@@ -50,10 +49,8 @@ export default function ProcessLeaderboard({ task, mineHref, showStepStrip = tru
       {/* The 'No vendor assumed — …' explainer paragraph is gone (founder 2026-09-30): the
           heading stands alone; the scoring story lives in the row tooltips and /methodology. */}
 
-      {/* The process at a glance (founder 2026-09-23): the SAME Kahn layers as the full vertical
-          diagram, compressed to a horizontal dot strip — scan the shape, then click through to
-          #steps. Process pages only: this component never renders on chain pages. */}
-      {showStepStrip && <ProcessDagStrip nodes={task.dag.nodes} edges={task.dag.edges} />}
+      {/* The compact DAG dot strip is gone (founder 2026-10-02) — the full diagram below IS the
+          process at a glance; one diagram per page. */}
 
       {/* Client-side "you run X" banner (founder 2026-09-21): hydrates in only for readers whose
           "I'm using" stack matches a covering arena — built from the FULL entry list so the
@@ -83,55 +80,36 @@ export default function ProcessLeaderboard({ task, mineHref, showStepStrip = tru
             geo={geoLookup[e.productId]}
             className="border-b border-zinc-800/70 last:border-b-0"
           >
-          <details className="group">
-            <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-2.5 transition hover:bg-zinc-900/60 [&::-webkit-details-marker]:hidden">
-              <span className="w-5 shrink-0 font-mono text-xs tabular-nums text-zinc-500">{i + 1}</span>
-              <span className="flex min-w-0 grow items-center gap-2">
-                <ProductLogoView product={{ id: e.productId, name: e.name }} size={18} hasLogo={hasLogo(e.productId)} />
-                <Link
-                  href={`/arena/${e.arenaId}/product/${e.productId}`}
-                  className="truncate text-sm font-medium text-zinc-100 transition hover:text-emerald-300"
-                >
-                  {e.name}
-                </Link>
-                <Link
-                  href={`/arena/${e.arenaId}`}
-                  className="hidden truncate text-[11px] text-zinc-500 transition hover:text-emerald-300 sm:inline"
-                >
-                  {e.arenaName}
-                </Link>
-                {/* ✓/◐/✕ + the vendor's own note under a non-US selection — nothing otherwise. */}
-                <VendorGeoMark geo={geoLookup[e.productId]} />
-              </span>
-              <span
-                className="shrink-0 text-[11px] text-zinc-500"
-                title={`Serves ${e.stepsServed} of the ${lb.rankableSteps} rankable steps, averaging ${e.avgStepScore.toFixed(0)}/100 on the steps it serves`}
+          {/* Plain rows (founder 2026-10-02): the expander and the '2/2 steps · avg 7' receipts
+              are gone — vendor, score, and the links carry the row; the per-step citations live
+              in the step blocks of the diagram below. */}
+          <div className="flex items-center gap-3 px-4 py-2.5 transition hover:bg-zinc-900/60">
+            <span className="w-7 shrink-0 font-mono text-xs tabular-nums text-zinc-500">{ordinal(i + 1)}</span>
+            <span className="flex min-w-0 grow items-center gap-2">
+              <ProductLogoView product={{ id: e.productId, name: e.name }} size={18} hasLogo={hasLogo(e.productId)} />
+              <Link
+                href={`/arena/${e.arenaId}/product/${e.productId}`}
+                className="truncate text-sm font-medium text-zinc-100 transition hover:text-emerald-300"
               >
-                {e.stepsServed}/{lb.rankableSteps} steps · avg {e.avgStepScore.toFixed(0)}
-              </span>
-              <span
-                className="w-12 shrink-0 text-right font-mono text-sm tabular-nums text-emerald-400"
-                title="Process score: sum of step scores over ALL rankable steps (unserved steps count 0), 0-100 — coverage × step quality"
+                {e.name}
+              </Link>
+              <Link
+                href={`/arena/${e.arenaId}`}
+                className="hidden truncate text-[11px] text-zinc-500 transition hover:text-emerald-300 sm:inline"
               >
-                {e.processScore.toFixed(0)}
-              </span>
-              <span aria-hidden className="shrink-0 text-[9px] text-zinc-600 transition-transform group-open:rotate-90">▶</span>
-            </summary>
-            <ul className="space-y-0.5 border-t border-zinc-800/50 bg-zinc-900/40 px-4 py-2 pl-12 text-[11px] text-zinc-400">
-              {e.steps.map((s) => (
-                <li key={s.nodeId} className="flex items-baseline justify-between gap-3">
-                  <span className="min-w-0 truncate">{s.label}</span>
-                  <span
-                    className="shrink-0 font-mono tabular-nums text-emerald-400/80"
-                    title={`Step score from judged verdicts on the ${s.storyCount} stories mapped to this step — expand the step block below for the citations`}
-                  >
-                    {s.score.toFixed(0)}
-                    <span className="text-zinc-500">/100 · {s.storyCount} stories</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </details>
+                {e.arenaName}
+              </Link>
+              {/* ✓/◐/✕ + the vendor's own note under a non-US selection — nothing otherwise. */}
+              <VendorGeoMark geo={geoLookup[e.productId]} />
+            </span>
+            <span
+              className="w-16 shrink-0 text-right font-mono text-sm tabular-nums text-emerald-400"
+              title="Process score: sum of step scores over ALL rankable steps (unserved steps count 0), 0-100 — coverage × step quality"
+            >
+              {e.processScore.toFixed(0)}
+              <span className="text-zinc-500">/100</span>
+            </span>
+          </div>
           </VendorGeoShade>
         ))}
       </div>
