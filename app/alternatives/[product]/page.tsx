@@ -118,7 +118,17 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
                 {/* The rival list is the judged arena field, honestly complete — but a rival
                     whose vendor announced a shutdown is tagged, never silently offered. */}
                 <ShutdownBadge shutdown={rival.product.shutdown} source={rival.product.shutdownSource} className="ml-2" />
-                <p className="text-xs text-zinc-500">{rival.product.vendor}</p>
+                {/* The company name clicks through to the same judged product page as the
+                    product name above it (founder 2026-10-02: vendor names like
+                    "Intercom (Fin…)" lead somewhere). */}
+                <p className="text-xs text-zinc-500">
+                  <Link
+                    href={`/arena/${data.category.id}/product/${rival.product.id}`}
+                    className="transition hover:text-emerald-300"
+                  >
+                    {rival.product.vendor}
+                  </Link>
+                </p>
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 text-xs text-zinc-400">

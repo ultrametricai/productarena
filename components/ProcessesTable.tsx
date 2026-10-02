@@ -725,7 +725,7 @@ export default function ProcessesTable({
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}
               <SortableTh col={metric} current={grouped ? null : column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
-              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main vendors this process runs on — judged vendors link to their product page">Vendor</span></SortableTh>
+              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main vendors this process runs on — judged vendors open this process viewed through that vendor">Vendor</span></SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
