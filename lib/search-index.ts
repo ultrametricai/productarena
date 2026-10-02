@@ -161,7 +161,8 @@ export function buildProcessEntries(
 // data); alias phrases come from data/search-aliases.json `pages`, keyed by href.
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/processes/operating-rhythm', label: 'Operating rhythm', sublabel: 'What a startup actually does, daily through annual' },
-  { href: '/startup-sim', label: 'The Open Startup', sublabel: 'Simulate a startup journey through the real processes' },
+  // Label renamed 'The Open Startup' → 'Open Startup Sim' (founder 2026-10-02); route unchanged.
+  { href: '/startup-sim', label: 'Open Startup Sim', sublabel: 'Simulate a startup journey through the real processes' },
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },
   { href: '/technologies', label: 'Technologies — control surfaces', sublabel: 'API, MCP, CLI & other agent surfaces, ranked by adoption' },
   { href: '/missing', label: 'Missing startups', sublabel: 'Arena gaps where agent startups are missing' },

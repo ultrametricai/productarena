@@ -1057,7 +1057,7 @@ describe('discoverability wiring', () => {
     const entry = buildPageEntries(searchAliases.pages as Record<string, string[]>).find(
       (e) => e.href === '/startup-sim',
     )
-    expect(entry?.label).toBe('The Open Startup')
+    expect(entry?.label).toBe('Open Startup Sim') // renamed from 'The Open Startup' (founder 2026-10-02)
     expect(entry?.keywords).toContain('virtual startup')
   })
 })
