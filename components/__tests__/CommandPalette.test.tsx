@@ -92,13 +92,13 @@ describe('browse view Processes group (founder 2026-10-02)', () => {
       ...manyArenas,
       { type: 'process', label: 'All processes', sublabel: 'Every founder process', href: '/processes' },
       { type: 'process', label: 'Incorporate C-Corp', sublabel: 'Founder process · formation', href: '/processes/incorporate-c-corp' },
-      { type: 'page', label: 'The Open Startup', sublabel: 'Simulate a startup journey', href: '/startup-sim' },
+      { type: 'page', label: 'Open Startup Sim', sublabel: 'Simulate a startup journey', href: '/startup-sim' },
     ]
     render(<CommandPalette entries={entries} />)
     fireEvent.click(screen.getByRole('button', { name: 'Open search' }))
     // Pinned-first contract: the VS entry is row one.
     const rows = screen.getAllByRole('button').filter((b) => b.getAttribute('aria-label') !== 'Open search')
-    expect(rows[0].textContent).toContain('The Open Startup')
+    expect(rows[0].textContent).toContain('Open Startup Sim')
     // The Processes group header and both process rows render despite the arena flood.
     expect(screen.getByText('Processes')).toBeDefined()
     expect(screen.getByText('All processes')).toBeDefined()

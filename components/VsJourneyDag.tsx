@@ -26,7 +26,10 @@ import type { SyntheticArtifact, TopVendorPick, VirtualTaskPayload } from '@/lib
 // EDGES: within a row, a simple hand-rolled connector (short line + arrowhead, lit emerald once
 // traversed) leads every node after the first. Across a row-wrap the arrow would point at the
 // row edge, so a measured effect (offsetTop of the flow items — no deps, no timers) swaps the
-// wrapped item's leading connector for a subtle ↵ continuation hint instead.
+// wrapped item's leading connector for a WRAP ELBOW — a drawn ⤶-style curve that drops in from
+// the row above and turns into an arrowhead at the node (founder 2026-10-02: the old ↵ text
+// hint was too subtle to read as "the previous row continues here"). Same lit/unlit scheme as
+// the in-row edge, and the EXACT same horizontal footprint (the invariant below).
 //
 // PROGRESSIVE REVEAL (kept from round 4): upcoming nodes are NOT shown. Pre-run only the FIRST
 // node renders, dim; each node appears exactly when the reveal reaches its task row
@@ -39,8 +42,9 @@ import type { SyntheticArtifact, TopVendorPick, VirtualTaskPayload } from '@/lib
 // (filled, chain-tinted) once its last row printed. Seeded mid-run events and semi-auto decision
 // pauses render as small diamond markers under the node whose terminal region carries them; the
 // pause the run is currently waiting on pulses amber (its host node is visible by construction —
-// a pause row is never past the reveal). The top judged pick's logo dot attaches under a node
-// once its step prints. A semi-auto recomposition simply re-derives: printed/passed nodes never
+// a pause row is never past the reveal). The top judged pick's logo rides INSIDE the node box,
+// trailing the title, once its step prints (founder 2026-10-02 — outside the box it didn't read
+// as the node's vendor). A semi-auto recomposition simply re-derives: printed/passed nodes never
 // change (the pause lands before the first affected row), only the unrevealed tail redraws.
 
 // ---------------------------------------------------------------------------
@@ -215,7 +219,7 @@ export function dagVisibleTaskIds(clusters: readonly VsDagCluster[], revealed: n
 
 // Which flow items start a new visual row of the wrap, given their measured offsetTops in flow
 // order: an item whose top sits below its predecessor's began a wrapped row — its leading
-// connector renders as a ↵ continuation hint instead of an arrow into the row edge. Pure so
+// connector renders as the wrap elbow instead of an arrow into the row edge. Pure so
 // tests drive it directly; the component feeds it real offsetTop measurements in an effect.
 export function dagWrapStartIds(items: readonly { id: string; top: number }[]): Set<string> {
   const out = new Set<string>()
@@ -288,18 +292,27 @@ function Edge({ lit }: { lit: boolean }) {
   )
 }
 
-// The across-a-wrap continuation hint: a subtle ↵ leading the first node of a wrapped row (an
-// arrow there would point at the row edge, not at its upstream node). Same 16px + mx-0.5
-// footprint as Edge — see the invariant above; a width change here reintroduces the flicker.
-function WrapHint() {
+// The across-a-wrap connector: a drawn ELBOW leading the first node of a wrapped row — it drops
+// in from above (where the previous row ended) and curves into a right-pointing arrowhead at the
+// node, so the row break visibly reads "…continues here" (founder 2026-10-02: the old ↵ text
+// hint was too subtle). An in-row arrow there would point at the row edge, not at its upstream
+// node. Lit emerald once traversed, exactly like Edge. Same 16px + mx-0.5 HORIZONTAL footprint
+// as Edge — see the invariant above; a width change here reintroduces the flicker (extra height
+// is safe: wrap classification compares offsetTop ordering, which row height never flips).
+function WrapHint({ lit }: { lit: boolean }) {
   return (
-    <span
+    <svg
       aria-hidden
       data-testid="vs-dag-wrap-hint"
-      className="mx-0.5 flex w-4 shrink-0 justify-center self-center text-[10px] leading-none text-zinc-600"
+      width="16"
+      height="14"
+      viewBox="0 0 16 14"
+      className="mx-0.5 w-4 shrink-0 self-center"
     >
-      ↵
-    </span>
+      {/* The elbow: down from the row above, then a quarter-curve into the arrowhead. */}
+      <path d="M8 0.5 V5 Q8 9 11.5 9" fill="none" strokeWidth="1.5" className={lit ? 'stroke-emerald-400/70' : 'stroke-zinc-600'} />
+      <path d="M10 6 L15.5 9 L10 12 Z" className={lit ? 'fill-emerald-400/70' : 'fill-zinc-600'} />
+    </svg>
   )
 }
 
@@ -462,7 +475,7 @@ export default function VsJourneyDag({
             return (
               // Each flow item wraps as one unit: [connector | ↵] [cluster chip?] [node column].
               <li key={node.taskId} data-dag-flow={node.taskId} className="flex shrink-0 items-start">
-                {fi > 0 && (wrapStarts.has(node.taskId) ? <WrapHint /> : <Edge lit={state !== 'pending'} />)}
+                {fi > 0 && (wrapStarts.has(node.taskId) ? <WrapHint lit={state !== 'pending'} /> : <Edge lit={state !== 'pending'} />)}
                 {/* The phase's chain-tinted label chip leads its first node (round 5 call:
                     box-frames fight wrapping; the chip + the chain-hued done fill carry the
                     cluster grouping instead). */}
@@ -499,13 +512,16 @@ export default function VsJourneyDag({
                     {/* FIXED node chrome (round 5): the title always renders — no tier ever
                         hides it, no fisheye ever shrinks it. */}
                     <span className="min-w-0 truncate text-[11px]">{node.title}</span>
-                  </button>
-                  {/* Under-node row: the top judged pick's logo dot (once its step printed),
-                      the event/pause diamonds, and the ↗ process-page link. */}
-                  <span className="flex h-3.5 min-w-0 items-center gap-1">
+                    {/* The top judged pick's logo rides INSIDE the node box, trailing the title
+                        (founder 2026-10-02: floating outside, it didn't read as the node's
+                        vendor). It appears once its step printed — same reveal gate as before.
+                        The fixed-size contract holds: the box's max-w/padding are untouched and
+                        the min-w-0 truncating title absorbs the logo's width at the cap, so the
+                        icon + title stay legible always. */}
                     {vendorPrinted && node.vendor && (
                       <span
                         data-testid={`vs-dag-vendor-${node.vendor.productId}`}
+                        className="shrink-0"
                         title={`${node.vendor.name} — top judged pick for this process's step`}
                       >
                         <ProductLogoView
@@ -515,6 +531,9 @@ export default function VsJourneyDag({
                         />
                       </span>
                     )}
+                  </button>
+                  {/* Under-node row: the event/pause diamonds and the ↗ process-page link. */}
+                  <span className="flex h-3.5 min-w-0 items-center gap-1">
                     {nodeMarkers.map((m) => markerChip(m))}
                     <Link
                       href={`/processes/${node.slug}`}

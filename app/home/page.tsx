@@ -107,7 +107,7 @@ export default function HomePage() {
             The next great companies will run themselves — operations, code, and all. We&apos;re building the
             products that let you focus on creating and skip the automatable.
           </p>
-          {/* Hero CTA removed (founder 2026-10-02) — the nav's The Open Startup entry and the
+          {/* Hero CTA removed (founder 2026-10-02) — the nav's Open Startup Sim entry and the
               homepage sections below carry the path in. */}
         </div>
       </section>

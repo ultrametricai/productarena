@@ -15,7 +15,7 @@ const ITEMS: Array<{ href: string; label: string; icon: string }> = [
   { href: '/processes', label: 'Processes', icon: MOBILE_NAV_ICONS['/processes'] },
   { href: '/situations', label: 'Situations', icon: MOBILE_NAV_ICONS['/situations'] },
   { href: '/technologies', label: 'Technologies', icon: MOBILE_NAV_ICONS['/technologies'] },
-  { href: '/startup-sim', label: 'The Open Startup', icon: MOBILE_NAV_ICONS['/startup-sim'] },
+  { href: '/startup-sim', label: 'Open Startup Sim', icon: MOBILE_NAV_ICONS['/startup-sim'] },
   { href: '/stacks', label: 'Stacks', icon: MOBILE_NAV_ICONS['/stacks'] },
   { href: '/compare', label: 'Compare', icon: MOBILE_NAV_ICONS['/compare'] },
   { href: '/global', label: 'Global rankings', icon: MOBILE_NAV_ICONS['/global'] },
