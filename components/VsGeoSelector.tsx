@@ -10,7 +10,7 @@ import {
   GEO_STORAGE_KEY,
   parseGeoChoice,
   serializeGeoChoice,
-  setGeoSelection,
+  setGeoChoice,
   type GeoChoice,
 } from '@/lib/geoPreference'
 import { readParam, setParams } from '@/lib/urlState'
@@ -86,9 +86,9 @@ export default function VsGeoSelector({
         ? parseGeoChoice(fromUrl)
         : parseGeoChoice(window.localStorage.getItem(GEO_STORAGE_KEY))
     if (initial === null) return
-    // Seed the shared store too (countries only), so a client-side hop to a process page keeps
-    // the same selection its own GeoSwitcher would read back from pa-geo.
-    setGeoSelection(initial === GEO_GLOBAL ? null : initial)
+    // Seed the shared store with the FULL choice (Global included — founder bug 2026-10-01: the
+    // old countries-only seed dropped an explicit Global pick to null, so it never stuck).
+    setGeoChoice(initial)
     onChange(initial)
     // Mount-only: the URL (else the stored copy) is the INITIAL view.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,7 +117,7 @@ export default function VsGeoSelector({
   }
 
   const apply = (next: GeoChoice | null) => {
-    setGeoSelection(next === GEO_GLOBAL ? null : next)
+    setGeoChoice(next)
     const serialized = serializeGeoChoice(next)
     setParams({ [GEO_PARAM]: serialized })
     if (serialized === null) window.localStorage.removeItem(GEO_STORAGE_KEY)

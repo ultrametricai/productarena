@@ -146,11 +146,6 @@ export function serializeGeo(selection: GeoSelection | null): string | null {
 // auto-preselect) sees exactly the geo-neutral state it always did; only the explicitly
 // global-aware consumers (ProcessGeoBanner, ProcessGeoNotes, JurisdictionToggle) read the
 // choice level via getGeoChoice().
-//
-// TODO(sim lane): components/VsGeoSelector.tsx still maps its Global pick to the null store
-// state (its documented pre-global-store contract). Once that lane adopts setGeoChoice, a
-// Global pick in the sim and on process pages will share one store state.
-
 type Listener = () => void
 let choice: GeoChoice | null = null
 const listeners = new Set<Listener>()
