@@ -63,6 +63,37 @@ describe('ArenaMenu (grouped + searchable)', () => {
     expect(screen.queryByLabelText('Search explore')).toBeNull() // not searchable unless asked
   })
 
+  it('row layout pin (founder 2026-10-02: right column misaligned under Gateways): centered rows, fixed w-4 icon column, no-wrap shrink-proof label, truncating name', () => {
+    // ROOT CAUSE pinned here: items-baseline took the left group's baseline from the SVG icon
+    // box (not the name text) and the unguarded label wrapped into a ragged second line once
+    // the icon slot's ~24px pushed long name+label rows past the 320px panel ("Browser
+    // Automation for Agents" + "BROWSER AGENTS"). The fix: items-center rows, a shrink-0
+    // whitespace-nowrap right label (the min-w-0 truncate name gives way instead), and one
+    // consistent w-4 shrink-0 icon slot.
+    render(
+      <ArenaMenu
+        sections={[
+          {
+            name: 'Models & Inference',
+            items: [{ id: 'browser-agents', name: 'Browser Automation for Agents', label: 'Browser agents', icon: 'pi:globe:emerald' }],
+          },
+        ]}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /Arenas/ }))
+    const row = screen.getByRole('menuitem')
+    expect(row.className).toContain('items-center')
+    expect(row.className).not.toContain('items-baseline')
+    const [nameGroup, label] = Array.from(row.children) as HTMLElement[]
+    expect(nameGroup.className).toContain('min-w-0')
+    expect(label.className).toContain('shrink-0')
+    expect(label.className).toContain('whitespace-nowrap')
+    const iconSlot = nameGroup.firstElementChild as HTMLElement
+    expect(iconSlot.className).toContain('w-4')
+    expect(iconSlot.className).toContain('shrink-0')
+    expect(screen.getByText('Browser Automation for Agents').className).toContain('truncate')
+  })
+
   it('renders house icon tokens as the custom duotone glyphs — items and section headers alike', () => {
     // The custom-icon upgrade (founder 2026-10-01): a `pi:` token renders the hand-authored SVG
     // via IconGlyph; a plain emoji string keeps rendering as text (two systems coexist).
