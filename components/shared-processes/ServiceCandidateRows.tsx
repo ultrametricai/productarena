@@ -1,5 +1,6 @@
 'use client'
 
+import CoverageScore from './CoverageScore'
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
 import type { ServiceCandidate } from '@/lib/shared-processes/service-candidates'
@@ -7,7 +8,7 @@ import type { VendorCoverage } from '@/lib/shared-processes/vendor-preview'
 import { useRegionalVariant } from './RegionalVariant'
 import { useVendorSelection } from './VendorSelection'
 
-function CandidateRow({ candidate, choiceScope, coverage }: { candidate: ServiceCandidate; choiceScope?: string; coverage?: VendorCoverage }) {
+function CandidateRow({ candidate, choiceScope, coverage, scores }: { candidate: ServiceCandidate; choiceScope?: string; coverage?: VendorCoverage; scores: readonly number[] }) {
   const selection = useVendorSelection()
   const region = useRegionalVariant()
   if (region && `${region.decision?.scope}:default` === coverage?.scope && region.selected !== 'default') coverage = undefined
@@ -21,7 +22,7 @@ function CandidateRow({ candidate, choiceScope, coverage }: { candidate: Service
         {candidate.href ? <Link href={candidate.href} aria-label={`${candidate.name} profile`} className="min-w-0 break-words text-sm font-medium text-zinc-100 hover:text-emerald-300">{candidate.name}</Link> : <span className="min-w-0 break-words text-sm font-medium text-zinc-100">{candidate.name}</span>}
       </span>
       {coverage && <span className="ml-auto flex shrink-0 items-center justify-end gap-3">
-        <span className="w-12 text-right font-mono text-sm tabular-nums text-emerald-400" title={`Filing story coverage ${coverage.score}/100 across ${coverage.storyCount} mapped stories for the default filing option.`}>{coverage.score.toFixed(0)}</span>
+        <CoverageScore score={coverage.score} scores={scores} title={`Filing story coverage ${coverage.score}/100 across ${coverage.storyCount} mapped stories for the default filing option.`} />
       </span>}
     </div>
 
@@ -35,7 +36,7 @@ export default function ServiceCandidateRows({ candidates, choiceScope, coverage
   return <>
     {hasScores && <p className="mb-2 text-xs text-zinc-400" title="Weighted coverage of the default filing step’s mapped stories, including manual workflows and APIs; not an automation probability or a whole-process score.">Filing coverage · /100</p>}
     <ul aria-label="Service options" className="overflow-hidden rounded-2xl border border-zinc-800">
-      {candidates.map(candidate => <CandidateRow key={candidate.id} candidate={candidate} choiceScope={choiceScope} coverage={coverage?.[candidate.id]} />)}
+      {candidates.map(candidate => <CandidateRow scores={candidates.flatMap(item => coverage?.[item.id] && coverage[item.id].scope === coverage?.[candidate.id]?.scope ? [coverage[item.id].score] : [])} key={candidate.id} candidate={candidate} choiceScope={choiceScope} coverage={coverage?.[candidate.id]} />)}
     </ul>
   </>
 }

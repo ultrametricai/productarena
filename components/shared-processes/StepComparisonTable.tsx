@@ -7,8 +7,8 @@ import type { StepComparison, StepComparisonProduct } from '@/lib/shared-process
 import { useRegionalVariant } from './RegionalVariant'
 import { useVendorSelection } from './VendorSelection'
 
-function ProductRow({ product, selected, inherited, onSelect, hidden }: { product: StepComparisonProduct; selected: boolean; inherited: boolean; onSelect?: () => void; hidden: boolean }) {
-  return <ScoredProductRow product={product} selected={selected} inherited={inherited} onSelect={onSelect} hidden={hidden} selectionLabel={`Use ${product.name} for this step`} evidenceLabel="story evidence" scoreTitle={`Story coverage ${product.score}/100 from this step's mapped stories`}>
+function ProductRow({ product, selected, inherited, onSelect, hidden, scores }: { product: StepComparisonProduct; selected: boolean; inherited: boolean; onSelect?: () => void; hidden: boolean; scores: readonly number[] }) {
+  return <ScoredProductRow scores={scores} product={product} selected={selected} inherited={inherited} onSelect={onSelect} hidden={hidden} selectionLabel={`Use ${product.name} for this step`} evidenceLabel="story evidence" scoreTitle={`Story coverage ${product.score}/100 from this step's mapped stories`}>
       {product.stories.map(story => <details key={story.id} className="min-w-0">
         <summary className="cursor-pointer break-words leading-relaxed text-zinc-300">{story.title}<span className="ml-2 text-zinc-500">{story.verdict} · {story.quality}/10 · weight {story.weight}</span></summary>
         <div className="mt-2 space-y-2 break-words leading-relaxed [overflow-wrap:anywhere]">
@@ -45,7 +45,7 @@ export default function StepComparisonTable({ comparison, choiceScope, scope }: 
   return <section aria-label="Step product comparison" className="space-y-2 border-t border-zinc-800/50 pt-3">
     <p className="text-xs text-zinc-400">Products · {comparison.storyCount} coverage stories</p>
     <div className="overflow-hidden rounded-2xl border border-zinc-800">
-      <ul id={listId}>{products.map((product, index) => <ProductRow key={product.id} product={product} selected={product.id === selectedId} inherited={inherited} onSelect={overrideScope && selection ? () => selection.override(overrideScope, product.id === selectedId ? null : product.id) : undefined} hidden={!expanded && index >= 3} />)}</ul>
+      <ul id={listId}>{products.map((product, index) => <ProductRow scores={comparison.products.map(item => item.score)} key={product.id} product={product} selected={product.id === selectedId} inherited={inherited} onSelect={overrideScope && selection ? () => selection.override(overrideScope, product.id === selectedId ? null : product.id) : undefined} hidden={!expanded && index >= 3} />)}</ul>
       {remaining > 0 && <button type="button" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(value => !value)} className="w-full border-t border-zinc-800/70 px-4 py-2.5 text-center text-xs text-zinc-400 hover:bg-zinc-900/60 hover:text-zinc-200">{expanded ? 'Show fewer' : `+ ${remaining} more`}</button>}
     </div>
     {hasOverride && inheritedScope && <button type="button" onClick={() => selection?.override(overrideScope!, undefined)} className="text-xs text-zinc-400 underline underline-offset-4 hover:text-zinc-200">Use process choice</button>}

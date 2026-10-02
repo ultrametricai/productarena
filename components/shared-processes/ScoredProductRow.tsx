@@ -2,10 +2,11 @@
 
 import { useId, useState, type ReactNode } from 'react'
 import Link from 'next/link'
+import CoverageScore from './CoverageScore'
 import ProductLogoView from '@/components/ProductLogoView'
 import type { StepComparisonProduct } from '@/lib/shared-processes/step-comparisons'
 
-export default function ScoredProductRow({ product, selected, inherited = false, onSelect, hidden = false, selectionLabel, evidenceLabel, scoreTitle, children }: { product: Pick<StepComparisonProduct, "productId" | "name" | "href" | "hasLogo" | "score">; selected: boolean; inherited?: boolean; onSelect?: () => void; hidden?: boolean; selectionLabel: string; evidenceLabel: string; scoreTitle: string; children: ReactNode }) {
+export default function ScoredProductRow({ product, selected, inherited = false, onSelect, hidden = false, selectionLabel, evidenceLabel, scoreTitle, scores, children }: { product: Pick<StepComparisonProduct, "productId" | "name" | "href" | "hasLogo" | "score">; selected: boolean; inherited?: boolean; onSelect?: () => void; hidden?: boolean; selectionLabel: string; evidenceLabel: string; scoreTitle: string; scores: readonly number[]; children: ReactNode }) {
   const [expanded, setExpanded] = useState(false)
   const id = useId()
   return <li hidden={hidden} className="border-b border-zinc-800/70 last:border-b-0" data-selected-provider={selected || undefined}>
@@ -17,7 +18,7 @@ export default function ScoredProductRow({ product, selected, inherited = false,
       </span>
       {selected && <span className="inline-flex items-center gap-1 text-[11px] text-zinc-400"><span aria-hidden="true" className="text-emerald-300">✓</span>{inherited ? 'Process choice' : 'Selected'}</span>}
       <span className="ml-auto flex shrink-0 items-center gap-3">
-        <span className="font-mono text-sm tabular-nums text-emerald-400" title={scoreTitle}>{product.score.toFixed(0)}<span className="text-[11px] text-zinc-500">/100</span></span>
+        <CoverageScore score={product.score} scores={scores} title={scoreTitle} />
         <button type="button" aria-label={`${expanded ? 'Hide' : 'Show'} ${product.name} ${evidenceLabel}`} aria-expanded={expanded} aria-controls={id} onClick={() => setExpanded(open => !open)} className="-my-1 flex h-7 w-7 items-center justify-center text-zinc-500 hover:text-zinc-100"><span aria-hidden="true" className={`text-[9px] transition-transform ${expanded ? 'rotate-90' : ''}`}>▶</span></button>
       </span>
     </div>
