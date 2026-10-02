@@ -4,7 +4,8 @@ import AiEraBadge from '@/components/AiEraBadge'
 import GeoMark from '@/components/GeoMark'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
-import arenaIcons from '@/data/arena-icons.json'
+import { IconGlyph } from '@/components/IconChip'
+import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
 import { globallyUnservedStories, OPPORTUNITY_FORMULA, rankMissingStartups } from '@/lib/missingStartups'
@@ -31,7 +32,6 @@ export default function MissingStartupsPage() {
   const categories = loadAll()
   const ranked = rankMissingStartups(categories)
   const globalGaps = globallyUnservedStories(categories)
-  const icons = arenaIcons as Record<string, string>
   const totalProducts = categories.reduce((n, c) => n + c.products.length, 0)
 
   return (
@@ -104,8 +104,12 @@ export default function MissingStartupsPage() {
           <section key={arena.arenaId} className="flex flex-col rounded-xl border border-zinc-800 p-4">
             <p className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-xs tabular-nums text-zinc-500">#{i + 1}</span>
-              {icons[arena.arenaId] && (
-                <span aria-hidden className="text-base leading-none">{icons[arena.arenaId]}</span>
+              {/* The arena's house glyph (lib/arenaIcons.ts) — the adjacent link names the
+                  arena, so the bare glyph needs no tooltip of its own. */}
+              {arenaIcon(arena.arenaId) && (
+                <span aria-hidden className="inline-flex leading-none">
+                  <IconGlyph icon={arenaIcon(arena.arenaId)} />
+                </span>
               )}
               <Link
                 href={`/arena/${arena.arenaId}`}
