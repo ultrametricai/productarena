@@ -149,7 +149,9 @@ source-cited, exhaustively tested records and code:
   `checked_on` date.
 - **Resources** — [`resources/`](resources/): the canonical startup resources plus
   [`LAWS.md`](resources/LAWS.md), the recurring principles distilled from them, every law
-  citing its sources.
+  citing its sources — and [`LORE.md`](resources/LORE.md), the famous episodes of startup
+  history as sourced records, every episode graded for veracity (first-person / documented /
+  reported / legend).
 
 Business logic may propose a result; it never silently authorizes a filing, grant, or
 transfer, and anything leaning on a legal threshold references a dated rule card and returns
@@ -216,7 +218,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds the site's geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
 | [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
-| [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) | `lib/resources.ts` + invariant tests |
+| [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) + `LORE.md` (veracity-graded startup history) | `lib/resources.ts` / `lib/lore.ts` + invariant tests |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
 that renders it. Three directories confuse newcomers, so plainly: **`schemas/`** holds the JSON
