@@ -116,6 +116,9 @@ export function timelineInversions(dir?: string): TimelineInversion[] {
     const producer = tasks.get(e.from)
     const consumer = tasks.get(e.to)
     if (!producer || !consumer) throw new Error(`edge ${e.from}→${e.to} names an unknown process`)
+    // Situations carry no timeline slot (kind: 'situation', timeOrder absent) — they are real
+    // graph participants but the inversion analysis is strictly about the curated timeline.
+    if (producer.timeOrder === undefined || consumer.timeOrder === undefined) continue
     if (consumer.timeOrder < producer.timeOrder) {
       inversions.push({
         artifactId: e.artifactId,
@@ -153,7 +156,10 @@ export interface PlacementSlack {
 // first — the top of this list is the founder's "could this move earlier?" worklist (the
 // fund_007 placement question falls out of it).
 export function placementSlack(minSlack = 40, dir?: string): PlacementSlack[] {
-  const tasks = loadProcesses(dir)
+  // Timeline processes only — situations have no slot to have slack against.
+  const tasks = loadProcesses(dir).filter(
+    (t): t is (typeof t & { timeOrder: number }) => t.timeOrder !== undefined,
+  )
   const timeOrder = new Map(tasks.map((t) => [t.id, t.timeOrder]))
   const byId = artifactsById()
   const rows: PlacementSlack[] = []

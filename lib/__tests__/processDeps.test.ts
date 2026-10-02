@@ -45,8 +45,11 @@ describe('the company-level dependency DAG', () => {
     // the curated timeline — any divergence is dependency-forced.
     const inversions = timelineInversions()
     expect(inversions.length).toBeGreaterThan(0)
-    const curated = [...tasks].sort((a, b) => a.timeOrder - b.timeOrder).map((t) => t.id)
-    const derived = topologicalOrder()
+    const timelineIds = new Set(tasks.filter((t) => t.timeOrder !== undefined).map((t) => t.id))
+    const curated = [...tasks].filter((t) => t.timeOrder !== undefined).sort((a, b) => a.timeOrder! - b.timeOrder!).map((t) => t.id)
+    // The graph (and so the derived order) legitimately includes situations — they consume
+    // artifacts — but the timeline comparison is over timeline processes only.
+    const derived = topologicalOrder().filter((id) => timelineIds.has(id))
     expect(derived).not.toEqual(curated)
     expect([...derived].sort()).toEqual([...curated].sort())
     // And in the derived order, every reported inversion is repaired: the producer now precedes.
