@@ -137,8 +137,10 @@ describe('canonical step comparisons', () => {
         scopes++
       }
     }
-    expect(recordCount).toBe(121)
-    expect(scopes).toBe(374)
+    // Wave-3 situations (2026-10-02): 8 new records carry function-mapped steps (12 scopes —
+    // sit_013 x4, sit_019/sit_020 x2 each, sit_014/015/017/018/022 x1 each).
+    expect(recordCount).toBe(129)
+    expect(scopes).toBe(386)
   })
 
   it('works beyond the formation preview and never scores linked or unmapped parts by inheritance', () => {

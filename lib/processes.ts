@@ -15,8 +15,9 @@ import { DECISION_STEP_RE, formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_T
 export { formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_TIERS, URGENCY_TIERS }
 export type { Cadence, GapResolution, ProcessKind, Reversibility, SimStep, StepRoute, SwapOption, Urgency, VendorRole }
 
-// The founder-process corpus (processes/corpus.json): 136 real startup operating records — 124
-// timeline processes plus 12 reactive SITUATIONS (kind 'situation', founder ask 2026-10-01) —
+// The founder-process corpus (processes/corpus.json): 146 real startup operating records — 124
+// timeline processes plus 22 reactive SITUATIONS (kind 'situation', founder ask 2026-10-01;
+// wave 3 boost 2026-10-02) —
 // each mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a
 // recorded API/tool call), 'form' (manual form/portal work — no public API path), or 'person'
 // (a human or a computer-use agent does it: meetings, judgment, waiting on a third party — with

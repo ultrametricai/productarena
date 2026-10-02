@@ -62,7 +62,7 @@ describe('/processes — one combined table, one processes vocabulary', () => {
     const { container } = render(<ProcessesPage />)
     const table = container.querySelector('table') as HTMLElement
     const situations = loadProcesses().filter((t) => t.kind === 'situation')
-    expect(situations).toHaveLength(12)
+    expect(situations).toHaveLength(22)
     for (const t of situations) {
       expect(
         table.querySelector(`a[href="/processes/${processSlug(t.title)}"]`),

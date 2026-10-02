@@ -257,6 +257,17 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_010: pi('clock-alert', 'sky'), // ⏰ DE franchise tax delinquency (the overdue clock)
   sit_011: pi('storm', 'sky'), // ⛈ DDoS attack or major outage (the storm hits the cloud)
   sit_012: pi('unplug', 'sky'), // 🔌 Migrate off a shutting-down vendor (the plug pulled)
+  // Wave 3 (founder boost 2026-10-02) — same rule: domain hue, situation grouped by kind.
+  sit_013: pi('unplug', 'emerald'), // 🔌 Processor account termination (the same pulled-plug concept as sit_012, money hue — the processor pulls YOURS)
+  sit_014: pi('eye', 'sky'), // 👁 Security-vulnerability report (someone saw through the shield)
+  sit_015: pi('padlock', 'sky'), // 🔒 Data-subject access request (privacy is the lock site-wide)
+  sit_016: pi('phone', 'sky'), // 📱 App-store rejection/removal (the app-stores concept, interrupted)
+  sit_017: pi('megaphone', 'fuchsia'), // 📣 Ad/platform account suspension (the marketing megaphone, muted)
+  sit_018: pi('key', 'sky'), // 🔑 Domain or social account hijacked (the access-keys concept — stolen, then retaken)
+  sit_019: pi('person-out', 'orange'), // 👋 Key employee resigns (the same offboarding concept as hr_005)
+  sit_020: pi('chart-down', 'emerald'), // 📉 Term sheet pulled (the runway chart is suddenly the whole story)
+  sit_021: pi('hard-hat', 'orange'), // 👷 Workplace injury (the safety hat — worn too late)
+  sit_022: pi('envelope-alert', 'orange'), // 📨 Harassment complaint (the notice-letter concept, people hue)
 }
 
 export function processIcon(taskId: string): string {
