@@ -150,6 +150,10 @@ source-cited, exhaustively tested records and code:
     acceleration outcomes, refresh grants as additive composition, the FAST advisor grid,
     and an early-exercise interface that hands the 83(b) and tax questions to the modules
     that own them.
+  - `antiDilution.ts` — round-protection mechanics: the NVCA model weighted-average
+    formula (broad- and narrow-based, the denominator difference stated), full ratchet,
+    conversion-price-to-ratio mechanics, pay-to-play as explanation, and a stated interface
+    into the waterfall module — published worked examples replayed number-for-number.
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
