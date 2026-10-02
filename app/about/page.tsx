@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { AboutFractal } from '@/components/fx/lazy'
 
 export const metadata: Metadata = {
   title: 'About — Ultrametric',
@@ -18,7 +19,15 @@ const FOUNDERS = [
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-2xl space-y-10">
+    // relative isolate: contains the page's own fractal backdrop (founder 2026-10-02 — the
+    // Burning Ship, unique to /about; the homepage keeps Newton, /company keeps Julia). The
+    // canvas is decorative, lazy, client-only; the page reads identically without it.
+    <div className="relative isolate mx-auto max-w-2xl space-y-10">
+      <div className="pointer-events-none absolute inset-x-[-20vw] -top-10 bottom-0 -z-10 overflow-hidden" aria-hidden>
+        <AboutFractal />
+        <div className="absolute inset-0 bg-zinc-950/35" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-zinc-950 to-transparent" />
+      </div>
       <div>
         {/* The 'About Ultrametric' heading was removed (founder 2026-10-02) — the eyebrow
             carries the h1 semantics so the page keeps an accessible name without the big title. */}

@@ -459,26 +459,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
               <div className="flex flex-wrap items-center gap-1 text-sm text-zinc-500">
                 <span>© 2026 Ultrametric.</span>
-                <span className="mx-2 hidden sm:inline">·</span>
-                <span className="flex items-center gap-1">
-                  <span>Made from</span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M3 18h18M5 18V10M19 18V10M5 10l2-6h10l2 6M8 10V7M12 10V4M16 10V7M5 14h14" />
-                    </svg>
-                  </span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M2 20l5-8 4 5 3-4 8 7" />
-                    </svg>
-                  </span>
-                  <span>&amp;</span>
-                  <span className="mx-0.5 inline-flex text-zinc-600 transition-colors hover:text-emerald-400">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-                    </svg>
-                  </span>
-                </span>
+                {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
               </div>
               {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
                   viewport and becomes the page's only source of horizontal scroll. */}
