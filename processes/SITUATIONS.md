@@ -40,7 +40,7 @@ more. Async waits (the IRS processing the response, the examiner's next action) 
 waits, never promised away. Educational guidance, not legal advice — every situation's
 description says so.
 
-## The 12 situations
+## The 22 situations
 
 <!-- situations:table:start (generated — scripts/generate-situations-md.ts) -->
 

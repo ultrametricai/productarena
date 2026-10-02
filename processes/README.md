@@ -10,7 +10,7 @@ Two layers, deliberately separate:
    Delaware equity workflows (409A valuation review, 83(b) election) — status `demonstration`,
    not production-certified; see `governance/REVIEW_POLICY.md` for the maturity ladder.
 
-2. **The operational corpus** (`corpus.json` in this directory, 136 records rendered live at
+2. **The operational corpus** (`corpus.json` in this directory, 146 records rendered live at
    [ultrametric.ai/processes](https://ultrametric.ai/processes) — each process at
    `/processes/<id>` — contract in `schemas/operational-process.schema.json`):
    step-by-step operating DAGs with agent/manual/human routing, judged vendor rankings per
