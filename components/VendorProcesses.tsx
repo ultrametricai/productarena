@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Fragment } from 'react'
 import GeoMark from '@/components/GeoMark'
 import { IconGlyph } from '@/components/IconChip'
 import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
@@ -10,6 +11,10 @@ import { processesForVendor, type VendorProcessAppearance } from '@/lib/vendorPr
 // derivations the process pages render (processLeaderboard, cross-arena rankings, computer-use
 // options, canonical vendors, grounded API calls), so the two surfaces can never disagree.
 // Renders nothing for the many products no process ever surfaces.
+//
+// Depth (founder 2026-10-02): each process row carries its per-step receipts inline — every
+// judged served step on its own muted line, deep-linked to the step's block on the process page,
+// with its judged score /100 (ServedStepLines below).
 //
 // Grouping: judged-SERVING appearances (a judged step score or a canonical/API-call role) lead
 // the table, capped at 8 visible rows; the rest — including every computer-use-only appearance
@@ -61,43 +66,85 @@ function roleTitle(a: VendorProcessAppearance): string {
   return `How this product comes up here: ${a.kinds.map((k) => why[k]).join('; ')}.`
 }
 
+// Per-step tooltip: the same judged number BEST_SCORE_TITLE describes, one step at a time.
+const STEP_SCORE_TITLE =
+  'This step\'s judged relevance score for this product, /100 — weightedPercent over the stories '
+  + 'our committed step→story mapping deems relevant to the step, derived purely from the arena\'s '
+  + 'judged verdicts. Same number the process page\'s step pills show.'
+
+// The per-step receipts under each process row (founder 2026-10-02: "go deeper on what each
+// vendor can do process-wise" — this re-introduces the per-step view the earlier declutter
+// dropped as a cramped "via:" one-liner, redesigned for depth): one judged served step per line,
+// the step name deep-linking to its block on the process page (#step-<taskId>-<nodeId>), its
+// judged score /100 beside it. Strictly the committed step→story mappings — computer-use-only
+// and canonical/api-calls-only appearances have no judged served steps and get no sub-rows.
+function ServedStepLines({ a }: { a: VendorProcessAppearance }) {
+  if (a.servedSteps.length === 0) return null
+  return (
+    // !border-t-0 defeats the tbody's divide-y line so the receipts read as part of their row.
+    <tr className="!border-t-0">
+      <td colSpan={4} className="px-2 pb-2 pt-0">
+        <ul className="ml-1 space-y-0.5 border-l border-zinc-800 pl-3">
+          {a.servedSteps.map((s) => (
+            <li key={s.nodeId} className="text-[11px] leading-relaxed text-zinc-500">
+              <Link
+                href={`/processes/${a.slug}#step-${a.taskId}-${s.nodeId}`}
+                title={`${s.label} — open this step on the process page: its ranked vendors, citations, and the ${s.storyCount} mapped ${s.storyCount === 1 ? 'story' : 'stories'} behind this score`}
+                className="text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+              >
+                {s.label}
+              </Link>
+              {' — '}
+              <span className="font-mono tabular-nums" title={STEP_SCORE_TITLE}>
+                {s.score}
+                <span className="text-zinc-600">/100</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </td>
+    </tr>
+  )
+}
+
 function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
   return (
     <>
       {rows.map((a) => (
-        <tr key={a.taskId} className="transition hover:bg-zinc-800/70">
-          <td className="max-w-[280px] px-2 py-1.5">
-            <Link
-              href={`/processes/${a.slug}`}
-              title={`${a.title} — see the full process page: the step DAG, ranked vendors per step, and the process leaderboard`}
-              className="flex items-center gap-1.5 font-medium hover:text-emerald-300"
-            >
-              {a.icon && <span aria-hidden><IconGlyph icon={a.icon} /></span>}
-              <span className="truncate">{a.title}</span>
-            </Link>
-          </td>
-          <td className="px-2 py-1.5 text-xs text-zinc-400">
-            <span title={phaseTooltip(a.phase)}>
-              {phaseIcon(a.phase) && <span aria-hidden className="mr-1"><IconGlyph icon={phaseIcon(a.phase)} /></span>}
-              {a.phase}
-            </span>
-          </td>
-          <td className="px-2 py-1.5 text-xs text-zinc-300">
-            {/* The per-step "via: …" receipts line is gone (founder 2026-10-02 declutter) — the
-                process page's step blocks still carry every served step with its citations. */}
-            <span title={roleTitle(a)}>{roleText(a)}</span>
-          </td>
-          <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
-            {a.bestStepScore === null ? (
-              <span className="italic text-zinc-500">—</span>
-            ) : (
-              <span title={BEST_SCORE_TITLE}>
-                {a.bestStepScore}
-                <span className="text-zinc-500">/100</span>
+        <Fragment key={a.taskId}>
+          <tr className="transition hover:bg-zinc-800/70">
+            <td className="max-w-[280px] px-2 py-1.5">
+              <Link
+                href={`/processes/${a.slug}`}
+                title={`${a.title} — see the full process page: the step DAG, ranked vendors per step, and the process leaderboard`}
+                className="flex items-center gap-1.5 font-medium hover:text-emerald-300"
+              >
+                {a.icon && <span aria-hidden><IconGlyph icon={a.icon} /></span>}
+                <span className="truncate">{a.title}</span>
+              </Link>
+            </td>
+            <td className="px-2 py-1.5 text-xs text-zinc-400">
+              <span title={phaseTooltip(a.phase)}>
+                {phaseIcon(a.phase) && <span aria-hidden className="mr-1"><IconGlyph icon={phaseIcon(a.phase)} /></span>}
+                {a.phase}
               </span>
-            )}
-          </td>
-        </tr>
+            </td>
+            <td className="px-2 py-1.5 text-xs text-zinc-300">
+              <span title={roleTitle(a)}>{roleText(a)}</span>
+            </td>
+            <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
+              {a.bestStepScore === null ? (
+                <span className="italic text-zinc-500">—</span>
+              ) : (
+                <span title={BEST_SCORE_TITLE}>
+                  {a.bestStepScore}
+                  <span className="text-zinc-500">/100</span>
+                </span>
+              )}
+            </td>
+          </tr>
+          <ServedStepLines a={a} />
+        </Fragment>
       ))}
     </>
   )

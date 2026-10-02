@@ -1,4 +1,4 @@
-// "How it compares" rows for one product page (components/CompareRivals.tsx): the product
+// "Alternatives comparison" rows for one product page (components/CompareRivals.tsx): the product
 // itself plus its nearest same-arena rivals by leaderboard adjacency — 2 above and 2 below
 // where they exist, filled from the other side at the edges (#1 and last place still get a
 // full set). Pure and `node:fs`-free, same contract as lib/alternatives.ts: callers pass
@@ -29,9 +29,10 @@ export interface CompareRivalRow {
    */
   battleSlug: string | null
   /**
-   * Judged head-to-head record oriented SELF-first (self wins – rival wins), so the "vs"
-   * column reads uniformly as "how this page's product fares against the row". Null on the
-   * self row and when no battle record exists for the pair.
+   * Judged head-to-head record oriented SELF-first (self wins – rival wins), so the Compare
+   * head-to-head chips read uniformly as "how this page's product fares against the rival"
+   * (the table's VS column retired, founder 2026-10-02). Null on the self row and when no
+   * battle record exists for the pair.
    */
   record: { wins: number; losses: number; draws: number } | null
 }

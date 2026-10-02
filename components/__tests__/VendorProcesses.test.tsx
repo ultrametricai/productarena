@@ -41,6 +41,26 @@ describe('VendorProcesses — founder 2026-10-02 declutter', () => {
     expect(container.textContent).not.toContain('via:')
   })
 
+  it('per-step receipts (founder 2026-10-02 depth): every judged served step on its own line, linked to the process page anchor, score /100', () => {
+    const { container } = render(<VendorProcesses arenaId={ARENA} productId={PRODUCT} productName="Mercury" />)
+    const rows = processesForVendor(ARENA, PRODUCT)
+    const withSteps = rows.filter((a) => a.servedSteps.length > 0)
+    expect(withSteps.length).toBeGreaterThan(0)
+    for (const a of withSteps) {
+      for (const s of a.servedSteps) {
+        // One line per served step, the step name deep-linking to its block on the process page.
+        const link = container.querySelector(`a[href="/processes/${a.slug}#step-${a.taskId}-${s.nodeId}"]`)
+        expect(link, `${a.taskId}/${s.nodeId}: served-step line must link to its process-page anchor`).not.toBeNull()
+        expect(link!.textContent).toBe(s.label)
+        expect(link!.closest('li')?.textContent).toContain(`${s.score}/100`)
+      }
+    }
+    // Only judged, committed step mappings — appearances with no judged served steps (canonical/
+    // api-calls/computer-use-only) get no sub-rows at all.
+    const stepLines = container.querySelectorAll('tbody li')
+    expect(stepLines.length).toBe(rows.reduce((n, a) => n + a.servedSteps.length, 0))
+  })
+
   it('the "canonical vendor" label never renders, but the role tooltip still explains the canonical kind', () => {
     const { container } = render(<VendorProcesses arenaId={ARENA} productId={PRODUCT} productName="Mercury" />)
     expect(container.textContent).not.toContain('canonical vendor')

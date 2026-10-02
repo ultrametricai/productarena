@@ -86,6 +86,26 @@ describe('processesForVendor — the reverse index over the process pages\' own 
     }
   })
 
+  it('servedSteps receipts: node-id\'d, best-first, deduped per node, never on computer-use-only rows (founder 2026-10-02 depth)', () => {
+    const rows = processesForVendor('startup-banking', 'mercury', DATA_DIR)
+    expect(rows.some((a) => a.servedSteps.length > 0)).toBe(true)
+    for (const a of rows) {
+      const ids = a.servedSteps.map((s) => s.nodeId)
+      expect(new Set(ids).size).toBe(ids.length)
+      for (let i = 1; i < a.servedSteps.length; i++) {
+        expect(a.servedSteps[i - 1].score).toBeGreaterThanOrEqual(a.servedSteps[i].score)
+      }
+      for (const s of a.servedSteps) {
+        expect(s.nodeId.length).toBeGreaterThan(0)
+        expect(s.label.length).toBeGreaterThan(0)
+      }
+      // "Could attempt it" never produces a served-step receipt.
+      if (!a.kinds.includes('step-ranked') && !a.kinds.includes('cross-arena')) {
+        expect(a.servedSteps).toEqual([])
+      }
+    }
+  })
+
   it('appearances are sorted best-placement-first and kinds are canonical-ordered', () => {
     const rows = processesForVendor('startup-banking', 'mercury', DATA_DIR)
     for (let i = 1; i < rows.length; i++) {

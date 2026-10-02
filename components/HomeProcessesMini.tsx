@@ -20,10 +20,8 @@ export default function HomeProcessesMini({ rows }: { rows: ProcessRow[] }) {
         <h2 id="home-processes-heading" className="font-display text-balance text-3xl font-medium tracking-tight sm:text-4xl">
           Automating founder processes
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          Founder processes mapped step-by-step — every step routed to an agent, a form, or a human,
-          with the share an agent can run today. In the order a founder hits them:
-        </p>
+        {/* Founder 2026-10-02: the "mapped step-by-step … In the order a founder hits them:"
+            intro paragraph is gone — the heading and the table stand alone. */}
         <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-[15px]">
             <thead>

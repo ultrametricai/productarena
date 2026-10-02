@@ -10,27 +10,51 @@ const dataDir = path.resolve(__dirname, '../../data')
 const banking = loadCategory('startup-banking', dataDir)
 
 describe('CompareRivals', () => {
-  it('renders self first and highlighted, 4 rivals linked, and the head-to-head record', () => {
+  it('renders self first and highlighted, 4 rivals linked — no VS column (founder 2026-10-02)', () => {
     const { container } = render(<CompareRivals data={banking} productId="mercury" />)
     const rows = container.querySelectorAll('tbody tr')
     expect(rows).toHaveLength(5)
-    // Self row: first, highlighted, no product link, em-dash in the vs cell.
+    // Self row: first, highlighted, no product link.
     expect(rows[0].className).toContain('bg-emerald-500/5')
     expect(rows[0].textContent).toContain('Mercury')
     expect(rows[0].querySelector('a[href="/arena/startup-banking/product/mercury"]')).toBeNull()
-    // Rival row links to its product page and to the /vs/ head-to-head with the stored slug;
-    // record is oriented self-first (mercury 16 – 28 ramp in data/startup-banking/rankings.json).
+    // Rival row links to its product page; the VS column is gone from the table (header + cells).
     const rampRow = [...rows].find((r) => r.textContent?.includes('Ramp'))!
     expect(rampRow.querySelector('a[href="/arena/startup-banking/product/ramp"]')).not.toBeNull()
-    const vsLink = rampRow.querySelector('a[href="/vs/mercury-vs-ramp"]')!
-    expect(vsLink).not.toBeNull()
-    expect(vsLink.textContent).toContain('16–28')
+    expect([...container.querySelectorAll('th')].some((th) => th.textContent === 'vs')).toBe(false)
+    expect(rampRow.querySelector('a[href="/vs/mercury-vs-ramp"]')).toBeNull()
     // Overall score cells link to each product's /score receipt page.
     expect(rows[0].querySelector('a[href="/arena/startup-banking/product/mercury/score"]')).not.toBeNull()
     expect(rampRow.querySelector('a[href="/arena/startup-banking/product/ramp/score"]')).not.toBeNull()
     // Footer: the full-arena link.
     const footer = [...container.querySelectorAll('a')].find((a) => a.getAttribute('href') === '/arena/startup-banking')
     expect(footer?.textContent).toContain('full arena')
+  })
+
+  it('renamed heading "Alternatives comparison", no explainer sentence (founder 2026-10-02)', () => {
+    const { container } = render(<CompareRivals data={banking} productId="mercury" />)
+    const heading = container.querySelector('h2')!
+    expect(heading.textContent).toContain('Alternatives comparison')
+    expect(container.textContent).not.toContain('How it compares')
+    // The explainer paragraph under the heading is gone ("…plus each pair's head-to-head
+    // record."); the GeoMark's svg <title> still carries the one-line framing.
+    expect(container.textContent).not.toContain('head-to-head record')
+    expect(container.querySelector('h2 + p')).toBeNull()
+  })
+
+  it('the Compare head-to-head strip is the prominent battle affordance: chip buttons with the judged record where known', () => {
+    const { container } = render(<CompareRivals data={banking} productId="mercury" />)
+    expect([...container.querySelectorAll('h3')].some((h) => h.textContent === 'Compare head-to-head')).toBe(true)
+    // Every same-arena rival gets a /vs chip; the ramp chip carries the stored judged record
+    // (mercury 16 – 28 ramp in data/startup-banking/rankings.json, self-first) since ramp is a
+    // leaderboard-adjacent rival row.
+    const rampChip = container.querySelector('a[href="/vs/mercury-vs-ramp"]')!
+    expect(rampChip).not.toBeNull()
+    expect(rampChip.className).toContain('rounded-full')
+    expect(rampChip.textContent).toContain('vs Ramp')
+    expect(rampChip.textContent).toContain('16–28')
+    const vsChips = container.querySelectorAll('a[href^="/vs/"]')
+    expect(vsChips.length).toBe(banking.products.length - 1)
   })
 
   it('renders n/a for the arena-declared naDimensions (processors: agentReady + apiQuality)', () => {

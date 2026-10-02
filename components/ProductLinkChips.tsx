@@ -1,12 +1,14 @@
 import type { Product } from '@/lib/schemas'
 
-const LINK_KEYS = ['app', 'api', 'cli', 'mcp'] as const
+// Founder 2026-10-02: the 'Open app ↗' chip is gone — links.app stays schema data, this surface
+// just stops rendering it (the vendor-name link in the header already opens the vendor's site).
+const LINK_KEYS = ['api', 'cli', 'mcp'] as const
 type LinkKey = (typeof LINK_KEYS)[number]
 
-const LETTER: Record<LinkKey, string> = { app: 'A', api: 'API', cli: 'CLI', mcp: 'MCP' }
+const LETTER: Record<LinkKey, string> = { api: 'API', cli: 'CLI', mcp: 'MCP' }
 // Functional labels (founder rule: say what clicking does, not just name the surface — "Open"
-// as a heading over bare nouns read as filler). `app` is the live product; the rest are docs.
-const LABEL: Record<LinkKey, string> = { app: 'Open app ↗', api: 'API docs ↗', cli: 'CLI docs ↗', mcp: 'MCP docs ↗' }
+// as a heading over bare nouns read as filler). These are all docs links.
+const LABEL: Record<LinkKey, string> = { api: 'API docs ↗', cli: 'CLI docs ↗', mcp: 'MCP docs ↗' }
 
 // Product quick links (schema: Product.links). Curation is a separate pass — most products
 // have none yet, so this renders nothing until a links object is present.

@@ -27,13 +27,14 @@ export default function TryItSection({
   return (
     <div id="try-it" className="scroll-mt-4">
       {/* Founder 2026-10-02 declutter: the Experimental chip and the long explainer paragraph
-          are gone. The honesty contract lives in the microterminal itself and survives intact —
-          the per-run "recorded session — replayed, not live" / "live — run just now" badges, the
-          LIVE divider, the ▶ run-live affordance, and the per-story footer provenance line
-          (recorded date · exit code · "captured verbatim by our probe harness"). Every
-          disclosure the paragraph carried is covered by those per-line labels. */}
+          are gone, and the heading reads "Test it in sandbox" (founder-decided rename of "Try it
+          agentically"). The honesty contract lives in the microterminal itself: recordings carry
+          the provenance footer (recorded date · exit code · "captured verbatim by our probe
+          harness") and never a live badge; live output carries the "live — run just now" /
+          LIVE-divider badge. The per-run "recorded session — replayed, not live" badge itself was
+          removed by the same ask — the footer + badge-absence keep the distinction visible. */}
       <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">
-        Try it agentically
+        Test it in sandbox
       </h2>
       <Microterminal
         arena={category}

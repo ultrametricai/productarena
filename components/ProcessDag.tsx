@@ -675,7 +675,13 @@ function NodeBlock({
   )
 
   return (
-    <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
+    // Per-step anchor (founder 2026-10-02): the product pages' per-step receipts deep-link to
+    // #step-<taskId>-<nodeId> — taskId-prefixed so chain pages (several tasks, one diagram)
+    // can never collide. Blocks without a corpus taskId (previews) carry no anchor.
+    <div
+      id={taskId ? `step-${taskId}-${node.id}` : undefined}
+      className={`min-w-0 scroll-mt-4 rounded-lg border p-3 ${style.block}`}
+    >
       <div className="flex items-start justify-between gap-2">
         {/* No step index numbers (founder 2026-09-30: '01', '02'… gone) — the connector spine
             already carries the order. */}
