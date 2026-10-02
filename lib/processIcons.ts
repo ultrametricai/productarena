@@ -83,6 +83,11 @@ export function phaseTooltip(phase: string): string {
   return entry ? `${phase} — ${entry.blurb}` : phase
 }
 
+// ---------- Cadence ----------
+// The one glyph for "this process recurs" (was the 🔁 emoji on the process-page cadence chip) —
+// the same recurring loop the Explore menu's Process-rankings group wears (lib/arenaIcons.ts).
+export const CADENCE_ICON = pi('cycle', 'sky')
+
 // ---------- Individual processes (keyed by corpus task id) ----------
 // Glyph = the concept (was: the emoji), hue = the process's area. Comments carry the old emoji
 // pick as the semantic guide each glyph was drawn from.

@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AiEraBadge from '@/components/AiEraBadge'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import {
   encodeMyStackParam,
   MAX_ADD_RECS,
@@ -181,10 +181,7 @@ export default function MyStackBuilder({
                     href={`/arena/${group.arenaId}`}
                     className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-emerald-300"
                   >
-                    <IconChip
-                      icon={(arenaIcons as Record<string, string>)[group.arenaId] ?? ''}
-                      title={`${group.arenaName} arena`}
-                    />
+                    <IconChip icon={arenaIcon(group.arenaId)} title={`${group.arenaName} arena`} />
                     {group.arenaName}
                   </Link>
                   {group.picks.map((p) => (

@@ -7,7 +7,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import { resolvePicks, type MyStackProduct } from '@/lib/myStack'
 import {
   aggregateStack,
@@ -374,10 +374,7 @@ export default function StackBattle({
                           href={`/arena/${slot.arenaId}`}
                           className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-300"
                         >
-                          <IconChip
-                            icon={(arenaIcons as Record<string, string>)[slot.arenaId] ?? ''}
-                            title={`${slot.arenaName} arena`}
-                          />
+                          <IconChip icon={arenaIcon(slot.arenaId)} title={`${slot.arenaName} arena`} />
                           {slot.arenaName}
                         </Link>
                         {slot.battleHref && (

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import FatProcessSearch from '@/components/FatProcessSearch'
 import ProcessesTable, { type ProcessTableRow, type PlaybookRow } from '@/components/ProcessesTable'
 import { PROCESSES_INDEX_DEFAULT_GEO } from '@/lib/geoPreference'

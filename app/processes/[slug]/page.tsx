@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import ArtifactChips from '@/components/ArtifactChips'
 import DoViaAfk from '@/components/DoViaAfk'
 import GeoSwitcher from '@/components/GeoSwitcher'
-import IconChip from '@/components/IconChip'
+import IconChip, { IconGlyph } from '@/components/IconChip'
 import JurisdictionToggle from '@/components/JurisdictionToggle'
 import ProcessGeoBanner from '@/components/ProcessGeoBanner'
 import MineLink from '@/components/MineLink'
@@ -18,7 +18,7 @@ import UrgencyChip from '@/components/UrgencyChip'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { artifactChipRows } from '@/lib/processDeps'
-import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
+import { CADENCE_ICON, phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
   CADENCE_META, findProcessBySlug, jurisdictionStepViews, knownCostUsd, loadProcesses, processSlug,
@@ -145,7 +145,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             title={`${CADENCE_META[task.cadence].label} — ${CADENCE_META[task.cadence].blurb} See the full operating rhythm.`}
             className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
           >
-            🔁 {CADENCE_META[task.cadence].label.toLowerCase()}
+            {/* The house loop glyph (lib/processIcons.ts CADENCE_ICON) — the link's title names
+                the cadence concept, so the bare glyph rides inside it. */}
+            <span aria-hidden className="mr-1 inline-flex align-[-0.125em]"><IconGlyph icon={CADENCE_ICON} /></span>
+            {CADENCE_META[task.cadence].label.toLowerCase()}
           </Link>
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>

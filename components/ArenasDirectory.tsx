@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import IconChip from '@/components/IconChip'
 import ProductLogo from '@/components/ProductLogo'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import { loadArenaSections } from '@/lib/arenaSections'
 import { loadAll, type CategoryData } from '@/lib/data'
 
@@ -28,10 +28,7 @@ function ArenaCard({ data }: { data: CategoryData }) {
         ))}
       </div>
       <h3 className="font-display leading-[1.1] mt-3 flex items-center gap-1.5 text-base font-semibold group-hover:text-emerald-300">
-        <IconChip
-          icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
-          title={`${data.category.name} arena`}
-        />
+        <IconChip icon={arenaIcon(data.category.id)} title={`${data.category.name} arena`} />
         {data.category.name}
       </h3>
       {/* Founder 2026-09-24: no score badge on the cards — leader name only; the number lives

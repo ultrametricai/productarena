@@ -171,6 +171,17 @@ export const MOBILE_NAV_ICONS: Record<string, string> = {
   '/methodology': pi('ruler', 'sky'), // 📐 same set square as fin_010
 }
 
+// The homepage mode tabs (components/HomeModes.tsx) — was 🏢/📦/🔁/🏟 emoji; now the same
+// house glyphs the Explore menu and the mobile menu wear for the same concepts (founder
+// 2026-10-02: "we still have the older icons in various places"). Products wears the package
+// box in the tabs' neutral sky, distinct from the package-managers arena's violet box.
+export const HOME_MODE_ICONS: Record<string, string> = {
+  companies: pi('building', 'sky'), // 🏢 same office as EXPLORE_SECTION_ICONS.companyRankings
+  products: pi('box', 'sky'), // 📦 the judged product lines
+  processes: pi('cycle', 'sky'), // 🔁 same loop as EXPLORE_SECTION_ICONS.processRankings
+  arenas: pi('stadium', 'emerald'), // 🏟 same stadium as MOBILE_NAV_ICONS['/arenas']
+}
+
 // Icon token for an arena id ('' for an unknown id — callers render nothing, never a wrong
 // concept; totality over the live categories is enforced by lib/__tests__/arenaIcons.test.ts).
 export function arenaIcon(arenaId: string): string {

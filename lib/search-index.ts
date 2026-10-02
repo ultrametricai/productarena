@@ -10,7 +10,8 @@ export interface SearchEntry {
   /** For product rows: render the product's committed logo in the palette. */
   productId?: string
   hasLogo?: boolean
-  /** For arena rows: the arena's emoji from data/arena-icons.json. */
+  /** For arena rows: the arena's house icon token from lib/arenaIcons.ts (the palette renders
+   *  it through IconGlyph as the custom duotone SVG). */
   icon?: string
   /**
    * Alias phrases people actually type ("agent harness", "vector store", "etl") that should

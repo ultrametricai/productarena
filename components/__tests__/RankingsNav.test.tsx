@@ -51,8 +51,13 @@ describe('ranking lists ↔ pages are 1:1', () => {
 describe('RankingsNav', () => {
   it('renders BOTH labeled groups — company and process rankings', () => {
     render(<RankingsNav current="agentic" />)
-    expect(screen.getByText('🏢 Company rankings')).toBeDefined()
-    expect(screen.getByText('🔁 Process rankings')).toBeDefined()
+    // Each group label wears its house glyph as SVG — never the old 🏢/🔁 emoji or a raw
+    // `pi:` token (founder sweep 2026-10-02).
+    for (const label of ['Company rankings', 'Process rankings']) {
+      const group = screen.getByText(label)
+      expect(group.querySelector('svg')).not.toBeNull()
+      expect(group.textContent).not.toMatch(/🏢|🔁|pi:/)
+    }
     // Every sibling from both groups is present (selector: GeoMark repeats each name in an
     // SVG <title>, so target the visible link/span only).
     for (const r of [...GLOBAL_RANKINGS, ...PROCESS_RANKINGS]) {

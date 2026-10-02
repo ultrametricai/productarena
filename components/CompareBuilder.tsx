@@ -10,7 +10,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import TierChip from '@/components/TierChip'
 import VerdictBadge from '@/components/VerdictBadge'
-import arenaIcons from '@/data/arena-icons.json'
+import { arenaIcon } from '@/lib/arenaIcons'
 import {
   accessGlyphClass,
   encodeCompareParam,
@@ -387,10 +387,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                         href={`/arena/${p.arenaId}`}
                         className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-emerald-300"
                       >
-                        <IconChip
-                          icon={(arenaIcons as Record<string, string>)[p.arenaId] ?? ''}
-                          title={`${p.arenaName} arena`}
-                        />
+                        <IconChip icon={arenaIcon(p.arenaId)} title={`${p.arenaName} arena`} />
                         {p.arenaName}
                       </Link>
                     </div>

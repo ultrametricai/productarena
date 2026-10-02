@@ -136,4 +136,15 @@ describe('URL ⇄ mode', () => {
     expect(p.get('order')).toBe('risk')
     expect(p.get('rank')).toBe('popularity')
   })
+
+  it('every tab wears its house glyph as SVG — never the old 🏢/📦/🔁/🏟 emoji or a raw token (founder sweep 2026-10-02)', () => {
+    const { getByRole } = render(
+      <HomeModes companies={<div>COMPANIES-PANE</div>} processes={<div>PROCESSES-PANE</div>} arenas={<div>ARENAS-PANE</div>} />,
+    )
+    for (const name of [/Companies/, /Products/, /Processes/, /Arenas/]) {
+      const btn = getByRole('button', { name })
+      expect(btn.querySelector('svg'), String(name)).not.toBeNull()
+      expect(btn.textContent).not.toMatch(/🏢|📦|🔁|🏟|pi:/)
+    }
+  })
 })
