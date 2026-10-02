@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
+import { once } from 'node:events'
+import { stopRuntime } from '../check-preview-runtime.mjs'
 
 const roots: string[] = []
 const checker = path.resolve('scripts/check-preview-runtime.mjs')
@@ -47,4 +49,22 @@ describe('preview deployment trace regression gate', () => {
     expect(result.status).not.toBe(0)
     expect(result.stderr).toContain('ENOENT')
   })
+})
+
+describe('packaged runtime cleanup', () => {
+  it('finishes after a failed spawn that never emits exit', async () => {
+    const root = fixture()
+    const child = spawn(path.join(root, 'missing-executable'))
+    const [error] = await once(child, 'error')
+    expect(error.code).toBe('ENOENT')
+    expect(child.pid).toBeUndefined()
+    await stopRuntime(child)
+  }, 2_000)
+  it('stops a running server process', async () => {
+    const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'])
+    await once(child, 'spawn')
+    await stopRuntime(child)
+    expect(child.signalCode).toBe('SIGTERM')
+    await stopRuntime(child) // already terminated: do not wait for another exit
+  }, 2_000)
 })

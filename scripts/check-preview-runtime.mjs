@@ -40,6 +40,16 @@ async function unusedPort() {
   return port
 }
 
+export async function stopRuntime(child) {
+  // A failed spawn has no PID and emits error/close, never exit. An already
+  // signaled process also has no future exit event to wait for.
+  if (!child?.pid || child.exitCode !== null || child.signalCode !== null) return
+  const exited = once(child, 'exit')
+  child.kill('SIGTERM')
+  const force = setTimeout(() => child.kill('SIGKILL'), 5_000)
+  try { await exited } finally { clearTimeout(force) }
+}
+
 export async function smokeRuntime(root, traces) {
   const runtime = await mkdtemp(path.join(tmpdir(), 'preview-runtime-'))
   let child
@@ -87,13 +97,7 @@ export async function smokeRuntime(root, traces) {
     }
     assert(!logs.includes('ENOENT'), `Packaged runtime accessed untraced files:\n${logs}`)
   } finally {
-    if (child && child.exitCode === null) {
-      const exited = once(child, 'exit')
-      child.kill('SIGTERM')
-      const force = setTimeout(() => child.kill('SIGKILL'), 5_000)
-      await exited
-      clearTimeout(force)
-    }
+    await stopRuntime(child)
     await rm(runtime, { recursive: true, force: true })
   }
 }
