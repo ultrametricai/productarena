@@ -23,15 +23,12 @@ export default function AboutPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">About</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">About Ultrametric</h1>
         <p className="mt-4 text-zinc-400">
-          Ultrametric is the open startup repo — a source-backed map of the processes it takes to
-          start and run a company, the honest share an agent can run today, and evidence-graded
-          rankings of the tools that serve each step. Everything on this site is generated from
-          dated, citable records committed to a public repository, never from opinion — and where
-          our own products appear, the affiliation is disclosed and audited.
+          We started Ultrametric to automate the boring processes in startups so that you can
+          focus on your mission.
         </p>
       </div>
 
-      <div className="flex items-center gap-8">
+      <div className="flex items-center justify-center gap-16">
         {FOUNDERS.map((f) => (
           <a
             key={f.name}
