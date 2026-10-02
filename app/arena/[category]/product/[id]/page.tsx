@@ -12,7 +12,6 @@ import ClaimsSection from '@/components/ClaimsSection'
 import CompareRivals from '@/components/CompareRivals'
 import CoverageMapSection from '@/components/CoverageMapSection'
 import FamilySection from '@/components/FamilySection'
-import { familyForProduct, loadFamilies } from '@/lib/families'
 import { storyProcessesForArena } from '@/lib/storyProcessGraph'
 import GeoMark from '@/components/GeoMark'
 import InstallCommands from '@/components/InstallCommands'
@@ -21,7 +20,6 @@ import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
 import OpportunitiesSection from '@/components/OpportunitiesSection'
 import OssPill from '@/components/OssPill'
-import ProductActions from '@/components/ProductActions'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import PricingSignals from '@/components/PricingSignals'
 import ProductLogo from '@/components/ProductLogo'
@@ -58,7 +56,7 @@ import { loadScoreHistory } from '@/lib/scoreHistory'
 import { aiEraBandFor, loadScoreIntervals } from '@/lib/scoreIntervals'
 import type { Product, Story } from '@/lib/schemas'
 import { authGatedProbeCount } from '@/lib/verification'
-import { SITE_URL } from '@/lib/site'
+import { REPO, SITE_URL } from '@/lib/site'
 import { loadStoryTiers, storyTiersByCell, tierCountsFor } from '@/lib/storyTiers'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 import { hasTryIt } from '@/lib/tryit'
@@ -101,7 +99,22 @@ export async function generateMetadata({
   const data = loadCategory(category)
   const product = data.products.find((p) => p.id === id)
   // "— Ultrametric" suffix like every other page title on the site.
-  return { title: `${product ? product.name : id} — ${data.category.name} Arena — Ultrametric` }
+  return {
+    title: `${product ? product.name : id} — ${data.category.name} Arena — Ultrametric`,
+    // Agent-discovery pointers (founder 2026-10-02): the bottom "For agents"/"Data" link cards
+    // left the visible page, so the per-product markdown and the evidence/verdict JSON stay
+    // discoverable FROM this page as <link rel="alternate"> tags — same URLs /llms.txt and
+    // /openapi.json document.
+    alternates: {
+      types: {
+        'text/markdown': `${SITE_URL}/arena/${category}/product/${id}/llms.md`,
+        'application/json': [
+          { url: `${SITE_URL}/data/${category}/evidence/${id}.json`, title: 'Evidence (JSON)' },
+          { url: `${SITE_URL}/data/${category}/verdicts.json`, title: 'Verdicts (JSON)' },
+        ],
+      },
+    },
+  }
 }
 
 export default async function ProductPage({
@@ -167,9 +180,6 @@ export default async function ProductPage({
   // startup-banking AND expense-management), each with its live rank there — the header's
   // arenas strip, so a user can jump straight to any leaderboard the vendor is a member of.
   const memberships = arenaMembershipsOf(allCategories, id)
-  // Company link target for the vendor line: the family page for multi-product vendors, else
-  // the homepage table filtered to the company (founder 2026-09-22).
-  const vendorFamily = familyForProduct(loadFamilies(), category, id)
   // Founder 2026-09-21: the processes this product interacts with and serves — the reverse of
   // the process pages' vendor rankings (lib/vendorProcesses.ts one-pass cached index). The
   // header chip counts only judged step-SERVING appearances (function/extra step scores);
@@ -213,21 +223,20 @@ export default async function ProductPage({
             </div>
             {/* The OssPill beside the name is the one open-source signal (founder 2026-09-23:
                 no "commercial" tag — nearly everything is, so it said nothing).
-                Founder 2026-09-22: the company name is the way BACK to the company — its
-                family page when one exists (multi-product vendors), else the homepage table
-                filtered to the company (shareable ?q=). */}
+                Founder 2026-10-02: the vendor name links OUT to the vendor's real site — the
+                committed urls.site from data/<arena>/products.json (schema-required, so every
+                product has one; never a guessed domain). The internal family breakdown still
+                lives in FamilySection below. */}
             <p className="text-zinc-500">
-              <Link
-                href={vendorFamily ? `/family/${vendorFamily.id}` : `/?q=${encodeURIComponent(product.vendor)}`}
-                title={
-                  vendorFamily
-                    ? `${product.vendor} — see the whole ${vendorFamily.name} product family`
-                    : `${product.vendor} — see every ${product.vendor} product across the arenas`
-                }
+              <a
+                href={product.urls.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`${product.vendor} — ${product.urls.site} (the vendor's own site, from our committed product data)`}
                 className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
               >
-                {product.vendor}
-              </Link>
+                {product.vendor} <span aria-hidden>↗</span>
+              </a>
             </p>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">
@@ -410,11 +419,12 @@ export default async function ProductPage({
             // The old per-theme anchors died with the vertical list — the sortable table below
             // (id="story-verdicts") has its own theme dropdown, so every theme card lands on
             // the same table rather than leaving a dead #theme-<t> link.
+            // Founder 2026-10-02: no per-card tooltip — the visible explanation line and the
+            // hover "evidence →" affordance say it; the section heading keeps its GeoMark title.
             return (
               <a
                 key={t}
                 href="#story-verdicts"
-                title={`See the judged stories and evidence behind the ${humanizeTheme(t)} score`}
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="flex items-center justify-between text-sm text-zinc-400">
@@ -500,16 +510,31 @@ export default async function ProductPage({
       <BusinessModelSection product={product} />
 
 
-      {/* Founder 2026-09-15: score trend + the utility rail (Try/Flag/Badge/For agents/Data)
-          and the auth-gated probe chip live at the page end — provenance and tooling for readers
-          who scrolled the evidence, not prime above-the-fold space. */}
+      {/* Founder 2026-09-15: score trend and the auth-gated probe chip live at the page end —
+          provenance and tooling for readers who scrolled the evidence, not prime space.
+          Founder 2026-10-02: the bottom utility card grid (Try/Flag/Badge/For agents/Data) is
+          collapsed to the one human action left — ⚑ Flag a verdict (the same prefilled-issue
+          link). The agent-discovery pointers it carried (per-product llms.md, evidence/verdicts
+          JSON) stay published via the documented contracts (/llms.txt and /openapi.json) and as
+          invisible <link rel="alternate"> tags in generateMetadata above; the /badges embed page
+          stays functional, just unlinked from here. */}
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
-      <ProductActions data={data} productId={id} tryIt={tryable} variant="bottom" />
-      <div>
+      <div className="flex flex-wrap items-center gap-4">
+        <a
+          href={`https://github.com/${REPO}/issues/new?${new URLSearchParams({
+            template: 'contest-verdict.md',
+            labels: 'contest',
+            title: `[contest] ${category}/${id}/<story-id>`,
+          }).toString()}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Think a verdict is wrong? Opens a prefilled GitHub issue — or use the ⚑ next to any verdict above."
+          className="rounded-lg border border-zinc-800 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+        >
+          ⚑ Flag a verdict
+        </a>
         <AuthGatedChip count={authGatedProbeCount(data, id)} />
       </div>
-      {/* No bottom "Battles" section: ProductActions' "Compare head-to-head" rail above is the
-          single authoritative list of this product's battles (same pairings, canonical /vs URLs). */}
 
       {/* Ops fine print, dead last (founder: educate first, ops last): 30-day agent-surface
           uptime (renders nothing until slo-check has history — lib/slo.ts). The "Evidence as

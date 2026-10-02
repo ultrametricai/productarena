@@ -48,10 +48,10 @@ export default function ScoreTrend({ entries }: { entries: ScoreHistoryEntry[] }
   if (entries.length === 0) return null
   return (
     <div className="rounded-xl border border-zinc-800 p-4">
+      {/* Founder 2026-10-02: no explainer sentence — the chart (with its first→last dates)
+          speaks for itself; "a point per change, not per day" stays documented in
+          lib/scoreHistory.ts. */}
       <h2 className="font-display leading-[1.1] text-lg font-semibold">Score trend</h2>
-      <p className="mt-0.5 text-xs text-zinc-500">
-        How this product&rsquo;s scores have moved as evidence and verdicts are re-derived — a point per change, not per day.
-      </p>
       <div className="mt-3 space-y-2">
         {METRICS.map(({ metric, label }) => (
           <TrendRow key={metric} label={label} series={seriesFor(entries, metric)} />
