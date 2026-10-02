@@ -12,7 +12,7 @@ import path from 'node:path'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import VirtualStartup from '@/components/VirtualStartup'
-import { setGeoSelection, type GeoAnalogNote, type VendorGeoLookup } from '@/lib/geoPreference'
+import { setGeoSelection, type GeoAnalogNote, type GeoNoteKind, type VendorGeoLookup } from '@/lib/geoPreference'
 import type { SimStep } from '@/lib/processSim'
 import { vendorGeoLookup } from '@/lib/vendorGeo'
 import type { VirtualTaskPayload, VsChain } from '@/lib/virtualStartup'
@@ -22,7 +22,9 @@ import type { VirtualTaskPayload, VsChain } from '@/lib/virtualStartup'
 interface CorpusGeoSlice {
   id: string
   geoScope: 'global' | 'us' | 'us-state'
-  geoNotes?: GeoAnalogNote[]
+  // The committed notes also carry the curated kind (lib/geoPreference.ts GEO_NOTE_KINDS) —
+  // the scope-audit pins below assert it on qs_023's UK flavor note.
+  geoNotes?: (GeoAnalogNote & { kind: GeoNoteKind })[]
 }
 const corpus = JSON.parse(
   readFileSync(path.join(process.cwd(), 'processes', 'corpus.json'), 'utf8'),
