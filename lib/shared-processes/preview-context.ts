@@ -1,4 +1,6 @@
-/** Explicit author binding for preview content; provider choice never confirms handling. */
+/** Presentation-only binding, not a canonical API/MCP instruction contract.
+ * A future typed instruction model must handle applicability and confirmed responsibility.
+ * Provider choice here never confirms handling or completion. */
 export interface PreviewContext {
   /** Local decision part ID in this record (e.g. n4). */
   decision: string

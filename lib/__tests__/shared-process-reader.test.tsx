@@ -101,7 +101,7 @@ describe('canonical shared process reader', () => {
     const record = findSharedRecord(records, 'form_001')!
     const el = mount(renderToStaticMarkup(<SharedProcessReader record={record} records={records} />))
     const name = el.querySelector('[id="form_001:n3"]')!
-    const link = name.querySelector('a')!
+    const link = name.querySelector('[aria-label="Related links"] a')!
     expect(link.textContent).toBe('Delaware name search')
     expect(link.querySelectorAll('svg[aria-hidden="true"] path')).toHaveLength(2)
     expect(link.getAttribute('href')).toBe('https://icis.corp.delaware.gov/ecorp/entitysearch/namesearch.aspx')
@@ -112,14 +112,14 @@ describe('canonical shared process reader', () => {
     expect(el.querySelector('[id="form_001:n6"] [aria-label="Related links"]')).toBeNull()
     expect(record.parts.find(part => part.id === 'n6')?.references).toContainEqual({ kind: 'vendor', id: 'clerky', role: 'stated-vendor' })
     const certificate = el.querySelector('[id="form_001:n5"]')!
-    expect(certificate.querySelector('details')).toBeNull()
+    expect(certificate.querySelector('details')?.open).toBe(false)
     expect(certificate.querySelector('[aria-label="Related links"]')).toBeNull()
     expect(record.parts.find(part => part.id === 'n5')?.references.length).toBeGreaterThan(0)
     const synthetic = structuredClone(record)
     synthetic.parts = [{ ...synthetic.parts[0], kind: 'step', options: [], guidance: 'Detailed authored guidance. '.repeat(20), references: [], notes: [{ text: 'Authored qualification' }] }]
     synthetic.links = []
     const long = mount(renderToStaticMarkup(<SharedProcessReader record={synthetic} records={[synthetic]} />))
-    expect([...long.querySelectorAll('article summary')].map(x => x.textContent)).toEqual(['Guidance', 'Notes (1)'])
+    expect([...long.querySelectorAll('article summary')].map(x => x.textContent)).toEqual(['Notes (1)'])
     expect(long.textContent).toContain(synthetic.parts[0].guidance)
     expect(long.textContent).toContain('Authored qualification')
   })
