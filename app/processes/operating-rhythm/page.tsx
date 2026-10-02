@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: 'Operating rhythm — a year of running a startup — Ultrametric',
   description:
-    'What a startup actually does, on the record: the recurring operations x-ray. Which founder processes run daily, weekly, monthly, quarterly, or annually — with each one’s agent ceiling and the software that runs it.',
+    'What a startup actually does, on the record: the recurring operations x-ray. Which founder processes run daily, weekly, monthly, quarterly, or annually — with each one’s Agentic % and the software that runs it.',
 }
 
 function ProcessCard({ task }: { task: ProcessTask }) {
@@ -111,7 +111,7 @@ export default function OperatingRhythmPage() {
           <Link href="/processes" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
             all {tasks.length} processes
           </Link>
-          , sliced by how often each one really recurs — with its agent ceiling and the software
+          , sliced by how often each one really recurs — with its Agentic % and the software
           that runs it.
         </p>
         <p className="mt-3 text-sm text-zinc-500">

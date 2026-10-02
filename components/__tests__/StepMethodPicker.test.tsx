@@ -131,7 +131,7 @@ describe('StepMethodPicker', () => {
     expect(html).toContain('Default')
     expect(html).toContain('3 ways')
     expect(html).toContain('DEFAULT-METHOD-CONTENT')
-    expect(html).not.toContain('Ceiling with this method')
+    expect(html).not.toContain('Agentic % with this method')
     expect(html).not.toContain('Customer-interview sprint')
   })
 
@@ -147,7 +147,7 @@ describe('StepMethodPicker', () => {
     expect(getByText('Run the interviews')).toBeTruthy()
     expect(getByText('ChatGPT')).toBeTruthy()
     // The relabeled ceiling names both numbers, defaults alongside.
-    expect(getByText(/Ceiling with this method/)).toBeTruthy()
+    expect(getByText(/Agentic % with this method/)).toBeTruthy()
     expect(getByText('60%')).toBeTruthy()
     expect(getByText(/default method: 71%/)).toBeTruthy()
     // The default-method content hid.
@@ -180,7 +180,7 @@ describe('StepMethodPicker', () => {
     fireEvent.click(getByRole('option', { name: /Customer-interview sprint/ }))
     act(() => setGeoSelection('UK'))
     // Still the manual pick — geo does not clobber an explicit choice.
-    expect(getByText(/Ceiling with this method/)).toBeTruthy()
+    expect(getByText(/Agentic % with this method/)).toBeTruthy()
     expect(queryByText(/Incorporating in the United Kingdom/)).toBeNull()
   })
 })

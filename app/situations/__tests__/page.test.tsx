@@ -14,11 +14,11 @@ import { URGENCY_META, URGENCY_TIERS } from '@/lib/processSim'
 describe('/situations', () => {
   const situations = loadProcesses().filter((t) => t.kind === 'situation')
 
-  it('renders ALL 12 situations as rows linking to their /processes/<slug> detail pages', () => {
+  it('renders ALL 22 situations as rows linking to their /processes/<slug> detail pages', () => {
     const { container } = render(<SituationsPage />)
-    expect(situations).toHaveLength(12)
+    expect(situations).toHaveLength(22)
     const table = container.querySelector('table') as HTMLElement
-    expect(table.querySelectorAll('tbody tr')).toHaveLength(12)
+    expect(table.querySelectorAll('tbody tr')).toHaveLength(22)
     for (const t of situations) {
       expect(
         table.querySelector(`a[href="/processes/${processSlug(t.title)}"]`),
@@ -53,10 +53,18 @@ describe('/situations', () => {
     }
   })
 
-  it('reads as its own area: a Situations h1, the honest low-ceiling framing, and a link back to /processes', () => {
+  it('reads as its own area: a Situations h1 with NO intro paragraph (founder 2026-10-02)', () => {
     const { container } = render(<SituationsPage />)
     expect(within(container).getByRole('heading', { level: 1 }).textContent).toContain('Situations')
-    expect(container.textContent).toContain('trigger')
-    expect(container.querySelector('a[href="/processes"]')).not.toBeNull()
+    // The 'Not stops on the founder journey …' paragraph is gone — the heading stands alone.
+    expect(container.textContent).not.toContain('Not stops on the founder journey')
+  })
+
+  it('table columns: Area (not Phase — the cell is the domain tag) and no Steps column (founder 2026-10-02)', () => {
+    const { container } = render(<SituationsPage />)
+    const headers = [...container.querySelectorAll('thead th')].map((th) => th.textContent)
+    expect(headers).toEqual(['Situation', 'Urgency', 'Area', 'Agentic %'])
+    // The per-row 'N/M' steps link left with its column.
+    expect(container.querySelector('a[href$="#steps"]')).toBeNull()
   })
 })

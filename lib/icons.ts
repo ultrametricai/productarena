@@ -220,6 +220,16 @@ const THEME_EXACT: Record<string, string> = {
   'startup-program': '🎓',
   'fee-transparency': '🧾',
   'legal-tech-enablement': '⚙️',
+  // startup-immigration arena (visa-practice vocabulary; 'timelines-fees' must not land on a
+  // generic pricing rule and 'platform-experience' would otherwise hit the fallback)
+  'visa-strategy': '🧭',
+  'petition-execution': '📑',
+  'timelines-fees': '⏱️',
+  'platform-experience': '🖥️',
+  'startup-ecosystem': '🎓',
+  'employer-sponsor-support': '🏢',
+  'origin-country-reach': '🌏',
+  'credentialed-expertise': '🎖️',
 }
 
 // Emoji for a story theme id — every live theme in data/*/stories.json must resolve to a
@@ -426,6 +436,15 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'startup-program': 'what the firm gives away — open document generators, published guides, accelerator programs',
   'fee-transparency': 'what it costs — published startup packages, deferred-fee terms, stated engagement models',
   'legal-tech-enablement': 'the firm as software — client portals, document automation, published AI tooling',
+  // startup-immigration arena
+  'visa-strategy': 'which visa and why — O-1 qualification assessment, the full pathway menu, founder self-sponsorship',
+  'petition-execution': 'the filing itself — petition prep, RFE responses, premium processing, the green-card continuation',
+  'timelines-fees': 'what it costs and how long — published flat fees, separated government fees, stated approval-rate basis',
+  'platform-experience': 'the case as software — status dashboards, structured document collection, stated AI-drafting posture',
+  'startup-ecosystem': 'what the provider gives away — open visa guides, free eligibility tools, accelerator programs',
+  'employer-sponsor-support': 'the company side — H-1B transfers and registrations, LCA compliance, team-scale mobility',
+  'origin-country-reach': 'where founders come from — origin-country guidance, consulate specifics, honest plan-B counsel',
+  'credentialed-expertise': 'who signs the petition — licensed attorneys of record, government-data-grounded claims',
 }
 
 // Honest fallback for an arena-specific niche theme no bespoke line covers.

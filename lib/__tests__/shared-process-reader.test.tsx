@@ -124,9 +124,10 @@ describe('canonical shared process reader', () => {
     expect(long.textContent).toContain('Authored qualification')
   })
 
-  it('renders the whole real catalog including current main addition fund_007', () => {
+  it('renders the whole real catalog including the wave-3 situations (sit_013–sit_022)', () => {
     const records = readSharedCatalog()
-    expect(records).toHaveLength(162)
+    expect(records).toHaveLength(172)
+    expect(findSharedRecord(records, 'sit_013')?.title).toBe('Recover from a payment-processor account termination')
     expect(findSharedRecord(records, 'fund_007')?.title).toBe('Apply to Y Combinator')
     for (const record of records) {
       const el = mount(renderToStaticMarkup(<SharedProcessReader record={record} records={records} />))

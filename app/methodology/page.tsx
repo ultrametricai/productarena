@@ -64,7 +64,9 @@ export default function MethodologyPage() {
             (non-<span className={CODE}>na</span>) product user stories only.
           </p>
         </div>
-        <div className={PILL}>
+        {/* Anchored: /terms ("Trademarks, no endorsement") deep-links here as THE standing
+            affiliation disclosure (founder liability pass 2026-10-02). */}
+        <div id="bias-disclosure" className={`scroll-mt-16 ${PILL}`}>
           <p className="font-semibold text-zinc-300">Bias disclosure</p>
           <p className="mt-1">
             The judge is <span className={CODE}>claude-opus-5-5</span>, made by Anthropic; the{' '}

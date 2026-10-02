@@ -1,9 +1,9 @@
 # Contributing to Ultrametric
 
 Ultrametric's whole premise is that every score should trace back to cited evidence, and
-that anyone can contest a verdict. This document covers the three contribution paths (contest
-a verdict, add evidence, or [add your product](#3-add-your-product) to an arena) plus local
-setup and style rules.
+that anyone can contest a verdict. This document covers the four contribution paths (contest
+a verdict, add evidence, [add your product](#3-add-your-product) to an arena, or
+[submit a stack](#4-submit-a-stack)) plus local setup and style rules.
 
 Contributing to the **founder-ops corpus** (jurisdiction-scoped workflows, rule cards, sources,
 vendor reviews, open modules) has its own workflow and review bar — see
@@ -238,6 +238,23 @@ certification).
    spec ([docs/PROVE-IT.md](./docs/PROVE-IT.md)) — recordings beat statements.
 4. **Keep it fresh**: ship a new API surface? PR the new docs URL into `urls.extra` — coverage
    gaps, not judge harshness, are the #1 cause of undeserved zeros.
+
+## 4. Submit a stack
+
+[/stacks](https://ultrametric.ai/stacks) is proven toolchains to use and improve — cross-arena
+stacks whose scored slots resolve live from the arena rankings, composed from curated,
+committed data (`lib/aiStacks.ts`). If you run a toolchain founders should see, propose it via
+the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml)
+issue form (the "Submit your stack" link on /stacks opens the same form). It asks for:
+
+- the stack's name (and who it's for),
+- the picks per arena (arena id + product id, one line each; unjudged layers marked editorial),
+- what you actually shipped with it — the proof it's proven, not a wishlist,
+- an affiliations disclosure (any relationship to any pick; "none" is an answer).
+
+Submissions feed curation review — a maintainer checks the picks against the arena
+leaderboards and composes accepted stacks into the committed data by PR. The form never
+auto-publishes anything.
 
 ## Local setup
 

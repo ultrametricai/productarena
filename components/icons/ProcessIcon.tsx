@@ -28,6 +28,7 @@ export const ICON_HUES: Record<IconHue, { strong: string; soft: string }> = {
   violet: { strong: '#a78bfa', soft: '#6d28d9' },
   fuchsia: { strong: '#e879f9', soft: '#a21caf' },
   orange: { strong: '#fb923c', soft: '#c2410c' },
+  red: { strong: '#f87171', soft: '#b91c1c' },
   zinc: { strong: '#a1a1aa', soft: '#52525b' },
 }
 

@@ -1,5 +1,5 @@
-// lib/dagLayers.ts — the Kahn layering shared by the full vertical diagram
-// (components/ProcessDag.tsx) and the mini horizontal strip (components/ProcessDagStrip.tsx).
+// lib/dagLayers.ts — the Kahn layering behind the full vertical diagram
+// (components/ProcessDag.tsx) and the shared-process graph.
 import { describe, expect, it } from 'vitest'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 

@@ -9,6 +9,7 @@ import { loadAll } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
 import { rankingJsonLd } from '@/lib/rankingJsonLd'
 import { batchLabel, buildYcRows, sortYcRows, type YcRow } from '@/lib/yc'
+import { ordinal } from '@/lib/ordinal'
 
 // Per-batch ranking of every TRACKED product carrying this verified ycBatch stamp, ordered by
 // agent readiness (rankings-page pattern: same table markup + JSON-LD as /rankings/most-open,
@@ -109,7 +110,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
           <tbody className="divide-y divide-zinc-800/70">
             {rows.map((row, i) => (
               <tr key={row.productId} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{ordinal(i + 1)}</td>
                 <td className="px-3 py-2">
                   <Link
                     href={`/arena/${row.arenaId}/product/${row.productId}`}

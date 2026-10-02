@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import HomePage from '@/app/home/page'
 import { HOME_PROCESSES_COUNT } from '@/components/HomeProcessesMini'
 import { HOME_RANKINGS_COUNT } from '@/components/HomeRankingsMini'
+import { ordinal } from '@/lib/ordinal'
 
 describe('landing homepage (ported to /home; served at ultrametric.ai/ by the worker)', () => {
   it('renders the hero with NO eyebrow line and NO CTA button (founder 2026-09-30 / 2026-10-02)', () => {
@@ -79,9 +80,10 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     expect(section).not.toBeNull()
     const rows = section.querySelectorAll('tbody tr')
     expect(rows.length).toBe(HOME_RANKINGS_COUNT)
-    // Rank is the /overall default-order identity — the first cell counts 1..15.
-    expect(rows[0].querySelector('td span')?.textContent).toBe('1')
-    expect(rows[HOME_RANKINGS_COUNT - 1].querySelector('td span')?.textContent).toBe(String(HOME_RANKINGS_COUNT))
+    // Rank is the /overall default-order identity — the first cell counts 1st..15th (rank
+    // positions read as ordinals, founder 2026-10-02).
+    expect(rows[0].querySelector('td span')?.textContent).toBe('1st')
+    expect(rows[HOME_RANKINGS_COUNT - 1].querySelector('td span')?.textContent).toBe(ordinal(HOME_RANKINGS_COUNT))
     // Every row's product cell links into its arena product page.
     const firstLink = rows[0].querySelector('a')
     expect(firstLink?.getAttribute('href')).toMatch(/^\/arena\/[^/]+\/product\/[^/]+$/)
@@ -93,6 +95,9 @@ describe('landing homepage (ported to /home; served at ultrametric.ai/ by the wo
     render(<HomePage />)
     const section = document.querySelector('section[aria-labelledby="home-processes-heading"]') as HTMLElement
     expect(section).not.toBeNull()
+    // Founder 2026-10-02: the intro paragraph is gone — heading + table stand alone.
+    expect(section.textContent).not.toContain('mapped step-by-step')
+    expect(section.textContent).not.toContain('In the order a founder hits them')
     const rows = section.querySelectorAll('tbody tr')
     expect(rows.length).toBe(HOME_PROCESSES_COUNT)
     // Every row links to its process page and carries an agent-ceiling bar; the icon renders

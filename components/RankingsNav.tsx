@@ -15,7 +15,7 @@ export const GLOBAL_RANKINGS = [
   { id: 'most-tested', name: 'Most tested', href: '/rankings/most-tested' },
   { id: 'rising', name: 'Rising & falling', href: '/rankings/rising' },
   { id: 'popular', name: 'Most popular', href: '/rankings/popular' },
-  { id: 'most-open', name: 'Most open', href: '/rankings/most-open' },
+  { id: 'most-open', name: 'Lowest lock-in', href: '/rankings/most-open' },
   { id: 'best-api', name: 'Best API', href: '/rankings/best-api' },
   // Arena-scoped, not cross-arena: the judged startup-law-firms leaderboard as a focused view
   // (founder 2026-10-02: "we need a ranking table for law firms"). Same contract otherwise.

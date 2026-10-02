@@ -4,8 +4,8 @@ One proposition per stable rule ID, scoped to a jurisdiction and backed by exact
 
 ## What a rule card is
 
-One JSON file per proposition under `rules/<JURISDICTION-CODE>/` — 38 cards committed today
-(32 US-FED, 6 US-DE, counted 2026-10-01), all status `demonstration`. A trimmed real card
+One JSON file per proposition under `rules/<JURISDICTION-CODE>/` — 40 cards committed today
+(33 US-FED, 6 US-DE, 1 EU, counted 2026-10-02), all status `demonstration`. A trimmed real card
 (`rules/US-FED/us-fed-1120-filing-deadline.json`):
 
 ```jsonc

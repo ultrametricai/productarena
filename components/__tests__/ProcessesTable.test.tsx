@@ -112,7 +112,7 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     setUrl('?order=grouped')
     const { container } = mount()
     expect(within(container).getByText('Formation')).toBeDefined() // area headers render
-    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('none')
+    expect(thFor(container, 'Agentic %')?.getAttribute('aria-sort')).toBe('none')
     expect(thFor(container, 'Cadence')?.getAttribute('aria-sort')).toBe('none')
   })
 
@@ -137,7 +137,7 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     setUrl('?order=pct')
     const { container } = mount()
     expect(within(container).queryByText('Formation')).toBeNull() // flat, no area headers
-    expect(thFor(container, 'Agent ceiling')?.getAttribute('aria-sort')).toBe('descending')
+    expect(thFor(container, 'Agentic %')?.getAttribute('aria-sort')).toBe('descending')
   })
 })
 

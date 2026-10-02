@@ -13,11 +13,11 @@ const records = readSharedCatalog()
 afterEach(() => { cleanup(); history.replaceState(null, '', '/') })
 
 describe('existing index presentation over shared records', () => {
-  it('keeps all 162 records, source metrics, exact authored icon bindings, and unique functional routes', () => {
+  it('keeps all 172 records, source metrics, exact authored icon bindings, and unique functional routes', () => {
     const index = buildPreviewIndex()
     const all = [...index.rows, ...index.playbooks]
-    expect(all).toHaveLength(162)
-    expect(new Set(all.map(row => row.href)).size).toBe(162)
+    expect(all).toHaveLength(172)
+    expect(new Set(all.map(row => row.href)).size).toBe(172)
     for (const record of records) {
       const href = sharedPreviewHref(record.id, records)
       expect(all.find(row => row.href === href)?.title).toBe(record.title)
@@ -27,7 +27,7 @@ describe('existing index presentation over shared records', () => {
     for (const row of original) expect(index.rows.find(preview => preview.slug === row.slug)?.pct).toBe(row.pct)
     expect(index.rows.filter(row => row.pct === null)).toHaveLength(2)
     const situations = index.rows.filter(row => row.kind === 'situation')
-    expect(situations).toHaveLength(12)
+    expect(situations).toHaveLength(22)
     expect(situations.every(row => row.area === 'Situations' && row.timeOrder === null && row.trigger && row.urgency)).toBe(true)
     expect(Object.keys(bindings)).toHaveLength(123)
     for (const binding of Object.values(bindings)) {
@@ -42,15 +42,15 @@ describe('existing index presentation over shared records', () => {
   it('retains sorting, filtering, search, and canonical-only records without fabricated metrics', () => {
     const el = render(<PreviewIndex />)
     const table = el.getByRole('table')
-    expect(table.querySelectorAll('tbody tr')).toHaveLength(162)
-    expect(el.getByRole('searchbox', { name: 'Search processes' }).getAttribute('placeholder')).toContain('162')
+    expect(table.querySelectorAll('tbody tr')).toHaveLength(172)
+    expect(el.getByRole('searchbox', { name: 'Search processes' }).getAttribute('placeholder')).toContain('172')
     const contractor = table.querySelector('a[href="/processes/preview/add-a-contractor-1099"]')!
     expect(contractor.textContent).toBe('Add a contractor (1099) using AI')
     expect(contractor.closest('tr')?.querySelector('img')?.getAttribute('width')).toBe('24')
     const equity = table.querySelector('a[href*="review-common-stock"]')!.closest('tr')!
     expect(equity.querySelectorAll('td')[2].textContent).toBe('')
     expect(equity.querySelectorAll('td')[4].textContent).toBe('')
-    fireEvent.click(within(table).getByRole('button', { name: /Agent ceiling/ }))
+    fireEvent.click(within(table).getByRole('button', { name: /Agentic %/ }))
     expect([...table.querySelectorAll('tbody tr')].slice(-2).some(row => row.contains(equity.querySelector('a')))).toBe(true)
     fireEvent.change(el.getByRole('combobox', { name: 'Rank by' }), { target: { value: 'order' } })
     fireEvent.click(within(table).getByRole('button', { name: /^Timeline/ }))

@@ -93,6 +93,7 @@ const CATEGORIES = [
   'sso-identity',
   'stablecoin-payments',
   'startup-banking',
+  'startup-immigration',
   'startup-law-firms',
   'tax-automation',
   'team-chat',

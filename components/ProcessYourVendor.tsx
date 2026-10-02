@@ -4,6 +4,7 @@ import MineLink from '@/components/MineLink'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import { isPicked } from '@/lib/myStack'
+import { ordinal } from '@/lib/ordinal'
 
 // Lean serialized leaderboard row for the client-side "you run X" banner — built server-side by
 // components/ProcessLeaderboard.tsx from the FULL (uncapped) processLeaderboard entries, so the
@@ -47,14 +48,16 @@ export default function ProcessYourVendor({
         <ProductLogoView product={{ id: yours.productId, name: yours.name }} size={18} hasLogo={yours.hasLogo} />
         <span>
           You run <span className="font-medium">{yours.name}</span> —{' '}
-          <span className="text-emerald-300">#{yours.rank}</span> for this process, {yours.stepsServed} of{' '}
+          <span className="text-emerald-300">{ordinal(yours.rank)}</span> for this process, {yours.stepsServed} of{' '}
           {rankableSteps} steps, score{' '}
           <span className="tabular-nums text-emerald-300">{yours.processScore.toFixed(0)}</span>
+          <span className="text-zinc-500">/100</span>
         </span>
       </span>
       {!isLeader && leader && (
         <span className="text-zinc-400">
-          (#1 is {leader.name} at <span className="tabular-nums">{leader.processScore.toFixed(0)}</span>)
+          (1st is {leader.name} at <span className="tabular-nums">{leader.processScore.toFixed(0)}</span>
+          <span className="text-zinc-500">/100</span>)
         </span>
       )}
       {moreMine > 0 && (
@@ -62,7 +65,7 @@ export default function ProcessYourVendor({
           className="text-zinc-400"
           title={mine
             .slice(1)
-            .map((m) => `${m.name} — #${m.rank}, ${m.stepsServed} step${m.stepsServed === 1 ? '' : 's'}`)
+            .map((m) => `${m.name} — ${ordinal(m.rank)}, ${m.stepsServed} step${m.stepsServed === 1 ? '' : 's'}`)
             .join('; ')}
         >
           +{moreMine} more of your vendors serve{moreMine === 1 ? 's' : ''} this process

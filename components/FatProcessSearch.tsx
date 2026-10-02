@@ -69,7 +69,7 @@ export default function FatProcessSearch({ rows }: { rows: FatSearchRow[] }) {
             >
               <IconChip icon={r.icon} title={r.playbook ? `${r.title} — multi-process` : `${r.title} — ${r.phase} process`} />
               <span className="min-w-0 flex-1 truncate">{r.title}</span>
-              {r.pct !== null && <span className="shrink-0 font-mono text-[11px] tabular-nums text-zinc-500" title="Agent ceiling — share of steps an agent can run today">
+              {r.pct !== null && <span className="shrink-0 font-mono text-[11px] tabular-nums text-zinc-500" title="Agentic % — share of steps an agent can run today">
                 {r.pct}%
               </span>}
             </Link>

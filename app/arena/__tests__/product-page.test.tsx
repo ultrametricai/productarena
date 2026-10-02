@@ -9,6 +9,8 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import ProductPage, { generateMetadata } from '@/app/arena/[category]/product/[id]/page'
+import { loadAll, loadCategory } from '@/lib/data'
+import { isGroupUntested } from '@/lib/data-helpers'
 
 const ARENA = 'startup-banking'
 const ID = 'mercury'
@@ -19,15 +21,42 @@ async function renderPage() {
 }
 
 describe('product page — founder 2026-10-02 batch', () => {
-  it('the vendor line links to the vendor\'s committed site (external-link hygiene, ↗)', async () => {
+  it('the vendor line links to the vendor\'s committed site — with NO ↗ glyph after the name (founder 2026-10-02)', async () => {
     await renderPage()
     const link = screen.getByRole('link', { name: /Mercury Technologies/ })
     expect(link.getAttribute('href')).toBe('https://mercury.com')
     expect(link.getAttribute('target')).toBe('_blank')
     expect(link.getAttribute('rel')).toContain('noopener')
-    expect(link.textContent).toContain('↗')
+    // Founder 2026-10-02: the arrow is gone; the name itself stays the external link.
+    expect(link.textContent).not.toContain('↗')
     // The URL comes from committed product data, said out loud in the tooltip — never guessed.
     expect(link.getAttribute('title')).toContain('https://mercury.com')
+  })
+
+  it('header display declutter (founder 2026-10-02): no Built-in AI assistant chip, no spike-depth chip, no Open app link', async () => {
+    const { container } = await renderPage()
+    // The '✨ Built-in AI assistant' chip is gone (the verdict stays data — the Built-in AI
+    // pill and the story row below still carry it).
+    expect(screen.queryByText('Built-in AI assistant')).toBeNull()
+    // The '◉ deep-spiked · N ev' / '◎ surface spike' verification-depth chip is gone.
+    expect(container.textContent).not.toMatch(/deep-spiked|surface spike|not yet spiked/)
+    // The 'Open app ↗' quick link is gone; the docs links keep their chips.
+    expect(screen.queryByText(/Open app/)).toBeNull()
+  })
+
+  it('never shows an "API untested" tag (founder 2026-10-02) — the pill simply does not render when the group is untested', async () => {
+    // Find a real committed product whose api-quality group IS untested (and not an n/a arena),
+    // so this pin exercises the suppressed-render path rather than passing vacuously.
+    const hit = loadAll()
+      .filter((d) => !(d.category.naDimensions ?? []).includes('apiQuality'))
+      .flatMap((d) => d.products.map((p) => ({ d, p })))
+      .find(({ d, p }) => isGroupUntested(d, p.id, 'api-quality'))
+    expect(hit, 'corpus must contain at least one api-quality-untested product').toBeDefined()
+    const { container } = render(
+      await ProductPage({ params: Promise.resolve({ category: hit!.d.category.id, id: hit!.p.id }) }),
+    )
+    // Only the API tag is banned — agent-ready/built-in-AI keep their honest untested pills.
+    expect(container.textContent).not.toContain('API untested')
   })
 
   it('theme rectangles carry no per-card tooltip (the section heading keeps its mark)', async () => {
@@ -57,6 +86,31 @@ describe('product page — founder 2026-10-02 batch', () => {
     expect(container.textContent).not.toContain('Connections to other tracked products')
     expect(container.textContent).not.toContain('a point per change, not per day')
     expect(screen.getByText('Verified integrations')).toBeTruthy()
+  })
+
+  it('story-DAG experiment (founder 2026-10-02): theme → story map renders on the mercury page, verdict-tinted, nodes deep-linking to the table', async () => {
+    const { container } = await renderPage()
+    expect(screen.getByRole('heading', { name: /Story map \(experiment\)/ })).toBeTruthy()
+    const section = container.querySelector('#story-map-experiment')!
+    expect(section).not.toBeNull()
+    // Every story node links to its judged #story-<id> row; every committed story is a node.
+    const nodes = section.querySelectorAll('a[href^="#story-"]')
+    expect(nodes.length).toBe(loadCategory(ARENA).stories.length)
+    // Verdict tints per the founder spec: full emerald, partial amber, na dashed.
+    expect(section.querySelector('a.border-emerald-400\\/50')).not.toBeNull()
+    expect(section.querySelector('a.border-amber-400\\/40')).not.toBeNull()
+    expect([...nodes].some((n) => n.className.includes('border-dashed'))).toBe(true)
+    // Theme headers carry the honest delivered count — judged verdicts, never a new score.
+    expect(section.textContent).toMatch(/\d+\/\d+ delivered/)
+  })
+
+  it('the story-DAG experiment is gated to mercury ONLY — no other product page renders it', async () => {
+    // Same arena, different product: the experiment must not leak.
+    const { container } = render(
+      await ProductPage({ params: Promise.resolve({ category: ARENA, id: 'ramp' }) }),
+    )
+    expect(container.textContent).not.toContain('Story map (experiment)')
+    expect(container.querySelector('#story-map-experiment')).toBeNull()
   })
 
   it('generateMetadata preserves the agent-discovery pointers as alternates (llms.md + data JSON)', async () => {

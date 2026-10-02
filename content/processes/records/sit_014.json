@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "id": "sit_014",
+  "kind": "process",
+  "title": "Handle a security-vulnerability report",
+  "summary": "A good-faith vulnerability report is a gift wearing a deadline. Acknowledge fast and open a private channel — researchers go public when ignored; reproduce the finding honestly and make the severity call on exploitability, not embarrassment; fix on a clock the severity sets; then agree the disclosure timeline with the reporter (90-day coordinated-disclosure norms are industry practice, not law) and publish the advisory with credit. CISA's coordinated-vulnerability-disclosure guidance is the pattern, and a security.txt file is how the next report finds you instead of your CEO's inbox. If the hole was actually exploited and data was reached, that is 'Respond to a data breach' — different situation, statutory clocks.",
+  "outcomes": [],
+  "guidance": null,
+  "parts": [
+    {
+      "id": "n1",
+      "kind": "step",
+      "title": "Acknowledge receipt fast and open a private channel with the reporter — silence is how disclosures go public",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "url",
+          "url": "https://www.cisa.gov/coordinated-vulnerability-disclosure-process",
+          "role": "legacy-action-link",
+          "title": "CISA: coordinated vulnerability disclosure",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "estimatedMinutes": 20
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "step",
+      "title": "Reproduce the report and scope the vulnerable surface: what's reachable, since when, by whom",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 60
+      }
+    },
+    {
+      "id": "n3",
+      "kind": "step",
+      "title": "Make the severity call: drop everything or schedule — exploitability and exposure, not embarrassment",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 30
+      }
+    },
+    {
+      "id": "n4",
+      "kind": "step",
+      "title": "Patch, regression-test, and run the scanners over the fix before it ships",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "vendor",
+          "id": "semgrep",
+          "role": "candidate"
+        },
+        {
+          "kind": "vendor",
+          "id": "snyk",
+          "role": "candidate"
+        },
+        {
+          "kind": "category",
+          "id": "security-scanners",
+          "role": "rankings"
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 120
+      }
+    },
+    {
+      "id": "n5",
+      "kind": "step",
+      "title": "Decide disclosure with the reporter: coordinated timeline, customer notice if data was reachable — exploited means the breach situation instead",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "riskLevel": "high",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n6",
+      "kind": "step",
+      "title": "Publish the fix and the advisory, credit the reporter, and adopt security.txt so the next report routes cleanly",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [
+        {
+          "kind": "url",
+          "url": "https://securitytxt.org/",
+          "role": "legacy-action-link",
+          "title": "security.txt standard",
+          "description": null
+        }
+      ],
+      "metadata": {
+        "route": "agent",
+        "reversibility": "reversible",
+        "estimatedMinutes": 45
+      }
+    },
+    {
+      "id": "n7",
+      "kind": "step",
+      "title": "Hold the coordinated-disclosure window: the fix soaks in production, the reporter holds publication, you re-test",
+      "guidance": null,
+      "when": null,
+      "ref": null,
+      "options": [],
+      "notes": [],
+      "references": [],
+      "metadata": {
+        "route": "person",
+        "reversibility": "reversible",
+        "async": true,
+        "estimatedMinutes": 10080
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "when": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "when": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "when": null
+    },
+    {
+      "from": "n4",
+      "to": "n5",
+      "when": null
+    },
+    {
+      "from": "n5",
+      "to": "n6",
+      "when": null
+    },
+    {
+      "from": "n6",
+      "to": "n7",
+      "when": null
+    }
+  ],
+  "references": [],
+  "notes": [],
+  "metadata": {
+    "phase": "product",
+    "kind": "situation",
+    "trigger": "A security researcher (or a customer, or a stranger) reports a vulnerability in your product — responsibly, so far.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "security",
+    "supportLevel": "partial",
+    "supportReason": "Reproduction, the patch loop, and the advisory mechanics are agent-drivable — the judged scanners gate the fix; the severity call, the disclosure decision, and the reporter relationship stay human.",
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the vulnerability report itself (vector, affected surface, reporter contact)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "access to the affected code and deployment",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "security",
+      "vulnerability",
+      "disclosure",
+      "triage"
+    ],
+    "activeMinutes": 320,
+    "totalEstimatedMinutes": 10400,
+    "hasAsyncSteps": true,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1,
+    "produces": [],
+    "requires": []
+  },
+  "source": {
+    "path": "processes/corpus.json",
+    "id": "sit_014",
+    "revision": "bd5943b0945cfef8e00490ef9f1ba72f1d253f43",
+    "sha256": "cff3ec102642f5f14f55e38983d19a0f0a3feefddb73817104ec128fd3560a1e"
+  }
+}

@@ -4,6 +4,7 @@ import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { arenaIcon } from '@/lib/arenaIcons'
 import type { MegaTableRow } from '@/lib/megaTableSort'
+import { ordinal } from '@/lib/ordinal'
 
 // Homepage "Rankings" section (founder 2026-09-30): a compact, static mini table of the TOP 15
 // rows of the /overall rankings — the same default companies view MegaTable opens with (rows
@@ -38,7 +39,7 @@ export default function HomeRankingsMini({ rows }: { rows: MegaTableRow[] }) {
                 <tr key={`${row.arenaId}:${row.productId}`} className="transition hover:bg-zinc-800/70">
                   <td className="min-w-[200px] px-2 py-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 shrink-0 tabular-nums text-zinc-400">{i + 1}</span>
+                      <span className="w-9 shrink-0 tabular-nums text-zinc-400">{ordinal(i + 1)}</span>
                       <Link
                         href={`/arena/${row.arenaId}/product/${row.productId}`}
                         className="flex min-w-0 items-center gap-2 hover:text-emerald-300"

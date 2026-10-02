@@ -10,7 +10,9 @@ import { loadChains, loadProcesses } from '@/lib/processes'
 import IconGalleryPage, { metadata } from '../icons/page'
 
 describe('/experiments/icons gallery', () => {
-  it('renders every designed glyph with its name, and every live process and playbook', () => {
+  // 90s timeout: the full ~175-glyph gallery render is legitimately heavy and flaked at the
+  // default 30s under multi-lane vitest load (2026-10-02, twice) — not a regression signal.
+  it('renders every designed glyph with its name, and every live process and playbook', { timeout: 90000 }, () => {
     const { container, getAllByText } = render(<IconGalleryPage />)
     // One neutral tile per glyph in the full-set grid (plus colorized renders above it).
     for (const [id, glyph] of Object.entries(GLYPHS)) {

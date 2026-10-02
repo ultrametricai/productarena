@@ -31,9 +31,9 @@ export const PROCESS_ICON_PREFIX = 'pi:'
 
 // The house accent families (tailwind names; hexes live with the glyphs in
 // components/icons/ProcessIcon.tsx). zinc is the neutral fallback tone.
-export type IconHue = 'emerald' | 'amber' | 'sky' | 'violet' | 'fuchsia' | 'orange' | 'zinc'
+export type IconHue = 'emerald' | 'amber' | 'sky' | 'violet' | 'fuchsia' | 'orange' | 'red' | 'zinc'
 
-const HUES: ReadonlySet<string> = new Set(['emerald', 'amber', 'sky', 'violet', 'fuchsia', 'orange', 'zinc'])
+const HUES: ReadonlySet<string> = new Set(['emerald', 'amber', 'sky', 'violet', 'fuchsia', 'orange', 'red', 'zinc'])
 
 // Compose a token. Kept private — the curated maps below are the only place tokens are minted.
 const pi = (glyph: string, hue: IconHue): string => `${PROCESS_ICON_PREFIX}${glyph}:${hue}`
@@ -87,6 +87,17 @@ export function phaseTooltip(phase: string): string {
 // The one glyph for "this process recurs" (was the 🔁 emoji on the process-page cadence chip) —
 // the same recurring loop the Explore menu's Process-rankings group wears (lib/arenaIcons.ts).
 export const CADENCE_ICON = pi('cycle', 'sky')
+
+// ---------- Urgency (situations) ----------
+// House glyphs for the UrgencyChip tiers (founder 2026-10-02: the 🚨/⏰/🗓 emoji join the custom
+// set). Glyph = the tier's old emoji concept, hue = the tier's existing semantic color: the
+// siren for "within hours" (red), the overdue clock for "within days" (amber), the calendar for
+// "within weeks" (sky). Keyed by the lib/processSim.ts Urgency tier names.
+export const URGENCY_ICONS: Record<'hours' | 'days' | 'weeks', string> = {
+  hours: pi('siren', 'red'), // 🚨
+  days: pi('clock-alert', 'amber'), // ⏰
+  weeks: pi('calendar', 'sky'), // 🗓
+}
 
 // ---------- Individual processes (keyed by corpus task id) ----------
 // Glyph = the concept (was: the emoji), hue = the process's area. Comments carry the old emoji
@@ -246,6 +257,17 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_010: pi('clock-alert', 'sky'), // ⏰ DE franchise tax delinquency (the overdue clock)
   sit_011: pi('storm', 'sky'), // ⛈ DDoS attack or major outage (the storm hits the cloud)
   sit_012: pi('unplug', 'sky'), // 🔌 Migrate off a shutting-down vendor (the plug pulled)
+  // Wave 3 (founder boost 2026-10-02) — same rule: domain hue, situation grouped by kind.
+  sit_013: pi('unplug', 'emerald'), // 🔌 Processor account termination (the same pulled-plug concept as sit_012, money hue — the processor pulls YOURS)
+  sit_014: pi('eye', 'sky'), // 👁 Security-vulnerability report (someone saw through the shield)
+  sit_015: pi('padlock', 'sky'), // 🔒 Data-subject access request (privacy is the lock site-wide)
+  sit_016: pi('phone', 'sky'), // 📱 App-store rejection/removal (the app-stores concept, interrupted)
+  sit_017: pi('megaphone', 'fuchsia'), // 📣 Ad/platform account suspension (the marketing megaphone, muted)
+  sit_018: pi('key', 'sky'), // 🔑 Domain or social account hijacked (the access-keys concept — stolen, then retaken)
+  sit_019: pi('person-out', 'orange'), // 👋 Key employee resigns (the same offboarding concept as hr_005)
+  sit_020: pi('chart-down', 'emerald'), // 📉 Term sheet pulled (the runway chart is suddenly the whole story)
+  sit_021: pi('hard-hat', 'orange'), // 👷 Workplace injury (the safety hat — worn too late)
+  sit_022: pi('envelope-alert', 'orange'), // 📨 Harassment complaint (the notice-letter concept, people hue)
 }
 
 export function processIcon(taskId: string): string {

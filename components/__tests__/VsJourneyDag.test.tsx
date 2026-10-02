@@ -12,8 +12,9 @@
 //     to the newest (active) node while following, with the terminal's follow-slack courtesy
 //     (scroll up unpins; back near the bottom re-pins) — smoke-tested via a scrollTop mock;
 //   - EDGES: a simple in-row connector leads every node after the first; an item measured at the
-//     start of a wrapped row swaps it for a subtle ↵ hint (pure helper dagWrapStartIds — jsdom
-//     does no layout, so the swap itself is driven at the unit level);
+//     start of a wrapped row swaps it for the WRAP ELBOW — a drawn drop-in curve + arrowhead,
+//     lit like an edge (founder 2026-10-02: the old ↵ text hint was too subtle) — (pure helper
+//     dagWrapStartIds; jsdom does no layout, so the swap is driven via mocked offsetTops);
 //   - cluster grouping survives as a chain-tinted label chip leading each phase's first node;
 //   - nodes light progressively as the terminal reveal passes them (pending → active → done),
 //     with exactly the node whose rows are printing carrying the active state (pulsing emerald);
@@ -211,7 +212,7 @@ describe('VsJourneyDag — rendering', () => {
     expect(screen.getByTestId('vs-dag-marker-event').className).toContain('fuchsia-400/30')
   })
 
-  it('lights nodes with the reveal: active pulses emerald, done fills; upcoming stays hidden; the vendor logo dot attaches once its step printed', () => {
+  it('lights nodes with the reveal: active pulses emerald, done fills; upcoming stays hidden; the vendor logo attaches INSIDE the node box once its step printed', () => {
     const { rerender } = render(<VsJourneyDag rows={UNIT_ROWS} revealed={2} running />)
     const activeNode = screen.getByTestId('vs-dag-node-form_001')
     expect(activeNode.getAttribute('data-dag-state')).toBe('active')
@@ -222,6 +223,11 @@ describe('VsJourneyDag — rendering', () => {
     expect(screen.getByTestId('vs-dag-node-form_001').getAttribute('data-dag-state')).toBe('done')
     expect(screen.queryByTestId('vs-dag-node-site_001')).toBeNull() // still one row short of reached
     expect(screen.getByTestId('vs-dag-vendor-best-legal')).toBeTruthy()
+    // Founder 2026-10-02: the logo rides INSIDE the node box (trailing the title), so it reads
+    // as the node's vendor — not a floating dot in the under-node row.
+    expect(
+      screen.getByTestId('vs-dag-node-form_001').contains(screen.getByTestId('vs-dag-vendor-best-legal')),
+    ).toBe(true)
     expect(screen.getByTestId('vs-dag-marker-event').className).toContain('fuchsia-400/90') // event revealed
     rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={8} running />)
     expect(screen.getByTestId('vs-dag-node-site_001').getAttribute('data-dag-state')).toBe('active')
@@ -257,6 +263,41 @@ describe('VsJourneyDag — rendering', () => {
       expect(edges.length + hints.length).toBe(Math.max(0, nodes.length - 1))
       view.unmount()
     }
+  })
+
+  it('the wrap connector is a visible lit-aware ELBOW (founder 2026-10-02): a wrapped row leads with the drawn drop-in curve + arrowhead, emerald once traversed', () => {
+    // jsdom reports every offsetTop as 0, so the wrap classification is forced by mocking the
+    // flow items' offsetTops and re-rendering (the dependency-less measure effect re-runs on
+    // every commit and converges via its set-equality guard).
+    const mockFlowTops = (strip: HTMLElement, tops: Record<string, number>) => {
+      for (const el of Array.from(strip.querySelectorAll<HTMLElement>('[data-dag-flow]'))) {
+        const top = tops[el.getAttribute('data-dag-flow')!] ?? 0
+        Object.defineProperty(el, 'offsetTop', { configurable: true, get: () => top })
+      }
+    }
+    // Traversed wrap: both nodes done → the elbow lights emerald, exactly like an in-row edge.
+    const done = render(<VsJourneyDag rows={UNIT_ROWS} revealed={UNIT_ROWS.length} running={false} />)
+    const strip = screen.getByTestId('vs-journeydag-strip')
+    expect(screen.queryByTestId('vs-dag-wrap-hint')).toBeNull() // all tops 0 — nothing wraps yet
+    mockFlowTops(strip, { site_001: 40 }) // site_001 measured below form_001 → starts a wrapped row
+    done.rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={UNIT_ROWS.length} running={false} />)
+    const hint = screen.getByTestId('vs-dag-wrap-hint')
+    expect(hint.tagName.toLowerCase()).toBe('svg') // a DRAWN connector — not the old ↵ text hint
+    expect(hint.textContent).not.toContain('↵')
+    const [elbow, head] = Array.from(hint.querySelectorAll('path'))
+    expect(elbow.getAttribute('d')).toContain('Q') // the drop-in curve from the row above
+    expect(elbow.getAttribute('class')).toContain('stroke-emerald-400/70')
+    expect(head.getAttribute('class')).toContain('fill-emerald-400/70')
+    // The single connector slot swapped — no in-row edge remains beside it.
+    expect(strip.querySelectorAll('[data-testid="vs-dag-edge"]').length).toBe(0)
+    done.unmount()
+    // Un-traversed wrap: the just-reached (still pending) node's elbow stays dim zinc.
+    const reached = render(<VsJourneyDag rows={UNIT_ROWS} revealed={7} running />)
+    mockFlowTops(screen.getByTestId('vs-journeydag-strip'), { site_001: 40 })
+    reached.rerender(<VsJourneyDag rows={UNIT_ROWS} revealed={7} running />)
+    const dim = screen.getByTestId('vs-dag-wrap-hint')
+    expect(dim.querySelector('path')!.getAttribute('class')).toContain('stroke-zinc-600')
+    reached.unmount()
   })
 
   it('nodes keep FULL fixed size at any count: icon + title legible always, no tier ever hides a title', () => {
@@ -564,5 +605,15 @@ describe('connector footprint invariant (mobile flicker fix, founder 2026-10-01)
     }
     // The invariant is documented at the source so a future edit can't miss it.
     expect(src).toContain('FOOTPRINT INVARIANT')
+  })
+
+  it('the wrap elbow (founder 2026-10-02) kept the footprint: an SVG with Edge-matching lit/unlit classes, width 16 — not the retired ↵ text', () => {
+    const src = readFileSync(path.resolve(__dirname, '../VsJourneyDag.tsx'), 'utf8')
+    const hint = src.slice(src.indexOf('function WrapHint'), src.indexOf('export default'))
+    expect(hint).toContain('<svg') // drawn connector
+    expect(hint).toContain('width="16"') // same content width as Edge — the invariant's number
+    expect(hint).toContain('lit: boolean') // lit-aware, like Edge
+    expect(hint).toContain('stroke-emerald-400/70')
+    expect(hint).not.toContain('↵')
   })
 })

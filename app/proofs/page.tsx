@@ -5,6 +5,7 @@ import ProofBlock from '@/components/ProofBlock'
 import { groupInOrder, loadCategory, stripPersonaPrefix } from '@/lib/data'
 import { collectSiteProofs, readProofTranscript, type ProofIndexEntry } from '@/lib/proofs'
 import { REPO, withBase } from '@/lib/site'
+import { ordinal } from '@/lib/ordinal'
 
 // The proof theater: every replayable probe recording site-wide (see lib/proofs.ts), grouped
 // by arena → product, each playable/readable inline. Static by construction — all recordings
@@ -103,7 +104,7 @@ export default function ProofsPage() {
           <ol className="mt-1 space-y-0.5 text-xs">
             {mostProven.map((p, i) => (
               <li key={p.productId} className="flex items-baseline gap-2">
-                <span className="w-4 shrink-0 font-mono text-zinc-500">{i + 1}.</span>
+                <span className="w-7 shrink-0 font-mono text-zinc-500">{ordinal(i + 1)}</span>
                 <Link
                   href={`/arena/${p.categoryId}/product/${p.productId}`}
                   className="truncate text-zinc-300 hover:text-emerald-300"

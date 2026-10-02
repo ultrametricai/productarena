@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import SituationsTable from '@/components/SituationsTable'
 import { buildSituationRows } from '@/lib/processRows'
 
@@ -12,7 +11,7 @@ import { buildSituationRows } from '@/lib/processRows'
 export const metadata: Metadata = {
   title: 'Situations — when something hits the company — Ultrametric',
   description:
-    'The reactive founder situations, mapped step by step: a lawsuit lands, a breach is live, a tax notice arrives. Trigger, urgency, and the honest agent ceiling for each — judgment, counsel, and signatures stay human.',
+    'The reactive founder situations, mapped step by step: a lawsuit lands, a breach is live, a tax notice arrives. Trigger, urgency, and the honest Agentic % for each — judgment, counsel, and signatures stay human.',
 }
 
 export default function SituationsPage() {
@@ -23,17 +22,8 @@ export default function SituationsPage() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           Situations — when something hits the company
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-zinc-400">
-          Not stops on the founder journey — interruptions of it. Each of these {rows.length} situations
-          starts with a trigger (the letter, the notice, the outage) and runs on its own clock: the
-          urgency chip is the honest tier, hours through weeks. Agent ceilings here are deliberately
-          low — reading a legal demand, the counsel call, and the signature under penalty of perjury
-          are human work; an agent preps the evidence and the math. The planned work lives on{' '}
-          <Link href="/processes" className="text-zinc-300 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300">
-            /processes
-          </Link>
-          .
-        </p>
+        {/* The intro paragraph ('Not stops on the founder journey — …') is gone (founder
+            2026-10-02) — the heading and the table's own tooltips carry the framing. */}
       </section>
       <section>
         <SituationsTable rows={rows} />

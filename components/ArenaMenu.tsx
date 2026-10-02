@@ -163,13 +163,21 @@ export default function ArenaMenu({
                     {section.name}
                   </p>
                 )}
+                {/* Row alignment (founder 2026-10-02: "right-side column misaligns under
+                    Gateways, e.g. Browser agents"): items-CENTER, not items-baseline — with the
+                    SVG icon slot the left group's baseline came from the icon box (leading-none
+                    SVG), not the name text, so icon rows sat vertically off their labels. And the
+                    right label is shrink-0 + nowrap so it NEVER wraps into a ragged second line;
+                    the name (min-w-0 + truncate) gives way instead. The icon column stays one
+                    fixed w-4 slot for every row (icon, GeoMark, or absent). Layout classes are
+                    pinned by components/__tests__/ArenaMenu.test.tsx. */}
                 {section.items.map((item) => (
                   <Link
                     key={item.id}
                     role="menuitem"
                     href={hrefOf(item)}
                     onClick={close}
-                    className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
+                    className="flex items-center justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
                   >
                     <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
                       {item.icon && (
@@ -182,7 +190,7 @@ export default function ArenaMenu({
                       )}
                       <span className="truncate">{item.name}</span>
                     </span>
-                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">
+                    <span className="shrink-0 whitespace-nowrap text-[10px] uppercase tracking-wide text-zinc-500">
                       {item.label}
                     </span>
                   </Link>

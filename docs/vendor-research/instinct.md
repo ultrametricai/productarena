@@ -1,6 +1,47 @@
 # Vendor research: Instinct (Spear Street Technology, Inc.)
 
-Research lane, fetched 2026-10-01. Evidence pack raw material — no judging, no rankings edits.
+**Status: JUDGED (2026-10-02).** Previously HELD (invite-only, ToS bars probing). The founder
+asked for it in (2026-10-02); it was brought up and judged under the ToS-respecting methodology
+below. Judged result: **#14 of 15** in ai-assistants (aiEra 15.1, band 15.1–18.6; agentReady 2.0,
+band 2–7), coverage grade **D** — the honest consequence of a near-zero probe tier.
+
+## ToS-respecting methodology (2026-10-02 bring-up)
+
+Instinct's ToS prohibits automated access to the Services ("any robot, spider, crawlers,
+scraper"), and the product is invite-only, so the usual hands-on/probe ladder is unavailable.
+The bring-up therefore used ONLY:
+
+1. **robots.txt check FIRST** (single fetch, 2026-10-02): https://instinct.com/robots.txt serves
+   200 text/plain, last-modified 2026-10-02, and allows ALL user-agents on ALL paths (named
+   Allow:/ blocks for Googlebot/Bingbot/Applebot/OAI-SearchBot/ChatGPT-User/PerplexityBot/
+   Claude-SearchBot/Claude-User, plus default `User-agent: * / Allow: /`), pointing at
+   sitemap.xml. This explicit crawler grant — the vendor's own machine-readable permission
+   signal — is what sanctioned step 2.
+2. **Standard single-fetch crawl of public pages only** (the pipeline's identified
+   Ultrametric/1.0 UA): homepage, /terms, /privacy-policy. No path-fishing (no /llms.txt,
+   /openapi.json, /docs guesses), no re-probing of the 2026-10-01 findings, no app.instinct.com
+   access, no invite-wall circumvention. The sitemap (single fetch) declares exactly one URL —
+   the homepage — recorded as probe-tier evidence that the vendor's declared public crawl
+   surface has no docs/API/pricing pages.
+3. **Third-party sources for everything else**: TechCrunch 2026-08-24 privacy investigation
+   (named sources: Peter Yang, Claire Vo, Alex Cohen, Katie Jacobs Stanton, Jesse Middleton),
+   TechCrunch 2026-09-28 Series C, a first-person invited-user week-long writeup
+   (aibyaakash.com), two genuine HN threads (49689664 — The Atlantic credit-card piece;
+   49937498 — Ask HN first-person reports), and a hands-on comparative review (top5apps.ai).
+   cybernews.com 403'd the fetcher (recorded, skipped). HN name-search is pure pollution
+   (AMD Instinct GPUs etc.) — curated seeds carried the pack.
+
+Final evidence pack: 37 items — 16 claimed-docs, 19 community, 2 probe (robots.txt +
+sitemap.xml, the only direct HTTP observations, both crawler-facing metadata files published
+for automated consumption). Judged by the standard stage (claude-opus-5-5/v4), 52 cells;
+incumbents byte-identical via the judge cellHash cache. Capability claims that only an
+invite-holder could verify stay claimed-docs/community tier, and the D coverage grade and wide
+bands say so — that is the grading system working as designed.
+
+---
+
+Research lane, fetched 2026-10-01. Evidence pack raw material below (pre-judging state;
+the 2026-10-01 probe rows were NOT re-run on 2026-10-02 — see methodology above).
 All URLs below were fetched on 2026-10-01 unless noted; tiers follow the evidence-pack convention
 (`claimed-docs` = vendor's own pages, `press` = third-party reporting, `probe` = direct HTTP observation).
 

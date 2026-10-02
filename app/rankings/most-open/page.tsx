@@ -68,7 +68,7 @@ export function generateMetadata(): Metadata {
   const rows = buildOpenRows(loadAll())
   const leader = rows[0]
   return {
-    title: `Most open — all ${rows.length} products ranked by openness — Ultrametric`,
+    title: `Lowest lock-in — self-hosting, data export, open licenses, API parity — Ultrametric`,
     description: `Who lets you self-host, export everything, and inspect the code? ${leader && leader.openness !== null ? `${leader.product.name} leads with ${leader.openness.toFixed(0)}/100 openness.` : ''} Evidence-graded verdicts on self-hosting, full export, open license, and API parity.`,
   }
 }
@@ -88,7 +88,7 @@ export default function MostOpenRankingPage() {
   const categories = loadAll()
   const rows = buildOpenRows(categories)
   const jsonLd = rankingJsonLd(
-    'Most open — openness ranking',
+    'Lowest lock-in — self-hosting, export, licenses, API parity',
     'Products ranked by evidence-graded openness: self-hosting, full data export, open licensing, and API parity.',
     rows.map((row) => ({
       name: row.product.name,
@@ -109,11 +109,11 @@ export default function MostOpenRankingPage() {
       <div>
         {/* seed "most-open": same concept mark as the Explore menu entry and RankingsNav. */}
         <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
-          <GeoMark seed="most-open" title="Most open — openness ranking" size={16} className="text-zinc-500" />
+          <GeoMark seed="most-open" title="Lowest lock-in — self-hosting, export, licenses, API parity" size={16} className="text-zinc-500" />
           Global ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          Most open — who lets you leave
+          Lowest lock-in — self-hosting, export, licenses, API parity
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {rows.length} products across every arena, ranked by the openness theme score — evidence-graded

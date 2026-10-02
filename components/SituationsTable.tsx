@@ -13,7 +13,7 @@ import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
 // country-view filter — the one honest ordering is urgency (hours → days → weeks), then title,
 // and the rows arrive pre-sorted from lib/processRows.ts buildSituationRows. The cell idiom
 // matches the house table exactly (same borders, icon chips, urgency chips, scope glyphs,
-// CeilingBar, steps link), so the two indexes read as one system.
+// CeilingBar), so the two indexes read as one system.
 //
 // Rows link to the detail pages, which STAY at /processes/<slug> this round (URL stability).
 // Every row always wears its SHARP geo-scope glyph (🌐 / 🇺🇸 / 🏛): there is no geo dropdown
@@ -31,15 +31,16 @@ export default function SituationsTable({ rows }: { rows: ProcessRow[] }) {
             <th scope="col" className="px-2 py-2 font-normal">
               <span title="How fast the clock really runs once the trigger lands — hours, days, or weeks">Urgency</span>
             </th>
+            {/* 'Area', not 'Phase' (founder 2026-10-02): the cell renders the situation's
+                domain tag (legal, compliance, finance…), not a lifecycle phase. */}
             <th scope="col" className="hidden px-2 py-2 font-normal md:table-cell">
-              <span title="The honest domain of the situation (legal, compliance, finance…)">Phase</span>
+              <span title="The honest domain of the situation (legal, compliance, finance…)">Area</span>
             </th>
             <th scope="col" className="px-2 py-2 font-normal">
-              <span title="Agent ceiling: the share of this situation's steps an AI agent can run today — judgment, counsel, and signatures stay human">Agent ceiling</span>
+              <span title="Agentic %: the share of this situation's steps an AI agent can run today — judgment, counsel, and signatures stay human">Agentic %</span>
             </th>
-            <th scope="col" className="hidden px-2 py-2 font-normal sm:table-cell">
-              <span title="Agent-runnable steps out of the total steps">Steps</span>
-            </th>
+            {/* The Steps column is gone (founder 2026-10-02) — the detail page's step-by-step
+                carries the per-step story; the Agentic % bar is the honest summary here. */}
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
@@ -74,15 +75,6 @@ export default function SituationsTable({ rows }: { rows: ProcessRow[] }) {
                 </td>
                 <td className="px-2 py-2">
                   <CeilingBar pct={r.pct} />
-                </td>
-                <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
-                  <Link
-                    href={`${href}#steps`}
-                    title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
-                    className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-                  >
-                    {r.agentSteps}/{r.totalSteps}
-                  </Link>
                 </td>
               </tr>
             )

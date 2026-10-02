@@ -54,6 +54,7 @@ export default function ProcessLensBanner({
           serves <span className="tabular-nums text-emerald-300">{summary.served}</span> of{' '}
           <span className="tabular-nums">{summary.rankable}</span> rankable steps · process score{' '}
           <span className="tabular-nums text-emerald-300">{summary.score.toFixed(0)}</span>
+          <span className="text-zinc-500">/100</span>
         </span>
       </span>
       {lensPickCount > 0 && (

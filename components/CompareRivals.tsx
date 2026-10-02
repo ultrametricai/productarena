@@ -6,13 +6,17 @@ import ShutdownBadge from '@/components/ShutdownBadge'
 import { compareRivalsFor, vsSlugFor, type CompareRivalRow } from '@/lib/compareRivals'
 import type { CategoryData } from '@/lib/data-helpers'
 
-// Server component: "How it compares" — the founder ask (2026-09-22): a product page shows a
-// comparison table of its similar products. "Similar" here is leaderboard adjacency in the
-// product's OWN arena (lib/compareRivals.ts: 2 above + 2 below, edge-filled), a deliberately
-// FOCUSED slice of the arena leaderboard — same judged numbers, same n/a rules, none of
-// ArenaTable's sorting/filtering/preset machinery. Shutdown rivals keep their row with the
-// Closing tag (list semantics, lib/shutdown.ts); each rival's "vs" cell links to the judged
-// /vs/ head-to-head with this product. Renders nothing for arenas with fewer than 2 products.
+// Server component: "Alternatives comparison" (renamed from "How it compares", founder
+// 2026-10-02; the explainer sentence under the heading and the table's VS column went with it) —
+// the founder ask (2026-09-22): a product page shows a comparison table of its similar products.
+// "Similar" here is leaderboard adjacency in the product's OWN arena (lib/compareRivals.ts:
+// 2 above + 2 below, edge-filled), a deliberately FOCUSED slice of the arena leaderboard — same
+// judged numbers, same n/a rules, none of ArenaTable's sorting/filtering/preset machinery.
+// Shutdown rivals keep their row with the Closing tag (list semantics, lib/shutdown.ts). The
+// judged /vs/ head-to-heads live in the prominent "Compare head-to-head" strip below the table
+// (founder 2026-10-02: the battle affordance gets real visual weight — full chip buttons, house
+// idiom, each carrying its judged record where one exists). Renders nothing for arenas with
+// fewer than 2 products.
 
 // Per-dimension receipt anchors on the product's /score page — the same anchors the header's
 // AgenticBadge trio links to (app/arena/[category]/product/[id]/page.tsx).
@@ -92,19 +96,17 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
 
   return (
     <div id="compare-rivals" className="scroll-mt-4">
-      <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">
+      <h2 className="font-display leading-[1.1] mb-3 flex items-center gap-2 text-lg font-semibold">
         <GeoMark
           seed="compare-rivals"
-          title="How it compares — this product against its nearest arena rivals by leaderboard rank, from the same judged scores as the full leaderboard"
+          title="Alternatives comparison — this product against its nearest arena rivals by leaderboard rank, from the same judged scores as the full leaderboard"
           size={18}
           className="text-zinc-500"
         />
-        How it compares
+        Alternatives comparison
       </h2>
-      <p className="mb-3 text-sm text-zinc-500">
-        {selfName} against its nearest {data.category.name} rivals by arena rank — same judged
-        scores as the full leaderboard, plus each pair&rsquo;s head-to-head record.
-      </p>
+      {/* Founder 2026-10-02: no explainer sentence under the heading — the GeoMark title and the
+          column tooltips carry the framing. */}
       <div className="overflow-x-auto rounded-2xl border border-zinc-800">
         <table className="w-full border-collapse text-sm">
           <thead>
@@ -123,9 +125,8 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
               <th scope="col" className="hidden px-2 py-1.5 font-normal sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found. Each glyph links to its story's evidence.">Access</span>
               </th>
-              <th scope="col" className="px-2 py-1.5 font-normal">
-                <span title={`Judged head-to-head vs ${selfName}: ${selfName}'s round wins first, the rival's second (drawn rounds in the tooltip). Click for every judged round.`}>vs</span>
-              </th>
+              {/* The VS column is gone (founder 2026-10-02) — the judged head-to-heads live in
+                  the Compare head-to-head strip below, records included. */}
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -188,49 +189,47 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
                 <td className="hidden px-2 py-2 sm:table-cell">
                   <AgentAccessGlyphs data={data} productId={row.productId} />
                 </td>
-                <td className="whitespace-nowrap px-2 py-2 font-mono text-xs tabular-nums">
-                  {row.isSelf || !row.battleSlug ? (
-                    <span className="text-zinc-600" aria-hidden>
-                      —
-                    </span>
-                  ) : (
-                    <Link
-                      href={`/vs/${row.battleSlug}`}
-                      title={
-                        row.record
-                          ? `${selfName} ${row.record.wins} – ${row.record.losses} ${row.name}${row.record.draws > 0 ? ` (${row.record.draws} drawn)` : ''} — judged story by story; click for every round`
-                          : `${selfName} vs ${row.name} — the judged head-to-head, story by story`
-                      }
-                      className="text-zinc-400 hover:text-emerald-300"
-                    >
-                      {row.record ? `${row.record.wins}–${row.record.losses}` : 'vs'} ↗
-                    </Link>
-                  )}
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       {/* Founder 2026-09-23: the head-to-head links live under this table (moved from the top
-          actions rail) — every same-arena rival's /vs page plus the alternatives directory. */}
-      <div className="mt-3 text-xs">
-        <p className="text-[10px] uppercase tracking-widest text-zinc-500">Compare head-to-head</p>
-        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1.5">
+          actions rail) — every same-arena rival's /vs page plus the alternatives directory.
+          Founder 2026-10-02: this is now THE battle affordance (the table's VS column is gone)
+          and gets real visual weight — a proper sub-heading and full chip buttons in the house
+          idiom (rounded-full bordered pills, emerald on hover), each carrying the judged
+          head-to-head record where the rival rows above computed one. */}
+      <div className="mt-4">
+        <h3 className="font-display text-base font-semibold">Compare head-to-head</h3>
+        <div className="mt-2 flex flex-wrap gap-2">
           {data.products
             .filter((p) => p.id !== productId)
-            .map((rival) => (
-              <Link
-                key={rival.id}
-                href={`/vs/${vsSlugFor(data, productId, rival.id)}`}
-                className="inline-flex items-center gap-1.5 text-zinc-400 transition hover:text-emerald-300"
-              >
-                <ProductLogo product={rival} size={16} />
-                vs {rival.name}
-              </Link>
-            ))}
+            .map((rival) => {
+              const rivalRow = rows.find((r) => r.productId === rival.id && !r.isSelf)
+              return (
+                <Link
+                  key={rival.id}
+                  href={`/vs/${vsSlugFor(data, productId, rival.id)}`}
+                  title={
+                    rivalRow?.record
+                      ? `${selfName} ${rivalRow.record.wins} – ${rivalRow.record.losses} ${rival.name}${rivalRow.record.draws > 0 ? ` (${rivalRow.record.draws} drawn)` : ''} — judged story by story; click for every round`
+                      : `${selfName} vs ${rival.name} — the judged head-to-head, story by story`
+                  }
+                  className="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-3.5 py-1.5 text-sm text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                >
+                  <ProductLogo product={rival} size={20} />
+                  vs {rival.name}
+                  {rivalRow?.record && (
+                    <span className="font-mono text-xs tabular-nums text-zinc-500">
+                      {rivalRow.record.wins}–{rivalRow.record.losses}
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
         </div>
-        <p className="mt-1.5">
+        <p className="mt-2 text-xs">
           <Link href={`/alternatives/${productId}`} className="text-zinc-400 hover:text-emerald-300">
             Alternatives to {data.products.find((p) => p.id === productId)?.name ?? productId} →
           </Link>

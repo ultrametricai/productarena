@@ -20,10 +20,8 @@ export default function HomeProcessesMini({ rows }: { rows: ProcessRow[] }) {
         <h2 id="home-processes-heading" className="font-display text-balance text-3xl font-medium tracking-tight sm:text-4xl">
           Automating founder processes
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          Founder processes mapped step-by-step — every step routed to an agent, a form, or a human,
-          with the share an agent can run today. In the order a founder hits them:
-        </p>
+        {/* Founder 2026-10-02: the "mapped step-by-step … In the order a founder hits them:"
+            intro paragraph is gone — the heading and the table stand alone. */}
         <div className="mt-8 overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-[15px]">
             <thead>
@@ -33,7 +31,7 @@ export default function HomeProcessesMini({ rows }: { rows: ProcessRow[] }) {
                 <th scope="col" className="hidden px-3 py-2 font-normal lg:table-cell">
                   <span title="The main vendors this process runs on — judged vendors link to their product page">Vendor</span>
                 </th>
-                <th scope="col" className="px-3 py-2 font-normal">Agent ceiling</th>
+                <th scope="col" className="px-3 py-2 font-normal">Agentic %</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">

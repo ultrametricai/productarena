@@ -61,6 +61,12 @@
       "anchor": "priced-round-mechanics",
       "processes": ["fund_002", "fund_006"]
     },
+    "roundComposer": {
+      "label": "Priced-round composer",
+      "file": "lib/openstartup/roundComposer.ts",
+      "anchor": "priced-round-composer",
+      "processes": ["fund_002", "fund_006"]
+    },
     "optionTax": {
       "label": "ISO / NSO exercise tax",
       "file": "lib/openstartup/optionTax.ts",
@@ -78,6 +84,18 @@
       "file": "lib/openstartup/qsbs.ts",
       "anchor": "qsbs--1202",
       "processes": ["form_001", "form_012"]
+    },
+    "deferredRevenue": {
+      "label": "Deferred revenue (subscriptions)",
+      "file": "lib/openstartup/deferredRevenue.ts",
+      "anchor": "deferred-revenue-subscriptions",
+      "processes": ["fin_002", "growth_001", "growth_014"]
+    },
+    "unitEconomics": {
+      "label": "Unit economics",
+      "file": "lib/openstartup/unitEconomics.ts",
+      "anchor": "unit-economics",
+      "processes": ["qs_050", "fin_003", "scale_005", "growth_002", "growth_014"]
     },
     "deFranchiseTax": {
       "label": "Delaware franchise tax",
@@ -117,7 +135,10 @@
     { "processId": "fund_001", "nodeId": "n8", "module": "capTable", "function": "buildCapTable", "what": "the table rebuilt with the signed SAFEs — post-money conversion per the YC User Guide" },
     { "processId": "fund_002", "nodeId": "n1", "module": "antiDilution", "function": "weightedAverageConversionPrice", "what": "the NVCA weighted-average formula behind the anti-dilution clause on the table" },
     { "processId": "fund_002", "nodeId": "n1", "module": "round", "function": "maintainOwnership", "what": "'maintain my %' IS buying pro rata of the issuance — the algebra investors negotiate with" },
+    { "processId": "fund_002", "nodeId": "n1", "module": "roundComposer", "function": "termSheetEconomics", "what": "the term sheet's own arithmetic — post-money, the % the new money buys, the Quick Start §3 dilution estimate over the outstanding SAFEs" },
     { "processId": "fund_002", "nodeId": "n7", "module": "capTable", "function": "buildCapTable", "what": "priced-round PPS solving and the post-round table the shares are issued from" },
+    { "processId": "fund_002", "nodeId": "n7", "module": "roundComposer", "function": "replayPricedRound", "what": "the closing stage of the one-replay composition — the wires to verify (new cash + exercised pro rata; SAFEs wire nothing) and the exact issuance" },
+    { "processId": "fund_002", "nodeId": "n9", "module": "roundComposer", "function": "replayPricedRound", "what": "the post-close stage — the table the cap-table update must reproduce, with the new series' at-close conversion terms" },
     { "processId": "fund_002", "nodeId": "n9", "module": "grant409aSanity", "function": "refreshTriggerChecklist", "what": "a closed financing is a 409A staleness trigger — the cited refresh checklist" },
     { "processId": "fund_004", "nodeId": "n1", "module": "grant409aSanity", "function": "fmvAgeCheck", "what": "the 12-month staleness window plus the term-sheet and material-change flags" },
     { "processId": "fund_004", "nodeId": "n4", "module": "grant409aSanity", "function": "strikeFloorCheck", "what": "strike at or above the 409A FMV (rule us-fed.409a-stock-right-exception)" },
@@ -126,6 +147,7 @@
     { "processId": "fund_006", "nodeId": "n2", "module": "capTable", "function": "buildCapTable", "what": "post-money SAFE conversion per the YC User Guide — caps, discounts, pro rata" },
     { "processId": "fund_006", "nodeId": "n2", "module": "convertibleNote", "function": "seriesPricingWithNotes", "what": "PPS with outstanding notes/SAFEs — the three published Cooley GO methods" },
     { "processId": "fund_006", "nodeId": "n2", "module": "round", "function": "proRataShares", "what": "each holder's pro-rata piece of the issuance (YC User Guide § E)" },
+    { "processId": "fund_006", "nodeId": "n4", "module": "roundComposer", "function": "replayPricedRound", "what": "the pro-forma reviewed with the lead investor — the full conversion-and-pricing replay, stage by stage, Appendix II replayed in its tests" },
     { "processId": "tax_001", "nodeId": "n1", "module": "deFranchiseTax", "function": "compareFranchiseTaxMethods", "what": "both published methods computed exactly — the March recalculation naming the cheaper one" },
     { "processId": "tax_001", "nodeId": "n3", "module": "deadlines", "function": "deFranchiseTaxDue", "what": "the March 1 due date (rule us-de.franchise-tax-annual-report)" },
     { "processId": "tax_002", "nodeId": "n6", "module": "deadlines", "function": "form1120Due", "what": "the 15th day of the 4th month, June-30 exception (rule us-fed.1120-filing-deadline)" },
@@ -145,6 +167,13 @@
     { "processId": "qs_052", "nodeId": "n2", "module": "capTable", "function": "buildCapTable", "what": "rebuild from the transactions — ownership sums to 100%, no negative shares" },
     { "processId": "qs_053", "nodeId": "n2", "module": "capTable", "function": "buildCapTable", "what": "an independent rebuild from the documents — the audit's cross-check" },
     { "processId": "fin_003", "nodeId": "n4", "module": "runway", "function": "defaultAliveReport", "what": "burn and runway on the default-alive model — the board report's trajectory" },
+    { "processId": "fin_003", "nodeId": "n4", "module": "unitEconomics", "function": "burnMultiple", "what": "the board report's capital-efficiency line — net burn ÷ net new ARR (Sacks), not computable when net new ARR ≤ 0" },
+    { "processId": "scale_005", "nodeId": "n4", "module": "unitEconomics", "function": "burnMultiple", "what": "the deck's burn-efficiency KPI — net burn ÷ net new ARR over the quarter (Sacks)" },
+    { "processId": "scale_005", "nodeId": "n4", "module": "unitEconomics", "function": "ruleOf40", "what": "growth % + profit % against the published 40 (Feld) — which profit measure was used is the caller's statement" },
+    { "processId": "growth_002", "nodeId": "n3", "module": "unitEconomics", "function": "ltv", "what": "what the at-risk account is worth — ARPA × gross margin % ÷ churn (Skok) — the number the save offer is sized against" },
+    { "processId": "fin_002", "nodeId": "n5", "module": "deferredRevenue", "function": "recognitionReport", "what": "the subscription revenue lines' recognized-vs-deferred split behind the P&L — straight-line whole-day, cents-exact; accountant review still owns the books" },
+    { "processId": "growth_014", "nodeId": "n4", "module": "deferredRevenue", "function": "prorationOnPlanChange", "what": "the migration's proration arithmetic — unused-time credit and remaining-time charge by whole days (the cited upgrade/downgrade examples)" },
+    { "processId": "growth_014", "nodeId": "n7", "module": "unitEconomics", "function": "netMrrChurnRatePct", "what": "churn and MRR through the transition — (churned − expansion) ÷ beginning MRR (Skok), negative when expansion outruns churn" },
     { "processId": "fin_010", "nodeId": "n2", "module": "runway", "function": "hiringImpact", "what": "the plan replayed with each hire layered in — the alive→dead flip the essay warns about" },
     { "processId": "sit_007", "nodeId": "n2", "module": "vesting", "function": "vestedAsOf", "what": "vested vs unvested at the departure date — cliff and cumulative-floor rounding" },
     { "processId": "sit_007", "nodeId": "n4", "module": "vesting", "function": "departureSummary", "what": "the unvested-repurchase mechanics at departure — terms stay with the plan documents" },

@@ -96,15 +96,10 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">The full run</h2>
-        <p className="mt-1 text-sm text-zinc-400">
-          One continuous flow, sectioned per process. Route-coded blocks:{' '}
-          <span className="text-emerald-300">emerald = agent</span>,{' '}
-          <span className="text-amber-300">amber = manual form/portal</span>,{' '}
-          <span className="text-sky-300">sky = human or computer use</span>,{' '}
-          {/* Stale-copy fix (SSOT audit 2026-09-30): the '⏳ async' chip left ProcessDag's step
-              blocks on 2026-09-30 — the legend advertises only what the diagram renders. */}
-          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate.
-        </p>
+        {/* The route-coded legend sentence is gone here too (founder 2026-10-02, same ask as
+            process pages) — the route colors keep their per-badge labels/tooltips in the
+            diagram. */}
+        <p className="mt-1 text-sm text-zinc-400">One continuous flow, sectioned per process.</p>
         {/* Client-side lens banner over the WHOLE chain — one clicked vendor flows across every
             section. Renders nothing in the static HTML. */}
         <ProcessLensBanner steps={checkStepsByTask.flat()} pageKey={def.id} />

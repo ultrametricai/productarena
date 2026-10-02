@@ -59,11 +59,11 @@ describe('phase → area display map (lib/processRows.ts)', () => {
     expect(areaOfTask({ kind: 'process', phase: 'legal' })).toBe('Legal')
   })
 
-  it('buildSituationRows: the 12 reactive records, urgency (hours → days → weeks) then title, trigger/urgency/area intact', () => {
+  it('buildSituationRows: every reactive record, urgency (hours → days → weeks) then title, trigger/urgency/area intact', () => {
     const rows = buildSituationRows()
     const situations = loadProcesses().filter((t) => t.kind === 'situation')
     expect(rows).toHaveLength(situations.length)
-    expect(rows).toHaveLength(12)
+    expect(rows).toHaveLength(22)
     for (const r of rows) {
       expect(r.kind).toBe('situation')
       expect(r.area).toBe(SITUATIONS_AREA)

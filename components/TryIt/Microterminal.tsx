@@ -270,36 +270,34 @@ export default function Microterminal({
             <span className="mr-1.5 select-none text-emerald-400">$</span>
             {isLive ? `mcp-probe → ${probe?.endpoint ?? ''}` : active?.command ?? `try ${productName}`}
           </code>
-          <button
-            type="button"
-            onClick={() => activeId && runStory(activeId)}
-            disabled={!activeId || liveBusy}
-            title={isLive ? 'Run the live handshake again (keyless)' : 'Replay this recording from the start'}
-            className="ml-auto shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            ▶ {liveBusy ? 'running…' : isLive ? 'run' : 'replay'}
-          </button>
-          {active?.live && (
-            <button
-              type="button"
-              onClick={runLiveTry}
-              disabled={liveBusy}
-              title="Re-run this exact command from our edge, right now. The worker fetches the fixed URL from our committed manifest — no user input is involved."
-              className="shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              ▶ run live
-            </button>
-          )}
-          <span
-            className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isLive || liveRanIds.has(activeId ?? '') ? 'border-emerald-400/60 text-emerald-300' : 'border-zinc-600 text-zinc-400'
-            }`}
-          >
-            {isLive
-              ? 'live — run just now from our edge'
-              : liveRanIds.has(activeId ?? '')
-                ? 'recorded replay + live re-run — see the LIVE divider'
-                : 'recorded session — replayed, not live'}
+          {/* Founder 2026-10-02 (second ask): the title-bar ▶ replay/run control is gone.
+              Recordings auto-play on mount and re-play on every story-chip click (runStory
+              re-runs even the already-selected story); the live handshake runs via its own menu
+              chip. The per-line ▶ run-live affordance below stays. */}
+          <span className="ml-auto flex shrink-0 items-center gap-2">
+            {active?.live && (
+              <button
+                type="button"
+                onClick={runLiveTry}
+                disabled={liveBusy}
+                title="Re-run this exact command from our edge, right now. The worker fetches the fixed URL from our committed manifest — no user input is involved."
+                className="shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ▶ run live
+              </button>
+            )}
+            {/* Founder 2026-10-02: the per-run 'recorded session — replayed, not live' badge is
+                gone. The recorded-vs-live distinction stays visible without it: the provenance
+                footer below leads with "recorded <date> · exit <code> · captured verbatim…" on
+                every recording, while live output is marked by this badge's presence (live run /
+                LIVE-divider re-run states only) — a replay simply carries no live badge. */}
+            {(isLive || liveRanIds.has(activeId ?? '')) && (
+              <span className="shrink-0 rounded border border-emerald-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+                {isLive
+                  ? 'live — run just now from our edge'
+                  : 'recorded replay + live re-run — see the LIVE divider'}
+              </span>
+            )}
           </span>
         </div>
 
@@ -308,7 +306,7 @@ export default function Microterminal({
           className="h-72 overflow-auto whitespace-pre-wrap break-words px-3 py-2.5 font-mono text-xs leading-relaxed text-zinc-200"
         >
           {isLive && target === '' && !liveBusy && (
-            <span className="text-zinc-500">$ press ▶ run to send one JSON-RPC initialize from our edge{'\n'}</span>
+            <span className="text-zinc-500">$ press ▶ Live MCP handshake above to send one JSON-RPC initialize from our edge{'\n'}</span>
           )}
           {target.slice(0, shown)}
           {liveBusy && shown >= target.length && <span className="text-zinc-500">…</span>}
@@ -324,9 +322,9 @@ export default function Microterminal({
               {active.live ? ' · pure-HTTP probe — ▶ run live re-runs it from our edge' : ''}
             </span>
           ) : null}
-          {/* Founder 2026-10-02: the footer "replay ↺ / run again ▶" button is gone — it
-              duplicated the title bar's ▶ replay/run control. Skip stays (it's the only way to
-              fast-forward a replay). */}
+          {/* Founder 2026-10-02: the footer "replay ↺ / run again ▶" button went first, then the
+              title-bar ▶ replay/run control it duplicated — the story-menu chips are the one
+              play/replay affordance. Skip stays (the only way to fast-forward a replay). */}
           <span className="ml-auto flex shrink-0 gap-2">
             {typing && !liveBusy && (
               <button type="button" onClick={skip} className="rounded border border-zinc-700 px-2 py-0.5 text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300">

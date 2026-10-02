@@ -114,6 +114,7 @@ const NAV_LABELS: Record<string, string> = {
   "cloud-storage": "Cloud storage",
   "cloud-platforms": "Clouds",
   "startup-law-firms": "Law firms",
+  "startup-immigration": "Immigration",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
@@ -243,7 +244,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Most tested (full ranking)", sublabel: "All products, ranked by tested-evidence share", href: "/rankings/most-tested", keywords: pageAliases["/rankings/most-tested"] },
     { type: "arena", label: "Rising & falling (30-day moves)", sublabel: "Biggest Overall score gains and falls", href: "/rankings/rising", keywords: pageAliases["/rankings/rising"] },
     { type: "arena", label: "Most popular (stars, installs, 🔥 hot)", sublabel: "Popularity measured fairly, by segment", href: "/rankings/popular", keywords: pageAliases["/rankings/popular"] },
-    { type: "arena", label: "Most open (full ranking)", sublabel: "All products, ranked by openness", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
+    { type: "arena", label: "Lowest lock-in (full ranking)", sublabel: "Self-hosting, data export, open licenses, API parity", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },
     ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
     // The ⌘K 'Processes' group (founder 2026-10-02: defaults include processes): the
@@ -322,7 +323,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href="/startup-sim"
                 className="hidden shrink-0 items-center gap-1.5 text-sm text-zinc-300 transition hover:text-emerald-300 sm:flex"
               >
-                The Open Startup
+                Open Startup Sim
               </Link>
               <span className="hidden sm:block">
                 <ArenaMenu sections={arenaMenuSections} searchable />
@@ -488,9 +489,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <p className="mt-1 text-sm text-zinc-500">Applied intelligence for companies and beyond.</p>
             </div>
             <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-              <div className="flex flex-wrap items-center gap-1 text-sm text-zinc-500">
-                <span>© 2026 Ultrametric.</span>
-                {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
+              <div className="flex flex-col gap-1 text-sm text-zinc-500">
+                <div className="flex flex-wrap items-center gap-1">
+                  <span>© 2026 Ultrametric.</span>
+                  {/* The "Made from <city icons>" sign-off removed (founder 2026-10-02). */}
+                </div>
+                {/* One muted disclaimer line sitewide, nothing louder (founder liability pass
+                    2026-10-02); the full exclusions live at /terms, which this links. */}
+                <p className="text-xs text-zinc-600">
+                  Research content — not legal, tax, or financial advice. See{' '}
+                  <Link href="/terms" className="underline decoration-zinc-800 transition-colors hover:text-zinc-400">
+                    terms
+                  </Link>
+                  .
+                </p>
               </div>
               {/* flex-wrap: at narrow widths (375px) an unwrapped link row is wider than the
                   viewport and becomes the page's only source of horizontal scroll. */}

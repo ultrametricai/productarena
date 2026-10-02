@@ -13,7 +13,7 @@ import { collectGlobalStories } from '@/lib/globalStories'
 export const metadata: Metadata = {
   title: 'Everything — Ultrametric',
   description:
-    'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its agent ceiling, every stack, every ICP lens, and a link index to the rest of the site.',
+    'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its Agentic %, every stack, every ICP lens, and a link index to the rest of the site.',
   // Unlisted by founder call (see app/layout.tsx's nav comment) — noindex like the other
   // reachable-by-URL-only pages (/queue, /experiments/*), which all set this already.
   robots: { index: false, follow: false },
@@ -119,7 +119,7 @@ export default function EverythingPage() {
           <span className="text-xs tabular-nums text-zinc-500">{processes.length}</span>
         </div>
         <p className="text-xs text-zinc-500">
-          Founder operating processes with the % of steps an agent can run today (the agent ceiling).
+          Founder operating processes with the % of steps an agent can run today (the Agentic %).
         </p>
         <ul className="rounded-lg border border-zinc-800">
           {processes.map((p) => (
@@ -133,7 +133,7 @@ export default function EverythingPage() {
               <Link
                 href={`/processes/${p.slug}`}
                 className="w-16 shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-                title={`Agent ceiling: ${p.agentSteps} of ${p.totalSteps} steps agent-runnable today — see the step-by-step verdict`}
+                title={`Agentic %: ${p.agentSteps} of ${p.totalSteps} steps agent-runnable today — see the step-by-step verdict`}
               >
                 {p.pct}% <span className="text-zinc-500">{p.agentSteps}/{p.totalSteps}</span>
               </Link>
