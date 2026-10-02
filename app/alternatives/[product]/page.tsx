@@ -10,7 +10,7 @@ import { loadAll } from '@/lib/data'
 import { humanizeTheme } from '@/lib/icons'
 import { SITE_URL } from '@/lib/site'
 
-// "Alternatives to <X>": X's arena rivals ranked by the same evidence-graded leaderboard,
+// "Alternatives to <X>": X's arena rivals ranked by the same agent-tested leaderboard,
 // each with its top story-level wins over X (from the derived battle rounds — see
 // lib/alternatives.ts), plus a few adjacent-arena products. One page per unique product id
 // (a duplicated id — square — resolves to its first arena, same rule as the badge generator).
@@ -88,7 +88,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
           Alternatives to {product.name}
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          {rivals.length} {data.category.name} rivals, ranked by the same evidence-graded leaderboard —{' '}
+          {rivals.length} {data.category.name} rivals, ranked by the same agent-tested leaderboard —{' '}
           {product.name} itself ranks{' '}
           <Link href={`/arena/${data.category.id}/product/${product.id}`} className="text-emerald-300 hover:underline">
             #{baseRank} with a Overall score of {fmtScore(baseEntry?.aiEra ?? null)}

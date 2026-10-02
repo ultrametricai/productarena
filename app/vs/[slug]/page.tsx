@@ -38,8 +38,8 @@ function vsFaqJsonLd(data: CategoryData, battle: BattleRecord, a: Product, b: Pr
         acceptedAnswer: {
           '@type': 'Answer',
           text: winnerName
-            ? `${winnerName} wins the head-to-head ${record} across ${data.category.name}'s evidence-graded user stories — see ${SITE_URL}/vs/${battleSlug(battle.a, battle.b)}.`
-            : `${a.name} and ${b.name} draw the head-to-head ${record} across ${data.category.name}'s evidence-graded user stories.`,
+            ? `${winnerName} wins the head-to-head ${record} across ${data.category.name}'s agent-tested user stories — see ${SITE_URL}/vs/${battleSlug(battle.a, battle.b)}.`
+            : `${a.name} and ${b.name} draw the head-to-head ${record} across ${data.category.name}'s agent-tested user stories.`,
         },
       },
       {
@@ -75,7 +75,7 @@ export async function generateMetadata({
   const year = new Date().getFullYear()
   return {
     title: `${a.name} vs ${b.name} (${year}): which is more AI-ready? Evidence-tested comparison`,
-    description: `Head-to-head, evidence-graded comparison of ${a.name} and ${b.name} across ${data.category.name} — Overall score, agent-readiness, business model, vendor claims verified, and every judged round.`,
+    description: `Head-to-head, agent-tested comparison of ${a.name} and ${b.name} across ${data.category.name} — Overall score, agent-readiness, business model, vendor claims verified, and every judged round.`,
     alternates: { canonical: `${SITE_URL}/vs/${slug}` },
   }
 }

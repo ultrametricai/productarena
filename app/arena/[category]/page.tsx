@@ -34,7 +34,7 @@ function topEntry(data: CategoryData) {
 }
 
 function scoreText(aiEra: number | null): string {
-  return aiEra === null ? 'the top evidence-graded coverage score' : `a Overall score of ${aiEra.toFixed(0)}/100`
+  return aiEra === null ? 'the top agent-tested coverage score' : `a Overall score of ${aiEra.toFixed(0)}/100`
 }
 
 // Honest FAQPage JSON-LD — both answers are derived straight from this arena's own computed
@@ -50,7 +50,7 @@ function arenaFaqJsonLd(data: CategoryData) {
         name: `Which ${data.category.name} product is most agent-friendly?`,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `${product.name} ranks first in Ultrametric's ${data.category.name} arena, with ${scoreText(entry.aiEra)} — see the full evidence-graded leaderboard at ${SITE_URL}/arena/${data.category.id}.`,
+          text: `${product.name} ranks first in Ultrametric's ${data.category.name} arena, with ${scoreText(entry.aiEra)} — see the full agent-tested leaderboard at ${SITE_URL}/arena/${data.category.id}.`,
         },
       },
       {
@@ -114,7 +114,7 @@ export async function generateMetadata({
   const year = new Date().getFullYear()
   return {
     title: `Best ${data.category.name} for AI agents (${year}) — Ultrametric`,
-    description: `Which ${data.category.name} product is most agent-friendly? ${product.name} leads with ${scoreText(entry.aiEra)} in Ultrametric's evidence-graded ${data.category.name} rankings.`,
+    description: `Which ${data.category.name} product is most agent-friendly? ${product.name} leads with ${scoreText(entry.aiEra)} in Ultrametric's agent-tested ${data.category.name} rankings.`,
   }
 }
 
