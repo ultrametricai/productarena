@@ -4,13 +4,13 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { once } from 'node:events'
-import { stopRuntime } from '../check-preview-runtime.mjs'
+import { staticTargets, stopRuntime } from '../check-preview-runtime.mjs'
 
 const roots: string[] = []
 const checker = path.resolve('scripts/check-preview-runtime.mjs')
 const traces = ['processes/preview/page.js.nft.json', 'processes/preview/[id]/page.js.nft.json', 'processes/incorporate-c-corp/v2/page.js.nft.json']
 const inputs = ['processes/corpus.json', 'journeys/chains.json']
-function fixture(omit?: { trace: number; file: string }) {
+function fixture(omit?: { trace: number; file: string }, staticExtras: string[] = []) {
   const root = mkdtempSync(path.join(tmpdir(), 'preview-trace-test-'))
   roots.push(root)
   for (const file of inputs) {
@@ -24,6 +24,15 @@ function fixture(omit?: { trace: number; file: string }) {
       .map(file => path.relative(path.dirname(filename), path.join(root, file)))
     writeFileSync(filename, JSON.stringify({ version: 1, files }))
   })
+  // Static routes' traces must carry code/deps only — never the build-time-only data dirs
+  // that next.config.ts's outputFileTracingExcludes keeps out of the deployment.
+  for (const target of staticTargets) {
+    const filename = path.join(root, '.next/server/app', target.trace)
+    mkdirSync(path.dirname(filename), { recursive: true })
+    const files = ['node_modules/next/dist/server/next-server.js', ...staticExtras]
+      .map(file => path.relative(path.dirname(filename), path.join(root, file)))
+    writeFileSync(filename, JSON.stringify({ version: 1, files }))
+  }
   return root
 }
 function check(root: string) {
@@ -48,6 +57,18 @@ describe('preview deployment trace regression gate', () => {
     const result = check(root)
     expect(result.status).not.toBe(0)
     expect(result.stderr).toContain('ENOENT')
+  })
+})
+
+describe('static trace exclusion regression gate', () => {
+  it.each(['data/ai-coding/verdicts.json', 'public/data/categories.json', 'pipeline/cache/claims.json'])(
+    'rejects a static trace that carries build-time-only file %s', extra => {
+      const result = check(fixture(undefined, [extra]))
+      expect(result.status).not.toBe(0)
+      expect(result.stderr).toContain(`build-time-only file ${extra}`)
+    })
+  it('accepts static traces that only carry code and dependencies', () => {
+    expect(check(fixture()).status).toBe(0)
   })
 })
 

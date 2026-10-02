@@ -28,8 +28,9 @@ describe('README.md (founder batch 2026-10-02)', () => {
     // The reactive layer links both its live index and its repo doctrine.
     expect(readme).toContain('https://ultrametric.ai/situations')
     expect(readme).toContain('processes/SITUATIONS.md')
-    // The pillar paragraph names the trigger + urgency model.
-    const para = readme.indexOf('**Situations.**')
+    // The pillar paragraph names the trigger + urgency model (plain prose, no bold-label
+    // scaffolding — AGENTS.md Writing style rule 5).
+    const para = readme.indexOf('**situations**, the reactive layer')
     expect(para).toBeGreaterThan(-1)
     const paraText = readme.slice(para, readme.indexOf('\n\n', para))
     expect(paraText).toContain('trigger')

@@ -26,9 +26,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 136 records (124 processes + 12 situations) with unique, non-empty slugs', () => {
+  it('loads all 146 records (124 processes + 22 situations) with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(136)
+    expect(tasks.length).toBe(146)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -320,6 +320,36 @@ describe('corpus', () => {
     expect(noteKind('tax_001', 'DE')).toBe('not-applicable')
   })
 
+  // Geo coverage to totality (founder boost 2026-10-02: "close EVERY gap … pin totality:
+  // uncovered = 0"). Every US-scoped record — processes and situations alike — now says what
+  // the need becomes in all four countries, with the honesty carried by the note KIND (a
+  // not-applicable note is a closed gap too: sit_002 is inherently US-inbound, Germany has no
+  // 409A ritual and no 1099 regime). The four-country set is the whole enum, so this is the
+  // uncovered=0 pin.
+  it('geo totality: every US-scoped record carries all four countries (uncovered = 0)', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    for (const t of tasks.filter((x) => x.geoScope !== 'global')) {
+      expect(
+        (t.geoNotes ?? []).map((n) => n.country).sort(),
+        `${t.id} (${t.title}): four-country geo totality`,
+      ).toEqual(['DE', 'FR', 'IN', 'UK'])
+    }
+    // The worked decisions of the closing pass, pinned: bank-account analogs exist in all four
+    // countries (vendor-geo-aligned); 409A and 1099s honestly have no DE equivalent; the visa
+    // situation is honestly not-applicable everywhere (inherently US-inbound).
+    const noteKind = (id: string, country: string) =>
+      tasks.find((t) => t.id === id)!.geoNotes!.find((n) => n.country === country)?.kind
+    for (const c of ['IN', 'UK', 'DE', 'FR']) {
+      expect(noteKind('qs_023', c), `qs_023/${c}`).toBe('analog')
+      expect(noteKind('sit_002', c), `sit_002/${c}`).toBe('not-applicable')
+    }
+    expect(noteKind('fund_003', 'DE')).toBe('not-applicable')
+    expect(noteKind('fund_003', 'FR')).toBe('not-applicable')
+    expect(noteKind('fund_003', 'UK')).toBe('analog') // the EMI valuation precedent
+    expect(noteKind('tax_003', 'DE')).toBe('not-applicable')
+    expect(noteKind('vc_002', 'DE')).toBe('analog') // AIFMD/BaFin is real, doable work
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()
@@ -337,7 +367,7 @@ describe('corpus', () => {
     const tasks = loadProcesses(DATA_DIR)
     const byId = (id: string) => tasks.find((t) => t.id === id)!
     const situations = tasks.filter((t) => t.kind === 'situation')
-    expect(situations.length).toBe(12)
+    expect(situations.length).toBe(22)
     // Reactive by definition: every situation is event-driven — no situation sits on a calendar.
     for (const t of situations) expect(t.cadence, `${t.id} cadence`).toBe('event-driven')
     // The urgency clock is curated, not uniform — all three tiers exist in the set.
@@ -371,6 +401,10 @@ describe('corpus', () => {
       ['sit_008', 'US-FED', 'us-fed.frcp-answer-deadline'],
       ['sit_009', 'US-FED', 'us-fed.trademark-office-action-response'],
       ['sit_010', 'US-DE', 'us-de.franchise-tax-annual-report'],
+      // Wave 3 (founder boost 2026-10-02): the GDPR one-month DSAR clock and the OSHA
+      // 8/24-hour severe-injury clocks, carded against their primary sources.
+      ['sit_015', 'EU', 'eu.gdpr-dsar-response-deadline'],
+      ['sit_021', 'US-FED', 'us-fed.osha-severe-injury-reporting'],
     ] as const) {
       expect(byId(sid).description, `${sid} cites its rule card`).toContain(ruleId)
       const file = path.join(__dirname, '..', '..', 'rules', dir, `${ruleId.replace(/\./g, '-')}.json`)
@@ -386,9 +420,12 @@ describe('corpus', () => {
     expect(breach.urgency).toBe('hours')
     expect(breach.reversibility).toBe('irreversible')
     expect(breach.dag.nodes.filter((n) => n.reversibility === 'irreversible').length).toBe(2)
-    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped.
+    // Geo honesty: the breach clocks are US-state statutes with real non-US analogs mapped —
+    // four-country total since the totality pass (the CNIL teleservice URL verified live
+    // 2026-10-02 closed the FR gap the first pass couldn't).
     expect(breach.geoScope).toBe('us-state')
-    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'IN', 'UK'])
+    expect((breach.geoNotes ?? []).map((n) => n.country).sort()).toEqual(['DE', 'FR', 'IN', 'UK'])
+    expect(breach.geoNotes!.find((n) => n.country === 'FR')!.actionUrl).toContain('cnil.fr')
   })
 
   it('contains no scrubbed vendor names and no AFK-app-legacy framing', () => {
