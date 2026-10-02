@@ -4,6 +4,7 @@ import { IconGlyph } from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { loadCommandPaletteIndex } from '@/lib/command-palette-client'
 import { filterSearchEntries, prepareSearchEntries, type SearchEntry, type SearchEntryType } from '@/lib/search-index'
 
 const TYPE_ORDER: SearchEntryType[] = ['arena', 'stack', 'process', 'page', 'product', 'story']
@@ -16,16 +17,39 @@ const TYPE_LABEL: Record<SearchEntryType, string> = {
   story: 'Stories',
 }
 const MAX_RESULTS = 40
+const EMPTY_ENTRIES: SearchEntry[] = []
+type IndexResult = { url: string; status: 'ready'; entries: SearchEntry[] } | { url: string; status: 'error' }
 
 // Global ⌘K/Ctrl+K search over every arena, product, and story (see lib/search-index.ts).
 // Self-contained: renders both its own header trigger button and the overlay, so it can be
 // dropped into the (server-component) layout without lifting open-state elsewhere.
-export default function CommandPalette({ entries }: { entries: SearchEntry[] }) {
+export default function CommandPalette({ indexUrl }: { indexUrl: string }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+  const [index, setIndex] = useState<IndexResult | null>(null)
+  const [attempt, setAttempt] = useState(0)
+  const currentIndex = index?.url === indexUrl ? index : null
+  const entries = currentIndex?.status === 'ready' ? currentIndex.entries : EMPTY_ENTRIES
+
+  useEffect(() => {
+    if (!open) return
+    let active = true
+    loadCommandPaletteIndex(indexUrl).then(
+      (loaded) => { if (active) setIndex({ url: indexUrl, status: 'ready', entries: loaded }) },
+      () => { if (active) setIndex({ url: indexUrl, status: 'error' }) },
+    )
+    return () => { active = false }
+  }, [open, indexUrl, attempt])
+
+  function retry() {
+    inputRef.current?.focus()
+    setIndex(null)
+    setActiveIndex(0)
+    setAttempt((value) => value + 1)
+  }
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -118,6 +142,10 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
     }
     if (e.key === 'Enter') {
       e.preventDefault()
+      if (currentIndex?.status === 'error') {
+        retry()
+        return
+      }
       const chosen = results[activeIndex]
       if (chosen) go(chosen)
     }
@@ -152,8 +180,18 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
               placeholder="Search arenas, products, stories…"
               className="w-full border-b border-zinc-800 bg-transparent px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
             />
-            <div className="max-h-96 overflow-y-auto py-2">
-              {results.length === 0 && (
+            <div className="max-h-96 overflow-y-auto py-2" aria-busy={!currentIndex}>
+              {!currentIndex && (
+                <div role="status" aria-label="Loading search" className="flex justify-center px-4 py-6">
+                  <span aria-hidden className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-700 border-t-emerald-400" />
+                </div>
+              )}
+              {currentIndex?.status === 'error' && (
+                <button type="button" onClick={retry} className="w-full px-4 py-6 text-center text-sm text-zinc-400 hover:text-emerald-300">
+                  Retry search
+                </button>
+              )}
+              {currentIndex?.status === 'ready' && results.length === 0 && (
                 <p className="px-4 py-6 text-center text-sm text-zinc-400">
                   {query.trim() ? <>No matches for &ldquo;{query}&rdquo;</> : 'No matches'}
                 </p>
