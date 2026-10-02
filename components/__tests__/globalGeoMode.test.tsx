@@ -34,12 +34,14 @@ import { resetMethodSelections, stepMethodNodeKey, type StepMethodView } from '@
 const NOTES: GeoAnalogNote[] = [
   {
     country: 'UK',
+    kind: 'analog',
     summary: 'Register a private limited company with Companies House.',
     actionUrl: 'https://www.gov.uk/limited-company-formation',
     actionLabel: 'Companies House — set up a limited company',
   },
   {
     country: 'IN',
+    kind: 'analog',
     summary: 'Incorporate via MCA SPICe+ on the NSWS portal.',
     actionUrl: 'https://www.nsws.gov.in/',
     actionLabel: 'NSWS — incorporate a company',
@@ -226,12 +228,13 @@ describe('manual country still wins; the switcher writes the shareable token', (
     expect(container.textContent).toContain('United Kingdom')
     expect(container.textContent).not.toContain('Delaware-only')
     act(() => setGeoChoice('UK'))
-    expect(container.textContent).toContain('US-centric process.')
+    // The wrong-country-flow guard (founder 2026-10-02): the committed UK note LEADS the banner.
+    expect(container.textContent).toContain('In the United Kingdom, this runs as:')
     expect(container.textContent).toContain('Register a private limited company with Companies House.')
     expect(container.textContent).toContain('Delaware-only')
     act(() => setGeoChoice(null))
     expect(container.textContent).not.toContain('Global view')
-    expect(container.textContent).not.toContain('US-centric process.')
+    expect(container.textContent).not.toContain('this runs as:')
     expect(container.textContent).toContain('Delaware-only')
   })
 

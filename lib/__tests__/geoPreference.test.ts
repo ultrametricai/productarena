@@ -15,6 +15,7 @@ import {
   setGeoChoice,
   setGeoSelection,
   subscribeGeoSelection,
+  usFlagGlyph,
   type GeoNotesByCountry,
 } from '@/lib/geoPreference'
 
@@ -132,6 +133,16 @@ describe('display metadata', () => {
       expect(GEO_SCOPE_GLYPH[s].glyph).toBeTruthy()
       expect(GEO_SCOPE_GLYPH[s].label).toBeTruthy()
     }
+  })
+
+  // The title-trailing scope glyph rule (founder batch 2026-10-02): keys STRICTLY on geoScope.
+  it('usFlagGlyph: 🇺🇸 for us AND us-state (labels telling them apart); NEVER for global or the shared-catalog null', () => {
+    expect(usFlagGlyph('us')?.glyph).toBe('🇺🇸')
+    expect(usFlagGlyph('us-state')?.glyph).toBe('🇺🇸')
+    expect(usFlagGlyph('us')!.label).not.toBe(usFlagGlyph('us-state')!.label)
+    // A geoScope-'global' record can never render the flag (the qs_023 audit).
+    expect(usFlagGlyph('global')).toBeNull()
+    expect(usFlagGlyph(null)).toBeNull()
   })
 })
 
