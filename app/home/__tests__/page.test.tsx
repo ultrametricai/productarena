@@ -6,13 +6,13 @@ import { HOME_PROCESSES_COUNT } from '@/components/HomeProcessesMini'
 import { HOME_RANKINGS_COUNT } from '@/components/HomeRankingsMini'
 
 describe('landing homepage (ported to /home; served at ultrametric.ai/ by the worker)', () => {
-  it('renders the hero with the simulator CTA and NO eyebrow line (founder 2026-09-30)', () => {
+  it('renders the hero with NO eyebrow line and NO CTA button (founder 2026-09-30 / 2026-10-02)', () => {
     render(<HomePage />)
     expect(screen.getByRole('heading', { level: 1, name: /Automating\s*the startup/ })).toBeDefined()
     // "Redefining work in the AI phase transition" was removed by founder ask 2026-09-30.
     expect(screen.queryByText('Redefining work in the AI phase transition')).toBeNull()
-    const cta = screen.getByRole('link', { name: /Play with the open startup/ })
-    expect(cta.getAttribute('href')).toBe('/startup-sim')
+    // The 'Play with the open startup' hero CTA was removed by founder ask 2026-10-02.
+    expect(screen.queryByRole('link', { name: /Play with the open startup/ })).toBeNull()
   })
 
   it('pins the ~70% viewport hero height (founder 2026-09-30, down from 100svh)', () => {
