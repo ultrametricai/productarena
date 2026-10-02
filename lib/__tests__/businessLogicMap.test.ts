@@ -84,7 +84,12 @@ describe('processes/business-logic-map.json step-level totality', () => {
 
   it('carries the honest curated set (both bounds guard against decorating and silent loss)', () => {
     expect(steps.length).toBeGreaterThanOrEqual(25)
-    expect(steps.length).toBeLessThanOrEqual(60)
+    // Ceiling raised 60 → 75 with the business-logic deep pass (founder 2026-10-02): the
+    // composer/unit-economics/deferred-revenue modules added curated step entries
+    // (fund_002 n1/n7/n9, fund_006 n4, fin_003 n4, scale_005 n4, growth_002 n3,
+    // growth_014 n4/n7, fin_002 n5). The bound still exists to force this comment the
+    // next time someone is tempted to decorate.
+    expect(steps.length).toBeLessThanOrEqual(75)
   })
 
   it('every entry names a known module whose task-level processes include the step process', () => {
