@@ -63,11 +63,25 @@ def check_part(raw, target, label, workflow=False):
     equal(target["id"], raw["id"], label + ".id")
     title = "action" if workflow else "label"
     equal(target["title"], raw[title], label + "." + title)
-    moved = {"id", title, "methods", "processRef"} | quarantined | check_refs(raw, target, label)
+    methods = raw.get("methods", [])
+    base = target["options"][0] if methods else target
+    alternatives = target["options"][1:] if methods else target["options"]
+    if methods:
+        equal(target["kind"], "decision", label + ".decision")
+        equal(base["id"], "default", label + ".explicitDefault")
+        base_label = raw.get("actionLabel") if raw.get("actionUrl") else None
+        equal(base["title"], "Default — " + (base_label or raw[title]), label + ".default.title")
+        equal(base["summary"], raw[title] if base_label else "", label + ".default.summary")
+        equal(base["when"], None, label + ".noInventedDefaultCondition")
+        equal(base["parts"], [], label + ".noInventedDefaultParts")
+        equal(base.get("links", []), [], label + ".noInventedDefaultEdges")
+        equal(target["references"], [], label + ".noDefaultReferencesOnDecision")
+        equal(target["metadata"], {}, label + ".noDefaultAnnotationsOnDecision")
+    moved = {"id", title, "methods", "processRef"} | quarantined | check_refs(raw, base, label)
     equal(target["ref"], slugs.get(raw.get("processRef"), raw.get("processRef")), label + ".processRef")
-    equal(target["metadata"], {k: v for k, v in raw.items() if k not in moved}, label + ".metadata")
-    equal(len(target["options"]), len(raw.get("methods", [])), label + ".methods.count")
-    for method, option in zip(raw.get("methods", []), target["options"]):
+    equal(base["metadata"], {k: v for k, v in raw.items() if k not in moved}, label + ".metadata")
+    equal(len(alternatives), len(methods), label + ".methods.count")
+    for method, option in zip(methods, alternatives):
         at = label + ".methods." + method["id"]
         equal(option["id"], method["id"], at + ".id")
         equal(option["title"], method["label"], at + ".label")
@@ -153,7 +167,8 @@ for r in records:
 
 positive_checks = checks
 mutated = copy.deepcopy(by_id[corpus[0]["id"]]["parts"][0])
-mutated["metadata"]["estimatedMinutes"] += 1
+timing_metadata = next((option["metadata"] for option in mutated["options"] if option["id"] == "default"), mutated["metadata"])
+timing_metadata["estimatedMinutes"] += 1
 try:
     check_part(corpus[0]["dag"]["nodes"][0], mutated, "negative changed timing")
 except AssertionError:

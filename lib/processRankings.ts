@@ -359,6 +359,11 @@ export interface ProcessLeaderboard {
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
+// Equal-weight coverage across the explicitly supplied rankable step scope.
+export function aggregateStepCoverage(scores: readonly number[], rankableSteps: number): number {
+  return rankableSteps === 0 ? 0 : round1(scores.reduce((sum, score) => sum + score, 0) / rankableSteps)
+}
+
 export function processLeaderboard(task: ProcessTask, dir?: string): ProcessLeaderboard {
   interface RankedStep {
     node: DagNode
@@ -411,7 +416,7 @@ export function processLeaderboard(task: ProcessTask, dir?: string): ProcessLead
       return {
         ...e,
         avgStepScore: round1(sum / e.stepsServed),
-        processScore: rankable === 0 ? 0 : round1(sum / rankable),
+        processScore: aggregateStepCoverage(e.steps.map(step => step.score), rankable),
       }
     })
     .sort(
