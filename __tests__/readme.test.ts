@@ -61,9 +61,8 @@ describe('README.md (founder batch 2026-10-02)', () => {
     expect(contributing).toContain('pnpm test')
   })
 
-  it('keeps the Discord slot commented out until the founder supplies the invite URL', () => {
-    expect(readme).toContain('TODO(founder): drop the Discord invite URL here')
-    // No invented invite anywhere in the README.
-    expect(readme).not.toContain('discord.gg')
+  it('carries the live Discord invite the founder supplied (2026-10-02)', () => {
+    expect(readme).toContain('[Discord](https://discord.com/invite/3aHky836qP)')
+    expect(readme).not.toContain('TODO(founder): drop the Discord invite URL here')
   })
 })

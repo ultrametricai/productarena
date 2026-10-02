@@ -10,9 +10,7 @@
 
 **Contribution guides:** [Add your vendor](CONTRIBUTING.md#add-your-vendor) · [Add a process](CONTRIBUTING.md#add-a-process) · [Add a jurisdiction](CONTRIBUTING.md#add-a-jurisdiction) · [Add an open module](CONTRIBUTING.md#add-an-open-module)
 
-<!-- TODO(founder): drop the Discord invite URL here, then uncomment:
-**Talk:** [Discord](DISCORD_INVITE_URL) — founders and contributors
--->
+**Talk:** [Discord](https://discord.com/invite/3aHky836qP) — founders and contributors
 
 ## Start here
 

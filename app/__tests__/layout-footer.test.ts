@@ -27,14 +27,10 @@ describe('sitewide footer (app/layout.tsx)', () => {
     expect(anchor).toContain('rel="noopener noreferrer"')
   })
 
-  it('keeps the Discord slot commented out until the founder supplies the invite URL (founder batch 2026-10-02)', () => {
+  it('links the live Discord invite in the footer (founder supplied 2026-10-02)', () => {
     const footer = layoutSrc.slice(layoutSrc.indexOf('<footer'))
-    // The slot exists, flagged for the founder…
-    expect(footer).toContain('TODO(founder): drop the Discord invite URL here')
-    // …and no invite URL was invented anywhere in the layout: the only mention of Discord is
-    // inside that commented slot, with the placeholder href, never a live discord.gg link.
-    expect(layoutSrc).not.toContain('discord.gg')
-    expect(footer).toContain('href="DISCORD_INVITE_URL"')
+    expect(footer).toContain('href="https://discord.com/invite/3aHky836qP"')
+    expect(footer).not.toContain('DISCORD_INVITE_URL')
   })
 
   it('carries ONE muted disclaimer line near the © line, linking /terms (founder liability pass 2026-10-02)', () => {
