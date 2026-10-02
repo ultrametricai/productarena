@@ -243,7 +243,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Most tested (full ranking)", sublabel: "All products, ranked by tested-evidence share", href: "/rankings/most-tested", keywords: pageAliases["/rankings/most-tested"] },
     { type: "arena", label: "Rising & falling (30-day moves)", sublabel: "Biggest Overall score gains and falls", href: "/rankings/rising", keywords: pageAliases["/rankings/rising"] },
     { type: "arena", label: "Most popular (stars, installs, 🔥 hot)", sublabel: "Popularity measured fairly, by segment", href: "/rankings/popular", keywords: pageAliases["/rankings/popular"] },
-    { type: "arena", label: "Most open (full ranking)", sublabel: "All products, ranked by openness", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
+    { type: "arena", label: "Lowest lock-in (full ranking)", sublabel: "Self-hosting, data export, open licenses, API parity", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },
     ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
     // The ⌘K 'Processes' group (founder 2026-10-02: defaults include processes): the
