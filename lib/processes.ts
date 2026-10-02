@@ -502,7 +502,7 @@ export const CADENCE_META: Record<Cadence, { label: string; blurb: string }> = {
   monthly: { label: 'Monthly', blurb: 'The money drumbeat: payroll runs, books close, invoices go out, runway gets read.' },
   quarterly: { label: 'Quarterly', blurb: 'Governance season: board meetings, minutes, OKRs, review cycles.' },
   annual: { label: 'Annual', blurb: 'The filing calendar: franchise tax, returns, 1099s, insurance, 409A.' },
-  'event-driven': { label: 'When it happens', blurb: 'No calendar — a hire, a cancellation, a new vendor, a round sets these off.' },
+  'event-driven': { label: 'As needed', blurb: 'No calendar — a hire, a cancellation, a new vendor, a round sets these off.' },
   once: { label: 'Once', blurb: 'Setup and formation — done once, then the company runs on everything above.' },
 }
 

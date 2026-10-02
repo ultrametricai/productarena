@@ -154,11 +154,12 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           arena id, so every arena header is subtly its own) behind the header text. */}
       <div className="relative isolate">
         <GeoBackdrop seed={data.category.id} />
-        {/* The eyebrow doubles as the way back up — this page's children (checklist, report)
-            already link their eyebrows back to the arena; same pattern, one level higher. */}
+        {/* The eyebrow is a breadcrumb back up to the arenas index (founder 2026-10-02) — this
+            page's children (checklist, report) already link their eyebrows back to the arena;
+            same pattern, one level higher. */}
         <p className="text-sm uppercase tracking-widest text-emerald-400">
-          <Link href="/" title="Back to all arenas" className="transition hover:text-emerald-300">
-            Arena
+          <Link href="/arenas" title="All arenas" className="transition hover:text-emerald-300">
+            ‹ Arenas
           </Link>
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
