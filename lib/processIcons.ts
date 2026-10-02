@@ -246,6 +246,9 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_010: pi('clock-alert', 'sky'), // ⏰ DE franchise tax delinquency (the overdue clock)
   sit_011: pi('storm', 'sky'), // ⛈ DDoS attack or major outage (the storm hits the cloud)
   sit_012: pi('unplug', 'sky'), // 🔌 Migrate off a shutting-down vendor (the plug pulled)
+  // Wave 3 (founder boost 2026-10-02) — same rule: domain hue, situation grouped by kind.
+  sit_013: pi('unplug', 'emerald'), // 🔌 Processor account termination (the same pulled-plug concept as sit_012, money hue — the processor pulls YOURS)
+  sit_014: pi('eye', 'sky'), // 👁 Security-vulnerability report (someone saw through the shield)
 }
 
 export function processIcon(taskId: string): string {

@@ -23895,5 +23895,316 @@
     "growthImpact": 1,
     "produces": [],
     "requires": []
+  },
+  {
+    "id": "sit_013",
+    "title": "Recover from a payment-processor account termination",
+    "description": "The famous overnight email: your processor is terminating the account. The first read is the notice itself — the stated reason, the final processing date, and the reserve terms (processors commonly hold funds against future disputes for a stated period after termination; Stripe's services agreement is public and states its reserve mechanics — read YOURS). Then three tracks at once: export every record while API access lasts, appeal through the processor's own review channel with real evidence, and start underwriting at a backup processor immediately — onboarding is days, and PAN-level card-data migration between PCI-compliant processors is a real, supported path, not a workaround. Tell customers honestly if payouts or renewals will wobble. The reserve clock is the processor's, modeled here as the wait it is.",
+    "phase": "finance",
+    "kind": "situation",
+    "trigger": "Your payment processor emails that your account is terminated or restricted — payouts pause and a final processing date is set.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "complex",
+    "reversibility": "painful",
+    "category": "payments",
+    "supportLevel": "partial",
+    "supportReason": "Data export and the checkout re-point are real API work while access lasts; the appeal, the underwriting conversation at the next processor, and the reserve clock belong to the processors' humans and timelines.",
+    "vendors": [
+      "stripe"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Read the termination notice: the stated reason, the final processing date, and the reserve/payout-hold terms your services agreement sets",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://stripe.com/legal/ssa",
+          "actionLabel": "Stripe Services Agreement (termination & reserves)",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n2",
+          "label": "Export everything while API access lasts: charges, customers, subscription state, dispute history, payout records",
+          "route": "agent",
+          "reversibility": "reversible",
+          "vendor": "stripe",
+          "functionCalls": [
+            {
+              "method": "GET /v1/charges",
+              "type": "rest"
+            },
+            {
+              "method": "GET /v1/subscriptions",
+              "type": "rest"
+            }
+          ],
+          "actionUrl": "https://docs.stripe.com/stripe-reports",
+          "actionLabel": "Stripe: reports & data exports",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n3",
+          "label": "File the appeal through the processor's own review channel, with evidence: business model, fulfillment proof, dispute history",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://support.stripe.com/",
+          "actionLabel": "Stripe support (account reviews)",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n4",
+          "label": "Choose the backup processor and start its underwriting now — onboarding/KYC runs in days, not hours",
+          "route": "person",
+          "reversibility": "reversible",
+          "optionsArenaId": "payments",
+          "vendorOptions": [
+            "paddle",
+            "paypal",
+            "square"
+          ],
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n5",
+          "label": "Request the PAN-level card-data migration to the new processor (a PCI-compliant processor-to-processor transfer)",
+          "route": "form",
+          "reversibility": "reversible",
+          "vendor": "stripe",
+          "actionUrl": "https://docs.stripe.com/get-started/data-migrations",
+          "actionLabel": "Stripe: payments data migrations",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n6",
+          "label": "Re-point checkout, billing, and webhooks to the new processor behind a flag, and reconcile the first live charges",
+          "route": "agent",
+          "reversibility": "reversible",
+          "riskLevel": "medium",
+          "optionsArenaId": "payments",
+          "vendorOptions": [
+            "paddle",
+            "paypal",
+            "square"
+          ],
+          "estimatedMinutes": 120
+        },
+        {
+          "id": "n7",
+          "label": "Tell affected customers honestly if payouts, refunds, or renewals will wobble during the cutover",
+          "route": "person",
+          "reversibility": "painful",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n8",
+          "label": "Wait out the appeal decision and the reserve release — both run on the processor's stated schedule",
+          "route": "person",
+          "reversibility": "reversible",
+          "async": true,
+          "estimatedMinutes": 43200
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        },
+        {
+          "from": "n7",
+          "to": "n8"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the termination notice (reason, final processing date, reserve terms)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "what runs on the processor: subscriptions, payout cadence, integrations",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "payments",
+      "processor",
+      "termination",
+      "migration"
+    ],
+    "activeMinutes": 420,
+    "totalEstimatedMinutes": 43620,
+    "hasAsyncSteps": true,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 2,
+    "produces": [],
+    "requires": []
+  },
+  {
+    "id": "sit_014",
+    "title": "Handle a security-vulnerability report",
+    "description": "A good-faith vulnerability report is a gift wearing a deadline. Acknowledge fast and open a private channel — researchers go public when ignored; reproduce the finding honestly and make the severity call on exploitability, not embarrassment; fix on a clock the severity sets; then agree the disclosure timeline with the reporter (90-day coordinated-disclosure norms are industry practice, not law) and publish the advisory with credit. CISA's coordinated-vulnerability-disclosure guidance is the pattern, and a security.txt file is how the next report finds you instead of your CEO's inbox. If the hole was actually exploited and data was reached, that is 'Respond to a data breach' — different situation, statutory clocks.",
+    "phase": "product",
+    "kind": "situation",
+    "trigger": "A security researcher (or a customer, or a stranger) reports a vulnerability in your product — responsibly, so far.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "security",
+    "supportLevel": "partial",
+    "supportReason": "Reproduction, the patch loop, and the advisory mechanics are agent-drivable — the judged scanners gate the fix; the severity call, the disclosure decision, and the reporter relationship stay human.",
+    "vendors": [],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Acknowledge receipt fast and open a private channel with the reporter — silence is how disclosures go public",
+          "route": "person",
+          "reversibility": "reversible",
+          "actionUrl": "https://www.cisa.gov/coordinated-vulnerability-disclosure-process",
+          "actionLabel": "CISA: coordinated vulnerability disclosure",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n2",
+          "label": "Reproduce the report and scope the vulnerable surface: what's reachable, since when, by whom",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n3",
+          "label": "Make the severity call: drop everything or schedule — exploitability and exposure, not embarrassment",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n4",
+          "label": "Patch, regression-test, and run the scanners over the fix before it ships",
+          "route": "agent",
+          "reversibility": "reversible",
+          "optionsArenaId": "security-scanners",
+          "vendorOptions": [
+            "semgrep",
+            "snyk"
+          ],
+          "estimatedMinutes": 120
+        },
+        {
+          "id": "n5",
+          "label": "Decide disclosure with the reporter: coordinated timeline, customer notice if data was reachable — exploited means the breach situation instead",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n6",
+          "label": "Publish the fix and the advisory, credit the reporter, and adopt security.txt so the next report routes cleanly",
+          "route": "agent",
+          "reversibility": "reversible",
+          "actionUrl": "https://securitytxt.org/",
+          "actionLabel": "security.txt standard",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n7",
+          "label": "Hold the coordinated-disclosure window: the fix soaks in production, the reporter holds publication, you re-test",
+          "route": "person",
+          "reversibility": "reversible",
+          "async": true,
+          "estimatedMinutes": 10080
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the vulnerability report itself (vector, affected surface, reporter contact)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "access to the affected code and deployment",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "security",
+      "vulnerability",
+      "disclosure",
+      "triage"
+    ],
+    "activeMinutes": 320,
+    "totalEstimatedMinutes": 10400,
+    "hasAsyncSteps": true,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1,
+    "produces": [],
+    "requires": []
   }
 ]

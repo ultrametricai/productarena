@@ -6,10 +6,10 @@ Doctrine: every corpus vendor resolves through the registry to a live arena, or 
 
 ## Summary
 
-- 169 distinct corpus vendor keys across 136 processes
-- 120 arena-tracked · 36 deliberately untracked (registry entry, no arena) · 13 unregistered (gap list below)
+- 171 distinct corpus vendor keys across 138 processes
+- 122 arena-tracked · 36 deliberately untracked (registry entry, no arena) · 13 unregistered (gap list below)
 - 0 mechanical gaps (registry arenaId pointing at no arena)
-- 7 of 136 processes resolve to zero arenas (no tracked vendor and no direct arena claim on any step)
+- 7 of 138 processes resolve to zero arenas (no tracked vendor and no direct arena claim on any step)
 
 ## Mechanical gaps (0)
 
