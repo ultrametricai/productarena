@@ -358,6 +358,23 @@ describe('VirtualStartup — the in-sim Geo row', () => {
 })
 
 describe('VirtualStartup — the state-graph panel', () => {
+  it("round 8 (item 4): the first tab is 'Status' (was 'Company'), it is the default, and NO tab carries a count badge", () => {
+    renderIt()
+    // The rename: vs-sg-tab-status exists and is selected by default; 'Company' is gone.
+    const status = screen.getByTestId('vs-sg-tab-status')
+    expect(status.textContent).toBe('Status')
+    expect(status.getAttribute('aria-pressed')).toBe('true')
+    expect(screen.queryByTestId('vs-sg-tab-company')).toBeNull()
+    // No counts beside any label — before OR after a run reveals objects.
+    const labels = () =>
+      ['status', 'vendors', 'decisions'].map((id) => screen.getByTestId(`vs-sg-tab-${id}`).textContent ?? '')
+    expect(labels()).toEqual(['Status', 'Vendors', 'Decisions'])
+    showAll()
+    expect(labels()).toEqual(['Status', 'Vendors', 'Decisions'])
+    // The default Status tab still mirrors the artifact stream.
+    expect(screen.getAllByTestId('vs-sg-artifact').length).toBeGreaterThan(0)
+  })
+
   it('is empty pre-run with a placeholder, fills live with the reveal, mirrors the artifact stream (data-synthetic kept), and resets', () => {
     vi.useFakeTimers()
     try {

@@ -165,9 +165,10 @@ describe('VirtualStartup — the Ultrametric CLI/MCP line on mapped process rows
     // The judged top pick on the unmapped control task still renders its terminal pill.
     const term = screen.getByTestId('vs-terminal')
     expect(within(term).getByRole('link', { name: /Mercury · 88/ })).toBeTruthy()
-    // Vendors tab badge counts JUDGED vendors only (1 — Mercury), not the CLI lines.
+    // The tab labels stand alone (round 8, item 4: count badges gone) — and the CLI lines
+    // were never counted anywhere to begin with.
     const vendorsTab = screen.getByTestId('vs-sg-tab-vendors')
-    expect((vendorsTab.textContent ?? '').replace(/\s/g, '')).toBe('Vendors1')
+    expect((vendorsTab.textContent ?? '').replace(/\s/g, '')).toBe('Vendors')
     fireEvent.click(vendorsTab)
     const body = screen.getByTestId('vs-stategraph-body')
     const judged = within(body).getAllByTestId('vs-sg-vendor')
@@ -185,4 +186,5 @@ describe('VirtualStartup — the Ultrametric CLI/MCP line on mapped process rows
     expect(block.textContent).not.toContain('Mercury')
     for (const j of judged) expect(j.textContent).not.toContain('Ultrametric')
   })
+
 })
