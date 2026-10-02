@@ -1,0 +1,123 @@
+# Daily vendor radar (founder ask 2026-10-02: "listen for new vendor launches and do a deep
+# spike on them when they come out, so this data set is alive"): runs the KEYLESS scan in
+# pipeline/scripts/vendor-radar.ts over public launch surfaces — Hacker News (Algolia API:
+# Show HN / Launch HN / launch-shaped front-page stories), Product Hunt's public frontpage feed,
+# and GitHub repo search (new repos crossing the star-velocity threshold) — matches candidates
+# lexically against the arena taxonomy, dedupes against every tracked product, the vendor
+# registry, and the committed seen-ledger (pipeline/radar-seen.json), then:
+#
+#   1. commits the dated candidates report (reports/vendor-radar/<date>.{json,md}) + the updated
+#      seen-ledger via the usual PR-or-issue flow,
+#   2. when there ARE new candidates, files (or updates, on a same-day re-run) a
+#      'vendor-radar: candidates YYYY-MM-DD' issue listing them with their evidence links
+#      (label: story-runner, the same label every automation reuses).
+#
+# HONESTY: the radar NEVER auto-adds products and NEVER auto-judges — detection only; nothing
+# under data/ changes from this scan. The deep spike on an approved candidate remains a
+# deliberate, reviewed run of the standard pipeline (docs/VENDOR-RADAR.md, the Instinct/dots
+# precedent). Keyless by design: no LLM key needed; secrets.GITHUB_TOKEN is auto-provided and
+# only used for git push / gh issue|pr create / the higher authenticated GitHub search limit.
+#
+# Cron offset from the other loops: story-runner '17 */6 * * *', daily-snapshot '43 5 * * *',
+# cert-sweep '29 7 * * 1' (Mondays), accuracy-engine '41 6 * * 3' (Wednesdays), yc-coverage
+# '53 6 * * 5' (Fridays) — this runs daily 31 minutes past 08:00 UTC.
+name: vendor-radar
+
+on:
+  schedule:
+    - cron: '31 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write # for the candidates issue + the PR→issue fallback (org policy may forbid Actions creating PRs)
+
+concurrency:
+  group: vendor-radar
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.21.0
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The scan itself: keyless, bounded (a handful of HTTP requests, 10s timeouts; GH_TOKEN
+      # only raises the GitHub search rate limit). Writes reports/vendor-radar/<date>.{json,md},
+      # updates pipeline/radar-seen.json, and writes the issue body ONLY when there are new
+      # candidates — a quiet day files no issue.
+      - name: Vendor radar scan
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm tsx pipeline/scripts/vendor-radar.ts --issue-body /tmp/vendor-radar-issue.md
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Commit report + seen-ledger as PR (or compare-link issue)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          # porcelain, not `git diff --quiet`: a brand-new dated report file is UNTRACKED and
+          # invisible to diff.
+          if [ -z "$(git status --porcelain -- reports pipeline/radar-seen.json)" ]; then
+            echo "No report/ledger change — done."
+            exit 0
+          fi
+          BRANCH="vendor-radar/$RUN_ID"
+          git config user.name "ultrametric-vendor-radar"
+          git config user.email "noreply@ultrametric.ai"
+          git checkout -b "$BRANCH"
+          git add reports pipeline/radar-seen.json
+          git commit -m "chore(vendor-radar): daily launch-surface scan"
+          git push -u origin "$BRANCH"
+          # Org policy currently forbids Actions from creating PRs ("Write permissions for
+          # workflows are disabled by the organization") — fall back to an issue carrying the
+          # compare link so the report is never silently stranded on a branch (mirrors
+          # story-runner.yml; reuses its existing "story-runner" label so the fallback never
+          # fails on a missing label).
+          if ! gh pr create \
+            --title "vendor-radar: daily scan $(date -u +%F)" \
+            --body "Automated keyless launch-surface scan (\`pipeline/scripts/vendor-radar.ts\`): dated candidates report + seen-ledger update. DETECTION ONLY — no products added, no verdicts touched; candidates are listed in the companion 'vendor-radar: candidates' issue and a deep spike on approved ones runs via the standard pipeline (docs/VENDOR-RADAR.md)." \
+            --base main --head "$BRANCH"; then
+            gh issue create \
+              --title "vendor-radar: report ready on $BRANCH" \
+              --body "The daily radar report is committed on [\`$BRANCH\`](https://github.com/${GITHUB_REPOSITORY}/compare/main...$BRANCH) but Actions may not open PRs (org policy). Open the PR from the compare link — the report only records detections, it never changes a score or verdict. Enable org Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests' to remove this manual step." \
+              --label "story-runner" || echo "issue creation also failed — branch $BRANCH is pushed; see run logs"
+          fi
+
+      # The candidates issue: filed only when the scan found NEW candidates (the script writes
+      # the body file only then). Same-day re-runs UPDATE the existing open issue with a comment
+      # instead of filing a duplicate. The body itself carries the honesty block: detection only,
+      # never auto-add / auto-judge; approval = checking the box / commenting.
+      - name: File or update candidates issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f /tmp/vendor-radar-issue.md ]; then
+            echo "No new candidates — no issue to file."
+            exit 0
+          fi
+          TITLE="vendor-radar: candidates $(date -u +%F)"
+          EXISTING=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number,title \
+            --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n1)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/vendor-radar-issue.md \
+              || echo "issue update failed — the same report is committed in reports/vendor-radar/"
+          else
+            gh issue create \
+              --title "$TITLE" \
+              --body-file /tmp/vendor-radar-issue.md \
+              --label "story-runner" || echo "issue creation failed — the same report is committed in reports/vendor-radar/"
+          fi
