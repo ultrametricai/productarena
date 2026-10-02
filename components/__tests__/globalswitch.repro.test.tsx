@@ -15,7 +15,7 @@ describe('founder repro: selecting Global on a process page', () => {
     expect(globalPill.getAttribute('aria-pressed')).toBe('true')
     expect(window.location.search).toContain('geo=global')
     expect(window.localStorage.getItem('pa-geo')).toBe('global')
-    expect(document.body.textContent).toMatch(/Global view|country-agnostic/i)
+    expect(document.body.textContent).toContain('Country mappings exist for')
   })
   it('DE → Global: banner leaves the DE view', () => {
     render(<><GeoSwitcher /><ProcessGeoBanner geoScope="us" notes={[{ country: 'DE', summary: 'German analog', actionUrl: 'https://example.de', actionLabel: 'Handelsregister' }]} /></>)
@@ -23,6 +23,6 @@ describe('founder repro: selecting Global on a process page', () => {
     expect(document.body.textContent).toContain('German analog')
     fireEvent.click(screen.getByRole('button', { name: /Global/ }))
     expect(document.body.textContent).not.toContain('German analog')
-    expect(document.body.textContent).toMatch(/Global view|country-agnostic/i)
+    expect(document.body.textContent).toContain('Country mappings exist for')
   })
 })

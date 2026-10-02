@@ -153,16 +153,23 @@ describe('default byte-identical (the static HTML never learns about ?geo=global
 })
 
 describe('?geo=global hides the country specifics (the country-agnostic lens)', () => {
-  it('banner: the Global view line + availability-only mapping summary, nothing promoted', () => {
+  it('banner: no explainer in the Global view (founder 2026-10-02) — availability line only, nothing promoted', () => {
     const { container } = render(<ProcessGeoBanner geoScope="us" notes={NOTES} />)
     act(() => setGeoChoice(GEO_GLOBAL))
-    expect(container.textContent).toContain('Global view')
-    expect(container.textContent).toContain('country-agnostic form')
+    // The '🌐 Global view — …country-agnostic form…' explainer no longer renders.
+    expect(container.textContent).not.toContain('Global view')
+    expect(container.textContent).not.toContain('country-agnostic form')
     // Availability only: the countries are named, the substance is not.
     expect(container.textContent).toContain('United Kingdom')
     expect(container.textContent).toContain('India')
     expect(container.textContent).not.toContain('Companies House')
     expect(container.textContent).not.toContain('SPICe+')
+  })
+
+  it('banner: Global view with no mappings renders nothing at all', () => {
+    const { container } = render(<ProcessGeoBanner geoScope="us" notes={[]} />)
+    act(() => setGeoChoice(GEO_GLOBAL))
+    expect(container.textContent).toBe('')
   })
 
   it('geoNotes: the "Outside the US" block collapses to availability only', () => {
