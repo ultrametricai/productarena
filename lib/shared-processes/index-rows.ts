@@ -37,7 +37,7 @@ export function buildPreviewIndex() {
       kind: 'process', trigger: null, urgency: null, phase: '', area: 'Other processes', areaRank: AREA_ORDER.length, geoScope: null,
       pct: null, agentSteps: null, totalSteps: record.parts.length, complexity: '',
       timeOrder: null, cadenceLabel: null, cadenceRank: null, annoyance: null, risk: null,
-      growthImpact: null, vendors: [],
+      growthImpact: null, vendors: [], geoNotesByCountry: {},
     })
   }
   return { rows, phases: original.phases, playbooks }

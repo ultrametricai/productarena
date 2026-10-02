@@ -136,26 +136,8 @@ export default function ProcessLeaderboard({ task, mineHref, showStepStrip = tru
         ))}
       </div>
 
-      {/* The mixed-fleet answer: the best vendor for each step, in run order. */}
-      <p className="mt-3 text-[11px] text-zinc-500">
-        <span className="mr-1.5 text-[10px] uppercase tracking-wide" title="The top-ranked vendor of each rankable step — the best mixed-vendor chain through this process">
-          best per step:
-        </span>
-        {lb.bestPerStep.map((s, i) => (
-          <span key={s.nodeId} className="inline-block max-w-full break-words align-top">
-            {i > 0 && <span className="mx-1.5 text-zinc-700">→</span>}
-            <span className="text-zinc-400">{s.label}:</span>{' '}
-            <Link
-              href={`/arena/${s.arenaId}/product/${s.top.productId}`}
-              title={`${s.top.name} — ${s.top.score.toFixed(0)}/100 on this step's ${s.storyCount} mapped ${s.arenaName} stories`}
-              className="text-zinc-300 transition hover:text-emerald-300"
-            >
-              {s.top.name}
-            </Link>{' '}
-            <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{s.top.score.toFixed(0)}</span>
-          </span>
-        ))}
-      </p>
+      {/* The 'best per step:' strip removed (founder 2026-10-02) — the per-step vendor rows
+          below carry the same answer readably. */}
     </section>
   )
 }

@@ -122,10 +122,11 @@ export type GeoNotesByCountry = Partial<Record<GeoSelection, { kind: GeoNoteKind
 // The no-selection default and the explicit 🌐 Global view never call this — they keep the full
 // corpus (the geo dimension only FILTERS inside a country view; it still never re-ranks).
 export function hiddenInCountryView(
-  row: { geoScope: 'global' | 'us' | 'us-state'; geoNotesByCountry: GeoNotesByCountry },
+  // geoScope null = a shared-catalog preview row (no geo dimension yet) — never hidden.
+  row: { geoScope: 'global' | 'us' | 'us-state' | null; geoNotesByCountry: GeoNotesByCountry },
   country: GeoSelection,
 ): boolean {
-  if (row.geoScope === 'global') return false
+  if (row.geoScope === null || row.geoScope === 'global') return false
   return row.geoNotesByCountry[country]?.kind !== 'analog'
 }
 
