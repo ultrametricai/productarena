@@ -13,6 +13,7 @@ import StepMethodDefault from '@/components/StepMethodDefault'
 import StepMethodPicker from '@/components/StepMethodPicker'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
 import { StepCostChip, StepFailureModes, StepVerifyLine } from '@/components/StepVerifyCost'
+import { computeChipsForStep } from '@/lib/businessLogicMap'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { openDocumentById } from '@/lib/documents'
 import { resolveGapStep } from '@/lib/gapClosers'
@@ -388,6 +389,10 @@ function NodeBlock({
   // present they take over the API-calls block, with the node's own functionCalls kept as the
   // canonical reference flow.
   const vendorCalls = taskId ? stepVendorCallsFor(taskId, node.id) : []
+  // The step's function-level open-module mappings (founder 2026-10-02: "go deeper on the
+  // mapping of the logic") — processes/business-logic-map.json steps, rendered as tiny muted
+  // "compute: <module>.<function>" chips below. Most steps carry none and render nothing.
+  const computeChips = taskId ? computeChipsForStep(taskId, node.id) : []
   // Authored root cause + computer-use feasibility for human/manual steps (founder 2026-09-21:
   // "get to the bottom of why, and why computer use can't be used there"). Null until the
   // audited entry exists — renderers then fall back to today's behavior.
@@ -504,6 +509,34 @@ function NodeBlock({
               </a>
             )
           })}
+        </div>
+      )}
+
+      {/* The step's open-module functions (founder 2026-10-02): the registry's per-step
+          entries as tiny muted "compute: <module>.<function>" chips — the document-chip row
+          idiom above, one shade quieter (this is library code, not an action). Tooltip carries
+          the honest 'what' clause; the chip deep-links to the module's section in
+          business-logic/README.md on GitHub (lib/businessLogicMap.ts computeChipsForStep). */}
+      {computeChips.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+          <span
+            className="text-[10px] uppercase tracking-wide text-zinc-500"
+            title="The open-module function whose cited, tested math computes this step — each chip opens the module's section in business-logic/README.md on GitHub"
+          >
+            compute:
+          </span>
+          {computeChips.map((c) => (
+            <a
+              key={`${c.module}.${c.fn}`}
+              href={c.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`${c.module}.${c.fn} — ${c.what} (open module, business-logic/README.md on GitHub)`}
+              className="inline-flex items-center gap-1 rounded-md border border-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 transition hover:border-emerald-400/60 hover:text-emerald-300"
+            >
+              {c.module}.{c.fn} ↗
+            </a>
+          ))}
         </div>
       )}
 
