@@ -13,7 +13,7 @@ import StepPromptBox from '@/components/StepPromptBox'
 import StepMethodDefault from '@/components/StepMethodDefault'
 import StepMethodPicker from '@/components/StepMethodPicker'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
-import { StepCostChip, StepVerifyLine } from '@/components/StepVerifyCost'
+import { StepCostChip, StepFailureModes, StepVerifyLine } from '@/components/StepVerifyCost'
 import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
@@ -618,6 +618,12 @@ function NodeBlock({
       {/* "How do I know it worked?" (depth wave pt 1) — the step's concrete external check,
           curated only where a real one exists; renders nothing for the many steps without. */}
       {node.verify && <StepVerifyLine verify={node.verify} />}
+
+      {/* "⚠ if it goes wrong" (founder spike 2026-10-02) — the step's curated failure modes,
+          collapsed by default; renders nothing for the many steps without entries. */}
+      {node.failureModes && node.failureModes.length > 0 && (
+        <StepFailureModes failureModes={node.failureModes} />
+      )}
     </>
   )
 

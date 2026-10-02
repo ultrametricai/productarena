@@ -123,6 +123,45 @@ export const DagNodeBaseSchema = z.object({
 })
 
 // ---------------------------------------------------------------------------
+// Depth wave part 1 (founder 2026-10-01): two per-step cited fields — verification checks and
+// real costs. Both OPTIONAL and ADDITIVE; no judged number reads either, so every committed
+// surface is unchanged. Declared ahead of the method-variant schemas so a variant can carry its
+// own published cost (founder spike 2026-10-02 — method sub-steps stay display-level).
+// ---------------------------------------------------------------------------
+
+// "How do I know it worked?" — a concrete, externally checkable test for the step, with the
+// primary-source URL of the checking tool where one exists (the DE entity search, TSDR, EDGAR
+// full-text search, RDAP lookup…). Curation honesty (processes/README.md "Verification
+// checks"): a verify that merely restates the step is worse than absence — drafting steps and
+// internal decisions carry none; URLs are https, primary sources (government portals, registrar
+// tools) preferred, and every one is curl-verified live before it ships.
+export const StepVerifySchema = z.object({
+  how: z.string().min(1),
+  url: z.string().url().optional(),
+})
+
+export type StepVerify = z.infer<typeof StepVerifySchema>
+
+export const COST_KINDS = ['government-fee', 'typical-vendor-price', 'free'] as const
+export type CostKind = (typeof COST_KINDS)[number]
+
+// The real, KNOWABLE cost of a step. Honesty contract (processes/README.md "Cost honesty"):
+// every number carries the source URL of a published fee schedule or sticker-price page plus
+// the asOf date it was read — fees change, the asOf date is the contract, currentness is never
+// claimed. `usd: null` is the honest spelling of "a real cost exists but no published number
+// does" (attorney fees vary) — the source then explains the variability; nothing is estimated
+// or averaged. `note` carries the required caveat (minimums, per-class fees, what's bundled).
+export const StepCostSchema = z.object({
+  usd: z.number().min(0).nullable(),
+  kind: z.enum(COST_KINDS),
+  source: z.string().url(),
+  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'asOf must be an ISO date (YYYY-MM-DD)'),
+  note: z.string().min(1).optional(),
+})
+
+export type StepCost = z.infer<typeof StepCostSchema>
+
+// ---------------------------------------------------------------------------
 // Method variants (founder 2026-09-30: "certain processes have steps that are just ONE way to
 // do it when there are multiple methods depending on context — get multiple options selectable
 // by context … sub-DAGs for all DAG choices that have multiple paths").
@@ -165,48 +204,37 @@ export const StepMethodSchema = z.object({
   functionCalls: FunctionCallSchema.array().optional(),
   estimatedMinutes: z.number().min(0).optional(),
   subSteps: DagNodeBaseSchema.array().min(2).max(5).optional(),
+  // The variant's own real, sourced cost (founder spike 2026-10-02, form_001 reference depth):
+  // same StepCostSchema honesty contract as the full node — published stickers and fee
+  // schedules only, `usd: null` where the real cost has no single published USD number (the
+  // £100 Companies House fee, Germany's value-based GNotKG notary fees). Variant costs are
+  // never averaged into anything: knownCostUsd() and every judged number keep reading the
+  // DEFAULT node only; this field is data-truth for the variant panel (display follow-up is a
+  // later pass — the summary prose carries the figure honestly meanwhile).
+  cost: StepCostSchema.optional(),
 })
 
 export type StepMethodContext = z.infer<typeof StepMethodContextSchema>
 export type StepMethod = z.infer<typeof StepMethodSchema>
 
-// ---------------------------------------------------------------------------
-// Depth wave part 1 (founder 2026-10-01): two per-step cited fields — verification checks and
-// real costs. Both OPTIONAL and ADDITIVE on the full node schema only (method sub-steps stay
-// display-level); no judged number reads either, so every committed surface is unchanged.
-// ---------------------------------------------------------------------------
-
-// "How do I know it worked?" — a concrete, externally checkable test for the step, with the
-// primary-source URL of the checking tool where one exists (the DE entity search, TSDR, EDGAR
-// full-text search, RDAP lookup…). Curation honesty (processes/README.md "Verification
-// checks"): a verify that merely restates the step is worse than absence — drafting steps and
-// internal decisions carry none; URLs are https, primary sources (government portals, registrar
-// tools) preferred, and every one is curl-verified live before it ships.
-export const StepVerifySchema = z.object({
-  how: z.string().min(1),
-  url: z.string().url().optional(),
+// Failure modes (founder spike 2026-10-02, form_001 reference depth): what actually goes wrong
+// at this step and what the honest recovery is. Curated ONLY where the failure is sourced or
+// structurally certain (a name conflict, a defective-certificate rejection, a lost stamped
+// certificate, the missed 83(b) window) — never speculative, never a generic "be careful".
+// `what` names the failure, `then` the recovery — or the honest "no recovery; this is a
+// conversation with counsel" where that is the truth (needs_review posture). `source` is the
+// primary page/statute/fee schedule backing the entry (curl-verified live, like every corpus
+// URL); legal claims additionally cite a dated rule card in rules/ by id inside the prose, the
+// situations-house precedent. 3–6 QUALITY entries per deep process, not coverage — see
+// processes/README.md "Failure modes". Display: ONE collapsed '⚠ if it goes wrong' line per
+// affected step (components/ProcessDag.tsx); no judged number reads the field.
+export const StepFailureModeSchema = z.object({
+  what: z.string().min(1),
+  then: z.string().min(1),
+  source: z.string().url().optional(),
 })
 
-export type StepVerify = z.infer<typeof StepVerifySchema>
-
-export const COST_KINDS = ['government-fee', 'typical-vendor-price', 'free'] as const
-export type CostKind = (typeof COST_KINDS)[number]
-
-// The real, KNOWABLE cost of a step. Honesty contract (processes/README.md "Cost honesty"):
-// every number carries the source URL of a published fee schedule or sticker-price page plus
-// the asOf date it was read — fees change, the asOf date is the contract, currentness is never
-// claimed. `usd: null` is the honest spelling of "a real cost exists but no published number
-// does" (attorney fees vary) — the source then explains the variability; nothing is estimated
-// or averaged. `note` carries the required caveat (minimums, per-class fees, what's bundled).
-export const StepCostSchema = z.object({
-  usd: z.number().min(0).nullable(),
-  kind: z.enum(COST_KINDS),
-  source: z.string().url(),
-  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'asOf must be an ISO date (YYYY-MM-DD)'),
-  note: z.string().min(1).optional(),
-})
-
-export type StepCost = z.infer<typeof StepCostSchema>
+export type StepFailureMode = z.infer<typeof StepFailureModeSchema>
 
 // The full node schema: the base fields (the DEFAULT method) plus optional method variants.
 // COMPAT-ADDITIVE: a node without methods is exactly the pre-variant schema, and no default
@@ -238,6 +266,17 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // The step's real, sourced cost — see StepCostSchema above. Optional: absence means no
   // knowable published number, never $0 (that's kind 'free' with usd 0).
   cost: StepCostSchema.optional(),
+  // What actually goes wrong here and the honest recovery — see StepFailureModeSchema above.
+  // Optional and deliberately sparse: absence means no sourced/structurally-certain failure
+  // mode is curated yet, never that the step can't fail.
+  failureModes: StepFailureModeSchema.array().min(1).optional(),
+  // Canonical open documents for THIS step — ids into documents/registry.json (the Cooley GO
+  // incorporation package for the bylaws-drafting step, IRS Form 15620 for the 83(b) steps).
+  // Added by the founder spike 2026-10-02 after confirming NO prior mechanism linked corpus
+  // steps to the documents registry. Data-level cross-reference only (no new default surface
+  // reads it this phase); referential integrity is corpus-tested (__tests__/documents.test.ts —
+  // every id must resolve in the registry).
+  documents: z.string().min(1).array().min(1).optional(),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -283,6 +322,37 @@ export const GEO_COUNTRY_META: Record<GeoNoteCountry, { label: string; flag: str
   DE: { label: 'Germany', flag: '🇩🇪' },
   FR: { label: 'France', flag: '🇫🇷' },
 }
+
+// Proven runs (founder spike 2026-10-02 — EXECUTED-PROOF SLOT, design only): a dated record
+// that a named operator actually ran this process end to end, with the real wall clock and the
+// real fees paid per step. The shape ships schema-ready and EMPTY — no run is fabricated; the
+// first records will be Ultrametric Inc.'s own receipts, supplied by the founder. Disclosure
+// rules (load-enforced): a run by the corpus's own operator/company sets `ownerRun: true` and
+// MUST carry a `disclosure` sentence saying so — reader trust comes from the disclosure, not
+// from pretending independence. Display-only when records exist; no judged number will read it.
+export const ProvenRunStepSchema = z.object({
+  nodeId: z.string().min(1),
+  // The real elapsed wall clock for the step, as run — honest, not the corpus estimate.
+  wallClockMinutes: z.number().min(0).optional(),
+  // The real fees paid at this step, in USD as settled.
+  feesPaidUsd: z.number().min(0).optional(),
+  note: z.string().min(1).optional(),
+})
+
+export const ProvenRunSchema = z.object({
+  // When the run happened (ISO date).
+  ranOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'ranOn must be an ISO date (YYYY-MM-DD)'),
+  // Who ran it — a named person/company, never "a user".
+  operator: z.string().min(1),
+  // True when the operator is Ultrametric (or the corpus's maintainer) itself.
+  ownerRun: z.boolean(),
+  // REQUIRED when ownerRun (load-enforced): the honest one-sentence disclosure.
+  disclosure: z.string().min(1).optional(),
+  steps: ProvenRunStepSchema.array().min(1),
+})
+
+export type ProvenRunStep = z.infer<typeof ProvenRunStepSchema>
+export type ProvenRun = z.infer<typeof ProvenRunSchema>
 
 export const ProcessTaskSchema = z.object({
   id: z.string().min(1),
@@ -386,6 +456,9 @@ export const ProcessTaskSchema = z.object({
   // alsoProducedBy exception.
   produces: z.string().min(1).array(),
   requires: z.string().min(1).array(),
+  // The executed-proof slot — see ProvenRunSchema above. Optional and currently empty
+  // corpus-wide (design shipped ahead of the first real run; nothing is fabricated).
+  provenRuns: ProvenRunSchema.array().min(1).optional(),
   tags: z.string().array(),
   activeMinutes: z.number().min(0),
   totalEstimatedMinutes: z.number().min(0),
@@ -492,6 +565,19 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
       if (t.timeOrder === undefined) throw new Error(`${t.id}: a process must carry its founder-timeline timeOrder`)
       if (t.trigger !== undefined || t.urgency !== undefined) {
         throw new Error(`${t.id}: trigger/urgency are situation-only fields`)
+      }
+    }
+  }
+  // Proven-run disclosure rule (founder spike 2026-10-02) that zod deliberately doesn't encode
+  // (the published JSON schema stays a plain shape): an owner-run record must say so.
+  for (const t of parsed) {
+    for (const r of t.provenRuns ?? []) {
+      if (r.ownerRun && !r.disclosure) {
+        throw new Error(`${t.id}: an ownerRun proven-run record must carry its disclosure sentence`)
+      }
+      const nodeIds = new Set(t.dag.nodes.map((n) => n.id))
+      for (const s of r.steps) {
+        if (!nodeIds.has(s.nodeId)) throw new Error(`${t.id}: proven run references unknown step ${s.nodeId}`)
       }
     }
   }
