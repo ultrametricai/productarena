@@ -1,18 +1,12 @@
-# Ultrametric — the open startup repo
+![Ultrametric — the open startup repo](docs/assets/banner.svg)
 
 **Everything a founder — or their agent — needs to start and run a company: every
 [process](#processes) step by step, the [vendors](#vendors) ranked, and the
 [open modules](#business-logic) underneath.**
 
-![The founder processes on ultrametric.ai — each process with its phase, Agentic %, step count, timeline position, and vendors](docs/assets/processes.png)
-
-*[ultrametric.ai/processes](https://ultrametric.ai/processes): the founder processes in
-timeline order — each with its phase, the share an agent can run today, and the vendors that
-serve it.*
-
 - **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
-- **Build on it** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([agents & developers](#for-ai-agents))
-- **Add to it** — [CONTRIBUTING.md](./CONTRIBUTING.md): contest a verdict, add your country, add a module
+- **Improve it** — the open startup repo: [CONTRIBUTING.md](./CONTRIBUTING.md) — contest a verdict, add your country, add a module
+- **For agents** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([for AI agents](#for-ai-agents))
 
 ## Start here
 
@@ -21,29 +15,11 @@ serve it.*
 | What you need | Where |
 | --- | --- |
 | Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its Agentic %, plus the chained playbooks |
-| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
-| Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
+| Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to use and improve |
 | Open modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
-
-**You want to contribute:**
-
-```bash
-git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
-pnpm install
-pnpm dev        # http://localhost:3000
-pnpm test
-```
-
-| You want to | Where |
-| --- | --- |
-| Contest a verdict | the "⚑ contest" link next to any verdict on the site → [prefilled issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml); flow in [CONTRIBUTING.md](./CONTRIBUTING.md) |
-| Add evidence or prove a story hands-on | [CONTRIBUTING.md](./CONTRIBUTING.md) · [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) |
-| Add your product to an arena | [/submit](https://ultrametric.ai/submit) or [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product) |
-| Add your country or state | [Add your country or state](#add-your-country-or-state) below — four PR shapes, smallest first |
-| Add an open module | [`business-logic/README.md`](business-logic/README.md) — the bar: pure functions, a citation on every formula, tests that double as documentation |
-| Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
 
 **You're an agent or developer consuming the data** — nothing to install, no auth:
 
@@ -61,6 +37,10 @@ described by [/openapi.json](https://ultrametric.ai/openapi.json), and the groun
 the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 
 ## Processes
+
+![The founder processes on ultrametric.ai — each process with its phase, Agentic %, step count, timeline position, and vendors](docs/assets/processes.png)
+
+*[ultrametric.ai/processes](https://ultrametric.ai/processes): the comprehensive founder processes from an agentic lens.*
 
 **What it is.** The operational corpus: step-by-step founder processes, each a DAG whose
 every step is routed agent / manual form / human, with per-step reversibility
@@ -87,7 +67,7 @@ whole corpus as a simulated company, end to end:
 
 ## Vendors
 
-**What it is.** The evidence layer: head-to-head, evidence-graded rankings of the tools
+**What it is.** The evidence layer: head-to-head, agent tested rankings of the tools
 startups run on, arena by arena (current counts under
 [Data releases & freshness](#data-releases--freshness)). Every verdict cites dated evidence (vendor docs, GitHub,
 community sources, hands-on probes), rankings recompute bit-identically and carry HMAC
@@ -616,6 +596,28 @@ treat them as a snapshot, not a promise.
 Every score on the site is only as good as its evidence, so evidence work is the
 contribution. (And if the repo is useful to you,
 [a star](https://github.com/ultrametricai/ultrametric) is how other founders find it.)
+
+The quick index:
+
+| You want to | Where |
+| --- | --- |
+| Contest a verdict | the "⚑ contest" link next to any verdict on the site → [prefilled issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml); flow in [CONTRIBUTING.md](./CONTRIBUTING.md) |
+| Add evidence or prove a story hands-on | [CONTRIBUTING.md](./CONTRIBUTING.md) · [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) |
+| Add your product to an arena | [/submit](https://ultrametric.ai/submit) or [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product) |
+| Add your country or state | [Add your country or state](#add-your-country-or-state) below — four PR shapes, smallest first |
+| Add an open module | [`business-logic/README.md`](business-logic/README.md) — the bar: pure functions, a citation on every formula, tests that double as documentation |
+| Submit a stack | the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml) issue form (linked from [/stacks](https://ultrametric.ai/stacks)) — stacks stay curated committed data; submissions feed review, never auto-publish |
+| Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
+
+Working on the repo itself:
+
+```bash
+git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
+pnpm install
+pnpm dev        # http://localhost:3000
+pnpm test
+```
+
 Pick your angle:
 
 - **Contest a verdict** — every verdict has a "⚑ contest" link that opens a prefilled
@@ -705,12 +707,12 @@ source resolution, jurisdiction matching, approval gates, and coverage honesty o
 Quoting a ranking, verdict, or evidence excerpt (with attribution, per DATA-LICENSE) in a
 paper, post, or dataset card:
 
-> Ultrametric — evidence-graded software rankings for the agent economy. Ultrametric Inc,
+> Ultrametric — agent tested software rankings for the agent economy. Ultrametric Inc,
 > 2026. https://ultrametric.ai
 
 ```bibtex
 @misc{ultrametric,
-  title        = {Ultrametric: evidence-graded software rankings for the agent economy},
+  title        = {Ultrametric: agent tested software rankings for the agent economy},
   author       = {{Ultrametric Inc}},
   year         = {2026},
   howpublished = {\url{https://ultrametric.ai}},

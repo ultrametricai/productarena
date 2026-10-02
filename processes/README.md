@@ -3,7 +3,7 @@
 Two layers, deliberately separate:
 
 1. **Jurisdiction-scoped workflows** (this tree, `processes/<domain>/<jurisdiction>/*.json`,
-   contract in `schemas/process.schema.json`): source-backed legal/tax workflows with explicit
+   contract in `schemas/process.schema.json`): source-cited legal/tax workflows with explicit
    applicability dimensions, dated editorial review, rule-card references, stop conditions, and
    a scoped human approval on every externally-effectful step. Validated by
    `lib/founderOps.ts` inside the normal test gates. The starter set is two demonstration US

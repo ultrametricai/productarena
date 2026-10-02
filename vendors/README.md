@@ -1,7 +1,7 @@
 # Vendors — evidence, not an endorsement list
 
 This repo's largest asset lives one directory over: `data/<arena>/` holds dated, reproducible,
-evidence-graded evaluations of 590+ products across 90+ arenas — judged verdicts over a shared
+agent tested evaluations of 590+ products across 90+ arenas — judged verdicts over a shared
 story taxonomy citing vendor docs, GitHub, community sources, and hands-on probes with recorded
 transcripts; rankings carry HMAC-fingerprinted `_provenance` and recompute deterministically
 (`pipeline/scripts/recompute-check.ts`). Owner-affiliated products (Foreloop, AFK, Ultrametric)
