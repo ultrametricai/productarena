@@ -1,6 +1,6 @@
 'use client'
 
-import CoverageScore from './CoverageScore'
+import CoverageScore, { CoveragePlace } from './CoverageScore'
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
 import type { ServiceCandidate } from '@/lib/shared-processes/service-candidates'
@@ -19,10 +19,10 @@ function CandidateRow({ candidate, choiceScope, coverage, scores }: { candidate:
       {choiceScope && selection && <button type="button" aria-pressed={selected} aria-label={`Use ${candidate.name}`} onClick={() => selection.toggle(choiceScope, candidate.id)} className="-ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:text-zinc-200"><span aria-hidden="true" className={`flex h-4 w-4 items-center justify-center rounded-full border text-[10px] ${selected ? 'border-emerald-400 text-emerald-300' : 'border-zinc-600'}`}>{selected ? '✓' : ''}</span></button>}
       <span className="flex min-w-0 grow basis-20 items-center gap-2">
         {logo}
-        {candidate.href ? <Link href={candidate.href} aria-label={`${candidate.name} profile`} className="min-w-0 break-words text-sm font-medium text-zinc-100 hover:text-emerald-300">{candidate.name}</Link> : <span className="min-w-0 break-words text-sm font-medium text-zinc-100">{candidate.name}</span>}
+        <span className="min-w-0 break-words">{candidate.href ? <Link href={candidate.href} aria-label={`${candidate.name} profile`} className="min-w-0 break-words text-sm font-medium text-zinc-100 hover:text-emerald-300">{candidate.name}</Link> : <span className="min-w-0 break-words text-sm font-medium text-zinc-100">{candidate.name}</span>}{coverage && <CoveragePlace score={coverage.score} scores={scores} />}</span>
       </span>
       {coverage && <span className="ml-auto flex shrink-0 items-center justify-end gap-3">
-        <CoverageScore score={coverage.score} scores={scores} title={`Filing story coverage ${coverage.score}/100 across ${coverage.storyCount} mapped stories for the default filing option.`} />
+        <CoverageScore score={coverage.score} title={`Filing story coverage ${coverage.score}/100 across ${coverage.storyCount} mapped stories for the default filing option.`} />
       </span>}
     </div>
 

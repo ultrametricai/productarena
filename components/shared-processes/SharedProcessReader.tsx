@@ -34,9 +34,7 @@ const routeLabels: Record<string, { label: string; color: string }> = {
 function StepAssessment({ metadata, spaced = false, unverified = false }: { metadata: Record<string, unknown>; spaced?: boolean; unverified?: boolean }) {
   const route = typeof metadata.route === 'string' && Object.hasOwn(routeLabels, metadata.route)
     ? routeLabels[metadata.route] : null
-  const assessment = unverified && route?.label === 'Agent'
-    ? { label: 'Agent · unverified', color: 'text-zinc-400' }
-    : route && metadata.legalSignature === true
+  const assessment = route && metadata.legalSignature === true
     ? { label: 'Signature — legally human', color: 'text-violet-300' } : route
   if (!assessment && metadata.riskLevel !== 'high' && metadata.reversibility !== 'irreversible') return null
   return <span className={`inline-flex flex-wrap items-center gap-x-3 gap-y-1 align-middle ${spaced ? 'ml-3' : ''}`}>
@@ -156,14 +154,14 @@ export default function SharedProcessReader({ record, records, supplementary, ve
           <Link href="/processes/preview" className="hover:text-emerald-300">Processes</Link><span className="mx-1 text-zinc-600">/</span>{phase}
         </p>
         {icon && <Image src="/process-icons/incorporate-64.svg" alt="" width={64} height={64} className="mt-4 h-16 w-16 md:hidden" />}
-        <h1 className="mt-4 break-words font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl"><ProcessTitle title={record.title} agent={processSummary(record, records).agent} /></h1>
+        <h1 className="mt-4 break-words font-display text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl"><ProcessTitle title={record.title} agent={processSummary(record, records).agent} /></h1>
         {record.summary && <p className="mt-5 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-zinc-400">{record.summary}</p>}
+        <ProcessSummary record={record} records={referencedCatalog(record, records)} />
       </div>
       {icon && <Image src={icon} alt="" width={256} height={256} priority className="hidden h-64 w-64 justify-self-end md:block" />}
     </header>
     <RegionalVariantSelector />
     <ProcessOverview processHrefs={Object.fromEntries(records.map(item => [item.id, sharedPreviewHref(item.id, records)]))} record={record} records={referencedCatalog(record, records)} />
-    <ProcessSummary record={record} records={referencedCatalog(record, records)} />
     {processChoice && <ProcessProviderSelector choice={processChoice} />}
     {(record.when || record.guidance || record.outcomes.length > 0 || record.notes.length > 0) && <section aria-label="Process overview" className="space-y-4">
       {record.when && <p className="text-zinc-400">When: {record.when}</p>}

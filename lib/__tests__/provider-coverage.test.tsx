@@ -52,7 +52,7 @@ it('shows scoped aggregate evidence independently of selection and preserves lin
   expect(providers.getByRole('button', { name: 'Use Stripe' }).getAttribute('aria-pressed')).toBe('true')
 })
 
-it('labels existing aggregate scores as default-scope when a regional option changes', () => {
+it('hides default-scope aggregate scores for an unassessed regional option', () => {
   const record = records.find(record => record.id === 'sales_002')!
   const comparisons = buildComposedComparisons(record, records)
   const choice = buildProcessProviderChoice(record, comparisons)!
@@ -61,6 +61,8 @@ it('labels existing aggregate scores as default-scope when a regional option cha
   const alternate = selector.querySelector('input:not([value="default"])')!
   fireEvent.click(alternate)
   const providers = within(el.getByRole('region', { name: 'Process providers' }))
-  expect(providers.getAllByText('These scores do not assess the selected regional variant.').length).toBeGreaterThan(0)
-  expect(providers.getAllByText(/Default-scope coverage across/).length).toBeGreaterThan(0)
+  expect(providers.queryByText('These scores do not assess the selected regional variant.')).toBeNull()
+  expect(el.getByRole('region', { name: 'Process providers' }).querySelector('[title*="rated default-scope"]')).toBeNull()
+  fireEvent.click(selector.querySelector('input[value="default"]')!)
+  expect(el.getByRole('region', { name: 'Process providers' }).querySelector('[title*="rated default-scope"]')).not.toBeNull()
 })

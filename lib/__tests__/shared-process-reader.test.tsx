@@ -86,7 +86,7 @@ describe('canonical shared process reader', () => {
     const records = readSharedCatalog()
     const record = findSharedRecord(records, 'form_001')!
     const el = mount(renderToStaticMarkup(<SharedProcessReader record={record} records={records} />))
-    expect(el.querySelector('[id="form_001:n3"] [title="Legacy agent classification; no verified API or tool binding"]')?.textContent).toBe('Agent · unverified')
+    expect(el.querySelector('[id="form_001:n3"] [title="Legacy agent classification; no verified API or tool binding"]')?.textContent).toBe('Agent')
     expect(el.querySelector('[id="form_001:n1"] [title="Existing source route assessment"]')?.textContent).toBe('Human or computer use')
     expect(el.querySelector('[id="form_001:n7b"] [title="Existing source route assessment"]')?.textContent).toBe('Signature — legally human')
     const filing = el.querySelector('[id="form_001:n4"]')!

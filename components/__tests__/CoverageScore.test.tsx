@@ -34,7 +34,9 @@ describe('scoped coverage placement', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Use Gamma' }))
     const first = screen.getAllByRole('listitem')[0]
     expect(first.textContent).toContain('Gamma')
-    expect(first.textContent).toContain('3rd52/100')
+    expect(first.textContent).toContain('3rd')
+    expect(first.textContent).toContain('52/100')
+    expect(first.querySelector('a')?.nextElementSibling?.textContent).toBe('3rd')
     expect(within(first).getByRole('button', { name: 'Use Gamma' }).getAttribute('aria-pressed')).toBe('true')
   })
   it('keeps the actual step place when a selected vendor is pinned first', () => {
@@ -42,6 +44,8 @@ describe('scoped coverage placement', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Use Gamma for this step' }))
     const first = screen.getAllByRole('listitem')[0]
     expect(first.textContent).toContain('Gamma')
-    expect(first.textContent).toContain('3rd52/100')
+    expect(first.textContent).toContain('3rd')
+    expect(first.textContent).toContain('52/100')
+    expect(first.querySelector('a')?.nextElementSibling?.textContent).toBe('3rd')
   })
 })

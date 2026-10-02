@@ -7,11 +7,12 @@ export function scorePlace(score: number, scores: readonly number[]) {
   return `${place}${suffix}`
 }
 
-export default function CoverageScore({ score, scores, title }: { score: number; scores: readonly number[]; title: string }) {
+export function CoveragePlace({ score, scores }: { score: number; scores: readonly number[] }) {
   const place = scorePlace(score, scores)
   const tied = scores.filter(value => value === score).length > 1
-  return <span className="inline-flex shrink-0 items-baseline gap-3">
-    <span className="text-[11px] tabular-nums text-zinc-500" title={`${tied ? 'Joint ' : ''}${place} by underlying score in this scope; selection does not change placement.`}>{place}</span>
-    <span className="font-mono text-sm tabular-nums text-emerald-400" title={title}>{score.toFixed(0)}<span className="text-[11px] text-zinc-500">/100</span></span>
-  </span>
+  return <span className="ml-1.5 whitespace-nowrap text-xs font-semibold tabular-nums text-emerald-400" title={`${tied ? 'Joint ' : ''}${place} by underlying score in this scope; selection does not change placement.`}>{place}</span>
+}
+
+export default function CoverageScore({ score, title }: { score: number; title: string }) {
+  return <span className="shrink-0 font-mono text-xs tabular-nums text-zinc-400" title={title}>{score.toFixed(0)}<span className="text-[10px] text-zinc-500">/100</span></span>
 }

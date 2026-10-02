@@ -34,7 +34,7 @@ export function RegionalVariantSelector() {
         </span>
       </label>)}
     </div>
-    <p id={`${id}-scope`} className="max-w-2xl text-xs leading-relaxed text-zinc-400">Changes “{state.decision.title}” only.{state.selected !== 'default' && ' Other steps have not been adapted to this region.'}</p>
+    <p id={`${id}-scope`} className="sr-only"><span className="sr-only">Changes “{state.decision.title}” only.</span>{state.selected !== 'default' && ' Other steps have not been adapted to this region.'}</p>
   </fieldset>
 }
 
@@ -61,5 +61,5 @@ export function RegionalOption({ scope, optionId, id, heading, assessment, child
 export function RegionalCoverageNote() {
   const state = useRegionalVariant()
   if (!state?.decision) return null
-  return <p className="mt-2 text-xs text-zinc-400">Default-scope coverage{state.selected !== 'default' && ' · selected regional variant not assessed'}</p>
+  return <p className="sr-only">Default-scope coverage{state.selected !== 'default' && ' · selected regional variant not assessed'}</p>
 }
