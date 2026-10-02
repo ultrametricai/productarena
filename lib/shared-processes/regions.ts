@@ -1,4 +1,5 @@
 import type { Option, SharedRecord } from './schema'
+import { previewContext } from './preview-context'
 
 export function isGeographicOption(option: Option) {
   const context = option.metadata.context
@@ -16,7 +17,10 @@ export function regionalDecision(record: SharedRecord) {
       const context = option.metadata.context as { countries?: unknown } | undefined
       const source = option.id === 'default' ? [record.metadata.geoScope] : context?.countries
       const countries = Array.isArray(source) ? source.filter((country): country is string => typeof country === 'string' && /^[a-z]{2}$/i.test(country)).map(country => country.toUpperCase()) : []
-      return { id: option.id, title: option.title, countries }
+      // Unbound surrounding steps remain on their original path. A part explicitly
+      // bound to this decision is either hidden or reviewed for its selected option.
+      const hasUnadaptedSteps = option.id !== 'default' && record.parts.some(other => other.id !== part.id && previewContext(other.metadata)?.decision !== part.id)
+      return { id: option.id, title: option.title, countries, hasUnadaptedSteps }
     }),
   }
 }

@@ -116,9 +116,10 @@ exchange rate, currency/range schema, current-price claim or fabricated total wa
   A subsequent legacy description change must produce a conflict and leave every
   catalog file untouched. The regression was also run against the original receipt:
   it failed because the importer allowed an overwrite; the repaired receipt passes.
-- Added opt-in `check-catalog-migration.py`: exact catalog fields/scopes, all 38 default
-  repairs, 97 alternatives, historical provenance, audit values and chooser protection.
-  It is a bounded migration acceptance check, not a restriction on future authored work.
+- The original reconciliation used a bounded comparison with generated source. That
+  historical acceptance command was removed after subsequent authored content made
+  the comparison obsolete. Current validation uses `pnpm shared:check`,
+  `check-import.py`, and the importer preservation tests.
 - `pnpm shared:import` equivalent (`python3 .../import.py --write`) executed twice:
   no pending source changes; all 166 catalog/audit/manifest JSON files byte-identical.
 - Two independent fresh generations from the pinned source are byte-identical.

@@ -23,7 +23,7 @@ describe('scoped regional presentation', () => {
     expect(chooser()).toBeNull()
     expect(el.container.querySelector('[id="form_001:n4:germany-notary-gmbh"]')?.querySelectorAll('article')).toHaveLength(4)
     expect(el.container.querySelector('[id="form_001:n4:germany-notary-gmbh"] [aria-label="Step product comparison"]')).toBeNull()
-    expect(el.getByText(/Other steps have not been adapted/)).toBeDefined()
+    expect(el.queryByText(/Other steps have not been adapted/)).toBeNull()
     expect(el.queryByRole('definition', { name: 'Agent' })).toBeNull()
     fireEvent.click(select.querySelector('input[value="default"]')!)
     expect(chooser().querySelectorAll('[title^="Filing story coverage"]')).toHaveLength(4)
@@ -31,6 +31,22 @@ describe('scoped regional presentation', () => {
     fireEvent.click(select.querySelector('input[value="uk-companies-house"]')!)
     el.rerender(<SharedProcessReader record={record('opp_002')} records={records} />)
     expect((el.container.querySelector('input[value="default"]') as HTMLInputElement).checked).toBe(true)
+  })
+
+  it('visibly qualifies UK/EU banking while unadapted application steps remain, and clears the warning on default', () => {
+    const banking = record('qs_023')
+    const el = render(<SharedProcessReader record={banking} records={records} />)
+    expect(el.queryByText(/Other steps have not been adapted/)).toBeNull()
+    fireEvent.click(el.container.querySelector('input[value="uk-eu-multicurrency"]')!)
+    const warning = el.getByText(/Other steps have not been adapted/)
+    expect(warning.className).toBe('text-xs text-zinc-400')
+    expect(warning.closest('fieldset')?.getAttribute('aria-describedby')).toBe(warning.id)
+    expect(el.container.querySelector('[id="qs_023:n3"]')?.textContent).toContain('EIN')
+    expect(el.container.querySelector('[id="qs_023:n5"]')).not.toBeNull()
+    expect(regionalDecision(banking)?.options.find(option => option.id === 'uk-eu-multicurrency')?.hasUnadaptedSteps).toBe(true)
+    fireEvent.click(el.container.querySelector('input[value="default"]')!)
+    expect(el.queryByText(/Other steps have not been adapted/)).toBeNull()
+    expect(regionalDecision(record('form_001'))?.options.every(option => !option.hasUnadaptedSteps)).toBe(true)
   })
 
   it('preserves non-geographic choices and does not assume one country per option', () => {

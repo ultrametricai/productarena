@@ -18,6 +18,7 @@ export function RegionalVariantSelector() {
   const state = useRegionalVariant()
   const id = useId()
   if (!state?.decision) return null
+  const hasUnadaptedSteps = state.decision.options.find(option => option.id === state.selected)?.hasUnadaptedSteps === true
   const countryOrder = (countries: string[]) => Math.min(...countries.map(country => {
     const index = GEO_COUNTRIES.indexOf(country as GeoCountry)
     return index === -1 ? GEO_COUNTRIES.length : index
@@ -34,7 +35,7 @@ export function RegionalVariantSelector() {
         </span>
       </label>)}
     </div>
-    <p id={`${id}-scope`} className="sr-only"><span className="sr-only">Changes “{state.decision.title}” only.</span>{state.selected !== 'default' && ' Other steps have not been adapted to this region.'}</p>
+    <p id={`${id}-scope`} className={hasUnadaptedSteps ? "text-xs text-zinc-400" : "sr-only"}><span className="sr-only">Changes “{state.decision.title}” only.</span>{hasUnadaptedSteps && ' Other steps have not been adapted to this region.'}</p>
   </fieldset>
 }
 

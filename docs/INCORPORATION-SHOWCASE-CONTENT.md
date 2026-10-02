@@ -51,9 +51,9 @@ steps indicates the scope of reviewed content, not legal inapplicability.
 - `git diff --check` passed. Production build and visual/provider-selection checks
   belong to the UI integration worker; none were run here.
 
-The old migration acceptance script checks the pre-authoring reconciliation and
-intentionally does not accept arbitrary later authored guidance. It is not the
-validation gate for this editorial change.
+The obsolete migration acceptance command has been removed. The current catalog
+validator, source-preservation check and importer regression tests validate
+authored content and its import baseline.
 
 Imported metadata is retained as requested and is not newly verified by this
 authoring pass. Previously reported issues remain: the legacy general entity
