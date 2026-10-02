@@ -82,6 +82,18 @@ export const GEO_SCOPE_GLYPH: Record<'global' | 'us' | 'us-state', { glyph: stri
   'us-state': { glyph: '🏛', label: 'US state-level process — a US state is the counterparty' },
 }
 
+// The one title-trailing scope glyph (founder batch 2026-10-02): the 🇺🇸 flag, keyed STRICTLY
+// on geoScope — 'us' AND 'us-state' wear it (the label still tells federal from state work);
+// 'global' (and the shared-catalog null) wears no scope glyph at all. The 🌐 globe and 🏛
+// state glyphs no longer follow titles — they read as duplicate icons next to the row's own
+// icon ('Set up registered agent 🏛'). A geoScope-'global' record can never render the flag.
+export function usFlagGlyph(
+  scope: 'global' | 'us' | 'us-state' | null,
+): { glyph: string; label: string } | null {
+  if (scope !== 'us' && scope !== 'us-state') return null
+  return { glyph: GEO_PREF_META.US.flag, label: GEO_SCOPE_GLYPH[scope].label }
+}
+
 // What a committed geo note SAYS about the need behind a US-scoped process in its country
 // (founder ask 2026-10-02: "changing the country should hide the processes that are not used in
 // that country — e.g. an EIN number for India doesn't make sense"). Required on every committed
