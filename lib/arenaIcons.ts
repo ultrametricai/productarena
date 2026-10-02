@@ -143,6 +143,7 @@ export const ARENA_ICONS: Record<string, string> = {
   'sso-identity': pi('badge', 'amber'), // 🪪 same badge as opp_007 provisioning
   'legal-ops': pi('scales', 'amber'), // ⚖️ same scales as the legal phase
   'startup-law-firms': pi('columns', 'amber'), // 🏛️ the firm's columns
+  'startup-immigration': pi('passport', 'amber'), // 🗽 same passport as hr_011's visa sponsorship
   'compliance-automation': pi('clipboard', 'amber'), // 📋 same clipboard as the compliance phase
   'security-keys': pi('hardware-key', 'amber'), // 🗝️ the hardware key
   'authenticator-apps': pi('otp-code', 'amber'), // 🔢 the one-time code
