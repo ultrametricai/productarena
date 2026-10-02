@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
-import { readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { loadSharedProcesses } from '../shared-processes/load'
 import SharedProcessReader from '@/components/shared-processes/SharedProcessReader'
@@ -13,10 +16,18 @@ const repairs = JSON.parse(readFileSync('content/processes/default-options-audit
 
 describe('explicit defaults in migrated method decisions', () => {
   it('preserves every base and alternative identity, annotations, applicability and original edge across the catalog', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'um-method-import-'))
+    let imported: ReturnType<typeof loadSharedProcesses>
+    try {
+      execFileSync('python3', ['scripts/shared-processes/import.py', '--write', '--output', path.join(root, 'content/processes')], { stdio: 'pipe' })
+      imported = loadSharedProcesses(root)
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
     let decisions = 0
     let alternatives = 0
     for (const source of corpus) {
-      const record = records.find(record => record.id === source.id)!
+      const record = imported.find(record => record.id === source.id)!
       for (const node of source.dag.nodes) {
         if (!node.methods?.length || !repairs.some(repair => repair.record === source.id && repair.part === node.id)) continue
         decisions++
