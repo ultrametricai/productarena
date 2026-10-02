@@ -9,6 +9,7 @@ type SourceMethod = { id: string; label: string; summary: string; context: { whe
 type SourceNode = { id: string; label: string; actionUrl?: string; actionLabel?: string; methods?: SourceMethod[]; [key: string]: unknown }
 const corpus = JSON.parse(readFileSync('processes/corpus.json', 'utf8')) as { id: string; dag: { nodes: SourceNode[]; edges?: { from: string; to: string }[] } }[]
 const records = loadSharedProcesses()
+const repairs = JSON.parse(readFileSync('content/processes/default-options-audit.json', 'utf8')).entries as Array<{ record: string; part: string }>
 
 describe('explicit defaults in migrated method decisions', () => {
   it('preserves every base and alternative identity, annotations, applicability and original edge across the catalog', () => {
@@ -17,7 +18,7 @@ describe('explicit defaults in migrated method decisions', () => {
     for (const source of corpus) {
       const record = records.find(record => record.id === source.id)!
       for (const node of source.dag.nodes) {
-        if (!node.methods?.length) continue
+        if (!node.methods?.length || !repairs.some(repair => repair.record === source.id && repair.part === node.id)) continue
         decisions++
         const part = record.parts.find(part => part.id === node.id)!
         const [base, ...options] = part.options

@@ -1,7 +1,7 @@
 # Process UI release candidate
 
 Integrated local branch: `codex/process-ui-integration` in sibling `ui-integration`.
-Pinned base: public main `149182e77645320261c51a468825a59c0bce112d`, verified on the remote
+Pinned base: public main `06fa7b8a7989cf0a1f9afd0912a0887c3e4be6a8`, verified on the remote
 at integration start. All 162 incoming shared records are retained. Prototype checkpoint
 `7c5fdccfd` on `codex/process-ui-release` preserves the earlier verified 150-record version;
 its port-3220 working preview also receives the approved small presentation refinements.
@@ -109,13 +109,13 @@ Integrated preview: `http://127.0.0.1:3221/processes/preview`.
 Preserved prototype: `http://127.0.0.1:3220/processes/preview`.
 Evidence is in sibling `../evidence/`, outside the repository:
 
-- `integration-tests.log`: 256 files, 2,791 tests passed after current-main integration.
+- `pr96-tests.log`: 257 files, 2,793 tests passed after the pinned PR96 reconciliation.
 - `integration-lint.log`, `integration-types.log`: lint has zero errors and 23 existing
   warnings; TypeScript passes. `integration-build.log` records the production build.
 - `integration-preservation.json`: all 162 records deeply equal incoming main after reversing
   only 38 approved defaults and formation chooser guidance. Preserves 62 verification annotations,
   21 cost annotations, all requires/produces/producesArtifact values, source provenance and links.
-- `integration-import-preservation.log`: 16,414 source-value checks; import/schema checks
+- `pr96-import-preservation.log`: 16,441 source-value checks; import/schema checks
   validate 162 records and eight Python importer tests pass.
 - `integration-rankings.log`: rankings determinism unchanged.
 - `integration-browser.log`:320/390/1440px checks for Get paid, incorporation, contractor,
@@ -167,3 +167,19 @@ Final presentation evidence: `provider-final-browser.log`, `final-providers-390.
 Provider rows measure 44px plus their 1px divider. Both local previews pass at 320, 390,
 and 1440px; graph geometry has no clipped labels, overlaps, misplaced anchors or edge/card crossings.
 Broader nested-surface flattening remains a proposal and is not applied.
+
+## Bounded PR96 compatibility reconciliation
+
+Preserved pre-check snapshot: `2387a07f2dda59017e9f56e420522df11422f455` on
+`codex/process-ui-before-pr96`. Merged only pinned main `06fa7b8a7989cf0a1f9afd0912a0887c3e4be6a8`.
+Three conflicts were resolved in form_001, import-manifest and legacy-audit by stable IDs.
+All 162 records deep-equal that incoming base after reversing only the 38 existing default
+repairs and the approved n1 chooser guidance. The new Clerky method remains as authored;
+its parent route metadata supplies the summary classification when no default option exists.
+Incoming documents, failureModes, verify/cost and jurisdiction corrections are retained.
+No new preview rendering or schema features were added. The incoming legacy renderers and
+schema are preserved exactly from the pinned main commit.
+
+Final compatibility evidence: `pr96-preservation.json`, `pr96-tests.log`, `pr96-lint.log`,
+`pr96-types.log`, `pr96-build.log`, `pr96-import-preservation.log`, `pr96-schema.log`,
+`pr96-rankings.log`, `pr96-browser.log`, and `pr96-main-browser.log` in sibling evidence.

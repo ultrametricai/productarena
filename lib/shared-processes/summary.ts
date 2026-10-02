@@ -17,7 +17,7 @@ export function processSummary(record: SharedRecord, records: SharedRecord[] = [
         continue
       }
       steps++
-      const metadata = part.kind === 'decision' ? part.options.find(option => option.id === 'default')?.metadata : part.metadata
+      const metadata = part.kind === 'decision' ? part.options.find(option => option.id === 'default')?.metadata ?? part.metadata : part.metadata
       if (!metadata || !['agent', 'form', 'person'].includes(String(metadata.route))) { classified = false; continue }
       if (metadata.legalSignature === true) { signature++; continue }
       if (metadata.route === 'form') { manual++; continue }

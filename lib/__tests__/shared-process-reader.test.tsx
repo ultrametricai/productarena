@@ -115,7 +115,7 @@ describe('canonical shared process reader', () => {
     expect(certificate.querySelector('[aria-label="Related links"]')).toBeNull()
     expect(record.parts.find(part => part.id === 'n5')?.references.length).toBeGreaterThan(0)
     const synthetic = structuredClone(record)
-    synthetic.parts = [{ ...synthetic.parts[0], guidance: 'Detailed authored guidance. '.repeat(20), references: [], notes: [{ text: 'Authored qualification' }] }]
+    synthetic.parts = [{ ...synthetic.parts[0], kind: 'step', options: [], guidance: 'Detailed authored guidance. '.repeat(20), references: [], notes: [{ text: 'Authored qualification' }] }]
     synthetic.links = []
     const long = mount(renderToStaticMarkup(<SharedProcessReader record={synthetic} records={[synthetic]} />))
     expect([...long.querySelectorAll('article summary')].map(x => x.textContent)).toEqual(['Guidance', 'Notes (1)'])

@@ -167,7 +167,8 @@ for r in records:
 
 positive_checks = checks
 mutated = copy.deepcopy(by_id[corpus[0]["id"]]["parts"][0])
-mutated["metadata"]["estimatedMinutes"] += 1
+timing_metadata = next((option["metadata"] for option in mutated["options"] if option["id"] == "default"), mutated["metadata"])
+timing_metadata["estimatedMinutes"] += 1
 try:
     check_part(corpus[0]["dag"]["nodes"][0], mutated, "negative changed timing")
 except AssertionError:
