@@ -81,7 +81,9 @@ const TASKS: Record<string, VirtualTaskPayload> = Object.fromEntries(
   [
     task('brand_001', 'Generate a company name'),
     // The REAL geo dimension: form_001 is US-scoped with curated country analogs (UK →
-    // Companies House); qs_023 is US-scoped with (currently) no UK analog — the honest gap.
+    // Companies House); qs_023 is GLOBAL since the founder's scope-audit correction
+    // (2026-10-02: the need is universal — only the write-up was US-first) and carries
+    // four-country flavor notes (UK → Wise Business).
     task('form_001', 'Incorporate C-Corp', {
       geoScope: FORM_001.geoScope,
       geoNotes: FORM_001.geoNotes ?? [],
@@ -282,13 +284,16 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(screen.getAllByTestId('vs-artifact').some((a) => /, Inc\./.test(a.textContent ?? ''))).toBe(true)
   })
 
-  it('UK: the committed form_001 analog prints (Companies House + verified actionUrl); unmapped stays honest; steps carry the mark', () => {
+  it('UK: the committed form_001 analog prints (Companies House + verified actionUrl); global flavor notes print; steps carry the mark', () => {
     // Pin the committed data this test rests on — a corpus drift fails here, visibly.
     const ukNote = (FORM_001.geoNotes ?? []).find((n) => n.country === 'UK')!
     expect(FORM_001.geoScope).toBe('us')
     expect(ukNote.summary).toContain('Companies House')
-    expect(QS_023.geoScope).toBe('us')
-    expect((QS_023.geoNotes ?? []).some((n) => n.country === 'UK')).toBe(false)
+    // Founder scope-audit correction (2026-10-02): opening a bank account is a universal
+    // need — qs_023 is global now, and its UK note is a committed flavor analog.
+    expect(QS_023.geoScope).toBe('global')
+    const qsUkNote = (QS_023.geoNotes ?? []).find((n) => n.country === 'UK')!
+    expect(qsUkNote.kind).toBe('analog')
 
     renderIt()
     pickGeo('uk')
@@ -303,13 +308,17 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     expect(analog.textContent).toContain('Companies House')
     expect(analog.textContent).toContain('US-shaped corpus playbook') // the honest frame
     expect(within(analog).getByRole('link').getAttribute('href')).toBe(ukNote.actionUrl)
-    // One line, not two: the generic geo analog is suppressed where the entity frame covers it.
-    expect(screen.queryByTestId('vs-geo-analog')).toBeNull()
-    // qs_023 has no UK analog — said plainly, never fabricated.
-    const missing = screen.getByTestId('vs-geo-analog-missing')
-    expect(missing.textContent).toContain('no United Kingdom mapping yet')
-    // Both US-scoped processes' steps carry the quiet 🇺🇸 mark; global tasks carry none.
-    expect(screen.getAllByTestId('vs-geo-step-mark')).toHaveLength(2)
+    // form_001's generic geo line is suppressed where the entity frame covers it — but the
+    // now-global qs_023 prints its committed UK flavor note (the bank-account analog), so
+    // exactly ONE generic analog line renders, with the committed note's verified link.
+    const geoAnalogs = screen.getAllByTestId('vs-geo-analog')
+    expect(geoAnalogs).toHaveLength(1)
+    expect(geoAnalogs[0].textContent).toContain(qsUkNote.summary)
+    expect(within(geoAnalogs[0]).getByRole('link').getAttribute('href')).toBe(qsUkNote.actionUrl)
+    // No "no mapping yet" line anywhere — the scope audit left no honest gap in this run.
+    expect(screen.queryByTestId('vs-geo-analog-missing')).toBeNull()
+    // Only form_001's steps carry the quiet 🇺🇸 mark now; global tasks carry none.
+    expect(screen.getAllByTestId('vs-geo-step-mark')).toHaveLength(1)
     // The Ltd entity label reached the artifacts (the company display suffix).
     expect(screen.getAllByTestId('vs-artifact').some((a) => / Ltd/.test(a.textContent ?? ''))).toBe(true)
   })
@@ -343,9 +352,11 @@ describe('VirtualStartup — the in-sim Geo row', () => {
     fireEvent.click(screen.getByTestId('vs-geo-trigger')) // close before the run
     showAll()
     // The mount-read UK selection also applied the entity reset (asserted Ltd) — form_001's
-    // country frame prints as the entity analog; qs_023 still reports its honest gap.
+    // country frame prints as the entity analog; the now-global qs_023 prints its committed
+    // UK flavor note instead of a gap line (founder scope-audit correction 2026-10-02).
     expect(screen.getByTestId('vs-entity-analog')).toBeTruthy()
-    expect(screen.getByTestId('vs-geo-analog-missing')).toBeTruthy()
+    expect(screen.getByTestId('vs-geo-analog')).toBeTruthy()
+    expect(screen.queryByTestId('vs-geo-analog-missing')).toBeNull()
   })
 
   it('the stored pa-geo copy (incl. global) is read on mount when the URL carries nothing', () => {

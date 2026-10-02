@@ -48,7 +48,7 @@ The 14 situations, hottest clock first (urgency, then title — the /situations 
 
 | id | Situation | Trigger | Urgency | Geo |
 | --- | --- | --- | --- | --- |
-| `sit_005` | Recover from a frozen bank account or bank failure | Your operating account is frozen by the bank's compliance review — or the bank itself fails. | hours | us |
+| `sit_005` | Recover from a frozen bank account or bank failure | Your operating account is frozen by the bank's compliance review — or the bank itself fails. | hours | global |
 | `sit_003` | Respond to a data breach | You discover unauthorized access to customer or company data — a breach is live or just happened. | hours | us-state |
 | `sit_011` | Survive a DDoS attack or major outage | Traffic spikes take the product down — a DDoS attack is live, or a major outage looks like one. | hours | global |
 | `sit_006` | Contain a chargeback or fraud spike | Your dispute rate jumps — a chargeback wave or a card-testing/fraud spike is hitting your payments. | days | global |
