@@ -181,12 +181,16 @@ export interface ArenaMatch {
 }
 
 // All arenas the text speaks the language of: ≥ MIN_ARENA_HITS distinct keyword hits, strongest
-// first (hits desc, then arena id asc — deterministic), capped at MAX_MATCHED_ARENAS.
+// first (hits desc, then arena id asc — deterministic), capped at MAX_MATCHED_ARENAS. `hits`
+// counts distinct matched vocab words; `keywords` is the display list — regex syntax stripped
+// (DOMAIN_VOCAB words like 'game\\b') and then deduped, so it can be shorter than `hits`.
 export function matchArenas(text: string, vocab: Map<string, VocabWord[]>): ArenaMatch[] {
   const matches: ArenaMatch[] = []
   for (const [arena, words] of vocab) {
-    const keywords = words.filter(({ re }) => re.test(text)).map(({ word }) => word)
-    if (keywords.length >= MIN_ARENA_HITS) matches.push({ arena, hits: keywords.length, keywords })
+    const matched = words.filter(({ re }) => re.test(text))
+    if (matched.length < MIN_ARENA_HITS) continue
+    const keywords = [...new Set(matched.map(({ word }) => word.replace(/\\b/g, '').replace(/[\\.()[\]|?+*^$]/g, ' ').replace(/\s+/g, ' ').trim()))]
+    matches.push({ arena, hits: matched.length, keywords })
   }
   return matches
     .sort((a, b) => b.hits - a.hits || a.arena.localeCompare(b.arena))
