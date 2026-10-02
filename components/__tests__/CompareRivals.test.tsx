@@ -66,7 +66,8 @@ describe('CompareRivals', () => {
     expect(rows.length).toBeGreaterThanOrEqual(2)
     // Every row shows the arena-class n/a cell (with its explanatory tooltip) for BOTH na
     // dimensions — never a number, never a /score link for those columns.
-    const naCells = container.querySelectorAll('td [title^="Not meaningful for this arena"]')
+    // Tooltip shortened in the founder 2026-10-02 sweep: "… for this product class".
+    const naCells = container.querySelectorAll('td [title^="Not meaningful for this product class"]')
     expect(naCells).toHaveLength(rows.length * 2)
   })
 
