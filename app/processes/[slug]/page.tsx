@@ -15,6 +15,7 @@ import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
 import UrgencyChip from '@/components/UrgencyChip'
+import { modulesForProcess } from '@/lib/businessLogicMap'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { artifactChipRows } from '@/lib/processDeps'
@@ -89,6 +90,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // derived, never hand-stored; vendor prices deliberately excluded so the headline never
   // implies a completeness the curation doesn't claim. 0 for most processes → no chip.
   const knownFees = knownCostUsd(task.dag.nodes)
+  // Open business-logic modules serving this process (processes/business-logic-map.json).
+  const openModules = modulesForProcess(task.id)
 
   return (
     <div className="space-y-10">
@@ -173,6 +176,29 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             the human context; these chips are the machine truth the cross-process dependency
             graph (lib/processDeps.ts) is built from. */}
         <ArtifactChips rows={artifactChipRows(task)} />
+        {/* Business-logic ↔ process wiring (founder 2026-10-02): the open lib/openstartup
+            modules that serve this process, from the committed registry
+            processes/business-logic-map.json — a muted line of chips deep-linking to the
+            module's section in business-logic/README.md on GitHub (the modules are a repo
+            library by design, no site pages). Renders nothing for the many unmapped tasks. */}
+        {openModules.length > 0 && (
+          <p className="mt-3 flex max-w-2xl flex-wrap items-center gap-1.5 text-xs text-zinc-500">
+            <span title="Open-source business-logic modules (lib/openstartup/ in the repo) whose cited, tested math serves this process — cap tables, deadlines, tax mechanics, and friends. Each chip opens the module's documentation.">
+              Open modules:
+            </span>
+            {openModules.map((m) => (
+              <a
+                key={m.id}
+                href={m.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                {m.label} ↗
+              </a>
+            ))}
+          </p>
+        )}
         {/* Situations routinely touch law (C&Ds, lawsuits, notices, breach statutes) — the
             posture banner is explicit, the same honest-banner idiom as ProcessGeoBanner:
             educational operating guidance, never legal advice; stated deadlines are nominal
