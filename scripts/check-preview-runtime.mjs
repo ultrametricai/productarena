@@ -1,0 +1,112 @@
+import assert from 'node:assert/strict'
+import { spawn } from 'node:child_process'
+import { once } from 'node:events'
+import { mkdir, mkdtemp, readFile, rm, stat, symlink } from 'node:fs/promises'
+import { createServer } from 'node:net'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+export const targets = [
+  { trace: 'processes/preview/page.js.nft.json', route: '/processes/preview', marker: '/processes/preview/get-paid' },
+  { trace: 'processes/preview/[id]/page.js.nft.json', route: '/processes/preview/get-paid', marker: 'data-shared-record="get-paid"' },
+  { trace: 'processes/incorporate-c-corp/v2/page.js.nft.json', route: '/processes/incorporate-c-corp/v2', marker: 'data-shared-record="form_001"' },
+]
+const requiredFiles = ['processes/corpus.json', 'journeys/chains.json']
+
+export async function readTraces(root) {
+  return Promise.all(targets.map(async target => {
+    const filename = path.join(root, '.next/server/app', target.trace)
+    const manifest = JSON.parse(await readFile(filename, 'utf8'))
+    return { ...target, files: new Set(manifest.files.map(file => path.resolve(path.dirname(filename), file))) }
+  }))
+}
+
+export async function verifyTraces(root, traces) {
+  for (const trace of traces) for (const file of requiredFiles) {
+    const absolute = path.join(root, file)
+    assert(trace.files.has(absolute), `${trace.route}: deployment trace omits ${file}`)
+    assert((await stat(absolute)).isFile(), `${trace.route}: traced file is not a file: ${file}`)
+  }
+  console.log('Preview traces include both runtime data files for all three routes.')
+}
+
+async function unusedPort() {
+  const server = createServer()
+  server.listen(0, '127.0.0.1')
+  await once(server, 'listening')
+  const port = server.address().port
+  await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()))
+  return port
+}
+
+export async function smokeRuntime(root, traces) {
+  const runtime = await mkdtemp(path.join(tmpdir(), 'preview-runtime-'))
+  let child
+  let logs = ''
+  try {
+    // The built server and installed packages are available. Repository data is
+    // available ONLY when a preview trace lists it, never via a whole-root link.
+    for (const name of ['.next', 'node_modules', 'package.json']) {
+      await symlink(path.join(root, name), path.join(runtime, name))
+    }
+    const files = [...new Set(traces.flatMap(trace => [...trace.files]))]
+    for (let offset = 0; offset < files.length; offset += 64) {
+      await Promise.all(files.slice(offset, offset + 64).map(async file => {
+        const relative = path.relative(root, file)
+        if (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) return
+        if (['.next', 'node_modules', 'package.json'].includes(relative.split(path.sep)[0])) return
+        const destination = path.join(runtime, relative)
+        await mkdir(path.dirname(destination), { recursive: true })
+        await symlink(file, destination)
+      }))
+    }
+    const port = await unusedPort()
+    child = spawn(process.execPath, [path.join(root, 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
+      cwd: runtime,
+      env: { ...process.env, NODE_ENV: 'production', NEXT_TELEMETRY_DISABLED: '1' },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`Packaged runtime did not start:\n${logs}`)), 30_000)
+      const collect = chunk => {
+        logs = (logs + chunk).slice(-20_000)
+        if (logs.includes('Ready in')) { clearTimeout(timer); resolve() }
+      }
+      child.stdout.on('data', collect)
+      child.stderr.on('data', collect)
+      child.once('error', error => { clearTimeout(timer); reject(error) })
+      child.once('exit', code => { clearTimeout(timer); reject(new Error(`Packaged runtime exited ${code}:\n${logs}`)) })
+    })
+    for (const target of [...targets, { route: '/processes/preview/unknown-runtime-smoke-route', status: 404 }]) {
+      const response = await fetch(`http://127.0.0.1:${port}${target.route}`, { signal: AbortSignal.timeout(30_000), redirect: 'manual' })
+      const body = await response.text()
+      assert.equal(response.status, target.status ?? 200, `${target.route}: unexpected status\n${logs}`)
+      if (target.marker) assert(body.includes(target.marker), `${target.route}: missing rendered content\n${logs}`)
+      console.log(`Packaged preview ${response.status}: ${target.route}`)
+    }
+    assert(!logs.includes('ENOENT'), `Packaged runtime accessed untraced files:\n${logs}`)
+  } finally {
+    if (child && child.exitCode === null) {
+      const exited = once(child, 'exit')
+      child.kill('SIGTERM')
+      const force = setTimeout(() => child.kill('SIGKILL'), 5_000)
+      await exited
+      clearTimeout(force)
+    }
+    await rm(runtime, { recursive: true, force: true })
+  }
+}
+
+async function main() {
+  const args = process.argv.slice(2)
+  const rootFlag = args.indexOf('--root')
+  const root = path.resolve(rootFlag === -1 ? process.cwd() : args[rootFlag + 1])
+  const traces = await readTraces(root)
+  await verifyTraces(root, traces)
+  if (!args.includes('--trace-only')) await smokeRuntime(root, traces)
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch(error => { console.error(error); process.exitCode = 1 })
+}
