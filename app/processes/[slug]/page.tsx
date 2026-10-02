@@ -191,7 +191,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             library by design, no site pages). Renders nothing for the many unmapped tasks. */}
         {openModules.length > 0 && (
           <p className="mt-3 flex max-w-2xl flex-wrap items-center gap-1.5 text-xs text-zinc-500">
-            <span title="Open-source business-logic modules (lib/openstartup/ in the repo) whose cited, tested math serves this process — cap tables, deadlines, tax mechanics, and friends. Each chip opens the module's documentation.">
+            <span title="The open modules (open-source lib/openstartup/ code in the repo) whose cited, tested math serves this process — cap tables, deadlines, tax mechanics, and friends. Each chip opens the module's documentation.">
               Open modules:
             </span>
             {openModules.map((m) => (

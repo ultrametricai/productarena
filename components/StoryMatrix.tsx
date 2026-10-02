@@ -64,12 +64,9 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
             </option>
           ))}
         </select>
-        <span className="text-xs text-zinc-500">
-          {visibleStories.length}/{data.stories.length} stories shown ·{' '}
-          <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
-            legend
-          </a>
-        </span>
+        {/* The '53/53 stories shown · legend' line is gone (founder 2026-10-02) — the select
+            itself says what's filtered, and the Legend section (components/Legend.tsx) still
+            renders at #legend further down every arena page. */}
       </div>
 
       {byTheme.length === 0 && <p className="text-sm text-zinc-500">No stories for this persona.</p>}

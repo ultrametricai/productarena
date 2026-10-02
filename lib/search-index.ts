@@ -168,6 +168,7 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/compare', label: 'Compare', sublabel: 'Any products, side by side' },
   { href: '/certified', label: 'Certified Agent-Ready', sublabel: 'The certification registry' },
   { href: '/yc', label: 'YC batches', sublabel: 'Y Combinator alumni ranked by agent readiness' },
+  { href: '/rankings/law-firms', label: 'Startup law firms — ranked', sublabel: 'The judged law-firm leaderboard with per-country availability' },
   { href: '/stacks', label: 'AI Stacks', sublabel: 'Curated cross-arena stacks' },
   { href: '/stacks/builder', label: 'Stack builder', sublabel: 'Build your own evidence-backed stack' },
   { href: '/my-stack', label: 'My stack', sublabel: 'Enter your stack, get evidence-based upgrades' },

@@ -9,6 +9,7 @@ import {
   CADENCE_META, cadenceRank, chainTasks, computeCeiling, loadChains, loadProcesses, phaseRank,
   processSlug, taskCeiling, type ProcessTask, VENDOR_ARENA, vendorLabel, vendorProductId,
 } from '@/lib/processes'
+import { URGENCY_TIERS } from '@/lib/processSim'
 
 // Server-side builder for the "all processes" table rows — extracted from app/processes/page.tsx
 // (2026-09-21) so the homepage's process mode renders the exact same rows as /processes; one
@@ -184,24 +185,15 @@ export interface ProcessRowsBundle {
   totalProcesses: number
 }
 
-export function buildProcessRows(): ProcessRowsBundle {
-  const tasks = loadProcesses()
-
-  const byPhase = new Map<string, true>()
-  for (const t of tasks) byPhase.set(t.phase, true)
-  const phases = [...byPhase.keys()].sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))
-
-  let agentSteps = 0
-  let totalSteps = 0
-  const rows: ProcessRow[] = tasks.map((t) => {
-    const c = taskCeiling(t)
-    agentSteps += c.agentSteps
-    totalSteps += c.totalSteps
-    // Resolved server-side (like cadence below) so the client table never imports this
-    // node-only module — the row carries both the area name and its lifecycle rank. KIND drives
-    // the area (founder 2026-10-01): situations group under 'Situations', last.
-    const area = areaOfTask(t)
-    return {
+// One corpus record serialized for the index tables — shared by buildProcessRows (processes)
+// and buildSituationRows (the /situations index, founder 2026-10-02).
+function serializeRow(t: ProcessTask): ProcessRow {
+  const c = taskCeiling(t)
+  // Resolved server-side (like cadence below) so the client table never imports this
+  // node-only module — the row carries both the area name and its lifecycle rank. KIND drives
+  // the area (founder 2026-10-01): situations group under 'Situations', last.
+  const area = areaOfTask(t)
+  return {
       slug: processSlug(t.title),
       title: t.title,
       icon: processIcon(t.id),
@@ -259,7 +251,29 @@ export function buildProcessRows(): ProcessRowsBundle {
             return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
           }),
       ),
-    }
+  }
+}
+
+export function buildProcessRows(): ProcessRowsBundle {
+  // kind=situation records moved OUT of the processes surfaces (founder 2026-10-02: situations
+  // get their own /situations index — see buildSituationRows below): every buildProcessRows
+  // consumer (/processes, the homepage process mode, the process rankings) now sees processes
+  // only, so the table's 'Situations' area group is gone and the corpus-wide ceiling/phase
+  // derivations speak for processes alone. Detail pages, chains, the sitemap, and the shared
+  // preview still load the full corpus.
+  const tasks = loadProcesses().filter((t) => t.kind !== 'situation')
+
+  const byPhase = new Map<string, true>()
+  for (const t of tasks) byPhase.set(t.phase, true)
+  const phases = [...byPhase.keys()].sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))
+
+  let agentSteps = 0
+  let totalSteps = 0
+  const rows: ProcessRow[] = tasks.map((t) => {
+    const c = taskCeiling(t)
+    agentSteps += c.agentSteps
+    totalSteps += c.totalSteps
+    return serializeRow(t)
   })
 
   return {
@@ -268,4 +282,22 @@ export function buildProcessRows(): ProcessRowsBundle {
     agentStepPct: totalSteps === 0 ? 0 : Math.round((agentSteps / totalSteps) * 100),
     totalProcesses: tasks.length,
   }
+}
+
+/**
+ * The /situations index rows (founder 2026-10-02): the corpus's kind=situation records in the
+ * SAME row shape the process tables use, sorted by urgency (hours → days → weeks — the hotter
+ * clock reads first), then title. Detail pages stay at /processes/<slug> this round (URL
+ * stability — the index links there); the shared preview index also consumes these rows so the
+ * preview table keeps its full-corpus coverage.
+ */
+export function buildSituationRows(): ProcessRow[] {
+  return loadProcesses()
+    .filter((t) => t.kind === 'situation')
+    .map(serializeRow)
+    .sort(
+      (a, b) =>
+        URGENCY_TIERS.indexOf(a.urgency!) - URGENCY_TIERS.indexOf(b.urgency!)
+        || a.title.localeCompare(b.title),
+    )
 }

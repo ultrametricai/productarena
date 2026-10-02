@@ -6,7 +6,7 @@ a verdict, add evidence, or [add your product](#3-add-your-product) to an arena)
 setup and style rules.
 
 Contributing to the **founder-ops corpus** (jurisdiction-scoped workflows, rule cards, sources,
-vendor reviews, business-logic modules) has its own workflow and review bar — see
+vendor reviews, open modules) has its own workflow and review bar — see
 [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) and the templates in
 [`templates/`](templates/).
 

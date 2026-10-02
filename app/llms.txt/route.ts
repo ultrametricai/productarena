@@ -68,10 +68,12 @@ ${leadingBattleLinks}
 
 ## Processes (startup operations, step by step)
 
-${loadProcesses().length} founder operating processes — each mapped as a DAG of steps routed
+${loadProcesses().filter((t) => t.kind !== 'situation').length} founder operating processes — each mapped as a DAG of steps routed
 agent / manual form / human (legally-required signatures flagged), with evidence-ranked vendors
 per step, grounded per-vendor API calls, computer-use feasibility audits, and a simulated dry
-run. Index: [${SITE}/processes](${SITE}/processes). End-to-end playbooks
+run. Index: [${SITE}/processes](${SITE}/processes). The
+${loadProcesses().filter((t) => t.kind === 'situation').length} reactive, trigger-driven SITUATIONS (lawsuit served, breach live, tax notice…) have their
+own index: [${SITE}/situations](${SITE}/situations). End-to-end playbooks
 (${loadChains().length} chains): [${SITE}/processes/chains](${SITE}/processes). Process
 rankings: most-automatable, best-covered, riskiest, most-annoying, growth-drivers under
 \`${SITE}/rankings/processes/\`. The full story↔step↔process graph is machine-readable at

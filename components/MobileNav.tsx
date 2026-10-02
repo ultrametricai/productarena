@@ -13,6 +13,7 @@ import { MOBILE_NAV_ICONS } from '@/lib/arenaIcons'
 const ITEMS: Array<{ href: string; label: string; icon: string }> = [
   { href: '/arenas', label: 'Arenas', icon: MOBILE_NAV_ICONS['/arenas'] },
   { href: '/processes', label: 'Processes', icon: MOBILE_NAV_ICONS['/processes'] },
+  { href: '/situations', label: 'Situations', icon: MOBILE_NAV_ICONS['/situations'] },
   { href: '/technologies', label: 'Technologies', icon: MOBILE_NAV_ICONS['/technologies'] },
   { href: '/startup-sim', label: 'The Open Startup', icon: MOBILE_NAV_ICONS['/startup-sim'] },
   { href: '/stacks', label: 'Stacks', icon: MOBILE_NAV_ICONS['/stacks'] },
