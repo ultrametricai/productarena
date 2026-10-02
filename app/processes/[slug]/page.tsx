@@ -191,18 +191,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             ))}
           </p>
         )}
-        {/* Situations routinely touch law (C&Ds, lawsuits, notices, breach statutes) — the
-            posture banner is explicit, the same honest-banner idiom as ProcessGeoBanner:
-            educational operating guidance, never legal advice; stated deadlines are nominal
-            and carry their sources on the steps (the deadlines.ts needs-review doctrine). */}
-        {task.kind === 'situation' && (
-          <p className="mt-4 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
-            This is a reactive situation guide — educational, not legal advice. Deadlines named
-            in the steps are the nominal clocks stated by their linked sources; the real date
-            can differ (service dates, statutory exceptions, your jurisdiction), so verify
-            against the cited source and counsel before relying on one.
-          </p>
-        )}
+        {/* The per-page situation posture banner was removed (founder 2026-10-02) — the
+            sitewide footer line and /terms carry the not-legal-advice posture. */}
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
             globe"), as the house dropdown with 🌐 Global leading (founder 2026-10-02 — the
