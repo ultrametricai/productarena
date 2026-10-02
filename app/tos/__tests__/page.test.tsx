@@ -25,4 +25,11 @@ describe('tos page (company Terms of Service ported verbatim from the landing)',
   it('declares the /tos canonical (the page keeps its landing URL)', () => {
     expect(metadata.alternates?.canonical).toBe('https://ultrametric.ai/tos')
   })
+
+  it('carries the site-local scope note cross-linking /terms (founder liability pass 2026-10-02)', () => {
+    render(<TosPage />)
+    // The one non-verbatim addition: company terms here, site/research terms layer on at /terms.
+    expect(screen.getByText(/layer on top of this document at/)).toBeDefined()
+    expect(screen.getByRole('link', { name: '/terms' }).getAttribute('href')).toBe('/terms')
+  })
 })

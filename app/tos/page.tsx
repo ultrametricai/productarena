@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 // The company Terms of Service, ported verbatim from the retired Astro landing site
 // (https://ultrametric.ai/tos, "Last Updated: May 14, 2026") so the page shares the product
 // app's layout — one top bar sitewide (founder 2026-09-29). Distinct from /terms (the
 // Ultrametric-rankings-specific terms of use, which layer ON TOP of this base ToS).
+// The only non-verbatim addition is the muted scope note under the date (founder liability
+// pass 2026-10-02): it cross-links /terms so the two documents' scopes reconcile — this page
+// covers the company and its Services; /terms adds the site/research-content terms on top.
 export const metadata: Metadata = {
   title: 'Ultrametric Terms of Service',
   description: 'Ultrametric Terms of Service',
@@ -20,7 +24,14 @@ export default function TosPage() {
       // descendant arbitrary variants style the verbatim-ported markup.
       className="mx-auto max-w-3xl leading-relaxed text-zinc-300 [&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-zinc-100 [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-zinc-100 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:my-1 [&_strong]:font-semibold [&_strong]:text-zinc-100 [&_a]:underline [&_a]:decoration-zinc-700 [&_a:hover]:text-emerald-300 [&_address]:not-italic [&_address]:whitespace-pre-line"
     >
-<h1 className="font-display text-3xl font-bold tracking-tight text-zinc-100">Ultrametric Terms of Service</h1> <p className="mt-2 text-sm text-zinc-500"><strong>Last Updated:</strong> May 14, 2026</p> <p>
+<h1 className="font-display text-3xl font-bold tracking-tight text-zinc-100">Ultrametric Terms of Service</h1> <p className="mt-2 text-sm text-zinc-500"><strong>Last Updated:</strong> May 14, 2026</p>{' '}
+{/* Site-local scope note — NOT part of the verbatim-ported landing text. */}
+<p className="text-sm text-zinc-500">
+  These are the company terms for Ultrametric, Inc. and its Services. The Ultrametric site&apos;s own
+  terms — rankings and guides as research not advice, dataset copyright and reuse, trademarks, the
+  dispute path — layer on top of this document at{' '}
+  <Link href="/terms">/terms</Link>.
+</p> <p>
 These Terms of Service (&quot;<strong>Terms</strong>&quot;) govern your access to and use of the Ultrametric website, software platform, mobile applications (if any), APIs, and related services (collectively, the &quot;<strong>Services</strong>&quot;) provided by <strong>Ultrametric, Inc.</strong>, a Delaware corporation (&quot;<strong>Ultrametric</strong>,&quot; &quot;<strong>we</strong>,&quot; &quot;<strong>us</strong>,&quot; or &quot;<strong>our</strong>&quot;).
 </p> <p>
 By accessing or using the Services, you agree to be bound by these Terms. If you do not agree, do not use the Services.

@@ -5,14 +5,17 @@ import { REPO } from '@/lib/site'
 export const metadata: Metadata = {
   title: 'Terms of use — Ultrametric',
   description:
-    'Ultrametric-specific terms: rankings are evidence-derived opinions, not advice; dataset copyright and reuse rules; trademark, dispute, and API terms — on top of the Ultrametric Terms of Service.',
+    'Ultrametric-specific terms: rankings and process guides are research, not professional advice; accuracy and third-party-link disclaimers; dataset copyright and reuse rules; trademark, dispute, and API terms — on top of the Ultrametric Terms of Service.',
 }
 
 // Static page — no data dependency, no dynamic segments. Plain-language terms: this page (plus
 // DATA-LICENSE in the repo) is the single place the dataset copyright, reuse rules, watermark
 // notice, and liability disclaimer live; footers and exports link here instead of restating.
-// site-specific risk coverage (opinions-not-advice, trademarks, dispute path, scraping/API) layers
-// on top of the Ultrametric base Terms of Service at ultrametric.ai/tos.
+// Site-specific risk coverage (not-professional-advice, accuracy, trademarks, third-party links,
+// warranties/liability, dispute path, scraping/API) layers on top of the Ultrametric base Terms
+// of Service at ultrametric.ai/tos. Strengthened to the standard comparison-site exclusions
+// (founder 2026-10-02): no professional advice, no accuracy guarantee, no endorsement,
+// third-party links, full warranty disclaimer + liability exclusion — in house plain English.
 export const dynamic = 'force-static'
 
 const SECTION = 'rounded-xl border border-zinc-800 p-4'
@@ -63,38 +66,72 @@ export default function TermsPage() {
       </section>
 
       <section className={SECTION}>
-        <h2 className={H2}>Rankings are opinions, not advice</h2>
+        <h2 className={H2}>Research, not professional advice</h2>
         <p className="mt-2 text-sm text-zinc-300">
-          Rankings, verdicts, scores, and comparisons on Ultrametric are research opinions derived from the
-          cited public evidence at a point in time, produced by the process described in the{' '}
+          Rankings, verdicts, scores, comparisons, and the process and situation guides on Ultrametric are
+          research and editorial content: opinions derived from the cited public evidence at a point in time,
+          produced by the process described in the{' '}
           <Link href="/methodology" className={EXT_LINK}>
             methodology
           </Link>
-          . They are not professional advice — not procurement, legal, financial, security, or investment
-          advice — and we make no warranty of their accuracy, completeness, or fitness for any purpose.
-          Products change faster than any dataset; before acting, verify against the cited evidence and the
-          vendor&apos;s own documentation.
+          . Nothing on the site or in the repository is professional advice — not legal, tax, accounting,
+          financial, investment, immigration, procurement, or security advice. A guide here is not a
+          substitute for a qualified professional who knows your facts; for decisions that matter, consult
+          one. Before acting, verify against the cited evidence and the vendor&apos;s own documentation.
         </p>
       </section>
 
       <section className={SECTION}>
-        <h2 className={H2}>No liability</h2>
+        <h2 className={H2}>Accuracy: evidence, not guarantees</h2>
         <p className="mt-2 text-sm text-zinc-300">
-          Everything on Ultrametric is provided &quot;as is&quot;, without warranties of any kind. Ultrametric
-          Inc accepts no responsibility for decisions — purchasing, procurement, investment, or otherwise —
-          made in reliance on rankings, verdicts, scores, or any other Ultrametric output. The liability
-          limitations and cap in the Ultrametric Terms of Service apply to Ultrametric.
+          Everything here is built from cited evidence, and we show our work — but we do not guarantee that
+          anything is accurate, complete, or current. Scores change when evidence changes. Vendors change
+          their products, prices, and plans. Government fees, forms, deadlines, and laws change after the
+          as-of dates we cite. Products change faster than any dataset. If something looks wrong, flag it —
+          the correction path is below.
         </p>
       </section>
 
       <section className={SECTION}>
-        <h2 className={H2}>Trademarks and affiliation</h2>
+        <h2 className={H2}>No warranties, no liability</h2>
+        <p className="mt-2 text-sm text-zinc-300">
+          Everything on Ultrametric is provided &quot;as is&quot; and &quot;as available&quot;, without
+          warranties of any kind — express, implied, or statutory — including merchantability, fitness for a
+          particular purpose, and non-infringement, to the maximum extent permitted by law. Ultrametric Inc
+          accepts no responsibility for decisions — purchasing, procurement, investment, legal, tax, or
+          otherwise — made in reliance on rankings, verdicts, scores, guides, or any other Ultrametric
+          output. To the maximum extent permitted by law, Ultrametric Inc is not liable for indirect,
+          incidental, special, consequential, or punitive damages, or for lost profits, revenue, or data,
+          arising from the site or its datasets. The liability limitations and cap in the Ultrametric Terms
+          of Service apply to Ultrametric. Some jurisdictions do not allow certain exclusions, so some of the
+          above may not apply to you.
+        </p>
+      </section>
+
+      <section className={SECTION}>
+        <h2 className={H2}>Trademarks, no endorsement</h2>
         <p className="mt-2 text-sm text-zinc-300">
           Product names, logos, and brands that appear on Ultrametric belong to their respective owners and
-          are used only to identify the products being compared. Listing or ranking a product does not imply
-          the vendor&apos;s affiliation with, sponsorship of, or endorsement by Ultrametric Inc — or ours of
-          them. If we ever have a commercial relationship with a listed vendor, we disclose it on the relevant
-          page.
+          are used only to identify the products being compared. Listing or ranking a product — even at #1 —
+          is not an endorsement, and does not imply the vendor&apos;s affiliation with, sponsorship of, or
+          endorsement by Ultrametric Inc, or ours of them. Affiliations that do exist are disclosed: the
+          standing one (the judge&apos;s own maker has a product in one arena) is in the methodology&apos;s{' '}
+          <Link href="/methodology#bias-disclosure" className={EXT_LINK}>
+            bias disclosure
+          </Link>
+          , and if we ever have a commercial relationship with a listed vendor, we disclose it on the
+          relevant page.
+        </p>
+      </section>
+
+      <section className={SECTION}>
+        <h2 className={H2}>Third-party links and documents</h2>
+        <p className="mt-2 text-sm text-zinc-300">
+          External links — vendor sites, evidence sources, and the open-documents chips on process steps
+          (government forms, filing portals, law-firm resources) — go to third-party content we do not
+          control. We link to the canonical source so you can check it yourself, but we are not responsible
+          for what is on the other end, and a link is not an endorsement. Third-party sites have their own
+          terms and privacy policies.
         </p>
       </section>
 
