@@ -4,7 +4,8 @@ Part of [the open startup repo](../README.md#business-logic): reusable business 
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
 the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
-liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution), every one pure,
+liquidity-event waterfalls, 409A grant sanity, vesting mechanics, anti-dilution,
+priced-round mechanics), every one pure,
 client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
@@ -129,6 +130,19 @@ that leans on a legal threshold must reference a dated rule card in `rules/` and
   adjust; exempt-issuance carve-outs are charter text the caller resolves first. Ordering
   invariants property-tested (ratchet ≤ narrow ≤ broad ≤ CP1) in
   `lib/openstartup/__tests__/antiDilution.test.ts`.
+- **Priced-round mechanics** — `lib/openstartup/round.ts` — pure, client-safe; reuses the
+  cap-table module's types and pool algebra and composes the anti-dilution module (no
+  parallel cap-table representation). Contract: `proRataShares` / `maintainOwnership`
+  (pro rata per the YC User Guide §E — the Appendix II purchase replayed, and the algebra
+  showing "maintain my %" IS "buy my pro rata of the issuance"), `poolTargetFromHiringPlan`
+  with `hiringPlanPoolIncrease` / `hiringPlanPoolTopUp` (bottom-up pool sizing per
+  Rewarding Talent's approach — per-role sizes stay in the book's published grant grids,
+  supplied as inputs, never invented; the pool algebra is capTable's, already cited),
+  `downRoundModel` (a dilutive round over snapshot rows composing per-series anti-dilution
+  adjustments — the Springmeyer example replayed end-to-end, including who absorbs the
+  dilution), and `founderSecondary` (Cooley GO glossary: a secondary transfers outstanding
+  shares, issues nothing, dilutes no one — proceeds go to the seller, never the company).
+  Worked examples in `lib/openstartup/__tests__/round.test.ts`.
 
 Still planned: hiring cost comparisons beyond the runway impact (benefits/payroll-tax load
 factors need dated rule cards first). The conservative workflow planner lives in

@@ -154,6 +154,10 @@ source-cited, exhaustively tested records and code:
     formula (broad- and narrow-based, the denominator difference stated), full ratchet,
     conversion-price-to-ratio mechanics, pay-to-play as explanation, and a stated interface
     into the waterfall module — published worked examples replayed number-for-number.
+  - `round.ts` — priced-round mechanics on top of the cap table: pro rata math (maintaining
+    ownership is buying your pro rata, shown by algebra), option-pool sizing bottom-up from
+    a hiring plan, down-round modeling that composes the anti-dilution adjustments, and
+    founder secondaries (which dilute no one — the shares just change hands).
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
