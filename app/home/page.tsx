@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import BackedByBuilders from '@/components/BackedByBuilders'
 import { GetStartedAgentsSection, GetStartedHeroSection } from '@/components/GetStartedSections'
 import HomeProcessesMini, { HOME_PROCESSES_COUNT } from '@/components/HomeProcessesMini'
@@ -108,12 +107,8 @@ export default function HomePage() {
             The next great companies will run themselves — operations, code, and all. We&apos;re building the
             products that let you focus on creating and skip the automatable.
           </p>
-          <Link
-            href="/startup-sim"
-            className="mt-12 inline-flex min-h-11 items-center gap-2 rounded-full border border-zinc-700/80 bg-zinc-950/40 px-6 py-2.5 text-sm text-zinc-200 backdrop-blur-sm transition-colors hover:border-zinc-500 hover:text-white"
-          >
-            Play with the open startup <span aria-hidden>→</span>
-          </Link>
+          {/* Hero CTA removed (founder 2026-10-02) — the nav's The Open Startup entry and the
+              homepage sections below carry the path in. */}
         </div>
       </section>
 
