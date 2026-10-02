@@ -68,3 +68,130 @@ the additive transition. Public Git owns shared process meaning. Private UM
 instructions live as versioned additions in the API database. Do not use the
 retired private process repo as a source of authority or copy private guides here.
 Run `pnpm shared:check` and the shared-process tests for schema or catalog changes.
+
+# Repository guide
+
+Practical detail beneath the house rules. Section order is roughly the order you will
+need it.
+
+## What this repo is
+
+Ultrametric is the open startup repo: step-by-step founder processes (`processes/`),
+agent-tested vendor rankings (`data/`, `vendors/`, `pipeline/`), and open, source-cited
+business logic (`lib/openstartup/`, `rules/`, `sources/`), rendered by a Next.js static
+site. The knowledge layer (plain JSON and markdown, schema-validated in CI) is the
+product; the site only renders it. The README has the full map.
+
+## Setup and everyday commands
+
+```bash
+pnpm install
+pnpm dev        # http://localhost:3000 (predev mirrors data/ into public/data/)
+pnpm test       # vitest run: schema, scoring, and founder-ops gates
+pnpm stats      # regenerates the README stats/arenas blocks and badges
+```
+
+`public/data/` is a gitignored build artifact produced by `scripts/copy-data.mjs`;
+do not commit it and do not expect it to exist before a dev or build run. Per the
+house rules, worktree lanes do not run `pnpm build`.
+
+## Schemas are law
+
+Every data file (`categories.json`, `products.json`, `stories.json`, `evidence/*.json`,
+`verdicts.json`, `rankings.json`, rule cards, process records) validates against a
+schema (`lib/schemas.ts`, `schemas/*.schema.json`). If a fact does not fit the schema,
+change the schema deliberately in its own commit; do not stuff it into a free-text
+field. Run `pnpm test` before opening any PR that touches `data/`, `processes/`,
+`rules/`, `sources/`, or `jurisdictions/`.
+
+## Generated files: do not hand-edit
+
+The evidence doctrine in the house rules is the principle; these are the mechanical
+traps:
+
+- `data/<arena>/rankings.json` is derived. Change verdicts or evidence, then run
+  `pnpm pipeline derive --category <id>`.
+- The README blocks between `<!-- stats:start -->` / `<!-- arenas:start -->` style
+  markers, and the badge SVGs in `public/badges/`, come from `pnpm stats` and
+  `node scripts/generate-badges.mjs`. Edit around the markers, never inside them.
+- `vendors/reviews/generated/` regenerates deterministically from `data/`.
+
+## The pipeline
+
+`pnpm pipeline <stage> --category <id> [--product <id>]` runs the stages
+(crawl, extract, normalize, collect-community, probe, judge, derive, logos,
+popularity). The LLM stages (`extract`, `normalize`, `collect-community`, `judge`)
+need `ANTHROPIC_API_KEY` in a local `.env`. That key is local-pipeline-only: it must
+never be set on the Vercel project, and the deployed site never calls the Anthropic
+API. Verdicts are cache-keyed on their evidence, so re-judging without new evidence
+is wasted spend; scope runs with `--product` where possible. After a contributed
+correction, the minimal flow is `judge --product` then `derive`, not a full
+category re-run (see CONTRIBUTING.md).
+
+## Legal and founder-ops layer
+
+- Rule cards are dated legal propositions with stable IDs, one proposition per card,
+  each citing a primary source with an exact locator. A provider blog cannot
+  establish law.
+- `reviewed_on`/`review_due` are editorial dates, not legal effective dates.
+- When facts or locale are missing, return `needs_review` or `unsupported`; never
+  guess a legal threshold, a jurisdiction, or vendor availability.
+- Every externally-effectful workflow step requires a named, scoped human approval.
+- Fixtures are fictional by gate. Never commit real company data, cap tables, PII,
+  or tax IDs.
+- Open modules propose results; they do not authorize filings, grants, or
+  transfers. Formulas cite their sources, and worked examples are replayed
+  number-for-number in tests.
+- Behavioral rules for agents consuming this data (what you may do autonomously vs.
+  what needs human authorization) are in `governance/AGENT_POLICY.md`; maturity and
+  evidence rules are in `governance/REVIEW_POLICY.md`. Follow both.
+
+## Secrets
+
+Never commit `.env`, API keys, or tokens. `.gitignore` excludes `.env*` except
+`.env.example`. If a secret lands in history by mistake, tell a maintainer
+immediately so it can be rotated; a follow-up commit does not remove it.
+
+## Writing style
+
+The house rules' Writing voice section covers titles and framing. The rules below
+cover prose register; they apply to README, docs, reports, commit messages, and any
+prose this repo publishes. They exist because the corpus is read by humans and
+quoted by agents; voice drift compounds.
+
+1. **State facts positively.** Reserve "never" for actual prohibitions with teeth
+   (the API key rule, hand-editing derived files). Write "benchmarks are inputs, not
+   encoded constants" instead of "benchmarks are inputs, never encoded", and prefer
+   the bare positive form ("scores are computed from verdicts") when the negation
+   adds nothing.
+2. **Do not assert trustworthiness; demonstrate it.** The words "honest" and
+   "honesty" appear only for the two named conventions (the Methodology honesty
+   mechanics and the business-logic "Honesty boundaries"). Elsewhere, show the
+   mechanism: dated evidence, confidence grades, bias audits. Repeatedly calling
+   the work honest reads as the opposite.
+3. **Em-dash discipline.** In prose, use commas, colons, parentheses, or sentence
+   breaks. Em-dashes are reserved for list separators (`name — description`) and
+   literal quoted strings. If a sentence needs two em-dashes, split it.
+4. **No aphorism closers.** Cut "X, not Y" epigrams ("a snapshot, not a promise",
+   "the template, not the ceiling") and rhetorical wrap-ups ("that's the whole
+   publish flow"). End on the fact.
+5. **Vary the scaffolding.** Do not stamp the same bold-label template
+   ("What it is. / Where it lives. / Live. / Extend it.") across sections. Headings
+   plus prose are enough.
+6. **Say it once.** If a sentence or list appears twice in the document, one
+   instance dies. Redundant restatement ("the share of steps an agent can run
+   today ... what an agent can actually run today") is the most recognizable
+   generated-text tell.
+7. **No editorializing.** Drop unattributed superlatives and hype fragments
+   ("the famous March recalculation", "the gap nobody's filling"). Specifics carry
+   the persuasion.
+8. **Keep anchors stable.** Section headings are link targets; rename one only
+   after grepping the repo for its anchor.
+
+## PR checklist
+
+- Every gate in the house rules exits 0.
+- No hand-edits inside generated blocks or derived files.
+- Scores changed only via evidence/verdict changes plus `derive`.
+- Prose changes follow the Writing voice and Writing style rules above.
+- No secrets, no real company data, no private UM material.

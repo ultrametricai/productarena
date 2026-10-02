@@ -1,12 +1,12 @@
 ![Ultrametric — the open startup repo](docs/assets/banner.svg)
 
-**Everything a founder — or their agent — needs to start and run a company: every
+**Everything a founder (or their agent) needs to start and run a company: every
 [process](#processes) step by step, the [vendors](#vendors) ranked, and the
 [open modules](#business-logic) underneath.**
 
-- **Use it** — [ultrametric.ai](https://ultrametric.ai): [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
-- **Improve it** — the open startup repo: [CONTRIBUTING.md](./CONTRIBUTING.md) — contest a verdict, add your country, add a module
-- **For agents** — open data, no keys: `curl https://ultrametric.ai/data/categories.json` ([for AI agents](#for-ai-agents))
+- **Use it:** [ultrametric.ai](https://ultrametric.ai) has [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
+- **Improve it:** the open startup repo, [CONTRIBUTING.md](./CONTRIBUTING.md). Contest a verdict, add your country, add a module.
+- **For agents:** open data, no keys. `curl https://ultrametric.ai/data/categories.json` ([for AI agents](#for-ai-agents))
 
 ## Start here
 
@@ -14,14 +14,14 @@
 
 | What you need | Where |
 | --- | --- |
-| Startup processes | [/processes](https://ultrametric.ai/processes) — every founder process with its Agentic %, plus the chained playbooks |
+| Startup processes | [/processes](https://ultrametric.ai/processes): every founder process with its Agentic %, plus the chained playbooks |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
-| Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to use and improve |
-| Open modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
-| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
+| Stacks | [/stacks](https://ultrametric.ai/stacks): proven toolchains to use and improve |
+| Open modules | [`business-logic/`](business-logic/README.md): cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| The simulator | [/startup-sim](https://ultrametric.ai/startup-sim): a simulated company runs the corpus end to end |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
 
-**You're an agent or developer consuming the data** — nothing to install, no auth:
+**You're an agent or developer consuming the data.** Nothing to install, no auth:
 
 ```bash
 curl https://ultrametric.ai/data/categories.json           # every arena
@@ -42,70 +42,67 @@ the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 
 *[ultrametric.ai/processes](https://ultrametric.ai/processes): the comprehensive founder processes from an agentic lens.*
 
-**What it is.** The operational corpus: step-by-step founder processes, each a DAG whose
+The operational corpus: step-by-step founder processes, each a DAG whose
 every step is routed agent / manual form / human, with per-step reversibility
 (reversible / painful / irreversible), vendor options drawn from the judged rankings, time
-estimates, and — where routes genuinely differ — named method variants (e.g. the per-country
-filing routes). Every process carries an honest **Agentic %** — the share of steps an agent can run today (`full` / `partial` /
-`manual_guide`: what an agent can actually run today), with per-country geo notes (UK, India,
-Germany, France; the US is the baseline). Playbooks chain processes into founder paths —
-incorporate → launch, the VC raise, the agent-run back office.
+estimates, and, where routes genuinely differ, named method variants (e.g. the per-country
+filing routes). Every process carries an **Agentic %**, the share of steps an agent can
+run today (`full` / `partial` / `manual_guide`), with per-country geo notes (UK, India,
+Germany, France; the US is the baseline). Playbooks chain processes into founder paths
+(incorporate → launch, the VC raise, the agent-run back office).
 
-**Where it lives.** [`processes/`](processes/) (`corpus.json` + the jurisdiction-scoped legal
+The data lives in [`processes/`](processes/) (`corpus.json` + the jurisdiction-scoped legal
 workflows), [`journeys/`](journeys/) (`chains.json`), and
 [`processes/vendor-registry.json`](processes/) (every vendor fact the process pages render).
-
-**Live.** [/processes](https://ultrametric.ai/processes) (each process at `/processes/<id>`),
-and [The Open Startup](https://ultrametric.ai/startup-sim) — a simulator that replays the
+On the site: [/processes](https://ultrametric.ai/processes) (each process at `/processes/<id>`),
+and [The Open Startup](https://ultrametric.ai/startup-sim), a simulator that replays the
 whole corpus as a simulated company, end to end:
 
 ![The Open Startup simulator mid-run — a simulated company executing the process corpus, each step routed agent / manual form / human](docs/assets/virtual-startup.png)
 
-**Extend it.** Add a `geoNotes` country analog, a new process from
-[`templates/`](templates/), or a chain — all schema-gated by `pnpm test`. Start at
+To contribute: add a `geoNotes` country analog, a new process from
+[`templates/`](templates/), or a chain. All are schema-gated by `pnpm test`. Start at
 [`processes/README.md`](processes/README.md) and [`journeys/README.md`](journeys/README.md).
 
 ## Vendors
 
-**What it is.** The evidence layer: head-to-head, agent tested rankings of the tools
+The evidence layer: head-to-head, agent-tested rankings of the tools
 startups run on, arena by arena (current counts under
 [Data releases & freshness](#data-releases--freshness)). Every verdict cites dated evidence (vendor docs, GitHub,
 community sources, hands-on probes), rankings recompute bit-identically and carry HMAC
-`_provenance`, honest negatives count as much as positives, and owner-affiliated products are
+`_provenance`, negative results count as much as positive ones, and owner-affiliated products are
 disclosed and adversarially bias-audited
 ([evidence doctrine](governance/REVIEW_POLICY.md) · [METHODOLOGY.md](./METHODOLOGY.md)).
 
-**Where it lives.** [`data/`](data/) (per-arena products, stories, evidence, verdicts,
-rankings), [`vendors/`](vendors/) (the doctrine + `reviews/generated/` — one dated interchange
+The data lives in [`data/`](data/) (per-arena products, stories, evidence, verdicts,
+rankings), [`vendors/`](vendors/) (the doctrine + `reviews/generated/`, one dated interchange
 record per judged product), and
 [`processes/vendor-registry.json`](processes/) (the bridge that links process steps to judged
-arenas).
-
-**Live.** [/overall](https://ultrametric.ai/overall) and every arena at
+arenas). On the site: [/overall](https://ultrametric.ai/overall) and every arena at
 `/arena/<id>` (index at [/arenas](https://ultrametric.ai/arenas)).
 
-**Extend it.** Contest a verdict, add evidence, prove a story, or submit a product — see
-[Contributing](#contributing--how-the-community-can-help). Start at
+To contribute: contest a verdict, add evidence, prove a story, or submit a product (see
+[Contributing](#contributing--how-the-community-can-help)). Start at
 [`vendors/README.md`](vendors/README.md).
 
 <a id="business-logic"></a>
 
 ## Open modules
 
-**What it is.** The open modules and the rule cards beneath them — the rules and calculations
+The open modules and the rule cards beneath them: the rules and calculations
 a startup actually runs on, as open, source-cited, exhaustively tested records and code:
 
 - **Rule cards** — [`rules/`](rules/): dated legal propositions (US federal and Delaware to
   start), one stable ID each, every `kind: legal` card citing a primary authority in
-  [`sources/`](sources/) with an exact provision locator. Status `demonstration` — honest
-  maturity, stated on the card.
+  [`sources/`](sources/) with an exact provision locator. Status is `demonstration`, the
+  current maturity level, stated on each card.
 - **Open modules** — [`lib/openstartup/`](lib/openstartup/), indexed in
   [`business-logic/README.md`](business-logic/README.md), all pure, deterministic, and tested
   against published worked examples:
   - `capTable.ts` (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
     in-round pool shuffle, post-money SAFE conversion per the YC Post-Money Safe User Guide
     (Appendix II examples reproduced number-for-number), priced-round PPS solving, dilution
-    waterfalls. Repo-only by design.
+    waterfalls. The module is repo-only.
   - `runway.ts` — Paul Graham's default-alive test as code (constant expenses, compounding
     revenue, month-by-month trajectory), plus growth-adjusted runway and hiring impact.
   - `deadlines.ts` — the founder compliance clock (DE franchise tax, Form 1120, Form 941,
@@ -113,11 +110,11 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
     `needsReview` whenever the true legal date can differ.
   - `equityComp.ts` — offer and equity-comp scenarios (grant % of fully diluted, option
     spread, exit outcomes under future dilution), cited to the Holloway Guide and Index
-    Ventures' Rewarding Talent; takes the 409A FMV as input, never invents one. Pre-tax by
-    design.
+    Ventures' Rewarding Talent; it takes the 409A FMV as input rather than inventing one.
+    All outputs are pre-tax.
   - `convertibleNote.ts` — convertible promissory notes: simple-interest accrual, best-of
     cap/discount conversion (the cap denominator comes from the note's own capitalization
-    definition, never a guessed convention), maturity surfaced not decided, the three
+    definition, not a guessed convention), maturity surfaced rather than decided, the three
     Cooley GO series-pricing methods, and the note-vs-SAFE differences stated plainly.
   - `waterfall.ts` — liquidity-event waterfalls: the SAFE cash-out-vs-convert choice per
     the YC User Guide, one preferred series (non-participating vs participating), a pari
@@ -125,7 +122,7 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
     conversion-indifference point.
   - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
-    that takes the FMV as input and never values a company — now with the three §409A
+    that takes the FMV as input and does not itself value a company. It now includes the three §409A
     valuation presumptions as structured cited data, method-eligibility checks over
     explicit inputs, a refresh-trigger checklist, and the penalty mechanics as a labeled
     arithmetic illustration.
@@ -138,11 +135,11 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
   - `antiDilution.ts` — round-protection mechanics: the NVCA model weighted-average
     formula (broad- and narrow-based, the denominator difference stated), full ratchet,
     conversion-price-to-ratio mechanics, pay-to-play as explanation, and a stated interface
-    into the waterfall module — published worked examples replayed number-for-number.
+    into the waterfall module; published worked examples are replayed number-for-number.
   - `round.ts` — priced-round mechanics on top of the cap table: pro rata math (maintaining
     ownership is buying your pro rata, shown by algebra), option-pool sizing bottom-up from
     a hiring plan, down-round modeling that composes the anti-dilution adjustments, and
-    founder secondaries (which dilute no one — the shares just change hands).
+    founder secondaries (which dilute no one; the shares just change hands).
   - `optionTax.ts` — ISO vs NSO exercise mechanics: NSO spread-at-exercise income and the
     published supplemental-withholding rates, ISO no-regular-tax-at-exercise with the AMT
     adjustment, the $100,000 ISO limit replaying the regulation's own examples,
@@ -151,20 +148,20 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
   - `election83b.ts` — the 83(b) money math (the deadline clock stays in `deadlines.ts`):
     tax-at-grant vs tax-at-vesting scenarios from explicit inputs, the zero-spread founder
     case, forfeiture outcomes with the cited no-refund risk, and the early-exercise
-    interplay — all six of the IRS revenue procedure's examples replayed.
+    interplay; all six of the IRS revenue procedure's examples are replayed.
   - `qsbs.ts` — § 1202 mechanics: eligibility as cited conditions (needs review wherever
     facts decide), the holding clock with the 83(b)/vesting interplay, exclusion
     percentages by acquisition date across both statutory regimes, the per-issuer cap
-    (greater of the dollar cap or 10× basis), and the § 1045 rollover explained, cited,
-    never computed.
+    (greater of the dollar cap or 10× basis), and the § 1045 rollover explained and cited
+    but not computed.
   - `deFranchiseTax.ts` — both published Delaware franchise-tax methods computed exactly
     (the Division of Corporations' worked examples replayed number-for-number), the
-    which-method-is-cheaper comparator for the famous March recalculation, and the Large
+    which-method-is-cheaper comparator for the annual March recalculation, and the Large
     Corporate Filer amount surfaced.
-  - `rdCredit.ts` — R&D tax mechanics at honest scope: § 174/§ 174A
+  - `rdCredit.ts` — R&D tax mechanics at a stated, narrow scope: § 174/§ 174A
     capitalization/amortization arithmetic with the midpoint convention, and the § 41
     payroll-tax-offset election mechanics (eligibility conditions, the cap, quarterly
-    application) — computation over explicit inputs, eligibility always needs review.
+    application); computation is over explicit inputs and eligibility always needs review.
   - `payrollTax.ts` — employer-side federal payroll mechanics: FICA with the asOf-dated
     wage base, Additional Medicare labeled employee-only, FUTA with the bounded state
     credit, and per-employee annual cost with a stated state-tax out-of-scope boundary.
@@ -172,39 +169,39 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
     conversions and pro rata → the post-close table), composing the cap-table, round,
     anti-dilution, and waterfall modules with zero parallel arithmetic.
   - `unitEconomics.ts` — LTV/CAC and payback, the burn multiple, Rule of 40, and the magic
-    number — each cited to its canonical formulation; benchmarks are inputs, never encoded.
+    number, each cited to its canonical formulation; benchmarks are inputs, not encoded
+    constants.
   - `deferredRevenue.ts` — subscription revenue recognition and plan-change proration,
     cents-exact, replaying the published worked examples.
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
-  documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
-  `checked_on` date.
+  documents (SAFEs, board consents, offer letters, …) as dated records that link rather than
+  redistribute; every URL is verified on its `checked_on` date.
 - **Resources** — [`resources/`](resources/): the canonical startup resources plus
   [`LAWS.md`](resources/LAWS.md), the recurring principles distilled from them, every law
-  citing its sources — and [`LORE.md`](resources/LORE.md), the famous episodes of startup
+  citing its sources, and [`LORE.md`](resources/LORE.md), notable episodes of startup
   history as sourced records, every episode graded for veracity (first-person / documented /
   reported / legend).
 
-An open module may propose a result; it never silently authorizes a filing, grant, or
+An open module may propose a result; it does not silently authorize a filing, grant, or
 transfer, and anything leaning on a legal threshold references a dated rule card and returns
 `needs_review` when the locale or date is unknown. Educational, not legal advice.
 
-**Where it lives.** [`rules/`](rules/), [`sources/`](sources/), [`lib/openstartup/`](lib/openstartup/),
-[`documents/`](documents/), [`resources/`](resources/), [`jurisdictions/`](jurisdictions/).
+The data lives in [`rules/`](rules/), [`sources/`](sources/), [`lib/openstartup/`](lib/openstartup/),
+[`documents/`](documents/), [`resources/`](resources/), and [`jurisdictions/`](jurisdictions/).
+The modules are repo-first: pure libraries usable from tests, scripts, or your own agent, and
+the processes and site consume the same rule cards and jurisdiction data.
 
-**Live.** Repo-first by design: the modules are pure libraries usable from tests, scripts, or
-your own agent; the processes and site consume the same rule cards and jurisdiction data.
-
-**Extend it.** [`business-logic/README.md`](business-logic/README.md) is the index — the
-modules, the contribution bar, and the honesty rules.
+To contribute, start at [`business-logic/README.md`](business-logic/README.md): the module
+index, the contribution bar, and the honesty rules.
 
 ## How it works
 
-The startup processes are the center of the repo — everything else feeds them:
+The startup processes are the center of the repo; everything else feeds them:
 
 - **Vendor rankings feed the steps.** The pipeline (`pipeline/`) crawls vendor docs, GitHub,
   and community sources into dated evidence (`data/<arena>/evidence/`), an LLM judge turns
   each (product, story) pair into a cited verdict (`verdicts.json`), and `derive` computes
-  the rankings (`rankings.json`) — scores are computed, never hand-set, and `recompute-check`
+  the rankings (`rankings.json`). Scores are computed, never hand-set, and `recompute-check`
   proves it bit-identically. `processes/vendor-registry.json` links each process step's
   vendor options to the arena that judges them, so every "use this tool for this step" is a
   ranked, cited claim.
@@ -213,7 +210,7 @@ The startup processes are the center of the repo — everything else feeds them:
   behind the processes, each formula cited.
 - **The law anchors both.** Rule cards (`rules/`, backed by primary sources in `sources/`)
   drive the deadline math, the jurisdiction-scoped workflows, and the geo notes
-  (`jurisdictions/`) — a process step that leans on a legal threshold cites a dated card.
+  (`jurisdictions/`). A process step that leans on a legal threshold cites a dated card.
 
 The processes themselves live in `processes/corpus.json` (playbooks in
 `journeys/chains.json`), render at [/processes](https://ultrametric.ai/processes), and replay
@@ -222,7 +219,7 @@ raw: the `/data` JSON API and the agent endpoints (`/llms.txt`, per-arena `llms.
 
 ## Map of the repo
 
-Everything in the tree. The **knowledge layer** is the product — plain JSON
+Everything in the tree. The **knowledge layer** is the product: plain JSON
 and markdown, schema-validated in CI, usable without running any code.
 
 **Processes**
@@ -238,7 +235,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | --- | --- | --- |
 | `data/` | The arena evidence layer: per-arena products, stories, verdicts, evidence packs, fingerprinted rankings | `recompute-check` (bit-identical determinism) |
 | [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product | `schemas/vendor-review.schema.json`, deterministic regeneration |
-| `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
+| `pipeline/` | crawl → extract → probe → judge → derive; all scores computed from verdicts | churn policy, judge caches, recompute gate |
 
 **Open modules**
 
@@ -247,34 +244,34 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`) | `schemas/rule.schema.json` + validator |
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
 | [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
-| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited — also feeds the site's geo switcher) | exact-dimension matching; unknown = `unsupported`, never guessed |
+| [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited; also feeds the site's geo switcher) | exact-dimension matching; unknown maps to `unsupported` |
 | [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) + `LORE.md` (veracity-graded startup history) | `lib/resources.ts` / `lib/lore.ts` + invariant tests |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
-that renders it. Three directories confuse newcomers, so plainly: **`schemas/`** holds the JSON
+that renders it. Three directories confuse newcomers, so to be explicit: **`schemas/`** holds the JSON
 contracts every record validates against; **`catalog/`** is the coverage map
-(`domains.json` = what the corpus intends to cover, `coverage.json` = what it honestly covers
-today, at what maturity); **`rules/`** is cited law the open-modules layer consumes — it
+(`domains.json` = what the corpus intends to cover, `coverage.json` = what it actually covers
+today, at what maturity); **`rules/`** is cited law the open-modules layer consumes; it
 belongs to [Open modules](#business-logic) above, listed there.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
 | [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews | drift-gated against the zod source |
-| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, honest machine-readable coverage | `lib/founderOps.ts` coverage checks |
+| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, machine-readable coverage data | `lib/founderOps.ts` coverage checks |
 | [`templates/`](templates/) | Blank, schema-valid starting points for contributions | — |
 | [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
 | [`governance/`](governance/) | Review policy + maturity ladder, evidence doctrine, agent policy, security | — |
 | `infra/` | Cloudflare edge worker (routing, auth, live MCP probes) | 120 worker tests |
 | `docs/` | Architecture ([FOUNDER-OPS.md](docs/FOUNDER-OPS.md)), scoring companions, program docs | — |
-| `reports/` | Committed weekly arena reports (markdown, rendered at `/reports`) | generated, never hand-written |
+| `reports/` | Committed weekly arena reports (markdown, rendered at `/reports`) | generated by the pipeline |
 | `scripts/` | Repo utilities: stats, badges, data mirroring, schema generation | — |
 | `app/`, `components/`, `lib/` | The Next.js site (~5,900 static pages) over the corpus | typecheck, lint, ~2,000 vitest tests |
 | `public/`, `__tests__/` | Static assets (committed badges, logos) and the repo-level test suites | — |
 
 Record semantics that bind everything (from [docs/FOUNDER-OPS.md](docs/FOUNDER-OPS.md)):
 stable IDs with versioned edits; every legal statement resolves to a primary source with an
-exact locator; `reviewed_on`/`review_due` are editorial dates, never legal effective dates;
+exact locator; `reviewed_on`/`review_due` are editorial dates, not legal effective dates;
 every externally-effectful workflow step requires a named, scoped human approval; the planner
 answers `unsupported` rather than guessing; and no jurisdiction is called covered because a
 few playbooks exist ([maturity ladder](governance/REVIEW_POLICY.md)).
@@ -381,7 +378,7 @@ few playbooks exist ([maturity ladder](governance/REVIEW_POLICY.md)).
 | Startup Immigration (`startup-immigration`) | alma, lighthouse, founder-law, deel-immigration, plymouth-street, casium, legalos, siskind-susser, ellis-porter, daryanani-law, green-and-spiegel |
 <!-- arenas:end -->
 
-Regenerated by `pnpm stats` — never hand-edited. …and growing — see the live site for the current set.
+Regenerated by `pnpm stats`; do not hand-edit. The live site has the current set as it grows.
 
 See `data/categories.json` for each arena's full description, personas, and themes.
 
@@ -397,9 +394,9 @@ See `data/categories.json` for each arena's full description, personas, and them
 As of the last full pipeline run: **95 arenas, 608 products, 34,591 judged verdicts.**
 <!-- stats:end -->
 
-These counts (and the badges) are regenerated from `data/` by `pnpm stats` — never a
-hand-maintained claim. Everything that changes is generated from the committed data, never
-hand-written, so freshness is a property of the repo, not of a news page:
+These counts (and the badges) are regenerated from `data/` by `pnpm stats`, not maintained
+by hand. Everything on this page that changes is generated from the committed data, so the
+numbers stay current with the repo itself:
 
 - **[/reports](https://ultrametric.ai/reports)** — generated weekly arena reports (biggest
   movers, rank flips, new arenas, close races), committed as markdown in `reports/`.
@@ -411,27 +408,27 @@ hand-written, so freshness is a property of the repo, not of a news page:
 
 ## Methodology
 
-The full technical writeup lives in **[METHODOLOGY.md](./METHODOLOGY.md)** — this is the short
+The full technical writeup lives in **[METHODOLOGY.md](./METHODOLOGY.md)**; this is the short
 version. For plain-language answers ("what does `na` mean," "how do I disagree"), see
 [docs/SCORING.md](./docs/SCORING.md); for a critical self-assessment of the formula's limits,
 [docs/SCORING-REVIEW.md](./docs/SCORING-REVIEW.md).
 
 - **Evidence tiers.** Every claim is backed by a dated evidence item, ranked
   `probe` (tested) > `github` (code) > `community` (independent) > `claimed-docs` (vendor
-  claim). A keyless probe harness turns hands-on checks into probe-tier evidence — negative
+  claim). A keyless probe harness turns hands-on checks into probe-tier evidence, negative
   results included.
 - **Judged cells.** For every (product, story) pair, an LLM judge reads only that product's
   evidence pack and returns `full` / `partial` / `disputed` / `none` / `na` with a 0–10
   quality, a rationale, and the evidence ids it relied on. No training knowledge allowed;
   verdicts are cache-keyed on their evidence, so nothing re-judges without a reason.
-- **Scores.** A product's score is its weighted percentage across applicable cells —
+- **Scores.** A product's score is its weighted percentage across applicable cells:
   evidenced story coverage, not absolute quality. `na` cells are excluded entirely.
 - **The Overall score** blends five agent-readiness components (agent access 0.30, API quality
   0.20, openness 0.20, agentic app 0.15, automation depth 0.15); 9 canonical agenticness
   stories are injected verbatim into every arena so the index is comparable across categories.
 - **Honesty mechanics.** Unknown is `null`, never 0; every Overall score carries an A–D confidence
   grade (how much of it is probe-backed) and a measured ±band (68% interval from re-roll
-  statistics — see [METHODOLOGY.md](./METHODOLOGY.md)); re-judge churn that cites no new
+  statistics; see [METHODOLOGY.md](./METHODOLOGY.md)); re-judge churn that cites no new
   evidence is reverted under audited rules; claims vendors make are reconciled against our
   verdicts in a claims-integrity index.
 - **Bias disclosure.** The judge is an Anthropic model and the `ai-coding` arena includes
@@ -469,36 +466,36 @@ pnpm pipeline popularity         --category <id> [--product <id>]   # keyless Gi
 ```
 
 To refresh a single product's data after editing its evidence (e.g. after a contributed
-correction), you don't need to re-run the whole category — see
+correction), you don't need to re-run the whole category; see
 [CONTRIBUTING.md](./CONTRIBUTING.md) for the minimal `judge --product` + `derive` flow.
 
 After any re-judge/`derive` that changes rankings, re-run `node scripts/generate-badges.mjs`
-and commit the `public/badges/` diff — the embeddable score badges (see `/badges` on the site)
-are committed static SVGs, deliberately not generated during `pnpm build`, so consumers who
+and commit the `public/badges/` diff. The embeddable score badges (see `/badges` on the site)
+are committed static SVGs rather than build output, so consumers who
 hotlink them pick up the new scores on the next deploy.
 
 Requires `ANTHROPIC_API_KEY` in a local `.env` (see `.env.example`) for the LLM-driven stages
 (`extract`, `normalize`, `collect-community`, `judge`).
 
 **`ANTHROPIC_API_KEY` is local-pipeline-only. It must never be set as an environment variable
-on the Vercel project** — the deployed site only serves pre-computed static data from `data/`
-and never calls the Anthropic API at build or request time.
+on the Vercel project.** The deployed site only serves pre-computed static data from `data/`
+and does not call the Anthropic API at build or request time.
 
-### Arena Notes (editorial drafts — never auto-published)
+### Arena Notes (editorial drafts, not auto-published)
 
 `pnpm tsx pipeline/scripts/generate-arena-notes.ts` drafts a short signed-POV essay (5
-paragraphs max: the week's flip that matters, the gap nobody's filling, the vendor move to
-watch, one honest self-critique of our own data, a closing line) into
-`drafts/arena-notes/YYYY-MM-DD.md`. It is LLM-drafted but honesty-gated in code: the model only
+paragraphs max: the week's rank flip that matters, an unfilled gap in the arena, the vendor
+move to watch, one self-critique of our own data, a closing line) into
+`drafts/arena-notes/YYYY-MM-DD.md`. It is LLM-drafted but constrained in code: the model only
 sees a fact sheet derived from the committed changelog/report/uncertainty/gap-closers data, and
 every paragraph must cite its site source inline (`(source: /changelog)`, `(source:
-/arena/...)`) from that fact sheet — violations fail schema validation and are retried.
+/arena/...)`) from that fact sheet; violations fail schema validation and are retried.
 
-Publishing is a human act, by design. Every generated file carries
+Publishing is a human decision. Every generated file carries
 `status: draft — requires founder sign-off before publishing` in its frontmatter, and the
 [/notes](https://ultrametric.ai/notes) page (see `lib/notes.ts`) renders **only**
 files whose frontmatter a human has edited to exactly `status: published`. Review the draft,
-edit the frontmatter, commit — that's the whole publish flow. Unreviewed drafts never render.
+edit the frontmatter, commit. Unreviewed drafts do not render.
 
 ## Data layout
 
@@ -516,54 +513,54 @@ data/
     popularity-history.jsonl  # optional: one snapshot line per product per popularity run, for future velocity tracking
 ```
 
-`popularity.json`/`popularity-history.jsonl` are display-only — see "Popularity — a signal, not
+`popularity.json`/`popularity-history.jsonl` are display-only. See "Popularity — a signal, not
 a score" in [METHODOLOGY.md](./METHODOLOGY.md). Neither file is read by the scoring pipeline
 (`pipeline derive`) or `lib/scoring.ts`, and `loadCategory` tolerates their absence entirely.
 
-`rankings.json` is derived data — never hand-edit it; regenerate it with
+`rankings.json` is derived data. Do not hand-edit it; regenerate it with
 `pnpm pipeline derive --category <id>` after any verdict change.
 
 `pnpm run build`/`pnpm run dev` mirror all of `data/` verbatim to `public/data/` (a gitignored
-build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs — see "For AI
-agents" below.
+build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs (see "For AI
+agents" below).
 
 **Dataset releases.** Point-in-time snapshots of `data/` are periodically tagged and published
 as [GitHub releases](https://github.com/ultrametricai/ultrametric/releases) (e.g.
 `data-YYYY-MM-DD`), each with a zip of the full `data/` tree attached and release notes listing
-arena/product/verdict counts at that snapshot — useful if you want a stable dataset to build
+arena/product/verdict counts at that snapshot; useful if you want a stable dataset to build
 against instead of tracking `main`.
 
 ## For AI agents
 
-Ultrametric is built to be read by agents, not just browsed by humans:
+Ultrametric is built to be read by agents as much as by humans:
 
-- **[/llms.txt](https://ultrametric.ai/llms.txt)** — the top-level index per the
+- **[/llms.txt](https://ultrametric.ai/llms.txt)**: the top-level index per the
   [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
   every arena's markdown endpoint, the data API, and `/openapi.json`.
-- **Markdown endpoints** — every arena has a full-content markdown rendering at
+- **Markdown endpoints**: every arena has a full-content markdown rendering at
   `/arena/{category}/llms.md` (leaderboard, business models, grouped story matrix with proof
   URLs), and every product has a deep-dive at `/arena/{category}/product/{productId}/llms.md`
-  (every verdict, rationale, and proof URL). These are the pages an agent should actually read.
-- **Data API** — the same JSON the site renders from is mirrored verbatim to stable URLs at
+  (every verdict, rationale, and proof URL). These are the pages an agent should read first.
+- **Data API**: the same JSON the site renders from is mirrored verbatim to stable URLs at
   build time (`scripts/copy-data.mjs`, a `prebuild` step): `/data/categories.json`,
   `/data/{category}/{products,stories,verdicts,rankings}.json`,
   `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
-  (gitignored) — it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
-- **[/openapi.json](https://ultrametric.ai/openapi.json)** — an OpenAPI 3.1 document
+  (gitignored); it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
+- **[/openapi.json](https://ultrametric.ai/openapi.json)**: an OpenAPI 3.1 document
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
-- **[/methodology](https://ultrametric.ai/methodology)** — a tight, on-site summary of
+- **[/methodology](https://ultrametric.ai/methodology)**: a tight, on-site summary of
   [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, Overall score weights,
   story provenance, re-judge stability, bias disclosure), linked from the header next to
   Arenas and from `/llms.txt`.
-- **MCP / CLI** — Ultrametric is not served over its own MCP server or CLI; a first-party
+- **MCP / CLI**: Ultrametric is not served over its own MCP server or CLI; a first-party
   Ultrametric MCP + API is coming instead. The MCP/CLI packages live in their own dedicated
   repo and are not published entry points.
-- **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
+- **schema.org**: arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
-  metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking
-  one would be dishonest.
-- **sitemap.xml / robots.txt** — `app/sitemap.ts` lists every route including the `llms.md`
+  metrics (`aiEra`, `score`, etc). No `aggregateRating`: we don't have star ratings, and faking
+  one would be misleading.
+- **sitemap.xml / robots.txt**: `app/sitemap.ts` lists every route including the `llms.md`
   endpoints; `public/robots.txt` explicitly allows `GPTBot`, `ClaudeBot`, `Claude-Web`,
   `PerplexityBot`, `Googlebot`, and `Bingbot`, with a `Sitemap:` pointer.
 
@@ -571,38 +568,38 @@ Ultrametric is built to be read by agents, not just browsed by humans:
 
 Ultrametric is live at **[ultrametric.ai](https://ultrametric.ai)** and under active expansion. In flight:
 
-- **Finer-grained arenas** — splitting broad categories (e.g. project management, edge
+- **Finer-grained arenas**: splitting broad categories (e.g. project management, edge
   platforms) into narrower slices as products diverge enough to need it.
 - **New arenas incoming**: the full build queue lives in
   [`data/arena-roadmap.json`](./data/arena-roadmap.json) (170+ planned arenas in priority
-  tiers — see [`docs/COVERAGE-STRATEGY.md`](./docs/COVERAGE-STRATEGY.md)); founder-ops
+  tiers; see [`docs/COVERAGE-STRATEGY.md`](./docs/COVERAGE-STRATEGY.md)); founder-ops
   next steps are specced in [`docs/FOUNDER-OPS-ROADMAP.md`](./docs/FOUNDER-OPS-ROADMAP.md)
   and classic head-to-heads in [`docs/CLASSIC-BATTLES.md`](./docs/CLASSIC-BATTLES.md).
-- **Recorded proofs** — CLI/MCP probe sessions are now captured as sanitized, replayable
+- **Recorded proofs**: CLI/MCP probe sessions are now captured as sanitized, replayable
   transcripts (and pilot browser video) published on product pages; the
   [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) protocol lets vendors submit reproducible proof
-  specs our runner executes and publishes — pass or fail.
-- **The Agentic Depth Program** — a deeper, runtime-conformance-tested successor to the
+  specs our runner executes and publishes, pass or fail.
+- **The Agentic Depth Program**: a deeper, runtime-conformance-tested successor to the
   current agenticness/API-quality cells (MCP handshake checks, API probe suites, CLI
   conformance, agent task trials, and a monthly agentic-velocity leaderboard). See
   [`docs/AGENTIC-DEPTH-PROGRAM.md`](./docs/AGENTIC-DEPTH-PROGRAM.md) for the full plan.
-- **The contest flow** — every verdict is contestable today (see
+- **The contest flow**: every verdict is contestable today (see
   [Contributing](#contributing--how-the-community-can-help) below);
   `.github/workflows/contest-check.yml` can automate the add-evidence → re-judge → PR loop
   once a maintainer wires up the `ANTHROPIC_API_KEY` secret.
-- **Continuous runners** — `.github/workflows/story-runner.yml` re-runs one arena's full
+- **Continuous runners**: `.github/workflows/story-runner.yml` re-runs one arena's full
   pipeline every 6 hours on rotation and opens a reviewable PR (idle until the
   `ANTHROPIC_API_KEY` secret is set); an arena-builder runner that works through the
   roadmap automatically is designed in `docs/COVERAGE-STRATEGY.md`.
 
-Counts on this page (arenas/products/verdicts) are generated by `pnpm stats` — see
-`scripts/update-readme-stats.mjs` — and will keep moving as arenas and products are added;
-treat them as a snapshot, not a promise.
+Counts on this page (arenas/products/verdicts) are generated by `pnpm stats` (see
+`scripts/update-readme-stats.mjs`) and will keep moving as arenas and products are added.
+They reflect the data at the last pipeline run.
 
 ## Contributing — how the community can help
 
-Every score on the site is only as good as its evidence, so evidence work is the
-contribution. (And if the repo is useful to you,
+Every score on the site is only as good as its evidence, so contributing evidence is the
+most valuable help. (And if the repo is useful to you,
 [a star](https://github.com/ultrametricai/ultrametric) is how other founders find it.)
 
 The quick index:
@@ -612,9 +609,9 @@ The quick index:
 | Contest a verdict | the "⚑ contest" link next to any verdict on the site → [prefilled issue](https://github.com/ultrametricai/ultrametric/issues/new?template=contest-verdict.yml); flow in [CONTRIBUTING.md](./CONTRIBUTING.md) |
 | Add evidence or prove a story hands-on | [CONTRIBUTING.md](./CONTRIBUTING.md) · [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) |
 | Add your product to an arena | [/submit](https://ultrametric.ai/submit) or [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product) |
-| Add your country or state | [Add your country or state](#add-your-country-or-state) below — four PR shapes, smallest first |
-| Add an open module | [`business-logic/README.md`](business-logic/README.md) — the bar: pure functions, a citation on every formula, tests that double as documentation |
-| Submit a stack | the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml) issue form (linked from [/stacks](https://ultrametric.ai/stacks)) — stacks stay curated committed data; submissions feed review, never auto-publish |
+| Add your country or state | [Add your country or state](#add-your-country-or-state) below; four PR shapes, smallest first |
+| Add an open module | [`business-logic/README.md`](business-logic/README.md): the bar is pure functions, a citation on every formula, tests that double as documentation |
+| Submit a stack | the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml) issue form (linked from [/stacks](https://ultrametric.ai/stacks)). Stacks stay curated committed data; submissions feed review and are not auto-published |
 | Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
 
 Working on the repo itself:
@@ -626,89 +623,89 @@ pnpm dev        # http://localhost:3000
 pnpm test
 ```
 
-Pick your angle:
+Ways to contribute:
 
-- **Contest a verdict** — every verdict has a "⚑ contest" link that opens a prefilled
+- **Contest a verdict**: every verdict has a "⚑ contest" link that opens a prefilled
   issue. Bring a citation that contradicts (or supports) the ruling.
-- **Prove a story** — submit a reproducible proof spec (setup + commands + expected
+- **Prove a story**: submit a reproducible proof spec (setup + commands + expected
   result) via the *Prove a story* issue form; our runner executes and records it, and the
-  recording is published as probe-tier evidence — pass or fail. See
+  recording is published as probe-tier evidence, pass or fail. See
   [`docs/PROVE-IT.md`](./docs/PROVE-IT.md).
-- **Respond as a vendor** — put an official, verified statement on the record next to a
+- **Respond as a vendor**: put an official, verified statement on the record next to a
   verdict about your product (CVE-style) via the *Vendor response* issue form. Published
-  verbatim; it never changes a verdict by itself, but feeds the next re-judge. See
+  verbatim. The statement does not change a verdict by itself, but feeds the next re-judge. See
   [`docs/VENDOR-RESPONSES.md`](./docs/VENDOR-RESPONSES.md).
-- **Add evidence by PR** — new doc pages, changelogs, or community sources for any
+- **Add evidence by PR**: new doc pages, changelogs, or community sources for any
   product; the pipeline re-judges only the cells whose evidence changed.
-- **Submit a product or arena** — the *Submit a product* issue form (prefilled from the
+- **Submit a product or arena**: the *Submit a product* issue form (prefilled from the
   [/submit](https://ultrametric.ai/submit) quick scan), or open a PR adding your
-  `data/<arena>/products.json` entry — the exact entry shape, which URLs to include and why,
+  `data/<arena>/products.json` entry. The exact entry shape, which URLs to include and why,
   and how to make your product probe well are all in
   [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product).
-- **Add your country or state** — the highest-leverage contribution for founders outside the
+- **Add your country or state**: the most valuable contribution for founders outside the
   US; see [the subsection below](#add-your-country-or-state).
-- **Add an open module** — pure, source-cited TypeScript under `lib/openstartup/`;
+- **Add an open module**: pure, source-cited TypeScript under `lib/openstartup/`;
   the bar and candidate modules are in [`business-logic/README.md`](business-logic/README.md).
-- **Make a prediction** — `/predictions` auto-generates yes/no questions from live close
+- **Make a prediction**: `/predictions` auto-generates yes/no questions from live close
   races ("will the #2 overtake the #1 within 30 days?") and settles them mechanically from
   the committed rank-flip history. The "Predict" link opens a prefilled issue
-  (`.github/ISSUE_TEMPLATE/prediction.yml`) — v1 records predictions as submitted issues;
+  (`.github/ISSUE_TEMPLATE/prediction.yml`); v1 records predictions as submitted issues, and
   an accuracy leaderboard comes once enough questions have settled.
-- **Report an inaccuracy** — wrong metadata, broken link, stale evidence, missing logo.
-- **Adopt an arena** — become the standing reviewer for one arena's story taxonomy,
+- **Report an inaccuracy**: wrong metadata, broken link, stale evidence, missing logo.
+- **Adopt an arena**: become the standing reviewer for one arena's story taxonomy,
   evidence freshness, and contest triage.
-- **Run probes locally** — `pnpm pipeline probe --category <id>` needs no API key;
+- **Run probes locally**: `pnpm pipeline probe --category <id>` needs no API key;
   publishing discrepancies you find is exactly the point.
-- **Cite the data** — verdicts, scores, and evidence excerpts may be quoted with
+- **Cite the data**: verdicts, scores, and evidence excerpts may be quoted with
   attribution (see DATA-LICENSE); bulk reuse needs written permission from Ultrametric.
-- **Spread the Weekly Arena Report** — `pnpm tsx pipeline/scripts/generate-weekly-report.ts`
+- **Spread the Weekly Arena Report**: `pnpm tsx pipeline/scripts/generate-weekly-report.ts`
   renders the last 7 days (biggest movers, rank flips, new arenas, close races) into
   committed markdown at `reports/YYYY-MM-DD.md`, listed on the site at `/reports`. The
-  markdown is copy-paste ready for a newsletter or community digest — links, attribution,
-  and honest empty-states included.
+  markdown is copy-paste ready for a newsletter or community digest, with links, attribution,
+  and empty states handled.
 
 Found a verdict you think is wrong, or evidence we missed? See
-[CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict and adding evidence are both
-first-class, expected contribution paths. Every verdict on the site has a "⚑ contest" link
-that opens a prefilled GitHub issue with the category/product/story and current verdict
-already filled in; a maintainer (or, in the future, a GitHub Action) does the deeper check —
-adding evidence, then `pnpm pipeline judge --category <category> --product <product>` followed
-by `pnpm pipeline derive --category <category>` — before any verdict actually changes.
+[CONTRIBUTING.md](./CONTRIBUTING.md). Contesting a verdict and adding evidence are both
+first-class, expected contribution paths: a maintainer (or, in the future, a GitHub Action)
+does the deeper check, adding evidence and then running
+`pnpm pipeline judge --category <category> --product <product>` followed
+by `pnpm pipeline derive --category <category>`, before any verdict actually changes.
 
 ### Add your country or state
 
-The goal is the **complete global repo for startup founders** — processes, rules, and vendor
+The goal is the **complete global repo for startup founders**: processes, rules, and vendor
 reality for every jurisdiction, contributed by founders who operate there and verified against
-primary sources. The US slice (federal + Delaware, CA/multi-state overlays) is the template,
-not the ceiling; UK, India, Germany, and France already have first process analogs and vendor
-rows. Four PR shapes, smallest first — each is schema-validated, so `pnpm test` tells you
+primary sources. The US slice (federal + Delaware, CA/multi-state overlays) is the starting
+template; UK, India, Germany, and France already have first process analogs and vendor
+rows. Four PR shapes, smallest first. Each is schema-validated, so `pnpm test` tells you
 immediately whether your records hold up:
 
 1. **Vendor availability in your country** — add rows to
    [`jurisdictions/vendor-geo.json`](jurisdictions/): `{productId, country, status:
    available|unavailable|partial, sourceUrl, note}`. The source must be the vendor's own page
-   (or an official register) stating the fact; honest negatives ("US entities only") are as
-   valuable as positives. These rows drive the geo switcher and "Where it works" on the site.
+   (or an official register) stating the fact; negative answers ("US entities only") are as
+   valuable as positive ones. These rows drive the geo switcher and "Where it works" on the site.
 2. **A country analog for a process** — add a `geoNotes` entry to the process in
    [`processes/corpus.json`](processes/): `{country, summary, actionUrl, actionLabel}` with a
    live, official actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). This is what
    renders in the top-of-page geo banner and the "Outside the US" block.
 3. **Rule cards for your jurisdiction** — register the jurisdiction in
-   [`jurisdictions/registry.json`](jurisdictions/) with an honest, narrow scope, then add
+   [`jurisdictions/registry.json`](jurisdictions/) with a narrow, accurate scope, then add
    `rules/<CODE>/*.json` rule cards citing primary sources in
-   [`sources/registry.json`](sources/) (statute, regulation, agency guidance — a provider blog
+   [`sources/registry.json`](sources/) (statute, regulation, agency guidance; a provider blog
    cannot establish law). One proposition per stable ID.
 4. **A full jurisdiction-scoped workflow** — copy
    [`templates/process.json`](templates/process.json), narrow the applicability dimensions,
    reference your rule cards, gate every external effect on a human approval, add a fictional
-   fixture, and record the honest maturity in [`catalog/coverage.json`](catalog/) (`draft` or
-   `demonstration` to start — `reviewed` requires a named domain expert; see the
+   fixture, and record the maturity level in [`catalog/coverage.json`](catalog/) (`draft` or
+   `demonstration` to start; `reviewed` requires a named domain expert, see the
    [review policy](governance/REVIEW_POLICY.md)).
 
-Never copy US rules into another jurisdiction, never mark a country covered because one
-workflow exists, and never commit real company data — fixtures are fictional by gate. The
+Do not copy US rules into another jurisdiction, do not mark a country covered because one
+workflow exists, and do not commit real company data (fixtures are fictional by gate). The
 validator (`lib/founderOps.ts`, run by `npx vitest run __tests__/founder-ops.test.ts`) enforces
-source resolution, jurisdiction matching, approval gates, and coverage honesty on every PR.
+source resolution, jurisdiction matching, approval gates, and accurate coverage reporting on
+every PR.
 
 ## Citing Ultrametric
 
@@ -728,7 +725,7 @@ paper, post, or dataset card:
 }
 ```
 
-Rankings move as evidence lands — cite the dataset release tag (e.g. `data-YYYY-MM-DD`) when
+Rankings move as evidence lands, so cite the dataset release tag (e.g. `data-YYYY-MM-DD`) when
 you need a pinned snapshot.
 
 ## License
@@ -736,10 +733,10 @@ you need a pinned snapshot.
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
 
-Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LICENSE).
-Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE) — viewable
+Code: © 2026 Ultrametric Inc, all rights reserved (source-available, see LICENSE).
+Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE): viewable
 and quotable with attribution; bulk reuse requires written permission.
-Rankings are research outputs provided "as is" — no responsibility for decisions made in
+Rankings are research outputs provided "as is", with no responsibility for decisions made in
 reliance on them (see [/terms](https://ultrametric.ai/terms)); published
 `rankings.json` files carry a `_provenance` watermark, verifiable with
 `pnpm tsx pipeline/scripts/verify-provenance.ts <file>`.
