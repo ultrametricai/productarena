@@ -39,10 +39,11 @@ describe('lore corpus', () => {
     // The corpus must carry negative/unverifiable lore honestly, not only heroics.
     expect(entries.some((e) => e.veracity === 'legend')).toBe(true)
     expect(entries.some((e) => e.veracity === 'first-person')).toBe(true)
-    // The headline do-things-that-don't-scale episode cites pg's essay, where it was told.
+    // The headline do-things-that-don't-scale episode cites pg's essay, where the term was
+    // coined — and is graded documented, not first-person: pg told it, the Collisons did it.
     const collison = entries.find((e) => e.id === 'stripe-collison-installation')
     expect(collison?.sources.some((s) => s.url === 'https://paulgraham.com/ds.html')).toBe(true)
-    expect(collison?.veracity).toBe('first-person')
+    expect(collison?.veracity).toBe('documented')
   })
 })
 
