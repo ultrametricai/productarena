@@ -10,7 +10,7 @@ import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 const records = loadSharedProcesses()
 afterEach(cleanup)
 
-it('opens the non-geographic default on arrival, keeps alternatives closed and preserves manual collapse across views', () => {
+it('opens the non-geographic default on arrival, keeps alternatives closed and preserves manual collapse with the overview always visible', () => {
   const record = records.find(record => record.id === 'qs_021')!
   const el = render(<SharedProcessReader record={record} records={records} comparisons={buildStepComparisons(record)} />)
   const defaults = [...el.container.querySelectorAll<HTMLDetailsElement>('details[id$=":default"]')]
@@ -20,8 +20,9 @@ it('opens the non-geographic default on arrival, keeps alternatives closed and p
   expect(defaults.some(item => item.querySelector('a[href*="/arena/"]'))).toBe(true)
   fireEvent.click(defaults[0].querySelector('summary')!)
   expect(defaults[0].open).toBe(false)
-  fireEvent.click(el.getByRole('button', { name: 'Graph' }))
-  fireEvent.click(el.getByRole('button', { name: 'Details' }))
+  expect(el.queryByRole('button', { name: 'Graph' })).toBeNull()
+    expect(el.getByRole('region', { name: 'Process overview graph' })).toBeDefined()
+  expect(el.getByRole('region', { name: 'Process parts' })).toBeDefined()
   expect(defaults[0].open).toBe(false)
 })
 

@@ -63,9 +63,13 @@ describe('composed canonical previews', () => {
     if (expand) fireEvent.click(expand)
     fireEvent.click(within(payments).getByRole('button', { name: 'Use Stripe' }))
     expect(el.container.querySelectorAll('article [aria-pressed="true"]').length).toBeGreaterThan(1)
-    fireEvent.click(el.getByRole('button', { name: 'Graph' }))
+    expect(el.queryByRole('button', { name: 'Graph' })).toBeNull()
+    expect(el.getByRole('region', { name: 'Process overview graph' })).toBeDefined()
+  const scopes = el.getByText(/^Subprocesses and option scopes/).closest('details')!
+  scopes.open = true
+  fireEvent(scopes, new Event('toggle'))
     expect(el.container.querySelectorAll('[data-graph-node^="get-paid:part-1:ref:"]').length).toBeGreaterThan(0)
-    fireEvent.click(el.getByRole('button', { name: 'Details' }))
+    expect(el.getByRole('region', { name: 'Process parts' })).toBeDefined()
     expect(within(payments).getByRole('button', { name: 'Use Stripe' }).getAttribute('aria-pressed')).toBe('true')
   })
 })

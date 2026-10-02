@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { referencedCatalog } from '@/lib/shared-processes/composed-preview'
-import { ProcessViewProvider, ProcessViewSwitcher, ProcessViews } from './ProcessViews'
+import { ProcessOverview } from './ProcessViews'
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 import type { Note, Part, Reference, SharedRecord } from '@/lib/shared-processes/schema'
@@ -149,7 +149,7 @@ export default function SharedProcessReader({ record, records, supplementary, ve
   const icon = record.id === 'form_001' ? '/process-icons/incorporate.svg' : undefined
   const related = relatedProcesses(record, records)
   const phase = typeof record.metadata.phase === 'string' ? record.metadata.phase : record.kind
-  return <RegionalVariantProvider key={record.id} decision={regionalDecision(record)}><VendorSelectionProvider key={record.id}><ProcessViewProvider><div className="min-w-0 space-y-10" data-shared-record={record.id}>
+  return <RegionalVariantProvider key={record.id} decision={regionalDecision(record)}><VendorSelectionProvider key={record.id}><div className="min-w-0 space-y-6" data-shared-record={record.id}>
     <header className={`grid items-start gap-6 ${icon ? 'md:grid-cols-[minmax(0,1fr)_256px] md:gap-12' : ''}`}>
       <div className="min-w-0">
         <p className="text-[10px] uppercase tracking-widest text-zinc-400">
@@ -158,12 +158,12 @@ export default function SharedProcessReader({ record, records, supplementary, ve
         {icon && <Image src="/process-icons/incorporate-64.svg" alt="" width={64} height={64} className="mt-4 h-16 w-16 md:hidden" />}
         <h1 className="mt-4 break-words font-display text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl"><ProcessTitle title={record.title} agent={processSummary(record, records).agent} /></h1>
         {record.summary && <p className="mt-5 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-zinc-400">{record.summary}</p>}
-        <ProcessSummary record={record} records={referencedCatalog(record, records)} />
       </div>
       {icon && <Image src={icon} alt="" width={256} height={256} priority className="hidden h-64 w-64 justify-self-end md:block" />}
     </header>
-    <ProcessViewSwitcher />
     <RegionalVariantSelector />
+    <ProcessOverview processHrefs={Object.fromEntries(records.map(item => [item.id, sharedPreviewHref(item.id, records)]))} record={record} records={referencedCatalog(record, records)} />
+    <ProcessSummary record={record} records={referencedCatalog(record, records)} />
     {processChoice && <ProcessProviderSelector choice={processChoice} />}
     {(record.when || record.guidance || record.outcomes.length > 0 || record.notes.length > 0) && <section aria-label="Process overview" className="space-y-4">
       {record.when && <p className="text-zinc-400">When: {record.when}</p>}
@@ -175,14 +175,13 @@ export default function SharedProcessReader({ record, records, supplementary, ve
       <summary className="cursor-pointer">How coverage scores work</summary>
       <p className="mt-2 max-w-2xl leading-relaxed">Scores measure the mapped stories, weighted by importance, assessed quality, and verdict. Stories can describe manual workflows or APIs; scores are not automation probabilities or confirmation of a complete service. Zero means no credited coverage in these assessments; not-applicable judgments are excluded. Product links and evidence controls do not change selections.</p>
     </details>}
-    <ProcessViews processHrefs={Object.fromEntries(records.map(item => [item.id, sharedPreviewHref(item.id, records)]))} record={record} records={referencedCatalog(record, records)}><section aria-label="Process parts" className="space-y-5">
+    <section aria-label="Process parts" className="space-y-5">
       <Parts parts={record.parts} records={records} scope={record.id} vendorPreview={vendorPreview} processChoice={processChoice} comparisons={comparisons} />
     </section>
-    </ProcessViews>
     {supplementary}
     {related.length > 0 && <section aria-labelledby="related-processes-heading" className="space-y-4">
       <h2 id="related-processes-heading" className="text-xl font-medium text-zinc-100">Related processes</h2>
       <ul className="divide-y divide-zinc-800 rounded-xl border border-zinc-800">{related.map(other => <li key={other.id}><Link href={sharedPreviewHref(other.id, records)} className="block break-words px-4 py-3 text-zinc-200 hover:text-emerald-300">{other.title}</Link></li>)}</ul>
     </section>}
-  </div></ProcessViewProvider></VendorSelectionProvider></RegionalVariantProvider>
+  </div></VendorSelectionProvider></RegionalVariantProvider>
 }

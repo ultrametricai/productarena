@@ -39,12 +39,16 @@ it('shows scoped aggregate evidence independently of selection and preserves lin
   expect(providers.getByRole('region', { name: 'Stripe process coverage' }).textContent).toContain('Assessed on 12 of 12')
   expect(providers.getByRole('button', { name: 'Use Stripe' }).getAttribute('aria-pressed')).toBe('false')
   fireEvent.click(providers.getByRole('button', { name: 'Use Stripe' }))
-  fireEvent.click(el.getByRole('button', { name: 'Graph' }))
-  const graph = within(el.getByRole('region', { name: 'Process graph' }))
-  expect(graph.getByRole('heading', { name: 'Get paid' }).className).toContain('text-xl')
+  expect(el.queryByRole('button', { name: 'Graph' })).toBeNull()
+    expect(el.getByRole('region', { name: 'Process overview graph' })).toBeDefined()
+  const graph = within(el.getByRole('region', { name: 'Process overview graph' }))
+  expect(graph.getByRole('heading', { name: 'Get paid' }).className).toContain('sr-only')
+  const scopes = el.getByText(/^Subprocesses and option scopes/).closest('details')!
+  scopes.open = true
+  fireEvent(scopes, new Event('toggle'))
   const link = graph.getByRole('link', { name: 'Bookkeeping close' })
   expect(link.getAttribute('href')).toBe('/processes/preview/bookkeeping-close')
-  fireEvent.click(el.getByRole('button', { name: 'Details' }))
+  expect(el.getByRole('region', { name: 'Process parts' })).toBeDefined()
   expect(providers.getByRole('button', { name: 'Use Stripe' }).getAttribute('aria-pressed')).toBe('true')
 })
 
