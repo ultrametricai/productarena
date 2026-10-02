@@ -45,8 +45,8 @@ import { vendorGeoLookup } from '@/lib/vendorGeo'
 // time against live arenas) keep their compact "⚡ agentic workaround" line inside the block.
 
 // Re-exported from the shared layout helper (lib/dagLayers.ts) so existing importers keep
-// working — the layering itself now lives there, shared with the mini strip
-// (components/ProcessDagStrip.tsx).
+// working — the layering itself lives there (the mini strip that once shared it left the
+// leaderboard, founder 2026-10-02).
 export type { DagEdge }
 
 // One task's slice of a chained run — rendered as a labeled header block inside the same

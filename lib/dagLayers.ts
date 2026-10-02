@@ -1,5 +1,5 @@
-// Kahn layering for process DAGs — extracted from components/ProcessDag.tsx's layerNodes so the
-// full vertical diagram and the mini horizontal strip (components/ProcessDagStrip.tsx) share ONE
+// Kahn layering for process DAGs — extracted from components/ProcessDag.tsx's layerNodes so
+// every DAG rendering (the full vertical diagram, the shared-process graph) shares ONE
 // layout truth (same approach as the ai-docs dashboard's layoutDAG): each topological layer is
 // one row/column of the diagram; a layer with >1 node is genuine parallelism. Tasks without
 // edges are linear by node order. Nodes an edge cycle would strand are appended as their own

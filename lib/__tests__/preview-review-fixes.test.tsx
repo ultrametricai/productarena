@@ -28,10 +28,13 @@ it('opens the non-geographic default on arrival, keeps alternatives closed and p
 it('qualifies the real supplementary leaderboard without changing its scores or order on region changes', () => {
   const record = records.find(record => record.id === 'form_001')!
   const task = loadProcesses().find(task => task.id === record.id)!
-  const el = render(<SharedProcessReader record={record} records={records} supplementary={<ProcessLeaderboard task={task} showStepStrip={false} scopeNote={<RegionalCoverageNote />} />} />)
+  const el = render(<SharedProcessReader record={record} records={records} supplementary={<ProcessLeaderboard task={task} scopeNote={<RegionalCoverageNote />} />} />)
   const heading = el.getByRole('heading', { name: 'Who covers this process best' })
   const section = heading.closest('section')!
-  const rows = () => [...section.querySelectorAll('li')].map(row => row.textContent)
+  // Leaderboard rows are plain (non-expandable) now — pin vendor order + the score spans.
+  const rows = () =>
+    [...section.querySelectorAll('a[href*="/product/"]')].map(a => a.textContent)
+      .concat([...section.querySelectorAll('span[title^="Process score"]')].map(s => s.textContent))
   const before = rows()
   expect(before.length).toBeGreaterThan(0)
   expect(section.textContent).toContain('Default-scope coverage')
