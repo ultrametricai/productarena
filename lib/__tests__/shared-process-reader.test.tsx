@@ -103,6 +103,7 @@ describe('canonical shared process reader', () => {
     const name = el.querySelector('[id="form_001:n3"]')!
     const link = name.querySelector('a')!
     expect(link.textContent).toBe('Delaware name search')
+    expect(link.querySelectorAll('svg[aria-hidden="true"] path')).toHaveLength(2)
     expect(link.getAttribute('href')).toBe('https://icis.corp.delaware.gov/ecorp/entitysearch/namesearch.aspx')
     expect(link.closest('details')).toBeNull()
     expect(name.textContent).not.toContain('GET /api')

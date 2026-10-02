@@ -1,11 +1,12 @@
 import Link from 'next/link'
+import ExternalLinkMark from './ExternalLinkMark'
 import { referencedCatalog } from '@/lib/shared-processes/composed-preview'
 import { ProcessOverview } from './ProcessViews'
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 import type { Note, Part, Reference, SharedRecord } from '@/lib/shared-processes/schema'
 import { sharedPreviewHref } from '@/lib/shared-processes/reader'
-import { isServiceCandidate } from '@/lib/shared-processes/service-candidates'
+import { isServiceCandidate, resolveServiceCandidates } from '@/lib/shared-processes/service-candidates'
 import ServiceCandidates from './ServiceCandidates'
 import { relatedProcesses } from '@/lib/shared-processes/related'
 import { regionalDecision } from '@/lib/shared-processes/regions'
@@ -17,7 +18,7 @@ import ProcessProviderSelector, { ProviderChoice } from './ProcessProviderSelect
 import type { ProcessProviderChoice } from '@/lib/shared-processes/provider-choice'
 import StepComparisonTable from './StepComparisonTable'
 import type { StepComparisons } from '@/lib/shared-processes/step-comparisons'
-import type { VendorPreview } from '@/lib/shared-processes/vendor-preview'
+import { buildVendorPreview, type VendorPreview } from '@/lib/shared-processes/vendor-preview'
 
 function HighRisk({ metadata }: { metadata: Record<string, unknown> }) {
   return metadata.riskLevel === 'high'
@@ -65,7 +66,7 @@ function References({ references }: { references: Reference[] }) {
   if (!urls.length) return null
   return <ul aria-label="Related links" className="space-y-2 border-t border-zinc-800/50 pt-3">
     {urls.map((ref, index) => <li key={`url-${index}`} className="min-w-0">
-      <a href={ref.url} target="_blank" rel="noopener noreferrer" className="break-words text-sm text-emerald-300 underline underline-offset-4 [overflow-wrap:anywhere]">{ref.title ?? ref.url}</a>
+      <a href={ref.url} target="_blank" rel="noopener noreferrer" className="break-words text-sm text-emerald-300 underline underline-offset-4 [overflow-wrap:anywhere]">{ref.title ?? ref.url}<ExternalLinkMark href={ref.url} label={ref.title ?? ref.url} /></a>
       {ref.description && <div className="mt-1"><Guidance text={ref.description} /></div>}
     </li>)}
 
@@ -93,6 +94,12 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
       const referenced = part.ref && !ancestors.includes(part.ref) && part.ref !== sourceId ? records.find(record => record.id === part.ref) : undefined
       const providerGroup = processChoice?.groups.find(group => group.partScope === anchor(scope, part.id))
       const comparison = comparisons[anchor(scope, part.id)]
+      // The authored Clerky pricing context belongs to its provider details,
+      // not a separate workflow method. Preserve the canonical option in source.
+      const clerkyContext = sourceId === 'form_001' && part.id === 'n1' ? part.options.find(option => option.id === 'clerky-formation') : undefined
+      const clerky = clerkyContext ? resolveServiceCandidates(part.references.filter(ref => ref.kind === 'vendor' && ref.id === 'clerky'))[0] : undefined
+      const providerDetails = clerky && clerkyContext ? { [clerky.id]: <div className="space-y-3"><Prose>{clerkyContext.summary}</Prose><Notes notes={clerkyContext.notes} /><References references={clerkyContext.references} /></div> } : undefined
+      const visibleOptions = part.options.filter(option => option !== clerkyContext)
       const icon = stepIcons[anchor(scope, part.id)]
       const jurisdictions = Array.isArray(part.metadata.jurisdictions) ? part.metadata.jurisdictions.filter((value): value is string => typeof value === 'string' && value.toLowerCase() !== 'multi') : []
       return <article key={part.id} id={anchor(scope, part.id)} className={`min-w-0 scroll-mt-6 rounded-xl border border-zinc-800 bg-zinc-900/40 ${nested ? 'p-3 sm:p-4' : 'p-5 sm:p-6'}`}>
@@ -111,23 +118,23 @@ function Parts({ parts, records, scope, vendorPreview, processChoice, comparison
           {referenced && <details open className="space-y-4 border-t border-zinc-800/50 pt-3">
             <summary className="cursor-pointer text-sm font-medium text-zinc-200">Steps in {referenced.title}</summary>
             {referenced.guidance && <Guidance text={referenced.guidance} />}
-            <Parts parts={referenced.parts} records={records} scope={`${scope}:${part.id}:ref`} sourceId={referenced.id} ancestors={[...ancestors, sourceId]} processChoice={processChoice} comparisons={comparisons} nested />
+            <Parts parts={referenced.parts} records={records} scope={`${scope}:${part.id}:ref`} sourceId={referenced.id} vendorPreview={buildVendorPreview(referenced, `${scope}:${part.id}:ref`, processChoice?.stepScopes)} ancestors={[...ancestors, sourceId]} processChoice={processChoice} comparisons={comparisons} nested />
           </details>}
-          {part.options.length > 0 && <div className="space-y-3 border-t border-zinc-800/50 pt-3">
+          {visibleOptions.length > 0 && <div className="space-y-3 border-t border-zinc-800/50 pt-3">
             <div className="divide-y divide-zinc-800/70 overflow-hidden rounded-xl border border-zinc-800">
-            {part.options.map(option => <RegionalOption key={option.id} scope={anchor(scope, part.id)} optionId={option.id} id={anchor(anchor(scope, part.id), option.id)} assessment={<StepAssessment metadata={option.metadata} />} heading={<>{option.title}<StepAssessment metadata={option.metadata} spaced /></>}>
+            {visibleOptions.map(option => <RegionalOption key={option.id} scope={anchor(scope, part.id)} optionId={option.id} id={anchor(anchor(scope, part.id), option.id)} assessment={<StepAssessment metadata={option.metadata} />} heading={<>{option.title}<StepAssessment metadata={option.metadata} spaced /></>}>
                 <Guidance text={option.summary} />
                 {option.when && <p className="text-zinc-400">When: {option.when}</p>}
                 <Notes notes={option.notes} />
-                {comparisons[anchor(anchor(scope, part.id), option.id)] ? <StepComparisonTable scope={anchor(anchor(scope, part.id), option.id)} comparison={comparisons[anchor(anchor(scope, part.id), option.id)]} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(anchor(scope, part.id), option.id)]} /> : vendorPreview && <SelectedCapability choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(anchor(scope, part.id), option.id)] ?? []} />}
+                {comparisons[anchor(anchor(scope, part.id), option.id)] ? <StepComparisonTable bordered={!(sourceId === 'form_001' && part.id === 'n4' && option.id === 'default')} parentChoiceScope={vendorPreview?.parentChoiceScope} scope={anchor(anchor(scope, part.id), option.id)} comparison={comparisons[anchor(anchor(scope, part.id), option.id)]} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(anchor(scope, part.id), option.id)]} /> : vendorPreview && <SelectedCapability parentChoiceScope={vendorPreview?.parentChoiceScope} choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(anchor(scope, part.id), option.id)] ?? []} />}
                 <ServiceCandidates references={option.references} separated excludeIds={comparisons[anchor(anchor(scope, part.id), option.id)]?.products.map(product => product.id)} />
                 <References references={option.references.filter(ref => comparisons[anchor(anchor(scope, part.id), option.id)] || !isServiceCandidate(ref))} />
                 {(option.parts.length > 0 || option.links?.length) && <Parts parts={option.parts} records={records} scope={anchor(anchor(scope, part.id), option.id)} sourceId={sourceId} ancestors={ancestors} vendorPreview={vendorPreview} processChoice={processChoice} comparisons={comparisons} nested />}
             </RegionalOption>)}
             </div>
           </div>}
-          {providerGroup ? <ProviderChoice choice={providerGroup} /> : <ServiceCandidates references={part.references} separated excludeIds={comparison?.products.map(product => product.id)} choiceScope={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.choiceScope : processChoice?.groups.find(group => group.partScope === anchor(scope, part.id))?.scope} coverage={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.coverage : undefined} />}
-          {comparison ? <StepComparisonTable scope={anchor(scope, part.id)} comparison={comparison} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(scope, part.id)]} /> : vendorPreview && <SelectedCapability choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(scope, part.id)] ?? []} />}
+          {providerGroup ? <ProviderChoice choice={providerGroup} /> : <ServiceCandidates details={providerDetails} references={part.references} separated excludeIds={comparison?.products.map(product => product.id)} choiceScope={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.choiceScope : processChoice?.groups.find(group => group.partScope === anchor(scope, part.id))?.scope} coverage={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.coverage : undefined} parentChoiceScope={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.parentChoiceScope : undefined} evidence={vendorPreview?.choiceScope === anchor(scope, part.id) ? vendorPreview.evidence : undefined} />}
+          {comparison ? <StepComparisonTable parentChoiceScope={vendorPreview?.parentChoiceScope} scope={anchor(scope, part.id)} comparison={comparison} choiceScope={vendorPreview?.choiceScope ?? processChoice?.stepScopes[anchor(scope, part.id)]} /> : vendorPreview && <SelectedCapability parentChoiceScope={vendorPreview?.parentChoiceScope} choiceScope={vendorPreview.choiceScope} evidence={vendorPreview.evidence[anchor(scope, part.id)] ?? []} />}
           <References references={part.references.filter(ref => comparison || !isServiceCandidate(ref))} />
         </div>
       </article>
