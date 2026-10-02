@@ -32,12 +32,20 @@ describe('operational-process schema publication', () => {
     const schema = JSON.parse(committed)
     expect(schema.$schema).toBe('https://json-schema.org/draft/2020-12/schema')
     expect(schema.type).toBe('object')
-    // The five founder orderings + the GEO dimension are required by construction — the schema
-    // must publish that, or external validators would accept an untagged process our loader
-    // rejects.
-    for (const key of ['id', 'title', 'geoScope', 'cadence', 'timeOrder', 'annoyance', 'risk', 'growthImpact', 'dag']) {
+    // The score orderings + the GEO dimension are required by construction — the schema must
+    // publish that, or external validators would accept an untagged process our loader rejects.
+    // timeOrder left the required set with the Situations classification (founder 2026-10-01):
+    // it is required on kind 'process' and forbidden on kind 'situation', a kind-conditional
+    // invariant loadProcesses enforces at load time (the published schema stays a plain shape).
+    for (const key of ['id', 'title', 'geoScope', 'cadence', 'annoyance', 'risk', 'growthImpact', 'dag']) {
       expect(schema.required, `required ${key}`).toContain(key)
     }
+    expect(schema.required).not.toContain('timeOrder')
+    // The situation classification is published: kind (zod-defaulted 'process'), the trigger
+    // sentence, and the urgency clock.
+    expect(schema.properties.kind?.enum ?? schema.properties.kind?.anyOf).toBeDefined()
+    expect(schema.properties.trigger).toBeDefined()
+    expect(schema.properties.urgency?.enum).toEqual(['hours', 'days', 'weeks'])
   })
 
   it('every committed corpus record validates against the published schema via shape()', () => {

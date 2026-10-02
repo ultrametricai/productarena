@@ -8,9 +8,11 @@ import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import GeoDropdown from '@/components/GeoDropdown'
 import TableControls from '@/components/TableControls'
+import UrgencyChip from '@/components/UrgencyChip'
 import { useGeoSelection } from '@/components/useGeoSelection'
 import { GEO_GLOBAL, GEO_SCOPE_GLYPH } from '@/lib/geoPreference'
 import { phaseEmoji, phaseIcon, phaseTooltip } from '@/lib/processIcons'
+import { URGENCY_TIERS, type ProcessKind, type Urgency } from '@/lib/processSim'
 import { readParams, setParams } from '@/lib/urlState'
 
 // The /processes controller: one dense sortable/filterable table over the whole founder-process
@@ -67,9 +69,16 @@ export interface ProcessRow {
   agentSteps: number
   totalSteps: number
   complexity: string
+  // Record kind (founder 2026-10-01): 'situation' rows are reactive — they render `trigger`
+  // as their subtitle, wear the `urgency` chip, and carry timeOrder null (no founder-timeline
+  // slot; they sort after the timeline — see timelineRank below).
+  kind: ProcessKind
+  trigger: string | null
+  urgency: Urgency | null
   // The five-orderings fields (curated in processes/corpus.json; cadence label/rank resolved
-  // server-side so this component stays free of the node-only cadence helpers).
-  timeOrder: number
+  // server-side so this component stays free of the node-only cadence helpers). timeOrder is
+  // null on kind 'situation'.
+  timeOrder: number | null
   cadenceLabel: string
   cadenceRank: number
   annoyance: number
@@ -154,11 +163,21 @@ const METRIC_META: Record<Metric, { header: string; tooltip: string }> = {
   growth: { header: 'Growth impact', tooltip: 'How directly this process drives revenue and user growth (1–5)' },
 }
 
+// The timeline-axis handling for situations, PINNED (founder 2026-10-01): a situation has no
+// timeOrder slot — it is reactive, not a stop on the journey — so on the timeline axis every
+// situation sorts AFTER every timeline process, and the situation tail orders by urgency
+// (hours → days → weeks: the hotter clock reads first), then title. Every OTHER axis (ceiling,
+// risk, annoyance, cadence…) interleaves situations honestly — they have real values there.
+const timelineRank = (row: ProcessRow): number => row.timeOrder ?? Number.MAX_SAFE_INTEGER
+const urgencyRank = (row: ProcessRow): number => (row.urgency ? URGENCY_TIERS.indexOf(row.urgency) : -1)
+const timelineCompare = (a: ProcessRow, b: ProcessRow): number =>
+  timelineRank(a) - timelineRank(b) || urgencyRank(a) - urgencyRank(b) || a.title.localeCompare(b.title)
+
 function fieldOf(row: ProcessRow, col: Column): number | string {
   if (col === 'title') return row.title
   if (col === 'phase') return row.phase
   if (col === 'pct') return row.pct
-  if (col === 'order') return row.timeOrder
+  if (col === 'order') return timelineRank(row)
   if (col === 'cadence') return row.cadenceRank
   if (col === 'annoyance') return row.annoyance
   if (col === 'risk') return row.risk
@@ -348,8 +367,9 @@ export default function ProcessesTable({
       const bv = fieldOf(b, column)
       const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
       // Ties (cadence buckets, 1–5 scores) fall back to the founder timeline so the order is
-      // deterministic and still reads as a journey inside each bucket.
-      if (cmp === 0) return a.timeOrder - b.timeOrder
+      // deterministic and still reads as a journey inside each bucket — with the slot-less
+      // situations after the timeline, by urgency then title (timelineCompare).
+      if (cmp === 0) return timelineCompare(a, b)
       return direction === 'desc' ? -cmp : cmp
     })
   }, [filtered, column, direction])
@@ -373,9 +393,10 @@ export default function ProcessesTable({
       const bv = b.kind === 'process' ? fieldOf(b.row, column) : playbookFieldOf(b.row, column)
       const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
       if (cmp === 0) {
-        // Process–process ties keep the founder-timeline fallback the table always had;
-        // ties involving a playbook resolve by title so the order stays deterministic.
-        if (a.kind === 'process' && b.kind === 'process') return a.row.timeOrder - b.row.timeOrder
+        // Process–process ties keep the founder-timeline fallback the table always had
+        // (situations after the timeline — timelineCompare); ties involving a playbook resolve
+        // by title so the order stays deterministic.
+        if (a.kind === 'process' && b.kind === 'process') return timelineCompare(a.row, b.row)
         return a.row.title.localeCompare(b.row.title)
       }
       return direction === 'desc' ? -cmp : cmp
@@ -413,9 +434,14 @@ export default function ProcessesTable({
         area,
         areaRank: g.areaRank,
         items: [...g.items].sort(
+          // Playbook rows always carry their first constituent's timeOrder; process rows rank
+          // through timelineRank (situations — the whole 'Situations' group — have no slot, so
+          // inside that group the urgency clock orders the rows, hours first, then title).
           (a, b) =>
-            a.row.timeOrder - b.row.timeOrder
+            (a.kind === 'playbook' ? a.row.timeOrder : timelineRank(a.row))
+              - (b.kind === 'playbook' ? b.row.timeOrder : timelineRank(b.row))
             || (a.kind === b.kind ? 0 : a.kind === 'process' ? -1 : 1)
+            || (a.kind === 'process' && b.kind === 'process' ? urgencyRank(a.row) - urgencyRank(b.row) : 0)
             || a.row.title.localeCompare(b.row.title),
         ),
       }))
@@ -428,7 +454,18 @@ export default function ProcessesTable({
     : 'cadence'
 
   function metricCell(r: ProcessRow): ReactNode {
-    if (metric === 'order') return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
+    if (metric === 'order') {
+      // A situation has no slot on the founder timeline — an honest dash, not an invented
+      // number (the same convention as the playbook rows' missing per-process metrics).
+      if (r.timeOrder === null) {
+        return (
+          <span className="text-xs text-zinc-600" title="Situation — reactive, trigger-driven: it has no slot on the founder timeline; the urgency chip carries its clock">
+            —
+          </span>
+        )
+      }
+      return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
+    }
     if (metric === 'cadence') return <span className="text-xs text-zinc-400">{r.cadenceLabel}</span>
     if (metric === 'annoyance') return <ScoreDots value={r.annoyance} label="Annoyance" />
     if (metric === 'risk') return <ScoreDots value={r.risk} label="Risk" />
@@ -442,7 +479,7 @@ export default function ProcessesTable({
       <tr key={r.slug} className="transition hover:bg-zinc-800/70">
         <td className="max-w-[260px] px-2 py-2">
           <span className="flex items-center gap-1.5">
-            <IconChip icon={r.icon} title={`${r.title} — ${r.phase} process`} />
+            <IconChip icon={r.icon} title={`${r.title} — ${r.phase} ${r.kind === 'situation' ? 'situation' : 'process'}`} />
             <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
               {r.title}
             </Link>
@@ -453,7 +490,13 @@ export default function ProcessesTable({
             >
               {scopeGlyphs[r.geoScope].glyph}
             </span>
+            {r.urgency !== null && <UrgencyChip tier={r.urgency} />}
           </span>
+          {/* Situations (founder 2026-10-01): the trigger — the event that puts a founder
+              here — is the row's subtitle; process rows stay single-line. */}
+          {r.kind === 'situation' && r.trigger !== null && (
+            <span className="mt-0.5 block pl-6 text-[11px] leading-snug text-zinc-500">{r.trigger}</span>
+          )}
         </td>
         <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
           {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
@@ -631,7 +674,11 @@ export default function ProcessesTable({
                         <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                           <span className="font-display text-sm font-semibold tracking-tight text-zinc-100">{g.area}</span>
                           <span className="text-[11px] text-zinc-500">
-                            {g.items.length} {g.items.length === 1 ? 'process' : 'processes'}
+                            {/* The Situations group counts honestly in its own vocabulary. */}
+                            {g.items.length}{' '}
+                            {g.area === 'Situations'
+                              ? g.items.length === 1 ? 'situation' : 'situations'
+                              : g.items.length === 1 ? 'process' : 'processes'}
                           </span>
                         </span>
                       </th>

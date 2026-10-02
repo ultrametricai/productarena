@@ -20,7 +20,12 @@ export const ARTIFACT_REGISTRY_SCHEMA_FILE = path.join(ROOT, 'schemas', 'process
 // format). Deterministic: z.toJSONSchema walks the zod shape in declaration order and
 // JSON.stringify preserves insertion order — no dates, no environment reads.
 export function operationalProcessSchemaJson(): string {
-  const { $schema, ...rest } = z.toJSONSchema(ProcessTaskSchema)
+  // io: 'input' — the published schema is the contract for the COMMITTED corpus records (the
+  // loader's input), where zod-defaulted fields are optional: `kind` defaults to 'process'
+  // (founder 2026-10-01, Situations) precisely so the 124 pre-situation records stay
+  // byte-identical, and the schema must accept them exactly as committed. The output
+  // perspective would mark `kind` required and reject every one of them.
+  const { $schema, ...rest } = z.toJSONSchema(ProcessTaskSchema, { io: 'input' })
   const doc = {
     $schema,
     title: 'Ultrametric operational process',

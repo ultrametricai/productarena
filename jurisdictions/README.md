@@ -43,7 +43,7 @@ itself rather than `geoNotes` analogs:
 
 | Country | Workflow-layer registry | vendor-geo rows | Process `geoNotes` (country analogs) |
 | --- | --- | --- | --- |
-| US | US-FED, US-DE (both `partial-example`) | 24 | — (baseline; 123/123 processes geo-scoped) |
+| US | US-FED, US-DE (both `partial-example`) | 24 | — (baseline; 136/136 corpus records geo-scoped) |
 | UK | — | 24 | 41 |
 | IN | — | 21 | 39 |
 | DE | — | 23 | 37 |

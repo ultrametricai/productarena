@@ -10,6 +10,44 @@ export type StepRoute = 'agent' | 'form' | 'person'
 // lockstep). Lives here so client components can type against it without pulling node:fs.
 export type Cadence = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual' | 'event-driven' | 'once'
 
+// Record kind (founder ask 2026-10-01: "Situations — reactive, trigger-driven founder
+// processes — e.g. your company has a C&D, or you want to come to Silicon Valley but the visa
+// is held up"). A 'situation' is the SAME corpus machinery as a 'process' — a routed DAG with
+// ceilings, vendors, reversibility, geo — classified reactive: a trigger event puts the founder
+// here, so it has NO slot in the founder timeline and instead carries an honest urgency clock.
+// Kept in lockstep with the z.enum in lib/processes.ts's ProcessTaskSchema.
+export const PROCESS_KINDS = ['process', 'situation'] as const
+export type ProcessKind = (typeof PROCESS_KINDS)[number]
+
+// How fast the FIRST step of a situation must honestly happen once its trigger fires. Curated,
+// never derived — 'hours' means contain-it-now (a breach, a frozen payroll account, a DDoS),
+// 'days' means this week (a C&D's stated deadline, a lawsuit's answer clock), 'weeks' means a
+// real but slower clock (a trademark office action's 3-month window). Required on every
+// situation, forbidden on processes (enforced at load time in lib/processes.ts).
+export const URGENCY_TIERS = ['hours', 'days', 'weeks'] as const
+export type Urgency = (typeof URGENCY_TIERS)[number]
+
+// Display meta for the urgency chip (components/UrgencyChip.tsx) — same {label, definition}
+// shape as REVERSIBILITY_META below; every tier renders (urgency is the point of a situation,
+// not an exception state).
+export const URGENCY_META: Record<Urgency, { label: string; definition: string }> = {
+  hours: {
+    label: 'act within hours',
+    definition:
+      'Act within hours — the first step is containment: a breach spreads, a frozen account blocks payroll, an attack is live.',
+  },
+  days: {
+    label: 'act within days',
+    definition:
+      'Act within days — a real clock is running (a stated response deadline, an answer window, a vesting cutoff), but the first step is assessment, not firefighting.',
+  },
+  weeks: {
+    label: 'act within weeks',
+    definition:
+      'Act within weeks — the deadline is real but measured in months, not days; start early, because the work (responses, filings, migrations) takes longer than it looks.',
+  },
+}
+
 // Reversibility tiers (founder 2026-09-30: "map what is irreversible and what is reversible —
 // consider 'irreversible with pain' as a 3rd option — for ALL processes and process steps").
 // Curated explicitly on every corpus process AND every DAG node (processes/corpus.json,

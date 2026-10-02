@@ -14,6 +14,7 @@ import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProductLogoView from '@/components/ProductLogoView'
+import UrgencyChip from '@/components/UrgencyChip'
 import { hasLogo } from '@/lib/logos'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { artifactChipRows } from '@/lib/processDeps'
@@ -111,7 +112,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.phase}
         </p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
-          <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
+          <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} ${task.kind === 'situation' ? 'situation' : 'process'}`} />
           {task.title}
           {task.region === 'us' && (
             <span
@@ -126,6 +127,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           )}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+          {/* Situations (founder 2026-10-01) lead the chip row with their honest clock. */}
+          {task.urgency && <UrgencyChip tier={task.urgency} />}
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
             {task.complexity.replace('_', ' ')}
           </span>
@@ -155,6 +158,13 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
               for everyone else. The manifest it hands off is public regardless. */}
           <DoViaAfk manifestUrl={processManifestUrl(slug)} />
         </div>
+        {/* The trigger — the event that puts a founder in this situation — leads the prose
+            (founder 2026-10-01), ahead of the description, in the header. */}
+        {task.kind === 'situation' && task.trigger && (
+          <p className="mt-3 max-w-2xl text-sm text-zinc-300">
+            <span className="font-semibold text-amber-300">Trigger:</span> {task.trigger}
+          </p>
+        )}
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
         {/* The typed-I/O layer (founder depth wave part 2, 2026-10-01): what this process Needs
@@ -163,6 +173,18 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             the human context; these chips are the machine truth the cross-process dependency
             graph (lib/processDeps.ts) is built from. */}
         <ArtifactChips rows={artifactChipRows(task)} />
+        {/* Situations routinely touch law (C&Ds, lawsuits, notices, breach statutes) — the
+            posture banner is explicit, the same honest-banner idiom as ProcessGeoBanner:
+            educational operating guidance, never legal advice; stated deadlines are nominal
+            and carry their sources on the steps (the deadlines.ts needs-review doctrine). */}
+        {task.kind === 'situation' && (
+          <p className="mt-4 max-w-2xl rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
+            This is a reactive situation guide — educational, not legal advice. Deadlines named
+            in the steps are the nominal clocks stated by their linked sources; the real date
+            can differ (service dates, statutory exceptions, your jurisdiction), so verify
+            against the cited source and counsel before relying on one.
+          </p>
+        )}
         {/* GEO as a top-level driver (founder 2026-09-28: "make GEO a top-level process driver
             at the top of a particular process page … so we know how it works across the
             globe"). The switcher is global (?geo= + pa-geo, lib/geoPreference.ts); the banner

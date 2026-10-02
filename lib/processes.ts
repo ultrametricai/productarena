@@ -6,18 +6,19 @@ import { resolveGapStep } from './gapClosers'
 import { JURISDICTIONS, type Jurisdiction, type JurisdictionStepView } from './jurisdictions'
 import { hasLogo } from './logos'
 import { isShutdown } from './shutdown'
-import type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
-import { DECISION_STEP_RE, formatMinutes, gapWhy, REVERSIBILITY_TIERS } from './processSim'
+import type { Cadence, GapResolution, ProcessKind, Reversibility, SimStep, StepRoute, SwapOption, Urgency, VendorRole } from './processSim'
+import { DECISION_STEP_RE, formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_TIERS, URGENCY_TIERS } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
-export { formatMinutes, gapWhy, REVERSIBILITY_TIERS }
-export type { Cadence, GapResolution, Reversibility, SimStep, StepRoute, SwapOption, VendorRole }
+export { formatMinutes, gapWhy, PROCESS_KINDS, REVERSIBILITY_TIERS, URGENCY_TIERS }
+export type { Cadence, GapResolution, ProcessKind, Reversibility, SimStep, StepRoute, SwapOption, Urgency, VendorRole }
 
-// The founder-process corpus (processes/corpus.json): 123 real startup operating processes, each
-// mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
-// API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
-// or a computer-use agent does it: meetings, judgment, waiting on a third party — with
+// The founder-process corpus (processes/corpus.json): 136 real startup operating records — 124
+// timeline processes plus 12 reactive SITUATIONS (kind 'situation', founder ask 2026-10-01) —
+// each mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a
+// recorded API/tool call), 'form' (manual form/portal work — no public API path), or 'person'
+// (a human or a computer-use agent does it: meetings, judgment, waiting on a third party — with
 // legally required signature acts flagged legalSignature, the true human floor). The feature's
 // thesis lives in that routing: the per-process **agent ceiling** (share of steps an agent can
 // run today) and the **gaps** (the non-agent steps) are first-class findings, not footnotes.
@@ -289,6 +290,24 @@ export const ProcessTaskSchema = z.object({
   slugAliases: SlugAliasSchema.array().optional(),
   description: z.string().min(1),
   phase: z.string().min(1),
+  // Record kind (founder ask 2026-10-01: "Situations — reactive, trigger-driven founder
+  // processes — e.g. your company has a C&D, or you want to get a visa and come to Silicon
+  // Valley but the visa is held up"). A situation is the same machinery as a process — a
+  // routed DAG with ceilings, vendors, reversibility, geo — classified REACTIVE: `trigger`
+  // names the event that puts a founder here, `urgency` is the honest clock on the first step,
+  // and there is NO timeOrder slot (a situation is not a stop on the founder timeline).
+  // ZOD-DEFAULTED to 'process' so every pre-existing record parses byte-identically and the
+  // corpus diff stays additive-only. The kind-conditional invariants (trigger/urgency required
+  // on situations and forbidden on processes; timeOrder the other way around) are enforced at
+  // load time in loadProcesses() — not as zod refinements — so the published JSON schema stays
+  // a plain object shape() can check.
+  kind: z.enum(PROCESS_KINDS).default('process'),
+  // The event that puts a founder in this situation — ONE honest sentence ("A cease-and-desist
+  // letter claiming trademark infringement arrives."). Situations only.
+  trigger: z.string().min(1).optional(),
+  // How fast the first step must honestly happen once the trigger fires — tiers and curation
+  // rules on URGENCY_TIERS/URGENCY_META in lib/processSim.ts. Situations only.
+  urgency: z.enum(URGENCY_TIERS).optional(),
   // How often this process actually recurs in a running company — the operating-rhythm axis
   // (/processes/operating-rhythm). Curated per process, honestly: setup/formation work is
   // 'once', trigger-driven work (a hire, a cancellation, a new vendor) is 'event-driven',
@@ -316,7 +335,10 @@ export const ProcessTaskSchema = z.object({
   // country per process (corpus-tested); unflavored global processes carry none.
   geoNotes: GeoNoteSchema.array().optional(),
   // The five founder orderings (founder ask 2026-09-18) — curated, display-only rank axes for
-  // the /processes table. All four are REQUIRED so coverage is total by construction:
+  // the /processes table. The three 1–5 scores are REQUIRED on every record so coverage is
+  // total by construction; timeOrder is REQUIRED on kind 'process' and FORBIDDEN on kind
+  // 'situation' (load-enforced): a situation is reactive — pretending it has a slot in the
+  // founder timeline would be a lie, so situation rows sort after the timeline instead.
   //   timeOrder   — unique position in the sequence a founder actually hits these processes
   //                 (incorporation first, then banking, payroll, … — the founder timeline).
   //   annoyance   — 1–5 drudgery score: how much of a toil this is to do by hand.
@@ -325,7 +347,7 @@ export const ProcessTaskSchema = z.object({
   //   growthImpact— 1–5 how directly the process drives revenue/user growth (daily feature
   //                 shipping and outbound at 5; compliance filings at 1).
   // The regularity ordering reuses `cadence` (daily → once) — no extra field needed.
-  timeOrder: z.number().int().min(1),
+  timeOrder: z.number().int().min(1).optional(),
   annoyance: z.number().int().min(1).max(5),
   risk: z.number().int().min(1).max(5),
   growthImpact: z.number().int().min(1).max(5),
@@ -454,6 +476,25 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(corpusFile(dir), 'utf8'))
   const parsed = ProcessTaskSchema.array().parse(raw)
+  // Kind-conditional invariants that zod deliberately doesn't encode (the published JSON schema
+  // stays a plain shape): a situation is reactive — it MUST name its trigger and urgency and
+  // must NOT claim a founder-timeline slot; a process is the exact pre-situation contract —
+  // timeOrder required, trigger/urgency forbidden. Enforced here so an uncurated record fails
+  // the parse loudly instead of rendering a half-classified row.
+  for (const t of parsed) {
+    if (t.kind === 'situation') {
+      if (!t.trigger) throw new Error(`${t.id}: a situation must name its trigger (one sentence)`)
+      if (!t.urgency) throw new Error(`${t.id}: a situation must carry an honest urgency tier`)
+      if (t.timeOrder !== undefined) {
+        throw new Error(`${t.id}: situations are reactive — they carry no founder-timeline timeOrder slot`)
+      }
+    } else {
+      if (t.timeOrder === undefined) throw new Error(`${t.id}: a process must carry its founder-timeline timeOrder`)
+      if (t.trigger !== undefined || t.urgency !== undefined) {
+        throw new Error(`${t.id}: trigger/urgency are situation-only fields`)
+      }
+    }
+  }
   // Method-variant invariants that zod deliberately doesn't encode (the published JSON schema
   // stays a plain shape): unique method ids per node, geo⇔countries consistency, unique
   // sub-step ids per method, and a derived (never invented) method time where subSteps exist.
@@ -566,13 +607,21 @@ export function loadChains(dir: string = DEFAULT_DIR()): ProcessChain[] {
   if (hit) return hit
   const raw = JSON.parse(fs.readFileSync(chainsFile(dir), 'utf8'))
   const chains = ProcessChainSchema.array().parse(raw)
-  const taskIds = new Set(loadProcesses(dir).map((t) => t.id))
+  const byId = new Map(loadProcesses(dir).map((t) => [t.id, t]))
   const chainIds = new Set<string>()
   for (const chain of chains) {
     if (chainIds.has(chain.id)) throw new Error(`duplicate chain id ${chain.id}`)
     chainIds.add(chain.id)
     for (const tid of chain.taskIds) {
-      if (!taskIds.has(tid)) throw new Error(`chain ${chain.id} references unknown task ${tid}`)
+      const task = byId.get(tid)
+      if (!task) throw new Error(`chain ${chain.id} references unknown task ${tid}`)
+      // A chain is a timeline journey: it folds into the grouped table at its FIRST
+      // constituent's timeOrder (lib/processRows.ts). A reactive situation has no slot to fold
+      // into, so chains may only compose kind 'process' tasks — this guarantee is what lets
+      // buildPlaybookRows read tasks[0].timeOrder as present.
+      if (task.kind === 'situation') {
+        throw new Error(`chain ${chain.id} composes situation ${tid} — chains are timeline journeys of processes only`)
+      }
     }
   }
   chainsCache.set(dir, chains)
