@@ -18,7 +18,7 @@ DEPLOY=/tmp/pa-deploy
 if [ ! -d "$DEPLOY/.git" ]; then
   git clone --depth 1 https://github.com/ultrametricai/ultrametric.git "$DEPLOY"
 fi
-cp -R "$REPO/.vercel" "$DEPLOY/.vercel" 2>/dev/null || true
+rm -rf "$DEPLOY/.vercel" && cp -R "$REPO/.vercel" "$DEPLOY/.vercel"
 cd "$DEPLOY"
 git fetch origin -q && git reset --hard origin/main -q
 echo "deploying $(git log --oneline -1)"
