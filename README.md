@@ -8,6 +8,12 @@
 - **Improve it:** the open startup repo, [CONTRIBUTING.md](./CONTRIBUTING.md). Contest a verdict, add your country, add a module.
 - **For agents:** open data, no keys. `curl https://ultrametric.ai/data/categories.json` ([for AI agents](#for-ai-agents))
 
+**Contribution guides:** [Add your vendor](CONTRIBUTING.md#add-your-vendor) · [Add a process](CONTRIBUTING.md#add-a-process) · [Add a jurisdiction](CONTRIBUTING.md#add-a-jurisdiction) · [Add an open module](CONTRIBUTING.md#add-an-open-module)
+
+<!-- TODO(founder): drop the Discord invite URL here, then uncomment:
+**Talk:** [Discord](DISCORD_INVITE_URL) — founders and contributors
+-->
+
 ## Start here
 
 **You're a founder starting or running a company:**
@@ -15,11 +21,15 @@
 | What you need | Where |
 | --- | --- |
 | Startup processes | [/processes](https://ultrametric.ai/processes): every founder process with its Agentic %, plus the chained playbooks |
+| A situation hits | [/situations](https://ultrametric.ai/situations): reactive, trigger-driven work (a breach, served papers, a tax notice), hottest clock first; doctrine in [`processes/SITUATIONS.md`](processes/SITUATIONS.md) |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks): proven toolchains to use and improve |
-| Open modules | [`business-logic/`](business-logic/README.md): cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| Open modules | [`business-logic/README.md`](business-logic/README.md): the cap-table, runway, deadline, equity, and tax math as source-cited code in [`lib/openstartup/`](lib/openstartup/) |
 | The simulator | [/startup-sim](https://ultrametric.ai/startup-sim): a simulated company runs the corpus end to end |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
+
+This table is tasks only; the single structural overview of the repo is
+[Map of the repo](#map-of-the-repo) below.
 
 **You're an agent or developer consuming the data.** Nothing to install, no auth:
 
@@ -45,11 +55,19 @@ the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
 The operational corpus: step-by-step founder processes, each a DAG whose
 every step is routed agent / manual form / human, with per-step reversibility
 (reversible / painful / irreversible), vendor options drawn from the judged rankings, time
-estimates, and, where routes genuinely differ, named method variants (e.g. the per-country
+estimates, and, where routes differ, named method variants (e.g. the per-country
 filing routes). Every process carries an **Agentic %**, the share of steps an agent can
 run today (`full` / `partial` / `manual_guide`), with per-country geo notes (UK, India,
 Germany, France; the US is the baseline). Playbooks chain processes into founder paths
 (incorporate → launch, the VC raise, the agent-run back office).
+
+The corpus also carries **situations**, the reactive layer: trigger-driven records for the
+work nobody schedules (a breach is live, a summons lands, a tax notice arrives). Each
+situation names its **trigger** (the event, not the task) and an **urgency** tier
+(`hours` / `days` / `weeks`), holds no slot on the founder timeline, and routes only the
+mechanical core to agents; the counsel/CPA judgment calls and signature acts stay human.
+The index is [/situations](https://ultrametric.ai/situations), sorted hottest clock first,
+and the doctrine is [`processes/SITUATIONS.md`](processes/SITUATIONS.md).
 
 The data lives in [`processes/`](processes/) (`corpus.json` + the jurisdiction-scoped legal
 workflows), [`journeys/`](journeys/) (`chains.json`), and
@@ -70,7 +88,7 @@ The evidence layer: head-to-head, agent-tested rankings of the tools
 startups run on, arena by arena (current counts under
 [Data releases & freshness](#data-releases--freshness)). Every verdict cites dated evidence (vendor docs, GitHub,
 community sources, hands-on probes), rankings recompute bit-identically and carry HMAC
-`_provenance`, negative results count as much as positive ones, and owner-affiliated products are
+`_provenance`, honest negatives count as much as positives, and owner-affiliated products are
 disclosed and adversarially bias-audited
 ([evidence doctrine](governance/REVIEW_POLICY.md) · [METHODOLOGY.md](./METHODOLOGY.md)).
 
@@ -90,15 +108,15 @@ To contribute: contest a verdict, add evidence, prove a story, or submit a produ
 ## Open modules
 
 The open modules and the rule cards beneath them: the rules and calculations
-a startup actually runs on, as open, source-cited, exhaustively tested records and code:
+a startup runs on, as open, source-cited, exhaustively tested records and code:
 
 - **Rule cards** — [`rules/`](rules/): dated legal propositions (US federal and Delaware to
   start), one stable ID each, every `kind: legal` card citing a primary authority in
   [`sources/`](sources/) with an exact provision locator. Status is `demonstration`, the
   current maturity level, stated on each card.
 - **Open modules** — [`lib/openstartup/`](lib/openstartup/), indexed in
-  [`business-logic/README.md`](business-logic/README.md), all pure, deterministic, and tested
-  against published worked examples:
+  [`business-logic/README.md`](business-logic/README.md) — pure, deterministic functions, each
+  tested against published worked examples:
   - `capTable.ts` (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
     in-round pool shuffle, post-money SAFE conversion per the YC Post-Money Safe User Guide
     (Appendix II examples reproduced number-for-number), priced-round PPS solving, dilution
@@ -139,7 +157,7 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
   - `round.ts` — priced-round mechanics on top of the cap table: pro rata math (maintaining
     ownership is buying your pro rata, shown by algebra), option-pool sizing bottom-up from
     a hiring plan, down-round modeling that composes the anti-dilution adjustments, and
-    founder secondaries (which dilute no one; the shares just change hands).
+    founder secondaries (which dilute no one; the shares change hands, none are issued).
   - `optionTax.ts` — ISO vs NSO exercise mechanics: NSO spread-at-exercise income and the
     published supplemental-withholding rates, ISO no-regular-tax-at-exercise with the AMT
     adjustment, the $100,000 ISO limit replaying the regulation's own examples,
@@ -192,7 +210,7 @@ The modules are repo-first: pure libraries usable from tests, scripts, or your o
 the processes and site consume the same rule cards and jurisdiction data.
 
 To contribute, start at [`business-logic/README.md`](business-logic/README.md): the module
-index, the contribution bar, and the honesty rules.
+index, the contribution bar, and each module's Honesty boundaries.
 
 ## How it works
 
@@ -219,14 +237,15 @@ raw: the `/data` JSON API and the agent endpoints (`/llms.txt`, per-arena `llms.
 
 ## Map of the repo
 
-Everything in the tree. The **knowledge layer** is the product: plain JSON
+The single structural overview: everything in the tree ([Start here](#start-here) stays
+task-oriented; this map owns structure). The **knowledge layer** is the product: plain JSON
 and markdown, schema-validated in CI, usable without running any code.
 
 **Processes**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
-| [`processes/`](processes/) | `corpus.json` (the operational processes: DAGs, routing, geo scope, time estimates), the per-step vendor registry, and jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
+| [`processes/`](processes/) | `corpus.json` (the operational processes and the reactive situations: DAGs, routing, geo scope, time estimates; situations doctrine in [`SITUATIONS.md`](processes/SITUATIONS.md)), the per-step vendor registry, and jurisdiction-scoped legal workflows (`equity/us-de/…`) | [`schemas/operational-process.schema.json`](schemas/) · [`schemas/process.schema.json`](schemas/) |
 | [`journeys/`](journeys/) | `chains.json` — multi-process founder paths | corpus schema + loader tests |
 
 **Vendors**
@@ -243,7 +262,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | --- | --- | --- |
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`) | `schemas/rule.schema.json` + validator |
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
-| [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the honesty rules | worked-example + property tests |
+| [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the Honesty boundaries | worked-example + property tests |
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited; also feeds the site's geo switcher) | exact-dimension matching; unknown maps to `unsupported` |
 | [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) + `LORE.md` (veracity-graded startup history) | `lib/resources.ts` / `lib/lore.ts` + invariant tests |
@@ -251,14 +270,14 @@ and markdown, schema-validated in CI, usable without running any code.
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
 that renders it. Three directories confuse newcomers, so to be explicit: **`schemas/`** holds the JSON
 contracts every record validates against; **`catalog/`** is the coverage map
-(`domains.json` = what the corpus intends to cover, `coverage.json` = what it actually covers
+(`domains.json` = what the corpus intends to cover, `coverage.json` = what it covers
 today, at what maturity); **`rules/`** is cited law the open-modules layer consumes; it
 belongs to [Open modules](#business-logic) above, listed there.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
 | [`schemas/`](schemas/) | JSON Schema contracts for processes, rules, sources, vendor reviews | drift-gated against the zod source |
-| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, machine-readable coverage data | `lib/founderOps.ts` coverage checks |
+| [`catalog/`](catalog/) | Domain taxonomy, lifecycle map, machine-readable coverage with its maturity stated | `lib/founderOps.ts` coverage checks |
 | [`templates/`](templates/) | Blank, schema-valid starting points for contributions | — |
 | [`fixtures/`](fixtures/) | Wholly fictional companies/events that exercise the planner | `synthetic: true` enforced |
 | [`governance/`](governance/) | Review policy + maturity ladder, evidence doctrine, agent policy, security | — |
@@ -276,7 +295,7 @@ every externally-effectful workflow step requires a named, scoped human approval
 answers `unsupported` rather than guessing; and no jurisdiction is called covered because a
 few playbooks exist ([maturity ladder](governance/REVIEW_POLICY.md)).
 
-## The arenas
+## Arena index — every market we rank
 
 <!-- arenas:start -->
 | Arena | Products |
@@ -437,17 +456,6 @@ version. For plain-language answers ("what does `na` mean," "how do I disagree")
   applied in both directions, and documented cell-by-cell in
   [METHODOLOGY.md § Bias disclosure](./METHODOLOGY.md#bias-disclosure--the-judge-is-an-anthropic-model).
 
-## Local development
-
-[![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
-
-```bash
-pnpm install
-pnpm dev        # http://localhost:3000
-pnpm test       # vitest — schema and scoring unit tests
-pnpm build      # next build (static)
-```
-
 ## Pipeline refresh workflow
 
 The pipeline is local-only (not run on Vercel). Each stage accepts `--category <id>` to
@@ -486,7 +494,7 @@ and does not call the Anthropic API at build or request time.
 `pnpm tsx pipeline/scripts/generate-arena-notes.ts` drafts a short signed-POV essay (5
 paragraphs max: the week's rank flip that matters, an unfilled gap in the arena, the vendor
 move to watch, one self-critique of our own data, a closing line) into
-`drafts/arena-notes/YYYY-MM-DD.md`. It is LLM-drafted but constrained in code: the model only
+`drafts/arena-notes/YYYY-MM-DD.md`. It is LLM-drafted but citation-gated in code: the model only
 sees a fact sheet derived from the committed changelog/report/uncertainty/gap-closers data, and
 every paragraph must cite its site source inline (`(source: /changelog)`, `(source:
 /arena/...)`) from that fact sheet; violations fail schema validation and are retried.
@@ -558,8 +566,8 @@ Ultrametric is built to be read by agents as much as by humans:
   repo and are not published entry points.
 - **schema.org**: arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
-  metrics (`aiEra`, `score`, etc). No `aggregateRating`: we don't have star ratings, and faking
-  one would be misleading.
+  metrics (`aiEra`, `score`, etc). No `aggregateRating`: we don't have star ratings and won't
+  fabricate one.
 - **sitemap.xml / robots.txt**: `app/sitemap.ts` lists every route including the `llms.md`
   endpoints; `public/robots.txt` explicitly allows `GPTBot`, `ClaudeBot`, `Claude-Web`,
   `PerplexityBot`, `Googlebot`, and `Bingbot`, with a `Sitemap:` pointer.
@@ -614,14 +622,10 @@ The quick index:
 | Submit a stack | the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml) issue form (linked from [/stacks](https://ultrametric.ai/stacks)). Stacks stay curated committed data; submissions feed review and are not auto-published |
 | Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
 
-Working on the repo itself:
+[![CI](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/ultrametric/actions/workflows/ci.yml)
 
-```bash
-git clone https://github.com/ultrametricai/ultrametric.git && cd ultrametric
-pnpm install
-pnpm dev        # http://localhost:3000
-pnpm test
-```
+Working on the repo itself: setup, the test gate, and style rules live in
+[CONTRIBUTING.md § Local setup](./CONTRIBUTING.md#local-setup).
 
 Ways to contribute:
 
@@ -669,7 +673,7 @@ Found a verdict you think is wrong, or evidence we missed? See
 first-class, expected contribution paths: a maintainer (or, in the future, a GitHub Action)
 does the deeper check, adding evidence and then running
 `pnpm pipeline judge --category <category> --product <product>` followed
-by `pnpm pipeline derive --category <category>`, before any verdict actually changes.
+by `pnpm pipeline derive --category <category>`, before any verdict changes.
 
 ### Add your country or state
 
@@ -683,8 +687,8 @@ immediately whether your records hold up:
 1. **Vendor availability in your country** — add rows to
    [`jurisdictions/vendor-geo.json`](jurisdictions/): `{productId, country, status:
    available|unavailable|partial, sourceUrl, note}`. The source must be the vendor's own page
-   (or an official register) stating the fact; negative answers ("US entities only") are as
-   valuable as positive ones. These rows drive the geo switcher and "Where it works" on the site.
+   (or an official register) stating the fact; honest negatives ("US entities only") are as
+   valuable as positives. These rows drive the geo switcher and "Where it works" on the site.
 2. **A country analog for a process** — add a `geoNotes` entry to the process in
    [`processes/corpus.json`](processes/): `{country, summary, actionUrl, actionLabel}` with a
    live, official actionUrl (Companies House, MCA/NSWS, Handelsregister, INPI…). This is what

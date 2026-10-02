@@ -515,6 +515,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 >
                   𝕏
                 </a>
+                {/* Discord — slot prepared (founder batch 2026-10-02): no invite URL exists
+                    yet, and inventing one is worse than waiting.
+                    TODO(founder): drop the Discord invite URL here, then uncomment:
+                <a
+                  href="DISCORD_INVITE_URL"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-zinc-300"
+                >
+                  Discord
+                </a> */}
                 {/* The open startup repo (founder 2026-09-30): GitHub mark + label in the
                     footer link row, same destination as the header's star chip. */}
                 <a
