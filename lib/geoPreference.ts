@@ -111,8 +111,12 @@ export type GeoNoteKind = (typeof GEO_NOTE_KINDS)[number]
 // One curated per-country analog of a US-scoped process (the client-safe shape of
 // lib/processes.ts GeoNote — same fields, so the server page passes task.geoNotes straight
 // through to components/ProcessGeoBanner.tsx without the client bundle touching node:fs).
+// `kind` rides along since the wrong-country-flow guard (founder 2026-10-02): the banner's
+// copy branches on what the committed note SAYS — an analog is promoted as the local answer,
+// an absorbed/not-applicable need is stated plainly.
 export interface GeoAnalogNote {
   country: GeoSelection
+  kind: GeoNoteKind
   summary: string
   actionUrl: string
   actionLabel: string
