@@ -48,6 +48,18 @@ export default function StacksPage() {
           >
             Battle of the stacks →
           </Link>
+          {/* Founder 2026-10-02: the honest house path for proposing a stack — a prefilled
+              issue that feeds curation review; stacks stay curated committed data, nothing
+              auto-publishes. */}
+          <a
+            href="https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Propose a stack via a prefilled GitHub issue — submissions feed curation review, never auto-publish"
+            className="inline-flex items-center rounded-full border border-zinc-800 px-4 py-1.5 text-sm text-zinc-300 transition hover:border-emerald-400/40 hover:text-emerald-300"
+          >
+            Submit your stack →
+          </a>
         </p>
       </section>
 
@@ -194,7 +206,16 @@ export default function StacksPage() {
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
         <p>
           Disagree with a pick? Every scored slot traces to an arena leaderboard — contest the
-          underlying verdicts and the stack updates itself.{' '}
+          underlying verdicts and the stack updates itself. Run a stack founders should see?{' '}
+          <a
+            href="https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"
+          >
+            Submit your stack
+          </a>{' '}
+          — submissions feed curation review, never auto-publish.{' '}
           <Link href="/" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
             See all rankings →
           </Link>

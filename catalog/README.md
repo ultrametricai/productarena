@@ -22,7 +22,7 @@ No one may claim a country is covered because a few playbooks exist — see
   Running operations → operations/trust, Building & shipping → product, Growth & sales →
   revenue.
 - **Jurisdiction-scoped workflows** (`processes/<domain>/<jurisdiction>/` in this tree) are the
-  legal-rigor layer: source-backed, dated, with explicit applicability and human-approval gates.
+  legal-rigor layer: source-cited, dated, with explicit applicability and human-approval gates.
 
 Coverage in `coverage.json` tracks only the jurisdiction-scoped workflow layer. The operational
 corpus and the arenas publish their own coverage honestly on their own pages.
