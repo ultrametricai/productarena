@@ -53,10 +53,18 @@ describe('/situations', () => {
     }
   })
 
-  it('reads as its own area: a Situations h1, the honest low-ceiling framing, and a link back to /processes', () => {
+  it('reads as its own area: a Situations h1 with NO intro paragraph (founder 2026-10-02)', () => {
     const { container } = render(<SituationsPage />)
     expect(within(container).getByRole('heading', { level: 1 }).textContent).toContain('Situations')
-    expect(container.textContent).toContain('trigger')
-    expect(container.querySelector('a[href="/processes"]')).not.toBeNull()
+    // The 'Not stops on the founder journey …' paragraph is gone — the heading stands alone.
+    expect(container.textContent).not.toContain('Not stops on the founder journey')
+  })
+
+  it('table columns: Area (not Phase — the cell is the domain tag) and no Steps column (founder 2026-10-02)', () => {
+    const { container } = render(<SituationsPage />)
+    const headers = [...container.querySelectorAll('thead th')].map((th) => th.textContent)
+    expect(headers).toEqual(['Situation', 'Urgency', 'Area', 'Agentic %'])
+    // The per-row 'N/M' steps link left with its column.
+    expect(container.querySelector('a[href$="#steps"]')).toBeNull()
   })
 })
