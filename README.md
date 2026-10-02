@@ -25,7 +25,7 @@ serve it.*
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
 | Open modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
-| Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
+| Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
 
 **You want to contribute:**
 
