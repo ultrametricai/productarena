@@ -2,7 +2,7 @@
 
 **Everything a founder — or their agent — needs to start and run a company: every
 [process](#processes) step by step, the [vendors](#vendors) ranked, and the
-[business logic](#business-logic) underneath.**
+[open modules](#business-logic) underneath.**
 
 ![The founder processes on ultrametric.ai — each process with its phase, agent ceiling, step count, timeline position, and vendors](docs/assets/processes.png)
 
@@ -24,7 +24,7 @@ serve it.*
 | The simulator | [/startup-sim](https://ultrametric.ai/startup-sim) — a simulated company runs the corpus end to end |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks) — proven toolchains to copy |
-| Business modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| Open modules | [`business-logic/`](business-logic/README.md) — cap table, runway, deadlines, equity comp, convertible notes, exit waterfalls, 409A sanity, ISO/NSO exercise tax, 83(b) math, QSBS, DE franchise tax, R&D tax mechanics, payroll tax; source-cited code in [`lib/openstartup/`](lib/openstartup/) |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR); to add yours, [Add your country or state](#add-your-country-or-state) |
 
 **You want to contribute:**
@@ -42,7 +42,7 @@ pnpm test
 | Add evidence or prove a story hands-on | [CONTRIBUTING.md](./CONTRIBUTING.md) · [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) |
 | Add your product to an arena | [/submit](https://ultrametric.ai/submit) or [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product) |
 | Add your country or state | [Add your country or state](#add-your-country-or-state) below — four PR shapes, smallest first |
-| Add a business-logic module | [`business-logic/README.md`](business-logic/README.md) — the bar: pure functions, a citation on every formula, tests that double as documentation |
+| Add an open module | [`business-logic/README.md`](business-logic/README.md) — the bar: pure functions, a citation on every formula, tests that double as documentation |
 | Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
 
 **You're an agent or developer consuming the data** — nothing to install, no auth:
@@ -108,10 +108,12 @@ arenas).
 [Contributing](#contributing--how-the-community-can-help). Start at
 [`vendors/README.md`](vendors/README.md).
 
-## Business logic
+<a id="business-logic"></a>
 
-**What it is.** The rules and calculations a startup actually runs on, as open,
-source-cited, exhaustively tested records and code:
+## Open modules
+
+**What it is.** The open modules and the rule cards beneath them — the rules and calculations
+a startup actually runs on, as open, source-cited, exhaustively tested records and code:
 
 - **Rule cards** — [`rules/`](rules/): dated legal propositions (US federal and Delaware to
   start), one stable ID each, every `kind: legal` card citing a primary authority in
@@ -195,7 +197,7 @@ source-cited, exhaustively tested records and code:
   history as sourced records, every episode graded for veracity (first-person / documented /
   reported / legend).
 
-Business logic may propose a result; it never silently authorizes a filing, grant, or
+An open module may propose a result; it never silently authorizes a filing, grant, or
 transfer, and anything leaning on a legal threshold references a dated rule card and returns
 `needs_review` when the locale or date is unknown. Educational, not legal advice.
 
@@ -219,7 +221,7 @@ The startup processes are the center of the repo — everything else feeds them:
   proves it bit-identically. `processes/vendor-registry.json` links each process step's
   vendor options to the arena that judges them, so every "use this tool for this step" is a
   ranked, cited claim.
-- **Business modules compute what the steps need.** The `lib/openstartup/` modules (cap
+- **Open modules compute what the steps need.** The `lib/openstartup/` modules (cap
   table, runway, deadlines, equity comp, notes, waterfalls, 409A sanity) are the calculations
   behind the processes, each formula cited.
 - **The law anchors both.** Rule cards (`rules/`, backed by primary sources in `sources/`)
@@ -251,7 +253,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`vendors/`](vendors/) | The evidence doctrine + `reviews/generated/` — one interchange record per judged product | `schemas/vendor-review.schema.json`, deterministic regeneration |
 | `pipeline/` | crawl → extract → probe → judge → derive; all scores are computed, never hand-set | churn policy, judge caches, recompute gate |
 
-**Business logic**
+**Open modules**
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
@@ -266,8 +268,8 @@ and markdown, schema-validated in CI, usable without running any code.
 that renders it. Three directories confuse newcomers, so plainly: **`schemas/`** holds the JSON
 contracts every record validates against; **`catalog/`** is the coverage map
 (`domains.json` = what the corpus intends to cover, `coverage.json` = what it honestly covers
-today, at what maturity); **`rules/`** is cited law the business-logic layer consumes — it
-belongs to [Business logic](#business-logic) above, listed there.
+today, at what maturity); **`rules/`** is cited law the open-modules layer consumes — it
+belongs to [Open modules](#business-logic) above, listed there.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
@@ -635,7 +637,7 @@ Pick your angle:
   [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product).
 - **Add your country or state** — the highest-leverage contribution for founders outside the
   US; see [the subsection below](#add-your-country-or-state).
-- **Add a business-logic module** — pure, source-cited TypeScript under `lib/openstartup/`;
+- **Add an open module** — pure, source-cited TypeScript under `lib/openstartup/`;
   the bar and candidate modules are in [`business-logic/README.md`](business-logic/README.md).
 - **Make a prediction** — `/predictions` auto-generates yes/no questions from live close
   races ("will the #2 overtake the #1 within 30 days?") and settles them mechanically from

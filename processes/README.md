@@ -236,9 +236,10 @@ regenerate the derived report: `npx tsx scripts/generate-timeline-inversions.ts`
 row in `docs/TIMELINE-INVERSIONS.md` — the founder's renumbering worklist, never a silent
 re-sort.
 
-## The business-logic map
+## The Open-modules map
 
-`business-logic-map.json` (founder 2026-10-02) wires the repo's open business-logic modules
+`business-logic-map.json` (founder 2026-10-02; the file name keeps the `business-logic/`
+directory's id) wires the repo's open modules
 (`lib/openstartup/`, indexed in `business-logic/README.md`) to the processes they serve — the
 Delaware franchise-tax math to `tax_001` and the `sit_010` delinquency cure, the 83(b)/deadline
 modules to the 83(b)-carrying processes, the cap-table/vesting/round/anti-dilution/waterfall

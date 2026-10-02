@@ -1,6 +1,6 @@
-# Business logic — decision support, calculations, calendars, comparisons
+# Open modules — decision support, calculations, calendars, comparisons
 
-Part of [the open startup repo](../README.md#business-logic): reusable business logic —
+Part of [the open startup repo](../README.md#business-logic): the open modules — reusable
 decision support, calculations, calendars, and comparisons — separate from law (`rules/`) and
 the vendor evidence layer (`vendors/`, `data/`). The modules live in `lib/openstartup/`
 (cap table, runway & burn, deadline calendar, equity-comp scenarios, convertible notes,
@@ -11,7 +11,7 @@ client-safe, and validated by worked-example and property tests
 (`npx vitest run lib/openstartup/__tests__/`). Repo-first by design: use the modules from
 tests, scripts, or your own agent. Every module must ship a contract, version, explicit assumptions,
 worked examples reproduced from cited public sources, deterministic tests, and explicit
-jurisdiction dependencies. Business logic may propose a result; it must never silently
+jurisdiction dependencies. An open module may propose a result; it must never silently
 authorize a tax election, equity grant, bank transfer, contract, or vendor disclosure. A module
 that leans on a legal threshold must reference a dated rule card in `rules/` and return
 `needs_review` when the applicable locale or date is unknown.
@@ -272,7 +272,7 @@ lives in `lib/founderOps.ts` and is gated by `__tests__/founder-ops.test.ts`.
 
 ## What you can contribute here
 
-- **A new business-logic module** — pure TypeScript under `lib/openstartup/` plus an index
+- **A new open module** — pure TypeScript under `lib/openstartup/` plus an index
   entry in this README. The bar is fixed: pure functions, a citation on every formula's doc
   comment (a published guide, form, or primary source — never "everyone knows"), explicit
   rounding, worked examples reproduced number-for-number from the cited source, and property
