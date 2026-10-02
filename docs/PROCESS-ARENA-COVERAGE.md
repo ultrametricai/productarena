@@ -6,10 +6,10 @@ Doctrine: every corpus vendor resolves through the registry to a live arena, or 
 
 ## Summary
 
-- 171 distinct corpus vendor keys across 146 processes
-- 122 arena-tracked · 36 deliberately untracked (registry entry, no arena) · 13 unregistered (gap list below)
+- 176 distinct corpus vendor keys across 146 processes
+- 127 arena-tracked · 36 deliberately untracked (registry entry, no arena) · 13 unregistered (gap list below)
 - 0 mechanical gaps (registry arenaId pointing at no arena)
-- 9 of 146 processes resolve to zero arenas (no tracked vendor and no direct arena claim on any step)
+- 8 of 146 processes resolve to zero arenas (no tracked vendor and no direct arena claim on any step)
 
 ## Mechanical gaps (0)
 
@@ -78,7 +78,7 @@ Registry entries without an `arenaId` — honest unlinked chips by design (gover
 | `sydecar` |  | `vc_001`, `vc_002`, `vc_003` |
 | `uspto` |  | `legal_002`, `opp_012` |
 
-## Processes resolving to zero arenas (9)
+## Processes resolving to zero arenas (8)
 
 No vendor on these resolves to an arena and no step claims one directly (`optionsArenaId`/`extraOptionArenas`). Some are honestly market-less (government and program counterparties — the USPTO is not a vendor market); others mark arenas the site does not judge yet. Curation calls, never auto-placed.
 
@@ -88,14 +88,13 @@ No vendor on these resolves to an arena and no step claims one directly (`option
 | Set up a password manager `ops_005` | process | `bitwarden`, `dashlane`, `onepassword` |
 | Monitor trademark / handle availability `opp_012` | process | `corsearch`, `markify`, `uspto` |
 | Apply to Y Combinator `fund_007` | process | — none — |
-| Unstick a delayed US visa `sit_002` | situation | — none — |
 | Cure a Delaware franchise tax delinquency `sit_010` | situation | — none — |
 | Migrate off a shutting-down vendor `sit_012` | situation | — none — |
 | Recover from an app-store rejection or removal `sit_016` | situation | — none — |
 | Report and manage a workplace injury `sit_021` | situation | — none — |
 
-## Registry keys no corpus reference uses (18)
+## Registry keys no corpus reference uses (13)
 
 Informational: registered vendors the corpus never references. Not gaps — the registry also serves non-corpus surfaces — but the first place to look when a key was meant to match a corpus vendor and missed (a typo would show up as one row here plus one in the unregistered list).
 
-`alma`, `box`, `casium`, `daryanani_law`, `deel_immigration`, `dynadot`, `ellis_porter`, `firebase`, `founder_law`, `green_and_spiegel`, `legalos`, `lighthouse`, `onedrive`, `plymouth_street`, `siskind_susser`, `sprinto`, `supabase`, `thoropass`
+`box`, `casium`, `daryanani_law`, `dynadot`, `ellis_porter`, `firebase`, `green_and_spiegel`, `legalos`, `onedrive`, `plymouth_street`, `sprinto`, `supabase`, `thoropass`
