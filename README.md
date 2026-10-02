@@ -168,6 +168,13 @@ a startup actually runs on, as open, source-cited, exhaustively tested records a
   - `payrollTax.ts` — employer-side federal payroll mechanics: FICA with the asOf-dated
     wage base, Additional Medicare labeled employee-only, FUTA with the bounded state
     credit, and per-employee annual cost with a stated state-tax out-of-scope boundary.
+  - `roundComposer.ts` — a priced round replayed end to end (term-sheet economics →
+    conversions and pro rata → the post-close table), composing the cap-table, round,
+    anti-dilution, and waterfall modules with zero parallel arithmetic.
+  - `unitEconomics.ts` — LTV/CAC and payback, the burn multiple, Rule of 40, and the magic
+    number — each cited to its canonical formulation; benchmarks are inputs, never encoded.
+  - `deferredRevenue.ts` — subscription revenue recognition and plan-change proration,
+    cents-exact, replaying the published worked examples.
 - **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records — link, never redistribute, every URL verified on its
   `checked_on` date.
