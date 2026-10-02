@@ -135,6 +135,11 @@ describe('Microterminal live tiers', () => {
     await waitFor(() => expect(urls).toHaveLength(1))
     expect(urls[0]).toBe('https://ultrametric.ai/api/try/payments/stripe/llms-txt')
     expect(await screen.findByText(/recorded replay \+ live re-run/)).toBeTruthy()
+    // Founder 2026-10-02: the footer "replay ↺ / run again ▶" duplicate is gone — the title
+    // bar's ▶ replay/run control is the one replay affordance.
+    expect(screen.queryByRole('button', { name: /replay ↺/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /run again/ })).toBeNull()
+    expect(screen.getByRole('button', { name: /▶ replay/ })).toBeTruthy()
   })
 
   it('a replay-only story (CLI/pty probe) offers no run-live affordance', () => {

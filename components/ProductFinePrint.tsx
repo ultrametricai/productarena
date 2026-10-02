@@ -1,8 +1,10 @@
 // The product page's bottom utility line (founder: educate first, ops last): evidence
 // freshness + the story-coverage tie-breaker, demoted from the header — the arenas strip took
 // that slot; this data is provenance minutiae, not identity. Sits next to SloUptimeLine in the
-// page's ops fine-print block, deliberately below the fold. (The actions rail's "For agents"
-// and "Badge" cells are handled by ProductActions' own top/bottom split — not here.)
+// page's ops fine-print block, deliberately below the fold. (The old actions rail — and its
+// "For agents"/"Badge" cells — is gone entirely, founder 2026-10-02: the product page's bottom
+// utility section collapsed to the one ⚑ Flag a verdict button, with the agent pointers moved
+// into generateMetadata alternates.)
 // Server component, no data loading — everything arrives as serializable props.
 export default function ProductFinePrint({
   freshness,
