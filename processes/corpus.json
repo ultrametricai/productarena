@@ -24489,5 +24489,282 @@
     "growthImpact": 3,
     "produces": [],
     "requires": []
+  },
+  {
+    "id": "sit_017",
+    "title": "Recover a suspended ad or platform account",
+    "description": "An ad-account suspension cuts a growth channel overnight — and the appeal that works is the one filed AFTER the violation is actually fixed. Read which policy is cited (Google Ads publishes its suspension reasons and appeal path; Meta's runs through the Business Help Center's account-quality flow), audit what could honestly have tripped it — billing mismatches, landing-page policy, circumventing-systems flags — fix that first, then file ONE complete appeal; five thin ones read as circumvention. While the appeal runs on the platform's clock, shift spend to the channels you still own — the email list first — because concentration was the real lesson. Platform policy enforcement is the platform's judgment; nothing here promises reinstatement.",
+    "phase": "growth",
+    "kind": "situation",
+    "trigger": "Google Ads, Meta, or another ad/platform account is suspended — campaigns stop and a policy email names the violation.",
+    "urgency": "days",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "moderate",
+    "reversibility": "reversible",
+    "category": "marketing",
+    "supportLevel": "manual_guide",
+    "supportReason": "Policy enforcement and appeals run on the platforms' own judgment and consoles; an agent can audit the likely trigger and keep the owned channels running, but the fix and the appeal are the founder's assertions.",
+    "vendors": [],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Read the suspension notice: which policy is cited, and at what level (account, campaign, payment profile)",
+          "route": "person",
+          "reversibility": "reversible",
+          "actionUrl": "https://support.google.com/adspolicy/answer/2375414",
+          "actionLabel": "Google Ads: account suspensions",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n2",
+          "label": "Audit what could have tripped it: billing mismatches, destination/landing-page policy, circumventing-systems flags",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n3",
+          "label": "Fix the underlying violation first — appeals filed with the violation still live get denied",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 60
+        },
+        {
+          "id": "n4",
+          "label": "File ONE complete appeal through the published flow with the fix documented (Meta's path runs through the Business Help Center's account-quality flow)",
+          "route": "form",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n5",
+          "label": "Shift spend to the channels still standing while the appeal runs — the email list first; concentration was the real lesson",
+          "route": "person",
+          "reversibility": "reversible",
+          "optionsArenaId": "email-marketing",
+          "vendorOptions": [
+            "mailchimp",
+            "loops",
+            "customer_io"
+          ],
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n6",
+          "label": "Wait for the appeal decision — the clock is the platform's",
+          "route": "person",
+          "reversibility": "reversible",
+          "async": true,
+          "estimatedMinutes": 10080
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "the suspension notice (policy cited, account level)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "how much acquisition rides the suspended channel",
+        "tier": "user_input",
+        "required": false
+      }
+    ],
+    "tags": [
+      "situation",
+      "marketing",
+      "ads",
+      "suspension",
+      "appeal"
+    ],
+    "activeMinutes": 215,
+    "totalEstimatedMinutes": 10295,
+    "hasAsyncSteps": true,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 3,
+    "produces": [],
+    "requires": []
+  },
+  {
+    "id": "sit_018",
+    "title": "Recover a hijacked domain or social account",
+    "description": "The first hour decides how far it spreads: scope what was actually taken — the registrar account, DNS, email, or the social handle — because changed MX records and DNS are how one stolen login becomes all of them. Lock everything you still hold (passwords, hardware-key 2FA, registrar/transfer lock), then run the owners' processes: the registrar's compromise case — and if the domain was transferred away, ICANN's transfer-dispute and complaint machinery, where the 60-day rules matter — plus the platforms' own published recovery flows (Google's hacked-account flow; Instagram's /hacked; X's equivalent lives behind its help center). Verify the registration state on RDAP rather than guessing. If posts went out or mail was read, tell the people affected before the screenshots do. A domain transferred to another registrar comes back only with pain — that is the honest reversibility here.",
+    "phase": "operations",
+    "kind": "situation",
+    "trigger": "Your domain, DNS, or a company social/email account is taken over — logins fail, records change, or posts you didn't write appear.",
+    "urgency": "hours",
+    "cadence": "event-driven",
+    "geoScope": "global",
+    "complexity": "complex",
+    "reversibility": "painful",
+    "category": "security",
+    "supportLevel": "manual_guide",
+    "supportReason": "Recovery runs through registrar cases, ICANN processes, and platform flows that verify the human owner; an agent can run the lock-down, the RDAP checks, and the hardening, but the ownership proofs are yours.",
+    "vendors": [],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Scope the compromise: registrar account, DNS, email, or the social handle — and whether MX/DNS were changed (that's how everything else falls)",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n2",
+          "label": "Lock what you still hold: rotate passwords, enforce hardware-key 2FA, check DNS and MX against known-good, enable the registrar/transfer lock",
+          "route": "agent",
+          "reversibility": "reversible",
+          "optionsArenaId": "domain-registrars",
+          "vendorOptions": [
+            "cloudflare_registrar",
+            "namecheap",
+            "porkbun"
+          ],
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n3",
+          "label": "Open the registrar's compromise case — and if the domain was transferred away, invoke ICANN's transfer-dispute path (the 60-day rules matter)",
+          "route": "person",
+          "reversibility": "reversible",
+          "riskLevel": "high",
+          "actionUrl": "https://www.icann.org/compliance/complaint",
+          "actionLabel": "ICANN: registrar complaints",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n4",
+          "label": "Verify the live registration state and transfer timeline on RDAP — facts, not guesses",
+          "route": "agent",
+          "reversibility": "reversible",
+          "actionUrl": "https://lookup.icann.org/",
+          "actionLabel": "ICANN RDAP lookup",
+          "estimatedMinutes": 20
+        },
+        {
+          "id": "n5",
+          "label": "Run the platform's own recovery flow for hijacked accounts (Google's hacked-account flow; Instagram's /hacked; X's via its help center)",
+          "route": "form",
+          "reversibility": "reversible",
+          "riskLevel": "medium",
+          "actionUrl": "https://support.google.com/accounts/answer/6294825",
+          "actionLabel": "Google: secure a hacked account",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n6",
+          "label": "If posts went out from your handle or mail was read, tell the people affected before the screenshots do",
+          "route": "person",
+          "reversibility": "painful",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n7",
+          "label": "Harden after recovery: registrar lock + hardware keys everywhere + DNS monitoring, documented",
+          "route": "agent",
+          "reversibility": "reversible",
+          "estimatedMinutes": 45
+        },
+        {
+          "id": "n8",
+          "label": "Wait out the registrar/platform case queues and re-verify on RDAP when they close",
+          "route": "person",
+          "reversibility": "reversible",
+          "async": true,
+          "estimatedMinutes": 10080
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        },
+        {
+          "from": "n7",
+          "to": "n8"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "which accounts/domains are affected and what still logs in",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "registrar, DNS host, and the ownership proofs you hold",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "situation",
+      "security",
+      "domain",
+      "account-takeover",
+      "recovery"
+    ],
+    "activeMinutes": 260,
+    "totalEstimatedMinutes": 10340,
+    "hasAsyncSteps": true,
+    "annoyance": 4,
+    "risk": 5,
+    "growthImpact": 1,
+    "produces": [],
+    "requires": []
   }
 ]

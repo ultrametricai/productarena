@@ -251,6 +251,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   sit_014: pi('eye', 'sky'), // 👁 Security-vulnerability report (someone saw through the shield)
   sit_015: pi('padlock', 'sky'), // 🔒 Data-subject access request (privacy is the lock site-wide)
   sit_016: pi('phone', 'sky'), // 📱 App-store rejection/removal (the app-stores concept, interrupted)
+  sit_017: pi('megaphone', 'fuchsia'), // 📣 Ad/platform account suspension (the marketing megaphone, muted)
+  sit_018: pi('key', 'sky'), // 🔑 Domain or social account hijacked (the access-keys concept — stolen, then retaken)
 }
 
 export function processIcon(taskId: string): string {
