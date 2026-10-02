@@ -169,6 +169,44 @@ export const StepMethodSchema = z.object({
 export type StepMethodContext = z.infer<typeof StepMethodContextSchema>
 export type StepMethod = z.infer<typeof StepMethodSchema>
 
+// ---------------------------------------------------------------------------
+// Depth wave part 1 (founder 2026-10-01): two per-step cited fields — verification checks and
+// real costs. Both OPTIONAL and ADDITIVE on the full node schema only (method sub-steps stay
+// display-level); no judged number reads either, so every committed surface is unchanged.
+// ---------------------------------------------------------------------------
+
+// "How do I know it worked?" — a concrete, externally checkable test for the step, with the
+// primary-source URL of the checking tool where one exists (the DE entity search, TSDR, EDGAR
+// full-text search, RDAP lookup…). Curation honesty (processes/README.md "Verification
+// checks"): a verify that merely restates the step is worse than absence — drafting steps and
+// internal decisions carry none; URLs are https, primary sources (government portals, registrar
+// tools) preferred, and every one is curl-verified live before it ships.
+export const StepVerifySchema = z.object({
+  how: z.string().min(1),
+  url: z.string().url().optional(),
+})
+
+export type StepVerify = z.infer<typeof StepVerifySchema>
+
+export const COST_KINDS = ['government-fee', 'typical-vendor-price', 'free'] as const
+export type CostKind = (typeof COST_KINDS)[number]
+
+// The real, KNOWABLE cost of a step. Honesty contract (processes/README.md "Cost honesty"):
+// every number carries the source URL of a published fee schedule or sticker-price page plus
+// the asOf date it was read — fees change, the asOf date is the contract, currentness is never
+// claimed. `usd: null` is the honest spelling of "a real cost exists but no published number
+// does" (attorney fees vary) — the source then explains the variability; nothing is estimated
+// or averaged. `note` carries the required caveat (minimums, per-class fees, what's bundled).
+export const StepCostSchema = z.object({
+  usd: z.number().min(0).nullable(),
+  kind: z.enum(COST_KINDS),
+  source: z.string().url(),
+  asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'asOf must be an ISO date (YYYY-MM-DD)'),
+  note: z.string().min(1).optional(),
+})
+
+export type StepCost = z.infer<typeof StepCostSchema>
+
 // The full node schema: the base fields (the DEFAULT method) plus optional method variants.
 // COMPAT-ADDITIVE: a node without methods is exactly the pre-variant schema, and no default
 // surface reads methods — computeCeiling, buildSimSteps, the manifest, the rankings and the
@@ -185,6 +223,12 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // carry the field this phase — variants are display-level; the default flow is the judged
   // surface.
   reversibility: z.enum(REVERSIBILITY_TIERS),
+  // "How do I know it worked?" — see StepVerifySchema above. Optional: absence means the step
+  // has no meaningful external check (drafting, internal decisions), never that one was missed.
+  verify: StepVerifySchema.optional(),
+  // The step's real, sourced cost — see StepCostSchema above. Optional: absence means no
+  // knowable published number, never $0 (that's kind 'free' with usd 0).
+  cost: StepCostSchema.optional(),
 })
 
 // An old URL slug that must keep working after a rename (founder rule: processes are named
@@ -578,6 +622,20 @@ export function computeCeiling(
 
 export function taskCeiling(task: ProcessTask): ProcessCeiling {
   return computeCeiling(task.dag.nodes)
+}
+
+// The process's known government fees (depth wave pt 1): the sum of the DATED per-step
+// government fees ONLY — kind 'government-fee' with a published usd number. Derived here, never
+// hand-stored. Vendor prices are deliberately excluded from the headline (a partial vendor sum
+// would imply a completeness the curation doesn't claim), and `usd: null` entries contribute
+// nothing. Computed over the DEFAULT flow (loadProcesses strips jurisdiction-conditional nodes),
+// so the number describes the same Delaware-default view every other committed number does.
+export function knownCostUsd(nodes: Array<Pick<DagNode, 'cost'>>): number {
+  let total = 0
+  for (const n of nodes) {
+    if (n.cost && n.cost.kind === 'government-fee' && n.cost.usd !== null) total += n.cost.usd
+  }
+  return total
 }
 
 // The site-wide headline: the agent ceiling across every step of every process in the corpus.
