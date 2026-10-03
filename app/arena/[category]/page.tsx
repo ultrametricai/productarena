@@ -9,6 +9,7 @@ import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
 import { arenaIcon } from '@/lib/arenaIcons'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
+import { arenaClientData } from '@/lib/arenaClientData'
 import { adjacentArenas } from '@/lib/alternatives'
 import arenaSections from '@/data/arena-sections.json'
 import { humanizeTheme } from '@/lib/icons'
@@ -143,6 +144,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   // 🔥 flags (lib/hotProducts.ts) need the whole fleet's popularity history (the hot threshold
   // is fleet-relative), so they're computed here server-side and passed down as plain strings.
   const hotReasons = hotReasonsForCategory(loadAll(), data)
+  // What the client components below receive: CategoryData minus verdict rationale and battle
+  // records, neither of which this page renders — see lib/arenaClientData.ts for the full
+  // accounting. The server-side JSON-LD above keeps reading the untouched `data`.
+  const clientData = arenaClientData(data)
   return (
     <div className="space-y-8">
       <script
@@ -199,15 +204,15 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       </div>
       {/* No "Leaderboard" heading (founder 2026-09-30: self-evident — the ranked table opens
           the page); the table itself carries an aria-label so it keeps an accessible name. */}
-      <ArenaTable data={data} logoMap={logoMap} pricing={pricing} hotReasons={Object.keys(hotReasons).length > 0 ? hotReasons : undefined} />
-      <PersonaStacksSection data={data} />
-      <StacksSection data={data} />
+      <ArenaTable data={clientData} logoMap={logoMap} pricing={pricing} hotReasons={Object.keys(hotReasons).length > 0 ? hotReasons : undefined} />
+      <PersonaStacksSection data={clientData} />
+      <StacksSection data={clientData} />
       <div id="story-matrix" className="scroll-mt-4">
         <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
           <GeoMark seed="story-matrix" title="What we tested — every product × every judged story" size={18} className="text-zinc-500" />
           What we tested
         </h2>
-        <StoryMatrix data={data} logoMap={logoMap} />
+        <StoryMatrix data={clientData} logoMap={logoMap} />
       </div>
       {/* Legend AFTER the last table it explains ("What we tested") — founder principle: optimize
           for first use, bulk value (the leaderboard) seen straight away, vocabulary below.
