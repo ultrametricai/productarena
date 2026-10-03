@@ -12,7 +12,8 @@ import {
 // README's grouped tables stay in sync with the registry. Link-don't-redistribute is policy
 // (open-documents/README.md); nothing here fetches the documents.
 
-const AS_OF = new Date('2026-09-30T00:00:00Z')
+// Pinned to the registry's updated_on (the latest verification pass).
+const AS_OF = new Date('2026-10-02T00:00:00Z')
 
 describe('documents corpus', () => {
   it('the committed registry + README pass every invariant', () => {
