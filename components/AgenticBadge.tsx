@@ -90,7 +90,7 @@ export default function AgenticBadge({
       <Link
         href={href}
         title={hrefTitle}
-        className="inline-flex w-fit rounded-full transition hover:brightness-125 hover:ring-1 hover:ring-emerald-400/60"
+        className="um-pill-link w-fit"
       >
         {badge}
       </Link>
