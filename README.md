@@ -6,7 +6,7 @@
 
 - **Use it:** [ultrametric.ai](https://ultrametric.ai) has [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
 - **Improve it:** the open startup repo, [CONTRIBUTING.md](./CONTRIBUTING.md). Contest a verdict, add your country, add a module.
-- **For agents:** open data, no keys. `curl https://ultrametric.ai/data/categories.json` ([for AI agents](#for-ai-agents))
+- **For agents:** open data, no keys. `curl https://ultrametric.ai/data/categories.json` ([use it from an agent](#use-it-from-an-agent))
 
 **Contribution guides:** [Add your vendor](CONTRIBUTING.md#add-your-vendor) · [Add a process](CONTRIBUTING.md#add-a-process) · [Add a jurisdiction](CONTRIBUTING.md#add-a-jurisdiction) · [Add an open module](CONTRIBUTING.md#add-an-open-module)
 
@@ -40,9 +40,8 @@ curl https://ultrametric.ai/llms.txt                       # the index for agent
 
 Every shape is published as a JSON Schema in [`schemas/`](schemas/), the endpoints are
 described by [/openapi.json](https://ultrametric.ai/openapi.json), and the ground rules are in
-[governance/AGENT_POLICY.md](governance/AGENT_POLICY.md). More in
-[For AI agents](#for-ai-agents) below. (A first-party Ultrametric MCP server + API is coming;
-the JSON data API and llms.txt/llms.md surfaces are the supported ways in.)
+[governance/AGENT_POLICY.md](governance/AGENT_POLICY.md). More surfaces (process manifests,
+the search index, the RSS feed) in [Use it from an agent](#use-it-from-an-agent) below.
 
 ## Processes
 
@@ -59,6 +58,20 @@ run today (`full` / `partial` / `manual_guide`), with per-country geo notes (UK,
 Germany, France; the US is the baseline). Playbooks chain processes into founder paths
 (incorporate → launch, the VC raise, the agent-run back office).
 
+One slice of [Incorporate C-Corp](https://ultrametric.ai/processes/incorporate-c-corp)
+(record `form_001` in [`processes/corpus.json`](processes/corpus.json)): the opening step
+"Choose formation service" carries the ranked vendor options, and the later step "Receive
+Certificate of Incorporation" produces the `certificate-of-incorporation` artifact that the
+EIN, banking, and state-registration processes consume
+([`processes/artifacts.json`](processes/artifacts.json)):
+
+```json
+{ "id": "n1", "label": "Choose formation service", "route": "person",
+  "vendorOptions": ["clerky", "stripe_atlas", "firstbase", "legalzoom", "northwest", "doola"] }
+{ "id": "n5", "label": "Receive Certificate of Incorporation", "route": "person",
+  "producesArtifact": "certificate-of-incorporation" }
+```
+
 The corpus also carries **situations**, the reactive layer: trigger-driven records for the
 work nobody schedules (a breach is live, a summons lands, a tax notice arrives). Each
 situation names its **trigger** (the event, not the task) and an **urgency** tier
@@ -66,6 +79,18 @@ situation names its **trigger** (the event, not the task) and an **urgency** tie
 mechanical core to agents; the counsel/CPA judgment calls and signature acts stay human.
 The index is [/situations](https://ultrametric.ai/situations), sorted hottest clock first,
 and the doctrine is [`processes/SITUATIONS.md`](processes/SITUATIONS.md).
+
+One situation end to end:
+[Respond to a cease-and-desist](https://ultrametric.ai/processes/respond-to-a-cease-and-desist)
+(record `sit_001` in [`processes/corpus.json`](processes/corpus.json)) names its trigger and
+clock, and routes the response to counsel:
+
+```json
+{ "trigger": "A cease-and-desist letter claiming trademark or IP infringement arrives by mail or email.",
+  "urgency": "days" }
+{ "id": "n4", "label": "Choose counsel for the response (IP/trademark litigation)",
+  "route": "person", "optionsArenaId": "startup-law-firms" }
+```
 
 The data lives in [`processes/`](processes/) (`corpus.json` + the jurisdiction-scoped legal
 workflows), [`journeys/`](journeys/) (`chains.json`), and
@@ -89,6 +114,20 @@ community sources, hands-on probes), rankings recompute bit-identically and carr
 `_provenance`, honest negatives count as much as positives, and owner-affiliated products are
 disclosed and adversarially bias-audited
 ([evidence doctrine](governance/REVIEW_POLICY.md) · [METHODOLOGY.md](./METHODOLOGY.md)).
+
+One judged cell: in [Online Payments](https://ultrametric.ai/arena/payments), Stripe's verdict
+on the story "As a founder, I can accept an online card payment within a day of signing up"
+([`data/payments/stories.json`](data/payments/stories.json)) is `full`, and its rationale leans
+on a hands-on community report, "up and running and accepting recurring payments in less than
+an hour" (evidence `stripe-comm-9` in
+[`data/payments/evidence/stripe.json`](data/payments/evidence/stripe.json)). The cell renders on
+[the Stripe product page](https://ultrametric.ai/arena/payments/product/stripe) from
+[`data/payments/verdicts.json`](data/payments/verdicts.json):
+
+```json
+{ "productId": "stripe", "storyId": "accept-card-payment-online",
+  "verdict": "full", "quality": 8, "confidence": "medium" }
+```
 
 The data lives in [`data/`](data/) (per-arena products, stories, evidence, verdicts,
 rankings), [`vendors/`](vendors/) (the doctrine + `reviews/generated/`, one dated interchange
@@ -527,8 +566,8 @@ a score" in [METHODOLOGY.md](./METHODOLOGY.md). Neither file is read by the scor
 `pnpm pipeline derive --category <id>` after any verdict change.
 
 `pnpm run build`/`pnpm run dev` mirror all of `data/` verbatim to `public/data/` (a gitignored
-build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs (see "For AI
-agents" below).
+build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs (see "Use it
+from an agent" below).
 
 **Dataset releases.** Point-in-time snapshots of `data/` are periodically tagged and published
 as [GitHub releases](https://github.com/ultrametricai/ultrametric/releases) (e.g.
@@ -536,9 +575,12 @@ as [GitHub releases](https://github.com/ultrametricai/ultrametric/releases) (e.g
 arena/product/verdict counts at that snapshot; useful if you want a stable dataset to build
 against instead of tracking `main`.
 
-## For AI agents
+<a id="for-ai-agents"></a>
 
-Ultrametric is built to be read by agents as much as by humans:
+## Use it from an agent
+
+Ultrametric is built to be read by agents as much as by humans. Every surface here is live
+today, no keys, no install:
 
 - **[/llms.txt](https://ultrametric.ai/llms.txt)**: the top-level index per the
   [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
@@ -547,21 +589,37 @@ Ultrametric is built to be read by agents as much as by humans:
   `/arena/{category}/llms.md` (leaderboard, business models, grouped story matrix with proof
   URLs), and every product has a deep-dive at `/arena/{category}/product/{productId}/llms.md`
   (every verdict, rationale, and proof URL). These are the pages an agent should read first.
+- **Process manifests**: every process page declares a machine-readable manifest as its
+  metadata alternate: `/processes/{slug}/manifest.json` (chains at
+  `/processes/chains/{chain}/manifest.json`), the published corpus reshaped into the executor
+  handoff contract ([docs/AFK-HANDOFF.md](docs/AFK-HANDOFF.md)): per-step routing, tool
+  calls, vendor options with their MCP endpoints, approval gates, and time estimates. Example:
+  [/processes/incorporate-c-corp/manifest.json](https://ultrametric.ai/processes/incorporate-c-corp/manifest.json).
 - **Data API**: the same JSON the site renders from is mirrored verbatim to stable URLs at
   build time (`scripts/copy-data.mjs`, a `prebuild` step): `/data/categories.json`,
   `/data/{category}/{products,stories,verdicts,rankings}.json`,
   `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
   (gitignored); it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
+- **Raw committed data**: the same records straight from the repo, no site in between:
+  [`data/`](data/) (arenas), [`processes/corpus.json`](processes/corpus.json) and
+  [`journeys/chains.json`](journeys/chains.json) (processes, situations, chains),
+  [`rules/`](rules/) and [`sources/`](sources/) (cited law), each validating against
+  [`schemas/`](schemas/).
 - **[/openapi.json](https://ultrametric.ai/openapi.json)**: an OpenAPI 3.1 document
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
+- **[/search-index.json](https://ultrametric.ai/search-index.json)**: the site's complete
+  search index as one JSON fetch (every arena, product, stack, process, chain, and tool page
+  with its href), the same file the on-site palette loads.
+- **[/feed.xml](https://ultrametric.ai/feed.xml)**: RSS over the derived changelog
+  (overtakes, score moves, launches), re-derived from committed history on each build.
 - **[/methodology](https://ultrametric.ai/methodology)**: a tight, on-site summary of
   [METHODOLOGY.md](./METHODOLOGY.md) (evidence tiers, judging, scoring, Overall score weights,
   story provenance, re-judge stability, bias disclosure), linked from the header next to
   Arenas and from `/llms.txt`.
-- **MCP / CLI**: Ultrametric is not served over its own MCP server or CLI; a first-party
-  Ultrametric MCP + API is coming instead. The MCP/CLI packages live in their own dedicated
-  repo and are not published entry points.
+- **MCP / CLI**: there is no Ultrametric MCP server or CLI today; the simulator's MCP calls
+  are labeled demos. A first-party MCP server is on the roadmap; until then the surfaces
+  above are the supported ways in.
 - **schema.org**: arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating`: we don't have star ratings and won't
