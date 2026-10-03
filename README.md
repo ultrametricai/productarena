@@ -2,7 +2,7 @@
 
 **Everything a founder (or their agent) needs to start and run a company: every
 [process](#processes) step by step, the [vendors](#vendors) ranked, and the
-[open modules](#business-logic) underneath.**
+[open modules](#open-modules) underneath.**
 
 - **Use it:** [ultrametric.ai](https://ultrametric.ai) has [the processes](https://ultrametric.ai/processes) · [the rankings](https://ultrametric.ai/overall) · [the simulator](https://ultrametric.ai/startup-sim)
 - **Improve it:** the open startup repo, [CONTRIBUTING.md](./CONTRIBUTING.md). Contest a verdict, add your country, add a module.
@@ -22,7 +22,7 @@
 | A situation hits | [/situations](https://ultrametric.ai/situations): reactive, trigger-driven work (a breach, served papers, a tax notice), hottest clock first; doctrine in [`processes/SITUATIONS.md`](processes/SITUATIONS.md) |
 | Vendor rankings | [/overall](https://ultrametric.ai/overall) · [per-arena leaderboards](https://ultrametric.ai/arenas) · [/compare](https://ultrametric.ai/compare) |
 | Stacks | [/stacks](https://ultrametric.ai/stacks): proven toolchains to use and improve |
-| Open modules | [`business-logic/README.md`](business-logic/README.md): the cap-table, runway, deadline, equity, and tax math as source-cited code in [`lib/openstartup/`](lib/openstartup/) |
+| Open modules | [`open-modules/README.md`](open-modules/README.md): the cap-table, runway, deadline, equity, and tax math as source-cited code in [`lib/openstartup/`](lib/openstartup/) |
 | The simulator | [/startup-sim](https://ultrametric.ai/startup-sim): a simulated company runs the corpus end to end |
 | Your context | the geo switcher on process/product pages (US · UK · IN · DE · FR) |
 
@@ -101,6 +101,7 @@ To contribute: contest a verdict, add evidence, prove a story, or submit a produ
 [Contributing](#contributing--how-the-community-can-help)). Start at
 [`vendors/README.md`](vendors/README.md).
 
+<!-- Legacy anchor: external links to #business-logic predate the open-modules/ rename. -->
 <a id="business-logic"></a>
 
 ## Open modules
@@ -113,7 +114,7 @@ a startup runs on, as open, source-cited, exhaustively tested records and code:
   [`sources/`](sources/) with an exact provision locator. Status is `demonstration`, the
   current maturity level, stated on each card.
 - **Open modules** — [`lib/openstartup/`](lib/openstartup/), indexed in
-  [`business-logic/README.md`](business-logic/README.md) — pure, deterministic functions, each
+  [`open-modules/README.md`](open-modules/README.md) — pure, deterministic functions, each
   tested against published worked examples:
   - `capTable.ts` (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
     in-round pool shuffle, post-money SAFE conversion per the YC Post-Money Safe User Guide
@@ -189,7 +190,7 @@ a startup runs on, as open, source-cited, exhaustively tested records and code:
     constants.
   - `deferredRevenue.ts` — subscription revenue recognition and plan-change proration,
     cents-exact, replaying the published worked examples.
-- **Open documents** — [`documents/`](documents/): the canonical, openly licensed startup legal
+- **Open documents** — [`open-documents/`](open-documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records that link rather than
   redistribute; every URL is verified on its `checked_on` date.
 - **Resources** — [`resources/`](resources/): the canonical startup resources plus
@@ -203,11 +204,11 @@ transfer, and anything leaning on a legal threshold references a dated rule card
 `needs_review` when the locale or date is unknown. Educational, not legal advice.
 
 The data lives in [`rules/`](rules/), [`sources/`](sources/), [`lib/openstartup/`](lib/openstartup/),
-[`documents/`](documents/), [`resources/`](resources/), and [`jurisdictions/`](jurisdictions/).
+[`open-documents/`](open-documents/), [`resources/`](resources/), and [`jurisdictions/`](jurisdictions/).
 The modules are repo-first: pure libraries usable from tests, scripts, or your own agent, and
 the processes and site consume the same rule cards and jurisdiction data.
 
-To contribute, start at [`business-logic/README.md`](business-logic/README.md): the module
+To contribute, start at [`open-modules/README.md`](open-modules/README.md): the module
 index, the contribution bar, and each module's Honesty boundaries.
 
 ## How it works
@@ -260,9 +261,9 @@ and markdown, schema-validated in CI, usable without running any code.
 | --- | --- | --- |
 | [`rules/`](rules/) | Dated, source-locked legal rule cards with stable IDs, one dir per jurisdiction (`US-FED/`, `US-DE/`) | `schemas/rule.schema.json` + validator |
 | [`sources/`](sources/) | Primary authorities: publisher, exact provision locator, issued/checked dates | `schemas/source.schema.json` |
-| [`business-logic/`](business-logic/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the Honesty boundaries | worked-example + property tests |
+| [`open-modules/`](open-modules/) | The index of the open modules (code in `lib/openstartup/`), the contribution bar, the Honesty boundaries | worked-example + property tests |
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited; also feeds the site's geo switcher) | exact-dimension matching; unknown maps to `unsupported` |
-| [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
+| [`open-documents/`](open-documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) + `LORE.md` (veracity-graded startup history) | `lib/resources.ts` / `lib/lore.ts` + invariant tests |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
@@ -270,7 +271,7 @@ that renders it. Three directories confuse newcomers, so to be explicit: **`sche
 contracts every record validates against; **`catalog/`** is the coverage map
 (`domains.json` = what the corpus intends to cover, `coverage.json` = what it covers
 today, at what maturity); **`rules/`** is cited law the open-modules layer consumes; it
-belongs to [Open modules](#business-logic) above, listed there.
+belongs to [Open modules](#open-modules) above, listed there.
 
 | Path | What lives there | Contract / gate |
 | --- | --- | --- |
@@ -616,7 +617,7 @@ The quick index:
 | Add evidence or prove a story hands-on | [CONTRIBUTING.md](./CONTRIBUTING.md) · [`docs/PROVE-IT.md`](./docs/PROVE-IT.md) |
 | Add your product to an arena | [/submit](https://ultrametric.ai/submit) or [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product) |
 | Add your country or state | [Add your country or state](#add-your-country-or-state) below; four PR shapes, smallest first |
-| Add an open module | [`business-logic/README.md`](business-logic/README.md): the bar is pure functions, a citation on every formula, tests that double as documentation |
+| Add an open module | [`open-modules/README.md`](open-modules/README.md): the bar is pure functions, a citation on every formula, tests that double as documentation |
 | Submit a stack | the [Submit a stack](https://github.com/ultrametricai/ultrametric/issues/new?template=submit-stack.yml) issue form (linked from [/stacks](https://ultrametric.ai/stacks)). Stacks stay curated committed data; submissions feed review and are not auto-published |
 | Understand the review bar | [governance/REVIEW_POLICY.md](governance/REVIEW_POLICY.md) |
 
@@ -647,7 +648,7 @@ Ways to contribute:
 - **Add your country or state**: the most valuable contribution for founders outside the
   US; see [the subsection below](#add-your-country-or-state).
 - **Add an open module**: pure, source-cited TypeScript under `lib/openstartup/`;
-  the bar and candidate modules are in [`business-logic/README.md`](business-logic/README.md).
+  the bar and candidate modules are in [`open-modules/README.md`](open-modules/README.md).
 - **Make a prediction**: `/predictions` auto-generates yes/no questions from live close
   races ("will the #2 overtake the #1 within 30 days?") and settles them mechanically from
   the committed rank-flip history. The "Predict" link opens a prefilled issue

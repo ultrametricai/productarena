@@ -10,7 +10,7 @@ import {
 
 // The open-documents map gates: every committed record is well-formed, dated, HTTPS, and the
 // README's grouped tables stay in sync with the registry. Link-don't-redistribute is policy
-// (documents/README.md); nothing here fetches the documents.
+// (open-documents/README.md); nothing here fetches the documents.
 
 const AS_OF = new Date('2026-09-30T00:00:00Z')
 

@@ -272,7 +272,7 @@ export const DagNodeSchema = DagNodeBaseSchema.extend({
   // Optional and deliberately sparse: absence means no sourced/structurally-certain failure
   // mode is curated yet, never that the step can't fail.
   failureModes: StepFailureModeSchema.array().min(1).optional(),
-  // Canonical open documents for THIS step — ids into documents/registry.json (the Cooley GO
+  // Canonical open documents for THIS step — ids into open-documents/registry.json (the Cooley GO
   // incorporation package for the bylaws-drafting step, IRS Form 15620 for the 83(b) steps).
   // Added by the founder spike 2026-10-02 after confirming NO prior mechanism linked corpus
   // steps to the documents registry; extended across the corpus and RENDERED the same day

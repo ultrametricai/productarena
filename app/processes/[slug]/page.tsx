@@ -91,7 +91,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   // derived, never hand-stored; vendor prices deliberately excluded so the headline never
   // implies a completeness the curation doesn't claim. 0 for most processes → no chip.
   const knownFees = knownCostUsd(task.dag.nodes)
-  // Open business-logic modules serving this process (processes/business-logic-map.json).
+  // Open modules serving this process (processes/business-logic-map.json).
   const openModules = modulesForProcess(task.id)
 
   return (
@@ -174,7 +174,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         {/* Business-logic ↔ process wiring (founder 2026-10-02): the open lib/openstartup
             modules that serve this process, from the committed registry
             processes/business-logic-map.json — a muted line of chips deep-linking to the
-            module's section in business-logic/README.md on GitHub (the modules are a repo
+            module's section in open-modules/README.md on GitHub (the modules are a repo
             library by design, no site pages). Renders nothing for the many unmapped tasks. */}
         {openModules.length > 0 && (
           <p className="mt-3 flex max-w-2xl flex-wrap items-center gap-1.5 text-xs text-zinc-500">

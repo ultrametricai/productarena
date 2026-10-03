@@ -293,7 +293,7 @@ test` validates every record.
 Open modules are pure, source-cited TypeScript under [`lib/openstartup/`](lib/openstartup/).
 The bar — pure functions, a citation on every formula, tests that double as documentation,
 `needs_review` wherever facts decide — and the candidate-module backlog live in
-[`business-logic/README.md`](business-logic/README.md).
+[`open-modules/README.md`](open-modules/README.md).
 
 ## Local setup
 
