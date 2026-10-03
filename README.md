@@ -264,6 +264,7 @@ and markdown, schema-validated in CI, usable without running any code.
 | [`jurisdictions/`](jurisdictions/) | Jurisdiction registry + `vendor-geo.json` (dated per-country vendor availability, source-cited; also feeds the site's geo switcher) | exact-dimension matching; unknown maps to `unsupported` |
 | [`documents/`](documents/) | Open documents — the canonical startup legal documents as dated, link-only records | `lib/documents.ts` + registry/README sync test |
 | [`resources/`](resources/) | The canonical startup resources + `LAWS.md` (cited distilled principles) + `LORE.md` (veracity-graded startup history) | `lib/resources.ts` / `lib/lore.ts` + invariant tests |
+| [`lore/`](lore/) | The startup-lore registry: schooled heuristics as sourced claims, with the cross-school tensions mapped on both sides | `__tests__/lore-registry.test.ts` schema + referential invariants |
 
 **Contracts & infrastructure** — the layer everything above validates against, plus the site
 that renders it. Three directories confuse newcomers, so to be explicit: **`schemas/`** holds the JSON
