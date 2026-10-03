@@ -71,6 +71,17 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '*': BUILD_TIME_ONLY,
   },
+  // In-app route renames only. /documents became /open-documents with the documents/ →
+  // open-documents/ directory rename (founder 2026-10-03); the old path stays alive as a
+  // permanent redirect, the same old-links-stay-alive posture as the proxy-layer
+  // /productarena/* redirects (which remain at infra/cloudflare-proxy, not here).
+  redirects: async () => [
+    {
+      source: '/documents',
+      destination: '/open-documents',
+      permanent: true,
+    },
+  ],
 };
 
 export default nextConfig;

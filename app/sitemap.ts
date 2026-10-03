@@ -114,6 +114,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // /processes/<slug> rows in the loadProcesses loop below.
   entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
   entries.push({ url: `${SITE_URL}/situations`, lastModified: now })
+  // The open-documents registry index (founder 2026-10-03, with the open-documents/ rename);
+  // /documents 308s here via next.config.ts.
+  entries.push({ url: `${SITE_URL}/open-documents`, lastModified: now })
   entries.push({ url: `${SITE_URL}/processes/operating-rhythm`, lastModified: now })
   entries.push({ url: `${SITE_URL}/startup-sim`, lastModified: now })
   for (const task of loadProcesses()) {
