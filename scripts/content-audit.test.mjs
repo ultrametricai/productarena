@@ -14,7 +14,7 @@ function fixture() {
     'data/arena/verdicts.json': [{ productId: 'tool', storyId: 'story', verdict: 'none', evidenceIds: ['proof'] }],
     'data/arena/evidence/tool.json': [{ id: 'proof', tier: 'probe' }],
     'vendors/reviews/generated/arena--tool.json': { tested_on: '2026-10-01', recheck_due: '2027-01-01', status: 'tested', reviewer: 'Automated pipeline' },
-    'documents/registry.json': { review_window_days: 120, documents: [{ id: 'form', name: 'Form', license_note: 'Review terms', publisher: 'Example', url: 'https://example.test/form', checked_on: '2026-10-01', jurisdiction: 'Worldwide', use_case: 'formation' }] },
+    'open-documents/registry.json': { review_window_days: 120, documents: [{ id: 'form', name: 'Form', license_note: 'Review terms', publisher: 'Example', url: 'https://example.test/form', checked_on: '2026-10-01', jurisdiction: 'Worldwide', use_case: 'formation' }] },
     'sources/registry.json': { sources: [{ id: 'statute', title: 'Statute', url: 'https://example.test/law', locator: '§ 1', checked_on: '2026-10-01', jurisdiction: 'US-DE' }] },
     'resources/registry.json': { resources: [] },
     'jurisdictions/registry.json': { jurisdictions: [{ code: 'US-DE', name: 'Delaware', coverage: 'partial-example', scope: 'One example' }] },
@@ -64,7 +64,7 @@ test('distinguishes registered untracked vendors from invalid registry keys', ()
 test('reports missing module tests and invalid review dates without claiming execution', () => {
   const files = fixture()
   files.delete('lib/openstartup/__tests__/module.test.ts')
-  change(files, 'documents/registry.json', value => value.documents[0].checked_on = '2026-99-99')
+  change(files, 'open-documents/registry.json', value => value.documents[0].checked_on = '2026-99-99')
   const report = buildContentAudit(files, metadata)
   assert.equal(record(report, 'modules:module').checks[0].state, 'missing')
   assert.equal(record(report, 'documents:form').checkedOn, null)
@@ -124,7 +124,7 @@ test('preserves process review dates and flags overdue or reversed schedules', (
 test('rejects missing or invalid document review windows', () => {
   for (const window of [undefined, 0, -1, '120']) {
     const files = fixture()
-    change(files, 'documents/registry.json', value => value.review_window_days = window)
+    change(files, 'open-documents/registry.json', value => value.review_window_days = window)
     assert.throws(() => buildContentAudit(files, metadata), /positive review_window_days/)
   }
 })

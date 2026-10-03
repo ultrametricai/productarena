@@ -10,7 +10,7 @@ export const collectionNames = {
   rules: 'Rules', sources: 'Sources', resources: 'Resources', artifacts: 'Business artifacts',
 }
 
-const roots = ['content/processes/records', 'data', 'documents', 'lib/openstartup', 'processes', 'jurisdictions', 'rules', 'sources', 'resources', 'vendors/reviews/generated', 'catalog']
+const roots = ['content/processes/records', 'data', 'open-documents', 'lib/openstartup', 'processes', 'jurisdictions', 'rules', 'sources', 'resources', 'vendors/reviews/generated', 'catalog']
 const recordKey = (collection, id) => `${collection}:${id}`
 const nonempty = value => typeof value === 'string' && value.trim().length > 0
 const isoDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value
@@ -136,10 +136,10 @@ export function buildContentAudit(files, metadata) {
   const roadmap = array(json('data/arena-roadmap.json'), 'arena roadmap')
   metrics.push({ label: 'Arenas in the declared roadmap', covered: roadmap.filter(item => categories.some(category => category.id === item.id)).length, total: roadmap.length, meaning: 'Presence in the category registry; does not establish complete vendor coverage.' })
 
-  const documents = json('documents/registry.json')
+  const documents = json('open-documents/registry.json')
   if (!Number.isInteger(documents.review_window_days) || documents.review_window_days <= 0) throw new Error('Documents require a positive review_window_days.')
   for (const value of array(documents.documents, 'documents')) {
-    const record = add('documents', value.id, value.name, 'documents/registry.json', [value.use_case, value.jurisdiction])
+    const record = add('documents', value.id, value.name, 'open-documents/registry.json', [value.use_case, value.jurisdiction])
     presence(record, 'License or terms note', nonempty(value.license_note))
     presence(record, 'Publisher', nonempty(value.publisher))
     link(record, value.url, 'publisher document', 'external')
