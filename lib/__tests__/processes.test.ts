@@ -361,6 +361,31 @@ describe('corpus', () => {
     expect(noteKind('vc_002', 'DE')).toBe('analog') // AIFMD/BaFin is real, doable work
   })
 
+  // US state coverage (founder state wave 2026-10-03): where founders actually diverge from the
+  // DE-corp default, the state-scoped records cite dated rule cards against primary sources —
+  // CA SOI + FTB minimum tax, NV annual list/license + commerce tax, TX margin tax + foreign
+  // registration. Same contract as the situations' rule-card pins: the id appears in the
+  // description AND the card is committed on disk.
+  it('state-coverage records cite their US-CA/US-NV/US-TX rule cards, committed on disk', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const byId = (id: string) => tasks.find((t) => t.id === id)!
+    for (const [pid, dir, ruleId] of [
+      ['form_005', 'US-CA', 'us-ca.minimum-franchise-tax'],
+      ['form_005', 'US-NV', 'us-nv.commerce-tax-threshold'],
+      ['form_005', 'US-TX', 'us-tx.franchise-tax-report'],
+      ['qs_045', 'US-CA', 'us-ca.foreign-qualification'],
+      ['qs_045', 'US-TX', 'us-tx.foreign-registration'],
+      ['qs_047', 'US-CA', 'us-ca.statement-of-information'],
+      ['qs_047', 'US-NV', 'us-nv.annual-list-business-license'],
+      ['qs_047', 'US-TX', 'us-tx.franchise-tax-report'],
+    ] as const) {
+      expect(byId(pid).description, `${pid} cites ${ruleId}`).toContain(ruleId)
+      const file = path.join(__dirname, '..', '..', 'rules', dir, `${ruleId.replace(/\./g, '-')}.json`)
+      expect(fs.existsSync(file), `${ruleId} card committed at ${file}`).toBe(true)
+      expect(JSON.parse(fs.readFileSync(file, 'utf8')).id).toBe(ruleId)
+    }
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()
