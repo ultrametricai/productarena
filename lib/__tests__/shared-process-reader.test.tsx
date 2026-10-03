@@ -108,12 +108,21 @@ describe('canonical shared process reader', () => {
     expect(name.textContent).not.toContain('GET /api')
     expect(el.textContent).not.toContain('References (')
     expect(el.textContent).not.toContain('Source details')
-    expect(el.querySelector('[id="form_001:n6"] [aria-label="Related links"]')).toBeNull()
     expect(record.parts.find(part => part.id === 'n6')?.references).toContainEqual({ kind: 'vendor', id: 'clerky', role: 'stated-vendor' })
-    const certificate = el.querySelector('[id="form_001:n5"]')!
-    expect(certificate.querySelector('details')).toBeNull()
-    expect(certificate.querySelector('[aria-label="Related links"]')).toBeNull()
-    expect(record.parts.find(part => part.id === 'n5')?.references.length).toBeGreaterThan(0)
+    for (const partId of ['n5', 'n6']) {
+      const part = record.parts.find(part => part.id === partId)!
+      const article = el.querySelector(`[id="form_001:${partId}"]`)!
+      expect(article.textContent).toContain(part.guidance)
+      expect([...article.querySelectorAll('[aria-label="Related links"] a')].map(link => link.getAttribute('href')))
+        .toEqual(part.references.filter(ref => ref.kind === 'url').map(ref => ref.url))
+    }
+    const associationsOnly = structuredClone(record)
+    associationsOnly.parts = [{ ...record.parts.find(part => part.id === 'n5')!, guidance: null,
+      references: [{ kind: 'vendor', id: 'clerky', role: 'stated-vendor' }] }]
+    associationsOnly.links = []
+    const withoutAuthoredContent = mount(renderToStaticMarkup(<SharedProcessReader record={associationsOnly} records={[associationsOnly]} />))
+    expect(withoutAuthoredContent.querySelector('article details')).toBeNull()
+    expect(withoutAuthoredContent.querySelector('article [aria-label="Related links"]')).toBeNull()
     const synthetic = structuredClone(record)
     synthetic.parts = [{ ...synthetic.parts[0], kind: 'step', options: [], guidance: 'Detailed authored guidance. '.repeat(20), references: [], notes: [{ text: 'Authored qualification' }] }]
     synthetic.links = []
