@@ -1,7 +1,9 @@
 // The reader's country preference (founder GEO ask 2026-09-28: "make GEO a top-level process
 // driver at the top of a particular process page or a vendor, so we know how it works across
-// the globe"). One preference, five countries — the same set the vendor-geo spike judged
-// (lib/vendorGeo.ts) and the process geo notes cover (lib/processes.ts GeoNoteSchema).
+// the globe"). One preference, one country list — the original five are the set the vendor-geo
+// spike judged (lib/vendorGeo.ts); the process geo notes (lib/processes.ts GeoNoteSchema) cover
+// every listed country, PT and CA included (founder new-countries wave 2026-10-03). Vendor geo
+// stays evidence-gated per country: products the spike has not judged are absent, never guessed.
 //
 // This module is the CLIENT-SAFE half (no node:fs — the lib/jurisdictions.ts split convention):
 // the country list, labels/flags, the ?geo= URL/localStorage codec, and a tiny per-tab store so
@@ -9,13 +11,13 @@
 // annotations) shares ONE selection without a context provider re-plumbing the server pages.
 //
 // URL/localStorage contract (lib/urlState.ts conventions, the JurisdictionToggle precedent):
-// the default — 🇺🇸 US — NEVER appears in the URL; ?geo=uk / ?geo=in / ?geo=de / ?geo=fr is the
-// shareable non-default state, mirrored to localStorage under `pa-geo`. Components read it on
+// the default — 🇺🇸 US — NEVER appears in the URL; ?geo=uk / ?geo=in / ?geo=de / ?geo=fr /
+// ?geo=pt / ?geo=ca is the shareable non-default state, mirrored to localStorage under `pa-geo`. Components read it on
 // MOUNT ONLY, so the static HTML always renders the US default byte-identically and hydrates
 // with zero mismatches — geo-conditional UI appears only after the reader (or their stored
 // preference) opts in, and no judged number ever moves.
 
-export const GEO_COUNTRIES = ['US', 'UK', 'IN', 'DE', 'FR'] as const
+export const GEO_COUNTRIES = ['US', 'UK', 'IN', 'DE', 'FR', 'PT', 'CA'] as const
 export type GeoCountry = (typeof GEO_COUNTRIES)[number]
 
 /** The non-default selections — everything a ?geo= param can carry. */
@@ -29,6 +31,8 @@ export const GEO_PREF_META: Record<GeoCountry, { label: string; flag: string; pr
   IN: { label: 'India', flag: '🇮🇳', prose: 'India' },
   DE: { label: 'Germany', flag: '🇩🇪', prose: 'Germany' },
   FR: { label: 'France', flag: '🇫🇷', prose: 'France' },
+  PT: { label: 'Portugal', flag: '🇵🇹', prose: 'Portugal' },
+  CA: { label: 'Canada', flag: '🇨🇦', prose: 'Canada' },
 }
 
 export const GEO_PARAM = 'geo'
