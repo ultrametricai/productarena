@@ -87,6 +87,70 @@ route's trace alongside the other static routes.
 page bodies themselves); any further reduction has to come from the pages' own markup,
 not shared layout props.
 
+### 2b. Round 2 (2026-10-02, same day): the pages' own payloads
+
+Starting point: the measured 15,111,188 KB (14.41 GB) above. 6,458 prerendered pages;
+the volume is battle/vs (1,876 + 1,872 pages). Every byte of a page's rendered tree is
+materialized ~5×: the HTML markup, the inline flight blob in that HTML, `.rsc`,
+`.segments/_full.segment.rsc` (byte-identical to `.rsc`), and
+`.segments/.../__PAGE__.segment.rsc` (the page subtree again). So tree bytes are the
+multiplier that matters.
+
+What was actually in the trees (sampled across 240 `.rsc` files): Tailwind `className`
+strings ~28%, `title` tooltip attributes ~9.6%, the ⚑ flag links' prefilled-GitHub-issue
+URLs ~7-9%, the rest real judged-round content (rationale, citations, element structure).
+Battle/vs pages carry **no** fat client props (the palette was the last one); arena index
+pages carried one (full CategoryData, 1.66 MB) and product pages a purpose-built 334 KB
+`rows` prop (all of it rendered — left alone).
+
+Three fixes, none changing a rendered pixel or the static posture:
+
+1. **Flag links** (`lib/contestUrl.ts`): the issue URL carried a ~600-byte markdown
+   `body` param that GitHub *ignores* for issue-form templates — it never prefilled
+   anything. Now ~230 bytes of per-field form params that actually prefill
+   (`.github/ISSUE_TEMPLATE/flag-verdict.yml` field ids), two links per judged round.
+2. **Arena pages** (`lib/arenaClientData.ts`): ArenaTable/StoryMatrix/stacks sections get
+   CategoryData minus `verdict.rationale` and `rankings.battles`, neither read anywhere
+   in those trees: 1.66 MB → 0.68 MB of flight per artifact on ai-coding.
+3. **Chip class dedup** (`app/globals.css` `um-*`): the per-round/per-row verdict-chip,
+   verification-pill, persona-chip and round-scaffold utility strings became one class
+   each, `@apply`ing exactly the utilities they replaced (pinned byte-for-byte by
+   `app/__tests__/globals-chip-classes.test.ts`).
+
+Measured (same corpus, both builds this worktree, `du -sm`):
+
+| route group | before | after |
+|---|---|---|
+| `arena/*/battle` (1,876 pages) | 5,870 MB | 5,074 MB |
+| `vs/` (1,872 pages) | 5,873 MB | 5,077 MB |
+| `arena/*/product` | 1,828 MB | 1,801 MB |
+| `arena/` index + checklist/report/llms (95 arenas) | 372 MB | 270 MB |
+| `processes/` | 249 MB | 249 MB |
+| everything else | 565 MB | 552 MB |
+| **`.next/server/app` total** | **15,111,188 KB (14.41 GB)** | **13,336,168 KB (12.72 GB)** |
+
+Sample pages: battle `cursor-vs-cline.html` 2,002,670 B → 1,740,652 B (`.rsc` 1,028,177 →
+895,769); arena `ai-coding.html` 3,123,409 → 2,017,681; product `cursor.html` 1,621,569 →
+1,574,507.
+
+**Honest remainder.** This round's −1.69 GB leaves 12.72 GB — above the ~9 GB that gives
+Vercel's ~2× packaging comfortable headroom. What's left in the 10.2 GB of battle/vs
+artifacts is, in order: the judged-round content itself (rationale + citations — the
+product), the remaining non-deduped class strings, and ~1 GB of `title` hover text that
+is user-visible vocabulary (shortening it changes what readers see — founder call, not a
+payload fix). The two levers big enough to reach ~9 GB are posture or framework calls,
+not prop fixes:
+
+- The segment files: `_full.segment.rsc` is byte-identical to `.rsc` on every page
+  (~2.9 GB of pure duplication) and `__PAGE__.segment.rsc` nearly so. This Next fork
+  generates them unconditionally (`collectSegmentData` has no config gate; the
+  prefetchInlining doc calls segment prefetching "a permanent part of the App Router").
+  Deduplicating them (hardlinks, or an upstream flag) would pass ~9 GB on its own.
+- The header menus: ArenaMenu/MobileNav props + SSR markup cost every one of the 6,458
+  pages ~50 KB across artifacts (~0.35 GB). The search-index.json idiom fits, but it
+  would remove the arena menu links from every page's served HTML — an internal-link-graph
+  (SEO) change that needs a founder call.
+
 `.next/cache` (Turbopack) was ~300-360 MB across builds — not part of the problem, and
 fine to keep persisted in CI/Vercel build caching.
 

@@ -17,7 +17,7 @@ import type { CategoryData } from './data-helpers'
 // the component tree is typed on. lib/__tests__/arenaClientData.test.ts pins both the strip and
 // the "nothing on the arena page reads these" claim; if a future arena-page component needs
 // rationale or battles, pass it what it needs explicitly instead of widening this again.
-// Measured on ai-coding (2026-10-02): 1.66 MB → ~0.5 MB of flight per artifact, ×4 artifacts
+// Measured on ai-coding (2026-10-02): 1.66 MB → 0.68 MB of flight per artifact, ×4 artifacts
 // per arena page.
 export function arenaClientData(data: CategoryData): CategoryData {
   return {
