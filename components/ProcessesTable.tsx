@@ -724,7 +724,7 @@ export default function ProcessesTable({
               {/* Adaptive metric column: shows whichever of the five orderings is active (falls
                   back to cadence) — the ranked-on number is always on screen. */}
               <SortableTh col={metric} current={grouped ? null : column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
-              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main vendors this process runs on — judged vendors link to their product page">Vendor</span></SortableTh>
+              <SortableTh col="title" current={grouped ? null : column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main vendors this process runs on — judged vendors open this process viewed through that vendor">Vendor</span></SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -796,9 +796,11 @@ export default function ProcessesTable({
                       <Link href={`/processes/${r.slug}`} className="text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300">
                         {r.title}
                       </Link>{' '}
-                      <span className="text-zinc-600">
+                      <span className="text-zinc-400">
                         {/* The committed note summary is the one-liner; a row with no note for
-                            this country says so honestly instead of inventing a reason. */}
+                            this country says so honestly instead of inventing a reason. Readable
+                            tier (zinc-400, matching the row's title link) — this is prose the
+                            reader needs, not a decorative annotation. */}
                         — {note ? note.summary : `US-specific — no ${country} note is curated yet.`}
                       </span>
                     </li>

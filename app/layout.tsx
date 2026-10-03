@@ -167,10 +167,10 @@ export const metadata: Metadata = {
   },
   title: "Ultrametric",
   description:
-    "Automation for the startup — step-by-step founder processes your agent can run, evidence-graded tool rankings, open startup logic, and a simulator that runs a company's first year.",
+    "Automation for the startup — step-by-step founder processes your agent can run, agent-tested tool rankings, open startup logic, and a simulator that runs a company's first year.",
   openGraph: {
     title: "Ultrametric",
-    description: "Automation for the startup: agent-runnable founder processes, evidence-graded tool rankings, and the open startup repo.",
+    description: "Automation for the startup: agent-runnable founder processes, agent-tested tool rankings, and the open startup repo.",
     url: SITE_URL,
     siteName: "Ultrametric",
     type: "website",
@@ -179,7 +179,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ultrametric",
-    description: "Automation for the startup: agent-runnable founder processes, evidence-graded tool rankings, and the open startup repo.",
+    description: "Automation for the startup: agent-runnable founder processes, agent-tested tool rankings, and the open startup repo.",
     images: [`${SITE_URL}/og5.png`],
   },
 };
