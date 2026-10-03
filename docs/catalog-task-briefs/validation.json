@@ -1,0 +1,132 @@
+{
+  "checks": [
+    {
+      "name": "preservation",
+      "command": "python3 scripts/shared-processes/check-task-briefs.py",
+      "exitCode": 0,
+      "result": "Exact target coverage; approved copy, all prior fields and manifest preservation."
+    },
+    {
+      "name": "import-tests",
+      "command": "python3 -m unittest discover -s scripts/shared-processes -p test_import.py",
+      "exitCode": 0,
+      "result": "8 tests passed."
+    },
+    {
+      "name": "task-brief-tests",
+      "command": "python3 -m unittest discover -s scripts/shared-processes -p test_task_briefs.py",
+      "exitCode": 0,
+      "result": "Complete catalog: two unchanged-source write runs preserve bytes; changed sources conflict for all 150 authored records with zero writes."
+    },
+    {
+      "name": "fresh-import",
+      "command": "python3 scripts/shared-processes/check-import.py",
+      "exitCode": 0,
+      "result": "172 records; 17,709 source value checks; changed-source negative check passed."
+    },
+    {
+      "name": "import-check",
+      "command": "python3 scripts/shared-processes/import.py",
+      "exitCode": 0,
+      "result": "No changed records or vendor registry change."
+    },
+    {
+      "name": "schema-graph",
+      "command": "node --import tsx scripts/shared-processes/check.ts",
+      "exitCode": 0,
+      "result": "172 shared records and graph references validated."
+    },
+    {
+      "name": "determinism",
+      "command": "node --import tsx pipeline/scripts/recompute-check.ts",
+      "exitCode": 0,
+      "result": "All deterministic."
+    },
+    {
+      "name": "tsc",
+      "command": "node node_modules/typescript/lib/tsc.js --noEmit",
+      "exitCode": 0,
+      "result": "Passed after final test update."
+    },
+    {
+      "name": "lint",
+      "command": "node node_modules/eslint/bin/eslint.js . --quiet",
+      "exitCode": 0,
+      "result": "Full lint passed; changed reader test also linted afterward."
+    },
+    {
+      "name": "reader-lint",
+      "command": "node node_modules/eslint/bin/eslint.js lib/__tests__/shared-process-reader.test.tsx --quiet",
+      "exitCode": 0,
+      "result": "Passed."
+    },
+    {
+      "name": "reader-targeted",
+      "command": "node node_modules/vitest/vitest.mjs run lib/__tests__/shared-process-reader.test.tsx --maxWorkers=1",
+      "exitCode": 0,
+      "result": "7 tests passed."
+    },
+    {
+      "name": "vitest-passing",
+      "command": "pnpm_config_pm_on_fail=ignore pnpm_config_verify_deps_before_run=false node node_modules/vitest/vitest.mjs run --maxWorkers=2",
+      "exitCode": 0,
+      "result": "280 test files and 3,066 tests passed."
+    }
+  ],
+  "environment": {
+    "node": "v26.5.0",
+    "pnpm": "11.1.3",
+    "tsx": "4.23.15",
+    "notes": [
+      "Tests used installed dependencies. Invocation-only pnpm settings disabled package-manager version download and dependency auto-install.",
+      "The full content suite passed with local subprocess IPC available.",
+      "Reader assertions verify authored guidance and citations, with a separate fixture for vendor-only associations. Reader implementation is unchanged."
+    ]
+  },
+  "notRun": [
+    {
+      "command": "next build",
+      "reason": "AGENTS.md prohibits builds in worktree lanes."
+    }
+  ],
+  "excludedSituationsByteIdentical": 22,
+  "diffCheck": "passed",
+  "scope": "Completed checks for the reviewed catalog. Publication integration checks are recorded separately; the canonical records are byte-identical.",
+  "publicationIntegration": {
+    "baseCommit": "90b3fbcea1bb98f9aa4c376d9a916f8545a3cf2d",
+    "canonicalRecordsByteIdenticalToReviewedContent": 172,
+    "conflicts": 0,
+    "checks": [
+      {
+        "command": "python3 scripts/shared-processes/check-task-briefs.py",
+        "exitCode": 0,
+        "result": "985 descriptions covered; all original fields preserved; fixed hashes protect 33 retained descriptions."
+      },
+      {
+        "command": "python3 -m unittest discover -s scripts/shared-processes -p test_task_briefs.py",
+        "exitCode": 0,
+        "result": "2 tests passed, including full-catalog import protection and negative preservation checks for retained descriptions and provider bindings."
+      },
+      {
+        "command": "python3 scripts/shared-processes/import.py",
+        "exitCode": 0,
+        "result": "No source drift, changed records or registry change."
+      },
+      {
+        "command": "node --import tsx scripts/shared-processes/check.ts",
+        "exitCode": 0,
+        "result": "172 records and graph references validated."
+      },
+      {
+        "command": "pnpm_config_pm_on_fail=ignore pnpm_config_verify_deps_before_run=false node node_modules/vitest/vitest.mjs run lib/__tests__/shared-process-reader.test.tsx scripts/__tests__/dedupe-segments.test.ts --maxWorkers=2",
+        "exitCode": 0,
+        "result": "Focused reader and newly integrated main-branch test files passed; see suite output for totals."
+      },
+      {
+        "command": "node node_modules/eslint/bin/eslint.js lib/__tests__/shared-process-reader.test.tsx --quiet",
+        "exitCode": 0,
+        "result": "Passed."
+      }
+    ]
+  }
+}
