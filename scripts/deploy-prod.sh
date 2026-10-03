@@ -31,5 +31,8 @@ if [ "${FORCE:-0}" != "1" ] && [ -f "$STAMP" ]; then
     echo "SKIP: last deploy ${AGE}s ago (<2h). Batch more merges or FORCE=1." ; exit 0
   fi
 fi
-vercel deploy --prod --archive=tgz --yes
+# --turbo: the Turbo build machine (30 vCPU, 64 GB disk vs Standard's 32 GB). The 32 GB disk
+# is what every post-team-transfer deploy overflowed (ENOSPC packaging ~13 GB of static output
+# twice); Elastic machine selection kept right-sizing us DOWN to Standard. Billed per CPU-minute.
+vercel deploy --prod --archive=tgz --yes --turbo
 echo "$NOW" > "$STAMP"
