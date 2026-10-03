@@ -116,79 +116,79 @@ a startup runs on, as open, source-cited, exhaustively tested records and code:
 - **Open modules** — [`lib/openstartup/`](lib/openstartup/), indexed in
   [`open-modules/README.md`](open-modules/README.md) — pure, deterministic functions, each
   tested against published worked examples:
-  - `capTable.ts` (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
+  - [`capTable.ts`](open-modules/README.md#cap-table) (+ `capTableCodec.ts`) — founder issuance and vesting, option pools and the
     in-round pool shuffle, post-money SAFE conversion per the YC Post-Money Safe User Guide
     (Appendix II examples reproduced number-for-number), priced-round PPS solving, dilution
     waterfalls. The module is repo-only.
-  - `runway.ts` — Paul Graham's default-alive test as code (constant expenses, compounding
+  - [`runway.ts`](open-modules/README.md#runway--burn) — Paul Graham's default-alive test as code (constant expenses, compounding
     revenue, month-by-month trajectory), plus growth-adjusted runway and hiring impact.
-  - `deadlines.ts` — the founder compliance clock (DE franchise tax, Form 1120, Form 941,
+  - [`deadlines.ts`](open-modules/README.md#deadline-calendar) — the founder compliance clock (DE franchise tax, Form 1120, Form 941,
     the 83(b) 30-day window); every deadline cites a dated rule card by ID and flags
     `needsReview` whenever the true legal date can differ.
-  - `equityComp.ts` — offer and equity-comp scenarios (grant % of fully diluted, option
+  - [`equityComp.ts`](open-modules/README.md#offer--equity-comp-scenarios) — offer and equity-comp scenarios (grant % of fully diluted, option
     spread, exit outcomes under future dilution), cited to the Holloway Guide and Index
     Ventures' Rewarding Talent; it takes the 409A FMV as input rather than inventing one.
     All outputs are pre-tax.
-  - `convertibleNote.ts` — convertible promissory notes: simple-interest accrual, best-of
+  - [`convertibleNote.ts`](open-modules/README.md#convertible-notes) — convertible promissory notes: simple-interest accrual, best-of
     cap/discount conversion (the cap denominator comes from the note's own capitalization
     definition, not a guessed convention), maturity surfaced rather than decided, the three
     Cooley GO series-pricing methods, and the note-vs-SAFE differences stated plainly.
-  - `waterfall.ts` — liquidity-event waterfalls: the SAFE cash-out-vs-convert choice per
+  - [`waterfall.ts`](open-modules/README.md#liquidity-event-waterfall) — liquidity-event waterfalls: the SAFE cash-out-vs-convert choice per
     the YC User Guide, one preferred series (non-participating vs participating), a pari
     passu preference tier, proceeds that sum to the sale price exactly, and the
     conversion-indifference point.
-  - `grant409aSanity.ts` — 409A grant sanity checks (strike floor, FMV staleness,
+  - [`grant409aSanity.ts`](open-modules/README.md#409a-grant-sanity) — 409A grant sanity checks (strike floor, FMV staleness,
     appraisal-presumption timing), every check citing a dated rule card; a sanity model
     that takes the FMV as input and does not itself value a company. It now includes the three §409A
     valuation presumptions as structured cited data, method-eligibility checks over
     explicit inputs, a refresh-trigger checklist, and the penalty mechanics as a labeled
     arithmetic illustration.
-  - `vesting.ts` — vesting schedules and mechanics with real date math: cliff + periodic
+  - [`vesting.ts`](open-modules/README.md#vesting-mechanics) — vesting schedules and mechanics with real date math: cliff + periodic
     schedules per the Cooley GO convention, back-loaded tranches (Amazon's published
     5/15/40/40), departure and unvested-repurchase summaries, single- and double-trigger
     acceleration outcomes, refresh grants as additive composition, the FAST advisor grid,
     and an early-exercise interface that hands the 83(b) and tax questions to the modules
     that own them.
-  - `antiDilution.ts` — round-protection mechanics: the NVCA model weighted-average
+  - [`antiDilution.ts`](open-modules/README.md#anti-dilution) — round-protection mechanics: the NVCA model weighted-average
     formula (broad- and narrow-based, the denominator difference stated), full ratchet,
     conversion-price-to-ratio mechanics, pay-to-play as explanation, and a stated interface
     into the waterfall module; published worked examples are replayed number-for-number.
-  - `round.ts` — priced-round mechanics on top of the cap table: pro rata math (maintaining
+  - [`round.ts`](open-modules/README.md#priced-round-mechanics) — priced-round mechanics on top of the cap table: pro rata math (maintaining
     ownership is buying your pro rata, shown by algebra), option-pool sizing bottom-up from
     a hiring plan, down-round modeling that composes the anti-dilution adjustments, and
     founder secondaries (which dilute no one; the shares change hands, none are issued).
-  - `optionTax.ts` — ISO vs NSO exercise mechanics: NSO spread-at-exercise income and the
+  - [`optionTax.ts`](open-modules/README.md#iso--nso-exercise-tax) — ISO vs NSO exercise mechanics: NSO spread-at-exercise income and the
     published supplemental-withholding rates, ISO no-regular-tax-at-exercise with the AMT
     adjustment, the $100,000 ISO limit replaying the regulation's own examples,
     qualifying/disqualifying disposition math with the loss cap, and a clearly-labeled AMT
     exposure illustration with asOf-dated parameters.
-  - `election83b.ts` — the 83(b) money math (the deadline clock stays in `deadlines.ts`):
+  - [`election83b.ts`](open-modules/README.md#83b-election-math) — the 83(b) money math (the deadline clock stays in `deadlines.ts`):
     tax-at-grant vs tax-at-vesting scenarios from explicit inputs, the zero-spread founder
     case, forfeiture outcomes with the cited no-refund risk, and the early-exercise
     interplay; all six of the IRS revenue procedure's examples are replayed.
-  - `qsbs.ts` — § 1202 mechanics: eligibility as cited conditions (needs review wherever
+  - [`qsbs.ts`](open-modules/README.md#qsbs--1202) — § 1202 mechanics: eligibility as cited conditions (needs review wherever
     facts decide), the holding clock with the 83(b)/vesting interplay, exclusion
     percentages by acquisition date across both statutory regimes, the per-issuer cap
     (greater of the dollar cap or 10× basis), and the § 1045 rollover explained and cited
     but not computed.
-  - `deFranchiseTax.ts` — both published Delaware franchise-tax methods computed exactly
+  - [`deFranchiseTax.ts`](open-modules/README.md#delaware-franchise-tax) — both published Delaware franchise-tax methods computed exactly
     (the Division of Corporations' worked examples replayed number-for-number), the
     which-method-is-cheaper comparator for the annual March recalculation, and the Large
     Corporate Filer amount surfaced.
-  - `rdCredit.ts` — R&D tax mechanics at a stated, narrow scope: § 174/§ 174A
+  - [`rdCredit.ts`](open-modules/README.md#rd-tax-mechanics) — R&D tax mechanics at a stated, narrow scope: § 174/§ 174A
     capitalization/amortization arithmetic with the midpoint convention, and the § 41
     payroll-tax-offset election mechanics (eligibility conditions, the cap, quarterly
     application); computation is over explicit inputs and eligibility always needs review.
-  - `payrollTax.ts` — employer-side federal payroll mechanics: FICA with the asOf-dated
+  - [`payrollTax.ts`](open-modules/README.md#employer-payroll-tax) — employer-side federal payroll mechanics: FICA with the asOf-dated
     wage base, Additional Medicare labeled employee-only, FUTA with the bounded state
     credit, and per-employee annual cost with a stated state-tax out-of-scope boundary.
-  - `roundComposer.ts` — a priced round replayed end to end (term-sheet economics →
+  - [`roundComposer.ts`](open-modules/README.md#priced-round-composer) — a priced round replayed end to end (term-sheet economics →
     conversions and pro rata → the post-close table), composing the cap-table, round,
     anti-dilution, and waterfall modules with zero parallel arithmetic.
-  - `unitEconomics.ts` — LTV/CAC and payback, the burn multiple, Rule of 40, and the magic
+  - [`unitEconomics.ts`](open-modules/README.md#unit-economics) — LTV/CAC and payback, the burn multiple, Rule of 40, and the magic
     number, each cited to its canonical formulation; benchmarks are inputs, not encoded
     constants.
-  - `deferredRevenue.ts` — subscription revenue recognition and plan-change proration,
+  - [`deferredRevenue.ts`](open-modules/README.md#deferred-revenue-subscriptions) — subscription revenue recognition and plan-change proration,
     cents-exact, replaying the published worked examples.
 - **Open documents** — [`open-documents/`](open-documents/): the canonical, openly licensed startup legal
   documents (SAFEs, board consents, offer letters, …) as dated records that link rather than
